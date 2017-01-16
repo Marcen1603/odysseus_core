@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -18,19 +18,19 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Channel Format View</b></em>'.
+ * An implementation of the model object '<em><b>Create View</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatViewImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatViewImpl#getSelect <em>Select</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateViewImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateViewImpl#getSelect <em>Select</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implements ChannelFormatView
+public class CreateViewImpl extends MinimalEObjectImpl.Container implements CreateView
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -67,7 +67,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ChannelFormatViewImpl()
+  protected CreateViewImpl()
   {
     super();
   }
@@ -80,7 +80,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.CHANNEL_FORMAT_VIEW;
+    return CQLPackage.Literals.CREATE_VIEW;
   }
 
   /**
@@ -103,7 +103,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_VIEW__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_VIEW__NAME, oldName, name));
   }
 
   /**
@@ -127,7 +127,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
     select = newSelect;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_VIEW__SELECT, oldSelect, newSelect);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_VIEW__SELECT, oldSelect, newSelect);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -144,14 +144,14 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
     {
       NotificationChain msgs = null;
       if (select != null)
-        msgs = ((InternalEObject)select).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.CHANNEL_FORMAT_VIEW__SELECT, null, msgs);
+        msgs = ((InternalEObject)select).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.CREATE_VIEW__SELECT, null, msgs);
       if (newSelect != null)
-        msgs = ((InternalEObject)newSelect).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.CHANNEL_FORMAT_VIEW__SELECT, null, msgs);
+        msgs = ((InternalEObject)newSelect).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.CREATE_VIEW__SELECT, null, msgs);
       msgs = basicSetSelect(newSelect, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_VIEW__SELECT, newSelect, newSelect));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_VIEW__SELECT, newSelect, newSelect));
   }
 
   /**
@@ -164,7 +164,7 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
+      case CQLPackage.CREATE_VIEW__SELECT:
         return basicSetSelect(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -180,9 +180,9 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_VIEW__NAME:
+      case CQLPackage.CREATE_VIEW__NAME:
         return getName();
-      case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
+      case CQLPackage.CREATE_VIEW__SELECT:
         return getSelect();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -198,10 +198,10 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_VIEW__NAME:
+      case CQLPackage.CREATE_VIEW__NAME:
         setName((String)newValue);
         return;
-      case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
+      case CQLPackage.CREATE_VIEW__SELECT:
         setSelect((Select)newValue);
         return;
     }
@@ -218,10 +218,10 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_VIEW__NAME:
+      case CQLPackage.CREATE_VIEW__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
+      case CQLPackage.CREATE_VIEW__SELECT:
         setSelect((Select)null);
         return;
     }
@@ -238,9 +238,9 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_VIEW__NAME:
+      case CQLPackage.CREATE_VIEW__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case CQLPackage.CHANNEL_FORMAT_VIEW__SELECT:
+      case CQLPackage.CREATE_VIEW__SELECT:
         return select != null;
     }
     return super.eIsSet(featureID);
@@ -263,4 +263,4 @@ public class ChannelFormatViewImpl extends MinimalEObjectImpl.Container implemen
     return result.toString();
   }
 
-} //ChannelFormatViewImpl
+} //CreateViewImpl

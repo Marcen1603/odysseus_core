@@ -5,16 +5,14 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
- 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel
@@ -25,12 +23,15 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
- 
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
-
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.util.CQLUtil
 import java.util.ArrayList
+import java.util.Arrays
+import java.util.Collection
 import java.util.HashMap
 import java.util.HashSet
 import java.util.List
@@ -38,18 +39,17 @@ import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import java.util.Arrays
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
-import org.eclipse.xtext.EcoreUtil2
-import java.util.Collections
-import java.util.Collection
-import de.uniol.inf.is.odysseus.parser.novel.cql.util.CQLUtil
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
 
 //import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 
@@ -90,25 +90,15 @@ class CQLGenerator implements IGenerator2
 	{
 		switch stmt.type
 		{
-			Select :
-			{
-				return parseSelect1(stmt.type as Select)
-			}
-			Create : 
-			{
-			return parseCreate(stmt.type as Create)
-			}
-			StreamTo		 : return parseStreamtoStatement(stmt.type as StreamTo)
-			//Drop			 : return parseDrop(stmt.type as Drop)
+			CreateView			: return parseCreateView(stmt.type as CreateView)
+			CreateStream1  		: return parseCreateStream1(stmt.type as CreateStream1)
+			CreateSink1         : return parseCreateSink1(stmt.type as CreateSink1)
+			CreateStreamChannel : return parseCreateStreamChannel(stmt.type as CreateStreamChannel)
+			CreateStreamFile    : return parseCreateStreamFile(stmt.type as CreateStreamFile)
+			StreamTo		 	: return parseStreamtoStatement(stmt.type as StreamTo)
+			Select 		   		: return parseSelect1(stmt.type as Select)
 		}
-		
 	}
-	
-//	def CharSequence parseDrop(Drop drop) 
-//	{
-//		//TODO Implement Drop
-//		return ''
-//	}
 	
 	def CharSequence parseSelect1(Select stmt)
 	{
@@ -182,7 +172,7 @@ class CQLGenerator implements IGenerator2
 		
 		sources.addAll(stmt.sources)
 		
-		println(predicates)
+//		println(predicates)
 		var nested = EcoreUtil2.eAllOfType(stmt, AttributeWithNestedStatement)
 		if(!nested.empty)
 		{
@@ -216,7 +206,7 @@ class CQLGenerator implements IGenerator2
 			)
 		}
 		
-		println(predicates)
+//		println(predicates)
 		
 ////////////////
 		if(stmt.sources.size > 1 && !stmt.attributes.empty)// SELECT * FROM src1 / src1, .. src2 WHERE ...;
@@ -287,150 +277,260 @@ class CQLGenerator implements IGenerator2
 		throw new IllegalArgumentException("given attribute " + attribute.name + "unknown")		
 	}
 		
-	def CharSequence parseCreate(Create stmt)
+	def CharSequence parseCreateStream1(CreateStream1 create)
 	{
-		var symbol1 = ' := '
-		//var symbol1 = if(isView) ' := ' else ' = '
-		var ch = stmt.channelformat
-		if(ch!= null)
-		{
-			if(ch.stream != null)
-			{
-				return '''«ch.stream.name + symbol1»«buildAccessOP(ch)»'''
-			}
-			if(ch.view.select != null) 
-			{
-				var str = parseSelect1(ch.view.select)
-					.toString
-//					.replaceAll("\\s*[\\r\\n]+\\s*", "")
-//					.trim()
-//					.replace(" ","")
-				return str.replace(("operator_" + count_ID + " = "), (ch.view.name + ":="))
-			}
-//			var str = parseCreateStatement(ch.view.create).toString
-//			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
-		}
-		else
-		{
-			var af = stmt.accessframework
-			if(af.type.equals("STREAM"))
-			{
-				return '''«af.name + symbol1»«buildAccessOP(af)»'''
-			}
-			buildSenderOP(af)
-			return ''''''
-		}
-	}
-		
-	def parseStreamtoStatement(StreamTo stmt)
-	{
-		if(stmt.statement != null)
-		{
-			var s = parseSelect1(stmt.statement).toString
-			streamto.put(stmt.name, s.subSequence(s.indexOf('=') + 1, s.length).toString)		
-		}
-		else
-		{
-			streamto.put(stmt.name, stmt.inputname)
-		}
-		if(!sinks.keySet.contains(stmt.name)) 
-		{ 
-			return ''
-		}
-		return '''output«getID() + " := " + sinks.get(stmt.name).replace("_INPUT_", streamto.get(stmt.name))»'''			
-	}
-		
-	def CharSequence buildAccessOP(ChannelFormat channel)
-	{
-		var wrapper     = 'GenericPush'
-		var protocol    = 'SizeByteBuffer'
-		var transport   = 'NonBlockingTcp'
-		var dataHandler = 'Tuple'		
-		var args 		= generateKeyValueString(
-							channel.stream.attributes.map[e|e.name],
-							channel.stream.datatypes.map[e|e.value],
-							','
-						  )
-						  
-		return '''ACCESS
-				  (
-					{	  
-						source      = '«getKeyword(0) +  channel.stream.name»', 
-						wrapper     = '«wrapper»',
-						protocol    = '«protocol»',
-						transport   = '«transport»',
-						dataHandler = '«dataHandler»',
-						schema = [«args»],
-						options =[['port', '«channel.stream.port»'],
-								  ['host', '«channel.stream.host»']]
-					 }
-				   )'''
+		return create.attributes.name + ' :=' + buildCreate1("ACCESS", create.pars, create.attributes.attributes, create.attributes.datatypes, create.attributes.name)
 	}	
 		
-	def CharSequence buildAccessOP(AccessFramework access)
+	def CharSequence parseCreateSink1(CreateSink1 sink) 
 	{
-		var wrapper     = access.wrapper
-		var protocol    = access.protocol
-		var transport   = access.transport
-		var dataHandler = access.datahandler
+		return sink.attributes.name + ' :=' + buildCreate1("SENDER", sink.pars, sink.attributes.attributes, sink.attributes.datatypes, sink.attributes.name)
+	}	
+			
+	def CharSequence buildCreate1(String type, CreateParameters pars, List<Attribute> attrs, List<DataType> dtypes, String name)
+	{	
+		var wrapper     = pars.wrapper
+		var protocol    = pars.protocol
+		var transport   = pars.transport
+		var dataHandler = pars.datahandler
 		var args 		= generateKeyValueString(
-							access.attributes.map[e|e.name],
-							access.datatypes.map[e|e.value],
+							attrs.map[e|e.name],
+							dtypes.map[e|e.value],
 							','
 						  )
-						  
 		var options 	= generateKeyValueString(
-							access.keys,
-							access.values,
+							pars.keys,
+							pars.values,
 							','
-						  )						  
+						  )		
+		var t = ''
+		var s = ''
+		var b = false
+		if(type.equals("ACCESS"))
+		{
+			t = 'source'
+			s = '''schema = [«args»],'''	
+		}
+		else
+		{
+			b = true
+			t = 'sink'	
+		}				  
 						  
+		var sink = '''«type»
+				  (
+					{	  
+						«t»      = '«getKeyword(0) + name»', 
+						wrapper     = '«wrapper»',
+						protocol    = '«protocol»',
+						transport   = '«transport»',
+						dataHandler = '«dataHandler»',
+						«s»
+						options =[«options»]
+					 }
+					 «IF b»,__INPUT__«ENDIF»
+				   )'''
+	    if(b)
+	    {
+	     	sinks.put(name, sink);
+	     	return''	
+	    }
+		return sink
+	}	
+		
+	def CharSequence parseCreateStreamFile(CreateStreamFile file)
+	{
+		var schema = generateKeyValueString(
+					file.attributes.attributes.map[e|e.name],
+					file.attributes.datatypes.map[e|e.value],
+					','
+				  )
+		
+		var options = '''['filename','«file.filename»']'''		  
+		return file.attributes.name + " := "+ buildCreate2('GenericPush', file.type, 'File', 'Tuple', schema, options, file.attributes.name)
+	}
+	
+	def CharSequence parseCreateStreamChannel(CreateStreamChannel channel) 
+	{
+		var schema = generateKeyValueString(
+			channel.attributes.attributes.map[e|e.name],
+			channel.attributes.datatypes.map[e|e.value],
+			','
+		  )
+		
+		var options = '''['port','«channel.port»'],['host', '«channel.host»']'''		  
+		return channel.attributes.name + " := "+ buildCreate2('GenericPush', 'SizeByteBuffer', 'NonBlockingTcp', 'Tuple', schema, options, channel.attributes.name)
+	}	
+	
+	def CharSequence buildCreate2(String wrapper, String protocol, String transport, String dataHandler, String schema, String options, String name)
+	{						  
 		return '''ACCESS
 				  (
 					{	  
-						source      = '«getKeyword(0) +  access.name»', 
+						source      = '«getKeyword(0) + name»', 
 						wrapper     = '«wrapper»',
 						protocol    = '«protocol»',
 						transport   = '«transport»',
 						dataHandler = '«dataHandler»',
-						schema = [«args»],
+						schema = [«schema»],
 						options =[«options»]
 					 }
 				   )'''
-	}		
-	
-	def buildSenderOP(AccessFramework access) 
+	}
+		
+//	def CharSequence parseCreate(Create stmt)
+//	{
+//		var symbol1 = ' := '
+//		//var symbol1 = if(isView) ' := ' else ' = '
+//		var ch = stmt.channelformat
+//		if(ch!= null)
+//		{
+//			if(ch.stream != null)
+//			{
+//				return '''«ch.stream.name + symbol1»«buildAccessOP(ch)»'''
+//			}
+//			if(ch.view.select != null) 
+//			{
+//				var str = parseSelect1(ch.view.select)
+//					.toString
+////					.replaceAll("\\s*[\\r\\n]+\\s*", "")
+////					.trim()
+////					.replace(" ","")
+//				return str.replace(("operator_" + count_ID + " = "), (ch.view.name + ":="))
+//			}
+////			var str = parseCreateStatement(ch.view.create).toString
+////			return str.replace(str.substring(0, str.indexOf(":")), ch.view.name + " ")
+//		}
+//		else
+//		{
+//			var af = stmt.accessframework
+//			if(af.type.equals("STREAM"))
+//			{
+//				return '''«af.name + symbol1»«buildAccessOP(af)»'''
+//			}
+//			buildSenderOP(af)
+//			return ''''''
+//		}
+//	}
+		
+	def CharSequence parseCreateView(CreateView view)
 	{
-		var wrapper     = access.wrapper
-		var protocol    = access.protocol
-		var transport   = access.transport
-		var dataHandler = access.datahandler
-						  
-		var options 	= generateKeyValueString(
-							access.keys,
-							access.values,
-							','
-						  )						  
-						  
-		var str = '''SENDER
-				  (
-					{	  
-						sink        = '«getKeyword(0) +  access.name»', 
-						wrapper     = '«wrapper»',
-						protocol    = '«protocol»',
-						transport   = '«transport»',
-						dataHandler = '«dataHandler»',
-						options =[«options»]
-					 }, _INPUT_
-				   )'''	
+		var select = parseSelect(view.select)
+		return "view" + getID() + " := " + select
+	}
+		
+	def parseStreamtoStatement(StreamTo to)
+	{
+		if(to.statement != null)
+			streamto.put(to.name, parseSelect(to.statement).toString)		
+		else
+			streamto.put(to.name, to.inputname)
 
-		if(streamto.keySet.contains(access.name))
-		{
-			return str.replace("_INPUT_", streamto.get(access.name))
-		}
-		sinks.put(access.name, str);
+		if(sinks.keySet.contains(to.name))
+			return '''«sinks.get(to.name).replace("__INPUT__", streamto.get(to.name))»'''
 		return ''
 	}
+		
+//	def CharSequence buildAccessOP(ChannelFormat channel)
+//	{
+//		var wrapper     = 'GenericPush'
+//		var protocol    = 'SizeByteBuffer'
+//		var transport   = 'NonBlockingTcp'
+//		var dataHandler = 'Tuple'		
+//		var args 		= generateKeyValueString(
+//							channel.stream.attributes.map[e|e.name],
+//							channel.stream.datatypes.map[e|e.value],
+//							','
+//						  )
+//
+//		//...						  
+//	
+//		var options 	= generateKeyValueString(
+//					'filename',
+//					channel.stream.values,
+//					','
+//				  )						  
+//		
+//		//TODO port to file 
+//		 
+//		return '''ACCESS
+//				  (
+//					{	  
+//						source      = '«getKeyword(0) +  channel.stream.name»', 
+//						wrapper     = '«wrapper»',
+//						protocol    = '«protocol»',
+//						transport   = '«transport»',
+//						dataHandler = '«dataHandler»',
+//						schema = [«args»],
+//						options =[«options»]
+//					 }
+//				   )'''
+//	}	
+//		
+//	def CharSequence buildAccessOP(AccessFramework access)
+//	{
+//		var wrapper     = access.wrapper
+//		var protocol    = access.protocol
+//		var transport   = access.transport
+//		var dataHandler = access.datahandler
+//		var args 		= generateKeyValueString(
+//							access.attributes.map[e|e.name],
+//							access.datatypes.map[e|e.value],
+//							','
+//						  )
+//						  
+//		var options 	= generateKeyValueString(
+//							access.keys,
+//							access.values,
+//							','
+//						  )						  
+//						  
+//		return '''ACCESS
+//				  (
+//					{	  
+//						source      = '«getKeyword(0) +  access.name»', 
+//						wrapper     = '«wrapper»',
+//						protocol    = '«protocol»',
+//						transport   = '«transport»',
+//						dataHandler = '«dataHandler»',
+//						schema = [«args»],
+//						options =[«options»]
+//					 }
+//				   )'''
+//	}		
+//	
+//	def buildSenderOP(AccessFramework access) 
+//	{
+//		var wrapper     = access.wrapper
+//		var protocol    = access.protocol
+//		var transport   = access.transport
+//		var dataHandler = access.datahandler
+//						  
+//		var options 	= generateKeyValueString(
+//							access.keys,
+//							access.values,
+//							','
+//						  )						  
+//						  
+//		var str = '''SENDER
+//				  (
+//					{	  
+//						sink        = '«getKeyword(0) +  access.name»', 
+//						wrapper     = '«wrapper»',
+//						protocol    = '«protocol»',
+//						transport   = '«transport»',
+//						dataHandler = '«dataHandler»',
+//						options =[«options»]
+//					 }, _INPUT_
+//				   )'''	
+//
+//		if(streamto.keySet.contains(access.name))
+//		{
+//			return str.replace("_INPUT_", streamto.get(access.name))
+//		}
+//		sinks.put(access.name, str);
+//		return ''
+//	}
 
 //	/**
 //	 * Builds a join operator with a given {@link ExpressionsModel} and list of {@link Source}

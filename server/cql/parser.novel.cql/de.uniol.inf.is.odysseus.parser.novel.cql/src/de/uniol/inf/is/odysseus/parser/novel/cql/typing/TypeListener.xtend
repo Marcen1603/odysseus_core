@@ -4,20 +4,16 @@ import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import de.uniol.inf.is.odysseus.parser.novel.cql.validation.AbstractCQLValidator
-import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.validation.Check
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition
 
 class TypeListener extends AbstractCQLValidator
 {
 	
 	@Inject extension CQLParser
-	@Check def foo(Create m)
+	@Check def foo(AttributeDefinition m)
 	{
-		createDictionary(
-			EcoreUtil2.eAllOfType(m.eContainer, Create),
-			CQLDictionaryProvider.currentUser
-		)
+		createDictionary(m, CQLDictionaryProvider.currentUser)
 	}
 	
 }

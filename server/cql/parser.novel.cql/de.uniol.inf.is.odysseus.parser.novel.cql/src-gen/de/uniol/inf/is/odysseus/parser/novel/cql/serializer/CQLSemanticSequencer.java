@@ -4,22 +4,24 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.serializer;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
@@ -64,9 +66,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
 		if (epackage == CQLPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
-			case CQLPackage.ACCESS_FRAMEWORK:
-				sequence_AccessFramework(context, (AccessFramework) semanticObject); 
-				return; 
 			case CQLPackage.AGGREGATION:
 				sequence_Aggregation(context, (Aggregation) semanticObject); 
 				return; 
@@ -86,6 +85,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case CQLPackage.ATTRIBUTE_DEFINITION:
+				sequence_AttributeDefinition(context, (AttributeDefinition) semanticObject); 
+				return; 
 			case CQLPackage.ATTRIBUTE_REF:
 				sequence_Atomic(context, (AttributeRef) semanticObject); 
 				return; 
@@ -97,15 +99,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.BRACKET:
 				sequence_Primary(context, (Bracket) semanticObject); 
-				return; 
-			case CQLPackage.CHANNEL_FORMAT:
-				sequence_ChannelFormat(context, (ChannelFormat) semanticObject); 
-				return; 
-			case CQLPackage.CHANNEL_FORMAT_STREAM:
-				sequence_ChannelFormatStream(context, (ChannelFormatStream) semanticObject); 
-				return; 
-			case CQLPackage.CHANNEL_FORMAT_VIEW:
-				sequence_ChannelFormatView(context, (ChannelFormatView) semanticObject); 
 				return; 
 			case CQLPackage.COMMAND:
 				if (rule == grammarAccess.getCommandRule()) {
@@ -120,8 +113,23 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
 				return; 
-			case CQLPackage.CREATE:
-				sequence_Create(context, (Create) semanticObject); 
+			case CQLPackage.CREATE_PARAMETERS:
+				sequence_CreateParameters(context, (CreateParameters) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_SINK1:
+				sequence_CreateSink1(context, (CreateSink1) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_STREAM1:
+				sequence_CreateStream1(context, (CreateStream1) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_STREAM_CHANNEL:
+				sequence_CreateStreamChannel(context, (CreateStreamChannel) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_STREAM_FILE:
+				sequence_CreateStreamFile(context, (CreateStreamFile) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_VIEW:
+				sequence_CreateView(context, (CreateView) semanticObject); 
 				return; 
 			case CQLPackage.DATA_TYPE:
 				sequence_DataType(context, (DataType) semanticObject); 
@@ -181,30 +189,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		if (errorAcceptor != null)
 			errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
 	}
-	
-	/**
-	 * Contexts:
-	 *     AccessFramework returns AccessFramework
-	 *
-	 * Constraint:
-	 *     (
-	 *         (type='STREAM' | type='SINK') 
-	 *         name=ID 
-	 *         attributes+=Attribute+ 
-	 *         datatypes+=DataType+ 
-	 *         (attributes+=Attribute datatypes+=DataType)* 
-	 *         wrapper=STRING 
-	 *         protocol=STRING 
-	 *         transport=STRING 
-	 *         datahandler=STRING 
-	 *         (keys+=STRING values+=STRING)+ 
-	 *         (keys+=STRING values+=STRING)?
-	 *     )
-	 */
-	protected void sequence_AccessFramework(ISerializationContext context, AccessFramework semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
 	
 	/**
 	 * Contexts:
@@ -335,7 +319,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Atomic returns FloatConstant
 	 *
 	 * Constraint:
-	 *     value=FLOAT_NUMBER
+	 *     value=FLOAT
 	 */
 	protected void sequence_Atomic(ISerializationContext context, FloatConstant semanticObject) {
 		if (errorAcceptor != null) {
@@ -343,7 +327,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FLOAT_CONSTANT__VALUE));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAtomicAccess().getValueFLOAT_NUMBERTerminalRuleCall_1_1_0(), semanticObject.getValue());
+		feeder.accept(grammarAccess.getAtomicAccess().getValueFLOATTerminalRuleCall_1_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -416,6 +400,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     AttributeDefinition returns AttributeDefinition
+	 *
+	 * Constraint:
+	 *     (name=ID attributes+=Attribute+ datatypes+=DataType+ (attributes+=Attribute datatypes+=DataType)*)
+	 */
+	protected void sequence_AttributeDefinition(ISerializationContext context, AttributeDefinition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     AttributeWithNestedStatement returns AttributeWithNestedStatement
 	 *
 	 * Constraint:
@@ -440,7 +436,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     AttributeWithoutAlias returns Attribute
 	 *
 	 * Constraint:
-	 *     name=ID
+	 *     name=AttributeName
 	 */
 	protected void sequence_AttributeWithoutAlias(ISerializationContext context, Attribute semanticObject) {
 		if (errorAcceptor != null) {
@@ -448,7 +444,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE__NAME));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAttributeWithoutAliasAccess().getNameIDTerminalRuleCall_0(), semanticObject.getName());
+		feeder.accept(grammarAccess.getAttributeWithoutAliasAccess().getNameAttributeNameParserRuleCall_0(), semanticObject.getName());
 		feeder.finish();
 	}
 	
@@ -458,61 +454,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Attribute returns Attribute
 	 *
 	 * Constraint:
-	 *     (name=ID alias=Alias?)
+	 *     (name=AttributeName alias=Alias?)
 	 */
 	protected void sequence_Attribute(ISerializationContext context, Attribute semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ChannelFormatStream returns ChannelFormatStream
-	 *
-	 * Constraint:
-	 *     (
-	 *         name=ID 
-	 *         attributes+=Attribute+ 
-	 *         datatypes+=DataType+ 
-	 *         (attributes+=Attribute datatypes+=DataType)* 
-	 *         host=ID 
-	 *         port=INT
-	 *     )
-	 */
-	protected void sequence_ChannelFormatStream(ISerializationContext context, ChannelFormatStream semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ChannelFormatView returns ChannelFormatView
-	 *
-	 * Constraint:
-	 *     (name=ID select=Select)
-	 */
-	protected void sequence_ChannelFormatView(ISerializationContext context, ChannelFormatView semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CHANNEL_FORMAT_VIEW__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CHANNEL_FORMAT_VIEW__NAME));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CHANNEL_FORMAT_VIEW__SELECT) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CHANNEL_FORMAT_VIEW__SELECT));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getChannelFormatViewAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getChannelFormatViewAccess().getSelectSelectParserRuleCall_4_0(), semanticObject.getSelect());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ChannelFormat returns ChannelFormat
-	 *
-	 * Constraint:
-	 *     (stream=ChannelFormatStream | view=ChannelFormatView)
-	 */
-	protected void sequence_ChannelFormat(ISerializationContext context, ChannelFormat semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -569,13 +513,131 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Create returns Create
+	 *     CreateParameters returns CreateParameters
 	 *
 	 * Constraint:
-	 *     ((name='CREATE' | name='ATTACH') (channelformat=ChannelFormat | accessframework=AccessFramework))
+	 *     (
+	 *         wrapper=STRING 
+	 *         protocol=STRING 
+	 *         transport=STRING 
+	 *         datahandler=STRING 
+	 *         (keys+=STRING values+=STRING)+ 
+	 *         (keys+=STRING values+=STRING)?
+	 *     )
 	 */
-	protected void sequence_Create(ISerializationContext context, Create semanticObject) {
+	protected void sequence_CreateParameters(ISerializationContext context, CreateParameters semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateSink1 returns CreateSink1
+	 *
+	 * Constraint:
+	 *     (attributes=AttributeDefinition pars=CreateParameters)
+	 */
+	protected void sequence_CreateSink1(ISerializationContext context, CreateSink1 semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_SINK1__ATTRIBUTES) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_SINK1__ATTRIBUTES));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_SINK1__PARS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_SINK1__PARS));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateSink1Access().getAttributesAttributeDefinitionParserRuleCall_2_0(), semanticObject.getAttributes());
+		feeder.accept(grammarAccess.getCreateSink1Access().getParsCreateParametersParserRuleCall_3_0(), semanticObject.getPars());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateStream1 returns CreateStream1
+	 *
+	 * Constraint:
+	 *     (attributes=AttributeDefinition pars=CreateParameters)
+	 */
+	protected void sequence_CreateStream1(ISerializationContext context, CreateStream1 semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM1__ATTRIBUTES) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM1__ATTRIBUTES));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM1__PARS) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM1__PARS));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateStream1Access().getAttributesAttributeDefinitionParserRuleCall_2_0(), semanticObject.getAttributes());
+		feeder.accept(grammarAccess.getCreateStream1Access().getParsCreateParametersParserRuleCall_3_0(), semanticObject.getPars());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateStreamChannel returns CreateStreamChannel
+	 *
+	 * Constraint:
+	 *     (attributes=AttributeDefinition host=ID port=INT)
+	 */
+	protected void sequence_CreateStreamChannel(ISerializationContext context, CreateStreamChannel semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__ATTRIBUTES) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__ATTRIBUTES));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__HOST) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__HOST));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__PORT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_CHANNEL__PORT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateStreamChannelAccess().getAttributesAttributeDefinitionParserRuleCall_2_0(), semanticObject.getAttributes());
+		feeder.accept(grammarAccess.getCreateStreamChannelAccess().getHostIDTerminalRuleCall_4_0(), semanticObject.getHost());
+		feeder.accept(grammarAccess.getCreateStreamChannelAccess().getPortINTTerminalRuleCall_6_0(), semanticObject.getPort());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateStreamFile returns CreateStreamFile
+	 *
+	 * Constraint:
+	 *     (attributes=AttributeDefinition filename=STRING type=ID)
+	 */
+	protected void sequence_CreateStreamFile(ISerializationContext context, CreateStreamFile semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__ATTRIBUTES) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__ATTRIBUTES));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__FILENAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__FILENAME));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__TYPE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_STREAM_FILE__TYPE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateStreamFileAccess().getAttributesAttributeDefinitionParserRuleCall_2_0(), semanticObject.getAttributes());
+		feeder.accept(grammarAccess.getCreateStreamFileAccess().getFilenameSTRINGTerminalRuleCall_4_0(), semanticObject.getFilename());
+		feeder.accept(grammarAccess.getCreateStreamFileAccess().getTypeIDTerminalRuleCall_6_0(), semanticObject.getType());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateView returns CreateView
+	 *
+	 * Constraint:
+	 *     (name=ID select=NestedStatement)
+	 */
+	protected void sequence_CreateView(ISerializationContext context, CreateView semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_VIEW__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_VIEW__NAME));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_VIEW__SELECT) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_VIEW__SELECT));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateViewAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
+		feeder.accept(grammarAccess.getCreateViewAccess().getSelectNestedStatementParserRuleCall_3_0(), semanticObject.getSelect());
+		feeder.finish();
 	}
 	
 	
@@ -856,7 +918,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Source returns Source
 	 *
 	 * Constraint:
-	 *     (((name=ID (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)?) | nested=NestedStatement) alias=Alias?)
+	 *     (((name=SourceName (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)?) | nested=NestedStatement) alias=Alias?)
 	 */
 	protected void sequence_Source(ISerializationContext context, Source semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -868,7 +930,16 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
-	 *     (type=Select | type=Create | type=StreamTo | type=Drop)
+	 *     (
+	 *         type=Select | 
+	 *         type=StreamTo | 
+	 *         type=Drop | 
+	 *         type=CreateStream1 | 
+	 *         type=CreateSink1 | 
+	 *         type=CreateStreamChannel | 
+	 *         type=CreateStreamFile | 
+	 *         type=CreateView
+	 *     )
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

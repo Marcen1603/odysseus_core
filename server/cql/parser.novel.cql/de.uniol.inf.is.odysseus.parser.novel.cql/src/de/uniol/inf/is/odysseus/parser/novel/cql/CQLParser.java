@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +27,6 @@ import com.google.inject.Injector;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -38,19 +36,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.RunCommandCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.query.StartQueryCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
@@ -127,51 +118,66 @@ public class CQLParser implements IQueryParser
 //		regex = ".*create[ ]*["+queryType+"][ ]*[a-z0-9]*[ ]+([a-z0-9]+){1}[ ]*[(]([a-z0-9]+[ ]+["+types+"]+[ ]*(, [a-z0-9]+[ ]+["+types+"]+)*)[)].*";
 	}
 	
-	public synchronized void createDictionary(List<Create> list, ISession user)
+//	public synchronized void createDictionary(List<Create> list, ISession user)
+//	{
+//		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
+//		for(Create stmt : list)
+//		{
+//			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
+//			{
+//				// do nothing
+//			}
+//			else
+//			{
+//				if(stmt.getAccessframework() != null)
+//				{
+//					AccessFramework create = stmt.getAccessframework();
+//					int s = create.getAttributes().size();
+//					SDFAttribute[] attributes = new SDFAttribute[s];
+//					for(int i = 0; i < s; i++)
+//					{
+//						String name = create.getAttributes().get(i).getName();
+//						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
+//						attributes[i] = new SDFAttribute(create.getName(), name, type);
+//					}
+//					dic.add(attributes);
+//				}
+//				else//CHANNEL FORMAT
+//				{
+//					ChannelFormat create = stmt.getChannelformat();
+//					if(create.getStream() != null)//CREATE STREAN
+//					{
+//						int s = create.getStream().getAttributes().size();
+//						SDFAttribute[] attributes = new SDFAttribute[s];
+//						for(int i = 0; i < s; i++)
+//						{
+//							String name = create.getStream().getAttributes().get(i).getName();
+//							SDFDatatype type = new SDFDatatype(create.getStream().getDatatypes().get(i).getValue());
+//							attributes[i] = new SDFAttribute(create.getStream().getName(), name, type);
+//						}
+//						dic.add(attributes);
+//					}
+//					else// CREATE VIEW
+//					{
+//					}
+//				}
+//			}
+//		}
+//	}
+//	
+	
+	public synchronized void createDictionary(AttributeDefinition d, ISession user)
 	{
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		for(Create stmt : list)
+		int s = d.getAttributes().size();
+		SDFAttribute[] attributes = new SDFAttribute[s];
+		for(int i = 0; i < s; i++)
 		{
-			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
-			{
-				// do nothing
-			}
-			else
-			{
-				if(stmt.getAccessframework() != null)
-				{
-					AccessFramework create = stmt.getAccessframework();
-					int s = create.getAttributes().size();
-					SDFAttribute[] attributes = new SDFAttribute[s];
-					for(int i = 0; i < s; i++)
-					{
-						String name = create.getAttributes().get(i).getName();
-						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
-						attributes[i] = new SDFAttribute(create.getName(), name, type);
-					}
-					dic.add(attributes);
-				}
-				else//CHANNEL FORMAT
-				{
-					ChannelFormat create = stmt.getChannelformat();
-					if(create.getStream() != null)//CREATE STREAN
-					{
-						int s = create.getStream().getAttributes().size();
-						SDFAttribute[] attributes = new SDFAttribute[s];
-						for(int i = 0; i < s; i++)
-						{
-							String name = create.getStream().getAttributes().get(i).getName();
-							SDFDatatype type = new SDFDatatype(create.getStream().getDatatypes().get(i).getValue());
-							attributes[i] = new SDFAttribute(create.getStream().getName(), name, type);
-						}
-						dic.add(attributes);
-					}
-					else// CREATE VIEW
-					{
-					}
-				}
-			}
+			String name = d.getAttributes().get(i).getName();
+			SDFDatatype type = new SDFDatatype(d.getDatatypes().get(i).getValue());
+			attributes[i] = new SDFAttribute(d.getName(), name, type);
 		}
+		dic.add(attributes);
 	}
 	
 	public synchronized List<IExecutorCommand> translate(String query, ISession user, IDataDictionary dd, Context context,
@@ -188,7 +194,13 @@ public class CQLParser implements IQueryParser
 		}
 		
 		model = (Model) resource.getContents().get(0);
-		createDictionary(EcoreUtil2.eAllOfType(model, Create.class), user);
+		
+		for(AttributeDefinition d : EcoreUtil2.eAllOfType(model, AttributeDefinition.class))
+		{
+				createDictionary(d, user);
+		}
+		
+//		createDictionary(EcoreUtil2.eAllOfType(model, Create.class), user);
 		
 //		System.out.println(dic.toString());
 		//Get schemata from PQl queries
@@ -227,8 +239,8 @@ public class CQLParser implements IQueryParser
  			return false;
  		}).collect(Collectors.toList());
  		
- 		System.out.println("lll= " + lll.toString());
-		System.out.println("stuff= " +  stuff.toString());
+// 		System.out.println("lll= " + lll.toString());
+//		System.out.println("stuff= " +  stuff.toString());
 		
 //		Systm.out.println("Generated PQL query text: ");//TODO Remove after debugging
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();

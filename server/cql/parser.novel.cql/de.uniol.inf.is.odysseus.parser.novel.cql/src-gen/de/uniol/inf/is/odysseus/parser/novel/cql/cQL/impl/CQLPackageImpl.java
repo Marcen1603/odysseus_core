@@ -3,23 +3,25 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
@@ -115,35 +117,49 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createEClass = null;
+  private EClass createParametersEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass accessFrameworkEClass = null;
+  private EClass attributeDefinitionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass channelFormatEClass = null;
+  private EClass createStream1EClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass channelFormatStreamEClass = null;
+  private EClass createSink1EClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass channelFormatViewEClass = null;
+  private EClass createStreamChannelEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass createStreamFileEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass createViewEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -680,9 +696,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreate()
+  public EClass getCreateParameters()
   {
-    return createEClass;
+    return createParametersEClass;
   }
 
   /**
@@ -690,9 +706,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreate_Name()
+  public EAttribute getCreateParameters_Wrapper()
   {
-    return (EAttribute)createEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -700,9 +716,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreate_Channelformat()
+  public EAttribute getCreateParameters_Protocol()
   {
-    return (EReference)createEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -710,9 +726,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreate_Accessframework()
+  public EAttribute getCreateParameters_Transport()
   {
-    return (EReference)createEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -720,9 +736,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAccessFramework()
+  public EAttribute getCreateParameters_Datahandler()
   {
-    return accessFrameworkEClass;
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -730,9 +746,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Type()
+  public EAttribute getCreateParameters_Keys()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -740,9 +756,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Name()
+  public EAttribute getCreateParameters_Values()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -750,9 +766,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAccessFramework_Attributes()
+  public EClass getAttributeDefinition()
   {
-    return (EReference)accessFrameworkEClass.getEStructuralFeatures().get(2);
+    return attributeDefinitionEClass;
   }
 
   /**
@@ -760,9 +776,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAccessFramework_Datatypes()
+  public EAttribute getAttributeDefinition_Name()
   {
-    return (EReference)accessFrameworkEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)attributeDefinitionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -770,9 +786,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Wrapper()
+  public EReference getAttributeDefinition_Attributes()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(4);
+    return (EReference)attributeDefinitionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -780,9 +796,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Protocol()
+  public EReference getAttributeDefinition_Datatypes()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(5);
+    return (EReference)attributeDefinitionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -790,9 +806,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Transport()
+  public EClass getCreateStream1()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(6);
+    return createStream1EClass;
   }
 
   /**
@@ -800,9 +816,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Datahandler()
+  public EReference getCreateStream1_Attributes()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(7);
+    return (EReference)createStream1EClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -810,9 +826,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Keys()
+  public EReference getCreateStream1_Pars()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(8);
+    return (EReference)createStream1EClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -820,9 +836,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAccessFramework_Values()
+  public EClass getCreateSink1()
   {
-    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(9);
+    return createSink1EClass;
   }
 
   /**
@@ -830,9 +846,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getChannelFormat()
+  public EReference getCreateSink1_Attributes()
   {
-    return channelFormatEClass;
+    return (EReference)createSink1EClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -840,9 +856,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChannelFormat_Stream()
+  public EReference getCreateSink1_Pars()
   {
-    return (EReference)channelFormatEClass.getEStructuralFeatures().get(0);
+    return (EReference)createSink1EClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -850,9 +866,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChannelFormat_View()
+  public EClass getCreateStreamChannel()
   {
-    return (EReference)channelFormatEClass.getEStructuralFeatures().get(1);
+    return createStreamChannelEClass;
   }
 
   /**
@@ -860,9 +876,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getChannelFormatStream()
+  public EReference getCreateStreamChannel_Attributes()
   {
-    return channelFormatStreamEClass;
+    return (EReference)createStreamChannelEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -870,9 +886,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getChannelFormatStream_Name()
+  public EAttribute getCreateStreamChannel_Host()
   {
-    return (EAttribute)channelFormatStreamEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createStreamChannelEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -880,9 +896,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChannelFormatStream_Attributes()
+  public EAttribute getCreateStreamChannel_Port()
   {
-    return (EReference)channelFormatStreamEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createStreamChannelEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -890,9 +906,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChannelFormatStream_Datatypes()
+  public EClass getCreateStreamFile()
   {
-    return (EReference)channelFormatStreamEClass.getEStructuralFeatures().get(2);
+    return createStreamFileEClass;
   }
 
   /**
@@ -900,9 +916,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getChannelFormatStream_Host()
+  public EReference getCreateStreamFile_Attributes()
   {
-    return (EAttribute)channelFormatStreamEClass.getEStructuralFeatures().get(3);
+    return (EReference)createStreamFileEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -910,9 +926,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getChannelFormatStream_Port()
+  public EAttribute getCreateStreamFile_Filename()
   {
-    return (EAttribute)channelFormatStreamEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)createStreamFileEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -920,9 +936,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getChannelFormatView()
+  public EAttribute getCreateStreamFile_Type()
   {
-    return channelFormatViewEClass;
+    return (EAttribute)createStreamFileEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -930,9 +946,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getChannelFormatView_Name()
+  public EClass getCreateView()
   {
-    return (EAttribute)channelFormatViewEClass.getEStructuralFeatures().get(0);
+    return createViewEClass;
   }
 
   /**
@@ -940,9 +956,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getChannelFormatView_Select()
+  public EAttribute getCreateView_Name()
   {
-    return (EReference)channelFormatViewEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createViewEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCreateView_Select()
+  {
+    return (EReference)createViewEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1635,37 +1661,40 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     aliasEClass = createEClass(ALIAS);
     createEAttribute(aliasEClass, ALIAS__NAME);
 
-    createEClass = createEClass(CREATE);
-    createEAttribute(createEClass, CREATE__NAME);
-    createEReference(createEClass, CREATE__CHANNELFORMAT);
-    createEReference(createEClass, CREATE__ACCESSFRAMEWORK);
+    createParametersEClass = createEClass(CREATE_PARAMETERS);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__WRAPPER);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__PROTOCOL);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__TRANSPORT);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__DATAHANDLER);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__KEYS);
+    createEAttribute(createParametersEClass, CREATE_PARAMETERS__VALUES);
 
-    accessFrameworkEClass = createEClass(ACCESS_FRAMEWORK);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__TYPE);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__NAME);
-    createEReference(accessFrameworkEClass, ACCESS_FRAMEWORK__ATTRIBUTES);
-    createEReference(accessFrameworkEClass, ACCESS_FRAMEWORK__DATATYPES);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__WRAPPER);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__PROTOCOL);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__TRANSPORT);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__DATAHANDLER);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__KEYS);
-    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__VALUES);
+    attributeDefinitionEClass = createEClass(ATTRIBUTE_DEFINITION);
+    createEAttribute(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__NAME);
+    createEReference(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__ATTRIBUTES);
+    createEReference(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__DATATYPES);
 
-    channelFormatEClass = createEClass(CHANNEL_FORMAT);
-    createEReference(channelFormatEClass, CHANNEL_FORMAT__STREAM);
-    createEReference(channelFormatEClass, CHANNEL_FORMAT__VIEW);
+    createStream1EClass = createEClass(CREATE_STREAM1);
+    createEReference(createStream1EClass, CREATE_STREAM1__ATTRIBUTES);
+    createEReference(createStream1EClass, CREATE_STREAM1__PARS);
 
-    channelFormatStreamEClass = createEClass(CHANNEL_FORMAT_STREAM);
-    createEAttribute(channelFormatStreamEClass, CHANNEL_FORMAT_STREAM__NAME);
-    createEReference(channelFormatStreamEClass, CHANNEL_FORMAT_STREAM__ATTRIBUTES);
-    createEReference(channelFormatStreamEClass, CHANNEL_FORMAT_STREAM__DATATYPES);
-    createEAttribute(channelFormatStreamEClass, CHANNEL_FORMAT_STREAM__HOST);
-    createEAttribute(channelFormatStreamEClass, CHANNEL_FORMAT_STREAM__PORT);
+    createSink1EClass = createEClass(CREATE_SINK1);
+    createEReference(createSink1EClass, CREATE_SINK1__ATTRIBUTES);
+    createEReference(createSink1EClass, CREATE_SINK1__PARS);
 
-    channelFormatViewEClass = createEClass(CHANNEL_FORMAT_VIEW);
-    createEAttribute(channelFormatViewEClass, CHANNEL_FORMAT_VIEW__NAME);
-    createEReference(channelFormatViewEClass, CHANNEL_FORMAT_VIEW__SELECT);
+    createStreamChannelEClass = createEClass(CREATE_STREAM_CHANNEL);
+    createEReference(createStreamChannelEClass, CREATE_STREAM_CHANNEL__ATTRIBUTES);
+    createEAttribute(createStreamChannelEClass, CREATE_STREAM_CHANNEL__HOST);
+    createEAttribute(createStreamChannelEClass, CREATE_STREAM_CHANNEL__PORT);
+
+    createStreamFileEClass = createEClass(CREATE_STREAM_FILE);
+    createEReference(createStreamFileEClass, CREATE_STREAM_FILE__ATTRIBUTES);
+    createEAttribute(createStreamFileEClass, CREATE_STREAM_FILE__FILENAME);
+    createEAttribute(createStreamFileEClass, CREATE_STREAM_FILE__TYPE);
+
+    createViewEClass = createEClass(CREATE_VIEW);
+    createEAttribute(createViewEClass, CREATE_VIEW__NAME);
+    createEReference(createViewEClass, CREATE_VIEW__SELECT);
 
     streamToEClass = createEClass(STREAM_TO);
     createEAttribute(streamToEClass, STREAM_TO__NAME);
@@ -1836,37 +1865,40 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(aliasEClass, Alias.class, "Alias", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAlias_Name(), ecorePackage.getEString(), "name", null, 0, 1, Alias.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createEClass, Create.class, "Create", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreate_Name(), ecorePackage.getEString(), "name", null, 0, 1, Create.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreate_Channelformat(), this.getChannelFormat(), null, "channelformat", null, 0, 1, Create.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreate_Accessframework(), this.getAccessFramework(), null, "accessframework", null, 0, 1, Create.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createParametersEClass, CreateParameters.class, "CreateParameters", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateParameters_Wrapper(), ecorePackage.getEString(), "wrapper", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateParameters_Protocol(), ecorePackage.getEString(), "protocol", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateParameters_Transport(), ecorePackage.getEString(), "transport", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateParameters_Datahandler(), ecorePackage.getEString(), "datahandler", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateParameters_Keys(), ecorePackage.getEString(), "keys", null, 0, -1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateParameters_Values(), ecorePackage.getEString(), "values", null, 0, -1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(accessFrameworkEClass, AccessFramework.class, "AccessFramework", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAccessFramework_Type(), ecorePackage.getEString(), "type", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Name(), ecorePackage.getEString(), "name", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAccessFramework_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAccessFramework_Datatypes(), this.getDataType(), null, "datatypes", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Wrapper(), ecorePackage.getEString(), "wrapper", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Protocol(), ecorePackage.getEString(), "protocol", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Transport(), ecorePackage.getEString(), "transport", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Datahandler(), ecorePackage.getEString(), "datahandler", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Keys(), ecorePackage.getEString(), "keys", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAccessFramework_Values(), ecorePackage.getEString(), "values", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(attributeDefinitionEClass, AttributeDefinition.class, "AttributeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAttributeDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAttributeDefinition_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAttributeDefinition_Datatypes(), this.getDataType(), null, "datatypes", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(channelFormatEClass, ChannelFormat.class, "ChannelFormat", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getChannelFormat_Stream(), this.getChannelFormatStream(), null, "stream", null, 0, 1, ChannelFormat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChannelFormat_View(), this.getChannelFormatView(), null, "view", null, 0, 1, ChannelFormat.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createStream1EClass, CreateStream1.class, "CreateStream1", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateStream1_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateStream1_Pars(), this.getCreateParameters(), null, "pars", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(channelFormatStreamEClass, ChannelFormatStream.class, "ChannelFormatStream", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getChannelFormatStream_Name(), ecorePackage.getEString(), "name", null, 0, 1, ChannelFormatStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChannelFormatStream_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, ChannelFormatStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChannelFormatStream_Datatypes(), this.getDataType(), null, "datatypes", null, 0, -1, ChannelFormatStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getChannelFormatStream_Host(), ecorePackage.getEString(), "host", null, 0, 1, ChannelFormatStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getChannelFormatStream_Port(), ecorePackage.getEInt(), "port", null, 0, 1, ChannelFormatStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createSink1EClass, CreateSink1.class, "CreateSink1", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateSink1_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateSink1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateSink1_Pars(), this.getCreateParameters(), null, "pars", null, 0, 1, CreateSink1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(channelFormatViewEClass, ChannelFormatView.class, "ChannelFormatView", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getChannelFormatView_Name(), ecorePackage.getEString(), "name", null, 0, 1, ChannelFormatView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getChannelFormatView_Select(), this.getSelect(), null, "select", null, 0, 1, ChannelFormatView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createStreamChannelEClass, CreateStreamChannel.class, "CreateStreamChannel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateStreamChannel_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateStreamChannel_Host(), ecorePackage.getEString(), "host", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateStreamChannel_Port(), ecorePackage.getEInt(), "port", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(createStreamFileEClass, CreateStreamFile.class, "CreateStreamFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateStreamFile_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateStreamFile_Filename(), ecorePackage.getEString(), "filename", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateStreamFile_Type(), ecorePackage.getEString(), "type", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(createViewEClass, CreateView.class, "CreateView", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateView_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateView_Select(), this.getSelect(), null, "select", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(streamToEClass, StreamTo.class, "StreamTo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStreamTo_Name(), ecorePackage.getEString(), "name", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

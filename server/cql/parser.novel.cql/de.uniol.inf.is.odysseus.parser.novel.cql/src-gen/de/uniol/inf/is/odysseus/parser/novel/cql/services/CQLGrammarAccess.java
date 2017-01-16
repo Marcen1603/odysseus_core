@@ -39,6 +39,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Statement
 		public RuleCall getStatementsStatementParserRuleCall_0() { return cStatementsStatementParserRuleCall_0; }
 	}
+	public class IDOrINTElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.IDOrINT");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cINTTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		//IDOrINT:
+		//	ID | INT;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID | INT
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_1() { return cINTTerminalRuleCall_1; }
+	}
 	public class StatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -46,21 +65,43 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTypeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
 		private final RuleCall cTypeSelectParserRuleCall_0_0_0 = (RuleCall)cTypeAssignment_0_0.eContents().get(0);
 		private final Assignment cTypeAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cTypeCreateParserRuleCall_0_1_0 = (RuleCall)cTypeAssignment_0_1.eContents().get(0);
+		private final RuleCall cTypeStreamToParserRuleCall_0_1_0 = (RuleCall)cTypeAssignment_0_1.eContents().get(0);
 		private final Assignment cTypeAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
-		private final RuleCall cTypeStreamToParserRuleCall_0_2_0 = (RuleCall)cTypeAssignment_0_2.eContents().get(0);
+		private final RuleCall cTypeDropParserRuleCall_0_2_0 = (RuleCall)cTypeAssignment_0_2.eContents().get(0);
 		private final Assignment cTypeAssignment_0_3 = (Assignment)cAlternatives_0.eContents().get(3);
-		private final RuleCall cTypeDropParserRuleCall_0_3_0 = (RuleCall)cTypeAssignment_0_3.eContents().get(0);
+		private final RuleCall cTypeCreateStream1ParserRuleCall_0_3_0 = (RuleCall)cTypeAssignment_0_3.eContents().get(0);
+		private final Assignment cTypeAssignment_0_4 = (Assignment)cAlternatives_0.eContents().get(4);
+		private final RuleCall cTypeCreateSink1ParserRuleCall_0_4_0 = (RuleCall)cTypeAssignment_0_4.eContents().get(0);
+		private final Assignment cTypeAssignment_0_5 = (Assignment)cAlternatives_0.eContents().get(5);
+		private final RuleCall cTypeCreateStreamChannelParserRuleCall_0_5_0 = (RuleCall)cTypeAssignment_0_5.eContents().get(0);
+		private final Assignment cTypeAssignment_0_6 = (Assignment)cAlternatives_0.eContents().get(6);
+		private final RuleCall cTypeCreateStreamFileParserRuleCall_0_6_0 = (RuleCall)cTypeAssignment_0_6.eContents().get(0);
+		private final Assignment cTypeAssignment_0_7 = (Assignment)cAlternatives_0.eContents().get(7);
+		private final RuleCall cTypeCreateViewParserRuleCall_0_7_0 = (RuleCall)cTypeAssignment_0_7.eContents().get(0);
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
+		////ID_RULE returns ID:
+		////	{ID}
+		////;	
+		////	
+		////ID_IN_QUOTES returns ID: 
+		////	("'" {ID} "'") | ('"' {ID} '"')
+		////;	
+		////
+		////ID_ONLY_NUMBERS returns ID: {ID_ONLY_NUMBERS}
+		////	('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')*
+		////;
 		//Statement:
-		//	(type=Select | type=Create | type=StreamTo | type=Drop) ';'?;
+		//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
+		//	type=CreateStreamFile | type=CreateView) ';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(type=Select | type=Create | type=StreamTo | type=Drop) ';'?
+		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
+		//type=CreateStreamFile | type=CreateView) ';'?
 		public Group getGroup() { return cGroup; }
 		
-		//(type=Select | type=Create | type=StreamTo | type=Drop)
+		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
+		//type=CreateStreamFile | type=CreateView)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//type=Select
@@ -69,23 +110,47 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Select
 		public RuleCall getTypeSelectParserRuleCall_0_0_0() { return cTypeSelectParserRuleCall_0_0_0; }
 		
-		//type=Create
+		//type=StreamTo
 		public Assignment getTypeAssignment_0_1() { return cTypeAssignment_0_1; }
 		
-		//Create
-		public RuleCall getTypeCreateParserRuleCall_0_1_0() { return cTypeCreateParserRuleCall_0_1_0; }
-		
-		//type=StreamTo
-		public Assignment getTypeAssignment_0_2() { return cTypeAssignment_0_2; }
-		
 		//StreamTo
-		public RuleCall getTypeStreamToParserRuleCall_0_2_0() { return cTypeStreamToParserRuleCall_0_2_0; }
+		public RuleCall getTypeStreamToParserRuleCall_0_1_0() { return cTypeStreamToParserRuleCall_0_1_0; }
 		
 		//type=Drop
-		public Assignment getTypeAssignment_0_3() { return cTypeAssignment_0_3; }
+		public Assignment getTypeAssignment_0_2() { return cTypeAssignment_0_2; }
 		
 		//Drop
-		public RuleCall getTypeDropParserRuleCall_0_3_0() { return cTypeDropParserRuleCall_0_3_0; }
+		public RuleCall getTypeDropParserRuleCall_0_2_0() { return cTypeDropParserRuleCall_0_2_0; }
+		
+		//type=CreateStream1
+		public Assignment getTypeAssignment_0_3() { return cTypeAssignment_0_3; }
+		
+		//CreateStream1
+		public RuleCall getTypeCreateStream1ParserRuleCall_0_3_0() { return cTypeCreateStream1ParserRuleCall_0_3_0; }
+		
+		//type=CreateSink1
+		public Assignment getTypeAssignment_0_4() { return cTypeAssignment_0_4; }
+		
+		//CreateSink1
+		public RuleCall getTypeCreateSink1ParserRuleCall_0_4_0() { return cTypeCreateSink1ParserRuleCall_0_4_0; }
+		
+		//type=CreateStreamChannel
+		public Assignment getTypeAssignment_0_5() { return cTypeAssignment_0_5; }
+		
+		//CreateStreamChannel
+		public RuleCall getTypeCreateStreamChannelParserRuleCall_0_5_0() { return cTypeCreateStreamChannelParserRuleCall_0_5_0; }
+		
+		//type=CreateStreamFile
+		public Assignment getTypeAssignment_0_6() { return cTypeAssignment_0_6; }
+		
+		//CreateStreamFile
+		public RuleCall getTypeCreateStreamFileParserRuleCall_0_6_0() { return cTypeCreateStreamFileParserRuleCall_0_6_0; }
+		
+		//type=CreateView
+		public Assignment getTypeAssignment_0_7() { return cTypeAssignment_0_7; }
+		
+		//CreateView
+		public RuleCall getTypeCreateViewParserRuleCall_0_7_0() { return cTypeCreateViewParserRuleCall_0_7_0; }
 		
 		//';'?
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
@@ -319,7 +384,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
 		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
 		private final Assignment cNameAssignment_0_0_0 = (Assignment)cGroup_0_0.eContents().get(0);
-		private final RuleCall cNameIDTerminalRuleCall_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0.eContents().get(0);
+		private final RuleCall cNameSourceNameParserRuleCall_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0.eContents().get(0);
 		private final Group cGroup_0_0_1 = (Group)cGroup_0_0.eContents().get(1);
 		private final Keyword cLeftSquareBracketKeyword_0_0_1_0 = (Keyword)cGroup_0_0_1.eContents().get(0);
 		private final Alternatives cAlternatives_0_0_1_1 = (Alternatives)cGroup_0_0_1.eContents().get(1);
@@ -338,27 +403,27 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAliasAliasParserRuleCall_1_1_0 = (RuleCall)cAliasAssignment_1_1.eContents().get(0);
 		
 		//Source:
-		//	(name=ID ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)
+		//	(name=SourceName ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)
 		//	']')?
 		//	| nested=NestedStatement) ('AS' alias=Alias)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(name=ID ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')? |
+		//(name=SourceName ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')? |
 		//nested=NestedStatement) ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
-		//(name=ID ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')? |
+		//(name=SourceName ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')? |
 		//nested=NestedStatement)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//name=ID ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')?
+		//name=SourceName ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')?
 		public Group getGroup_0_0() { return cGroup_0_0; }
 		
-		//name=ID
+		//name=SourceName
 		public Assignment getNameAssignment_0_0_0() { return cNameAssignment_0_0_0; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_0_0_0_0() { return cNameIDTerminalRuleCall_0_0_0_0; }
+		//SourceName
+		public RuleCall getNameSourceNameParserRuleCall_0_0_0_0() { return cNameSourceNameParserRuleCall_0_0_0_0; }
 		
 		//('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased) ']')?
 		public Group getGroup_0_0_1() { return cGroup_0_0_1; }
@@ -408,28 +473,39 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Alias
 		public RuleCall getAliasAliasParserRuleCall_1_1_0() { return cAliasAliasParserRuleCall_1_1_0; }
 	}
+	public class SourceNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SourceName");
+		private final RuleCall cIDTerminalRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//SourceName:
+		//	ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall() { return cIDTerminalRuleCall; }
+	}
 	public class AttributeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameIDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final RuleCall cNameAttributeNameParserRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cASKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cAliasAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cAliasAliasParserRuleCall_1_1_0 = (RuleCall)cAliasAssignment_1_1.eContents().get(0);
 		
 		//Attribute:
-		//	name=ID ('AS' alias=Alias)?;
+		//	name=AttributeName ('AS' alias=Alias)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=ID ('AS' alias=Alias)?
+		//name=AttributeName ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
-		//name=ID
+		//name=AttributeName
 		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_0_0() { return cNameIDTerminalRuleCall_0_0; }
+		//AttributeName
+		public RuleCall getNameAttributeNameParserRuleCall_0_0() { return cNameAttributeNameParserRuleCall_0_0; }
 		
 		//('AS' alias=Alias)?
 		public Group getGroup_1() { return cGroup_1; }
@@ -446,17 +522,48 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	public class AttributeWithoutAliasElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAlias");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
+		private final RuleCall cNameAttributeNameParserRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
 		//AttributeWithoutAlias Attribute:
-		//	name=ID
+		//	name=AttributeName
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=ID
+		//name=AttributeName
 		public Assignment getNameAssignment() { return cNameAssignment; }
 		
+		//AttributeName
+		public RuleCall getNameAttributeNameParserRuleCall_0() { return cNameAttributeNameParserRuleCall_0; }
+	}
+	public class AttributeNameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeName");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final RuleCall cSourceNameParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_1_2 = (RuleCall)cGroup_1.eContents().get(2);
+		
+		//AttributeName:
+		//	ID | SourceName '.' ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID | SourceName '.' ID
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
 		//ID
-		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//SourceName '.' ID
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//SourceName
+		public RuleCall getSourceNameParserRuleCall_1_0() { return cSourceNameParserRuleCall_1_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_1_2() { return cIDTerminalRuleCall_1_2; }
 	}
 	public class AttributeWithNestedStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
@@ -558,18 +665,35 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
 	}
-	public class CreateElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Create");
+	public class CreateParametersElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateParameters");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
-		private final Keyword cNameCREATEKeyword_0_0_0 = (Keyword)cNameAlternatives_0_0.eContents().get(0);
-		private final Keyword cNameATTACHKeyword_0_0_1 = (Keyword)cNameAlternatives_0_0.eContents().get(1);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cChannelformatAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final RuleCall cChannelformatChannelFormatParserRuleCall_1_0_0 = (RuleCall)cChannelformatAssignment_1_0.eContents().get(0);
-		private final Assignment cAccessframeworkAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cAccessframeworkAccessFrameworkParserRuleCall_1_1_0 = (RuleCall)cAccessframeworkAssignment_1_1.eContents().get(0);
+		private final Keyword cWRAPPERKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cWrapperAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cWrapperSTRINGTerminalRuleCall_1_0 = (RuleCall)cWrapperAssignment_1.eContents().get(0);
+		private final Keyword cPROTOCOLKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cProtocolAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cProtocolSTRINGTerminalRuleCall_3_0 = (RuleCall)cProtocolAssignment_3.eContents().get(0);
+		private final Keyword cTRANSPORTKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cTransportAssignment_5 = (Assignment)cGroup.eContents().get(5);
+		private final RuleCall cTransportSTRINGTerminalRuleCall_5_0 = (RuleCall)cTransportAssignment_5.eContents().get(0);
+		private final Keyword cDATAHANDLERKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		private final Assignment cDatahandlerAssignment_7 = (Assignment)cGroup.eContents().get(7);
+		private final RuleCall cDatahandlerSTRINGTerminalRuleCall_7_0 = (RuleCall)cDatahandlerAssignment_7.eContents().get(0);
+		private final Keyword cOPTIONSKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Keyword cLeftParenthesisKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Group cGroup_10 = (Group)cGroup.eContents().get(10);
+		private final Assignment cKeysAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
+		private final RuleCall cKeysSTRINGTerminalRuleCall_10_0_0 = (RuleCall)cKeysAssignment_10_0.eContents().get(0);
+		private final Assignment cValuesAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
+		private final RuleCall cValuesSTRINGTerminalRuleCall_10_1_0 = (RuleCall)cValuesAssignment_10_1.eContents().get(0);
+		private final Group cGroup_11 = (Group)cGroup.eContents().get(11);
+		private final Keyword cCommaKeyword_11_0 = (Keyword)cGroup_11.eContents().get(0);
+		private final Assignment cKeysAssignment_11_1 = (Assignment)cGroup_11.eContents().get(1);
+		private final RuleCall cKeysSTRINGTerminalRuleCall_11_1_0 = (RuleCall)cKeysAssignment_11_1.eContents().get(0);
+		private final Assignment cValuesAssignment_11_2 = (Assignment)cGroup_11.eContents().get(2);
+		private final RuleCall cValuesSTRINGTerminalRuleCall_11_2_0 = (RuleCall)cValuesAssignment_11_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_12 = (Keyword)cGroup.eContents().get(12);
 		
 		////SelectWithoutWhere returns Select:
 		////	name='SELECT'
@@ -631,397 +755,400 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		////	attribute=Attribute
 		////	direction=('ASC'|'DESC')
 		////;
-		//Create:
-		//	name=('CREATE' | 'ATTACH') (channelformat=ChannelFormat | accessframework=AccessFramework);
-		@Override public ParserRule getRule() { return rule; }
-		
-		//name=('CREATE' | 'ATTACH') (channelformat=ChannelFormat | accessframework=AccessFramework)
-		public Group getGroup() { return cGroup; }
-		
-		//name=('CREATE' | 'ATTACH')
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
-		
-		//('CREATE' | 'ATTACH')
-		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
-		
-		//'CREATE'
-		public Keyword getNameCREATEKeyword_0_0_0() { return cNameCREATEKeyword_0_0_0; }
-		
-		//'ATTACH'
-		public Keyword getNameATTACHKeyword_0_0_1() { return cNameATTACHKeyword_0_0_1; }
-		
-		//(channelformat=ChannelFormat | accessframework=AccessFramework)
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
-		
-		//channelformat=ChannelFormat
-		public Assignment getChannelformatAssignment_1_0() { return cChannelformatAssignment_1_0; }
-		
-		//ChannelFormat
-		public RuleCall getChannelformatChannelFormatParserRuleCall_1_0_0() { return cChannelformatChannelFormatParserRuleCall_1_0_0; }
-		
-		//accessframework=AccessFramework
-		public Assignment getAccessframeworkAssignment_1_1() { return cAccessframeworkAssignment_1_1; }
-		
-		//AccessFramework
-		public RuleCall getAccessframeworkAccessFrameworkParserRuleCall_1_1_0() { return cAccessframeworkAccessFrameworkParserRuleCall_1_1_0; }
-	}
-	public class AccessFrameworkElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AccessFramework");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Alternatives cTypeAlternatives_0_0 = (Alternatives)cTypeAssignment_0.eContents().get(0);
-		private final Keyword cTypeSTREAMKeyword_0_0_0 = (Keyword)cTypeAlternatives_0_0.eContents().get(0);
-		private final Keyword cTypeSINKKeyword_0_0_1 = (Keyword)cTypeAlternatives_0_0.eContents().get(1);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cAttributesAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cAttributesAttributeParserRuleCall_3_0 = (RuleCall)cAttributesAssignment_3.eContents().get(0);
-		private final Assignment cDatatypesAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_4_0 = (RuleCall)cDatatypesAssignment_4.eContents().get(0);
-		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
-		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
-		private final Assignment cAttributesAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
-		private final RuleCall cAttributesAttributeParserRuleCall_5_1_0 = (RuleCall)cAttributesAssignment_5_1.eContents().get(0);
-		private final Assignment cDatatypesAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_5_2_0 = (RuleCall)cDatatypesAssignment_5_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Keyword cWRAPPERKeyword_7 = (Keyword)cGroup.eContents().get(7);
-		private final Assignment cWrapperAssignment_8 = (Assignment)cGroup.eContents().get(8);
-		private final RuleCall cWrapperSTRINGTerminalRuleCall_8_0 = (RuleCall)cWrapperAssignment_8.eContents().get(0);
-		private final Keyword cPROTOCOLKeyword_9 = (Keyword)cGroup.eContents().get(9);
-		private final Assignment cProtocolAssignment_10 = (Assignment)cGroup.eContents().get(10);
-		private final RuleCall cProtocolSTRINGTerminalRuleCall_10_0 = (RuleCall)cProtocolAssignment_10.eContents().get(0);
-		private final Keyword cTRANSPORTKeyword_11 = (Keyword)cGroup.eContents().get(11);
-		private final Assignment cTransportAssignment_12 = (Assignment)cGroup.eContents().get(12);
-		private final RuleCall cTransportSTRINGTerminalRuleCall_12_0 = (RuleCall)cTransportAssignment_12.eContents().get(0);
-		private final Keyword cDATAHANDLERKeyword_13 = (Keyword)cGroup.eContents().get(13);
-		private final Assignment cDatahandlerAssignment_14 = (Assignment)cGroup.eContents().get(14);
-		private final RuleCall cDatahandlerSTRINGTerminalRuleCall_14_0 = (RuleCall)cDatahandlerAssignment_14.eContents().get(0);
-		private final Keyword cOPTIONSKeyword_15 = (Keyword)cGroup.eContents().get(15);
-		private final Keyword cLeftParenthesisKeyword_16 = (Keyword)cGroup.eContents().get(16);
-		private final Group cGroup_17 = (Group)cGroup.eContents().get(17);
-		private final Assignment cKeysAssignment_17_0 = (Assignment)cGroup_17.eContents().get(0);
-		private final RuleCall cKeysSTRINGTerminalRuleCall_17_0_0 = (RuleCall)cKeysAssignment_17_0.eContents().get(0);
-		private final Assignment cValuesAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
-		private final RuleCall cValuesSTRINGTerminalRuleCall_17_1_0 = (RuleCall)cValuesAssignment_17_1.eContents().get(0);
-		private final Group cGroup_18 = (Group)cGroup.eContents().get(18);
-		private final Keyword cCommaKeyword_18_0 = (Keyword)cGroup_18.eContents().get(0);
-		private final Assignment cKeysAssignment_18_1 = (Assignment)cGroup_18.eContents().get(1);
-		private final RuleCall cKeysSTRINGTerminalRuleCall_18_1_0 = (RuleCall)cKeysAssignment_18_1.eContents().get(0);
-		private final Assignment cValuesAssignment_18_2 = (Assignment)cGroup_18.eContents().get(2);
-		private final RuleCall cValuesSTRINGTerminalRuleCall_18_2_0 = (RuleCall)cValuesAssignment_18_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_19 = (Keyword)cGroup.eContents().get(19);
-		
-		//AccessFramework:
-		//	type=('STREAM' | 'SINK') name=ID
-		//	'('
-		//	attributes+=Attribute+
-		//	datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)*
-		//	')'
+		//CreateParameters:
 		//	'WRAPPER' wrapper=STRING
 		//	'PROTOCOL' protocol=STRING
 		//	'TRANSPORT' transport=STRING
 		//	'DATAHANDLER' datahandler=STRING
-		//	'OPTIONS'
-		//	'(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
-		//	')';
+		//	'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//type=('STREAM' | 'SINK') name=ID '(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute
-		//datatypes+=DataType)* ')' 'WRAPPER' wrapper=STRING 'PROTOCOL' protocol=STRING 'TRANSPORT' transport=STRING
-		//'DATAHANDLER' datahandler=STRING 'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')'
+		//'WRAPPER' wrapper=STRING 'PROTOCOL' protocol=STRING 'TRANSPORT' transport=STRING 'DATAHANDLER' datahandler=STRING
+		//'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')'
 		public Group getGroup() { return cGroup; }
-		
-		//type=('STREAM' | 'SINK')
-		public Assignment getTypeAssignment_0() { return cTypeAssignment_0; }
-		
-		//('STREAM' | 'SINK')
-		public Alternatives getTypeAlternatives_0_0() { return cTypeAlternatives_0_0; }
-		
-		//'STREAM'
-		public Keyword getTypeSTREAMKeyword_0_0_0() { return cTypeSTREAMKeyword_0_0_0; }
-		
-		//'SINK'
-		public Keyword getTypeSINKKeyword_0_0_1() { return cTypeSINKKeyword_0_0_1; }
-		
-		//name=ID
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
-		
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
-		
-		//attributes+=Attribute+
-		public Assignment getAttributesAssignment_3() { return cAttributesAssignment_3; }
-		
-		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_3_0() { return cAttributesAttributeParserRuleCall_3_0; }
-		
-		//datatypes+=DataType+
-		public Assignment getDatatypesAssignment_4() { return cDatatypesAssignment_4; }
-		
-		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_4_0() { return cDatatypesDataTypeParserRuleCall_4_0; }
-		
-		//(',' attributes+=Attribute datatypes+=DataType)*
-		public Group getGroup_5() { return cGroup_5; }
-		
-		//','
-		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
-		
-		//attributes+=Attribute
-		public Assignment getAttributesAssignment_5_1() { return cAttributesAssignment_5_1; }
-		
-		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_5_1_0() { return cAttributesAttributeParserRuleCall_5_1_0; }
-		
-		//datatypes+=DataType
-		public Assignment getDatatypesAssignment_5_2() { return cDatatypesAssignment_5_2; }
-		
-		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_5_2_0() { return cDatatypesDataTypeParserRuleCall_5_2_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_6() { return cRightParenthesisKeyword_6; }
 		
 		//'WRAPPER'
-		public Keyword getWRAPPERKeyword_7() { return cWRAPPERKeyword_7; }
+		public Keyword getWRAPPERKeyword_0() { return cWRAPPERKeyword_0; }
 		
 		//wrapper=STRING
-		public Assignment getWrapperAssignment_8() { return cWrapperAssignment_8; }
+		public Assignment getWrapperAssignment_1() { return cWrapperAssignment_1; }
 		
 		//STRING
-		public RuleCall getWrapperSTRINGTerminalRuleCall_8_0() { return cWrapperSTRINGTerminalRuleCall_8_0; }
+		public RuleCall getWrapperSTRINGTerminalRuleCall_1_0() { return cWrapperSTRINGTerminalRuleCall_1_0; }
 		
 		//'PROTOCOL'
-		public Keyword getPROTOCOLKeyword_9() { return cPROTOCOLKeyword_9; }
+		public Keyword getPROTOCOLKeyword_2() { return cPROTOCOLKeyword_2; }
 		
 		//protocol=STRING
-		public Assignment getProtocolAssignment_10() { return cProtocolAssignment_10; }
+		public Assignment getProtocolAssignment_3() { return cProtocolAssignment_3; }
 		
 		//STRING
-		public RuleCall getProtocolSTRINGTerminalRuleCall_10_0() { return cProtocolSTRINGTerminalRuleCall_10_0; }
+		public RuleCall getProtocolSTRINGTerminalRuleCall_3_0() { return cProtocolSTRINGTerminalRuleCall_3_0; }
 		
 		//'TRANSPORT'
-		public Keyword getTRANSPORTKeyword_11() { return cTRANSPORTKeyword_11; }
+		public Keyword getTRANSPORTKeyword_4() { return cTRANSPORTKeyword_4; }
 		
 		//transport=STRING
-		public Assignment getTransportAssignment_12() { return cTransportAssignment_12; }
+		public Assignment getTransportAssignment_5() { return cTransportAssignment_5; }
 		
 		//STRING
-		public RuleCall getTransportSTRINGTerminalRuleCall_12_0() { return cTransportSTRINGTerminalRuleCall_12_0; }
+		public RuleCall getTransportSTRINGTerminalRuleCall_5_0() { return cTransportSTRINGTerminalRuleCall_5_0; }
 		
 		//'DATAHANDLER'
-		public Keyword getDATAHANDLERKeyword_13() { return cDATAHANDLERKeyword_13; }
+		public Keyword getDATAHANDLERKeyword_6() { return cDATAHANDLERKeyword_6; }
 		
 		//datahandler=STRING
-		public Assignment getDatahandlerAssignment_14() { return cDatahandlerAssignment_14; }
+		public Assignment getDatahandlerAssignment_7() { return cDatahandlerAssignment_7; }
 		
 		//STRING
-		public RuleCall getDatahandlerSTRINGTerminalRuleCall_14_0() { return cDatahandlerSTRINGTerminalRuleCall_14_0; }
+		public RuleCall getDatahandlerSTRINGTerminalRuleCall_7_0() { return cDatahandlerSTRINGTerminalRuleCall_7_0; }
 		
 		//'OPTIONS'
-		public Keyword getOPTIONSKeyword_15() { return cOPTIONSKeyword_15; }
+		public Keyword getOPTIONSKeyword_8() { return cOPTIONSKeyword_8; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_16() { return cLeftParenthesisKeyword_16; }
+		public Keyword getLeftParenthesisKeyword_9() { return cLeftParenthesisKeyword_9; }
 		
 		//(keys+=STRING values+=STRING)+
-		public Group getGroup_17() { return cGroup_17; }
+		public Group getGroup_10() { return cGroup_10; }
 		
 		//keys+=STRING
-		public Assignment getKeysAssignment_17_0() { return cKeysAssignment_17_0; }
+		public Assignment getKeysAssignment_10_0() { return cKeysAssignment_10_0; }
 		
 		//STRING
-		public RuleCall getKeysSTRINGTerminalRuleCall_17_0_0() { return cKeysSTRINGTerminalRuleCall_17_0_0; }
+		public RuleCall getKeysSTRINGTerminalRuleCall_10_0_0() { return cKeysSTRINGTerminalRuleCall_10_0_0; }
 		
 		//values+=STRING
-		public Assignment getValuesAssignment_17_1() { return cValuesAssignment_17_1; }
+		public Assignment getValuesAssignment_10_1() { return cValuesAssignment_10_1; }
 		
 		//STRING
-		public RuleCall getValuesSTRINGTerminalRuleCall_17_1_0() { return cValuesSTRINGTerminalRuleCall_17_1_0; }
+		public RuleCall getValuesSTRINGTerminalRuleCall_10_1_0() { return cValuesSTRINGTerminalRuleCall_10_1_0; }
 		
 		//(',' keys+=STRING values+=STRING)?
-		public Group getGroup_18() { return cGroup_18; }
+		public Group getGroup_11() { return cGroup_11; }
 		
 		//','
-		public Keyword getCommaKeyword_18_0() { return cCommaKeyword_18_0; }
+		public Keyword getCommaKeyword_11_0() { return cCommaKeyword_11_0; }
 		
 		//keys+=STRING
-		public Assignment getKeysAssignment_18_1() { return cKeysAssignment_18_1; }
+		public Assignment getKeysAssignment_11_1() { return cKeysAssignment_11_1; }
 		
 		//STRING
-		public RuleCall getKeysSTRINGTerminalRuleCall_18_1_0() { return cKeysSTRINGTerminalRuleCall_18_1_0; }
+		public RuleCall getKeysSTRINGTerminalRuleCall_11_1_0() { return cKeysSTRINGTerminalRuleCall_11_1_0; }
 		
 		//values+=STRING
-		public Assignment getValuesAssignment_18_2() { return cValuesAssignment_18_2; }
+		public Assignment getValuesAssignment_11_2() { return cValuesAssignment_11_2; }
 		
 		//STRING
-		public RuleCall getValuesSTRINGTerminalRuleCall_18_2_0() { return cValuesSTRINGTerminalRuleCall_18_2_0; }
+		public RuleCall getValuesSTRINGTerminalRuleCall_11_2_0() { return cValuesSTRINGTerminalRuleCall_11_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_19() { return cRightParenthesisKeyword_19; }
+		public Keyword getRightParenthesisKeyword_12() { return cRightParenthesisKeyword_12; }
 	}
-	public class ChannelFormatElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormat");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cStreamAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cStreamChannelFormatStreamParserRuleCall_0_0 = (RuleCall)cStreamAssignment_0.eContents().get(0);
-		private final Assignment cViewAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cViewChannelFormatViewParserRuleCall_1_0 = (RuleCall)cViewAssignment_1.eContents().get(0);
-		
-		//ChannelFormat:
-		//	stream=ChannelFormatStream | view=ChannelFormatView;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//stream=ChannelFormatStream | view=ChannelFormatView
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//stream=ChannelFormatStream
-		public Assignment getStreamAssignment_0() { return cStreamAssignment_0; }
-		
-		//ChannelFormatStream
-		public RuleCall getStreamChannelFormatStreamParserRuleCall_0_0() { return cStreamChannelFormatStreamParserRuleCall_0_0; }
-		
-		//view=ChannelFormatView
-		public Assignment getViewAssignment_1() { return cViewAssignment_1; }
-		
-		//ChannelFormatView
-		public RuleCall getViewChannelFormatViewParserRuleCall_1_0() { return cViewChannelFormatViewParserRuleCall_1_0; }
-	}
-	public class ChannelFormatStreamElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormatStream");
+	public class AttributeDefinitionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cSTREAMKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cAttributesAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cAttributesAttributeParserRuleCall_3_0 = (RuleCall)cAttributesAssignment_3.eContents().get(0);
-		private final Assignment cDatatypesAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_4_0 = (RuleCall)cDatatypesAssignment_4.eContents().get(0);
-		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
-		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
-		private final Assignment cAttributesAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
-		private final RuleCall cAttributesAttributeParserRuleCall_5_1_0 = (RuleCall)cAttributesAssignment_5_1.eContents().get(0);
-		private final Assignment cDatatypesAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_5_2_0 = (RuleCall)cDatatypesAssignment_5_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Keyword cCHANNELKeyword_7 = (Keyword)cGroup.eContents().get(7);
-		private final Assignment cHostAssignment_8 = (Assignment)cGroup.eContents().get(8);
-		private final RuleCall cHostIDTerminalRuleCall_8_0 = (RuleCall)cHostAssignment_8.eContents().get(0);
-		private final Keyword cColonKeyword_9 = (Keyword)cGroup.eContents().get(9);
-		private final Assignment cPortAssignment_10 = (Assignment)cGroup.eContents().get(10);
-		private final RuleCall cPortINTTerminalRuleCall_10_0 = (RuleCall)cPortAssignment_10.eContents().get(0);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributesAttributeParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
+		private final Assignment cDatatypesAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cDatatypesDataTypeParserRuleCall_3_0 = (RuleCall)cDatatypesAssignment_3.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Keyword cCommaKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Assignment cAttributesAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cAttributesAttributeParserRuleCall_4_1_0 = (RuleCall)cAttributesAssignment_4_1.eContents().get(0);
+		private final Assignment cDatatypesAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
+		private final RuleCall cDatatypesDataTypeParserRuleCall_4_2_0 = (RuleCall)cDatatypesAssignment_4_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		//ChannelFormatStream:
-		//	'STREAM'
+		//AttributeDefinition:
 		//	name=ID
-		//	'('
-		//	attributes+=Attribute+
-		//	datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)*
-		//	')'
-		//	'CHANNEL' //TODO Add FILE as possible parameter --> and even more ..
-		//	host=ID
-		//	':'
-		//	port=INT;
+		//	'(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'STREAM' name=ID '(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')'
-		//'CHANNEL' //TODO Add FILE as possible parameter --> and even more ..
-		//host=ID ':' port=INT
+		//name=ID '(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')'
 		public Group getGroup() { return cGroup; }
 		
-		//'STREAM'
-		public Keyword getSTREAMKeyword_0() { return cSTREAMKeyword_0; }
-		
 		//name=ID
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
 		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+		public RuleCall getNameIDTerminalRuleCall_0_0() { return cNameIDTerminalRuleCall_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
+		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
 		//attributes+=Attribute+
-		public Assignment getAttributesAssignment_3() { return cAttributesAssignment_3; }
+		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
 		
 		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_3_0() { return cAttributesAttributeParserRuleCall_3_0; }
+		public RuleCall getAttributesAttributeParserRuleCall_2_0() { return cAttributesAttributeParserRuleCall_2_0; }
 		
 		//datatypes+=DataType+
-		public Assignment getDatatypesAssignment_4() { return cDatatypesAssignment_4; }
+		public Assignment getDatatypesAssignment_3() { return cDatatypesAssignment_3; }
 		
 		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_4_0() { return cDatatypesDataTypeParserRuleCall_4_0; }
+		public RuleCall getDatatypesDataTypeParserRuleCall_3_0() { return cDatatypesDataTypeParserRuleCall_3_0; }
 		
 		//(',' attributes+=Attribute datatypes+=DataType)*
-		public Group getGroup_5() { return cGroup_5; }
+		public Group getGroup_4() { return cGroup_4; }
 		
 		//','
-		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
+		public Keyword getCommaKeyword_4_0() { return cCommaKeyword_4_0; }
 		
 		//attributes+=Attribute
-		public Assignment getAttributesAssignment_5_1() { return cAttributesAssignment_5_1; }
+		public Assignment getAttributesAssignment_4_1() { return cAttributesAssignment_4_1; }
 		
 		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_5_1_0() { return cAttributesAttributeParserRuleCall_5_1_0; }
+		public RuleCall getAttributesAttributeParserRuleCall_4_1_0() { return cAttributesAttributeParserRuleCall_4_1_0; }
 		
 		//datatypes+=DataType
-		public Assignment getDatatypesAssignment_5_2() { return cDatatypesAssignment_5_2; }
+		public Assignment getDatatypesAssignment_4_2() { return cDatatypesAssignment_4_2; }
 		
 		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_5_2_0() { return cDatatypesDataTypeParserRuleCall_5_2_0; }
+		public RuleCall getDatatypesDataTypeParserRuleCall_4_2_0() { return cDatatypesDataTypeParserRuleCall_4_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_6() { return cRightParenthesisKeyword_6; }
+		public Keyword getRightParenthesisKeyword_5() { return cRightParenthesisKeyword_5; }
+	}
+	public class CreateStream1Elements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStream1");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cCREATEKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cSTREAMKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributesAttributeDefinitionParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
+		private final Assignment cParsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cParsCreateParametersParserRuleCall_3_0 = (RuleCall)cParsAssignment_3.eContents().get(0);
+		
+		//CreateStream1:
+		//	'CREATE'
+		//	'STREAM'
+		//	attributes=AttributeDefinition
+		//	pars=CreateParameters;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'CREATE' 'STREAM' attributes=AttributeDefinition pars=CreateParameters
+		public Group getGroup() { return cGroup; }
+		
+		//'CREATE'
+		public Keyword getCREATEKeyword_0() { return cCREATEKeyword_0; }
+		
+		//'STREAM'
+		public Keyword getSTREAMKeyword_1() { return cSTREAMKeyword_1; }
+		
+		//attributes=AttributeDefinition
+		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		
+		//AttributeDefinition
+		public RuleCall getAttributesAttributeDefinitionParserRuleCall_2_0() { return cAttributesAttributeDefinitionParserRuleCall_2_0; }
+		
+		//pars=CreateParameters
+		public Assignment getParsAssignment_3() { return cParsAssignment_3; }
+		
+		//CreateParameters
+		public RuleCall getParsCreateParametersParserRuleCall_3_0() { return cParsCreateParametersParserRuleCall_3_0; }
+	}
+	public class CreateSink1Elements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateSink1");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cCREATEKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cSINKKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributesAttributeDefinitionParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
+		private final Assignment cParsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cParsCreateParametersParserRuleCall_3_0 = (RuleCall)cParsAssignment_3.eContents().get(0);
+		
+		//CreateSink1:
+		//	'CREATE'
+		//	'SINK'
+		//	attributes=AttributeDefinition
+		//	pars=CreateParameters;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'CREATE' 'SINK' attributes=AttributeDefinition pars=CreateParameters
+		public Group getGroup() { return cGroup; }
+		
+		//'CREATE'
+		public Keyword getCREATEKeyword_0() { return cCREATEKeyword_0; }
+		
+		//'SINK'
+		public Keyword getSINKKeyword_1() { return cSINKKeyword_1; }
+		
+		//attributes=AttributeDefinition
+		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		
+		//AttributeDefinition
+		public RuleCall getAttributesAttributeDefinitionParserRuleCall_2_0() { return cAttributesAttributeDefinitionParserRuleCall_2_0; }
+		
+		//pars=CreateParameters
+		public Assignment getParsAssignment_3() { return cParsAssignment_3; }
+		
+		//CreateParameters
+		public RuleCall getParsCreateParametersParserRuleCall_3_0() { return cParsCreateParametersParserRuleCall_3_0; }
+	}
+	public class CreateStreamChannelElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStreamChannel");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cCREATEKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cSTREAMKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributesAttributeDefinitionParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
+		private final Keyword cCHANNELKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cHostAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cHostIDTerminalRuleCall_4_0 = (RuleCall)cHostAssignment_4.eContents().get(0);
+		private final Keyword cColonKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cPortAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cPortINTTerminalRuleCall_6_0 = (RuleCall)cPortAssignment_6.eContents().get(0);
+		
+		//CreateStreamChannel:
+		//	'CREATE'
+		//	'STREAM'
+		//	attributes=AttributeDefinition
+		//	'CHANNEL' host=ID ':' port=INT;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'CREATE' 'STREAM' attributes=AttributeDefinition 'CHANNEL' host=ID ':' port=INT
+		public Group getGroup() { return cGroup; }
+		
+		//'CREATE'
+		public Keyword getCREATEKeyword_0() { return cCREATEKeyword_0; }
+		
+		//'STREAM'
+		public Keyword getSTREAMKeyword_1() { return cSTREAMKeyword_1; }
+		
+		//attributes=AttributeDefinition
+		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		
+		//AttributeDefinition
+		public RuleCall getAttributesAttributeDefinitionParserRuleCall_2_0() { return cAttributesAttributeDefinitionParserRuleCall_2_0; }
 		
 		//'CHANNEL'
-		public Keyword getCHANNELKeyword_7() { return cCHANNELKeyword_7; }
+		public Keyword getCHANNELKeyword_3() { return cCHANNELKeyword_3; }
 		
-		////TODO Add FILE as possible parameter --> and even more ..
 		//host=ID
-		public Assignment getHostAssignment_8() { return cHostAssignment_8; }
+		public Assignment getHostAssignment_4() { return cHostAssignment_4; }
 		
 		//ID
-		public RuleCall getHostIDTerminalRuleCall_8_0() { return cHostIDTerminalRuleCall_8_0; }
+		public RuleCall getHostIDTerminalRuleCall_4_0() { return cHostIDTerminalRuleCall_4_0; }
 		
 		//':'
-		public Keyword getColonKeyword_9() { return cColonKeyword_9; }
+		public Keyword getColonKeyword_5() { return cColonKeyword_5; }
 		
 		//port=INT
-		public Assignment getPortAssignment_10() { return cPortAssignment_10; }
+		public Assignment getPortAssignment_6() { return cPortAssignment_6; }
 		
 		//INT
-		public RuleCall getPortINTTerminalRuleCall_10_0() { return cPortINTTerminalRuleCall_10_0; }
+		public RuleCall getPortINTTerminalRuleCall_6_0() { return cPortINTTerminalRuleCall_6_0; }
 	}
-	public class ChannelFormatViewElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormatView");
+	public class CreateStreamFileElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStreamFile");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cCREATEKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cSTREAMKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributesAttributeDefinitionParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
+		private final Keyword cFILEKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cFilenameAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cFilenameSTRINGTerminalRuleCall_4_0 = (RuleCall)cFilenameAssignment_4.eContents().get(0);
+		private final Keyword cASKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cTypeAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cTypeIDTerminalRuleCall_6_0 = (RuleCall)cTypeAssignment_6.eContents().get(0);
+		
+		//CreateStreamFile:
+		//	'CREATE'
+		//	'STREAM'
+		//	attributes=AttributeDefinition
+		//	'FILE' filename=STRING 'AS' type=ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'CREATE' 'STREAM' attributes=AttributeDefinition 'FILE' filename=STRING 'AS' type=ID
+		public Group getGroup() { return cGroup; }
+		
+		//'CREATE'
+		public Keyword getCREATEKeyword_0() { return cCREATEKeyword_0; }
+		
+		//'STREAM'
+		public Keyword getSTREAMKeyword_1() { return cSTREAMKeyword_1; }
+		
+		//attributes=AttributeDefinition
+		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		
+		//AttributeDefinition
+		public RuleCall getAttributesAttributeDefinitionParserRuleCall_2_0() { return cAttributesAttributeDefinitionParserRuleCall_2_0; }
+		
+		//'FILE'
+		public Keyword getFILEKeyword_3() { return cFILEKeyword_3; }
+		
+		//filename=STRING
+		public Assignment getFilenameAssignment_4() { return cFilenameAssignment_4; }
+		
+		//STRING
+		public RuleCall getFilenameSTRINGTerminalRuleCall_4_0() { return cFilenameSTRINGTerminalRuleCall_4_0; }
+		
+		//'AS'
+		public Keyword getASKeyword_5() { return cASKeyword_5; }
+		
+		//type=ID
+		public Assignment getTypeAssignment_6() { return cTypeAssignment_6; }
+		
+		//ID
+		public RuleCall getTypeIDTerminalRuleCall_6_0() { return cTypeIDTerminalRuleCall_6_0; }
+	}
+	public class CreateViewElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateView");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cVIEWKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cFROMKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Assignment cSelectAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cSelectSelectParserRuleCall_4_0 = (RuleCall)cSelectAssignment_4.eContents().get(0);
-		private final Keyword cSemicolonKeyword_5 = (Keyword)cGroup.eContents().get(5);
-		private final Keyword cRightParenthesisKeyword_6 = (Keyword)cGroup.eContents().get(6);
+		private final Assignment cSelectAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cSelectNestedStatementParserRuleCall_3_0 = (RuleCall)cSelectAssignment_3.eContents().get(0);
 		
-		//ChannelFormatView:
-		//	'VIEW'
-		//	name=ID
-		//	'FROM'
-		//	'('
-		//	select=Select ';'?
-		//	')';
+		////Create:
+		////	name=('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
+		////;
+		////
+		////AccessFramework:
+		////	type=('STREAM'|'SINK')
+		////	name = ID
+		////	'('
+		////	attributes+= Attribute+ 
+		////	datatypes+= DataType+
+		////	(',' attributes+=Attribute datatypes+= DataType)*
+		////	')'
+		////	'WRAPPER' wrapper=STRING
+		////	'PROTOCOL' protocol=STRING
+		////	'TRANSPORT' transport=STRING
+		////	'DATAHANDLER' datahandler=STRING
+		////	'OPTIONS' 
+		////		'(' 
+		////			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
+		////		')'
+		////;
+		////
+		////ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+		////
+		////ChannelFormatStream:
+		////	'STREAM'
+		////	name = ID
+		////	'('
+		////	attributes+= Attribute+ 
+		////	datatypes+= DataType+
+		////	(',' attributes+=Attribute datatypes+= DataType)*
+		////	')'
+		////	(    'CHANNEL' (keys+=ID) ':'
+		////		|'FILE' (keys+=STRING) 'AS'
+		////	) 
+		////	(values+=IDOrINT)
+		////;
+		//CreateView:
+		//	'VIEW' name=ID 'FROM' select=NestedStatement;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'VIEW' name=ID 'FROM' '(' select=Select ';'? ')'
+		//'VIEW' name=ID 'FROM' select=NestedStatement
 		public Group getGroup() { return cGroup; }
 		
 		//'VIEW'
@@ -1036,20 +1163,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'FROM'
 		public Keyword getFROMKeyword_2() { return cFROMKeyword_2; }
 		
-		//'('
-		public Keyword getLeftParenthesisKeyword_3() { return cLeftParenthesisKeyword_3; }
+		//select=NestedStatement
+		public Assignment getSelectAssignment_3() { return cSelectAssignment_3; }
 		
-		//select=Select
-		public Assignment getSelectAssignment_4() { return cSelectAssignment_4; }
-		
-		//Select
-		public RuleCall getSelectSelectParserRuleCall_4_0() { return cSelectSelectParserRuleCall_4_0; }
-		
-		//';'?
-		public Keyword getSemicolonKeyword_5() { return cSemicolonKeyword_5; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_6() { return cRightParenthesisKeyword_6; }
+		//NestedStatement
+		public RuleCall getSelectNestedStatementParserRuleCall_3_0() { return cSelectNestedStatementParserRuleCall_3_0; }
 	}
 	public class StreamToElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.StreamTo");
@@ -1065,8 +1183,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInputnameIDTerminalRuleCall_3_1_0 = (RuleCall)cInputnameAssignment_3_1.eContents().get(0);
 		
 		//StreamTo:
-		//	'STREAM' 'TO'
-		//	name=ID (statement=Select | inputname=ID);
+		//	'STREAM' 'TO' name=ID (statement=Select | inputname=ID);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'STREAM' 'TO' name=ID (statement=Select | inputname=ID)
@@ -1360,6 +1477,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cElementsAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cElementsExpressionParserRuleCall_1_0 = (RuleCall)cElementsAssignment_1.eContents().get(0);
 		
+		//// Expression DSL ///////////////////////////////////////////////////////
 		//ExpressionsModel:
 		//	{ExpressionsModel} elements+=Expression;
 		@Override public ParserRule getRule() { return rule; }
@@ -1730,7 +1848,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
 		private final Action cFloatConstantAction_1_0 = (Action)cGroup_1.eContents().get(0);
 		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cValueFLOAT_NUMBERTerminalRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
+		private final RuleCall cValueFLOATTerminalRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
 		private final Action cStringConstantAction_2_0 = (Action)cGroup_2.eContents().get(0);
 		private final Assignment cValueAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
@@ -1750,12 +1868,12 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueAttributeWithNestedStatementParserRuleCall_4_1_1_0 = (RuleCall)cValueAssignment_4_1_1.eContents().get(0);
 		
 		//Atomic Expression:
-		//	{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
-		//	value=('TRUE' | 'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
+		//	{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=('TRUE' |
+		//	'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
-		//value=('TRUE' | 'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
+		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=('TRUE' |
+		//'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//{IntConstant} value=INT
@@ -1770,17 +1888,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getValueINTTerminalRuleCall_0_1_0() { return cValueINTTerminalRuleCall_0_1_0; }
 		
-		//{FloatConstant} value=FLOAT_NUMBER
+		//{FloatConstant} value=FLOAT
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//{FloatConstant}
 		public Action getFloatConstantAction_1_0() { return cFloatConstantAction_1_0; }
 		
-		//value=FLOAT_NUMBER
+		//value=FLOAT
 		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
 		
-		//FLOAT_NUMBER
-		public RuleCall getValueFLOAT_NUMBERTerminalRuleCall_1_1_0() { return cValueFLOAT_NUMBERTerminalRuleCall_1_1_0; }
+		//FLOAT
+		public RuleCall getValueFLOATTerminalRuleCall_1_1_0() { return cValueFLOATTerminalRuleCall_1_1_0; }
 		
 		//{StringConstant} value=STRING
 		public Group getGroup_2() { return cGroup_2; }
@@ -1881,27 +1999,33 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
 	private final ModelElements pModel;
+	private final TerminalRule tID;
+	private final TerminalRule tFLOAT;
+	private final IDOrINTElements pIDOrINT;
 	private final StatementElements pStatement;
 	private final SelectElements pSelect;
 	private final NestedStatementElements pNestedStatement;
 	private final SourceElements pSource;
+	private final SourceNameElements pSourceName;
 	private final AttributeElements pAttribute;
 	private final AttributeWithoutAliasElements pAttributeWithoutAlias;
+	private final AttributeNameElements pAttributeName;
 	private final AttributeWithNestedStatementElements pAttributeWithNestedStatement;
 	private final AggregationElements pAggregation;
 	private final AliasElements pAlias;
-	private final CreateElements pCreate;
-	private final AccessFrameworkElements pAccessFramework;
-	private final ChannelFormatElements pChannelFormat;
-	private final ChannelFormatStreamElements pChannelFormatStream;
-	private final ChannelFormatViewElements pChannelFormatView;
+	private final CreateParametersElements pCreateParameters;
+	private final AttributeDefinitionElements pAttributeDefinition;
+	private final CreateStream1Elements pCreateStream1;
+	private final CreateSink1Elements pCreateSink1;
+	private final CreateStreamChannelElements pCreateStreamChannel;
+	private final CreateStreamFileElements pCreateStreamFile;
+	private final CreateViewElements pCreateView;
 	private final StreamToElements pStreamTo;
 	private final CommandElements pCommand;
 	private final DropElements pDrop;
 	private final Window_UnboundedElements pWindow_Unbounded;
 	private final Window_TimebasedElements pWindow_Timebased;
 	private final Window_TuplebasedElements pWindow_Tuplebased;
-	private final TerminalRule tFLOAT_NUMBER;
 	private final ExpressionsModelElements pExpressionsModel;
 	private final ExpressionElements pExpression;
 	private final OrElements pOr;
@@ -1924,27 +2048,33 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.gaTerminals = gaTerminals;
 		this.pModel = new ModelElements();
+		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+		this.tFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT");
+		this.pIDOrINT = new IDOrINTElements();
 		this.pStatement = new StatementElements();
 		this.pSelect = new SelectElements();
 		this.pNestedStatement = new NestedStatementElements();
 		this.pSource = new SourceElements();
+		this.pSourceName = new SourceNameElements();
 		this.pAttribute = new AttributeElements();
 		this.pAttributeWithoutAlias = new AttributeWithoutAliasElements();
+		this.pAttributeName = new AttributeNameElements();
 		this.pAttributeWithNestedStatement = new AttributeWithNestedStatementElements();
 		this.pAggregation = new AggregationElements();
 		this.pAlias = new AliasElements();
-		this.pCreate = new CreateElements();
-		this.pAccessFramework = new AccessFrameworkElements();
-		this.pChannelFormat = new ChannelFormatElements();
-		this.pChannelFormatStream = new ChannelFormatStreamElements();
-		this.pChannelFormatView = new ChannelFormatViewElements();
+		this.pCreateParameters = new CreateParametersElements();
+		this.pAttributeDefinition = new AttributeDefinitionElements();
+		this.pCreateStream1 = new CreateStream1Elements();
+		this.pCreateSink1 = new CreateSink1Elements();
+		this.pCreateStreamChannel = new CreateStreamChannelElements();
+		this.pCreateStreamFile = new CreateStreamFileElements();
+		this.pCreateView = new CreateViewElements();
 		this.pStreamTo = new StreamToElements();
 		this.pCommand = new CommandElements();
 		this.pDrop = new DropElements();
 		this.pWindow_Unbounded = new Window_UnboundedElements();
 		this.pWindow_Timebased = new Window_TimebasedElements();
 		this.pWindow_Tuplebased = new Window_TuplebasedElements();
-		this.tFLOAT_NUMBER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT_NUMBER");
 		this.pExpressionsModel = new ExpressionsModelElements();
 		this.pExpression = new ExpressionElements();
 		this.pOr = new OrElements();
@@ -1995,8 +2125,42 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getModelAccess().getRule();
 	}
 	
+	//terminal ID:
+	//	('a'..'z' | 'A'..'Z' | '_' | ':' | '$' | '{' | '}') ('a'..'z' | 'A'..'Z' | '_' | ':' | '$' | '{' | '}' | '0'..'9')*;
+	public TerminalRule getIDRule() {
+		return tID;
+	}
+	
+	//terminal FLOAT:
+	//	INT '.' INT;
+	public TerminalRule getFLOATRule() {
+		return tFLOAT;
+	}
+	
+	//IDOrINT:
+	//	ID | INT;
+	public IDOrINTElements getIDOrINTAccess() {
+		return pIDOrINT;
+	}
+	
+	public ParserRule getIDOrINTRule() {
+		return getIDOrINTAccess().getRule();
+	}
+	
+	////ID_RULE returns ID:
+	////	{ID}
+	////;	
+	////	
+	////ID_IN_QUOTES returns ID: 
+	////	("'" {ID} "'") | ('"' {ID} '"')
+	////;	
+	////
+	////ID_ONLY_NUMBERS returns ID: {ID_ONLY_NUMBERS}
+	////	('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9') ('0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9')*
+	////;
 	//Statement:
-	//	(type=Select | type=Create | type=StreamTo | type=Drop) ';'?;
+	//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
+	//	type=CreateStreamFile | type=CreateView) ';'?;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -2031,7 +2195,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Source:
-	//	(name=ID ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)
+	//	(name=SourceName ('[' (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)
 	//	']')?
 	//	| nested=NestedStatement) ('AS' alias=Alias)?;
 	public SourceElements getSourceAccess() {
@@ -2042,8 +2206,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getSourceAccess().getRule();
 	}
 	
+	//SourceName:
+	//	ID;
+	public SourceNameElements getSourceNameAccess() {
+		return pSourceName;
+	}
+	
+	public ParserRule getSourceNameRule() {
+		return getSourceNameAccess().getRule();
+	}
+	
 	//Attribute:
-	//	name=ID ('AS' alias=Alias)?;
+	//	name=AttributeName ('AS' alias=Alias)?;
 	public AttributeElements getAttributeAccess() {
 		return pAttribute;
 	}
@@ -2053,13 +2227,23 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//AttributeWithoutAlias Attribute:
-	//	name=ID
+	//	name=AttributeName
 	public AttributeWithoutAliasElements getAttributeWithoutAliasAccess() {
 		return pAttributeWithoutAlias;
 	}
 	
 	public ParserRule getAttributeWithoutAliasRule() {
 		return getAttributeWithoutAliasAccess().getRule();
+	}
+	
+	//AttributeName:
+	//	ID | SourceName '.' ID;
+	public AttributeNameElements getAttributeNameAccess() {
+		return pAttributeName;
+	}
+	
+	public ParserRule getAttributeNameRule() {
+		return getAttributeNameAccess().getRule();
 	}
 	
 	//AttributeWithNestedStatement:
@@ -2155,84 +2339,132 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	////	attribute=Attribute
 	////	direction=('ASC'|'DESC')
 	////;
-	//Create:
-	//	name=('CREATE' | 'ATTACH') (channelformat=ChannelFormat | accessframework=AccessFramework);
-	public CreateElements getCreateAccess() {
-		return pCreate;
-	}
-	
-	public ParserRule getCreateRule() {
-		return getCreateAccess().getRule();
-	}
-	
-	//AccessFramework:
-	//	type=('STREAM' | 'SINK') name=ID
-	//	'('
-	//	attributes+=Attribute+
-	//	datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)*
-	//	')'
+	//CreateParameters:
 	//	'WRAPPER' wrapper=STRING
 	//	'PROTOCOL' protocol=STRING
 	//	'TRANSPORT' transport=STRING
 	//	'DATAHANDLER' datahandler=STRING
-	//	'OPTIONS'
-	//	'(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
-	//	')';
-	public AccessFrameworkElements getAccessFrameworkAccess() {
-		return pAccessFramework;
+	//	'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')';
+	public CreateParametersElements getCreateParametersAccess() {
+		return pCreateParameters;
 	}
 	
-	public ParserRule getAccessFrameworkRule() {
-		return getAccessFrameworkAccess().getRule();
+	public ParserRule getCreateParametersRule() {
+		return getCreateParametersAccess().getRule();
 	}
 	
-	//ChannelFormat:
-	//	stream=ChannelFormatStream | view=ChannelFormatView;
-	public ChannelFormatElements getChannelFormatAccess() {
-		return pChannelFormat;
+	//AttributeDefinition:
+	//	name=ID
+	//	'(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')';
+	public AttributeDefinitionElements getAttributeDefinitionAccess() {
+		return pAttributeDefinition;
 	}
 	
-	public ParserRule getChannelFormatRule() {
-		return getChannelFormatAccess().getRule();
+	public ParserRule getAttributeDefinitionRule() {
+		return getAttributeDefinitionAccess().getRule();
 	}
 	
-	//ChannelFormatStream:
+	//CreateStream1:
+	//	'CREATE'
 	//	'STREAM'
-	//	name=ID
-	//	'('
-	//	attributes+=Attribute+
-	//	datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)*
-	//	')'
-	//	'CHANNEL' //TODO Add FILE as possible parameter --> and even more ..
-	//	host=ID
-	//	':'
-	//	port=INT;
-	public ChannelFormatStreamElements getChannelFormatStreamAccess() {
-		return pChannelFormatStream;
+	//	attributes=AttributeDefinition
+	//	pars=CreateParameters;
+	public CreateStream1Elements getCreateStream1Access() {
+		return pCreateStream1;
 	}
 	
-	public ParserRule getChannelFormatStreamRule() {
-		return getChannelFormatStreamAccess().getRule();
+	public ParserRule getCreateStream1Rule() {
+		return getCreateStream1Access().getRule();
 	}
 	
-	//ChannelFormatView:
-	//	'VIEW'
-	//	name=ID
-	//	'FROM'
-	//	'('
-	//	select=Select ';'?
-	//	')';
-	public ChannelFormatViewElements getChannelFormatViewAccess() {
-		return pChannelFormatView;
+	//CreateSink1:
+	//	'CREATE'
+	//	'SINK'
+	//	attributes=AttributeDefinition
+	//	pars=CreateParameters;
+	public CreateSink1Elements getCreateSink1Access() {
+		return pCreateSink1;
 	}
 	
-	public ParserRule getChannelFormatViewRule() {
-		return getChannelFormatViewAccess().getRule();
+	public ParserRule getCreateSink1Rule() {
+		return getCreateSink1Access().getRule();
+	}
+	
+	//CreateStreamChannel:
+	//	'CREATE'
+	//	'STREAM'
+	//	attributes=AttributeDefinition
+	//	'CHANNEL' host=ID ':' port=INT;
+	public CreateStreamChannelElements getCreateStreamChannelAccess() {
+		return pCreateStreamChannel;
+	}
+	
+	public ParserRule getCreateStreamChannelRule() {
+		return getCreateStreamChannelAccess().getRule();
+	}
+	
+	//CreateStreamFile:
+	//	'CREATE'
+	//	'STREAM'
+	//	attributes=AttributeDefinition
+	//	'FILE' filename=STRING 'AS' type=ID;
+	public CreateStreamFileElements getCreateStreamFileAccess() {
+		return pCreateStreamFile;
+	}
+	
+	public ParserRule getCreateStreamFileRule() {
+		return getCreateStreamFileAccess().getRule();
+	}
+	
+	////Create:
+	////	name=('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
+	////;
+	////
+	////AccessFramework:
+	////	type=('STREAM'|'SINK')
+	////	name = ID
+	////	'('
+	////	attributes+= Attribute+ 
+	////	datatypes+= DataType+
+	////	(',' attributes+=Attribute datatypes+= DataType)*
+	////	')'
+	////	'WRAPPER' wrapper=STRING
+	////	'PROTOCOL' protocol=STRING
+	////	'TRANSPORT' transport=STRING
+	////	'DATAHANDLER' datahandler=STRING
+	////	'OPTIONS' 
+	////		'(' 
+	////			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
+	////		')'
+	////;
+	////
+	////ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+	////
+	////ChannelFormatStream:
+	////	'STREAM'
+	////	name = ID
+	////	'('
+	////	attributes+= Attribute+ 
+	////	datatypes+= DataType+
+	////	(',' attributes+=Attribute datatypes+= DataType)*
+	////	')'
+	////	(    'CHANNEL' (keys+=ID) ':'
+	////		|'FILE' (keys+=STRING) 'AS'
+	////	) 
+	////	(values+=IDOrINT)
+	////;
+	//CreateView:
+	//	'VIEW' name=ID 'FROM' select=NestedStatement;
+	public CreateViewElements getCreateViewAccess() {
+		return pCreateView;
+	}
+	
+	public ParserRule getCreateViewRule() {
+		return getCreateViewAccess().getRule();
 	}
 	
 	//StreamTo:
-	//	'STREAM' 'TO'
-	//	name=ID (statement=Select | inputname=ID);
+	//	'STREAM' 'TO' name=ID (statement=Select | inputname=ID);
 	public StreamToElements getStreamToAccess() {
 		return pStreamTo;
 	}
@@ -2300,12 +2532,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getWindow_TuplebasedAccess().getRule();
 	}
 	
-	//terminal FLOAT_NUMBER:
-	//	INT '.' INT;
-	public TerminalRule getFLOAT_NUMBERRule() {
-		return tFLOAT_NUMBER;
-	}
-	
+	//// Expression DSL ///////////////////////////////////////////////////////
 	//ExpressionsModel:
 	//	{ExpressionsModel} elements+=Expression;
 	public ExpressionsModelElements getExpressionsModelAccess() {
@@ -2397,8 +2624,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Atomic Expression:
-	//	{IntConstant} value=INT | {FloatConstant} value=FLOAT_NUMBER | {StringConstant} value=STRING | {BoolConstant}
-	//	value=('TRUE' | 'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
+	//	{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=('TRUE' |
+	//	'FALSE') | {AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
 	public AtomicElements getAtomicAccess() {
 		return pAtomic;
 	}
@@ -2417,12 +2644,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getDataTypeRule() {
 		return getDataTypeAccess().getRule();
-	}
-	
-	//terminal ID:
-	//	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
-	public TerminalRule getIDRule() {
-		return gaTerminals.getIDRule();
 	}
 	
 	//terminal INT returns ecore::EInt:

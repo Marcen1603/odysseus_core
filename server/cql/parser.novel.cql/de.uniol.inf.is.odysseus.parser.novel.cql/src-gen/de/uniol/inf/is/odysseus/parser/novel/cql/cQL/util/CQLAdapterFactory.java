@@ -116,29 +116,39 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAliasAdapter();
       }
       @Override
-      public Adapter caseCreate(Create object)
+      public Adapter caseCreateParameters(CreateParameters object)
       {
-        return createCreateAdapter();
+        return createCreateParametersAdapter();
       }
       @Override
-      public Adapter caseAccessFramework(AccessFramework object)
+      public Adapter caseAttributeDefinition(AttributeDefinition object)
       {
-        return createAccessFrameworkAdapter();
+        return createAttributeDefinitionAdapter();
       }
       @Override
-      public Adapter caseChannelFormat(ChannelFormat object)
+      public Adapter caseCreateStream1(CreateStream1 object)
       {
-        return createChannelFormatAdapter();
+        return createCreateStream1Adapter();
       }
       @Override
-      public Adapter caseChannelFormatStream(ChannelFormatStream object)
+      public Adapter caseCreateSink1(CreateSink1 object)
       {
-        return createChannelFormatStreamAdapter();
+        return createCreateSink1Adapter();
       }
       @Override
-      public Adapter caseChannelFormatView(ChannelFormatView object)
+      public Adapter caseCreateStreamChannel(CreateStreamChannel object)
       {
-        return createChannelFormatViewAdapter();
+        return createCreateStreamChannelAdapter();
+      }
+      @Override
+      public Adapter caseCreateStreamFile(CreateStreamFile object)
+      {
+        return createCreateStreamFileAdapter();
+      }
+      @Override
+      public Adapter caseCreateView(CreateView object)
+      {
+        return createCreateViewAdapter();
       }
       @Override
       public Adapter caseStreamTo(StreamTo object)
@@ -388,76 +398,106 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create <em>Create</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters <em>Create Parameters</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters
    * @generated
    */
-  public Adapter createCreateAdapter()
+  public Adapter createCreateParametersAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework <em>Access Framework</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition <em>Attribute Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition
    * @generated
    */
-  public Adapter createAccessFrameworkAdapter()
+  public Adapter createAttributeDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat <em>Channel Format</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1 <em>Create Stream1</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormat
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1
    * @generated
    */
-  public Adapter createChannelFormatAdapter()
+  public Adapter createCreateStream1Adapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream <em>Channel Format Stream</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1 <em>Create Sink1</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1
    * @generated
    */
-  public Adapter createChannelFormatStreamAdapter()
+  public Adapter createCreateSink1Adapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView <em>Channel Format View</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel <em>Create Stream Channel</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel
    * @generated
    */
-  public Adapter createChannelFormatViewAdapter()
+  public Adapter createCreateStreamChannelAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile <em>Create Stream File</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile
+   * @generated
+   */
+  public Adapter createCreateStreamFileAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView <em>Create View</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
+   * @generated
+   */
+  public Adapter createCreateViewAdapter()
   {
     return null;
   }

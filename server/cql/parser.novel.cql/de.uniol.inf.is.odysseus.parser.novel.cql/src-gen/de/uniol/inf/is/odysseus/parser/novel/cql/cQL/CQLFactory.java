@@ -96,49 +96,67 @@ public interface CQLFactory extends EFactory
   Alias createAlias();
 
   /**
-   * Returns a new object of class '<em>Create</em>'.
+   * Returns a new object of class '<em>Create Parameters</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create</em>'.
+   * @return a new object of class '<em>Create Parameters</em>'.
    * @generated
    */
-  Create createCreate();
+  CreateParameters createCreateParameters();
 
   /**
-   * Returns a new object of class '<em>Access Framework</em>'.
+   * Returns a new object of class '<em>Attribute Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Access Framework</em>'.
+   * @return a new object of class '<em>Attribute Definition</em>'.
    * @generated
    */
-  AccessFramework createAccessFramework();
+  AttributeDefinition createAttributeDefinition();
 
   /**
-   * Returns a new object of class '<em>Channel Format</em>'.
+   * Returns a new object of class '<em>Create Stream1</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Channel Format</em>'.
+   * @return a new object of class '<em>Create Stream1</em>'.
    * @generated
    */
-  ChannelFormat createChannelFormat();
+  CreateStream1 createCreateStream1();
 
   /**
-   * Returns a new object of class '<em>Channel Format Stream</em>'.
+   * Returns a new object of class '<em>Create Sink1</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Channel Format Stream</em>'.
+   * @return a new object of class '<em>Create Sink1</em>'.
    * @generated
    */
-  ChannelFormatStream createChannelFormatStream();
+  CreateSink1 createCreateSink1();
 
   /**
-   * Returns a new object of class '<em>Channel Format View</em>'.
+   * Returns a new object of class '<em>Create Stream Channel</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Channel Format View</em>'.
+   * @return a new object of class '<em>Create Stream Channel</em>'.
    * @generated
    */
-  ChannelFormatView createChannelFormatView();
+  CreateStreamChannel createCreateStreamChannel();
+
+  /**
+   * Returns a new object of class '<em>Create Stream File</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Create Stream File</em>'.
+   * @generated
+   */
+  CreateStreamFile createCreateStreamFile();
+
+  /**
+   * Returns a new object of class '<em>Create View</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Create View</em>'.
+   * @generated
+   */
+  CreateView createCreateView();
 
   /**
    * Returns a new object of class '<em>Stream To</em>'.

@@ -136,9 +136,9 @@ ruleStatement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateParserRuleCall_0_1_0());
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeStreamToParserRuleCall_0_1_0());
 					}
-					lv_type_1_0=ruleCreate
+					lv_type_1_0=ruleStreamTo
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStatementRule());
@@ -147,26 +147,6 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"type",
 							lv_type_1_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Create");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			    |
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getStatementAccess().getTypeStreamToParserRuleCall_0_2_0());
-					}
-					lv_type_2_0=ruleStreamTo
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getStatementRule());
-						}
-						set(
-							$current,
-							"type",
-							lv_type_2_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.StreamTo");
 						afterParserOrEnumRuleCall();
 					}
@@ -176,9 +156,29 @@ ruleStatement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStatementAccess().getTypeDropParserRuleCall_0_3_0());
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeDropParserRuleCall_0_2_0());
 					}
-					lv_type_3_0=ruleDrop
+					lv_type_2_0=ruleDrop
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"type",
+							lv_type_2_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Drop");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateStream1ParserRuleCall_0_3_0());
+					}
+					lv_type_3_0=ruleCreateStream1
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStatementRule());
@@ -187,16 +187,96 @@ ruleStatement returns [EObject current=null]
 							$current,
 							"type",
 							lv_type_3_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Drop");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStream1");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateSink1ParserRuleCall_0_4_0());
+					}
+					lv_type_4_0=ruleCreateSink1
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"type",
+							lv_type_4_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateSink1");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateStreamChannelParserRuleCall_0_5_0());
+					}
+					lv_type_5_0=ruleCreateStreamChannel
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"type",
+							lv_type_5_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStreamChannel");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateStreamFileParserRuleCall_0_6_0());
+					}
+					lv_type_6_0=ruleCreateStreamFile
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"type",
+							lv_type_6_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateStreamFile");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateViewParserRuleCall_0_7_0());
+					}
+					lv_type_7_0=ruleCreateView
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"type",
+							lv_type_7_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateView");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)
 		(
-			otherlv_4=';'
+			otherlv_8=';'
 			{
-				newLeafNode(otherlv_4, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+				newLeafNode(otherlv_8, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 			}
 		)?
 	)
@@ -598,19 +678,20 @@ ruleSource returns [EObject current=null]
 			(
 				(
 					(
-						lv_name_0_0=RULE_ID
 						{
-							newLeafNode(lv_name_0_0, grammarAccess.getSourceAccess().getNameIDTerminalRuleCall_0_0_0_0());
+							newCompositeNode(grammarAccess.getSourceAccess().getNameSourceNameParserRuleCall_0_0_0_0());
 						}
+						lv_name_0_0=ruleSourceName
 						{
 							if ($current==null) {
-								$current = createModelElement(grammarAccess.getSourceRule());
+								$current = createModelElementForParent(grammarAccess.getSourceRule());
 							}
-							setWithLastConsumed(
+							set(
 								$current,
 								"name",
 								lv_name_0_0,
-								"org.eclipse.xtext.common.Terminals.ID");
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SourceName");
+							afterParserOrEnumRuleCall();
 						}
 					)
 				)
@@ -735,6 +816,30 @@ ruleSource returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleSourceName
+entryRuleSourceName returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getSourceNameRule()); }
+	iv_ruleSourceName=ruleSourceName
+	{ $current=$iv_ruleSourceName.current.getText(); }
+	EOF;
+
+// Rule SourceName
+ruleSourceName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	this_ID_0=RULE_ID
+	{
+		$current.merge(this_ID_0);
+	}
+	{
+		newLeafNode(this_ID_0, grammarAccess.getSourceNameAccess().getIDTerminalRuleCall());
+	}
+;
+
 // Entry rule entryRuleAttribute
 entryRuleAttribute returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getAttributeRule()); }
@@ -753,19 +858,20 @@ ruleAttribute returns [EObject current=null]
 	(
 		(
 			(
-				lv_name_0_0=RULE_ID
 				{
-					newLeafNode(lv_name_0_0, grammarAccess.getAttributeAccess().getNameIDTerminalRuleCall_0_0());
+					newCompositeNode(grammarAccess.getAttributeAccess().getNameAttributeNameParserRuleCall_0_0());
 				}
+				lv_name_0_0=ruleAttributeName
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAttributeRule());
+						$current = createModelElementForParent(grammarAccess.getAttributeRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeName");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -814,19 +920,71 @@ ruleAttributeWithoutAlias returns [EObject current=null]
 }:
 	(
 		(
-			lv_name_0_0=RULE_ID
 			{
-				newLeafNode(lv_name_0_0, grammarAccess.getAttributeWithoutAliasAccess().getNameIDTerminalRuleCall_0());
+				newCompositeNode(grammarAccess.getAttributeWithoutAliasAccess().getNameAttributeNameParserRuleCall_0());
 			}
+			lv_name_0_0=ruleAttributeName
 			{
 				if ($current==null) {
-					$current = createModelElement(grammarAccess.getAttributeWithoutAliasRule());
+					$current = createModelElementForParent(grammarAccess.getAttributeWithoutAliasRule());
 				}
-				setWithLastConsumed(
+				set(
 					$current,
 					"name",
 					lv_name_0_0,
-					"org.eclipse.xtext.common.Terminals.ID");
+					"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeName");
+				afterParserOrEnumRuleCall();
+			}
+		)
+	)
+;
+
+// Entry rule entryRuleAttributeName
+entryRuleAttributeName returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getAttributeNameRule()); }
+	iv_ruleAttributeName=ruleAttributeName
+	{ $current=$iv_ruleAttributeName.current.getText(); }
+	EOF;
+
+// Rule AttributeName
+ruleAttributeName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		this_ID_0=RULE_ID
+		{
+			$current.merge(this_ID_0);
+		}
+		{
+			newLeafNode(this_ID_0, grammarAccess.getAttributeNameAccess().getIDTerminalRuleCall_0());
+		}
+		    |
+		(
+			{
+				newCompositeNode(grammarAccess.getAttributeNameAccess().getSourceNameParserRuleCall_1_0());
+			}
+			this_SourceName_1=ruleSourceName
+			{
+				$current.merge(this_SourceName_1);
+			}
+			{
+				afterParserOrEnumRuleCall();
+			}
+			kw='.'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getAttributeNameAccess().getFullStopKeyword_1_1());
+			}
+			this_ID_3=RULE_ID
+			{
+				$current.merge(this_ID_3);
+			}
+			{
+				newLeafNode(this_ID_3, grammarAccess.getAttributeNameAccess().getIDTerminalRuleCall_1_2());
 			}
 		)
 	)
@@ -923,7 +1081,7 @@ ruleAggregation returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_0_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
@@ -1011,21 +1169,21 @@ ruleAlias returns [EObject current=null]
 					$current,
 					"name",
 					lv_name_0_0,
-					"org.eclipse.xtext.common.Terminals.ID");
+					"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 			}
 		)
 	)
 ;
 
-// Entry rule entryRuleCreate
-entryRuleCreate returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getCreateRule()); }
-	iv_ruleCreate=ruleCreate
-	{ $current=$iv_ruleCreate.current; }
+// Entry rule entryRuleCreateParameters
+entryRuleCreateParameters returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateParametersRule()); }
+	iv_ruleCreateParameters=ruleCreateParameters
+	{ $current=$iv_ruleCreateParameters.current; }
 	EOF;
 
-// Rule Create
-ruleCreate returns [EObject current=null]
+// Rule CreateParameters
+ruleCreateParameters returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -1033,420 +1191,198 @@ ruleCreate returns [EObject current=null]
 	leaveRule();
 }:
 	(
-		(
-			(
-				(
-					lv_name_0_1='CREATE'
-					{
-						newLeafNode(lv_name_0_1, grammarAccess.getCreateAccess().getNameCREATEKeyword_0_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCreateRule());
-						}
-						setWithLastConsumed($current, "name", lv_name_0_1, null);
-					}
-					    |
-					lv_name_0_2='ATTACH'
-					{
-						newLeafNode(lv_name_0_2, grammarAccess.getCreateAccess().getNameATTACHKeyword_0_0_1());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCreateRule());
-						}
-						setWithLastConsumed($current, "name", lv_name_0_2, null);
-					}
-				)
-			)
-		)
-		(
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getCreateAccess().getChannelformatChannelFormatParserRuleCall_1_0_0());
-					}
-					lv_channelformat_1_0=ruleChannelFormat
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getCreateRule());
-						}
-						set(
-							$current,
-							"channelformat",
-							lv_channelformat_1_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormat");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			    |
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getCreateAccess().getAccessframeworkAccessFrameworkParserRuleCall_1_1_0());
-					}
-					lv_accessframework_2_0=ruleAccessFramework
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getCreateRule());
-						}
-						set(
-							$current,
-							"accessframework",
-							lv_accessframework_2_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AccessFramework");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)
-	)
-;
-
-// Entry rule entryRuleAccessFramework
-entryRuleAccessFramework returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getAccessFrameworkRule()); }
-	iv_ruleAccessFramework=ruleAccessFramework
-	{ $current=$iv_ruleAccessFramework.current; }
-	EOF;
-
-// Rule AccessFramework
-ruleAccessFramework returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			(
-				(
-					lv_type_0_1='STREAM'
-					{
-						newLeafNode(lv_type_0_1, grammarAccess.getAccessFrameworkAccess().getTypeSTREAMKeyword_0_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
-						}
-						setWithLastConsumed($current, "type", lv_type_0_1, null);
-					}
-					    |
-					lv_type_0_2='SINK'
-					{
-						newLeafNode(lv_type_0_2, grammarAccess.getAccessFrameworkAccess().getTypeSINKKeyword_0_0_1());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
-						}
-						setWithLastConsumed($current, "type", lv_type_0_2, null);
-					}
-				)
-			)
-		)
-		(
-			(
-				lv_name_1_0=RULE_ID
-				{
-					newLeafNode(lv_name_1_0, grammarAccess.getAccessFrameworkAccess().getNameIDTerminalRuleCall_1_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAccessFrameworkRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
-				}
-			)
-		)
-		otherlv_2='('
+		otherlv_0='WRAPPER'
 		{
-			newLeafNode(otherlv_2, grammarAccess.getAccessFrameworkAccess().getLeftParenthesisKeyword_2());
+			newLeafNode(otherlv_0, grammarAccess.getCreateParametersAccess().getWRAPPERKeyword_0());
 		}
 		(
 			(
+				lv_wrapper_1_0=RULE_STRING
 				{
-					newCompositeNode(grammarAccess.getAccessFrameworkAccess().getAttributesAttributeParserRuleCall_3_0());
-				}
-				lv_attributes_3_0=ruleAttribute
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAccessFrameworkRule());
-					}
-					add(
-						$current,
-						"attributes",
-						lv_attributes_3_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)+
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getAccessFrameworkAccess().getDatatypesDataTypeParserRuleCall_4_0());
-				}
-				lv_datatypes_4_0=ruleDataType
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAccessFrameworkRule());
-					}
-					add(
-						$current,
-						"datatypes",
-						lv_datatypes_4_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)+
-		(
-			otherlv_5=','
-			{
-				newLeafNode(otherlv_5, grammarAccess.getAccessFrameworkAccess().getCommaKeyword_5_0());
-			}
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getAccessFrameworkAccess().getAttributesAttributeParserRuleCall_5_1_0());
-					}
-					lv_attributes_6_0=ruleAttribute
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getAccessFrameworkRule());
-						}
-						add(
-							$current,
-							"attributes",
-							lv_attributes_6_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getAccessFrameworkAccess().getDatatypesDataTypeParserRuleCall_5_2_0());
-					}
-					lv_datatypes_7_0=ruleDataType
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getAccessFrameworkRule());
-						}
-						add(
-							$current,
-							"datatypes",
-							lv_datatypes_7_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)*
-		otherlv_8=')'
-		{
-			newLeafNode(otherlv_8, grammarAccess.getAccessFrameworkAccess().getRightParenthesisKeyword_6());
-		}
-		otherlv_9='WRAPPER'
-		{
-			newLeafNode(otherlv_9, grammarAccess.getAccessFrameworkAccess().getWRAPPERKeyword_7());
-		}
-		(
-			(
-				lv_wrapper_10_0=RULE_STRING
-				{
-					newLeafNode(lv_wrapper_10_0, grammarAccess.getAccessFrameworkAccess().getWrapperSTRINGTerminalRuleCall_8_0());
+					newLeafNode(lv_wrapper_1_0, grammarAccess.getCreateParametersAccess().getWrapperSTRINGTerminalRuleCall_1_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+						$current = createModelElement(grammarAccess.getCreateParametersRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"wrapper",
-						lv_wrapper_10_0,
+						lv_wrapper_1_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
 		)
-		otherlv_11='PROTOCOL'
+		otherlv_2='PROTOCOL'
 		{
-			newLeafNode(otherlv_11, grammarAccess.getAccessFrameworkAccess().getPROTOCOLKeyword_9());
+			newLeafNode(otherlv_2, grammarAccess.getCreateParametersAccess().getPROTOCOLKeyword_2());
 		}
 		(
 			(
-				lv_protocol_12_0=RULE_STRING
+				lv_protocol_3_0=RULE_STRING
 				{
-					newLeafNode(lv_protocol_12_0, grammarAccess.getAccessFrameworkAccess().getProtocolSTRINGTerminalRuleCall_10_0());
+					newLeafNode(lv_protocol_3_0, grammarAccess.getCreateParametersAccess().getProtocolSTRINGTerminalRuleCall_3_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+						$current = createModelElement(grammarAccess.getCreateParametersRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"protocol",
-						lv_protocol_12_0,
+						lv_protocol_3_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
 		)
-		otherlv_13='TRANSPORT'
+		otherlv_4='TRANSPORT'
 		{
-			newLeafNode(otherlv_13, grammarAccess.getAccessFrameworkAccess().getTRANSPORTKeyword_11());
+			newLeafNode(otherlv_4, grammarAccess.getCreateParametersAccess().getTRANSPORTKeyword_4());
 		}
 		(
 			(
-				lv_transport_14_0=RULE_STRING
+				lv_transport_5_0=RULE_STRING
 				{
-					newLeafNode(lv_transport_14_0, grammarAccess.getAccessFrameworkAccess().getTransportSTRINGTerminalRuleCall_12_0());
+					newLeafNode(lv_transport_5_0, grammarAccess.getCreateParametersAccess().getTransportSTRINGTerminalRuleCall_5_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+						$current = createModelElement(grammarAccess.getCreateParametersRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"transport",
-						lv_transport_14_0,
+						lv_transport_5_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
 		)
-		otherlv_15='DATAHANDLER'
+		otherlv_6='DATAHANDLER'
 		{
-			newLeafNode(otherlv_15, grammarAccess.getAccessFrameworkAccess().getDATAHANDLERKeyword_13());
+			newLeafNode(otherlv_6, grammarAccess.getCreateParametersAccess().getDATAHANDLERKeyword_6());
 		}
 		(
 			(
-				lv_datahandler_16_0=RULE_STRING
+				lv_datahandler_7_0=RULE_STRING
 				{
-					newLeafNode(lv_datahandler_16_0, grammarAccess.getAccessFrameworkAccess().getDatahandlerSTRINGTerminalRuleCall_14_0());
+					newLeafNode(lv_datahandler_7_0, grammarAccess.getCreateParametersAccess().getDatahandlerSTRINGTerminalRuleCall_7_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+						$current = createModelElement(grammarAccess.getCreateParametersRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"datahandler",
-						lv_datahandler_16_0,
+						lv_datahandler_7_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
 		)
-		otherlv_17='OPTIONS'
+		otherlv_8='OPTIONS'
 		{
-			newLeafNode(otherlv_17, grammarAccess.getAccessFrameworkAccess().getOPTIONSKeyword_15());
+			newLeafNode(otherlv_8, grammarAccess.getCreateParametersAccess().getOPTIONSKeyword_8());
 		}
-		otherlv_18='('
+		otherlv_9='('
 		{
-			newLeafNode(otherlv_18, grammarAccess.getAccessFrameworkAccess().getLeftParenthesisKeyword_16());
+			newLeafNode(otherlv_9, grammarAccess.getCreateParametersAccess().getLeftParenthesisKeyword_9());
 		}
 		(
 			(
 				(
-					lv_keys_19_0=RULE_STRING
+					lv_keys_10_0=RULE_STRING
 					{
-						newLeafNode(lv_keys_19_0, grammarAccess.getAccessFrameworkAccess().getKeysSTRINGTerminalRuleCall_17_0_0());
+						newLeafNode(lv_keys_10_0, grammarAccess.getCreateParametersAccess().getKeysSTRINGTerminalRuleCall_10_0_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							$current = createModelElement(grammarAccess.getCreateParametersRule());
 						}
 						addWithLastConsumed(
 							$current,
 							"keys",
-							lv_keys_19_0,
+							lv_keys_10_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 			(
 				(
-					lv_values_20_0=RULE_STRING
+					lv_values_11_0=RULE_STRING
 					{
-						newLeafNode(lv_values_20_0, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_17_1_0());
+						newLeafNode(lv_values_11_0, grammarAccess.getCreateParametersAccess().getValuesSTRINGTerminalRuleCall_10_1_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							$current = createModelElement(grammarAccess.getCreateParametersRule());
 						}
 						addWithLastConsumed(
 							$current,
 							"values",
-							lv_values_20_0,
+							lv_values_11_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 		)+
 		(
-			otherlv_21=','
+			otherlv_12=','
 			{
-				newLeafNode(otherlv_21, grammarAccess.getAccessFrameworkAccess().getCommaKeyword_18_0());
+				newLeafNode(otherlv_12, grammarAccess.getCreateParametersAccess().getCommaKeyword_11_0());
 			}
 			(
 				(
-					lv_keys_22_0=RULE_STRING
+					lv_keys_13_0=RULE_STRING
 					{
-						newLeafNode(lv_keys_22_0, grammarAccess.getAccessFrameworkAccess().getKeysSTRINGTerminalRuleCall_18_1_0());
+						newLeafNode(lv_keys_13_0, grammarAccess.getCreateParametersAccess().getKeysSTRINGTerminalRuleCall_11_1_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							$current = createModelElement(grammarAccess.getCreateParametersRule());
 						}
 						addWithLastConsumed(
 							$current,
 							"keys",
-							lv_keys_22_0,
+							lv_keys_13_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 			(
 				(
-					lv_values_23_0=RULE_STRING
+					lv_values_14_0=RULE_STRING
 					{
-						newLeafNode(lv_values_23_0, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_18_2_0());
+						newLeafNode(lv_values_14_0, grammarAccess.getCreateParametersAccess().getValuesSTRINGTerminalRuleCall_11_2_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							$current = createModelElement(grammarAccess.getCreateParametersRule());
 						}
 						addWithLastConsumed(
 							$current,
 							"values",
-							lv_values_23_0,
+							lv_values_14_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 		)?
-		otherlv_24=')'
+		otherlv_15=')'
 		{
-			newLeafNode(otherlv_24, grammarAccess.getAccessFrameworkAccess().getRightParenthesisKeyword_19());
+			newLeafNode(otherlv_15, grammarAccess.getCreateParametersAccess().getRightParenthesisKeyword_12());
 		}
 	)
 ;
 
-// Entry rule entryRuleChannelFormat
-entryRuleChannelFormat returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getChannelFormatRule()); }
-	iv_ruleChannelFormat=ruleChannelFormat
-	{ $current=$iv_ruleChannelFormat.current; }
+// Entry rule entryRuleAttributeDefinition
+entryRuleAttributeDefinition returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getAttributeDefinitionRule()); }
+	iv_ruleAttributeDefinition=ruleAttributeDefinition
+	{ $current=$iv_ruleAttributeDefinition.current; }
 	EOF;
 
-// Rule ChannelFormat
-ruleChannelFormat returns [EObject current=null]
+// Rule AttributeDefinition
+ruleAttributeDefinition returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -1456,102 +1392,40 @@ ruleChannelFormat returns [EObject current=null]
 	(
 		(
 			(
+				lv_name_0_0=RULE_ID
 				{
-					newCompositeNode(grammarAccess.getChannelFormatAccess().getStreamChannelFormatStreamParserRuleCall_0_0());
-				}
-				lv_stream_0_0=ruleChannelFormatStream
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getChannelFormatRule());
-					}
-					set(
-						$current,
-						"stream",
-						lv_stream_0_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormatStream");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getChannelFormatAccess().getViewChannelFormatViewParserRuleCall_1_0());
-				}
-				lv_view_1_0=ruleChannelFormatView
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getChannelFormatRule());
-					}
-					set(
-						$current,
-						"view",
-						lv_view_1_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ChannelFormatView");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-	)
-;
-
-// Entry rule entryRuleChannelFormatStream
-entryRuleChannelFormatStream returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getChannelFormatStreamRule()); }
-	iv_ruleChannelFormatStream=ruleChannelFormatStream
-	{ $current=$iv_ruleChannelFormatStream.current; }
-	EOF;
-
-// Rule ChannelFormatStream
-ruleChannelFormatStream returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		otherlv_0='STREAM'
-		{
-			newLeafNode(otherlv_0, grammarAccess.getChannelFormatStreamAccess().getSTREAMKeyword_0());
-		}
-		(
-			(
-				lv_name_1_0=RULE_ID
-				{
-					newLeafNode(lv_name_1_0, grammarAccess.getChannelFormatStreamAccess().getNameIDTerminalRuleCall_1_0());
+					newLeafNode(lv_name_0_0, grammarAccess.getAttributeDefinitionAccess().getNameIDTerminalRuleCall_0_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getChannelFormatStreamRule());
+						$current = createModelElement(grammarAccess.getAttributeDefinitionRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"name",
-						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						lv_name_0_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
-		otherlv_2='('
+		otherlv_1='('
 		{
-			newLeafNode(otherlv_2, grammarAccess.getChannelFormatStreamAccess().getLeftParenthesisKeyword_2());
+			newLeafNode(otherlv_1, grammarAccess.getAttributeDefinitionAccess().getLeftParenthesisKeyword_1());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getChannelFormatStreamAccess().getAttributesAttributeParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getAttributesAttributeParserRuleCall_2_0());
 				}
-				lv_attributes_3_0=ruleAttribute
+				lv_attributes_2_0=ruleAttribute
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getChannelFormatStreamRule());
+						$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
 					}
 					add(
 						$current,
 						"attributes",
-						lv_attributes_3_0,
+						lv_attributes_2_0,
 						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
 					afterParserOrEnumRuleCall();
 				}
@@ -1560,41 +1434,41 @@ ruleChannelFormatStream returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getChannelFormatStreamAccess().getDatatypesDataTypeParserRuleCall_4_0());
+					newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getDatatypesDataTypeParserRuleCall_3_0());
 				}
-				lv_datatypes_4_0=ruleDataType
+				lv_datatypes_3_0=ruleDataType
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getChannelFormatStreamRule());
+						$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
 					}
 					add(
 						$current,
 						"datatypes",
-						lv_datatypes_4_0,
+						lv_datatypes_3_0,
 						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)+
 		(
-			otherlv_5=','
+			otherlv_4=','
 			{
-				newLeafNode(otherlv_5, grammarAccess.getChannelFormatStreamAccess().getCommaKeyword_5_0());
+				newLeafNode(otherlv_4, grammarAccess.getAttributeDefinitionAccess().getCommaKeyword_4_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getChannelFormatStreamAccess().getAttributesAttributeParserRuleCall_5_1_0());
+						newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getAttributesAttributeParserRuleCall_4_1_0());
 					}
-					lv_attributes_6_0=ruleAttribute
+					lv_attributes_5_0=ruleAttribute
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getChannelFormatStreamRule());
+							$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
 						}
 						add(
 							$current,
 							"attributes",
-							lv_attributes_6_0,
+							lv_attributes_5_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
 						afterParserOrEnumRuleCall();
 					}
@@ -1603,67 +1477,243 @@ ruleChannelFormatStream returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getChannelFormatStreamAccess().getDatatypesDataTypeParserRuleCall_5_2_0());
+						newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getDatatypesDataTypeParserRuleCall_4_2_0());
 					}
-					lv_datatypes_7_0=ruleDataType
+					lv_datatypes_6_0=ruleDataType
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getChannelFormatStreamRule());
+							$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
 						}
 						add(
 							$current,
 							"datatypes",
-							lv_datatypes_7_0,
+							lv_datatypes_6_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)*
-		otherlv_8=')'
+		otherlv_7=')'
 		{
-			newLeafNode(otherlv_8, grammarAccess.getChannelFormatStreamAccess().getRightParenthesisKeyword_6());
+			newLeafNode(otherlv_7, grammarAccess.getAttributeDefinitionAccess().getRightParenthesisKeyword_5());
 		}
-		otherlv_9='CHANNEL'
+	)
+;
+
+// Entry rule entryRuleCreateStream1
+entryRuleCreateStream1 returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateStream1Rule()); }
+	iv_ruleCreateStream1=ruleCreateStream1
+	{ $current=$iv_ruleCreateStream1.current; }
+	EOF;
+
+// Rule CreateStream1
+ruleCreateStream1 returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='CREATE'
 		{
-			newLeafNode(otherlv_9, grammarAccess.getChannelFormatStreamAccess().getCHANNELKeyword_7());
+			newLeafNode(otherlv_0, grammarAccess.getCreateStream1Access().getCREATEKeyword_0());
+		}
+		otherlv_1='STREAM'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getCreateStream1Access().getSTREAMKeyword_1());
 		}
 		(
 			(
-				lv_host_10_0=RULE_ID
 				{
-					newLeafNode(lv_host_10_0, grammarAccess.getChannelFormatStreamAccess().getHostIDTerminalRuleCall_8_0());
+					newCompositeNode(grammarAccess.getCreateStream1Access().getAttributesAttributeDefinitionParserRuleCall_2_0());
+				}
+				lv_attributes_2_0=ruleAttributeDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateStream1Rule());
+					}
+					set(
+						$current,
+						"attributes",
+						lv_attributes_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getCreateStream1Access().getParsCreateParametersParserRuleCall_3_0());
+				}
+				lv_pars_3_0=ruleCreateParameters
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateStream1Rule());
+					}
+					set(
+						$current,
+						"pars",
+						lv_pars_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateParameters");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleCreateSink1
+entryRuleCreateSink1 returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateSink1Rule()); }
+	iv_ruleCreateSink1=ruleCreateSink1
+	{ $current=$iv_ruleCreateSink1.current; }
+	EOF;
+
+// Rule CreateSink1
+ruleCreateSink1 returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='CREATE'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getCreateSink1Access().getCREATEKeyword_0());
+		}
+		otherlv_1='SINK'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getCreateSink1Access().getSINKKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getCreateSink1Access().getAttributesAttributeDefinitionParserRuleCall_2_0());
+				}
+				lv_attributes_2_0=ruleAttributeDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateSink1Rule());
+					}
+					set(
+						$current,
+						"attributes",
+						lv_attributes_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getCreateSink1Access().getParsCreateParametersParserRuleCall_3_0());
+				}
+				lv_pars_3_0=ruleCreateParameters
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateSink1Rule());
+					}
+					set(
+						$current,
+						"pars",
+						lv_pars_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateParameters");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleCreateStreamChannel
+entryRuleCreateStreamChannel returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateStreamChannelRule()); }
+	iv_ruleCreateStreamChannel=ruleCreateStreamChannel
+	{ $current=$iv_ruleCreateStreamChannel.current; }
+	EOF;
+
+// Rule CreateStreamChannel
+ruleCreateStreamChannel returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='CREATE'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getCreateStreamChannelAccess().getCREATEKeyword_0());
+		}
+		otherlv_1='STREAM'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getCreateStreamChannelAccess().getSTREAMKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getCreateStreamChannelAccess().getAttributesAttributeDefinitionParserRuleCall_2_0());
+				}
+				lv_attributes_2_0=ruleAttributeDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateStreamChannelRule());
+					}
+					set(
+						$current,
+						"attributes",
+						lv_attributes_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_3='CHANNEL'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getCreateStreamChannelAccess().getCHANNELKeyword_3());
+		}
+		(
+			(
+				lv_host_4_0=RULE_ID
+				{
+					newLeafNode(lv_host_4_0, grammarAccess.getCreateStreamChannelAccess().getHostIDTerminalRuleCall_4_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getChannelFormatStreamRule());
+						$current = createModelElement(grammarAccess.getCreateStreamChannelRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"host",
-						lv_host_10_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						lv_host_4_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
-		otherlv_11=':'
+		otherlv_5=':'
 		{
-			newLeafNode(otherlv_11, grammarAccess.getChannelFormatStreamAccess().getColonKeyword_9());
+			newLeafNode(otherlv_5, grammarAccess.getCreateStreamChannelAccess().getColonKeyword_5());
 		}
 		(
 			(
-				lv_port_12_0=RULE_INT
+				lv_port_6_0=RULE_INT
 				{
-					newLeafNode(lv_port_12_0, grammarAccess.getChannelFormatStreamAccess().getPortINTTerminalRuleCall_10_0());
+					newLeafNode(lv_port_6_0, grammarAccess.getCreateStreamChannelAccess().getPortINTTerminalRuleCall_6_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getChannelFormatStreamRule());
+						$current = createModelElement(grammarAccess.getCreateStreamChannelRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"port",
-						lv_port_12_0,
+						lv_port_6_0,
 						"org.eclipse.xtext.common.Terminals.INT");
 				}
 			)
@@ -1671,15 +1721,105 @@ ruleChannelFormatStream returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleChannelFormatView
-entryRuleChannelFormatView returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getChannelFormatViewRule()); }
-	iv_ruleChannelFormatView=ruleChannelFormatView
-	{ $current=$iv_ruleChannelFormatView.current; }
+// Entry rule entryRuleCreateStreamFile
+entryRuleCreateStreamFile returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateStreamFileRule()); }
+	iv_ruleCreateStreamFile=ruleCreateStreamFile
+	{ $current=$iv_ruleCreateStreamFile.current; }
 	EOF;
 
-// Rule ChannelFormatView
-ruleChannelFormatView returns [EObject current=null]
+// Rule CreateStreamFile
+ruleCreateStreamFile returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='CREATE'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getCreateStreamFileAccess().getCREATEKeyword_0());
+		}
+		otherlv_1='STREAM'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getCreateStreamFileAccess().getSTREAMKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getCreateStreamFileAccess().getAttributesAttributeDefinitionParserRuleCall_2_0());
+				}
+				lv_attributes_2_0=ruleAttributeDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getCreateStreamFileRule());
+					}
+					set(
+						$current,
+						"attributes",
+						lv_attributes_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_3='FILE'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getCreateStreamFileAccess().getFILEKeyword_3());
+		}
+		(
+			(
+				lv_filename_4_0=RULE_STRING
+				{
+					newLeafNode(lv_filename_4_0, grammarAccess.getCreateStreamFileAccess().getFilenameSTRINGTerminalRuleCall_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getCreateStreamFileRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"filename",
+						lv_filename_4_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)
+		otherlv_5='AS'
+		{
+			newLeafNode(otherlv_5, grammarAccess.getCreateStreamFileAccess().getASKeyword_5());
+		}
+		(
+			(
+				lv_type_6_0=RULE_ID
+				{
+					newLeafNode(lv_type_6_0, grammarAccess.getCreateStreamFileAccess().getTypeIDTerminalRuleCall_6_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getCreateStreamFileRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"type",
+						lv_type_6_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleCreateView
+entryRuleCreateView returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getCreateViewRule()); }
+	iv_ruleCreateView=ruleCreateView
+	{ $current=$iv_ruleCreateView.current; }
+	EOF;
+
+// Rule CreateView
+ruleCreateView returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -1689,63 +1829,49 @@ ruleChannelFormatView returns [EObject current=null]
 	(
 		otherlv_0='VIEW'
 		{
-			newLeafNode(otherlv_0, grammarAccess.getChannelFormatViewAccess().getVIEWKeyword_0());
+			newLeafNode(otherlv_0, grammarAccess.getCreateViewAccess().getVIEWKeyword_0());
 		}
 		(
 			(
 				lv_name_1_0=RULE_ID
 				{
-					newLeafNode(lv_name_1_0, grammarAccess.getChannelFormatViewAccess().getNameIDTerminalRuleCall_1_0());
+					newLeafNode(lv_name_1_0, grammarAccess.getCreateViewAccess().getNameIDTerminalRuleCall_1_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getChannelFormatViewRule());
+						$current = createModelElement(grammarAccess.getCreateViewRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"name",
 						lv_name_1_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
 		otherlv_2='FROM'
 		{
-			newLeafNode(otherlv_2, grammarAccess.getChannelFormatViewAccess().getFROMKeyword_2());
-		}
-		otherlv_3='('
-		{
-			newLeafNode(otherlv_3, grammarAccess.getChannelFormatViewAccess().getLeftParenthesisKeyword_3());
+			newLeafNode(otherlv_2, grammarAccess.getCreateViewAccess().getFROMKeyword_2());
 		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getChannelFormatViewAccess().getSelectSelectParserRuleCall_4_0());
+					newCompositeNode(grammarAccess.getCreateViewAccess().getSelectNestedStatementParserRuleCall_3_0());
 				}
-				lv_select_4_0=ruleSelect
+				lv_select_3_0=ruleNestedStatement
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getChannelFormatViewRule());
+						$current = createModelElementForParent(grammarAccess.getCreateViewRule());
 					}
 					set(
 						$current,
 						"select",
-						lv_select_4_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Select");
+						lv_select_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.NestedStatement");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		(
-			otherlv_5=';'
-			{
-				newLeafNode(otherlv_5, grammarAccess.getChannelFormatViewAccess().getSemicolonKeyword_5());
-			}
-		)?
-		otherlv_6=')'
-		{
-			newLeafNode(otherlv_6, grammarAccess.getChannelFormatViewAccess().getRightParenthesisKeyword_6());
-		}
 	)
 ;
 
@@ -1787,7 +1913,7 @@ ruleStreamTo returns [EObject current=null]
 						$current,
 						"name",
 						lv_name_2_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
@@ -1826,7 +1952,7 @@ ruleStreamTo returns [EObject current=null]
 							$current,
 							"inputname",
 							lv_inputname_4_0,
-							"org.eclipse.xtext.common.Terminals.ID");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
@@ -1905,7 +2031,7 @@ ruleDrop returns [EObject current=null]
 						$current,
 						"value1",
 						lv_value1_2_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
@@ -1937,7 +2063,7 @@ ruleDrop returns [EObject current=null]
 						$current,
 						"value2",
 						lv_value2_4_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
@@ -2018,7 +2144,7 @@ ruleWindow_Timebased returns [EObject current=null]
 						$current,
 						"unit",
 						lv_unit_2_0,
-						"org.eclipse.xtext.common.Terminals.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
 		)
@@ -2059,7 +2185,7 @@ ruleWindow_Timebased returns [EObject current=null]
 							$current,
 							"advance_unit",
 							lv_advance_unit_5_0,
-							"org.eclipse.xtext.common.Terminals.ID");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
@@ -2853,9 +2979,9 @@ ruleAtomic returns [EObject current=null]
 			)
 			(
 				(
-					lv_value_3_0=RULE_FLOAT_NUMBER
+					lv_value_3_0=RULE_FLOAT
 					{
-						newLeafNode(lv_value_3_0, grammarAccess.getAtomicAccess().getValueFLOAT_NUMBERTerminalRuleCall_1_1_0());
+						newLeafNode(lv_value_3_0, grammarAccess.getAtomicAccess().getValueFLOATTerminalRuleCall_1_1_0());
 					}
 					{
 						if ($current==null) {
@@ -2865,7 +2991,7 @@ ruleAtomic returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_3_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT_NUMBER");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT");
 					}
 				)
 			)
@@ -3088,9 +3214,9 @@ ruleDataType returns [EObject current=null]
 	)
 ;
 
-RULE_FLOAT_NUMBER : RULE_INT '.' RULE_INT;
+RULE_ID : ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;
 
-RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+RULE_FLOAT : RULE_INT '.' RULE_INT;
 
 RULE_INT : ('0'..'9')+;
 

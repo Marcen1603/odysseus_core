@@ -7,22 +7,22 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Channel Format View</b></em>'.
+ * A representation of the model object '<em><b>Create View</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getSelect <em>Select</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView#getSelect <em>Select</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getChannelFormatView()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateView()
  * @model
  * @generated
  */
-public interface ChannelFormatView extends EObject
+public interface CreateView extends EObject
 {
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -34,14 +34,14 @@ public interface ChannelFormatView extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Name</em>' attribute.
    * @see #setName(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getChannelFormatView_Name()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateView_Name()
    * @model
    * @generated
    */
   String getName();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getName <em>Name</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Name</em>' attribute.
@@ -60,14 +60,14 @@ public interface ChannelFormatView extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Select</em>' containment reference.
    * @see #setSelect(Select)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getChannelFormatView_Select()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateView_Select()
    * @model containment="true"
    * @generated
    */
   Select getSelect();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatView#getSelect <em>Select</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView#getSelect <em>Select</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Select</em>' containment reference.
@@ -76,4 +76,4 @@ public interface ChannelFormatView extends EObject
    */
   void setSelect(Select value);
 
-} // ChannelFormatView
+} // CreateView

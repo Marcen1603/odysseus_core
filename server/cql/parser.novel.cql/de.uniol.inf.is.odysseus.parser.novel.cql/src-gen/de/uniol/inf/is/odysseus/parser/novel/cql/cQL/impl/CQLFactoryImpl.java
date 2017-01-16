@@ -73,11 +73,13 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.AGGREGATION: return createAggregation();
       case CQLPackage.ALIAS: return createAlias();
-      case CQLPackage.CREATE: return createCreate();
-      case CQLPackage.ACCESS_FRAMEWORK: return createAccessFramework();
-      case CQLPackage.CHANNEL_FORMAT: return createChannelFormat();
-      case CQLPackage.CHANNEL_FORMAT_STREAM: return createChannelFormatStream();
-      case CQLPackage.CHANNEL_FORMAT_VIEW: return createChannelFormatView();
+      case CQLPackage.CREATE_PARAMETERS: return createCreateParameters();
+      case CQLPackage.ATTRIBUTE_DEFINITION: return createAttributeDefinition();
+      case CQLPackage.CREATE_STREAM1: return createCreateStream1();
+      case CQLPackage.CREATE_SINK1: return createCreateSink1();
+      case CQLPackage.CREATE_STREAM_CHANNEL: return createCreateStreamChannel();
+      case CQLPackage.CREATE_STREAM_FILE: return createCreateStreamFile();
+      case CQLPackage.CREATE_VIEW: return createCreateView();
       case CQLPackage.STREAM_TO: return createStreamTo();
       case CQLPackage.COMMAND: return createCommand();
       case CQLPackage.WINDOW_TIMEBASED: return createWindow_Timebased();
@@ -197,10 +199,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Create createCreate()
+  public CreateParameters createCreateParameters()
   {
-    CreateImpl create = new CreateImpl();
-    return create;
+    CreateParametersImpl createParameters = new CreateParametersImpl();
+    return createParameters;
   }
 
   /**
@@ -208,10 +210,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AccessFramework createAccessFramework()
+  public AttributeDefinition createAttributeDefinition()
   {
-    AccessFrameworkImpl accessFramework = new AccessFrameworkImpl();
-    return accessFramework;
+    AttributeDefinitionImpl attributeDefinition = new AttributeDefinitionImpl();
+    return attributeDefinition;
   }
 
   /**
@@ -219,10 +221,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ChannelFormat createChannelFormat()
+  public CreateStream1 createCreateStream1()
   {
-    ChannelFormatImpl channelFormat = new ChannelFormatImpl();
-    return channelFormat;
+    CreateStream1Impl createStream1 = new CreateStream1Impl();
+    return createStream1;
   }
 
   /**
@@ -230,10 +232,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ChannelFormatStream createChannelFormatStream()
+  public CreateSink1 createCreateSink1()
   {
-    ChannelFormatStreamImpl channelFormatStream = new ChannelFormatStreamImpl();
-    return channelFormatStream;
+    CreateSink1Impl createSink1 = new CreateSink1Impl();
+    return createSink1;
   }
 
   /**
@@ -241,10 +243,32 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ChannelFormatView createChannelFormatView()
+  public CreateStreamChannel createCreateStreamChannel()
   {
-    ChannelFormatViewImpl channelFormatView = new ChannelFormatViewImpl();
-    return channelFormatView;
+    CreateStreamChannelImpl createStreamChannel = new CreateStreamChannelImpl();
+    return createStreamChannel;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateStreamFile createCreateStreamFile()
+  {
+    CreateStreamFileImpl createStreamFile = new CreateStreamFileImpl();
+    return createStreamFile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateView createCreateView()
+  {
+    CreateViewImpl createView = new CreateViewImpl();
+    return createView;
   }
 
   /**

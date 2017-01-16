@@ -197,6 +197,27 @@ class CQLParsingTest
 		)
 	}
 
+	@Test def void CreateStreamTest3()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM stream1 (attr1 INTEGER) FILE 'this/is/a/filename.file' AS SimpleCSV;"
+			,
+			"stream1 := ACCESS
+			(
+				{ source = 'input_stream1', 
+				  wrapper = 'GenericPush',
+				  protocol = 'SimpleCSV',
+				  transport = 'File',
+				  dataHandler ='Tuple',
+				  schema = [['attr1', 'INTEGER']],
+				  options =[['filename', 'this/is/a/filename.file']]
+				}
+			)"
+			, null
+		)
+	}
+
 	@Test def void StreamtoTest1()
 	{
 		assertCorrectGenerated
@@ -233,7 +254,7 @@ class CQLParsingTest
 
 			STREAM TO out1 SELECT attr1, attr2 FROM stream1 WHERE attr2 != attr1;"
 			,
-			"output2 := SENDER
+			"out1 := SENDER
 			(
 				{
 					sink='input_out1',
@@ -262,7 +283,7 @@ class CQLParsingTest
 
 			STREAM TO out1 stream1;"
 			,
-			"output1 := SENDER
+			"out1 := SENDER
 			(
 				{
 					sink='input_out1',
@@ -575,6 +596,17 @@ class CQLParsingTest
 		assertCorrectGenerated
 		(
 			"SELECT attr1, attr3 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000)"
+			,
+			"operator_1 = SELECT({predicate='attr1 > 1000'}, PROJECT({attributes=['attr1','attr3']}, stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void NestedStatementTest4()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr3 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND att3 IN (SELECT attr3 FROM stream1 WHERE attr1 > 1000)"
 			,
 			"operator_1 = SELECT({predicate='attr1 > 1000'}, PROJECT({attributes=['attr1','attr3']}, stream1))"
 			, new CQLDictionaryHelper()

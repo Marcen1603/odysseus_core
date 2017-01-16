@@ -2,10 +2,18 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
+
 Model: statements+=(Statement)*;
 	
+terminal ID: ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;	
+terminal FLOAT:  INT '.' INT;
+	
+IDOrINT:
+	ID | INT
+;
+
 Statement:	
-	(type=Select | type=Create | type=StreamTo | type=Drop) 
+	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView) 
 	(';')?
 ;
  
@@ -29,7 +37,7 @@ NestedStatement returns Select: '(' Select ')' ;
 
 Source: 
 	(
-		name=ID
+		name=SourceName
 		(	
 			'[' 
 			(
@@ -47,20 +55,28 @@ Source:
 	('AS' alias=Alias)?
 ;
 
+SourceName:
+	ID
+;
+
 Attribute: 
-	name=ID
+	name=AttributeName
 	('AS' alias=Alias)?
 ;
  
 AttributeWithoutAlias returns Attribute: 
-	name=ID
+	name=AttributeName
 ; 
+
+AttributeName:
+	(ID | SourceName '.' ID)
+;
 
 AttributeWithNestedStatement:
 	value=AttributeWithoutAlias
 	'IN'
 	nested=NestedStatement
-; 
+;  
  
 Aggregation:
 	name=ID
@@ -135,59 +151,88 @@ Alias:
 //	direction=('ASC'|'DESC')
 //;
 
-
-Create:
-	name=('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
-;
-
-AccessFramework:
-	type=('STREAM'|'SINK')
-	name = ID
-	'('
-	attributes+= Attribute+ 
-	datatypes+= DataType+
-	(',' attributes+=Attribute datatypes+= DataType)*
-	')'
+CreateParameters:
 	'WRAPPER' wrapper=STRING
 	'PROTOCOL' protocol=STRING
 	'TRANSPORT' transport=STRING
 	'DATAHANDLER' datahandler=STRING
-	'OPTIONS' 
-		'(' 
-			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
-		')'
+	'OPTIONS' '('(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?')'
 ;
 
-ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+AttributeDefinition:
+	name=ID
+	'('attributes+= Attribute+ datatypes+= DataType+ (',' attributes+=Attribute datatypes+= DataType)*')'
+;
 
-ChannelFormatStream:
+CreateStream1:
+	'CREATE'
 	'STREAM'
-	name = ID
-	'('
-	attributes+= Attribute+ 
-	datatypes+= DataType+
-	(',' attributes+=Attribute datatypes+= DataType)*
-	')'
-	'CHANNEL'//TODO Add FILE as possible parameter --> and even more ..
-	host=ID
-	':'
-	port=INT
+	attributes=AttributeDefinition
+	pars=CreateParameters
 ;
 
-ChannelFormatView:
-	'VIEW' 
-	name=ID
-	'FROM'
-	'('
-	(select=Select) (';')?
-	')'
+CreateSink1:
+	'CREATE'
+	'SINK'
+	attributes=AttributeDefinition
+	pars=CreateParameters
 ;
 
-StreamTo:
-	'STREAM' 'TO'
-	name=ID
-	(statement=Select|inputname=ID)
+CreateStreamChannel:
+	'CREATE'
+	'STREAM'
+	attributes=AttributeDefinition 
+ 	'CHANNEL' host=ID ':' port=INT
 ;
+
+CreateStreamFile:
+	'CREATE'
+	'STREAM'
+	attributes=AttributeDefinition
+ 	'FILE' filename=STRING 'AS' type=ID
+;
+
+//Create:
+//	name=('CREATE'|'ATTACH') (channelformat=ChannelFormat|accessframework=AccessFramework)
+//;
+//
+//AccessFramework:
+//	type=('STREAM'|'SINK')
+//	name = ID
+//	'('
+//	attributes+= Attribute+ 
+//	datatypes+= DataType+
+//	(',' attributes+=Attribute datatypes+= DataType)*
+//	')'
+//	'WRAPPER' wrapper=STRING
+//	'PROTOCOL' protocol=STRING
+//	'TRANSPORT' transport=STRING
+//	'DATAHANDLER' datahandler=STRING
+//	'OPTIONS' 
+//		'(' 
+//			(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?
+//		')'
+//;
+//
+//ChannelFormat: (stream=ChannelFormatStream|view=ChannelFormatView);
+//
+//ChannelFormatStream:
+//	'STREAM'
+//	name = ID
+//	'('
+//	attributes+= Attribute+ 
+//	datatypes+= DataType+
+//	(',' attributes+=Attribute datatypes+= DataType)*
+//	')'
+//	(    'CHANNEL' (keys+=ID) ':'
+//		|'FILE' (keys+=STRING) 'AS'
+//	) 
+//	(values+=IDOrINT)
+//;
+
+CreateView: 'VIEW' name=ID 'FROM' select=NestedStatement;
+
+StreamTo: 'STREAM' 'TO' name=ID (statement=Select|inputname=ID);
 
 
 // build generic rule for those commands
@@ -226,8 +271,6 @@ Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
 ;
 
 // Expression DSL ///////////////////////////////////////////////////////
-terminal FLOAT_NUMBER:  INT '.' INT ;
-
 ExpressionsModel: {ExpressionsModel} elements+=Expression;
 
 Expression: Or;
@@ -277,7 +320,7 @@ Primary returns Expression:
 Atomic returns Expression:
 //	{NumberConstant} (value=INT | value=INT '.' INT) |
 	{IntConstant} value=INT |
-	{FloatConstant} value=FLOAT_NUMBER |
+	{FloatConstant} value=FLOAT |
 	{StringConstant} value= STRING |
 	{BoolConstant} value=('TRUE' | 'FALSE') |
 	//TODO A SELECT * query offers no reference for an attribute.

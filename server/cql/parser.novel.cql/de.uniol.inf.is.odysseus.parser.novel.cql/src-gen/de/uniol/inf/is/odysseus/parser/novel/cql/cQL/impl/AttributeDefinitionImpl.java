@@ -4,8 +4,8 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ChannelFormatStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 
 import java.util.Collection;
@@ -26,22 +26,20 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Channel Format Stream</b></em>'.
+ * An implementation of the model object '<em><b>Attribute Definition</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatStreamImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatStreamImpl#getAttributes <em>Attributes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatStreamImpl#getDatatypes <em>Datatypes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatStreamImpl#getHost <em>Host</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ChannelFormatStreamImpl#getPort <em>Port</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getAttributes <em>Attributes</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getDatatypes <em>Datatypes</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implements ChannelFormatStream
+public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implements AttributeDefinition
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -84,51 +82,11 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   protected EList<DataType> datatypes;
 
   /**
-   * The default value of the '{@link #getHost() <em>Host</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getHost()
-   * @generated
-   * @ordered
-   */
-  protected static final String HOST_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getHost() <em>Host</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getHost()
-   * @generated
-   * @ordered
-   */
-  protected String host = HOST_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getPort() <em>Port</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getPort()
-   * @generated
-   * @ordered
-   */
-  protected static final int PORT_EDEFAULT = 0;
-
-  /**
-   * The cached value of the '{@link #getPort() <em>Port</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getPort()
-   * @generated
-   * @ordered
-   */
-  protected int port = PORT_EDEFAULT;
-
-  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ChannelFormatStreamImpl()
+  protected AttributeDefinitionImpl()
   {
     super();
   }
@@ -141,7 +99,7 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.CHANNEL_FORMAT_STREAM;
+    return CQLPackage.Literals.ATTRIBUTE_DEFINITION;
   }
 
   /**
@@ -164,7 +122,7 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_STREAM__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.ATTRIBUTE_DEFINITION__NAME, oldName, name));
   }
 
   /**
@@ -176,7 +134,7 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     if (attributes == null)
     {
-      attributes = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES);
+      attributes = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES);
     }
     return attributes;
   }
@@ -190,55 +148,9 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     if (datatypes == null)
     {
-      datatypes = new EObjectContainmentEList<DataType>(DataType.class, this, CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES);
+      datatypes = new EObjectContainmentEList<DataType>(DataType.class, this, CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES);
     }
     return datatypes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getHost()
-  {
-    return host;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setHost(String newHost)
-  {
-    String oldHost = host;
-    host = newHost;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_STREAM__HOST, oldHost, host));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public int getPort()
-  {
-    return port;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setPort(int newPort)
-  {
-    int oldPort = port;
-    port = newPort;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CHANNEL_FORMAT_STREAM__PORT, oldPort, port));
   }
 
   /**
@@ -251,9 +163,9 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
         return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
-      case CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
         return ((InternalEList<?>)getDatatypes()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -269,16 +181,12 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_STREAM__NAME:
+      case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         return getName();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
         return getAttributes();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
         return getDatatypes();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__HOST:
-        return getHost();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__PORT:
-        return getPort();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -294,22 +202,16 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_STREAM__NAME:
+      case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         setName((String)newValue);
         return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
         getAttributes().clear();
         getAttributes().addAll((Collection<? extends Attribute>)newValue);
         return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
         getDatatypes().clear();
         getDatatypes().addAll((Collection<? extends DataType>)newValue);
-        return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__HOST:
-        setHost((String)newValue);
-        return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__PORT:
-        setPort((Integer)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -325,20 +227,14 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_STREAM__NAME:
+      case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
         getAttributes().clear();
         return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
         getDatatypes().clear();
-        return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__HOST:
-        setHost(HOST_EDEFAULT);
-        return;
-      case CQLPackage.CHANNEL_FORMAT_STREAM__PORT:
-        setPort(PORT_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -354,16 +250,12 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
-      case CQLPackage.CHANNEL_FORMAT_STREAM__NAME:
+      case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case CQLPackage.CHANNEL_FORMAT_STREAM__ATTRIBUTES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
         return attributes != null && !attributes.isEmpty();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__DATATYPES:
+      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
         return datatypes != null && !datatypes.isEmpty();
-      case CQLPackage.CHANNEL_FORMAT_STREAM__HOST:
-        return HOST_EDEFAULT == null ? host != null : !HOST_EDEFAULT.equals(host);
-      case CQLPackage.CHANNEL_FORMAT_STREAM__PORT:
-        return port != PORT_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -381,12 +273,8 @@ public class ChannelFormatStreamImpl extends MinimalEObjectImpl.Container implem
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
-    result.append(", host: ");
-    result.append(host);
-    result.append(", port: ");
-    result.append(port);
     result.append(')');
     return result.toString();
   }
 
-} //ChannelFormatStreamImpl
+} //AttributeDefinitionImpl

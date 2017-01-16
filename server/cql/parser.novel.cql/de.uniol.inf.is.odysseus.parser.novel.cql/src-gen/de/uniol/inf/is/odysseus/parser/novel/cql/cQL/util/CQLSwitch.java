@@ -129,38 +129,52 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE:
+      case CQLPackage.CREATE_PARAMETERS:
       {
-        Create create = (Create)theEObject;
-        T result = caseCreate(create);
+        CreateParameters createParameters = (CreateParameters)theEObject;
+        T result = caseCreateParameters(createParameters);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.ACCESS_FRAMEWORK:
+      case CQLPackage.ATTRIBUTE_DEFINITION:
       {
-        AccessFramework accessFramework = (AccessFramework)theEObject;
-        T result = caseAccessFramework(accessFramework);
+        AttributeDefinition attributeDefinition = (AttributeDefinition)theEObject;
+        T result = caseAttributeDefinition(attributeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CHANNEL_FORMAT:
+      case CQLPackage.CREATE_STREAM1:
       {
-        ChannelFormat channelFormat = (ChannelFormat)theEObject;
-        T result = caseChannelFormat(channelFormat);
+        CreateStream1 createStream1 = (CreateStream1)theEObject;
+        T result = caseCreateStream1(createStream1);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CHANNEL_FORMAT_STREAM:
+      case CQLPackage.CREATE_SINK1:
       {
-        ChannelFormatStream channelFormatStream = (ChannelFormatStream)theEObject;
-        T result = caseChannelFormatStream(channelFormatStream);
+        CreateSink1 createSink1 = (CreateSink1)theEObject;
+        T result = caseCreateSink1(createSink1);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CHANNEL_FORMAT_VIEW:
+      case CQLPackage.CREATE_STREAM_CHANNEL:
       {
-        ChannelFormatView channelFormatView = (ChannelFormatView)theEObject;
-        T result = caseChannelFormatView(channelFormatView);
+        CreateStreamChannel createStreamChannel = (CreateStreamChannel)theEObject;
+        T result = caseCreateStreamChannel(createStreamChannel);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CREATE_STREAM_FILE:
+      {
+        CreateStreamFile createStreamFile = (CreateStreamFile)theEObject;
+        T result = caseCreateStreamFile(createStreamFile);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CREATE_VIEW:
+      {
+        CreateView createView = (CreateView)theEObject;
+        T result = caseCreateView(createView);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -458,81 +472,113 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Parameters</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Parameters</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreate(Create object)
+  public T caseCreateParameters(CreateParameters object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Access Framework</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Attribute Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Access Framework</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Attribute Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseAccessFramework(AccessFramework object)
+  public T caseAttributeDefinition(AttributeDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Channel Format</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Stream1</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Channel Format</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Stream1</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseChannelFormat(ChannelFormat object)
+  public T caseCreateStream1(CreateStream1 object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Channel Format Stream</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Sink1</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Channel Format Stream</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Sink1</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseChannelFormatStream(ChannelFormatStream object)
+  public T caseCreateSink1(CreateSink1 object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Channel Format View</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Stream Channel</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Channel Format View</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Stream Channel</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseChannelFormatView(ChannelFormatView object)
+  public T caseCreateStreamChannel(CreateStreamChannel object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Create Stream File</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Create Stream File</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCreateStreamFile(CreateStreamFile object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Create View</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Create View</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCreateView(CreateView object)
   {
     return null;
   }
