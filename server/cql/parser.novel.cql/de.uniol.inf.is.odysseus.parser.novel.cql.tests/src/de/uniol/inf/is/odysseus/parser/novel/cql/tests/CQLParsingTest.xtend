@@ -547,7 +547,7 @@ class CQLParsingTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
 			,
-			"operator_1=SELECT({predicate='attr3>100&&Counter>1000'},
+			"operator_1=SELECT({predicate='Counter>1000&&attr3>100'},
 				PROJECT({attributes=['Counter','attr3']},
 					JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),
 						 JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),
@@ -606,9 +606,31 @@ class CQLParsingTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT attr1, attr3 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND att3 IN (SELECT attr3 FROM stream1 WHERE attr1 > 1000)"
+			"SELECT attr1, attr3 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr3 != 2"
 			,
-			"operator_1 = SELECT({predicate='attr1 > 1000'}, PROJECT({attributes=['attr1','attr3']}, stream1))"
+			"operator_1 = SELECT({predicate='attr1 > 1000 && attr3 !=  2'}, PROJECT({attributes=['attr1','attr3']}, stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void NestedStatementTest5()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr3 FROM stream1 WHERE attr3 != 20 OR attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr1 != 0 AND attr3 IN (SELECT attr1, attr3 FROM stream1 WHERE attr1 < 100) AND attr3 > 1.92"
+			,
+			"operator_1 = SELECT({predicate='attr3 !=20 || attr1 > 1000 && attr1 != 0 &&  attr1 < 100 && attr3 > 1.92'}, PROJECT({attributes=['attr1','attr3']}, stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void NestedStatementTest6()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1, attr2 FROM stream1 WHERE attr1 IN (SELECT attr1, attr2 FROM (SELECT * FROM stream1 WHERE attr1 < 1234), (SELECT * FROM stream2))"
+			,
+			"operator_1 = SELECT({predicate='attr1 < 1234'}, PROJECT({attributes=['attr1','attr2']}, stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}

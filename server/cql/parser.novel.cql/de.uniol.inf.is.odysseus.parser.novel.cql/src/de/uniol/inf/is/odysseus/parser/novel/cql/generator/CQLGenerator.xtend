@@ -163,13 +163,11 @@ class CQLGenerator implements IGenerator2
 	    var List<String>     attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 		var List<Expression> predicates = newArrayList
 		var List<Source>        sources = newArrayList
-	    
-
+		
 		////WOKRING PROGRESS remove duplicates!!
-
-		predicates.add(stmt.predicates.elements.get(0))
-		
-		
+		predicates.add(0, stmt.predicates.elements.get(0))
+		if(stmt.having != null)
+			predicates.add(0, stmt.having.elements.get(0))
 		sources.addAll(stmt.sources)
 		
 //		println(predicates)
@@ -183,17 +181,12 @@ class CQLGenerator implements IGenerator2
 				)
 				var pred = nested.get(i).nested.predicates
 				var srcs = nested.get(i).nested.sources
-				predicates.addAll(pred.elements.get(0))
+//				predicates.add(predicates.size - 1, pred.elements.get(0))
 				CQLUtil.merge(sources, srcs)
 			}
 		}
 		
 		////
-
-		if(stmt.having != null)
-		{
-			predicates.add(stmt.having.elements.get(0))
-		}
 		if(!stmt.aggregations.empty)
 		{
 			var result = buildAggregateOP(stmt.aggregations, stmt.order, sources)
@@ -777,14 +770,23 @@ class CQLGenerator implements IGenerator2
 				}
 				AttributeRef:
 				{
+					/*
+					 * 
+					 * attr1 > 10 AND attr1 IN (SELECT attr1 FROM s1 WHERE attr1 != 10) AND attr2 IN (... )
+					 * 
+					 * AttributeRef := (attr1 IN (SELECT attr1 FROM s1 WHERE attr1 != 10))
+					 * 
+					 * 
+					 */
 					if(e.value instanceof AttributeWithNestedStatement)
 					{
-////						println("something")
-						predicate += ''// (e.value as AttributeWithNestedStatement).value.name	
+						parseNestedPredicate((e.value as AttributeWithNestedStatement).nested)
 					} 
 					else
-					if(e.value instanceof Attribute)
-						predicate += (e.value as Attribute).name
+					{
+						if(e.value instanceof Attribute)
+							predicate += (e.value as Attribute).name
+					}
 				}  	 
 			}
 		} 
@@ -800,6 +802,27 @@ class CQLGenerator implements IGenerator2
 	
 			}
 			predicate += str
+		}
+//		println(predicate)
+		return predicate
+	}
+	
+	def private CharSequence parseNestedPredicate(Select select)
+	{
+		var pred = select.predicates
+		if(pred == null)
+		{
+			for(Source s : checkForNestedStatement(select.sources))
+			{
+				var p = s.nested.predicates
+				if(p != null)				
+					predicate += parsePredicate(s.nested.predicates.elements.get(0))
+			 }
+			return predicate
+		}
+		else
+		{
+			return parsePredicate(pred.elements.get(0))
 		}
 	}
 	
@@ -818,7 +841,11 @@ class CQLGenerator implements IGenerator2
 			else
 			{
 				predicate = ''
-				s += parsePredicate(expressions.get(i)) + '&&'
+				var result = parsePredicate(expressions.get(i))
+//				if(result.equals(''))
+//					s+= result
+//				else
+					s +=  result + '&&'
 			}
 		}
 		predicate = ''
@@ -838,9 +865,14 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 
-	def CharSequence checkForNestedStatemen(Select stmt)
+	def List<Source> checkForNestedStatement(List<Source> srcs)
 	{
-		
+		var List<Source> l = newArrayList
+		for(Source s : srcs)
+			if(s.nested != null)
+				l.add(s)
+				
+		return l
 	}
 
 	def CharSequence buildWindowOP(Source src)
@@ -893,9 +925,6 @@ class CQLGenerator implements IGenerator2
 		
 	}
 
-	/**
-	 * TODO Write documentation! 
-	 */
 	def String generateKeyValueString(String ... s)
 	{
 		var str = "["
