@@ -52,7 +52,7 @@ public class RandomParallelization implements IPlanRewriteFunction {
 		IParallelizationIndividualConfiguration config = possibleParallelizations.get(random);
 		config.setParallelizationDegree(PerformanceDetectionHelper.getNumberOfCores());
 		config.setBufferSize(10000);
-		LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier() + " to "
+		LOG.debug("Set parallelization parallelizationDegree of operator " + config.getOperator().getUniqueIdentifier() + " to "
 				+ PerformanceDetectionHelper.getNumberOfCores() + ".");
 		LOG.debug("Partitioning strategy: " + config.getClass());
 		config.execute(settings);

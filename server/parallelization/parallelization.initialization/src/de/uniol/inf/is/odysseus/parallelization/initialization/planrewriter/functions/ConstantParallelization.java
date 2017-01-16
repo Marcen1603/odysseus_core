@@ -51,7 +51,7 @@ public class ConstantParallelization implements IPlanRewriteFunction {
 		for (IParallelizationIndividualConfiguration config : possibleParallelizations) {
 			config.setParallelizationDegree(this.parallelizationDegree);
 			config.setBufferSize(10000);
-			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier() + " to "
+			LOG.debug("Set parallelization parallelizationDegree of operator " + config.getOperator().getUniqueIdentifier() + " to "
 					+ this.parallelizationDegree + ".");
 			LOG.debug("Partitioning strategy: " + config.getClass());
 			config.execute(settings);
