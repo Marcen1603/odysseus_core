@@ -52,7 +52,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 		for (IParallelizationIndividualConfiguration config : possibleParallelizations) {
 			config.setParallelizationDegree(parallelizationDegree);
 			config.setBufferSize(bufferSize);
-			LOG.debug("Set parallelization degree of operator " + config.getOperator().getUniqueIdentifier() + " to "
+			LOG.debug("Set parallelization parallelizationDegree of operator " + config.getOperator().getUniqueIdentifier() + " to "
 					+ parallelizationDegree + ".");
 			LOG.debug("Partitioning strategy: " + config.getClass());
 			config.execute(settings);

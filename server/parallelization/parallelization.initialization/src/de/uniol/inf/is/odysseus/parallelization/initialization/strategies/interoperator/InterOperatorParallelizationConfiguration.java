@@ -21,8 +21,6 @@ public class InterOperatorParallelizationConfiguration extends AbstractParalleli
 	
 	private static Logger LOG = LoggerFactory.getLogger(InterOperatorParallelizationConfiguration.class);
 
-	private int degree;
-	private int bufferSize;
 	private String parallelizationStrategy;
 	private String fragmentationStrategy;
 
@@ -34,22 +32,10 @@ public class InterOperatorParallelizationConfiguration extends AbstractParalleli
 	}
 
 	@Override
-	public void setParallelizationDegree(int degree) {
-		this.degree = degree;
-
-	}
-
-	@Override
-	public void setBufferSize(int bufferSize) {
-		this.bufferSize = bufferSize;
-
-	}
-
-	@Override
 	public void execute(Collection<IQueryBuildSetting<?>> settings) {
 		try {
 			InterOperatorIndividualInitializer.createInterIndividualConfiguration(settings,
-					getOperator().getUniqueIdentifier(), degree, bufferSize, parallelizationStrategy,
+					getOperator().getUniqueIdentifier(), parallelizationDegree, bufferSize, parallelizationStrategy,
 					fragmentationStrategy);
 		} catch (ParallelizationTransformationException e) {
 			LOG.error("Creating individual parallelization configuration for operator " + operator + " failed.", e);
