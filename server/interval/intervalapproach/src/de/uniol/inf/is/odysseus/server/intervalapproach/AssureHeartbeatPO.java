@@ -22,9 +22,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * (sendAlwaysHeartbeats = true) or only if no other stream elements indicate
  * time progress (e.g. in out of order scenarios) independent if a new element
  * has been received or not.
- * 
+ *
  * @author Marco Grawunder
- * 
+ *
  * @param <R>
  *            The type of the StreamObject (must have ITimeInterval as metadata)
  */
@@ -103,7 +103,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	protected void process_next(R object, int port) {
+	protected synchronized void process_next(R object, int port) {
 		if (startTimerAfterFirstElement) {
 			if (!generateHeartbeat.isAlive()) {
 				generateHeartbeat.start();
@@ -130,7 +130,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		PointInTime marker = punctuation.getTime();
 		if (marker.afterOrEquals(getWatermark())) {
 			sendPunctuation(punctuation);
@@ -144,7 +144,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void sendPunctuation(IPunctuation punctuation) {
+	public synchronized void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		if (timestamp.afterOrEquals(getWatermark())) {
 			// LOG.debug("SEND PUNCTUATION "+punctuation+"
