@@ -10,6 +10,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -25,10 +28,13 @@ import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
+
+	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);
 
 	public static final String TYPE = "geohash";
 
@@ -38,11 +44,13 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	private String name;
 
 	private NavigableMap<GeoHash, Tuple<ITimeInterval>> geoHashes;
+	protected DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public GeoHashSTDataStructure(String name, int geometryPosition) {
 		this.geometryPosition = geometryPosition;
 		this.name = name;
 		this.geoHashes = new TreeMap<>();
+		this.sweepArea = new DefaultTISweepArea<>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -57,14 +65,22 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			geoHashes.put(geoHash, tuple);
 
 			// Insert in SweepArea
-			// this.sweepArea.insert(tuple);
+			this.sweepArea.insert(tuple);
 		}
 	}
 
 	@Override
 	public void cleanUp(PointInTime timestamp) {
-		// TODO Auto-generated method stub
+		// Remove old elements from sweepArea
+		List<Tuple<ITimeInterval>> removed = this.sweepArea.extractElementsBeforeAsList(timestamp);
 
+		// Warn
+		if (removed.size() > 50000) {
+			_logger.warn("Remove " + removed.size() + " elements from GeoHashIndex. This can take a while!");
+		}
+
+		// Remove the extracted elements from the quadTree
+		removed.stream().forEach(e -> this.geoHashes.remove(this.fromGeometry(getGeometry(e))));
 	}
 
 	@Override
@@ -91,7 +107,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			// get all tuples
 			List<Tuple<ITimeInterval>> result = new ArrayList<>();
 			result.addAll(geoHashes.values());
-			
+
 			// Nevertheless, we have to filter out the elements which do
 			// not overlap on a timely level
 			List<Tuple<ITimeInterval>> filter = result.parallelStream()
