@@ -32,6 +32,12 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
+/**
+ * Uses GeoHashes for a spatial indexing.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);
