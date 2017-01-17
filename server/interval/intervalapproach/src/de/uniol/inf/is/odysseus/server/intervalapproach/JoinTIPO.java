@@ -188,12 +188,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@Override public boolean deliversStoredElement(int outputPort) {
+	@Override
+	public boolean deliversStoredElement(int outputPort) {
 		return true;
 	}
 
 	@Override
-	protected void process_next(T object, int port) {
+	protected synchronized void process_next(T object, int port) {
+
+		// Synchronized to avoid overtaking
 
 		transferFunction.newElement(object, port);
 
@@ -219,7 +222,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		Order order = Order.fromOrdinal(port);
 		Iterator<T> qualifies;
 		// Avoid removing elements while querying for potential hits
-		synchronized (this) {
+	//	synchronized (this) {
 
 			if (inOrder && object.isTimeProgressMarker()) {
 				areas[otherport].purgeElements(object, order);
@@ -298,15 +301,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					break;
 				}
 			}
-			// Lead potentially to problems ...?
-//			PointInTime a = areas[port].getMinStartTs();
-//			PointInTime b = areas[otherport].getMinStartTs();
-//			PointInTime heartbeat = PointInTime.max(a, b);
-//			if(heartbeat != null) {
-//				transferFunction.newHeartbeat(heartbeat, port);
-//				transferFunction.newHeartbeat(heartbeat, otherport);
-//			}
+		PointInTime a = areas[port].getMinStartTs();
+		PointInTime b = areas[otherport].getMinStartTs();
+		PointInTime heartbeat = PointInTime.max(a, b);
+		if (heartbeat != null) {
+			transferFunction.newHeartbeat(heartbeat, port);
+			transferFunction.newHeartbeat(heartbeat, otherport);
 		}
+		//}
 	}
 
 	@Override
@@ -372,12 +374,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation inPunctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation inPunctuation, int port) {
 		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
-			synchronized (this) {
-				this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
-			}
+			// synchronized (this) {
+			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+			// }
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
@@ -530,14 +532,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			map.put("Right Area Has End TS Order", ((AbstractTISweepArea<?>) areas[1]).hasEndTsOrder() + "");
 		}
 
-		if(areas[0] instanceof IPhysicalOperatorKeyValueProvider) {
-			for(Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[0]).getKeyValues().entrySet().iterator(); iter.hasNext();){
+		if (areas[0] instanceof IPhysicalOperatorKeyValueProvider) {
+			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[0]).getKeyValues()
+					.entrySet().iterator(); iter.hasNext();) {
 				Entry<String, String> e = iter.next();
 				map.put("Left Area - " + e.getKey(), e.getValue());
 			}
 		}
-		if(areas[1] instanceof IPhysicalOperatorKeyValueProvider) {
-			for(Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[1]).getKeyValues().entrySet().iterator(); iter.hasNext();){
+		if (areas[1] instanceof IPhysicalOperatorKeyValueProvider) {
+			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[1]).getKeyValues()
+					.entrySet().iterator(); iter.hasNext();) {
 				Entry<String, String> e = iter.next();
 				map.put("Right Area - " + e.getKey(), e.getValue());
 			}
