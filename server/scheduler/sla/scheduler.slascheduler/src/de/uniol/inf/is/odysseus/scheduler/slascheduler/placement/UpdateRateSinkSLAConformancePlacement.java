@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.scheduler.slascheduler.ISLAConformancePlacement;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.SLAHelper;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLAPipeConformance;
 import de.uniol.inf.is.odysseus.scheduler.slascheduler.conformance.AbstractSLaConformance;
-import de.uniol.inf.is.odysseus.server.intervalapproach.AssureHeartbeatPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.HeartbeatPO;
 /**
  * Placement strategy for UpdateRateSink based sla conformance  operators
  * 
@@ -80,7 +80,7 @@ public class UpdateRateSinkSLAConformancePlacement implements
 			if (((IOwnedOperator)costCalc).getOwner().size() == 0)
 				((IOwnedOperator)costCalc).addOwner(root.getOwner());
 			
-			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+			HeartbeatPO<?> heartbeat = new HeartbeatPO<>(true);
 			heartbeat.setSendAlwaysHeartbeat(true);
 			heartbeat.setAllowOutOfOrder(true);
 			heartbeat.setRealTimeDelay(SLAHelper.getHeartbeatInterval(), TimeUnit.MILLISECONDS);
@@ -99,7 +99,7 @@ public class UpdateRateSinkSLAConformancePlacement implements
 		} else {
 			if (((IOwnedOperator)conformance).getOwner().size() == 0)
 				((IOwnedOperator)conformance).addOwner(root.getOwner());
-			AssureHeartbeatPO<?> heartbeat = new AssureHeartbeatPO<>(true);
+			HeartbeatPO<?> heartbeat = new HeartbeatPO<>(true);
 			heartbeat.setSendAlwaysHeartbeat(true);
 			heartbeat.setAllowOutOfOrder(true);
 			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
