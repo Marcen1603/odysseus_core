@@ -31,6 +31,7 @@ public class InterOperatorStrategyInitializer extends AbstractParallelizationStr
 	private static int DEFAULT_DEGREE = 0;
 	private static int DEFAULT_BUFFERSIZE = 0;
 	private static boolean DEFAULT_ALLOW_OPTIMIZATION = false;
+	//FIXME is also used for individual configurations
 	private static boolean DEFUALT_USE_THREADEDBUFFER = true;
 
 	@Override

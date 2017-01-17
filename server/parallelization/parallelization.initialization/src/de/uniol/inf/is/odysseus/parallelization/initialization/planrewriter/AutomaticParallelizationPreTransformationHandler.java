@@ -24,6 +24,8 @@ public class AutomaticParallelizationPreTransformationHandler implements IPreTra
 
 	private final static Logger LOG = LoggerFactory.getLogger(AutomaticParallelizationPreTransformationHandler.class);
 
+	private final static PlanRewriter rewriter = new PlanRewriter();
+	
 	public final static String HANDLER_NAME = "AutomaticParallelizationPreTransformatinHandler";
 
 	@Override
@@ -35,7 +37,6 @@ public class AutomaticParallelizationPreTransformationHandler implements IPreTra
 	public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query,
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
 		LOG.info("Starting automatic configuration of parallelization.");
-		Planrewriter rewriter = new Planrewriter();
 		rewriter.rewritePlan(query, config, handlerParameters);
 	}
 
