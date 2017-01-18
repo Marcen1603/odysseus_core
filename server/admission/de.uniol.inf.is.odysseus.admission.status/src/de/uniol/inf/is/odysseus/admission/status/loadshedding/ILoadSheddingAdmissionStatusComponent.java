@@ -14,9 +14,6 @@ public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusC
 	
 	static public final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	
-	// TODO: get max shedding factor from each query.
-	public final int MAX_SHEDDING_FACTOR = 50;
-	
 	/**
 	 * Adds the query to the StatusComponent.
 	 * @param query
@@ -44,6 +41,10 @@ public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusC
 	 */
 	public void rollBackLoadShedding();
 
+	/**
+	 * Returns the name of this component.
+	 * @return
+	 */
 	public String getComponentName();
 
 }

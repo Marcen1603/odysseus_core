@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.admission.status.impl.AdmissionSink;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -27,13 +29,19 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addQuery(IPhysicalQuery query) {
+		LoggerFactory.getLogger(this.getClass()).info("latency measurement add " + query.getID());
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
 			AdmissionSink<?> admissionSink = new AdmissionSink<>();
-			IPhysicalOperator operator = query.getLeafSources().get(0);
-			if(operator.isSink() && !operator.isSource()) {
-				ISubscribable sink = (ISubscribable) operator;
-				sink.connectSink(admissionSink, 0, 0, operator.getOutputSchema());
+			admissionSink.setLatencyAdmissionMonitor(this);
+			LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
+			for(IPhysicalOperator operator : query.getRoots()) {
+				if(operator.isSink()) {
+					ISubscribable sink = (ISubscribable) operator;
+					sink.connectSink(admissionSink, 0, 0, operator.getOutputSchema());
+					LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
+					break;
+				}
 			}
 		}
 	}
@@ -46,6 +54,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	public void updateMeasurement(IPhysicalQuery query, long latency) {
+		LoggerFactory.getLogger(this.getClass()).info("latency measurement on " + query.getID() + ". Latency : " + latency);
 		if (latencies.isEmpty()) {
 			return;
 		}

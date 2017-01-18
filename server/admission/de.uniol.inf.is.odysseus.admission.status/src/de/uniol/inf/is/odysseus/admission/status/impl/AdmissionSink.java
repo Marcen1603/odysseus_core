@@ -20,7 +20,7 @@ public class AdmissionSink<R extends IStreamObject<?>> extends AbstractSink<R> {
 			IPhysicalQuery owner = (IPhysicalQuery) this.getOwner().get(0);
 			monitor.updateMeasurement(owner, latency);
 		}
-		measurement = measurement + MEASURE_FREQUENCY;
+		measurement = (measurement + MEASURE_FREQUENCY) % 100;
 	}
 
 	@Override

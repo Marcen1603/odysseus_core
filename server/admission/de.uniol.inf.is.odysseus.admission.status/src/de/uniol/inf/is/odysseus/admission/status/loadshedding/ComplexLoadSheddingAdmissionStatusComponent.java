@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -39,6 +42,9 @@ public class ComplexLoadSheddingAdmissionStatusComponent implements ILoadSheddin
 	@Override
 	public void addQuery(int queryID) {
 		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+		for(String name : AdmissionStatusPlugIn.getServerExecutor().getPreTransformationHandlerNames()) {
+			LoggerFactory.getLogger(this.getClass()).info(name);
+		}
 		QUEUE_LENGTHS_MONITOR.addQuery(query);
 		LATENCY_MONITOR.addQuery(query);
 	}
@@ -135,13 +141,17 @@ public class ComplexLoadSheddingAdmissionStatusComponent implements ILoadSheddin
 	}
 	
 	private int getAllowedFactor(IPhysicalQuery query) {
-		int factor = 10;
+		int factor;
 		if(activeQueries.containsKey(query.getID())) {
-			factor = activeQueries.get(query.getID()) + 10;
+			factor = activeQueries.get(query.getID()) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+		} else {
+			factor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 		}
 		
-		if(factor >= MAX_SHEDDING_FACTOR) {
-			factor = factor - (factor - MAX_SHEDDING_FACTOR);
+		ILogicalQuery logQuery = query.getLogicalQuery();
+		int maxSheddingFactor = (int) logQuery.getParameter("maxSheddingFactor");
+		if(factor >= maxSheddingFactor) {
+			factor = factor - (factor - maxSheddingFactor);
 			maxSheddingQueries.add(query.getID());
 		}
 		return factor;

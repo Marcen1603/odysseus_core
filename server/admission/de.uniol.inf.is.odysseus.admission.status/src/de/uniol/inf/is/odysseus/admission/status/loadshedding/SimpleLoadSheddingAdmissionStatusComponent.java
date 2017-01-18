@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -21,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 	
 	private final String NAME = "simple";
+	
+	private HashMap<Integer, Integer> allowedQueries = new HashMap<Integer, Integer>();
 	
 	/**
 	 * Contains all queries with active load shedding.
@@ -38,7 +41,22 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 	
 	@Override
 	public void addQuery(int queryID) {
-		LoggerFactory.getLogger(this.getClass()).info("addquerysimpleloadshedding");
+		LoggerFactory.getLogger(this.getClass()).info("addquerysimpleloadshedding : " + queryID);
+		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+		ILogicalQuery logQuery = physQuery.getLogicalQuery();
+		Object o = logQuery.getParameter("LOADSHEDDINGENABLED");
+		if (o != null) {
+			LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED != null : " + queryID);
+			boolean enabled = (boolean) o;
+			if (enabled) {
+				LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED : " + queryID);
+				int maxSheddingFactor = (int) logQuery.getParameter("MAXSHEDDINGFACTOR");
+				LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED : " + queryID);
+			}
+		} else {
+			LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED == null : " + queryID);
+		}
+		
 	}
 	
 	@Override
@@ -61,24 +79,28 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 		
 		int sheddingFactor = 0;
 		
+		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+		ILogicalQuery logQuery = physQuery.getLogicalQuery();
+		int maxSheddingFactor = (int) logQuery.getParameter("MAXSHEDDINGFACTOR");
+		
 		//The load shedding of this query is already active 
 		if (activeQueries.containsKey(queryID)) {
-			sheddingFactor = activeQueries.get(queryID) + 10;
+			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			
 			//The maximal shedding factor is reached.
-			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
+			if (sheddingFactor >= maxSheddingFactor) {
 				maxSheddingQueries.add(queryID);
-				sheddingFactor = sheddingFactor - (sheddingFactor - MAX_SHEDDING_FACTOR);
+				sheddingFactor = sheddingFactor - (sheddingFactor - maxSheddingFactor);
 			}
 			
 			activeQueries.replace(queryID, sheddingFactor);
 		} else {
-			sheddingFactor = 10;
+			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			
 			//The maximal shedding factor is reached.
-			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
+			if (sheddingFactor >= maxSheddingFactor) {
 				maxSheddingQueries.add(queryID);
-				sheddingFactor = sheddingFactor - (sheddingFactor - MAX_SHEDDING_FACTOR);
+				sheddingFactor = sheddingFactor - (sheddingFactor - maxSheddingFactor);
 			}
 			
 			activeQueries.put(queryID, sheddingFactor);
@@ -98,7 +120,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadShedding
 			if (maxSheddingQueries.contains(queryID)) {
 				maxSheddingQueries.remove(queryID);
 			}
-			int sheddingFactor = activeQueries.get(queryID) - 10;
+			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor <= 0) {
 				sheddingFactor = 0;
 				activeQueries.remove(queryID);

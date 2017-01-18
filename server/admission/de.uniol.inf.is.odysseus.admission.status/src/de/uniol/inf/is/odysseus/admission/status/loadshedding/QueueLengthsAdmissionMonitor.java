@@ -21,8 +21,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
-	static private final int QUEUE_MEASUREMENT_SIZE = 5;
-	static private final int TRESHOLD = 5;
+	static private final int QUEUE_MEASUREMENT_SIZE = 10;
+	static private final int TRESHOLD = 2;
 	
 	private HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>> queuelengths
 		= new HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>>();
