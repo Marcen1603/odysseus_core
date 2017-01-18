@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -84,15 +85,19 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 			return;
 		}
 		
+		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+		ILogicalQuery logQuery = physQuery.getLogicalQuery();
+		int maxSheddingFactor = (int) logQuery.getParameter("maxSheddingFactor");
+		
 		int sheddingFactor;
 		if (activeQueries.containsKey(queryID)) {
-			sheddingFactor = activeQueries.get(queryID) + 10;
-			if (sheddingFactor >= MAX_SHEDDING_FACTOR) {
+			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+			if (sheddingFactor >= maxSheddingFactor) {
 				maxSheddingQueries.add(queryID);
 			}
 			activeQueries.replace(queryID, sheddingFactor);
 		} else {
-			sheddingFactor = 10;
+			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			activeQueries.put(queryID, sheddingFactor);
 		}
 		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
@@ -109,7 +114,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 			if (maxSheddingQueries.contains(queryID)) {
 				maxSheddingQueries.remove(queryID);
 			}
-			int sheddingFactor = activeQueries.get(queryID) - 10;
+			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor <= 0) {
 				activeQueries.remove(queryID);
 			}

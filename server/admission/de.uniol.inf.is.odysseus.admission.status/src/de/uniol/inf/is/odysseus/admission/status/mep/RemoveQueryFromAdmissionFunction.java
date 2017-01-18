@@ -1,4 +1,4 @@
-package mep;
+package de.uniol.inf.is.odysseus.admission.status.mep;
 
 import de.uniol.inf.is.odysseus.admission.status.loadshedding.LoadSheddingAdmissionStatusRegistry;
 import de.uniol.inf.is.odysseus.core.command.Command;
