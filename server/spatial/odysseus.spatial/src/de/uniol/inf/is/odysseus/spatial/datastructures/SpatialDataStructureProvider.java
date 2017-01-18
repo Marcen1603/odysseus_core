@@ -100,4 +100,22 @@ public class SpatialDataStructureProvider {
 		return getDataStructure(name) != null;
 	}
 
+	/**
+	 * Removes the data structure from the provider. If this was the only
+	 * reference to the data structure, the data structure will be removed by
+	 * the garbage collector.
+	 * 
+	 * @param name
+	 *            The name of the data structure you want to remove
+	 * @return true, if there was a data structure with the given name, false if
+	 *         not
+	 */
+	public boolean removeDataStructure(String name) {
+		if (this.dataStructureExists(name)) {
+			this.dataStructureMap.remove(name);
+			return true;
+		}
+		return false;
+	}
+
 }

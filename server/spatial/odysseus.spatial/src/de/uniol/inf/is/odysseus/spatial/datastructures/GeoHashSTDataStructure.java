@@ -49,7 +49,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	private int geometryPosition;
 	private String name;
 
-	private NavigableMap<GeoHash, Tuple<ITimeInterval>> geoHashes;
+	protected NavigableMap<GeoHash, Tuple<ITimeInterval>> geoHashes;
 	protected DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public GeoHashSTDataStructure(String name, int geometryPosition) {
@@ -87,6 +87,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// Remove the extracted elements from the quadTree
 		removed.stream().forEach(e -> this.geoHashes.remove(this.fromGeometry(getGeometry(e))));
+
 	}
 
 	@Override
@@ -316,7 +317,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		return this.geoHashes.subMap(preffix, preffix.next());
 	}
 
-	private GeoHash fromGeometry(Geometry geometry) {
+	protected GeoHash fromGeometry(Geometry geometry) {
 		Point centroid = geometry.getCentroid();
 		GeoHash hash = GeoHash.withBitPrecision(centroid.getX(), centroid.getY(), BIT_PRECISION);
 		return hash;
