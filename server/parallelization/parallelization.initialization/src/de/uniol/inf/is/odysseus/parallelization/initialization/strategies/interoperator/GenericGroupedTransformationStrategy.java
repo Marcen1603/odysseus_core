@@ -43,8 +43,6 @@ public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
 		switch (operator.getStateType()) {
 		case PARTITIONED_STATE:
 			return 90;
-		case STATELESS:
-			return 50;
 		default:
 			return 0;
 		}

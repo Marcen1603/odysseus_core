@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.parallelization.initialization.planrewriter.IPla
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 
 /**
- * @author Dennis
+ * @author Dennis Nowak
  *
  */
 public class RandomParallelization implements IPlanRewriteFunction {
