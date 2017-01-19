@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parallelization.optimization.ParallelizationOptimizer;
 
 /**
- * @author Dennis
+ * @author Dennis Nowak
  *
  */
 public class ReoptimizeParallelizationCommand extends AbstractExecutorCommand {
