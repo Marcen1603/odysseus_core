@@ -22,16 +22,16 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * (sendAlwaysHeartbeats = true) or only if no other stream elements indicate
  * time progress (e.g. in out of order scenarios) independent if a new element
  * has been received or not.
- * 
+ *
  * @author Marco Grawunder
- * 
+ *
  * @param <R>
  *            The type of the StreamObject (must have ITimeInterval as metadata)
  */
 
-public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
+public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
 
-	static final Logger LOG = LoggerFactory.getLogger(AssureHeartbeatPO.class);
+	static final Logger LOG = LoggerFactory.getLogger(HeartbeatPO.class);
 
 	private long realTimeDelay;
 	private long applicationTimeDelay;
@@ -40,11 +40,11 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	private PointInTime _watermark = PointInTime.getZeroTime();
 
-	public AssureHeartbeatPO() {
+	public HeartbeatPO() {
 		super();
 	}
 
-	public AssureHeartbeatPO(boolean startAtCurrentTime) {
+	public HeartbeatPO(boolean startAtCurrentTime) {
 		super();
 		if (startAtCurrentTime) {
 			this._watermark = PointInTime.currentPointInTime();
@@ -76,7 +76,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 					}
 					if (!restart) {
 						PointInTime punctuation = getWatermark().sum(applicationTimeDelay);
-						AssureHeartbeatPO.this.sendPunctuation(Heartbeat.createNewHeartbeat(punctuation));
+						HeartbeatPO.this.sendPunctuation(Heartbeat.createNewHeartbeat(punctuation));
 					}
 				} catch (InterruptedException e) {
 					// e.printStackTrace();
@@ -103,7 +103,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	protected void process_next(R object, int port) {
+	protected synchronized void process_next(R object, int port) {
 		if (startTimerAfterFirstElement) {
 			if (!generateHeartbeat.isAlive()) {
 				generateHeartbeat.start();
@@ -130,7 +130,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		PointInTime marker = punctuation.getTime();
 		if (marker.afterOrEquals(getWatermark())) {
 			sendPunctuation(punctuation);
@@ -144,7 +144,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	@Override
-	public void sendPunctuation(IPunctuation punctuation) {
+	public synchronized void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		if (timestamp.afterOrEquals(getWatermark())) {
 			// LOG.debug("SEND PUNCTUATION "+punctuation+"
@@ -197,11 +197,11 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof AssureHeartbeatPO)) {
+		if (!(ipo instanceof HeartbeatPO)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
-		AssureHeartbeatPO<R> po = (AssureHeartbeatPO<R>) ipo;
+		HeartbeatPO<R> po = (HeartbeatPO<R>) ipo;
 
 		if (this.realTimeDelay != po.realTimeDelay) {
 			return false;

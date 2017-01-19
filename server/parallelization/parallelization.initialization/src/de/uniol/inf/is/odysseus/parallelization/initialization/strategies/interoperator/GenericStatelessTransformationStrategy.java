@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.
 public class GenericStatelessTransformationStrategy<T extends ILogicalOperator>
 		extends AbstractFragmentUnionTransformationStrategy<T> {
 
-	private static final String NAME = "GenericStatelessTransformationStrategy";
+	public static final String NAME = "GenericStatelessTransformationStrategy";
 
 	@Override
 	public String getName() {

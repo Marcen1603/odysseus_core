@@ -31,7 +31,7 @@ public class GenericGroupedTransformationStrategy<T extends ILogicalOperator>
 
 	public static final String NAME = "GenericGroupedTransformationStrategy";
 
-	public Map<Integer, List<SDFAttribute>> groupingAttributes = new HashMap<>();
+	private Map<Integer, List<SDFAttribute>> groupingAttributes = new HashMap<>();
 
 	@Override
 	public String getName() {

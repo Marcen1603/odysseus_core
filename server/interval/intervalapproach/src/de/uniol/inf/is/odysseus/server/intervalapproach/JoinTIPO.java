@@ -301,14 +301,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 					break;
 				}
 			}
-			// Lead potentially to problems ...?
-			// PointInTime a = areas[port].getMinStartTs();
-			// PointInTime b = areas[otherport].getMinStartTs();
-			// PointInTime heartbeat = PointInTime.max(a, b);
-			// if(heartbeat != null) {
-			// transferFunction.newHeartbeat(heartbeat, port);
-			// transferFunction.newHeartbeat(heartbeat, otherport);
-			// }
+		PointInTime a = areas[port].getMinStartTs();
+		PointInTime b = areas[otherport].getMinStartTs();
+		PointInTime heartbeat = PointInTime.max(a, b);
+		if (heartbeat != null) {
+			transferFunction.newHeartbeat(heartbeat, port);
+			transferFunction.newHeartbeat(heartbeat, otherport);
+		}
 		//}
 	}
 
