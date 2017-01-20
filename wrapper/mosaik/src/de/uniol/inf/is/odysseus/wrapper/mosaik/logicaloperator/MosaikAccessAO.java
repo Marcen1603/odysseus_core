@@ -47,8 +47,8 @@ public class MosaikAccessAO extends AbstractAccessAO {
 	}
 	
 	@Parameter(type = StringParameter.class, name = "TYPE", optional = true, isList = false, doc = "use zeromq or simapi")
-	public void setType(String version) {
-		this.type = version;
+	public void setType(String apiType) {
+		this.type = apiType;
 		this.init();
 	}
 
@@ -71,9 +71,15 @@ public class MosaikAccessAO extends AbstractAccessAO {
 			this.setDataHandler("KeyValueObject");
 			
 			if(!options.containsKey("port")) {
-				options.setOption("port", "5554");
+				options.setOption("port", "5553");
 			}
-		} else {
+			if(!options.containsKey("mosaikPort")) {
+				options.setOption("mosaikPort", "5554");
+			}
+			if(!options.containsKey("host")) {
+				options.setOption("host","127.0.0.1");
+			}
+		} else if(this.type != null && this.type.equalsIgnoreCase("zeromq")) {
 			this.setWrapper("GenericPush");
 			this.setTransportHandler("ZeroMQ");
 			this.setProtocolHandler("JSON");
@@ -100,7 +106,7 @@ public class MosaikAccessAO extends AbstractAccessAO {
 			if(!options.containsKey("basetimeunit")) {
 				options.setOption("basetimeunit", "SECONDS");
 			}
-		}
+		} 
 		if(!options.containsKey("byteorder")) {
 			options.setOption("byteorder", "LittleEndian");		
 		}
