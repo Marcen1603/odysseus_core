@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
@@ -16,13 +16,14 @@
 
 package de.uniol.inf.is.odysseus.script.keyword;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.scheduler.StopSchedulerCommand;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
@@ -42,13 +43,10 @@ public class StopSchedulerPreParserKeyword extends AbstractPreParserKeyword {
 
 	@Override
 	public List<IExecutorCommand>  execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
-		try {
-			ISchedulerManager manager = executor.getSchedulerManager();
-			manager.stopScheduling();
-			return null;
-		} catch (NoSchedulerLoadedException ex) {
-			throw new OdysseusScriptException("Could not stop scheduler", ex);
-		} 
+		List<IExecutorCommand> cmds = new ArrayList<IExecutorCommand>();
+		cmds.add(new StopSchedulerCommand(caller));
+		return cmds;
+
 	}
 
 }
