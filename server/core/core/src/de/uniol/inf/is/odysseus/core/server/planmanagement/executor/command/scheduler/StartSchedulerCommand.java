@@ -16,7 +16,7 @@ public class StartSchedulerCommand extends AbstractExecutorCommand {
 
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
-		executor.getSchedulerManager().startScheduling();
+		executor.startExecution(getCaller());
 	}
 
 }

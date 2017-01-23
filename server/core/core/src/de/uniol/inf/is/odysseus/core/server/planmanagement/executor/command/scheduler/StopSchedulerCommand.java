@@ -16,7 +16,7 @@ public class StopSchedulerCommand extends AbstractExecutorCommand {
 
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
-		executor.getSchedulerManager().stopScheduling();
+		executor.stopExecution(getCaller());
 	}
 
 }
