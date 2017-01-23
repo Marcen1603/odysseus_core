@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 /**
@@ -36,8 +35,6 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
-	private List<ISpatialListener> listeners = new ArrayList<ISpatialListener>();
-
 	public NaiveSTDataStructure(String name, int geometryPosition)
 			throws InstantiationException, IllegalAccessException {
 		this.name = name;
@@ -50,14 +47,12 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 	public void add(Object o) {
 		if (o instanceof Tuple<?>) {
 			this.sweepArea.insert((Tuple<ITimeInterval>) o);
-			notifyListeners();
 		}
 	}
 
 	@Override
 	public void cleanUp(PointInTime timestamp) {
 		this.sweepArea.extractElementsBefore(timestamp);
-		notifyListeners();
 	}
 
 	// TODO Different distance functions should be possible (e.g. city distance
@@ -162,25 +157,6 @@ public class NaiveSTDataStructure implements IMovingObjectDataStructure {
 
 		// Collect the points and return them
 		return result;
-	}
-
-	@Override
-	public void addListener(ISpatialListener listener) {
-		listeners.add(listener);
-	}
-
-	@Override
-	public void removeListener(ISpatialListener listener) {
-		listeners.remove(listener);
-	}
-
-	/**
-	 * Notifies all listeners that the data structure changed
-	 */
-	private void notifyListeners() {
-		for (ISpatialListener listener : listeners) {
-			listener.onMovingObjectDataStructureChange(this);
-		}
 	}
 
 	@Override

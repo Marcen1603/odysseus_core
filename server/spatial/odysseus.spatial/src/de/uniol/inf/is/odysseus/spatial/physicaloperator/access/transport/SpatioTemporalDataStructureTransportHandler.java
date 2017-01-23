@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -14,12 +12,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
-import de.uniol.inf.is.odysseus.spatial.listener.ISpatialListener;
 
-public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTransportHandler
-		implements ISpatialListener {
+public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTransportHandler {
 
 	public static final String NAME = "SpatioTemporal";
 	public static final String STRUCTURENAME = "dataStructureName";
@@ -60,7 +54,6 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 
 	@Override
 	public void processInOpen() throws IOException {
-		SpatialDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).addListener(this);
 	}
 
 	@Override
@@ -69,7 +62,6 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 
 	@Override
 	public void processInClose() throws IOException {
-		SpatialDataStructureProvider.getInstance().getDataStructure(this.dataStructureName).removeListener(this);
 	}
 
 	@Override
@@ -91,13 +83,6 @@ public class SpatioTemporalDataStructureTransportHandler extends AbstractPushTra
 		}
 
 		return false;
-	}
-
-	@Override
-	public void onMovingObjectDataStructureChange(IMovingObjectDataStructure dataStructure) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
-		tuple.setAttribute(0, dataStructure.getName());
-		fireProcess(tuple);
 	}
 
 	public String getDataStructureName() {

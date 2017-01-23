@@ -66,13 +66,10 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
  * @author Marco Grawunder
  */
 
-public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
-		ActionListener {
+public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements ActionListener {
 
-	final private static Logger LOG = LoggerFactory
-			.getLogger(DatabaseSinkPO.class);
-	final private static InfoService INFO = InfoServiceFactory
-			.getInfoService(DatabaseSinkPO.class);
+	final private static Logger LOG = LoggerFactory.getLogger(DatabaseSinkPO.class);
+	final private static InfoService INFO = InfoServiceFactory.getInfoService(DatabaseSinkPO.class);
 
 	private Connection jdbcConnection;
 	private String preparedStatementString;
@@ -100,9 +97,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	private boolean recovering;
 	private boolean useAttributeNames;
 
-	public DatabaseSinkPO(IDatabaseConnection connection, String tablename,
-			boolean drop, boolean truncate, long batchSize, int batchTimeout,
-			List<String> tableSchema, List<String> primaryKeys,
+	public DatabaseSinkPO(IDatabaseConnection connection, String tablename, boolean drop, boolean truncate,
+			long batchSize, int batchTimeout, List<String> tableSchema, List<String> primaryKeys,
 			String preparedStatement, boolean jdcbSupportsBatch) {
 		if (connection == null) {
 			throw new IllegalArgumentException("Connection must not be null");
@@ -112,9 +108,9 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		this.truncate = truncate;
 		this.drop = drop;
 		this.batchSize = batchSize;
-		if (batchSize == -1 || !jdcbSupportsBatch){
+		if (batchSize == -1 || !jdcbSupportsBatch) {
 			preparedStatementHandler = new PreparedStatementHandler(false);
-		}else{
+		} else {
 			preparedStatementHandler = new PreparedStatementHandler(true);
 		}
 		this.batchTimeout = batchTimeout;
@@ -127,8 +123,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		SDFSchema outputSchema = getOutputSchema();
 		dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size() + 1];
 		for (int i = 0; i < outputSchema.size(); i++) {
-			dtMappings[i + 1] = DatatypeRegistry.getDataHandler(outputSchema
-					.get(i).getDatatype());
+			dtMappings[i + 1] = DatatypeRegistry.getDataHandler(outputSchema.get(i).getDatatype());
 		}
 		if (batchTimeout > 0) {
 			timer = new Timer(batchTimeout, this);
@@ -136,8 +131,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		}
 	}
 
-	public void setRecoveryEnabled(boolean recoveryEnabled,
-			String recoveryStoreType, OptionMap recoveryStoreOptions) {
+	public void setRecoveryEnabled(boolean recoveryEnabled, String recoveryStoreType, OptionMap recoveryStoreOptions) {
 		this.recoveryEnabled = recoveryEnabled;
 		this.recoveryStoreType = recoveryStoreType;
 		this.recoveryStoreOptions = new OptionMap(recoveryStoreOptions);
@@ -158,12 +152,11 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		toStore.clear();
 		if (recoveryEnabled) {
 			try {
-				recoveryStore = (IStore<Long, Tuple<?>>) StoreRegistry
-						.createStore(recoveryStoreType, recoveryStoreOptions);
+				recoveryStore = (IStore<Long, Tuple<?>>) StoreRegistry.createStore(recoveryStoreType,
+						recoveryStoreOptions);
 				if (recoveryStore == null) {
-					throw new OpenFailedException("Cannot create "
-							+ recoveryStoreType + " with "
-							+ recoveryStoreOptions);
+					throw new OpenFailedException(
+							"Cannot create " + recoveryStoreType + " with " + recoveryStoreOptions);
 				}
 				if (recoveryStore.size() > 0) {
 					recovering = true;
@@ -197,16 +190,14 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 	private void initTable() throws SQLException {
 
 		if (!this.connection.tableExists(tablename)) {
-			this.connection.createTable(tablename, getOutputSchema(),
-					tableSchema, primaryKeys);
+			this.connection.createTable(tablename, getOutputSchema(), tableSchema, primaryKeys);
 		} else {
 			// Do not clear table, if operator is recovering from former
 			// state!
 			if (!recovering) {
 				if (this.drop) {
 					dropTable();
-					this.connection.createTable(tablename, getOutputSchema(),
-							tableSchema, primaryKeys);
+					this.connection.createTable(tablename, getOutputSchema(), tableSchema, primaryKeys);
 				} else {
 					if (this.truncate) {
 						truncateTable();
@@ -224,13 +215,14 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				if (jdbcConnection.isClosed()) {
 					return;
 				}
-				if ((this.preparedStatementString == null)
-						|| ("".equals(this.preparedStatementString))) {
-					this.preparedStatementHandler.setPreparedStatement(this.jdbcConnection
-							.prepareStatement(createInsertPreparedStatement()));
-				} else {
-					this.preparedStatementHandler.setPreparedStatement(this.jdbcConnection
-							.prepareStatement(this.preparedStatementString));
+				if (this.preparedStatementHandler.getPreparedStatement() == null) {
+					if ((this.preparedStatementString == null) || ("".equals(this.preparedStatementString))) {
+						this.preparedStatementHandler.setPreparedStatement(
+								this.jdbcConnection.prepareStatement(createInsertPreparedStatement()));
+					} else {
+						this.preparedStatementHandler.setPreparedStatement(
+								this.jdbcConnection.prepareStatement(this.preparedStatementString));
+					}
 				}
 				this.jdbcConnection.setAutoCommit(false);
 			}
@@ -268,8 +260,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		if (useAttributeNames) {
 			s.append("(");
 			for (int i = 0; i < count; i++) {
-				s.append(sep).append(
-						outputSchema.getAttribute(i).getAttributeName());
+				s.append(sep).append(outputSchema.getAttribute(i).getAttributeName());
 				sep = ",";
 			}
 			s.append(")");
@@ -305,8 +296,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					// 1.Removed elements that are already stored?
 
 					// 2. Add remaining elements to storeList
-					List<Entry<Long, Tuple<?>>> values = recoveryStore
-							.getOrderedByKey(batchSize - counter);
+					List<Entry<Long, Tuple<?>>> values = recoveryStore.getOrderedByKey(batchSize - counter);
 
 					for (int i = 0; i < values.size(); i++) {
 						addTupleToStoreBatch(values.get(i).getValue());
@@ -337,9 +327,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 		for (int i = 0; i < this.getOutputSchema().size(); i++) {
 			Object attributeValue = tuple.getAttribute(i);
 			if (attributeValue != null) {
-				// ToDo: 
-				dtMappings[i + 1].setValue(this.preparedStatementHandler.getPreparedStatement(), i + 1,
-						attributeValue);
+				// ToDo:
+				dtMappings[i + 1].setValue(this.preparedStatementHandler.getPreparedStatement(), i + 1, attributeValue);
 			} else {
 				this.preparedStatementHandler.setNull(i + 1, Types.NULL);
 			}
@@ -371,7 +360,6 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 					this.preparedStatementHandler.addBatch();
 				}
 
-				
 				boolean batchProcessingFailed = false;
 				try {
 					count = this.preparedStatementHandler.executeBatch();
@@ -392,7 +380,7 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 							this.preparedStatementHandler.executeUpdate();
 							count++;
 						} catch (SQLException e) {
-							INFO.warning("Insertion of "+toStore.get(i)+" failed",e);
+							INFO.warning("Insertion of " + toStore.get(i) + " failed", e);
 						}
 					}
 				}
@@ -405,7 +393,8 @@ public class DatabaseSinkPO extends AbstractSink<Tuple<?>> implements
 				if (recoveryEnabled) {
 					StringBuffer buffer = new StringBuffer();
 					recoveryStore.dumpTo(buffer);
-					// /System.err.println("COUNT "+count+" STORE "+recoveryStore.size()+" "+buffer);
+					// /System.err.println("COUNT "+count+" STORE
+					// "+recoveryStore.size()+" "+buffer);
 					if (count >= recoveryStore.size()) {
 						recoveryStore.clear();
 					} else {
