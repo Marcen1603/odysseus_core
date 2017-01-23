@@ -3,17 +3,16 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
-import org.slf4j.LoggerFactory;
+import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * Provides the status for complex load shedding.
  * 
- * The CPU load together witch the latency and queue lengths of each query is used in this status component.
+ * The CPU load together which the latency and queue lengths of each query is used in this status component.
  * 
  * @author Jannes
  *
@@ -24,6 +23,8 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	
 	private final QueueLengthsAdmissionMonitor QUEUE_LENGTHS_MONITOR = new QueueLengthsAdmissionMonitor();
 	private final LatencyAdmissionMonitor LATENCY_MONITOR = new LatencyAdmissionMonitor();
+	
+	private List<Integer> simpleActiveQueries = new ArrayList<>();
 	
 	@Override
 	public boolean addQuery(int queryID) {
@@ -39,32 +40,88 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 
 	@Override
 	public boolean removeQuery(int queryID) {
-		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		QUEUE_LENGTHS_MONITOR.removeQuery(query);
-		LATENCY_MONITOR.removeQuery(query);
+		if (super.removeQuery(queryID)) {
+			IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+			QUEUE_LENGTHS_MONITOR.removeQuery(query);
+			LATENCY_MONITOR.removeQuery(query);
+			
+			if (simpleActiveQueries.contains(queryID)) {
+				simpleActiveQueries.remove(Integer.valueOf(queryID));
+			}
+			return true;	
+		}
 		return false;
 	}
 
 	@Override
 	public void runLoadShedding() {
-		tryComplexLoadShedding();
+		if (!isSheddingPossible()) {
+			return;
+		}
+		boolean simple = false;
+		int queryID = queryFromComplexLoadShedding();
+		if (queryID < 0) {
+			queryID = queryFromSimpleLoadShedding();
+			simple = true;
+			if (queryID < 0) {
+				return;
+			}
+		}
+		int maxSheddingFactor = allowedQueries.get(queryID);
+		int sheddingFactor;
+		boolean first;
+		if (activeQueries.containsKey(queryID)) {
+			first = false;
+			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
+				maxSheddingQueries.add(queryID);
+			}
+			activeQueries.replace(queryID, sheddingFactor);
+		} else {
+			first = true;
+			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
+				maxSheddingQueries.add(queryID);
+			}
+			activeQueries.put(queryID, sheddingFactor);
+		}
+		if (simple) {
+			if (first) {
+				simpleActiveQueries.add(queryID);
+			}
+		} else {
+			if (simpleActiveQueries.contains(queryID)) {
+				simpleActiveQueries.remove(Integer.valueOf(queryID));
+			}
+		}
+		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
 	}
 
 	@Override
-	public void rollBackLoadShedding() {
-		int queryID = getRandomActiveQueryID();
-		if (queryID < 0) {
+	public void rollbackLoadShedding() {
+		if (activeQueries.isEmpty()) {
 			return;
+		}
+		int queryID;
+		if (!simpleActiveQueries.isEmpty()) {
+			queryID = getSimpleActiveQueryID();
+		} else {
+			queryID = getComplexActiveQueryID();
 		}
 		
 		if (activeQueries.containsKey(queryID)) {
 			if (maxSheddingQueries.contains(queryID)) {
-				maxSheddingQueries.remove(queryID);
+				maxSheddingQueries.remove(Integer.valueOf(queryID));
 			}
-			int sheddingFactor = activeQueries.get(queryID) - 10;
+			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor <= 0) {
 				sheddingFactor = 0;
 				activeQueries.remove(queryID);
+				if (simpleActiveQueries.contains(queryID)) {
+					simpleActiveQueries.remove(Integer.valueOf(queryID));
+				}
 			}
 			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
 		}
@@ -75,20 +132,20 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		QUEUE_LENGTHS_MONITOR.updateMeasurements();
 	}
 	
-	private boolean tryComplexLoadShedding() {
-		ArrayList<IPhysicalQuery> queuelengths = removeQuerysWithMaxSheddingFactor
+	private int queryFromComplexLoadShedding() {
+		List<IPhysicalQuery> queuelengths = removeQuerysWithMaxSheddingFactor
 				(QUEUE_LENGTHS_MONITOR.getQuerysWithIncreasingTendency());
 		
-		ArrayList<IPhysicalQuery> latencies = removeQuerysWithMaxSheddingFactor
+		List<IPhysicalQuery> latencies = removeQuerysWithMaxSheddingFactor
 				(LATENCY_MONITOR.getQuerysWithIncreasingTendency());
 		
-		HashMap<IPhysicalQuery, Integer> queryRanks = new HashMap<>();
+		Map<Integer, Integer> queryRanks = new HashMap<>();
 		
 		if(!queuelengths.isEmpty() && !latencies.isEmpty()) {
 			for(int q = 0; q < queuelengths.size(); q++) {
 				for(int l = 0; l < latencies.size(); l++) {
 					if(queuelengths.get(q) == latencies.get(l)) {
-						queryRanks.put(queuelengths.get(q), (q + l));
+						queryRanks.put(queuelengths.get(q).getID(), (q + l));
 						latencies.remove(l);
 						break;
 					}
@@ -98,64 +155,63 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 				}
 			}
 			if(!queryRanks.isEmpty()) {
-				IPhysicalQuery partialQuery = null;
+				int partialQuery = -1;
 				int rank = -1;
-				for (IPhysicalQuery query : queryRanks.keySet()) {
-					if(queryRanks.get(query) > rank) {
-						partialQuery = query;
-						rank = queryRanks.get(query);
+				for (int queryID : queryRanks.keySet()) {
+					if(queryRanks.get(queryID) > rank) {
+						partialQuery = queryID;
+						rank = queryRanks.get(queryID);
 					}
 				}
-				
-				int sheddingFactor = getAllowedFactor(partialQuery);
-				if(activeQueries.containsKey(partialQuery.getID())) {
-					activeQueries.replace(partialQuery.getID(), sheddingFactor);
-				} else {
-					activeQueries.put(partialQuery.getID(), sheddingFactor);
-				}
-				AdmissionStatusPlugIn.getServerExecutor().partialQuery(partialQuery.getID(), sheddingFactor, superUser);
-				return true;
+				return partialQuery;
 			}
 		}
-		return false;
+		return -1;
 	}
 	
-	private ArrayList<IPhysicalQuery> removeQuerysWithMaxSheddingFactor(ArrayList<IPhysicalQuery> list) {
+	private int queryFromSimpleLoadShedding() {
+		List<Integer> list = new ArrayList<Integer>(allowedQueries.keySet());
+		
+		for (int queryID : list) {
+			if (maxSheddingQueries.contains(queryID) || 
+					(activeQueries.containsKey(queryID) && !simpleActiveQueries.contains(queryID))) {
+				list.remove(Integer.valueOf(queryID));
+			}
+		}
+		
+		if (list.isEmpty()){
+			return -1;
+		}
+		Collections.shuffle(list);
+		return list.get(0);
+	}
+	
+	private List<IPhysicalQuery> removeQuerysWithMaxSheddingFactor(List<IPhysicalQuery> list) {
 		for(IPhysicalQuery query : list) {
-			if (maxSheddingQueries.contains(query)) {
+			if (maxSheddingQueries.contains(query.getID())) {
 				list.remove(query);
 			}
 		}
 		return list;
 	}
 	
-	private int getAllowedFactor(IPhysicalQuery query) {
-		int factor;
-		if(activeQueries.containsKey(query.getID())) {
-			factor = activeQueries.get(query.getID()) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-		} else {
-			factor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-		}
-		
-		ILogicalQuery logQuery = query.getLogicalQuery();
-		int maxSheddingFactor = (int) logQuery.getParameter("maxSheddingFactor");
-		if(factor >= maxSheddingFactor) {
-			factor = factor - (factor - maxSheddingFactor);
-			maxSheddingQueries.add(query.getID());
-		}
-		return factor;
+	/**
+	 * Returns a queryID, which query has load shedding activated and 
+	 * was activated through simple load shedding.
+	 * @return
+	 */
+	private int getSimpleActiveQueryID() {
+		Collections.shuffle(simpleActiveQueries);
+		return simpleActiveQueries.get(0);
 	}
 	
 	/**
-	 * Returns a queryID, which query has load shedding activated.
+	 * Returns a queryID, which query has load shedding activated and 
+	 * was activated through complex load shedding.
 	 * @return
 	 */
-	private int getRandomActiveQueryID() {
-		if (activeQueries.isEmpty()) {
-			return -1;
-		}
-		
-		ArrayList<Integer> list = new ArrayList<Integer>(activeQueries.keySet());
+	private int getComplexActiveQueryID() {
+		List<Integer> list = new ArrayList<>(activeQueries.keySet());
 		Collections.shuffle(list);
 		return list.get(0);
 	}

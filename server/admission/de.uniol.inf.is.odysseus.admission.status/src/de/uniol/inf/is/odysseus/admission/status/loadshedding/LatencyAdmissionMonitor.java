@@ -6,11 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.impl.AdmissionSink;
-import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -27,7 +27,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	static private final int LATENCY_MEASUREMENT_SIZE = 50;
 	static private final long TRESHOLD = 100;
 	
-	private HashMap<IPhysicalQuery, ArrayList<Long>> latencies = new HashMap<IPhysicalQuery, ArrayList<Long>>();
+	private Map<IPhysicalQuery, List<Long>> latencies = new HashMap<IPhysicalQuery, List<Long>>();
 	
 	@Override
 	public void addQuery(IPhysicalQuery query) {
@@ -68,7 +68,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 		if (latencies.isEmpty()) {
 			return;
 		}
-		ArrayList<Long> list = latencies.get(query);
+		List<Long> list = latencies.get(query);
 		list.add(latency);
 		while (list.size() > LATENCY_MEASUREMENT_SIZE) {
 			list.remove(0);
@@ -76,7 +76,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	@Override
-	public ArrayList<IPhysicalQuery> getQuerysWithIncreasingTendency() {
+	public List<IPhysicalQuery> getQuerysWithIncreasingTendency() {
 		
 		HashMap<IPhysicalQuery, Long> map = new HashMap<>();
 		for (IPhysicalQuery query : latencies.keySet()) {
@@ -94,7 +94,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	 * @param list
 	 * @return
 	 */
-	private long estimateTendency(ArrayList<Long> list) {
+	private long estimateTendency(List<Long> list) {
 		long tendency = 0;
 		for (int i = 0; i < (list.size() - 1); i++) {
 			tendency = tendency + (list.get(i + 1) - list.get(i));
@@ -108,12 +108,12 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	 * @param map
 	 * @return
 	 */
-	private ArrayList<IPhysicalQuery> getSortedListByValues(HashMap<IPhysicalQuery, Long> map) {
+	private List<IPhysicalQuery> getSortedListByValues(Map<IPhysicalQuery, Long> map) {
 	    List<IPhysicalQuery> queries = new ArrayList<>(map.keySet());
 	    List<Long> tendencies = new ArrayList<>(map.values());
 	    Collections.sort(tendencies);
 
-	    ArrayList<IPhysicalQuery> sortedList = new ArrayList<>();
+	    List<IPhysicalQuery> sortedList = new ArrayList<>();
 
 	    Iterator<Long> tendencyIt = tendencies.iterator();
 	    while (tendencyIt.hasNext()) {

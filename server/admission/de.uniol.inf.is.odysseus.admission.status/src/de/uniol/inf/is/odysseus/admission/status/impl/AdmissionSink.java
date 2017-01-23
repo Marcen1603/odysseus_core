@@ -1,11 +1,7 @@
 package de.uniol.inf.is.odysseus.admission.status.impl;
 
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.admission.status.loadshedding.LatencyAdmissionMonitor;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;

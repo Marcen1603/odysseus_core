@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
@@ -28,5 +28,5 @@ public interface IAdmissionMonitor {
 	 * Returns a list with all queries, which have an increasing tendency.
 	 * @return
 	 */
-	public ArrayList<IPhysicalQuery> getQuerysWithIncreasingTendency();
+	public List<IPhysicalQuery> getQuerysWithIncreasingTendency();
 }

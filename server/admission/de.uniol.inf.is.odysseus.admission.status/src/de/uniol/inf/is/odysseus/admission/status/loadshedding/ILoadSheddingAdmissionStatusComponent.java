@@ -39,7 +39,7 @@ public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusC
 	/**
 	 * Rolls the load shedding algorithm back.
 	 */
-	public void rollBackLoadShedding();
+	public void rollbackLoadShedding();
 
 	/**
 	 * Returns the name of this component.

@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
@@ -11,17 +13,20 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public abstract class AbstractLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 
-	protected HashMap<Integer, Integer> allowedQueries = new HashMap<Integer, Integer>();
+	/**
+	 * Contains all allowed queries with their maximal shedding factor.
+	 */
+	protected volatile Map<Integer, Integer> allowedQueries = new HashMap<Integer, Integer>();
 	
 	/**
-	 * Contains all queries with active load shedding.
+	 * Contains all queries with active load shedding and their actual shedding factor.
 	 */
-	protected HashMap<Integer, Integer> activeQueries = new HashMap<Integer, Integer>();
+	protected volatile Map<Integer, Integer> activeQueries = new HashMap<Integer, Integer>();
 	
 	/**
 	 * Contains all queries with maximal shedding-factor.
 	 */
-	protected ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
+	protected volatile List<Integer> maxSheddingQueries = new ArrayList<Integer>();
 	
 	public AbstractLoadSheddingAdmissionStatusComponent() {
 		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
@@ -52,7 +57,27 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 
 	@Override
 	public boolean removeQuery(int queryID) {
+		if (allowedQueries.containsKey(queryID)) {
+			if (maxSheddingQueries.contains(queryID)) {
+				maxSheddingQueries.remove(Integer.valueOf(queryID));
+			}
+			if (activeQueries.containsKey(queryID)) {
+				activeQueries.remove(queryID);
+			}
+			allowedQueries.remove(queryID);
+			return true;
+			
+		}
 		return false;
 	}
-
+	
+	protected boolean isSheddingPossible() {
+		if(allowedQueries.isEmpty()) {
+			return false;
+		}
+		if(allowedQueries.keySet().size() == maxSheddingQueries.size()) {
+			return false;
+		}
+		return true;
+	}
 }

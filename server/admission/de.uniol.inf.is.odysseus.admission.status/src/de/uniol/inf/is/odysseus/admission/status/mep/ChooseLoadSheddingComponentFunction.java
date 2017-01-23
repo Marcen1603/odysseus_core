@@ -19,7 +19,9 @@ public class ChooseLoadSheddingComponentFunction extends AbstractFunction<Comman
 		
 		return new Command() {
 			@Override public boolean run() {
-				LoadSheddingAdmissionStatusRegistry.setActiveComponent(component);
+				if (LoadSheddingAdmissionStatusRegistry.hasLoadSheddingAdmissionComponent(component)) {
+					LoadSheddingAdmissionStatusRegistry.setActiveComponent(component);
+				}
 		
 				return true;
 			}

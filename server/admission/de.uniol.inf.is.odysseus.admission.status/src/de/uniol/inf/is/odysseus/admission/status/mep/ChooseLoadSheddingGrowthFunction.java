@@ -5,22 +5,24 @@ import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class RollbackLoadSheddingAdmissionFunction  extends AbstractFunction<Command> {
+public class ChooseLoadSheddingGrowthFunction extends AbstractFunction<Command> {
 
-	private static final long serialVersionUID = -5074148701507211739L;
+	private static final long serialVersionUID = 2699448496486141245L;
 
-	public RollbackLoadSheddingAdmissionFunction() {
-		super("rollbackLoadShedding", 0, null, SDFDatatype.COMMAND);
+	public ChooseLoadSheddingGrowthFunction() {
+		super("chooseSheddingGrowth", 1, null, SDFDatatype.COMMAND);
 	}
 
 	@Override 
 	public Command getValue() {
+		final int growth = (int) getInputValue(0);
+		
 		return new Command() {
 			@Override public boolean run() {
-				LoadSheddingAdmissionStatusRegistry.getActiveComponent().rollbackLoadShedding();
-		
+				LoadSheddingAdmissionStatusRegistry.setSheddingGrowth(growth);
 				return true;
 			}
 		};
 	}
+
 }

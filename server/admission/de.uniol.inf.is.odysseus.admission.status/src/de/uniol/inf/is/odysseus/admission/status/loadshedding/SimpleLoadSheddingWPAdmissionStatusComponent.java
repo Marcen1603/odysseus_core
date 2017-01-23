@@ -1,11 +1,13 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -16,172 +18,201 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Jannes
  *
  */
-public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
+public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 
 	private final String NAME = "simpleWP";
 	
-	private int minPriority = -1;
-	private int maxPriority = -1;
-	
-	/**
-	 * Contains all queries with active load shedding.
-	 */
-	private HashMap<Integer, Integer> activeQueries = new HashMap<Integer, Integer>();
-	
-	/**
-	 * Contains all queries with maximal shedding-factor.
-	 */
-	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
+	private volatile int actPriority = -1;
+
+	private volatile Map<Integer, List<Integer>> priorityMap = new TreeMap<Integer, List<Integer>>();
 	
 	@Override
 	public boolean addQuery(int queryID) {
-		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		if(minPriority < 0) {
-			minPriority = query.getPriority();
-			maxPriority = query.getPriority();
-		} else {
-			if (query.getPriority() < minPriority) {
-				minPriority = query.getPriority();
-			} else if(maxPriority < query.getPriority()) {
-				maxPriority = query.getPriority();
+		if (super.addQuery(queryID)) {
+			IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+			if(!priorityMap.containsKey(query.getPriority())) {
+				List<Integer> list = new ArrayList<>();
+				list.add(queryID);
+				priorityMap.put(query.getPriority(), list);
+			} else {
+				List<Integer> list = priorityMap.get(query.getPriority());
+				list.add(queryID);
+				priorityMap.replace(query.getPriority(), list);
 			}
+			if (actPriority < query.getPriority()) {
+				actPriority = query.getPriority();
+			}
+			return true;
 		}
 		return false;
 	}
 
 	@Override
 	public boolean removeQuery(int queryID) {
-		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
-		if(!queries.isEmpty()) {
-			if (query.getPriority() <= minPriority) {
-				minPriority = 10;
-				for (IPhysicalQuery q : queries) {
-					if (q.getPriority() < minPriority) {
-						minPriority = q.getPriority();
-					}
-				}
-			} else if (query.getPriority() >= maxPriority) {
-				maxPriority = 0;
-				for (IPhysicalQuery q : queries) {
-					if (q.getPriority() > maxPriority) {
-						maxPriority = q.getPriority();
+		if (super.removeQuery(queryID)) {
+			IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+			if (priorityMap.containsKey(query.getPriority())) {
+				List<Integer> list = priorityMap.get(query.getPriority());
+				if (list.contains(queryID)) {
+					list.remove(Integer.valueOf(queryID));
+					if (list.isEmpty()) {
+						priorityMap.remove(query.getPriority());
 					}
 				}
 			}
-		} else {
-			minPriority = -1;
-			maxPriority = -1;
+			int greatestPrio = getGreatestPriority();
+			if (actPriority > greatestPrio) {
+				actPriority = greatestPrio;
+			}
+			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void measureStatus() {
+		//Nothing to measure
 	}
 
 	@Override
 	public void runLoadShedding() {
-		int queryID = getIncreasingRandomQueryID(minPriority);
+		if(!isSheddingPossible()) {
+			return;
+		}
+		int queryID = getIncreasingPriorityRandomQueryID();
 		if (queryID < 0) {
 			return;
 		}
 		
-		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		ILogicalQuery logQuery = physQuery.getLogicalQuery();
-		int maxSheddingFactor = (int) logQuery.getParameter("maxSheddingFactor");
+		int maxSheddingFactor = allowedQueries.get(queryID);
 		
 		int sheddingFactor;
 		if (activeQueries.containsKey(queryID)) {
 			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
 				maxSheddingQueries.add(queryID);
 			}
 			activeQueries.replace(queryID, sheddingFactor);
 		} else {
 			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
+				maxSheddingQueries.add(queryID);
+			}
 			activeQueries.put(queryID, sheddingFactor);
 		}
 		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
 	}
 
 	@Override
-	public void rollBackLoadShedding() {
-		int queryID = getDecreasingRandomQueryID(maxPriority);
+	public void rollbackLoadShedding() {
+		int queryID = getDecreasingPriorityRandomQueryID();
 		if (queryID < 0) {
 			return;
 		}
 		
 		if (activeQueries.containsKey(queryID)) {
 			if (maxSheddingQueries.contains(queryID)) {
-				maxSheddingQueries.remove(queryID);
+				maxSheddingQueries.remove(Integer.valueOf(queryID));
 			}
 			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor <= 0) {
+				sheddingFactor = 0;
 				activeQueries.remove(queryID);
 			}
 			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
 		}
 	}
-
-	@Override
-	public void measureStatus() {
-	}
 	
 	/**
-	 * Recursive method to find the queryID with the minimal priority.
-	 * @param actPriority
+	 * Recursive method to find a query with minimal priority, which has not its maximal shedding factor. 
 	 * @return
 	 */
-	private int getIncreasingRandomQueryID(int actPriority) {
+	private int getIncreasingPriorityRandomQueryID() {
 		if (actPriority < 0) {
 			return -1;
 		}
-		
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
-		if (queries.isEmpty()) {
-			return -1;
-		}
-		
-		for(IPhysicalQuery query : queries) {
-			if (query.getPriority() == actPriority &&
-					!maxSheddingQueries.contains(query.getID())) {
-				return query.getID();
+		List<Integer> list = new ArrayList<>(priorityMap.get(actPriority));
+		for (int queryID : list) {
+			if (maxSheddingQueries.contains(queryID)) {
+				list.remove(Integer.valueOf(queryID));
 			}
 		}
-		
-		if(actPriority >= maxPriority) {
-			return -1;
+		if (!list.isEmpty()) {
+			Collections.shuffle(list);
+			return list.get(0);
+		} else {
+			int nextPrio = getNextPriority();
+			if (nextPrio < 0) {
+				return -1;
+			}
+			actPriority = nextPrio;
+			return getIncreasingPriorityRandomQueryID();
 		}
-		
-		actPriority++;
-		return getIncreasingRandomQueryID(actPriority);
 	}
 	
 	/**
-	 * Recursive method to find the queryID with the maximal priority.
+	 * Recursive method to find the active query with the maximal priority.
 	 * @param actPriority
 	 * @return
 	 */
-	private int getDecreasingRandomQueryID(int actPriority) {
-		if (actPriority < 0) {
+	private int getDecreasingPriorityRandomQueryID() {
+		if (actPriority < 0 || activeQueries.isEmpty()) {
 			return -1;
 		}
 		
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
-		if (queries.isEmpty()) {
-			return -1;
-		}
-		
-		for(IPhysicalQuery query : queries) {
-			if (query.getPriority() == actPriority &&
-					activeQueries.containsKey(query.getID())) {
-				return query.getID();
+		List<Integer> list = new ArrayList<>(priorityMap.get(actPriority));
+		for (int queryID : list) {
+			if (!activeQueries.containsKey(queryID)) {
+				list.remove(Integer.valueOf(queryID));
 			}
 		}
-		
-		if(actPriority <= minPriority) {
-			return -1;
+		if (!list.isEmpty()) {
+			Collections.shuffle(list);
+			return list.get(0);
+		} else {
+			int previousPrio = getPreviousPriority();
+			if (previousPrio < 0) {
+				return -1;
+			}
+			actPriority = previousPrio;
+			return getDecreasingPriorityRandomQueryID();
 		}
-		
-		actPriority--;
-		return getDecreasingRandomQueryID(actPriority);
+	}
+	
+	private int getNextPriority() {
+		int priority = -1;
+		Iterator<Integer> iterator = priorityMap.keySet().iterator();
+		while (iterator.hasNext()) {
+			int next = iterator.next();
+			if(next == actPriority) {
+				if (iterator.hasNext()) {
+					priority = iterator.next();
+				} 
+				break;
+			}
+		}
+		return priority;
+	}
+	
+	private int getPreviousPriority() {
+		int priority = -1;
+		List<Integer> list = new ArrayList<>(priorityMap.keySet());
+		Collections.reverse((List<?>) list);
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i) == actPriority) {
+				if ((i + 1) < list.size()) {
+					priority = list.get(i + 1);
+				}
+				break;
+			}
+		}
+		return priority;
+	}
+	
+	private int getGreatestPriority() {
+		return Collections.max(priorityMap.keySet());
 	}
 
 	@Override

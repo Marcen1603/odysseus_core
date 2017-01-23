@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -22,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
 	static private final int QUEUE_MEASUREMENT_SIZE = 10;
-	static private final int TRESHOLD = 2;
 	
 	private HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>> queuelengths
 		= new HashMap<IPhysicalQuery, HashMap<ControllablePhysicalSubscription<ISink<?>>, ArrayList<Integer>>>();
@@ -61,16 +61,17 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	@Override
-	public ArrayList<IPhysicalQuery> getQuerysWithIncreasingTendency() {
-		HashMap<IPhysicalQuery, Integer> map = new HashMap<>();
+	public List<IPhysicalQuery> getQuerysWithIncreasingTendency() {
+		Map<IPhysicalQuery, Integer> map = new HashMap<>();
 		for (IPhysicalQuery query : queuelengths.keySet()) {
 			for (ControllablePhysicalSubscription<ISink<?>> subscription : queuelengths.get(query).keySet()) {
 				
 				int tendency = estimateTendency(queuelengths.get(query).get(subscription));
-				if (tendency > TRESHOLD) {
-					if (!map.containsKey(query)) {
-						map.put(query, tendency);
-						break;
+				if (!map.containsKey(query)) {
+					map.put(query, tendency);
+				} else {
+					if (map.get(query) < tendency) {
+						map.replace(query, tendency);
 					}
 				}
 			}
@@ -131,22 +132,22 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	 * @param passedMap
 	 * @return
 	 */
-	private ArrayList<IPhysicalQuery> getSortedListByValues(HashMap<IPhysicalQuery, Integer> passedMap) {
+	private List<IPhysicalQuery> getSortedListByValues(Map<IPhysicalQuery, Integer> passedMap) {
 	    List<IPhysicalQuery> queries = new ArrayList<>(passedMap.keySet());
 	    List<Integer> tendencies = new ArrayList<>(passedMap.values());
 	    Collections.sort(tendencies);
 
-	    ArrayList<IPhysicalQuery> sortedList = new ArrayList<>();
+	    List<IPhysicalQuery> sortedList = new ArrayList<>();
 
 	    Iterator<Integer> tendencyIt = tendencies.iterator();
 	    while (tendencyIt.hasNext()) {
-	        long tendency = tendencyIt.next();
+	        int tendency = tendencyIt.next();
 	        Iterator<IPhysicalQuery> queriesIt = queries.iterator();
 
 	        while (queriesIt.hasNext()) {
 	        	IPhysicalQuery query = queriesIt.next();
-	            long comp1 = passedMap.get(query);
-	            long comp2 = tendency;
+	            int comp1 = passedMap.get(query);
+	            int comp2 = tendency;
 
 	            if (comp1 == comp2) {
 	                queriesIt.remove();

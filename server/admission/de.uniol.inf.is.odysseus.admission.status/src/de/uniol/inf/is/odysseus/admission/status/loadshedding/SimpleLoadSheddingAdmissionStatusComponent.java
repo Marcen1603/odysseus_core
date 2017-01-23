@@ -1,12 +1,10 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * Provides the status for simple load shedding.
@@ -21,32 +19,24 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	private final String NAME = "simple";
 	
 	@Override
-	public boolean removeQuery(int queryID) {
-		if (allowedQueries.containsKey(queryID)) {
-			
-		}
-		allowedQueries.remove(queryID);
-		return true;
-	}
-	
-	@Override
 	public void measureStatus() {
+		//Nothing to measure
 	}
 	
 	@Override
 	public void runLoadShedding() {
-		int queryID = getRandomPossibleQueryID();
+		if(!isSheddingPossible()) {
+			return;
+		}
 		
+		int queryID = getRandomPossibleQueryID();
 		//It was not possible to find a queryID for load shedding.
 		if (queryID < 0) {
 			return;
 		}
 		
-		int sheddingFactor = 0;
-		
-		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		ILogicalQuery logQuery = physQuery.getLogicalQuery();
-		int maxSheddingFactor = (int) logQuery.getParameter("MAXSHEDDINGFACTOR");
+		int sheddingFactor;
+		int maxSheddingFactor = allowedQueries.get(queryID);
 		
 		//The load shedding of this query is already active 
 		if (activeQueries.containsKey(queryID)) {
@@ -54,8 +44,8 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 			
 			//The maximal shedding factor is reached.
 			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
 				maxSheddingQueries.add(queryID);
-				sheddingFactor = sheddingFactor - (sheddingFactor - maxSheddingFactor);
 			}
 			
 			activeQueries.replace(queryID, sheddingFactor);
@@ -64,8 +54,8 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 			
 			//The maximal shedding factor is reached.
 			if (sheddingFactor >= maxSheddingFactor) {
+				sheddingFactor = maxSheddingFactor;
 				maxSheddingQueries.add(queryID);
-				sheddingFactor = sheddingFactor - (sheddingFactor - maxSheddingFactor);
 			}
 			
 			activeQueries.put(queryID, sheddingFactor);
@@ -75,7 +65,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	}
 	
 	@Override
-	public void rollBackLoadShedding() {
+	public void rollbackLoadShedding() {
 		int queryID = getRandomActiveQueryID();
 		if (queryID < 0) {
 			return;
@@ -83,7 +73,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 		
 		if (activeQueries.containsKey(queryID)) {
 			if (maxSheddingQueries.contains(queryID)) {
-				maxSheddingQueries.remove(queryID);
+				maxSheddingQueries.remove(Integer.valueOf(queryID));
 			}
 			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor <= 0) {
@@ -101,18 +91,17 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	 * @return
 	 */
 	private int getRandomPossibleQueryID() {
-		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
-		if (queries.isEmpty()) {
-			return -1;
-		}
 		
-		ArrayList<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<Integer>(allowedQueries.keySet());
 		
 		// remove queries which already have their maximal shedding-factor
-		for (IPhysicalQuery query : queries) {
-			if (!maxSheddingQueries.contains(query.getID())) {
-				list.add(query.getID());
+		for (int queryID : list) {
+			if (maxSheddingQueries.contains(queryID)) {
+				list.remove(Integer.valueOf(queryID));
 			}
+		}
+		if (list.isEmpty()){
+			return -1;
 		}
 		Collections.shuffle(list);
 		return list.get(0);
@@ -126,7 +115,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 		if (activeQueries.isEmpty()) {
 			return -1;
 		}
-		ArrayList<Integer> list = new ArrayList<Integer>(activeQueries.keySet());
+		List<Integer> list = new ArrayList<>(activeQueries.keySet());
 		Collections.shuffle(list);
 		return list.get(0);
 	}
