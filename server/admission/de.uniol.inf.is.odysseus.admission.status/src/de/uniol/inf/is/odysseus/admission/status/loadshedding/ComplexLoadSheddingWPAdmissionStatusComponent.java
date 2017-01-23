@@ -8,24 +8,12 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
  * @author Jannes
  *
  */
-public class ComplexLoadSheddingWPAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
+public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 
 	private final String NAME = "complexWP";
 	
 	public ComplexLoadSheddingWPAdmissionStatusComponent() {
 		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
-	}
-	
-	@Override
-	public void addQuery(int queryID) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeQuery(int queryID) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.admission.status.mep;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,23 +24,23 @@ public class LoadSheddingPreParserKeyword extends AbstractPreParserKeyword {
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
-		variables.put("LOADSHEDDINGENABLED", true);
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
-		LoggerFactory.getLogger(this.getClass()).info("Transform AdmissionTransformationHandler executed");
+		Map<String, String> qParams = new HashMap<String, String>();
+		qParams.put("LOADSHEDDINGENABLED", "true");
 		
-		variables.put("LOADSHEDDINGENABLED", true);
-		
+		variables.put("QPARAM", qParams);
+		/*
 		String name = "AdmissionTransformationHandler";
 		Pair<String, String> pair = new Pair<>("", "");
 		List<Pair<String, String>> list = new ArrayList<Pair<String, String>>();
 		list.add(pair);
 		
 		List<IQueryBuildSetting<?>> addSettings = getAdditionalTransformationSettings(variables);
-		// Determine if ParameterTransformationConfiguration is already set
+		// Determine if PreTransformationHandlerParameter is already set
 		for (IQueryBuildSetting<?> s : addSettings) {
 			if (s instanceof PreTransformationHandlerParameter) {
 				((PreTransformationHandlerParameter) s)
@@ -50,7 +51,7 @@ public class LoadSheddingPreParserKeyword extends AbstractPreParserKeyword {
 		
 		PreTransformationHandlerParameter p = new PreTransformationHandlerParameter();
 		addSettings.add(p);
-		p.add(name, list);
+		p.add(name, list);*/
 		return null;
 	}
 

@@ -33,12 +33,8 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 	 */
 	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
 	
-	public SimpleLoadSheddingWPAdmissionStatusComponent() {
-		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
-	}
-	
 	@Override
-	public void addQuery(int queryID) {
+	public boolean addQuery(int queryID) {
 		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		if(minPriority < 0) {
 			minPriority = query.getPriority();
@@ -50,10 +46,11 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 				maxPriority = query.getPriority();
 			}
 		}
+		return false;
 	}
 
 	@Override
-	public void removeQuery(int queryID) {
+	public boolean removeQuery(int queryID) {
 		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		Collection<IPhysicalQuery> queries = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser);
 		if(!queries.isEmpty()) {
@@ -76,6 +73,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent implements ILoadSheddi
 			minPriority = -1;
 			maxPriority = -1;
 		}
+		return false;
 	}
 
 	@Override

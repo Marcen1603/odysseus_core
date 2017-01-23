@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,7 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.impl.AdmissionSink;
 import de.uniol.inf.is.odysseus.core.ISubscribable;
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
@@ -26,22 +29,29 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	
 	private HashMap<IPhysicalQuery, ArrayList<Long>> latencies = new HashMap<IPhysicalQuery, ArrayList<Long>>();
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void addQuery(IPhysicalQuery query) {
 		LoggerFactory.getLogger(this.getClass()).info("latency measurement add " + query.getID());
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
-			AdmissionSink<?> admissionSink = new AdmissionSink<>();
+			AdmissionSink<?> admissionSink = new AdmissionSink();
 			admissionSink.setLatencyAdmissionMonitor(this);
-			LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
+			ISource source = null;
 			for(IPhysicalOperator operator : query.getRoots()) {
-				if(operator.isSink()) {
-					ISubscribable sink = (ISubscribable) operator;
-					sink.connectSink(admissionSink, 0, 0, operator.getOutputSchema());
-					LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
+				if(operator.isSource()) {
+					source = (ISource) operator;
 					break;
+				} else if (operator.isSink()) {
+					source = getPreviousSource(operator, query); 
+					if(source != null) {
+						break;
+					}
 				}
+			}
+			if (source != null) {
+				LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
+				//subscribe und open
+				source.connectSink(admissionSink, 0, 0, source.getOutputSchema());
 			}
 		}
 	}
@@ -123,5 +133,25 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	        }
 	    }
 	    return sortedList;
+	}
+	
+	private ISource getPreviousSource(IPhysicalOperator operator, IPhysicalQuery query) {
+		for (IPhysicalOperator previous : query.getAllOperators()) {
+			if (previous.isSource()) {
+				// follow outgoing paths 
+				ISource<?> source = (ISource<?>) previous;
+				Collection<?> subscriptions = source.getSubscriptions();
+				
+				for (Object obj : subscriptions) {
+					@SuppressWarnings("unchecked")
+					ISubscription subscription = (ISubscription) obj;
+					IPhysicalOperator targetOperator = (IPhysicalOperator) subscription.getTarget();
+					if(targetOperator.equals(operator)) {
+						return source;
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

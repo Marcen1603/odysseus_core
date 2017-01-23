@@ -18,42 +18,31 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Jannes
  *
  */
-public class ComplexLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
+public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 
 	private final String NAME = "complex";
 	
 	private final QueueLengthsAdmissionMonitor QUEUE_LENGTHS_MONITOR = new QueueLengthsAdmissionMonitor();
 	private final LatencyAdmissionMonitor LATENCY_MONITOR = new LatencyAdmissionMonitor();
 	
-	/**
-	 * Contains all queries with active load shedding.
-	 */
-	private HashMap<Integer, Integer> activeQueries = new HashMap<Integer, Integer>();
-	
-	/**
-	 * Contains all queries with maximal shedding-factor.
-	 */
-	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
-	
-	public ComplexLoadSheddingAdmissionStatusComponent() {
-		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
-	}
-	
 	@Override
-	public void addQuery(int queryID) {
-		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		for(String name : AdmissionStatusPlugIn.getServerExecutor().getPreTransformationHandlerNames()) {
-			LoggerFactory.getLogger(this.getClass()).info(name);
+	public boolean addQuery(int queryID) {
+		if(super.addQuery(queryID)) {
+			IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
+			QUEUE_LENGTHS_MONITOR.addQuery(query);
+			LATENCY_MONITOR.addQuery(query);
+			return true;
 		}
-		QUEUE_LENGTHS_MONITOR.addQuery(query);
-		LATENCY_MONITOR.addQuery(query);
+		return false;
+		
 	}
 
 	@Override
-	public void removeQuery(int queryID) {
+	public boolean removeQuery(int queryID) {
 		IPhysicalQuery query = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		QUEUE_LENGTHS_MONITOR.removeQuery(query);
 		LATENCY_MONITOR.removeQuery(query);
+		return false;
 	}
 
 	@Override

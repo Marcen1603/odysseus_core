@@ -19,22 +19,19 @@ public class AdmissionTransformationHandler implements IPreTransformationHandler
 	private String name = "AdmissionTransformationHandler";
 	
 	public AdmissionTransformationHandler() {
-		LoggerFactory.getLogger(this.getClass()).info("intialize admissiontransformationhandler");
 	}
 	
 	@Override
 	public String getName() {
-		LoggerFactory.getLogger(this.getClass()).info("getname admissiontransformation");
 		return this.name;
 	}
 
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query,
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
-		LoggerFactory.getLogger(this.getClass()).info("pretransform admissiontransformation");
-		ILogicalOperator operator = query.getLogicalPlan();
+		/*ILogicalOperator operator = query.getLogicalPlan();
 		CalcLatencyAO latency = new CalcLatencyAO();
-		latency.subscribeTo(operator, operator.getOutputSchema());
+		latency.subscribeTo(operator, operator.getOutputSchema());*/
 	}
 
 }

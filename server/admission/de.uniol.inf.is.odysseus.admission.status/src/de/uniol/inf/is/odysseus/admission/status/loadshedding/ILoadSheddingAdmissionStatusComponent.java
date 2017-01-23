@@ -18,13 +18,13 @@ public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusC
 	 * Adds the query to the StatusComponent.
 	 * @param query
 	 */
-	public void addQuery(int queryID);
+	public boolean addQuery(int queryID);
 	
 	/**
 	 * Removes the Query from the StatusComponent.
 	 * @param query
 	 */
-	public void removeQuery(int queryID);
+	public boolean removeQuery(int queryID);
 	
 	/**
 	 * Measure the status of the StatusComponent.

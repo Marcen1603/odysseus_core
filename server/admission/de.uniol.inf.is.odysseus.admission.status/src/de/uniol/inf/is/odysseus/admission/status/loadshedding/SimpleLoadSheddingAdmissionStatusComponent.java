@@ -3,9 +3,6 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -19,49 +16,17 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  * @author Jannes
  *
  */
-public class SimpleLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
+public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 	
 	private final String NAME = "simple";
 	
-	private HashMap<Integer, Integer> allowedQueries = new HashMap<Integer, Integer>();
-	
-	/**
-	 * Contains all queries with active load shedding.
-	 */
-	private HashMap<Integer, Integer> activeQueries = new HashMap<Integer, Integer>();
-	
-	/**
-	 * Contains all queries with maximal shedding-factor.
-	 */
-	private ArrayList<Integer> maxSheddingQueries = new ArrayList<Integer>();
-	
-	public SimpleLoadSheddingAdmissionStatusComponent() {
-		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
-	}
-	
 	@Override
-	public void addQuery(int queryID) {
-		LoggerFactory.getLogger(this.getClass()).info("addquerysimpleloadshedding : " + queryID);
-		IPhysicalQuery physQuery = AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
-		ILogicalQuery logQuery = physQuery.getLogicalQuery();
-		Object o = logQuery.getParameter("LOADSHEDDINGENABLED");
-		if (o != null) {
-			LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED != null : " + queryID);
-			boolean enabled = (boolean) o;
-			if (enabled) {
-				LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED : " + queryID);
-				int maxSheddingFactor = (int) logQuery.getParameter("MAXSHEDDINGFACTOR");
-				LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED : " + queryID);
-			}
-		} else {
-			LoggerFactory.getLogger(this.getClass()).info("LOADSHEDDINGENABLED == null : " + queryID);
+	public boolean removeQuery(int queryID) {
+		if (allowedQueries.containsKey(queryID)) {
+			
 		}
-		
-	}
-	
-	@Override
-	public void removeQuery(int queryID) {
-		LoggerFactory.getLogger(this.getClass()).info("removequerysimpleloadshedding");
+		allowedQueries.remove(queryID);
+		return true;
 	}
 	
 	@Override
