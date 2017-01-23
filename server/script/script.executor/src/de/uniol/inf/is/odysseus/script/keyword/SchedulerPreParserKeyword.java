@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.scheduler.SetSchedulerCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
@@ -39,10 +40,10 @@ public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
 			throw new OdysseusScriptException("Illegal Scheduler Definition "+parameter);
 		}
 		if (!(executor.getRegisteredSchedulers(caller).contains(params.get(0)))){
-			throw new OdysseusScriptException("Scheduler "+params.get(0)+" not found");			
+			throw new OdysseusScriptException("Scheduler "+params.get(0)+" not found");
 		}
 		if (!(executor.getRegisteredSchedulingStrategies(caller).contains(params.get(1)))){
-			throw new OdysseusScriptException("Schedulingstrategy "+params.get(1)+" not found");			
+			throw new OdysseusScriptException("Schedulingstrategy "+params.get(1)+" not found");
 		}
 	}
 
@@ -51,8 +52,10 @@ public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
 			throws OdysseusScriptException {
 		parameter.split("\"*\"");
 		List<String> params = splitParams(parameter);
-		executor.setScheduler(params.get(0), params.get(1), caller);
-		return null;
+		List<IExecutorCommand>  ret = new ArrayList<>();
+		SetSchedulerCommand cmd = new SetSchedulerCommand(params.get(0), params.get(1), caller);
+		ret.add(cmd);
+		return ret;
 	}
 
 	private static List<String> splitParams(String input){
@@ -65,7 +68,7 @@ public class SchedulerPreParserKeyword extends AbstractPreParserKeyword {
 		}
 		return ret;
 	}
-	
+
 	public static boolean isEmpty(String str) {
 		if (str != null && str.trim().length() > 0) {
 			return false;
