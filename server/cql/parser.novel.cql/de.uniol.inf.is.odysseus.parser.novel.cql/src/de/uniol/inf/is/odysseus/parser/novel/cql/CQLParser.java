@@ -230,8 +230,7 @@ public class CQLParser implements IQueryParser
 	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
-		List<EObject> lll = EcoreUtil2.eAllContentsAsList(model.eResource());
- 		List<EObject> stuff = lll.stream().filter(e -> {
+ 		List<EObject> stuff = EcoreUtil2.eAllContentsAsList(model.eResource()).stream().filter(e -> {
  			if(e instanceof StatementImpl)
  				return true;
  			if(e instanceof CommandImpl)
@@ -279,6 +278,7 @@ public class CQLParser implements IQueryParser
 				generator.doGenerate(obj.eResource(), fsa, null);
 				for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
 				{
+					System.out.println(e.getValue().toString());
 					l.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), true));
 				}
 				list.addAll(l);

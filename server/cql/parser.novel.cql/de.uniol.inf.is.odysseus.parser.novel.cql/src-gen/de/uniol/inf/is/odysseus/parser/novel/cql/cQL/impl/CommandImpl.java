@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword1 <em>Keyword1</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword2 <em>Keyword2</em>}</li>
@@ -26,7 +27,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword3 <em>Keyword3</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getValue2 <em>Value2</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

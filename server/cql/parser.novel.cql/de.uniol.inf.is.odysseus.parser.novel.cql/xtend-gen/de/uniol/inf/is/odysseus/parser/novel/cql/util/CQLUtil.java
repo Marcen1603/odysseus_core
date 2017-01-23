@@ -3,10 +3,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.util;
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
 @SuppressWarnings("all")
 public class CQLUtil {
@@ -44,29 +42,9 @@ public class CQLUtil {
   }
   
   public static List<?> merge(final Collection<?> l1, final Collection<?> l2) {
-    ArrayList<Object> l = CollectionLiterals.<Object>newArrayList();
-    int _size = l1.size();
-    int _size_1 = l2.size();
-    boolean _greaterThan = (_size > _size_1);
-    if (_greaterThan) {
-      for (final Object o : l2) {
-        for (final Object p : l1) {
-          boolean _equality = CQLUtil.equality(o, p);
-          if (_equality) {
-            l.add(o);
-          }
-        }
-      }
-    } else {
-      for (final Object o_1 : l1) {
-        for (final Object p_1 : l2) {
-          boolean _equality_1 = CQLUtil.equality(o_1, p_1);
-          if (_equality_1) {
-            l.add(o_1);
-          }
-        }
-      }
-    }
-    return l;
+    throw new Error("Unresolved compilation problems:"
+      + "\nType mismatch: type Object is not applicable at this location"
+      + "\nType mismatch: type Object is not applicable at this location"
+      + "\nType mismatch: cannot convert from Collection<?> to List<?>");
   }
 }

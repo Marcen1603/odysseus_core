@@ -23,11 +23,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl#getValue <em>Value</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeWithNestedStatementImpl#getNested <em>Nested</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

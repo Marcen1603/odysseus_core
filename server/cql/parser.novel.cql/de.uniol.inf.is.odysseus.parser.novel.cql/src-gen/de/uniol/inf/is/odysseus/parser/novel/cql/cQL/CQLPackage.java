@@ -251,22 +251,22 @@ public interface CQLPackage extends EPackage
   int SOURCE__TUPLE = 3;
 
   /**
-   * The feature id for the '<em><b>Nested</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__NESTED = 4;
-
-  /**
    * The feature id for the '<em><b>Alias</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SOURCE__ALIAS = 5;
+  int SOURCE__ALIAS = 4;
+
+  /**
+   * The feature id for the '<em><b>Nested</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SOURCE__NESTED = 5;
 
   /**
    * The number of structural features of the '<em>Source</em>' class.
@@ -1711,17 +1711,6 @@ public interface CQLPackage extends EPackage
   EReference getSource_Tuple();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Nested</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested()
-   * @see #getSource()
-   * @generated
-   */
-  EReference getSource_Nested();
-
-  /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getAlias <em>Alias</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1731,6 +1720,17 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EReference getSource_Alias();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Nested</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested()
+   * @see #getSource()
+   * @generated
+   */
+  EReference getSource_Nested();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute <em>Attribute</em>}'.
@@ -2998,20 +2998,20 @@ public interface CQLPackage extends EPackage
     EReference SOURCE__TUPLE = eINSTANCE.getSource_Tuple();
 
     /**
-     * The meta object literal for the '<em><b>Nested</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SOURCE__NESTED = eINSTANCE.getSource_Nested();
-
-    /**
      * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference SOURCE__ALIAS = eINSTANCE.getSource_Alias();
+
+    /**
+     * The meta object literal for the '<em><b>Nested</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SOURCE__NESTED = eINSTANCE.getSource_Nested();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl <em>Attribute</em>}' class.

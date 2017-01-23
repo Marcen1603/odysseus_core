@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getWrapper <em>Wrapper</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getProtocol <em>Protocol</em>}</li>
@@ -22,7 +23,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getKeys <em>Keys</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getValues <em>Values</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateParameters()
  * @model

@@ -36,24 +36,15 @@ Select:
 NestedStatement returns Select: '(' Select ')' ;
 
 Source: 
-	(
-		name=SourceName
-		(	
-			'[' 
-			(
-				unbounded=Window_Unbounded|
-				time=Window_Timebased|
-				tuple=Window_Tuplebased
-			)
-			']'
-		)?
-		|
-		(
-			nested=NestedStatement
-		)
-	)
-	('AS' alias=Alias)?
+	name=SourceName 
+	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased) ']')? ('AS' alias=Alias)?
+	|
+	(nested=NestedStatement 'AS' alias=Alias)
 ;
+
+//SourceAsNestedSelect returns Source:
+//		nested=NestedStatement 'AS' alias=Alias
+//;
 
 SourceName:
 	ID

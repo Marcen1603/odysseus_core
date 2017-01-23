@@ -22,12 +22,12 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl#getSize <em>Size</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl#getAdvance_size <em>Advance size</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl#getPartition_attribute <em>Partition attribute</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

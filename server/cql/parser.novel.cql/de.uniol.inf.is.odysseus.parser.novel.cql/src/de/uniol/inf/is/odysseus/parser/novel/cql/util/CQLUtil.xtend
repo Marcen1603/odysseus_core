@@ -36,14 +36,14 @@ class CQLUtil
 	
 	static def List<?> merge(Collection<?> l1, Collection<?> l2)
 	{
-		var l = newArrayList
+		var l = l1
 		if(l1.size > l2.size)
 		{
 			for(Object o : l2)
 			{
 				for(Object p : l1)
 				{
-					if(equality(o, p))
+					if(!equality(o, p))
 					{
 						l.add(o)
 					}
@@ -56,7 +56,7 @@ class CQLUtil
 			{
 				for(Object p : l2)
 				{
-					if(equality(o, p))
+					if(!equality(o, p))
 					{
 						l.add(o)
 					}

@@ -556,7 +556,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSource_Nested()
+  public EReference getSource_Alias()
   {
     return (EReference)sourceEClass.getEStructuralFeatures().get(4);
   }
@@ -566,7 +566,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSource_Alias()
+  public EReference getSource_Nested()
   {
     return (EReference)sourceEClass.getEStructuralFeatures().get(5);
   }
@@ -1642,8 +1642,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(sourceEClass, SOURCE__UNBOUNDED);
     createEReference(sourceEClass, SOURCE__TIME);
     createEReference(sourceEClass, SOURCE__TUPLE);
-    createEReference(sourceEClass, SOURCE__NESTED);
     createEReference(sourceEClass, SOURCE__ALIAS);
+    createEReference(sourceEClass, SOURCE__NESTED);
 
     attributeEClass = createEClass(ATTRIBUTE);
     createEAttribute(attributeEClass, ATTRIBUTE__NAME);
@@ -1846,8 +1846,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getSource_Unbounded(), ecorePackage.getEString(), "unbounded", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSource_Time(), this.getWindow_Timebased(), null, "time", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSource_Tuple(), this.getWindow_Tuplebased(), null, "tuple", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSource_Nested(), this.getSelect(), null, "nested", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSource_Alias(), this.getAlias(), null, "alias", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSource_Nested(), this.getSelect(), null, "nested", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

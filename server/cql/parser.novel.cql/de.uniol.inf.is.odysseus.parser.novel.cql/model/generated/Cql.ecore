@@ -33,9 +33,9 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="tuple" eType="#//Window_Tuplebased"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" eType="#//Select"
-        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="alias" eType="#//Alias"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" eType="#//Select"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Attribute">

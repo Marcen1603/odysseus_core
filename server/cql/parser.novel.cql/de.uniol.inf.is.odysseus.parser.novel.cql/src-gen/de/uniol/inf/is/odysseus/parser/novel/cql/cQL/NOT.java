@@ -11,10 +11,10 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT#getExpression <em>Expression</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getNOT()
  * @model

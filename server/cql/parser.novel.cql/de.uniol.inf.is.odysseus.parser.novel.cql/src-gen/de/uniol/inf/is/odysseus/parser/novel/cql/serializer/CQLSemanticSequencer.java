@@ -918,7 +918,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Source returns Source
 	 *
 	 * Constraint:
-	 *     (((name=SourceName (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)?) | nested=NestedStatement) alias=Alias?)
+	 *     (
+	 *         (name=SourceName (unbounded=Window_Unbounded | time=Window_Timebased | tuple=Window_Tuplebased)? alias=Alias?) | 
+	 *         (nested=NestedStatement alias=Alias)
+	 *     )
 	 */
 	protected void sequence_Source(ISerializationContext context, Source semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

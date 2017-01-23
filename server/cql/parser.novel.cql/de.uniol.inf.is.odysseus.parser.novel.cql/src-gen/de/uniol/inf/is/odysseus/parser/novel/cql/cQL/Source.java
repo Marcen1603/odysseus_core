@@ -12,15 +12,15 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getUnbounded <em>Unbounded</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTime <em>Time</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTuple <em>Tuple</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getAlias <em>Alias</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource()
  * @model
@@ -133,32 +133,6 @@ public interface Source extends EObject
   void setTuple(Window_Tuplebased value);
 
   /**
-   * Returns the value of the '<em><b>Nested</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Nested</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Nested</em>' containment reference.
-   * @see #setNested(Select)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Nested()
-   * @model containment="true"
-   * @generated
-   */
-  Select getNested();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Nested</em>' containment reference.
-   * @see #getNested()
-   * @generated
-   */
-  void setNested(Select value);
-
-  /**
    * Returns the value of the '<em><b>Alias</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -183,5 +157,31 @@ public interface Source extends EObject
    * @generated
    */
   void setAlias(Alias value);
+
+  /**
+   * Returns the value of the '<em><b>Nested</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Nested</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Nested</em>' containment reference.
+   * @see #setNested(Select)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Nested()
+   * @model containment="true"
+   * @generated
+   */
+  Select getNested();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Nested</em>' containment reference.
+   * @see #getNested()
+   * @generated
+   */
+  void setNested(Select value);
 
 } // Source
