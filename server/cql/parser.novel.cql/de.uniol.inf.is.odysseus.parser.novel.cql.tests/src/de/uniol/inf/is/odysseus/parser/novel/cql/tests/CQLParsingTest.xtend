@@ -161,11 +161,57 @@ class CQLParsingTest
 		)
 	}
 	
+//	@Test def void AliasTest6()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+//	
+//	@Test def void AliasTest7()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2 WHERE s1.attr1 > s2.attr1;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+	
 	@Test def void SelectAttr1Test1() 
 	{ 
 		assertCorrectGenerated
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > 2;"
+			,
+			"
+			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
+			operator_2 = SELECT({predicate='stream1.attr1 > 2'}, operator_1)"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void SelfJoinTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
+			,
+			"
+			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
+			operator_2 = SELECT({predicate='stream1.attr1 > 2'}, operator_1)"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void SelfJoinTest2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
 			,
 			"
 			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
@@ -672,7 +718,7 @@ class CQLParsingTest
 			"
 			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
 			s1 = operator_1
-			operator_2 = PROJECT({attributes=['stream2.attr4', 'stream2.attr3']}, stream2)
+			operator_2 = PROJECT({attributes=['stream2.attr3', 'stream2.attr4']}, stream2)
 			s2 = operator_2
 			operator_3 = PROJECT({attributes=['stream1.attr1', 'stream2.attr3']}, JOIN(s1, s2))"
 			, new CQLDictionaryHelper()
@@ -729,7 +775,7 @@ class CQLParsingTest
 			"
 			operator_1=SELECT({predicate='stream1.attr1<1234'},stream1)
 			s1=operator_1
- 			operator_2=PROJECT({attributes=['stream2.attr4','stream2.attr3']},stream2)
+ 			operator_2=PROJECT({attributes=['stream2.attr3','stream2.attr4']},stream2)
 			s2=operator_2
 			operator_3=PROJECT({attributes=['stream1.attr1','stream1.attr2']},JOIN(stream1,JOIN(s1,s2)))
 			operator_4=SELECT({predicate='stream1.attr1<1234'},operator_3)"

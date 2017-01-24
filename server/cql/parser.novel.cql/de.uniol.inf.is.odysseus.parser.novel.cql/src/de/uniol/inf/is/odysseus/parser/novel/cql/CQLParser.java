@@ -287,6 +287,7 @@ public class CQLParser implements IQueryParser
 		}
 		
 		generator.clear();
+//		CQLDictionaryProvider.removeDictionary(user);
 		return list;
 	}
 	

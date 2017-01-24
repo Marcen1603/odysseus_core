@@ -13,7 +13,12 @@ class TypeListener extends AbstractCQLValidator
 	@Inject extension CQLParser
 	@Check def foo(AttributeDefinition m)
 	{
-		createDictionary(m, CQLDictionaryProvider.currentUser)
+		/*
+		 * Only scan current file.
+		 * Sources that are already placed, can be accessed via IExecutor!
+		 */
+//		println("create dictionary" + m.name)
+//		createDictionary(m, CQLDictionaryProvider.currentUser)
 	}
 	
 }

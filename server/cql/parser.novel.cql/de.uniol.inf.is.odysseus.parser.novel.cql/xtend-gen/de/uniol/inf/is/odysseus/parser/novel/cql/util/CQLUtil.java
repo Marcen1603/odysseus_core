@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.util;
 import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
-import java.util.Collection;
-import java.util.List;
 
 @SuppressWarnings("all")
 public class CQLUtil {
@@ -39,12 +37,5 @@ public class CQLUtil {
       }
     }
     return false;
-  }
-  
-  public static List<?> merge(final Collection<?> l1, final Collection<?> l2) {
-    throw new Error("Unresolved compilation problems:"
-      + "\nType mismatch: type Object is not applicable at this location"
-      + "\nType mismatch: type Object is not applicable at this location"
-      + "\nType mismatch: cannot convert from Collection<?> to List<?>");
   }
 }
