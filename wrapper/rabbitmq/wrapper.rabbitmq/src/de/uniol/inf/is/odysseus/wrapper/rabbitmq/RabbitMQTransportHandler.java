@@ -164,7 +164,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 					wrapped.position(wrapped.limit());
 					fireProcess(wrapped);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOG.warn("Error processing input",e);
 				}
 				channel.basicAck(deliveryTag, false);
 			};
@@ -217,6 +217,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 		connection = factory.newConnection();
 		channel = connection.createChannel();
+		channel.basicQos(10);
 
 		switch (publishStyle) {
 		case WorkQueue:
