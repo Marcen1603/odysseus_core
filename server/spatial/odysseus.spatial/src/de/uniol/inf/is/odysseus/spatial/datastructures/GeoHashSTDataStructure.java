@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial.datastructures;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -214,27 +215,44 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 				radius);
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
-		Point lowerRigt = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
 
 		// Get all elements within that bounding box
-		List<Tuple<ITimeInterval>> candidates = queryBoundingBox(topLeft, lowerRigt, t);
+		// TODO This results in doing the distance calculation twice as it is
+		// already done within the BoundingBox-method. Create another method
+		// that returns roughly the right coordinates and then do the distance
+		// calculation only once.
+		Collection<Tuple<ITimeInterval>> candidateCollection = approximateBoundinBox(
+				createPolygon(createBox(topLeft, lowerRight))).values();
 
-		// Check the candidates if they are in the circle
-		List<Tuple<ITimeInterval>> rangeTuples = new ArrayList<Tuple<ITimeInterval>>();
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
 
-		for (Tuple<ITimeInterval> tuple : candidates) {
-			Geometry tupleGeometry = getGeometry(tuple);
+		// TODO Think about: maybe it is faster to first check if the point is
+		// within a polygon (cheap) and reduce the number of distance
+		// calculations (expensive)
 
-			// TODO Use the right coordinate reference system
-			MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
-			double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-					tupleGeometry.getCentroid().getCoordinate());
+		List<Tuple<ITimeInterval>> result = candidateCollection.parallelStream()
+				// temporal filter
+				.filter(e -> e.getMetadata().getStart().before(t.getEnd())
+						&& e.getMetadata().getEnd().after(t.getStart()))
+				// spatial filter
+				// TODO Use the right coordinate reference system
+				.filter(f -> spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+						getGeometry(f).getCentroid().getCoordinate()) <= radius)
+				.collect(Collectors.toList());
 
-			if (realDistance <= radius) {
-				rangeTuples.add(tuple);
-			}
-		}
-		return rangeTuples;
+		// TODO Maybe faster with haversine. give choice?
+		// List<Tuple<ITimeInterval>> result =
+		// candidateCollection.parallelStream()
+		// // temporal filter
+		// .filter(e -> e.getMetadata().getStart().before(t.getEnd())
+		// && e.getMetadata().getEnd().after(t.getStart()))
+		// // spatial filter
+		// .filter(f ->
+		// spatialUtils.calculateHaversineDistance(geometry.getCentroid().getCoordinate(),
+		// getGeometry(f).getCentroid().getCoordinate()) <= radius)
+		// .collect(Collectors.toList());
+		return result;
 	}
 
 	public List<Tuple<ITimeInterval>> queryBoundingBox(Point topLeft, Point lowerRight, ITimeInterval t) {
@@ -246,21 +264,25 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	@Override
 	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
+		Polygon polygon = createPolygon(polygonPoints);
 
-		// Check if the first and the last point is equal. If not, we have to
-		// add the first point at the end to have a closed ring.
-		Point firstPoint = polygonPoints.get(0);
-		Point lastPoint = polygonPoints.get(polygonPoints.size() - 1);
-		if (!firstPoint.equals(lastPoint)) {
-			polygonPoints.add(firstPoint);
-		}
+		// Get all hashes that we have to calculate the distance for
+		Map<GeoHash, Tuple<ITimeInterval>> allHashes = approximateBoundinBox(polygon);
 
-		// Find the ones which are really within the box
-		// Create a polygon with the given points
-		GeometryFactory factory = new GeometryFactory();
-		LinearRing ring = factory.createLinearRing(
-				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
-		Polygon polygon = factory.createPolygon(ring, null);
+		// For every point in our list ask JTS if the points lies within the
+		// polygon
+		List<Tuple<ITimeInterval>> result = allHashes.keySet().parallelStream()
+				// spatial filter
+				.filter(e -> polygon.contains(getGeometry(allHashes.get(e))))
+				// temporal filter
+				.filter(f -> allHashes.get(f).getMetadata().getStart().before(t.getEnd())
+						&& allHashes.get(f).getMetadata().getEnd().after(t.getStart()))
+				.map(e -> allHashes.get(e)).collect(Collectors.toList());
+
+		return result;
+	}
+
+	private Map<GeoHash, Tuple<ITimeInterval>> approximateBoundinBox(Polygon polygon) {
 		Geometry envelope = polygon.getEnvelope();
 
 		// Get hashes that we have to search for
@@ -280,18 +302,25 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			// The whole list of hashes is used in "getByPrefix"
 			allHashes.putAll(getByPreffix(hash));
 		}
+		return allHashes;
+	}
 
-		// For every point in our list ask JTS if the points lies within the
-		// polygon
-		List<Tuple<ITimeInterval>> result = allHashes.keySet().parallelStream()
-				// spatial filter
-				.filter(e -> polygon.contains(getGeometry(allHashes.get(e))))
-				// temporal filter
-				.filter(f -> allHashes.get(f).getMetadata().getStart().before(t.getEnd())
-						&& allHashes.get(f).getMetadata().getEnd().after(t.getStart()))
-				.map(e -> allHashes.get(e)).collect(Collectors.toList());
+	private Polygon createPolygon(List<Point> polygonPoints) {
+		// Check if the first and the last point is equal. If not, we have to
+		// add the first point at the end to have a closed ring.
+		Point firstPoint = polygonPoints.get(0);
+		Point lastPoint = polygonPoints.get(polygonPoints.size() - 1);
+		if (!firstPoint.equals(lastPoint)) {
+			polygonPoints.add(firstPoint);
+		}
 
-		return result;
+		// Find the ones which are really within the box
+		// Create a polygon with the given points
+		GeometryFactory factory = new GeometryFactory();
+		LinearRing ring = factory.createLinearRing(
+				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
+		Polygon polygon = factory.createPolygon(ring, null);
+		return polygon;
 	}
 
 	@Override
