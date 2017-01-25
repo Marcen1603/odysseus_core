@@ -30,6 +30,9 @@
 
 package de.uniol.inf.is.odysseus.database.transform;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.database.logicaloperator.DatabaseSourceAO;
 import de.uniol.inf.is.odysseus.database.physicaloperator.DatabaseSourcePO;
@@ -52,8 +55,15 @@ public class TDatabaseSourceAORule extends AbstractTransformationRule<DatabaseSo
 
 	@Override
 	public void execute(DatabaseSourceAO accessAO, TransformationConfiguration config) throws RuleException {
-		DatabaseSourcePO accessPO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(), accessAO.getWaitMillis(), accessAO.isEscapeNames(), accessAO.isUseDatatypeMappings());
-		defaultExecute(accessAO, accessPO, config, true, true);		
+		DatabaseSourcePO databaseSourcePO = new DatabaseSourcePO(accessAO.getTableName(), accessAO.getConnection(),
+				accessAO.getWaitMillis(), accessAO.isEscapeNames(), accessAO.isUseDatatypeMappings());
+		processMetaData(databaseSourcePO, config);
+		defaultExecute(accessAO, databaseSourcePO, config, true, true);
+	}
+
+	private void processMetaData(DatabaseSourcePO databaseSourcePO, TransformationConfiguration config) {
+		IMetaAttribute type = MetadataRegistry.getMetadataType(config.getDefaultMetaTypeSet());
+		((IMetadataInitializer<?, ?>) databaseSourcePO).setMetadataType(type);
 	}
 
 	@Override

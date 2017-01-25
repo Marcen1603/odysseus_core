@@ -34,7 +34,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -149,6 +151,14 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 				IDatabaseConnection conn = getConnection();
 				if (conn != null) {
 					SDFSchema schema = getConnection().getSchema(tablename);
+					
+					// Add meta schema
+					IMetaAttribute metaAttribute = getMetaAttribute();
+					if (metaAttribute != null) {
+						List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+						schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+					}
+					
 					if (schema != null) {
 						this.setOutputSchema(schema);
 					} else {
