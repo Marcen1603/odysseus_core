@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
+ * @author Tobias Brandt (metadata)
  */
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
 		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
@@ -153,6 +154,8 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 					SDFSchema schema = getConnection().getSchema(tablename);
 					
 					// Add meta schema
+					
+					// Use the metadata schema from the query
 					IMetaAttribute metaAttribute = getMetaAttribute();
 					if (metaAttribute != null) {
 						List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();

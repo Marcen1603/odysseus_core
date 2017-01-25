@@ -57,6 +57,7 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 /**
  * 
  * @author Dennis Geesen Created at: 02.11.2011
+ * @author Tobias Brandt (added metadata)
  * @param <M>
  */
 public class DatabaseSourcePO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractSource<W>
