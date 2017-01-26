@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,16 +39,16 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	boolean isSink();
 
 	boolean isPipe();
-	
+
 	boolean isSemanticallyEqual(IPhysicalOperator ipo);
-	
+
 	/**
-	 * Name for Operator (Visual Identification) 
+	 * Name for Operator (Visual Identification)
 	 */
 	@Override
 	public String getName();
 	public void setName(String name);
-	
+
 	/**
 	 * gets a Map of simple information that may be used by the GUI
 	 * @return a map of key-value pairs
@@ -59,15 +59,15 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	 * @param infos a map with key-value pairs
 	 */
 	public void setParameterInfos(Map<String, String> infos);
-	
+
 	/**
 	 * adds a key value pair to the information map
 	 * @param key the name of the information
 	 * @param value the value of the information
 	 */
 	public void addParameterInfo(String key, Object value);
-	
-	
+
+
 	/**
 	 * Schemarelated methods
 	 * @return
@@ -77,33 +77,40 @@ public interface IPhysicalOperator extends IOwnedOperator,
 	public Map<Integer, SDFSchema> getOutputSchemas();
 	public void setOutputSchema(SDFSchema outputSchema);
 	public void setOutputSchema(SDFSchema outputSchema, int port);
-	
+
 	/**
-	 * Call open for a distinct owner 
+	 * Call open for a distinct owner
 	 */
-	void open(IOperatorOwner id);
+	void open(IOperatorOwner id) throws OpenFailedException;
 	public boolean isOpen();
-	
+
 	/**
-	 * Call close for a distinct owner 
+	 * Call start
+	 */
+	void start(IOperatorOwner id) throws StartFailedException;
+	public boolean isStarted();
+
+
+	/**
+	 * Call close for a distinct owner
 	 */
 	void close(IOperatorOwner id);
-	
+
 	boolean isDone();
 
 	void addUniqueId(IOperatorOwner owner, Resource id);
 	void removeUniqueId(IOperatorOwner key);
 	Map<IOperatorOwner,Resource> getUniqueIds();
-	
+
 	public boolean hasInput();
 
 	/**
 	 * debug
 	 */
 	void setDebug(boolean debug);
-	
+
 	void setSuppressPunctuations(boolean suppressPunctuations);
-	
+
 	List<ISession> getSessions();
 
 	void setLogicalOperator(ILogicalOperator op);
