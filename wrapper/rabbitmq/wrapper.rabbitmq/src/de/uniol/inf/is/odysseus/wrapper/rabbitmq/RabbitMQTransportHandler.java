@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.rabbitmq;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class RabbitMQTransportHandler extends AbstractTransportHandler {
+public class RabbitMQTransportHandler extends AbstractTransportHandler implements UncaughtExceptionHandler {
+
+	private static final int RABBIT_MQ_START_DELAY = 1000;
+
 
 	static final Logger LOG = LoggerFactory.getLogger(RabbitMQTransportHandler.class);
 
@@ -145,46 +149,73 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			e1.printStackTrace();
 		}
 
-		if (publishStyle == PublishStyle.PublishSubscribe) {
-			String queueName = channel.queueDeclare().getQueue();
-			channel.queueBind(queueName, exchangeName, "");
-		}
+		// To avoid deadlocks because of interleaving
+		// open phase and process phase delay opening
 
-		// Create Consumer
-		boolean autoAck = false;
-		channel.basicConsume(queueName, autoAck, consumerTag, new DefaultConsumer(channel) {
+		Thread delayedStart = new Thread() {
+
 			@Override
-			public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
-					com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
-				// String routingKey = envelope.getRoutingKey();
-				// String contentType = properties.getContentType();
-				long deliveryTag = envelope.getDeliveryTag();
+			public void run() {
 				try {
-					ByteBuffer wrapped = ByteBuffer.wrap(body);
-					wrapped.position(wrapped.limit());
-					fireProcess(wrapped);
-				} catch (Exception e) {
-					LOG.warn("Error processing input",e);
+					Thread.sleep(RABBIT_MQ_START_DELAY);
+
+					if (publishStyle == PublishStyle.PublishSubscribe) {
+						String queueName = channel.queueDeclare().getQueue();
+						channel.queueBind(queueName, exchangeName, "");
+					}
+
+					// Create Consumer
+					boolean autoAck = false;
+					channel.basicConsume(queueName, autoAck, consumerTag, new DefaultConsumer(channel) {
+						@Override
+						public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
+								com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
+							// String routingKey = envelope.getRoutingKey();
+							// String contentType = properties.getContentType();
+							long deliveryTag = envelope.getDeliveryTag();
+							try {
+								ByteBuffer wrapped = ByteBuffer.wrap(body);
+								wrapped.position(wrapped.limit());
+								fireProcess(wrapped);
+							} catch (Exception e) {
+								LOG.warn("Error processing input",e);
+							}
+							channel.basicAck(deliveryTag, false);
+						};
+					});
+
+					connection.addShutdownListener(new ShutdownListener() {
+
+						@Override
+						public void shutdownCompleted(ShutdownSignalException cause) {
+							LOG.warn("Connection shutdown.", cause);
+						}
+					});
+
+					channel.addShutdownListener(new ShutdownListener() {
+
+						@Override
+						public void shutdownCompleted(ShutdownSignalException cause) {
+							LOG.warn("Channel shutdown.", cause);
+						}
+					});
+				} catch (IOException | InterruptedException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e);
 				}
-				channel.basicAck(deliveryTag, false);
-			};
-		});
 
-		connection.addShutdownListener(new ShutdownListener() {
-
-			@Override
-			public void shutdownCompleted(ShutdownSignalException cause) {
-				LOG.warn("Connection shutdown.", cause);
 			}
-		});
+		};
 
-		channel.addShutdownListener(new ShutdownListener() {
+		delayedStart.setName("RabbitMQDelayedStarter");
+		delayedStart.setDaemon(true);
+		delayedStart.setUncaughtExceptionHandler(this);
+		delayedStart.start();
+	}
 
-			@Override
-			public void shutdownCompleted(ShutdownSignalException cause) {
-				LOG.warn("Channel shutdown.", cause);
-			}
-		});
+	@Override
+	public void uncaughtException(Thread thread, Throwable exception) {
+		LOG.error("Error in Thread "+thread.getName(),exception);
 	}
 
 	@Override
@@ -281,5 +312,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+
 
 }
