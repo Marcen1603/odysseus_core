@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
  *
  */
 public class SocketService extends Observable {
-
+	
 	private static final Logger LOG = LoggerFactory.getLogger(SocketService.class);
 
 	// QueryId, OutputOperator, OperatorOutputPort
@@ -542,6 +542,21 @@ public class SocketService extends Observable {
 		return addSocketSink(query, minPort, maxPort, root, rootPort, token, withMetaData);
 	}
 
+	/**
+	 * Adds a SocketSinkPO so that the required data can be send.
+	 * 
+	 * @param query
+	 * @param minPort
+	 * @param maxPort
+	 * @param root
+	 *            The operator to get the data from
+	 * @param rootOutputPort
+	 *            the output port at the root operator to connect to
+	 * @param token
+	 * @param withMetaData
+	 *            if you want to send the metadata as well
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SocketSinkPO addSocketSink(IPhysicalQuery query, int minPort, int maxPort, IPhysicalOperator root,
 			int rootOutputPort, String token, boolean withMetaData) {
@@ -552,40 +567,52 @@ public class SocketService extends Observable {
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
 			int serverPort = getNextFreePort(minPort, maxPort);
+
+			// Create the physical operator that will send the data via a socket
 			SocketSinkPO sink = new SocketSinkPO(serverPort, "", new NioByteBufferSinkStreamHandlerBuilder(), true,
 					false, false, objectHandler, false, withMetaData);
 
 			if (!(root instanceof ISource)) {
 
+				// If the operator is not an ISource, we have to connect to the
+				// inputs of that operator
+
 				ISink rootAsSink = (ISink) root;
+
+				// These are the inputs of the given operator
 				Collection<ISubscription> sources = rootAsSink.getSubscribedToSource();
+
+				// For every such operator, connect our new sink (the socket
+				// operator) to it so that the socket operator receives all the
+				// data the original operator receives
 				for (ISubscription source : sources) {
-					// target
 					Object target = source.getTarget();
+					if (target instanceof ISource) {
+						final ISource<?> targetAsSource = (ISource<?>) target;
+						targetAsSource.subscribeSink((ISink) sink, 0, rootOutputPort,
+								root.getOutputSchema(rootOutputPort), true, 0);
+					}
 				}
 
-				
-				
-				
-				// E.g. a MongoDBSinkPO is no ISource and can't be processed
-				// here
-				LOG.warn("Operator " + root.getName()
-						+ " is not instanceof ISource and can't be processed for socket output.");
-				return null;
-				
 			} else {
-				
+
+				// The physical operator we want to subscribe to is itself a
+				// source, hence we can directly subscribe to this operator ->
+				// only one connection needed
 				final ISource<?> rootAsSource = (ISource<?>) root;
 				rootAsSource.subscribeSink((ISink) sink, 0, rootOutputPort, root.getOutputSchema(rootOutputPort), true,
 						0);
-				sink.startListening();
-				sink.addOwner(query);
-				sink.addAllowedSessionId(token);
-				return sink;
 
 			}
+
+			// Now the new operator can start its work
+			sink.startListening();
+			sink.addOwner(query);
+			sink.addAllowedSessionId(token);
+			return sink;
 		}
 
+		LOG.warn("The operator " + root.getName() + " has to output schema. Won't be used for a socket sink.");
 		return null;
 	}
 
