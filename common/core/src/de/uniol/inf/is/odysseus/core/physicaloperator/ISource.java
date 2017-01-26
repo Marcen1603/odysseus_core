@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,12 +23,12 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 /**
  * Interface for data sources in a query graph.
- * 
+ *
  * It provides data to subscribed {@link ISink sinks}. Subscriptions are managed
  * via {@link #subscribe(ISink, int)} and {@link #unsubscribe(ISink, int)}.
  * Subscriptions can be added/removed at any time (before or after
  * {@link #open()} was called).
- * 
+ *
  * @author Jonas Jacobi, Tobias Witt
  */
 public interface ISource<T> extends IPhysicalOperator,
@@ -37,63 +37,26 @@ public interface ISource<T> extends IPhysicalOperator,
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.
 	 * caller: who called open
-	 * sourcePort: on which output port of the source 
+	 * sourcePort: on which output port of the source
 	 * sinkPort: on which inport port of the sink
 	 * callPath: Is needed to cope with cycles in the graph
-	 * 
+	 *
 	 * @throws OpenFailedException
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	public void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) throws OpenFailedException;
+	void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) throws OpenFailedException;
+
+	void start(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+			throws StartFailedException;
 
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
+	void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
 
-	
-//	/**
-//	 * Removes several subscriptions in remove list to this source and
-//	 * subscribes a sink in one 'atomic' step, so that no transfer() can be
-//	 * executed between these steps.
-//	 * 
-//	 * @param remove
-//	 *            {@link List} of {@link PhysicalSubscription}s to remove.
-//	 * @param sink
-//	 *            new {@link ISink} to subscribe.
-//	 * @param sinkInPort
-//	 *            sinkInPort.
-//	 * @param sourceOutPort
-//	 *            sourceOutPort.
-//	 * @param schema
-//	 *            Output schema of source.
-//	 */
-//	public void atomicReplaceSink(
-//			List<PhysicalSubscription<ISink<? super T>>> remove,
-//			ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema);
 
-//	/**
-//	 * Removes a subscription to this source and subscribes several sinks in the
-//	 * sinks list in one 'atomic' step, so that no transfer() can be executed
-//	 * between these steps.
-//	 * 
-//	 * @param remove
-//	 *            {@link PhysicalSubscription} to remove.
-//	 * @param sink
-//	 *            {@link List} of new {@link ISink}s to subscribe.
-//	 * @param sinkInPort
-//	 *            sinkInPort.
-//	 * @param sourceOutPort
-//	 *            sourceOutPort.
-//	 * @param schema
-//	 *            Output schema of source.
-//	 */
-//	public void atomicReplaceSink(
-//			PhysicalSubscription<ISink<? super T>> remove,
-//			List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-//			SDFSchema schema);
 
 	/**
 	 * Methods to mark (!) Operator as blocked. Can be used by scheduler
@@ -101,7 +64,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	void unblock();
 	void block();
 	boolean isBlocked();
-	
+
 	/**
 	 * Suspending a source, when called from all owners the operator will be suspended
 	 * @param owner
@@ -118,5 +81,7 @@ public interface ISource<T> extends IPhysicalOperator,
 	void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
 			List<IOperatorOwner> forOwners);
+
+
 
 }

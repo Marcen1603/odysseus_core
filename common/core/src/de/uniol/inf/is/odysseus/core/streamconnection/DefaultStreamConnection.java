@@ -41,6 +41,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -651,6 +652,18 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public int getInputPortCount() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void start(IOperatorOwner id) throws StartFailedException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isStarted() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

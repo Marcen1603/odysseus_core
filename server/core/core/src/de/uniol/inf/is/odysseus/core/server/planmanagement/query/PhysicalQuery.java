@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -185,7 +185,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Notice can be used to annotade a query
 	 */
 	private String notice;
-	
+
 	final boolean acQuery;
 
 	private int sheddingFactor;
@@ -193,7 +193,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/**
 	 * Creates a query based on a physical plan and
 	 * {@link QueryBuildConfiguration}
-	 * 
+	 *
 	 * @param physicalPlan
 	 *            physical operator plan
 	 * @param parameters
@@ -208,7 +208,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/**
 	 * Create a new physical query
-	 * 
+	 *
 	 * @param query
 	 *            The logical query that is the origin of the query
 	 * @param physicalPlan
@@ -237,7 +237,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Some operators need to be scheduled typically buffers To allow other
 	 * processing of operators that are sources these iteratableleafSources are
 	 * treated different
-	 * 
+	 *
 	 * @param physicalPlan
 	 */
 	private void determineIteratableSourcesAndLeafs(
@@ -292,7 +292,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getRoot
 	 * ()
@@ -308,7 +308,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
@@ -332,7 +332,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * getPhysicalChilds()
 	 */
@@ -343,7 +343,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * initializePhysicalPlan
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
@@ -418,11 +418,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * Sets the physical children of this query. These children are the physical
 	 * operators which are necessary for the execution of this query. It also
 	 * sets the owner relationship between the query and the operators.
-	 * 
+	 *
 	 * This method should be only used if special optimizations are processed.
 	 * For initial setting the physical plan use
 	 * {@link #initializePhysicalPlan(IPhysicalOperator)}.
-	 * 
+	 *
 	 * @param physicalChilds
 	 *            Physical operators which are necessary for the execution of
 	 *            this query.
@@ -456,7 +456,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * replace an physical operator of the query plan with another operator
 	 * operator subscription are not touched, so correct subscriptions need to
 	 * be set before replacement
-	 * 
+	 *
 	 * @param oldOp
 	 * @param newOp
 	 */
@@ -470,12 +470,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/**
 	 * Replaces a Root in the Query with another Physical Operator (Has no
 	 * effect, if the oldRoot-argument is no root for this Query)
-	 * 
+	 *
 	 * @param oldRoot
 	 *            The root that is being replaced
 	 * @param newRoot
 	 *            The replacement for the old root
-	 * 
+	 *
 	 */
 	@Override
 	public void replaceRoot(IPhysicalOperator oldRoot, IPhysicalOperator newRoot) {
@@ -493,7 +493,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * returns a set of physical operators, that a query shares with the given
 	 * query. in fact this is the intersection of the physical operators of this
 	 * query with the given query
-	 * 
+	 *
 	 * @param otherQuery
 	 * @return
 	 */
@@ -506,7 +506,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 		return ops1;
 	}
-		
+
 	@Override
 	public IPhysicalOperator getOperator(String name) {
 		Set<IPhysicalOperator> allOps = this.getAllOperators();
@@ -520,7 +520,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
 	 * removeOwnerschip()
 	 */
@@ -547,9 +547,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 			queryStartedTS = System.currentTimeMillis();
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
-				// since if an operator is already open, the
-				// following sources will not be called any more.
+				// since if an operator is already open/started, the
+				// following roots will not be called any more.
 				curRoot.open(this);
+				curRoot.start(this);
 			}
 			setState(nextState);
 			this.isStarting = false;
@@ -659,13 +660,13 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public QueryState getState() {
 		return queryState;
 	}
-	
+
 	protected final void setState( QueryState state ) {
 		queryState = state;
-		
+
 		queryStateChangeTS = System.currentTimeMillis();
 	}
-	
+
 	@Override
 	public final long getLastQueryStateChangeTS() {
 		return queryStateChangeTS;
@@ -675,15 +676,15 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public final long getQueryStartTS(){
 		return queryStartedTS;
 	}
-	
+
 	@Override
 	public int getSheddingFactor() {
 		return sheddingFactor;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
 	 * #reoptimize ()
@@ -701,7 +702,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#
 	 * addReoptimizeListener(java.lang.Object)
 	 */
@@ -717,7 +718,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.IReoptimizeHandler#
 	 * removeReoptimizeListener(java.lang.Object)
 	 */
@@ -731,7 +732,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#
 	 * addReoptimzeRule
 	 * (de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRule)
@@ -748,7 +749,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.IReoptimizeRequester#
 	 * removeReoptimzeRule
 	 * (de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRule)
@@ -763,7 +764,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/**
 	 * returns a set of all operators used by the query
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -928,7 +929,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seede.uniol.inf.is.odysseus.core.server.physicaloperator.plan.IPhysicalQuery
 	 * # getIterableSource()
 	 */
@@ -1011,6 +1012,6 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	@Override
 	public boolean isACquery() {
-		return this.acQuery;		
+		return this.acQuery;
 	}
 }

@@ -100,6 +100,15 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	}
 
 	@Override
+	final public void start() {
+		delegate.start();
+	}
+
+	@Override
+	public void processInStart() {
+	}
+
+	@Override
 	final public void close() throws IOException {
 		delegate.close();
 	}

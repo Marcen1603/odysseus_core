@@ -273,10 +273,7 @@ public class SensorOntologyServiceImpl
 	}
 
 	private void prepareExecutor() {
-		if (SensorOntologyServiceImpl.getExecutor().getSchedulerManager() != null) {
-			SensorOntologyServiceImpl.getExecutor().getSchedulerManager().subscribeToAll(this);
-			SensorOntologyServiceImpl.getExecutor().getSchedulerManager().getActiveScheduler().subscribeToAll(this);
-		}
+		SensorOntologyServiceImpl.getExecutor().subscribeToAllSchedulerEvents(this);
 		this.registerDataDictionaryListener();
 	}
 

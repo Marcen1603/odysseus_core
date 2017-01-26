@@ -138,6 +138,11 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 		openCounter++;
 	}
 
+	public void start() {
+		callOnMe.processInStart();
+	}
+
+
 	final synchronized public void close() throws IOException {
 		openCounter--;
 		if (openCounter == 0) {
@@ -194,5 +199,6 @@ public class AbstractTransportHandlerDelegate<T extends IStreamObject<IMetaAttri
 	public void optionsMapChanged(String key, String value) {
 		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.callOnMe.getName());
 	}
+
 
 }

@@ -34,7 +34,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -49,6 +51,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
+ * @author Tobias Brandt (metadata)
  */
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
 		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
@@ -149,6 +152,16 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 				IDatabaseConnection conn = getConnection();
 				if (conn != null) {
 					SDFSchema schema = getConnection().getSchema(tablename);
+					
+					// Add meta schema
+					
+					// Use the metadata schema from the query
+					IMetaAttribute metaAttribute = getMetaAttribute();
+					if (metaAttribute != null) {
+						List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+						schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+					}
+					
 					if (schema != null) {
 						this.setOutputSchema(schema);
 					} else {

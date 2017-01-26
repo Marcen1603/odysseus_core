@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 
 public class MemStoreSourcePO<T extends IStreamObject<?>> extends AbstractIterableSource<T> {
@@ -18,7 +19,7 @@ public class MemStoreSourcePO<T extends IStreamObject<?>> extends AbstractIterab
 		this.dd = dd;
 		this.store = store;
 	}
-	
+
 	@Override
 	public boolean hasNext() {
 		if (pos == storeContent.size()){
@@ -27,7 +28,7 @@ public class MemStoreSourcePO<T extends IStreamObject<?>> extends AbstractIterab
 		}
 		return pos<storeContent.size();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void transferNext() {
@@ -38,6 +39,11 @@ public class MemStoreSourcePO<T extends IStreamObject<?>> extends AbstractIterab
 	protected void process_open() throws OpenFailedException {
 		storeContent = dd.getStore(store);
 		pos = 0;
+	}
+
+	@Override
+	protected void process_start() throws StartFailedException {
+
 	}
 
 }

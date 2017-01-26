@@ -220,6 +220,12 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 
 	@Override
 	public void processInOpen() throws IOException {
+		// Do not connect to source in open, as element are send directly, when
+		// connection is established
+	}
+
+	@Override
+	public void start() {
 		open(address, messagePrototype);
 	}
 
@@ -268,6 +274,10 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 			logger.info("Bound to: " + address + " for message type: "
 					+ message.getClass().getSimpleName());
 		}
+	}
+
+	@Override
+	public void processInStart() {
 	}
 
 
