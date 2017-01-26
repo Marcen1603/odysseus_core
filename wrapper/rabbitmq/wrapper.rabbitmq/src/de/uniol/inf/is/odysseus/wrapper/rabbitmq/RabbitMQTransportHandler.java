@@ -9,10 +9,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.ShutdownListener;
+import com.rabbitmq.client.ShutdownSignalException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
@@ -20,6 +25,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractT
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 public class RabbitMQTransportHandler extends AbstractTransportHandler {
+
+	static final Logger LOG = LoggerFactory.getLogger(RabbitMQTransportHandler.class);
+
 
 	public static final String QUEUE_NAME = "queue_name";
 	public static final String EXCHANGE_NAME = "exchange_name";
@@ -34,7 +42,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public static final String DURABLE = "durable";
 	public static final String EXCLUSIVE = "exclusive";
 	public static final String AUTO_DELETE = "auto_delete";
-	
+
 	public static final String OPTIONS_PREFIX = "rabbit.";
 
 	public enum PublishStyle {
@@ -50,6 +58,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	private String virtualhost;
 	private int port;
 	private PublishStyle publishStyle;
+
 
 	private OptionMap options;
 
@@ -155,10 +164,26 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 					wrapped.position(wrapped.limit());
 					fireProcess(wrapped);
 				} catch (Exception e) {
-					e.printStackTrace();
+					LOG.warn("Error processing input",e);
 				}
 				channel.basicAck(deliveryTag, false);
 			};
+		});
+
+		connection.addShutdownListener(new ShutdownListener() {
+
+			@Override
+			public void shutdownCompleted(ShutdownSignalException cause) {
+				LOG.warn("Connection shutdown.", cause);
+			}
+		});
+
+		channel.addShutdownListener(new ShutdownListener() {
+
+			@Override
+			public void shutdownCompleted(ShutdownSignalException cause) {
+				LOG.warn("Channel shutdown.", cause);
+			}
 		});
 	}
 
@@ -189,8 +214,10 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		if (port > 0) {
 			factory.setPort(port);
 		}
+
 		connection = factory.newConnection();
 		channel = connection.createChannel();
+		channel.basicQos(10);
 
 		switch (publishStyle) {
 		case WorkQueue:
@@ -202,7 +229,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			boolean durable = options.getBoolean(DURABLE, false);
 			boolean exclusive = options.getBoolean(EXCLUSIVE, false);
 			boolean autoDelete = options.getBoolean(AUTO_DELETE, false);
-			
+
 			Set<String> keySet = options.getKeySet();
 			Object[] keys = keySet.stream().filter(key -> key.startsWith(OPTIONS_PREFIX)).toArray();
 			for (Object key : keys) {
