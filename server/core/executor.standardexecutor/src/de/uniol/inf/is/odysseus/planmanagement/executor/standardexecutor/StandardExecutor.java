@@ -639,12 +639,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	// -----------
 
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName,
-			Context context) throws PlanManagementException {
-		return addQuery(query, parserID, user, buildConfigurationName, context, null);
-	}
-
-	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
 		return addQuery(query, parserID, user, "Standard", context, null);

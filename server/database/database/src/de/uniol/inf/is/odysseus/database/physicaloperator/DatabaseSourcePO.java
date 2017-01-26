@@ -42,9 +42,13 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.database.connection.DatatypeRegistry;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
@@ -53,10 +57,17 @@ import de.uniol.inf.is.odysseus.database.physicaloperator.access.IDataTypeMappin
 /**
  * 
  * @author Dennis Geesen Created at: 02.11.2011
+ * @author Tobias Brandt (added metadata)
+ * @param <M>
  */
-public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
-	
+public class DatabaseSourcePO<W extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractSource<W>
+		implements IMetadataInitializer<M, W> {
+
 	Logger LOG = LoggerFactory.getLogger(DatabaseSourcePO.class);
+
+	// Handle metadata
+	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
+	private IMetadataUpdater<M, W> metadataUpdater;
 
 	final private IDatabaseConnection connection;
 	final private String tablename;
@@ -68,8 +79,8 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	private IDataTypeMappingHandler<?>[] dtMappings;
 	final boolean useDtMapper;
 
-	public DatabaseSourcePO(String tableName, IDatabaseConnection connection,
-			long waitTimeMillis, boolean escapeNames, boolean useDtMapper) {
+	public DatabaseSourcePO(String tableName, IDatabaseConnection connection, long waitTimeMillis, boolean escapeNames,
+			boolean useDtMapper) {
 		super();
 		this.tablename = tableName;
 		this.connection = connection;
@@ -78,7 +89,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		this.escapeNames = escapeNames;
 	}
 
-	public DatabaseSourcePO(DatabaseSourcePO databaseSourcePO) {
+	public DatabaseSourcePO(DatabaseSourcePO<W, M> databaseSourcePO) {
 		super(databaseSourcePO);
 		this.connection = databaseSourcePO.connection;
 		this.tablename = databaseSourcePO.tablename;
@@ -92,8 +103,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 			SDFSchema outputSchema = getOutputSchema();
 			dtMappings = new IDataTypeMappingHandler<?>[outputSchema.size() + 1];
 			for (int i = 0; i < outputSchema.size(); i++) {
-				dtMappings[i + 1] = DatatypeRegistry
-						.getDataHandler(outputSchema.get(i).getDatatype());
+				dtMappings[i + 1] = DatatypeRegistry.getDataHandler(outputSchema.get(i).getDatatype());
 			}
 		}
 	}
@@ -105,8 +115,7 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 				initDTMappings();
 			}
 			this.jdbcConnection = this.connection.getConnection();
-			this.preparedStatement = this.jdbcConnection
-					.prepareStatement(createPreparedStatement());
+			this.preparedStatement = this.jdbcConnection.prepareStatement(createPreparedStatement());
 			this.preparedStatement.setFetchSize(100);
 			this.jdbcConnection.setAutoCommit(false);
 			this.thread = new TransferThread();
@@ -133,8 +142,8 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 	}
 
 	@Override
-	public AbstractSource<Tuple<?>> clone() {
-		return new DatabaseSourcePO(this);
+	public AbstractSource<W> clone() {
+		return new DatabaseSourcePO<W, M>(this);
 	}
 
 	@Override
@@ -149,8 +158,9 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 		public void run() {
 			// TODO: why the min waiting time of 10 ms?
 			// Else the thread will block every communication
-			long waitTime = waitTimeMillis == 0?10:waitTimeMillis;
+			long waitTime = waitTimeMillis == 0 ? 10 : waitTimeMillis;
 			try {
+
 				ResultSet rs = preparedStatement.executeQuery();
 				int count = rs.getMetaData().getColumnCount();
 
@@ -161,16 +171,24 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 							try {
 								attributes.add(dtMappings[i].getValue(rs, i));
 							} catch (Exception e) {
-								LOG.error("Error translating element"+e.getMessage());
+								LOG.error("Error translating element" + e.getMessage());
 								attributes.add(null);
 							}
 						} else {
 							attributes.add(rs.getObject(i));
 						}
 					}
-					Tuple<?> t = new Tuple<IMetaAttribute>(
-							attributes.toArray(), false);
-					transfer(t);
+					
+					@SuppressWarnings("unchecked")
+					W toTransfer = (W) new Tuple<M>(attributes.toArray(), false);
+
+					// add metadata
+					M meta = getMetadataInstance();
+					toTransfer.setMetadata(meta);
+					updateMetadata(toTransfer);
+
+					// transfer element
+					transfer(toTransfer);
 					sleep(waitTime);
 				}
 				propagateDone();
@@ -180,8 +198,37 @@ public class DatabaseSourcePO extends AbstractSource<Tuple<?>> {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				return;
+			} catch (InstantiationException e1) {
+				LOG.error("Error creating meta data", e1);
+			} catch (IllegalAccessException e1) {
+				e1.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void setMetadataType(IMetaAttribute type) {
+		this.metadataInitializer.setMetadataType(type);
+	}
+
+	@Override
+	public M getMetadataInstance() throws InstantiationException, IllegalAccessException {
+		return this.metadataInitializer.getMetadataInstance();
+	}
+
+	@Override
+	public void addMetadataUpdater(IMetadataUpdater<M, W> mFac) {
+		this.metadataInitializer.addMetadataUpdater(mFac);
+		this.metadataUpdater = mFac;
+	}
+
+	@Override
+	public void updateMetadata(W object) {
+		this.metadataInitializer.updateMetadata(object);
+	}
+
+	public IMetadataUpdater<M, W> getMetadataFactory() {
+		return this.metadataUpdater;
 	}
 
 }

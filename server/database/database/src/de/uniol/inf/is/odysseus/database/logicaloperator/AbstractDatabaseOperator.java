@@ -184,7 +184,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 	private void creatingNewConnection() {
 
 		IDatabaseConnectionFactory factory = DatabaseConnectionDictionary
-				.getFactory(db);
+				.getFactory(type);
 		if (factory == null) {
 			String currentInstalled = "";
 			String sep = "";
@@ -193,7 +193,7 @@ public abstract class AbstractDatabaseOperator extends AbstractLogicalOperator {
 				currentInstalled = currentInstalled + sep + n;
 				sep = ", ";
 			}
-			throw new QueryParseException("DBMS \"" + db
+			throw new QueryParseException("DBMS \"" + type
 					+ "\" not supported! Currently available: "
 					+ currentInstalled);
 		}
