@@ -5,6 +5,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataInitializerAdapter;
@@ -25,7 +26,7 @@ public abstract class AbstractNoSQLSourcePO<M extends IMetaAttribute, E extends 
 			.getInstance();
 
 	private IMetadataInitializer<M,E> metadataInitializer = new MetadataInitializerAdapter<>();
-	
+
 	private Thread transferThread;
 
 	private String host;
@@ -65,7 +66,7 @@ public abstract class AbstractNoSQLSourcePO<M extends IMetaAttribute, E extends 
 		if( this.metadataInitializer == null ) {
 			return null;
 		}
-			
+
 		return this.metadataInitializer.getMetadataInstance();
 	}
 
@@ -79,7 +80,7 @@ public abstract class AbstractNoSQLSourcePO<M extends IMetaAttribute, E extends 
 		this.metadataInitializer.updateMetadata(object);
 	}
 
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 
@@ -89,6 +90,10 @@ public abstract class AbstractNoSQLSourcePO<M extends IMetaAttribute, E extends 
 
 		transferThread = new TransferThread();
 		transferThread.start();
+	}
+
+	@Override
+	protected void process_start() throws StartFailedException {
 	}
 
 	/**

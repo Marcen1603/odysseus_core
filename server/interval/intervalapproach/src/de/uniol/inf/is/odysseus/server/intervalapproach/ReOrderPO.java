@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,33 +26,33 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 
 /**
- * Physical implementation of the AssureOrderAO. All incoming tuples are stored
+ * Physical implementation of the ReOrderAO. All incoming tuples are stored
  * in a SweepArea and ordered and transfered when a Punctuation is processed.
- * 
- * There has to be an AssureHeartBeatOperator in the plan before this.
- * 
+ *
+ * There has to be an HeartBeatOperator in the plan before this.
+ *
  * @author Merlin Wasmann
- * 
+ *
  */
-public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
+public class ReOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		extends AbstractPipe<T, T> {
 
 	private final static Logger LOG = LoggerFactory
-			.getLogger(AssureOrderPO.class);
+			.getLogger(ReOrderPO.class);
 
 	private ITransferArea<T, T> transferFunction;
-	
+
 	private boolean transferedElements = false;
 
-	public AssureOrderPO() {
+	public ReOrderPO() {
 
 	}
 
-	public AssureOrderPO(ITransferArea<T, T> transferArea) {
+	public ReOrderPO(ITransferArea<T, T> transferArea) {
 		this.transferFunction = transferArea;
 	}
 
-	public AssureOrderPO(AssureOrderPO<K, T> assureOrderPO) {
+	public ReOrderPO(ReOrderPO<K, T> assureOrderPO) {
 		super(assureOrderPO);
 		this.transferFunction = assureOrderPO.transferFunction.clone();
 		this.transferFunction.init(this, getSubscribedToSource().size());
@@ -60,7 +60,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * getOutputMode()
 	 */
@@ -71,7 +71,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
 	 * process_next(de.uniol.inf.is.odysseus.core.metadata.IStreamObject, int)
 	 */
@@ -80,7 +80,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		// insert object into the transferFunction.
 		this.transferFunction.transfer(object);
 		this.transferedElements = true;
-		
+
 		if (isDone()) {
 			return;
 		}
@@ -112,7 +112,7 @@ public class AssureOrderPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	protected void process_open() throws OpenFailedException {
 		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
-	
+
 	@Override
 	protected synchronized void process_done(int port) {
 		this.transferFunction.done(port);

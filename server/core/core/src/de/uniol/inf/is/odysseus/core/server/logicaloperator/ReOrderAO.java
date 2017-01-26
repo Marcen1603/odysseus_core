@@ -23,22 +23,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * incoming tuples and transfers them in the correct order when a Punctuation is
  * processed.
  *
- * There has to be an AssureHeartBeatOperator in the plan before this.
- *
  * @author Merlin Wasmann
  *
  */
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "ASSUREORDER", category={LogicalOperatorCategory.PROCESSING, LogicalOperatorCategory.ORDER}, doc = "Deprecatd. Use ReOrder.", deprecation = true)
-@Deprecated
-public class AssureOrderAO extends ReOrderAO {
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "REORDER", category={LogicalOperatorCategory.PROCESSING, LogicalOperatorCategory.ORDER}, doc = "Operator which ensures the order of tuples based on punctuations. Requires heartbeats.")
+public class ReOrderAO extends UnaryLogicalOp {
 
-	private static final long serialVersionUID = 8751430587754483972L;
+	private static final long serialVersionUID = 1242934768166736002L;
 
-	public AssureOrderAO() {
+	public ReOrderAO() {
 		super();
 	}
 
-	public AssureOrderAO(AssureOrderAO ao) {
+	public ReOrderAO(ReOrderAO ao) {
 		super(ao);
 	}
 
@@ -51,7 +48,7 @@ public class AssureOrderAO extends ReOrderAO {
 	 */
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new AssureOrderAO(this);
+		return new ReOrderAO(this);
 	}
 
 }

@@ -66,6 +66,11 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
     void open() throws UnknownHostException, IOException;
 
     /**
+     * Sometime there must be a difference between opening and starting
+     */
+	void start();
+
+    /**
      * Is called from the framework, when the query is stopped
      * @throws IOException
      */
@@ -156,6 +161,7 @@ public interface IProtocolHandler<T extends IStreamObject<? extends IMetaAttribu
      */
 
     void updateOption(String key, String value);
+
 
 
 }
