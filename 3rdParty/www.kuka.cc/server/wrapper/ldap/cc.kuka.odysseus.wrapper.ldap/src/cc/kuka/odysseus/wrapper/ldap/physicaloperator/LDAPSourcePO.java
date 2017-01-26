@@ -29,6 +29,7 @@ import javax.naming.directory.SearchResult;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 
@@ -101,6 +102,11 @@ public class LDAPSourcePO extends AbstractSource<Tuple<?>> implements ActionList
         }
     }
 
+    @Override
+    protected void process_start() throws StartFailedException {
+
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +125,7 @@ public class LDAPSourcePO extends AbstractSource<Tuple<?>> implements ActionList
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -132,7 +138,7 @@ public class LDAPSourcePO extends AbstractSource<Tuple<?>> implements ActionList
 
         /**
          * Class constructor.
-         * 
+         *
          * @throws NamingException
          *
          */

@@ -103,6 +103,11 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	}
 
 	@Override
+	public void processInStart() {
+
+	}
+
+	@Override
 	public void processInClose() throws IOException {
 		fireOnDisconnect();
 		in.close();

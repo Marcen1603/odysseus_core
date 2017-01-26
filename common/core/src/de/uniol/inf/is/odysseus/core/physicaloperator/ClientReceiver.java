@@ -802,4 +802,24 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void start(IOperatorOwner id) throws StartFailedException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isStarted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void start(ISink<? super W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+			throws StartFailedException {
+		// TODO Auto-generated method stub
+
+	}
 }
