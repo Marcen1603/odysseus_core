@@ -5,12 +5,17 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
@@ -37,6 +42,8 @@ import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
  *
  */
 public class SocketService extends Observable {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(SocketService.class);
 
 	// QueryId, OutputOperator, OperatorOutputPort
 	private Map<Integer, Map<IPhysicalOperator, Map<Integer, SocketSinkPO>>> socketSinkMap = new HashMap<>();
@@ -231,8 +238,8 @@ public class SocketService extends Observable {
 	 * @return The outer map has the name of the operator as key, the inner map
 	 *         the output port of the operator
 	 */
-	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId, String operatorName,
-			boolean withMetaData) {
+	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
+			String operatorName, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName, session);
 		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
 		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
@@ -329,7 +336,8 @@ public class SocketService extends Observable {
 	private SocketInfo getConnectionInformationWithPorts(ISession session, String queryName, int minPort, int maxPort,
 			IPhysicalOperator operator, int operatorOutputPort, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session)
+				.getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, operatorOutputPort,
 				withMetaData);
 	}
@@ -337,7 +345,8 @@ public class SocketService extends Observable {
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, String queryName, int minPort,
 			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session).getID();
+		int queryId = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()), session)
+				.getID();
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 
@@ -401,6 +410,11 @@ public class SocketService extends Observable {
 	}
 
 	private SocketInfo getSocketInfo(SocketSinkPO socketSink, IPhysicalOperator operator, boolean withMetaData) {
+
+		if (socketSink == null) {
+			// Maybe it was not possible to add a socketSink
+			return null;
+		}
 		try {
 
 			// Get our address
@@ -474,7 +488,7 @@ public class SocketService extends Observable {
 		return roots.get(rootPort);
 	}
 
-	private List<IPhysicalOperator> getRootOperators(int queryId ,ISession session) {
+	private List<IPhysicalOperator> getRootOperators(int queryId, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
 		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return query.getRoots();
@@ -501,7 +515,8 @@ public class SocketService extends Observable {
 
 	private List<IPhysicalOperator> getRootOperators(String queryName, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
-		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()),session);
+		IPhysicalQuery query = plan.getQueryByName(Resource.specialCreateResource(queryName, session.getUser()),
+				session);
 		return query.getRoots();
 	}
 
@@ -527,29 +542,77 @@ public class SocketService extends Observable {
 		return addSocketSink(query, minPort, maxPort, root, rootPort, token, withMetaData);
 	}
 
+	/**
+	 * Adds a SocketSinkPO so that the required data can be send.
+	 * 
+	 * @param query
+	 * @param minPort
+	 * @param maxPort
+	 * @param root
+	 *            The operator to get the data from
+	 * @param rootOutputPort
+	 *            the output port at the root operator to connect to
+	 * @param token
+	 * @param withMetaData
+	 *            if you want to send the metadata as well
+	 * @return
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SocketSinkPO addSocketSink(IPhysicalQuery query, int minPort, int maxPort, IPhysicalOperator root,
 			int rootOutputPort, String token, boolean withMetaData) {
-		if (!(root instanceof ISource)) {
-			// E.g. a MongoDBSinkPO is no ISource and can't be processed here
-			return null;
-		}
-		final ISource<?> rootAsSource = (ISource<?>) root;
+
 		if (root.getOutputSchema(rootOutputPort) != null) {
 			NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler(root.getOutputSchema(rootOutputPort));
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
 			int serverPort = getNextFreePort(minPort, maxPort);
+
+			// Create the physical operator that will send the data via a socket
 			SocketSinkPO sink = new SocketSinkPO(serverPort, "", new NioByteBufferSinkStreamHandlerBuilder(), true,
 					false, false, objectHandler, false, withMetaData);
 
-			rootAsSource.subscribeSink((ISink) sink, 0, rootOutputPort, root.getOutputSchema(rootOutputPort), true, 0);
+			if (!(root instanceof ISource)) {
+
+				// If the operator is not an ISource, we have to connect to the
+				// inputs of that operator
+
+				ISink rootAsSink = (ISink) root;
+
+				// These are the inputs of the given operator
+				Collection<ISubscription> sources = rootAsSink.getSubscribedToSource();
+
+				// For every such operator, connect our new sink (the socket
+				// operator) to it so that the socket operator receives all the
+				// data the original operator receives
+				for (ISubscription source : sources) {
+					Object target = source.getTarget();
+					if (target instanceof ISource) {
+						final ISource<?> targetAsSource = (ISource<?>) target;
+						targetAsSource.subscribeSink((ISink) sink, 0, rootOutputPort,
+								root.getOutputSchema(rootOutputPort), true, 0);
+					}
+				}
+
+			} else {
+
+				// The physical operator we want to subscribe to is itself a
+				// source, hence we can directly subscribe to this operator ->
+				// only one connection needed
+				final ISource<?> rootAsSource = (ISource<?>) root;
+				rootAsSource.subscribeSink((ISink) sink, 0, rootOutputPort, root.getOutputSchema(rootOutputPort), true,
+						0);
+
+			}
+
+			// Now the new operator can start its work
 			sink.startListening();
 			sink.addOwner(query);
 			sink.addAllowedSessionId(token);
 			return sink;
 		}
+
+		LOG.warn("The operator " + root.getName() + " has to output schema. Won't be used for a socket sink.");
 		return null;
 	}
 

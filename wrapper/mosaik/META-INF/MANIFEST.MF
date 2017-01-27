@@ -13,4 +13,5 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
  org.slf4j,
  org.osgi.framework
 Bundle-ClassPath: lib/json-simple-1.1.1.jar,
+ lib/mosaik-api-java-2.2.jar,
  .
