@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -136,7 +137,27 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		this.expressions = new ArrayList<>(exprToInit.size());
 		int i = 0;
 		for (NamedExpression expression : exprToInit) {
-			List<SDFAttribute> neededAttributes = expression.expression.getAllAttributes();
+			List<SDFAttribute> exprAttributes = expression.expression.getAllAttributes();
+			// Check, if there are some attributes from the meta schema and set datatype
+			List<SDFAttribute> neededAttributes = new ArrayList<>();
+			boolean changedSchema = false;
+			for (SDFAttribute a: exprAttributes){
+				Pair<Integer, Integer> pos = getInputSchema()
+						.indexOfMetaAttribute(a.getURI());
+				if (pos != null){
+					neededAttributes.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
+					changedSchema = true;
+				}else{
+					neededAttributes.add(a);
+				}
+
+			}
+			if (changedSchema){
+				SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(inputSchema, neededAttributes);
+				List<SDFSchema> schemaList = new ArrayList<>();
+				schemaList.add(newSchema);
+				expression.expression.setSchema(schemaList);
+			}
 			String[] newArray = new String[neededAttributes.size()];
 			this.variables[i++] = newArray;
 			int j = 0;
