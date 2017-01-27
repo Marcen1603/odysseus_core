@@ -76,12 +76,27 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 				for (int i = 0; i < this.expressions.size(); ++i) {
 					Object[] values = new Object[this.variables[i].length];
 					for (int j = 0; j < this.variables[i].length; ++j) {
-						values[j] = object.getAttribute(this.variables[i][j]);
-						// Could be metadata value
-						if (values[j] == null){
-							Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(this.variables[i][j]);
-							if (pos != null){
-								values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
+						if (this.variables[i][j].equals("$")) {
+							values[j] = object.clone();
+							((T)values[j]).setMetadata(null);
+						} else {
+							values[j] = object.getAttribute(this.variables[i][j]);
+							// Could be metadata value
+							if (values[j] == null) {
+								Pair<Integer, Integer> pos = getInputSchema()
+										.indexOfMetaAttribute(this.variables[i][j]);
+								if (pos != null) {
+									values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
+								}
+							}
+							// Could be path
+							if (values[j] == null) {
+								List<Object> pathResult = object.path(this.variables[i][j]);
+								if (pathResult.size() == 1) {
+									values[j] = pathResult.get(0);
+								} else {
+									values[j] = pathResult;
+								}
 							}
 						}
 					}
