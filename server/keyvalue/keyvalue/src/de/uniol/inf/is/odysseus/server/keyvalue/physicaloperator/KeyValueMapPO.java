@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -35,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
- * Implementation of map operator for key value objects.
- * Adapted from relational map.
+ * Implementation of map operator for key value objects. Adapted from relational
+ * map.
  *
  * @author Jan Soeren Schwarz
  * @author Marco Grawunder
@@ -56,56 +57,63 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		this.inputSchema = mapAO.getInputSchema();
 		initExpressions(mapAO.getExpressions());
 		this.allowNull = false;
-		if (mapAO.isKeepInput()){
+		if (mapAO.isKeepInput()) {
 			throw new RuntimeException("KeepInput is not possible for KeyValueMap. Use $ as expression instead");
 		}
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	final protected void process_next(T object, int port) {
+		if (object != null) {
 
-		T outputVal = (T) KeyValueObject.createInstance();
+			T outputVal = (T) KeyValueObject.createInstance();
 
-		outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
+			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
+			boolean nullValueOccured = false;
 
-		boolean nullValueOccured = false;
-		synchronized (this.expressions) {
-			for (int i = 0; i < this.expressions.size(); ++i) {
-				Object[] values = new Object[this.variables[i].length];
-				for (int j = 0; j < this.variables[i].length; ++j) {
-					if (object != null) {
+			synchronized (this.expressions) {
+				for (int i = 0; i < this.expressions.size(); ++i) {
+					Object[] values = new Object[this.variables[i].length];
+					for (int j = 0; j < this.variables[i].length; ++j) {
 						values[j] = object.getAttribute(this.variables[i][j]);
+						// Could be metadata value
+						if (values[j] == null){
+							Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(this.variables[i][j]);
+							if (pos != null){
+								values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
+							}
+						}
 					}
-				}
-				SDFExpression expr = this.expressions.get(i).expression;
-				String name = this.expressions.get(i).name;
-				try {
+					SDFExpression expr = this.expressions.get(i).expression;
+					String name = this.expressions.get(i).name;
+					try {
 
-					expr.bindVariables(values);
-					Object val = expr.getValue();
+						expr.bindVariables(values);
+						Object val = expr.getValue();
 
-					outputVal.setAttribute(name, val);
+						outputVal.setAttribute(name, val);
 
-					if (val == null) {
+						if (val == null) {
+							nullValueOccured = true;
+						}
+					} catch (Exception e) {
 						nullValueOccured = true;
-					}
-				} catch (Exception e) {
-					nullValueOccured = true;
-					if (!(e instanceof NullPointerException)) {
-						logger.warn("Cannot calc result for " + object
-								+ " with expression " + expr, e);
-						// Not needed. Value is null, if not set!
-						// outputVal.setAttribute(i, null);
-						sendWarning("Cannot calc result for " + object
-								+ " with expression " + expr, e);
+						if (!(e instanceof NullPointerException)) {
+							logger.warn("Cannot calc result for " + object + " with expression " + expr, e);
+							// Not needed. Value is null, if not set!
+							// outputVal.setAttribute(i, null);
+							sendWarning("Cannot calc result for " + object + " with expression " + expr, e);
+						}
 					}
 				}
+
+			} // synchronized
+			if (!nullValueOccured || (nullValueOccured && allowNull)) {
+				transfer(outputVal);
 			}
 		}
-		if (!nullValueOccured || (nullValueOccured && allowNull)) {
-			transfer(outputVal);
-		}
+
 	}
 
 	protected void initExpressions(List<NamedExpression> exprToInit) {
@@ -120,18 +128,18 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 			for (SDFAttribute curAttribute : neededAttributes) {
 				newArray[j++] = removePoint(curAttribute.toString());
 			}
-			if (Strings.isNullOrEmpty(expression.name)){
+			if (Strings.isNullOrEmpty(expression.name)) {
 				String newName = expression.expression.getExpressionString();
 				newName = newName.replaceAll("(", "_").replaceAll(")", "_");
 				this.expressions.add(new NamedExpression(newName, expression));
-			}else{
+			} else {
 				this.expressions.add(expression);
 			}
 		}
 	}
 
 	private String removePoint(String name) {
-		if(name.substring(0, 1).equals(".")) {
+		if (name.substring(0, 1).equals(".")) {
 			return name.substring(1);
 		}
 		return name;
