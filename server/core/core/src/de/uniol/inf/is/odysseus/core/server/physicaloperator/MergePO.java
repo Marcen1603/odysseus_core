@@ -34,12 +34,12 @@ public class MergePO extends AbstractPipe<IStreamObject<?>,IStreamObject<?>> {
 	}
 
 	@Override
-	protected void process_next(IStreamObject<?> object, int port) {
+	protected synchronized void process_next(IStreamObject<?> object, int port) {
 		transfer(object);
 	}
 	
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
+	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
 	}
 
