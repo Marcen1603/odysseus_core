@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,19 +31,19 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoade
  * Describes an object which manages the scheduling of the execution plan.
  * ISchedulerManager is the scheduling module of the odysseus. This interface is
  * used for scheduling services.
- * 
+ *
  * A manager can handle many scheduler, scheduler factories and scheduling
  * strategy factories. It defines which scheduler are active and distributes the
  * execution plan for scheduling.
- * 
+ *
  * @author Wolf Bauer
- * 
+ *
  */
 public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 		IErrorEventListener, IEventHandler {
 	/**
 	 * Start scheduling of the registered physical plan.
-	 * 
+	 *
 	 * @throws NoSchedulerLoadedException
 	 *             An {@link Exception} occurs because no scheduler is loaded.
 	 * @throws OpenFailedException
@@ -55,7 +55,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * Stop scheduling of the registered physical plan.
-	 * 
+	 *
 	 * @throws NoSchedulerLoadedException
 	 *             An {@link Exception} occurs because no scheduler is loaded.
 	 */
@@ -63,7 +63,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * TODO: sollte jemand erklären der Ahnung davon hat (Wolf).
-	 * 
+	 *
 	 * @param time
 	 * @throws NoSchedulerLoadedException
 	 *             An {@link Exception} occurs because no scheduler is loaded.
@@ -73,7 +73,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * Indicates if the scheduling is started.
-	 * 
+	 *
 	 * @return TRUE: Scheduling is started. FALSE: Scheduling is stopped.
 	 * @throws NoSchedulerLoadedException
 	 *             An {@link Exception} occurs because no scheduler is loaded.
@@ -82,7 +82,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * Sets the new execution plan which should be scheduled.
-	 * 
+	 *
 	 * @param executivePlan
 	 *            New execution plan which should be scheduled.
 	 * @throws NoSchedulerLoadedException
@@ -91,7 +91,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	public void refreshScheduling(IExecutionPlan executivePlan)
 			throws NoSchedulerLoadedException;
 
-	
+
 	/**
 	 * Adds a new query to schedule
 	 * @param affectedQuery
@@ -115,10 +115,10 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	 * @param affectedQuery
 	 */
 	public void stoppedQuery(IPhysicalQuery affectedQuery);
-	
+
 	/**
 	 * Sets how many scheduler should be used.
-	 * 
+	 *
 	 * @param schedulerCount
 	 *            How many scheduler should be used.
 	 */
@@ -126,7 +126,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * Returns how many scheduler are used.
-	 * 
+	 *
 	 * @return How many scheduler are used.
 	 */
 	public int getSchedulerCount();
@@ -134,7 +134,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	/**
 	 * Returns a set of all schedulers which are registered. A Scheduler is
 	 * represented with an ID.
-	 * 
+	 *
 	 * @return Set of all schedulers which are registered. A Scheduler is
 	 *         represented with an ID.
 	 */
@@ -143,7 +143,7 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	/**
 	 * Returns a set of all scheduling strategies which are registered. A
 	 * scheduling strategy is represented with an ID.
-	 * 
+	 *
 	 * @return Set of all scheduling strategies which are registered. A
 	 *         scheduling strategy is represented with an ID.
 	 */
@@ -152,10 +152,10 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 	/**
 	 * Set the active scheduler. This scheduler is used for scheduling the
 	 * execution plan.
-	 * 
+	 *
 	 * TODO: So nur sinnvoll, wenn nur ein Scheduler gleichzeitig ... sollte
 	 * aber Standardfall sein ...
-	 * 
+	 *
 	 * @param activeScheduler
 	 *            ID of the scheduler which should be used.
 	 * @param activeSchedulingStrategy
@@ -168,25 +168,25 @@ public interface ISchedulerManager extends IInfoProvider, IErrorEventHandler,
 
 	/**
 	 * Returns the active scheduler as an ID.
-	 * 
+	 *
 	 * @return The active scheduler as an ID.
 	 */
 	public String getActiveSchedulerID();
 
 	/**
 	 * Returns the active scheduler
-	 * 
+	 *
 	 * @return The active scheduler
 	 */
 	public IScheduler getActiveScheduler();
 
 	/**
 	 * Returns the active scheduling strategy as an ID.
-	 * 
+	 *
 	 * @return The active scheduling strategy as an ID.
 	 */
 	public String getActiveSchedulingStrategyID();
-	
+
 	public void schedulingsChanged();
 
 }

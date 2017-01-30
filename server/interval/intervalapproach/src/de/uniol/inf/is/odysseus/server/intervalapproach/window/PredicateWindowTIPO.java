@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
@@ -153,24 +152,11 @@ public class PredicateWindowTIPO<T extends IStreamObject<ITimeInterval>> extends
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-
-		// FIXME: Implement me again
-		// Need to iterate over all buffers
-		// if (maxWindowTime > 0){
-		//
-		// PointInTime.plus(queue.get(0).getMetadata().getStart(),
-		// maxWindowTime).afterOrEquals(punctuation.getTime())) {
-		// produceData(punctuation.getTime());
-		// }
-
-	}
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof PredicateWindowTIPO)) {
 			return false;
 		}
+		@SuppressWarnings("unchecked")
 		PredicateWindowTIPO<IStreamObject<ITimeInterval>> other = (PredicateWindowTIPO<IStreamObject<ITimeInterval>>) ipo;
 		if (!Objects.equal(this.start,other.start)) {
 			return false;

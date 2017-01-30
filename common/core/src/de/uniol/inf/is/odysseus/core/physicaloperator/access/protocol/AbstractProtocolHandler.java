@@ -136,6 +136,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	@Override
+	public void start() {
+		getTransportHandler().start();
+	}
+
+	@Override
 	public void close() throws IOException {
 		getTransportHandler().close();
 	}

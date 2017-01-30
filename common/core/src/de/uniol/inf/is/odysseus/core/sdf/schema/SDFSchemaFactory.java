@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
  * This class is used to create instance of SDFSchema
- * 
+ *
  * @author Marco Grawunder
  *
  */
@@ -23,7 +23,7 @@ public class SDFSchemaFactory {
 	 * should only be used, if there is no input schema (e.g. from an input
 	 * operator) </b>. Typically, this method should only be used in access
 	 * operators
-	 * 
+	 *
 	 * @param uri
 	 *            The name of the schema
 	 * @param type
@@ -52,7 +52,7 @@ public class SDFSchemaFactory {
 	 * should only be used, if there is no input schema (e.g. from an input
 	 * operator) </b>. Typically, this method should only be used in access
 	 * operators
-	 * 
+	 *
 	 * @param uri
 	 *            The name of the schema
 	 * @param type
@@ -72,7 +72,7 @@ public class SDFSchemaFactory {
 	 * types). <b>This method should only be used, if there is no input schema
 	 * (e.g. from an input operator) </b>. Typically, this method should only be
 	 * used in access operators
-	 * 
+	 *
 	 * @param uri
 	 *            The name of the schema
 	 * @param attributes
@@ -86,7 +86,7 @@ public class SDFSchemaFactory {
 				Tuple.class, attributes);
 		return out;
 	}
-	
+
 	static public SDFSchema createNewSchema(String uri, Class<? extends IStreamObject<?>> type,
 			Collection<SDFAttribute> attributes, SDFSchema oldSchema) {
 		SDFSchema out = new SDFSchema(uri,
@@ -94,13 +94,13 @@ public class SDFSchemaFactory {
 		return out;
 	}
 
-	
+
 	/**
 	 * This method can be used to create a new SDFSchema object (with tuples as
 	 * types). <b>This method should only be used, if there is no input schema
 	 * (e.g. from an input operator) </b>. Typically, this method should only be
 	 * used in access operators
-	 * 
+	 *
 	 * @param uri
 	 *            The name of the schema
 	 * @param attributes
@@ -118,7 +118,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * This method creates a new SDFSchema by replacing the current attributes
-	 * 
+	 *
 	 * @param attributes
 	 *            the new attribute
 	 * @param inputSchema
@@ -133,7 +133,7 @@ public class SDFSchemaFactory {
 	/**
 	 * This method creates a new SDFSchema by replacing the current attributes
 	 * and the name of the schema
-	 * 
+	 *
 	 * @param name
 	 *            the new name the schema should get
 	 * @param attributes
@@ -149,7 +149,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * This method creates a new SDFSchema by replacing the current attributes
-	 * 
+	 *
 	 * @param inputSchema
 	 *            the input schema from which the new schema should be derived
 	 * @param attributes
@@ -162,10 +162,24 @@ public class SDFSchemaFactory {
 	}
 
 	/**
+	 * This method creates a new SDFSchema by replacing the current attributes
+	 *
+	 * @param inputSchema
+	 *            the input schema from which the new schema should be derived
+	 * @param attributes
+	 *            the new attribute
+	 * @return
+	 */
+	static public SDFSchema createNewWithAttributes(SDFSchema inputSchema,
+			Collection<SDFAttribute> attributes) {
+		return new SDFSchema(inputSchema, attributes);
+	}
+
+	/**
 	 * This method creates a new SDFSchema by appending a new attribute at the
 	 * end of the current input schema. If multiple attributes should be
 	 * appended use crateNewAddAttributes
-	 * 
+	 *
 	 * @param attribute
 	 *            the single attribute to append
 	 * @param inputSchema
@@ -184,7 +198,7 @@ public class SDFSchemaFactory {
 	 * This method creates a new SDFSchema by appending new attributes at the
 	 * end of the current input schema. If a single attribute should be appended
 	 * use crateNewAddAttribute
-	 * 
+	 *
 	 * @param attribute
 	 *            the single attribute to append
 	 * @param inputSchema
@@ -202,7 +216,7 @@ public class SDFSchemaFactory {
 	/**
 	 * This method creates a new SDFSchema with the special flag strictOrder set
 	 * (to true or false)
-	 * 
+	 *
 	 * @param strictOrder
 	 *            If set to true, the order for every case where two elements
 	 *            have the same order key (e.g. a time stamp) an additional
@@ -220,7 +234,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * This method creates a new SDFSchema where contraints are added
-	 * 
+	 *
 	 * @param constraints
 	 *            A map of constraints
 	 * @param inputSchema
@@ -236,7 +250,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * This method creates a new SDFSchema where contraints are added
-	 * 
+	 *
 	 * @param constraints
 	 *            A collection of constraints
 	 * @param inputSchema
@@ -250,10 +264,10 @@ public class SDFSchemaFactory {
 		return output;
 	}
 
-	
+
 	/**
 	 * Create a new schema by adding all attributes of schema2 into schema
-	 * 
+	 *
 	 * @param schema1
 	 * @param schema2
 	 * @return
@@ -264,7 +278,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * Create a new schema by adding all attributes of schema2 into schema
-	 * 
+	 *
 	 * @param schema1
 	 * @param schema2
 	 * @param schema3
@@ -278,7 +292,7 @@ public class SDFSchemaFactory {
 
 	/**
 	 * Creates a new schema by adding the metaSchema to the current schema
-	 * 
+	 *
 	 * @param currentSchema
 	 * @param metaSchema
 	 * @return

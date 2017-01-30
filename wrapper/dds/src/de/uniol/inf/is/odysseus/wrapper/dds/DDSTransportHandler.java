@@ -50,7 +50,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 	public static final String NAME = "DDS";
 
 	static final InfoService INFO = InfoServiceFactory.getInfoService(DDSTransportHandler.class);
-	
+
 	public static final String QOS_FILE = "qosfile";
 	public static final String IDL_FILE = "idlfile";
 	public static final String TOPIC_TYPE = "topictype";
@@ -68,7 +68,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 	private String qosProfile;
 
 	private Topic topic;
-	
+
 	@Override
 	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		try {
@@ -89,7 +89,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 	private void init(OptionMap options) throws FileNotFoundException {
 
 		//Logger.get_instance().set_verbosity(LogVerbosity.NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-		
+
 		options.checkRequired(QOS_FILE, IDL_FILE, TOPIC, TOPIC_TYPE, QOS_LIB, QOS_PROFILE);
 
 		// ToDo allow multiple topics?
@@ -106,7 +106,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 
 		IDLTranslator translator = new IDLTranslator(idlFileName);
 		translator.processIDLFile();
-		
+
 		System.out.println(TypeCodeMapper.getNametocode());
 
 		DomainParticipantFactory domFactory = DomainParticipantFactory.get_instance();
@@ -125,7 +125,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 			INFO.error("Error reading config file "+qosFile, e);
 		}
 //		factoryQos.profile.url_profile.add(qosFile);
-		
+
 		factoryQos.resource_limits.max_objects_per_thread = 8192;
 		domFactory.set_qos(factoryQos);
 
@@ -137,7 +137,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 
 		participant = DomainParticipantFactory.get_instance().create_participant(domainId,
 				DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
-		
+
 		participant.enable();
 
         SubscriberQos subscriberQos = new SubscriberQos();
@@ -151,14 +151,14 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 
         publisherQos.partition.name.clear();
         participant.set_default_publisher_qos(publisherQos);
-               
-        
-		// Register Type and topic        
+
+
+		// Register Type and topic
         TypeCode topicTypeCode = TypeCodeMapper.getTypeCode(topicTypeName);
 		if (topicTypeCode == null) {
 			throw new IllegalArgumentException("Typecode " + topicTypeName + " for topic " + topicName + " not defined.");
 		}
-		
+
 		topicTypeCode.print_IDL(0);
 		// set schema from type code
 		try {
@@ -169,18 +169,18 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 			e.printStackTrace();
 		}
 
-		
+
 		DynamicDataTypeSupport dynamicTypeSupport = new DynamicDataTypeSupport(topicTypeCode,
 				DynamicDataTypeSupport.TYPE_PROPERTY_DEFAULT);
-		
+
 		dynamicTypeSupport.register_type(participant, topicTypeName);
 
-		
+
 		topic = participant.create_topic(topicName, topicTypeName,
 				DomainParticipant.TOPIC_QOS_DEFAULT, null, StatusKind.STATUS_MASK_NONE);
-		
+
 	}
-	
+
     public static void loadQosLibrary(DomainParticipantFactoryQos qos, URL url) throws IOException {
 
         if (url != null) {
@@ -204,26 +204,30 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
             INFO.warning("Could not locate config file "+url);
     }
     }
-	
+
 	@Override
 	public String getName() {
 		return NAME;
 	}
-	
+
 
 	@Override
 	public void processInOpen() throws IOException {
 
+	}
+
+	@Override
+	public void processInStart() {
 		reader = new Thread() {
 
 			@Override
 			public void run() {
 				try {
-								
-					// Create a reader endpoint 
+
+					// Create a reader endpoint
 					DynamicDataReader reader = (DynamicDataReader) participant.create_datareader_with_profile(topic,
 							qosLibrary, qosProfile, null , StatusKind.STATUS_MASK_NONE);
-										
+
 					// A waitset allows us to wait for various status changes in
 					// various
 					// entities
@@ -251,7 +255,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 
 //					// // Will contain the data samples we read from the reader
 					DynamicDataSeq data_seq = new DynamicDataSeq();
-					
+
 			        // Will contain the data samples we read from the reader
 //			        ice.SampleArraySeq data_seq = new ice.SampleArraySeq();
 
@@ -320,6 +324,7 @@ public class DDSTransportHandler extends AbstractPushTransportHandler implements
 		reader.start();
 		reader.setUncaughtExceptionHandler(this);
 	}
+
 
 	@Override
 	public void processOutOpen() throws IOException {
