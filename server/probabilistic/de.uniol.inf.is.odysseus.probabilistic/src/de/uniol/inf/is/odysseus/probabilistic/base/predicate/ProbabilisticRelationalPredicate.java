@@ -53,6 +53,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.AbstractRelationalPred
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
+@SuppressWarnings("all")
 public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicate<ProbabilisticTuple<?>>
 		implements IProbabilisticRelationalPredicate<ProbabilisticTuple<?>> {
 	private static final long serialVersionUID = 1222104352250883947L;
