@@ -21,14 +21,6 @@
          version="0.0.0"/>
 
    <includes
-         id="org.eclipse.xtext.runtime"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.xtext.xbase"
-         version="0.0.0"/>
-
-   <includes
          id="org.eclipse.emf.codegen"
          version="0.0.0"/>
 
@@ -41,18 +33,12 @@
          version="0.0.0"/>
 
    <requires>
-      <import plugin="org.eclipse.xtext.xbase"/>
       <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi" version="3.11.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore"/>
-      <import plugin="org.eclipse.xtend.lib"/>
-      <import plugin="org.eclipse.emf.common"/>
-      <import plugin="org.eclipse.xtext.junit4" version="2.10.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.parser.pql"/>
       <import plugin="com.google.guava"/>
-      <import plugin="org.eclipse.xtend.lib.macro"/>
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.10.2" match="greaterOrEqual"/>
       <import plugin="org.antlr.runtime" version="3.2.0" match="perfect"/>
       <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
@@ -60,7 +46,6 @@
       <import plugin="org.eclipse.xtext.smap" version="2.10.0" match="compatible"/>
       <import plugin="org.eclipse.xtext" version="2.10.0" match="compatible"/>
       <import plugin="org.objectweb.asm" version="5.0.1" match="compatible"/>
-      <import plugin="org.apache.commons.cli"/>
    </requires>
 
    <plugin
@@ -72,13 +57,6 @@
 
    <plugin
          id="org.antlr.runtime"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtext"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -210,14 +188,84 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.emf.codegen.ecore"
+         id="org.eclipse.xpand"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xpand"
+         id="org.eclipse.emf.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.ibm.icu"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.debug.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.variables"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javax.inject"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.builder.standalone"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.xtext.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.ecore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.smap"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.codegen.ecore"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -231,14 +279,14 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.jdt.core"
+         id="org.eclipse.jdt.launching"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.jdt.launching"
+         id="org.eclipse.jdt.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -251,7 +299,14 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.eclipse.emf.common"
+         id="org.eclipse.text"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.generator"
          download-size="0"
          install-size="0"
          version="0.0.0"

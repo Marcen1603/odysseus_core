@@ -7,7 +7,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.novel.cql; singleton:=true
 Service-Component: OSGI-INF/component.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
- org.eclipse.xtext.xbase,
  org.eclipse.equinox.common,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
@@ -21,7 +20,9 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.junit4,
  de.uniol.inf.is.odysseus.parser.pql,
  com.google.guava,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ org.eclipse.xtext.generator,
+ org.eclipse.xtext.builder.standalone;bundle-version="2.10.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql,
  de.uniol.inf.is.odysseus.parser.novel.cql.cQL,
