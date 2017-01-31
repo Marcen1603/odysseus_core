@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.command.TargetedCommand;
 import de.uniol.inf.is.odysseus.core.connection.NioConnection;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -148,7 +149,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/**
 	 * Scheduling-Komponente
 	 */
-	private ISchedulerManager schedulerManager;
+	protected ISchedulerManager schedulerManager;
 
 	/**
 	 * Optimierungs-Komponente
@@ -509,28 +510,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		throw new NoOptimizerLoadedException();
 	}
 
-	/**
-	 * schedulerManager liefert den aktuellen Scheduling-Manager. Sollte keiner
-	 * registriert sein, wird eine Exception geworfen.
-	 *
-	 * @return aktueller Scheduling-Manager
-	 * @throws SchedulerException
-	 */
-	@Override
-	public ISchedulerManager getSchedulerManager(ISession session) throws SchedulerException {
-		// TODO: Check access rights
-		return getSchedulerManager();
-	}
-
-	@Override
-	public ISchedulerManager getSchedulerManager() throws SchedulerException {
-		if (this.schedulerManager != null) {
-			return this.schedulerManager;
-		}
-
-		throw new SchedulerException();
-	}
-
 	@Override
 	public ICompiler getCompiler() throws NoCompilerLoadedException {
 		if (this.compiler != null) {
@@ -568,23 +547,23 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		case PLAN_REOPTIMIZE:
 		case QUERY_REOPTIMIZE:
 			LOG.info("Refresh Scheduling");
-			getSchedulerManager().refreshScheduling(executionPlan);
+			schedulerManager.refreshScheduling(executionPlan);
 			fireGenericEvent(IUpdateEventListener.SCHEDULING);
 			break;
 		case QUERY_ADDED:
-			getSchedulerManager().addQuery(affectedQuery);
+			schedulerManager.addQuery(affectedQuery);
 			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_REMOVE:
-			getSchedulerManager().removeQuery(affectedQuery);
+			schedulerManager.removeQuery(affectedQuery);
 			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_START:
-			getSchedulerManager().startedQuery(affectedQuery);
+			schedulerManager.startedQuery(affectedQuery);
 			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_STOP:
-			getSchedulerManager().stoppedQuery(affectedQuery);
+			schedulerManager.stoppedQuery(affectedQuery);
 			fireGenericEvent(IUpdateEventListener.QUERY);
 			break;
 		case QUERY_SUSPEND:
@@ -594,6 +573,19 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			break;
 		}
 	}
+
+	@Override
+	public void subscribeToAllSchedulerEvents(IEventListener caller) {
+		schedulerManager.subscribeToAll(caller);
+		schedulerManager.getActiveScheduler().subscribeToAll(caller);
+	};
+
+	@Override
+	public void unsubscribeFromAllSchedulerEvents(IEventListener caller) {
+		schedulerManager.unSubscribeFromAll(caller);
+		schedulerManager.getActiveScheduler().unSubscribeFromAll(caller);
+	};
+
 
 	// ----------------------------------------------------------------------------------------
 	// Run Commands
@@ -615,7 +607,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public void runCommand(Command command, ISession caller) {
-		// TODO: check rights
+		ExecutorPermission.validateUserRight(caller, ExecutorPermission.RUN_COMMAND);
 
 		if (command instanceof TargetedCommand) {
 			TargetedCommand<?> tCommand = (TargetedCommand<?>) command;
@@ -768,7 +760,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public void startExecution(ISession session) throws SchedulerException {
-		// TODO: Is scheduling manager
+		ExecutorPermission.validateUserRight(session, ExecutorPermission.START_SCHEDULER);
 
 		if (isRunning()) {
 			LOG.trace("Scheduler already running.");
@@ -776,7 +768,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		LOG.trace("Start Scheduler.");
 		try {
-			getSchedulerManager().startScheduling();
+			schedulerManager.startScheduling();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}
@@ -795,14 +787,14 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	@Override
 	public void stopExecution(ISession session) throws SchedulerException {
-		// TODO: SCHEDULING RIGHTS
+		ExecutorPermission.validateUserRight(session, ExecutorPermission.STOP_SCHEDULER);
 		if (!isRunning()) {
 			LOG.trace("Scheduler not running.");
 			return;
 		}
 		LOG.trace("Stop Scheduler.");
 		try {
-			getSchedulerManager().stopScheduling();
+			schedulerManager.stopScheduling();
 			// Stopp only if it has an instance
 			if (NioConnection.hasInstance()) {
 				NioConnection.getInstance().stopRouting();
@@ -827,7 +819,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public boolean isRunning() throws SchedulerException {
 		try {
-			return getSchedulerManager().isRunning();
+			return schedulerManager.isRunning();
 		} catch (Exception e) {
 			throw new SchedulerException(e);
 		}

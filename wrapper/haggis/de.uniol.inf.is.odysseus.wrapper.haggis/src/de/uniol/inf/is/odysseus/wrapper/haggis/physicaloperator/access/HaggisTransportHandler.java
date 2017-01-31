@@ -17,9 +17,9 @@ import de.uniol.inf.is.odysseus.wrapper.haggis.communication.HaggisConsumer;
 
 /**
  * Transport handler for the Haggis simulation platform. Realized using the ICE framework (See http://www.zeroc.com/ice.html).
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc> edited by jbmzh <jan.meyer.zu.holte@uni-oldenburg.de>
- * 
+ *
  */
 public class HaggisTransportHandler extends AbstractTransportHandler {
     /** Logger */
@@ -44,11 +44,11 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     private String username;
     private String password;
     private String agent;
-    
+
     private HaggisConsumer consumer;
 
     /**
-     * 
+     *
      */
     public HaggisTransportHandler() {
         super();
@@ -136,11 +136,15 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
 
     @Override
 	public void processInOpen() throws IOException {
+	}
+
+    @Override
+    public void processInStart() {
 		if(consumer == null){
 			consumer = new HaggisConsumer(this);
 			consumer.start();
 		}
-	}
+    }
 
 	@Override
 	public void processInClose() throws IOException {
@@ -205,10 +209,10 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     	} else if(!this.getListen().equals(other.getListen())) {
     		return false;
     	}
-    	
+
     	return true;
     }
-    
+
     /**
      * @param listen
      *            the listen address to set
@@ -313,7 +317,7 @@ public class HaggisTransportHandler extends AbstractTransportHandler {
     public String getPassword() {
         return this.password;
     }
-    
+
     public InputStream getInput() {
 		return input;
 	}

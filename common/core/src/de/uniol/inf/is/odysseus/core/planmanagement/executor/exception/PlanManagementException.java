@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,29 +18,29 @@ package de.uniol.inf.is.odysseus.core.planmanagement.executor.exception;
 /**
  * PlanManagementException describes an {@link Exception} which occurs during
  * plan management.
- * 
+ *
  * @author Wolf Bauer
- * 
+ *
  */
 public class PlanManagementException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 3420886636303978500L;
 
 	/**
 	 * Constructor of PlanManagementException.
-	 * 
-	 * @param e original {@link Exception} which occurs. 
+	 *
+	 * @param e original {@link Exception} which occurs.
 	 */
-	public PlanManagementException(Exception e) {
+	public PlanManagementException(Throwable e) {
 		super(e);
 	}
 
 	/**
 	 * Constructor of PlanManagementException.
-	 * 
+	 *
 	 * @param details detailed exception message.
 	 */
 	public PlanManagementException(String details) {
@@ -50,12 +50,12 @@ public class PlanManagementException extends RuntimeException {
 	public PlanManagementException(String message, Throwable e) {
 		super(message,e);
 	}
-	
+
 	public String getRootMessage(){
 		Throwable current = this;
 		while(current.getCause()!=null){
 			current = current.getCause();
 		}
-		return current.getMessage();				
+		return current.getMessage();
 	}
 }

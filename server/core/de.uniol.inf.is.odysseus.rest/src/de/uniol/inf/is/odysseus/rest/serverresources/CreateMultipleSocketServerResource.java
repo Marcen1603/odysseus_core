@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.rest.socket.SocketService;
  *
  */
 public class CreateMultipleSocketServerResource extends AbstractSessionServerResource {
-
+	
 	public static final String PATH = "createMultiSocket";
 
 	/**

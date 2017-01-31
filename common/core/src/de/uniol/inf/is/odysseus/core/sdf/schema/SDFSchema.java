@@ -747,6 +747,20 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return null;
 	}
 
+	public Pair<Integer, Integer> indexOfMetaAttribute(String curAttribute) {
+		if( metaschema == null ) {
+			return null;
+		}
+
+		for (int i = 0; i < metaschema.size(); i++) {
+			int index = metaschema.get(i).findAttributeIndex(curAttribute);
+			if (index >= 0) {
+				return new Pair<Integer, Integer>(i, index);
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Checks if all names are distinct. Else the set of not distinct names are send
 	 * @return

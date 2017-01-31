@@ -60,8 +60,7 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
  *
  * @author Marco Grawunder
  *
- * @param
- * 			<Q>:
+ * @param <Q>:
  *            The metadata datatype
  * @param <R>:
  *            The type of the element that is read
@@ -286,7 +285,8 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					.get(groupID);
 			if (sa == null) {
 				// TODO: make flexible
-				sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(new FastLinkedList<>());
+				sa = new DefaultTISweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>(
+						new FastLinkedList<>());
 				groups.put(groupID, sa);
 			}
 
@@ -383,26 +383,28 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	}
 
 	@Override
-	public PointInTime getLatestEndTimestamp(){
+	public PointInTime getLatestEndTimestamp() {
 		return getLatestEndTimestamp(groups);
 	}
 
-	public PointInTime getLatestEndTimestamp(Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess){
+	public PointInTime getLatestEndTimestamp(
+			Map<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> groupsToProcess) {
 		PointInTime maxPoint = null;
 		for (Entry<Object, ITimeIntervalSweepArea<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>>> entry : groupsToProcess
 				.entrySet()) {
-			maxPoint = PointInTime.max(maxPoint,entry.getValue().getMaxEndTs());
+			maxPoint = PointInTime.max(maxPoint, entry.getValue().getMaxEndTs());
 		}
 		return maxPoint;
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-
-		// Keep punctuation order by sending to transfer area
-		transferArea.sendPunctuation(punctuation, port);
-		// Maybe new output can be created because of time progress
-		createOutput(null, null, punctuation.getTime(), port, groups, getGroupProcessor());
+		synchronized (groups) {
+			// Keep punctuation order by sending to transfer area
+			transferArea.sendPunctuation(punctuation, port);
+			// Maybe new output can be created because of time progress
+			createOutput(null, null, punctuation.getTime(), port, groups, getGroupProcessor());
+		}
 	}
 
 	/**
@@ -483,11 +485,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 		// The list of found elements that cannot be changed anymore
 		List<PairMap<SDFSchema, AggregateFunction, W, Q>> returnValues = new LinkedList<>();
 		List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> outdated = new LinkedList<>();
-		// Get all overlapping elements but KEEP them in the area, remove outdated
+		// Get all overlapping elements but KEEP them in the area, remove
+		// outdated
 		List<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifierList = sa
 				.queryOverlapsAsListExtractOutdated(newElem.getMetadata(), outdated);
 
-		for (PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e:outdated){
+		for (PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> e : outdated) {
 			PairMap<SDFSchema, AggregateFunction, W, Q> out = calcEval(e, true);
 			out.setMetadata(e.getMetadata());
 			returnValues.add(out);
@@ -495,12 +498,13 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 		Iterator<PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q>> qualifies = qualifierList.iterator();
 
-		while(qualifies.hasNext()){
+		while (qualifies.hasNext()) {
 			PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> pa = qualifies.next();
 			// Now test different cases:
 			// Case 1: elemToAdd starts later
-			if (pa.getMetadata().getStart().before(newElemMeta.getStart())){
-				// in this case, the pa has a part before the new element that does not overlap and
+			if (pa.getMetadata().getStart().before(newElemMeta.getStart())) {
+				// in this case, the pa has a part before the new element that
+				// does not overlap and
 				// can be written out
 				PairMap<SDFSchema, AggregateFunction, W, Q> out = calcEval(pa, true);
 				out.setMetadata((Q) pa.getMetadata().clone());
@@ -508,32 +512,36 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 				returnValues.add(out);
 
 				// Now two cases the elemToAdd ends later or not
-				if (pa.getMetadata().getEnd().beforeOrEquals(newElemMeta.getEnd())){
-					// In this case the PA can be updated and no need to insert again
-					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, false);
+				if (pa.getMetadata().getEnd().beforeOrEquals(newElemMeta.getEnd())) {
+					// In this case the PA can be updated and no need to insert
+					// again
+					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem,
+							false);
 					// Merge metadata
-					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta)
-							.clone();
-					// Remark: Altough the timestamps are changed, the order in the area is not changed!
+					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta).clone();
+					// Remark: Altough the timestamps are changed, the order in
+					// the area is not changed!
 					newMeta.setStartAndEnd(newElemMeta.getStart(), pa.getMetadata().getEnd());
 					merged.setMetadata(newMeta);
 					// now update the timestamp of the elemToAdd to the new part
-					if (pa.getMetadata().getEnd().before(newElemMeta.getEnd())){
+					if (pa.getMetadata().getEnd().before(newElemMeta.getEnd())) {
 						newElemMeta.setStart(pa.getMetadata().getEnd());
-					}else{
+					} else {
 						// In this case the elements is fully integrated
 						newElem = null;
-						assert(!qualifies.hasNext());
+						assert (!qualifies.hasNext());
 					}
-				}else{
+				} else {
 					// elemToAdd ends earlier
-					// in this case the partial aggregate needs to be split into a new merged version and
+					// in this case the partial aggregate needs to be split into
+					// a new merged version and
 					// timestamp changed version
-					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, true);
+					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem,
+							true);
 					// Merge metadata
-					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta)
-							.clone();
-					// Remark: Altough the timestamps are changed, the order in the area is not changed!
+					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta).clone();
+					// Remark: Altough the timestamps are changed, the order in
+					// the area is not changed!
 					newMeta.setStartAndEnd(newElemMeta.getStart(), newElemMeta.getEnd());
 					merged.setMetadata(newMeta);
 
@@ -543,50 +551,51 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					// first update than insert!! else order could be wrong
 					saInsert(sa, merged, newMeta);
 
-
 					// the element is fully integrated
 					newElem = null;
-					assert(!qualifies.hasNext());
+					assert (!qualifies.hasNext());
 				}
 
-			}else{
+			} else {
 				// Case 2: elemToAdd starts earlier or same
 				// is there a new part before?
-				if (newElemMeta.getStart().before(pa.getMetadata().getStart())){
+				if (newElemMeta.getStart().before(pa.getMetadata().getStart())) {
 					Q meta = (Q) newElemMeta.clone();
 					meta.setStartAndEnd(newElemMeta.getStart(), pa.getMetadata().getStart());
-					saInsert(sa, calcInit(newElem),meta);
+					saInsert(sa, calcInit(newElem), meta);
 				}
 
 				// now again both cases: elementToAdd end later than pa and not
-				if (newElemMeta.getEnd().afterOrEquals(pa.getMetadata().getEnd())){
+				if (newElemMeta.getEnd().afterOrEquals(pa.getMetadata().getEnd())) {
 					// in this case the pa can be updated
-					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, false);
+					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem,
+							false);
 					// Merge metadata
-					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta)
-							.clone();
-					// Remark: Altough the timestamps are changed, the order in the area is not changed!
+					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta).clone();
+					// Remark: Altough the timestamps are changed, the order in
+					// the area is not changed!
 					newMeta.setStartAndEnd(pa.getMetadata().getStart(), pa.getMetadata().getEnd());
 					merged.setMetadata(newMeta);
 					// now update the timestamp of the elemToAdd to the new part
-					if (pa.getMetadata().getEnd().before(newElemMeta.getEnd())){
+					if (pa.getMetadata().getEnd().before(newElemMeta.getEnd())) {
 						newElemMeta.setStartAndEnd(pa.getMetadata().getEnd(), newElemMeta.getEnd());
-					}else{
+					} else {
 						// In this case the elements is fully integrated
 						newElem = null;
-						assert(!qualifies.hasNext());
+						assert (!qualifies.hasNext());
 					}
 
-
-				}else{
+				} else {
 					// elemToAdd ends earlier
-					// in this case the partial aggregate needs to be split into a new merged version and
+					// in this case the partial aggregate needs to be split into
+					// a new merged version and
 					// timestamp changed version
-					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem, true);
+					PairMap<SDFSchema, AggregateFunction, IPartialAggregate<R>, Q> merged = calcMerge(pa, newElem,
+							true);
 					// Merge metadata
-					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta)
-							.clone();
-					// Remark: Altough the timestamps are changed, the order in the area is not changed!
+					Q newMeta = (Q) metadataMerge.mergeMetadata(pa.getMetadata(), newElemMeta).clone();
+					// Remark: Altough the timestamps are changed, the order in
+					// the area is not changed!
 					newMeta.setStartAndEnd(pa.getMetadata().getStart(), newElemMeta.getEnd());
 					merged.setMetadata(newMeta);
 
@@ -597,20 +606,18 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 					saInsert(sa, merged, newMeta);
 					// the element is fully integrated
 					newElem = null;
-					assert(!qualifies.hasNext());
+					assert (!qualifies.hasNext());
 				}
 			}
 
-
 		} // while qualifies.hasNext();
-		// Now there could be a rest or a non overlapping
-		if (newElem != null){
-			saInsert(sa, calcInit(newElem),newElemMeta);
+			// Now there could be a rest or a non overlapping
+		if (newElem != null) {
+			saInsert(sa, calcInit(newElem), newElemMeta);
 		}
 
 		return returnValues;
 	}
-
 
 	/**
 	 * This method does for every group/sweep area the core calculation of the
@@ -971,9 +978,10 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
 		map.put("OutputQueueSize", transferArea.size() + "");
-//		if (groups.size() > 0) {
-//			map.put("Size Group 1", groups.entrySet().iterator().next().getValue().size() + "");
-//		}
+		// if (groups.size() > 0) {
+		// map.put("Size Group 1",
+		// groups.entrySet().iterator().next().getValue().size() + "");
+		// }
 		map.put("Groups", groups.size() + "");
 		map.put("Watermark", transferArea.getWatermark() + "");
 		return map;
@@ -994,13 +1002,12 @@ public class AggregateTIPO<Q extends ITimeInterval, R extends IStreamObject<Q>, 
 
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (ipo instanceof AggregateTIPO){
+		if (ipo instanceof AggregateTIPO) {
 			return super.isSemanticallyEqual(ipo);
-		}else{
+		} else {
 			return false;
 		}
 	}
-
 
 }
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 
 /**
  * Handler for generic TCP Server
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
  */
 public class NonBlockingTcpServerHandler extends AbstractTransportHandler
@@ -63,8 +63,8 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 
 	public NonBlockingTcpServerHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		
-		
+
+
 		readBufferSize = options.containsKey("read") ? Integer
 				.parseInt(options.get("read")) : 10240;
 		writeBufferSize = options.containsKey("write") ? Integer
@@ -127,6 +127,10 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
 
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
+	}
+
+	@Override
+	public void processInStart() {
 		try {
 			this.acceptor.open();
 		} catch (final IOException e) {
@@ -224,7 +228,7 @@ public class NonBlockingTcpServerHandler extends AbstractTransportHandler
     	} else if(this.writeBufferSize != other.writeBufferSize) {
     		return false;
     	}
-    	
+
     	return true;
     }
 }

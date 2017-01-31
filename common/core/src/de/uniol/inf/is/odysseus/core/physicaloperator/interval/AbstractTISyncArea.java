@@ -254,7 +254,12 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 					if (curHB == null || heartbeat.after(curHB)) {
 						minTs.put(inPort, heartbeat);
 					} else {
-						logger.trace("Heart beat " + heartbeat + " ignored. Was older than last heartbeat " + curHB);
+						if (logger.isTraceEnabled()) {
+							if (heartbeat.before(curHB)) {
+								logger.trace(
+										"Heart beat " + heartbeat + " ignored . Was older than last heartbeat " + curHB + " - (" + this.operator + "(" + operator.getName() + "))");
+							}
+						}
 					}
 				}
 				sendData();
@@ -362,7 +367,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 			while (iter.hasNext()) {
 				IStreamable e = iter.next().getE1();
 				if (!e.isPunctuation()) {
-					maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>)e).getMetadata().getEnd());
+					maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
 				}
 			}
 		}

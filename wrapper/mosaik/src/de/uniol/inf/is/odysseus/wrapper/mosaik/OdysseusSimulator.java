@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class OdysseusSimulator {
+import de.offis.mosaik.api.Simulator;
+
+public class OdysseusSimulator extends Simulator {
 
 	static Logger LOG = LoggerFactory.getLogger(OdysseusSimulator.class);
 	
@@ -36,46 +38,51 @@ public class OdysseusSimulator {
 	@SuppressWarnings("unused")
 	private String sid;
 	private int stepSize = 1;
-	private int idCounter = 0;
 	
 	// Alternatively, put all the JSON into a .json file and read meta data from
     // that.
     private static final JSONObject meta = (JSONObject) JSONValue.parse(("{"
-            + "    'api_version': '2.0',"
+            + "    'api_version': '" + Simulator.API_VERSION + "',"
             + "    'models': {"
-            + "        'Odysseus': {" + "            'public': true,"
+            + "        'Odysseus': {" 
+            + "            'public': true,"
             + "			   'any_inputs': true,"
             + "            'params': ['init_val'],"
-            + "            'attrs': []" + "        }"
+            + "            'attrs': []" 
+            + "        }"
             + "    }" + "}").replace("'", "\""));
 
 	public OdysseusSimulator(MosaikProtocolHandler<?> pHandler, String name) {
+		super(name);
 		this.pHandler = pHandler;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> create(int num, String model, Map<String, Object> modelParams) throws Exception {
+		if(num > 1) {
+			throw new Exception("You can create only one odysseus model per simulator.");
+		}
         JSONArray entities = new JSONArray();
-        for (int i = 0; i < num; i++) {
-            String eid = "odysseus_" + (this.idCounter + i);
+        String eid = "odysseus_0";
 
-            JSONObject entity = new JSONObject();
-            entity.put("eid", eid);
-            entity.put("type", model);
-            entity.put("rel", new JSONArray());
-            entities.add(entity);
-        }
-        this.idCounter += num;
-//		this.pHandler.sendRequest = true;
+        JSONObject entity = new JSONObject();
+        entity.put("eid", eid);
+        entity.put("type", model);
+        entity.put("rel", new JSONArray());
+        entities.add(entity);
+        
         return entities;
 	}
 
+	@Override
 	public Map<String, Object> getData(Map<String, List<String>> arg0)
 			throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		return result;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> init(String sid, Map<String, Object> simParams) throws Exception {
 		this.sid = sid;
@@ -86,6 +93,7 @@ public class OdysseusSimulator {
         return OdysseusSimulator.meta;
 	}
 
+	@Override
 	public long step(long arg0, Map<String, Object> input) throws Exception {
 		String[] inputString = new String[1];
 		input.put("timestamp", time);
@@ -97,5 +105,14 @@ public class OdysseusSimulator {
 		pHandler.process(inputString);
 		time += stepSize;
 		return time;
+	}
+	
+	@Override
+    public void setupDone() throws Exception {
+//		Map<String, Object> relatedEntities = this.getMosaik().getRelatedEntities();
+//		System.out.println("SetupDone(): show related Entities:");
+//		for(Entry<String, Object> entry:relatedEntities.entrySet()) {
+//			System.out.println("	" + entry.getKey() + " - " + entry.getValue());
+//		}
 	}
 }
