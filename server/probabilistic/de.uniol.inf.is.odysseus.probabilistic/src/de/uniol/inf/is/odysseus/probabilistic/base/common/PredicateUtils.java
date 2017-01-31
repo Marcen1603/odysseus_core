@@ -42,21 +42,22 @@ import de.uniol.inf.is.odysseus.mep.functions.compare.EqualsOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.predicate.ProbabilisticRelationalPredicate;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public final class PredicateUtils {
     /**
      * Checks whether the given predicate is an AND predicate.
-     * 
+     *
      * A AND B AND C ...
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return <code>true</code> if the given predicate is an AND predicate
      */
-    public static boolean isAndPredicate(final IPredicate<?> predicate) {
+    @SuppressWarnings("deprecation")
+	public static boolean isAndPredicate(final IPredicate<?> predicate) {
         if (predicate instanceof AndPredicate) {
             return ComplexPredicateHelper.isAndPredicate(predicate);
         }
@@ -71,9 +72,9 @@ public final class PredicateUtils {
 
     /**
      * Checks whether the given predicate is an OR predicate.
-     * 
+     *
      * A OR B OR C ...
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return <code>true</code> if the given predicate is an OR predicate
@@ -93,9 +94,9 @@ public final class PredicateUtils {
 
     /**
      * Checks whether the given predicate is an OR predicate.
-     * 
+     *
      * NOT A ...
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return <code>true</code> if the given predicate is a NOT predicate
@@ -115,7 +116,7 @@ public final class PredicateUtils {
 
     /**
      * Splits the given predicate if it is an AND predicate into sub-predicates.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return A list of predicates
@@ -154,7 +155,7 @@ public final class PredicateUtils {
 
     /**
      * Splits the given predicate if it is an OR predicate into sub-predicates.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return A list of predicates
@@ -192,12 +193,12 @@ public final class PredicateUtils {
 
     /**
      * Get all attributes used in the given predicate.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return A set of referenced attributes
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
     public static Set<SDFAttribute> getAttributes(final IPredicate<?> predicate) {
         final Set<SDFAttribute> attributes = new HashSet<SDFAttribute>();
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
@@ -227,12 +228,13 @@ public final class PredicateUtils {
 
     /**
      * Gets all expressions used in the given predicate.
-     * 
+     *
      * @param predicate
      *            The predicate
      * @return The list of expressions
      */
-    public static List<SDFExpression> getExpressions(final IPredicate<?> predicate) {
+    @SuppressWarnings("deprecation")
+	public static List<SDFExpression> getExpressions(final IPredicate<?> predicate) {
         final List<SDFExpression> expressions = new ArrayList<SDFExpression>();
         final Collection<IPredicate<?>> predicates = PredicateUtils.conjunctiveSplit(predicate);
         for (final IPredicate<?> pre : predicates) {
@@ -248,9 +250,9 @@ public final class PredicateUtils {
 
     /**
      * Return true if the given expression is of the form:
-     * 
+     *
      * A.x=B.y AND A.y=B.z AND * ...
-     * 
+     *
      * @param expression
      *            The expression
      * @return <code>true</code> iff the expression is of the given form
@@ -274,7 +276,7 @@ public final class PredicateUtils {
 
     /**
      * Return the map of attributes used in a equi expression.
-     * 
+     *
      * @param expression
      *            The expression
      * @param resolver
@@ -318,9 +320,9 @@ public final class PredicateUtils {
 
     /**
      * Return true if the given relational predicate is of the form:
-     * 
+     *
      * A.x=B.y AND A.y=B.z AND * ...
-     * 
+     *
      * @param predicate
      *            The relational predicate
      * @return <code>true</code> iff the relational predicate is of the given

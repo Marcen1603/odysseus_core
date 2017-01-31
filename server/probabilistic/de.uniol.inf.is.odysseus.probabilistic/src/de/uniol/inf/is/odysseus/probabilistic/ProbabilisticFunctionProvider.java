@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.probabilistic.functions.TimelinessFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticAndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticNotOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticOrOperator;
@@ -67,9 +66,9 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.transform.ToProbabilisti
 
 /**
  * Function provider for probabilistic functions.
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
  */
 public class ProbabilisticFunctionProvider implements IFunctionProvider {
     /** Logger. */
@@ -84,7 +83,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.mep.IFunctionProvider#getFunctions()
      */
     @Override
@@ -155,7 +154,7 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
             // ProbabilisticFunctionProvider.LOG.info(String.format(
             // "Register functions: %s", functions));
 
-            functions.add(new TimelinessFunction());
+            //functions.add(new TimelinessFunction());
         }
         catch (final Exception e) {
             ProbabilisticFunctionProvider.LOG.error(e.getMessage(), e);
