@@ -14,7 +14,7 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.NUMBERS};
 
 	public ListElementAtFunction() {
-		super("[]", 2, accTypes, SDFDatatype.OBJECT, false);
+		super("elementAt", 2, accTypes, SDFDatatype.OBJECT, false);
 	}
 
 	@Override
@@ -29,10 +29,9 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 
 	@Override
 	public String getAliasName() {
-		return "elementAt";
-		//return "listElementAt";
+		return "[]";
 	}
-	
+
 	@Override
 	public SDFDatatype determineType(IExpression<?>[] args) {
 		if (args != null && args.length == 2){
@@ -40,12 +39,12 @@ public class ListElementAtFunction extends AbstractFunction<Object> implements I
 		}
 		throw new IllegalArgumentException("Types cannot be determined with "+args);
 	}
-	
+
 	@Override
 	public boolean determineTypeFromInput() {
 		return true;
 	}
 
 
-	
+
 }

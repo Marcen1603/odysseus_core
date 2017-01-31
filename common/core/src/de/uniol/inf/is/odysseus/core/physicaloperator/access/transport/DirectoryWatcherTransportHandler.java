@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,6 +41,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 
 /**
@@ -48,208 +49,209 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
  *
  */
 public class DirectoryWatcherTransportHandler extends AbstractPushTransportHandler {
-    /** Logger. */
-    static final Logger LOG = LoggerFactory.getLogger(DirectoryWatcherTransportHandler.class);
-    protected static final String DIRECTORY = "directory";
-    protected static final String FILTER = "filter";
-    protected static final String CACHEFILES = "cachefiles";
-    protected static final String CACHESIZE = "cachesize";
-    protected static final int defaultCacheSize = 10;
-    
-    Path directory;
-    Pattern filter;
-    WatchService watcher;
-    LoadingCache<File, FileInputStream> fileCache;
+	/** Logger. */
+	static final Logger LOG = LoggerFactory.getLogger(DirectoryWatcherTransportHandler.class);
+	protected static final String DIRECTORY = "directory";
+	protected static final String FILTER = "filter";
+	protected static final String CACHEFILES = "cachefiles";
+	protected static final String CACHESIZE = "cachesize";
+	protected static final int defaultCacheSize = 10;
 
-    /**
-     * 
-     * Class constructor.
-     *
-     */
-    public DirectoryWatcherTransportHandler() {
-        super();
-    }
+	Path directory;
+	Pattern filter;
+	WatchService watcher;
+	LoadingCache<File, FileInputStream> fileCache;
 
-    /**
-     * 
-     * Class constructor.
-     *
-     * @param protocolHandler
-     * @param options
-     */
-    public DirectoryWatcherTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
-        super(protocolHandler, options);
-        if (options.containsKey(DirectoryWatcherTransportHandler.DIRECTORY)) {
-            this.directory = Paths.get(options.get(DirectoryWatcherTransportHandler.DIRECTORY));
-        }
-        else {
-            throw new IllegalArgumentException("No directory given!");
-        }
-        if (options.containsKey(DirectoryWatcherTransportHandler.FILTER)) {
-            this.filter = Pattern.compile(options.get(DirectoryWatcherTransportHandler.FILTER));
-        }
-        if (options.get(CACHEFILES, "false").equalsIgnoreCase("true")) {
-        	fileCache = CacheBuilder.newBuilder().maximumSize(options.getInt(CACHESIZE, defaultCacheSize)).build(
-        					new CacheLoader<File, FileInputStream>()
-        					{
-        						@Override public FileInputStream load(File file) throws Exception 
-        						{
-        	                    	return new FileInputStream(file);
-        						}        
-        					});
-        }
-    }
+	/**
+	 *
+	 * Class constructor.
+	 *
+	 */
+	public DirectoryWatcherTransportHandler() {
+		super();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void send(final byte[] message) throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 *
+	 * Class constructor.
+	 *
+	 * @param protocolHandler
+	 * @param options
+	 */
+	public DirectoryWatcherTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+		super(protocolHandler, options);
+		if (options.containsKey(DirectoryWatcherTransportHandler.DIRECTORY)) {
+			this.directory = Paths.get(options.get(DirectoryWatcherTransportHandler.DIRECTORY));
+		} else {
+			throw new IllegalArgumentException("No directory given!");
+		}
+		if (options.containsKey(DirectoryWatcherTransportHandler.FILTER)) {
+			this.filter = Pattern.compile(options.get(DirectoryWatcherTransportHandler.FILTER));
+		}
+		if (options.get(CACHEFILES, "false").equalsIgnoreCase("true")) {
+			fileCache = CacheBuilder.newBuilder().maximumSize(options.getInt(CACHESIZE, defaultCacheSize))
+					.build(new CacheLoader<File, FileInputStream>() {
+						@Override
+						public FileInputStream load(File file) throws Exception {
+							return new FileInputStream(file);
+						}
+					});
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
-        final DirectoryWatcherTransportHandler handler = new DirectoryWatcherTransportHandler(protocolHandler, options);
-        return handler;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void send(final byte[] message) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return "Directory";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ITransportHandler createInstance(final IProtocolHandler<?> protocolHandler, final OptionMap options) {
+		final DirectoryWatcherTransportHandler handler = new DirectoryWatcherTransportHandler(protocolHandler, options);
+		return handler;
+	}
 
-    protected void onChangeDetected(File file) throws IOException
-    {
-    	if (fileCache != null)
-    	{
-    		try 
-    		{
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getName() {
+		return "Directory";
+	}
+
+	protected void onChangeDetected(File file) throws IOException {
+		if (fileCache != null) {
+			try {
 				fireProcess(fileCache.get(file));
-			} 
-    		catch (ExecutionException e) 
-    		{
-    			throw new IOException("Error while loading \"" + file + "\" into cache", e);
+			} catch (ExecutionException e) {
+				throw new IOException("Error while loading \"" + file + "\" into cache", e);
 			}
-    	}
-    	else
-    		fireProcess(new FileInputStream(file));
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processInOpen() throws IOException {
-        this.watcher = FileSystems.getDefault().newWatchService();
-        this.directory.register(this.watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
-        this.fireOnConnect();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    try (DirectoryStream<Path> stream = Files.newDirectoryStream(DirectoryWatcherTransportHandler.this.directory)) {
-                        for (Path child : stream) {
-                            if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) 
-                            {
-                            	onChangeDetected(child.toFile());                                
-                            }
-                        }
-                    }
-                    catch (IOException | DirectoryIteratorException e) {
-                        LOG.error(e.getMessage(), e);
-                    }
-                    while (DirectoryWatcherTransportHandler.this.watcher != null) {
-                        WatchKey key;
-                        try {
-                            key = DirectoryWatcherTransportHandler.this.watcher.take();
-                        }
-                        catch (InterruptedException e) {
-                            return;
-                        }
+		} else
+			fireProcess(new FileInputStream(file));
+	}
 
-                        for (WatchEvent<?> event : key.pollEvents()) {
-                            WatchEvent.Kind<?> kind = event.kind();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processInOpen() throws IOException {
+	}
 
-                            if (kind == OVERFLOW) {
-                                continue;
-                            }
-                            @SuppressWarnings("unchecked")
-                            WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                            Path filename = ev.context();
+	@Override
+	public void processInStart() {
+		try {
+			this.watcher = FileSystems.getDefault().newWatchService();
+			this.directory.register(this.watcher, StandardWatchEventKinds.ENTRY_CREATE,
+					StandardWatchEventKinds.ENTRY_MODIFY);
+			this.fireOnConnect();
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						try (DirectoryStream<Path> stream = Files
+								.newDirectoryStream(DirectoryWatcherTransportHandler.this.directory)) {
+							for (Path child : stream) {
+								if ((DirectoryWatcherTransportHandler.this.filter == null)
+										|| (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString())
+												.find())) {
+									onChangeDetected(child.toFile());
+								}
+							}
+						} catch (IOException | DirectoryIteratorException e) {
+							LOG.error(e.getMessage(), e);
+						}
+						while (DirectoryWatcherTransportHandler.this.watcher != null) {
+							WatchKey key;
+							try {
+								key = DirectoryWatcherTransportHandler.this.watcher.take();
+							} catch (InterruptedException e) {
+								return;
+							}
 
-                            try {
-                                Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
-                                if ((DirectoryWatcherTransportHandler.this.filter == null) || (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString()).find())) {
-                                	onChangeDetected(child.toFile());                                    
-                                }
-                            }
-                            catch (IOException e) {
-                                LOG.error(e.getMessage(), e);
+							for (WatchEvent<?> event : key.pollEvents()) {
+								WatchEvent.Kind<?> kind = event.kind();
 
-                                continue;
-                            }
-                        }
-                        boolean valid = key.reset();
-                        if (!valid) {
-                            break;
-                        }
-                    }
-                }
-                catch (Exception x) {
-                    return;
-                }
-            }
-        }).start();
+								if (kind == OVERFLOW) {
+									continue;
+								}
+								@SuppressWarnings("unchecked")
+								WatchEvent<Path> ev = (WatchEvent<Path>) event;
+								Path filename = ev.context();
 
-    }
+								try {
+									Path child = DirectoryWatcherTransportHandler.this.directory.resolve(filename);
+									if ((DirectoryWatcherTransportHandler.this.filter == null)
+											|| (DirectoryWatcherTransportHandler.this.filter.matcher(child.toString())
+													.find())) {
+										onChangeDetected(child.toFile());
+									}
+								} catch (IOException e) {
+									LOG.error(e.getMessage(), e);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processOutOpen() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+									continue;
+								}
+							}
+							boolean valid = key.reset();
+							if (!valid) {
+								break;
+							}
+						}
+					} catch (Exception x) {
+						return;
+					}
+				}
+			}).start();
+		} catch (IOException e1) {
+			throw new StartFailedException(e1);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processInClose() throws IOException {
-        this.watcher.close();
-        this.watcher = null;
-        this.fireOnDisconnect();
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processOutClose() throws IOException {
-        throw new UnsupportedOperationException();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processOutOpen() throws IOException {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isSemanticallyEqualImpl(final ITransportHandler o) {
-        if (!(o instanceof DirectoryWatcherTransportHandler)) {
-            return false;
-        }
-        final DirectoryWatcherTransportHandler other = (DirectoryWatcherTransportHandler) o;
-        if (this.directory != other.directory) {
-            return false;
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processInClose() throws IOException {
+		this.watcher.close();
+		this.watcher = null;
+		this.fireOnDisconnect();
+	}
 
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void processOutClose() throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isSemanticallyEqualImpl(final ITransportHandler o) {
+		if (!(o instanceof DirectoryWatcherTransportHandler)) {
+			return false;
+		}
+		final DirectoryWatcherTransportHandler other = (DirectoryWatcherTransportHandler) o;
+		if (this.directory != other.directory) {
+			return false;
+		}
+
+		return true;
+	}
 
 }

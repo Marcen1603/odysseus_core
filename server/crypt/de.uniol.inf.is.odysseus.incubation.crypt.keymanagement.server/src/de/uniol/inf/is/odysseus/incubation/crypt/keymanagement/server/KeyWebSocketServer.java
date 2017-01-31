@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server;
 
@@ -35,7 +35,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Constructor for the LaotseWebSocketServer.
-	 * 
+	 *
 	 * @param address
 	 *            the address to listen to.
 	 */
@@ -51,7 +51,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Returns the LaotseWebSocketServer instance.
-	 * 
+	 *
 	 * @return the websocketserver instance.
 	 */
 	public static KeyWebSocketServer getInstance() {
@@ -143,10 +143,11 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Sends a string to all connected clients.
-	 * 
+	 *
 	 * @param json
 	 *            the string.
 	 */
+	@SuppressWarnings("unused")
 	private void broadcast(String json) {
 		Collection<WebSocket> sockets = connections();
 		synchronized (sockets) {
@@ -158,12 +159,13 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Sends a String to all connected sockets except conn.
-	 * 
+	 *
 	 * @param json
 	 *            the string.
 	 * @param conn
 	 *            the websocket that should not receive json.
 	 */
+	@SuppressWarnings("unused")
 	private void broadcastExceptConn(WebSocket conn, String json) {
 		Collection<WebSocket> sockets = connections();
 		synchronized (sockets) {

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractIterableSource;
 
@@ -40,6 +41,11 @@ public final class FixedSetPO<T extends IStreamObject<? extends IClone>> extends
 	@Override
 	protected void process_open() throws OpenFailedException {
 		index = 0;
+	}
+
+	@Override
+	protected void process_start() throws StartFailedException {
+
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public final class FixedSetPO<T extends IStreamObject<? extends IClone>> extends
 	public FixedSetPO<T> clone()  {
 		throw new RuntimeException("Clone Not implemented yet");
 	}
-	
+
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
 		return false;

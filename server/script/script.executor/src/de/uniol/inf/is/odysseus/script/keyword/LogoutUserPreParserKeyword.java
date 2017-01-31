@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 		// Eine Validierung ist hier nicht sinnvoll (vorerst). Da bei der Validierung keine
 		// User eingeloggt werden...
-		
+
 		// TODO: Sp�ter LOGOUT nocheinmal anschauen
 	}
 
@@ -43,7 +43,8 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 
 		try {
 			UserManagementProvider.getSessionmanagement().logout(caller);
-			
+			variables.remove("USER");
+
 		} catch( Exception ex ) {
 			ex.printStackTrace();
 			throw new OdysseusScriptException("Cannot logout user " + parameter);

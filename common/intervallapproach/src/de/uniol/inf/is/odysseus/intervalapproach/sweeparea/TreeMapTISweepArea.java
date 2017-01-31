@@ -60,8 +60,9 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 	});
 
+	@SuppressWarnings("unused")
 	private transient IPredicate<? super T> queryPredicate;
-
+	@SuppressWarnings("unused")
 	private transient IPredicate<? super T> removePredicate;
 
 	/**

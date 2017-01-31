@@ -177,7 +177,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 		infos += AppEnv.LINE_SEPARATOR + AppEnv.LINE_SEPARATOR + "SchedulerManager: ";
 		try {
-			infos += AppEnv.LINE_SEPARATOR + getSchedulerManager().getInfos();
+			infos += AppEnv.LINE_SEPARATOR + schedulerManager.getInfos();
 		} catch (Exception e) {
 			infos += "not set. " + AppEnv.LINE_SEPARATOR + e.getMessage();
 		}
@@ -639,12 +639,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	// -----------
 
 	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user, String buildConfigurationName,
-			Context context) throws PlanManagementException {
-		return addQuery(query, parserID, user, buildConfigurationName, context, null);
-	}
-
-	@Override
 	public Collection<Integer> addQuery(String query, String parserID, ISession user, Context context)
 			throws PlanManagementException {
 		return addQuery(query, parserID, user, "Standard", context, null);
@@ -1045,7 +1039,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 					}
 				}
 				if (executionPlan.isEmpty()) {
-					getSchedulerManager().getActiveScheduler().clear();
+					schedulerManager.getActiveScheduler().clear();
 				}
 			} catch (Exception e) {
 				LOG.warn("Query not removed. An Error while removing occurd (ID: "
@@ -1445,7 +1439,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public Set<String> getRegisteredSchedulingStrategies(ISession session) {
 		// TODO: Check access rights
 		try {
-			return getSchedulerManager().getSchedulingStrategy();
+			return schedulerManager.getSchedulingStrategy();
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Getting SchedulingStrategyFactories. " + e.getMessage());
 		}
@@ -1462,7 +1456,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	public Set<String> getRegisteredSchedulers(ISession session) {
 		// TODO: Check access rights
 		try {
-			return getSchedulerManager().getScheduler();
+			return schedulerManager.getScheduler();
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Getting SchedulingFactories. " + e.getMessage());
 		}
@@ -1477,9 +1471,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	@Override
 	public void setScheduler(String scheduler, String schedulerStrategy, ISession session) {
-		// TODO: Check access rights
+		ExecutorPermission.validateUserRight(session, ExecutorPermission.SET_SCHEDULER);
+
 		try {
-			getSchedulerManager().setActiveScheduler(scheduler, schedulerStrategy, executionPlan);
+			schedulerManager.setActiveScheduler(scheduler, schedulerStrategy, executionPlan);
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Setting Scheduler. " + e.getMessage());
 		}
@@ -1494,7 +1489,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	@Override
 	public String getCurrentSchedulingStrategyID(ISession user) {
 		try {
-			return getSchedulerManager().getActiveSchedulingStrategyID();
+			return schedulerManager.getActiveSchedulingStrategyID();
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Getting Active Scheduling Strategy. " + e.getMessage());
 		}
@@ -1509,9 +1504,8 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 	 */
 	@Override
 	public String getCurrentSchedulerID(ISession session) {
-		// TODO: Check rights
 		try {
-			return getSchedulerManager().getActiveSchedulerID();
+			return schedulerManager.getActiveSchedulerID();
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
 		}
@@ -1526,7 +1520,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	protected IScheduler getCurrentScheduler() {
 		try {
-			return getSchedulerManager().getActiveScheduler();
+			return schedulerManager.getActiveScheduler();
 		} catch (SchedulerException e) {
 			LOG.error("Error while using schedulerManager. Getting Active Scheduler. " + e.getMessage());
 		}
@@ -1535,7 +1529,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public OptimizationConfiguration getOptimizerConfiguration(ISession session) throws NoOptimizerLoadedException {
-		// TODO: Check rights
 		return getOptimizerConfiguration();
 	};
 
@@ -1545,7 +1538,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public ISystemMonitor getDefaultSystemMonitor(ISession session) throws NoSystemMonitorLoadedException {
-		// TODO: Checks rights
 		return getDefaultSystemMonitor();
 	}
 
@@ -1558,7 +1550,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public ISystemMonitor newSystemMonitor(long period, ISession session) throws NoSystemMonitorLoadedException {
-		// TODO: Check Rights
 		return newSystemMonitor(period);
 	};
 
@@ -1578,7 +1569,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public Collection<String> getQueryBuildConfigurationNames(ISession session) {
-		// TODO: Check access rights
 		return queryBuildConfigs.keySet();
 	}
 
@@ -1594,8 +1584,6 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	@Override
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query) {
-		// TODO: Check access rights;
-		// ISession caller = query.getUser();
 		return queryBuildParameter.get(query);
 	}
 

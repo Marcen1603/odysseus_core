@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -80,10 +81,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 		@Override
 		public int compare(AbstractPhysicalSubscription<?> left, AbstractPhysicalSubscription<?> right) {
-			if (left.isNeedsClone() == right.isNeedsClone()){
+			if (left.isNeedsClone() == right.isNeedsClone()) {
 				return 0;
 			}
-			if (left.isNeedsClone() && !right.isNeedsClone()){
+			if (left.isNeedsClone() && !right.isNeedsClone()) {
 				return -1;
 			}
 			return 1;
@@ -95,6 +96,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final private Map<Integer, Integer> consumerCount = new HashMap<>();
 
 	protected AtomicBoolean open = new AtomicBoolean(false);
+	protected AtomicBoolean started = new AtomicBoolean(false);
 
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new TreeMap<Integer, SDFSchema>();
@@ -107,7 +109,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private ILogicalOperator definingOp;
 
 	/**
-	 * For stateful operators, this flag signals, that an operator state has been loaded.
+	 * For stateful operators, this flag signals, that an operator state has
+	 * been loaded.
 	 */
 	private boolean operatorStateLoaded = false;
 
@@ -236,11 +239,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		return consumerCount.get(port) <= 1;
 	}
 
-	// Returns wether this source delivers an element which is also stored in this source.
-	// The element then may not be modified since this source needs it in its original state
-	public boolean deliversStoredElement(int outputPort)
-	{
-		getLogger().warn("Operator " + getName() + " doesn't implement method deliversStoredElement. Cloning performance may suffer!");
+	// Returns wether this source delivers an element which is also stored in
+	// this source.
+	// The element then may not be modified since this source needs it in its
+	// original state
+	public boolean deliversStoredElement(int outputPort) {
+		getLogger().warn("Operator " + getName()
+				+ " doesn't implement method deliversStoredElement. Cloning performance may suffer!");
 		return true;
 	}
 
@@ -341,7 +346,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@Override
 	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
 			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
-					throws OpenFailedException {
+			throws OpenFailedException {
 
 		openCloseLock.lock();
 		try {
@@ -382,8 +387,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			// in other cases open the operator
 			if (!isOpen()) {
 				fire(openInitEvent);
-				// Avoid initalizing of operator state after loading it per setState (see IStatefulPO)
-				if(!this.operatorStateLoaded) {
+				// Avoid initalizing of operator state after loading it per
+				// setState (see IStatefulPO)
+				if (!this.operatorStateLoaded) {
 					process_open();
 				}
 				fire(openDoneEvent);
@@ -423,7 +429,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			}
 			consumerCount.put(sub.getSourceOutPort(), currentCount + 1);
 
-			// the subscriptions must be ordered. All elements that clone need to be the first in the list
+			// the subscriptions must be ordered. All elements that clone need
+			// to be the first in the list
 			Collections.sort(activeSinkSubscriptions, this.sortByCloneComparator);
 
 			newReceiver(sub);
@@ -463,6 +470,51 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	protected abstract void process_open() throws OpenFailedException;
+
+	// ------------------------------------------------------------------------
+	// start
+	// ------------------------------------------------------------------------
+	@Override
+	public void start(IOperatorOwner id) throws StartFailedException {
+		if (!isStarted()) {
+			process_start();
+		}
+		started.set(true);
+	}
+
+	@Override
+	public void start(ISink<? super T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+			throws StartFailedException {
+
+		// Hint: ignore callPath on sources because the source does not call
+		// any subscription
+
+		// o can be null, if operator is top operator
+		// otherwise top operator cannot be opened
+		if (caller != null) {
+			// Find subscription for caller
+			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
+			if (sub == null) {
+				throw new StartFailedException("Start called from an unsubscribed sink " + caller);
+			}
+		}
+
+		// Because of multiple calls from different source, the operator may
+		// already have been started (isStarted())
+		// in other cases start the operator
+		if (!isStarted()) {
+			process_start();
+			started.set(true);
+		}
+	}
+
+	@Override
+	public boolean isStarted() {
+		return started.get();
+	}
+
+	protected abstract void process_start() throws StartFailedException;
 
 	// ------------------------------------------------------------------------
 	// Punctuations
@@ -533,38 +585,6 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 	}
 
-	// @Override
-	// final public void transfer(Collection<T> object, int sourceOutPort) {
-	// fire(this.pushListInitEvent);
-	// for (PhysicalSubscription<ISink<? super T>> sink :
-	// this.activeSinkSubscriptions) {
-	// if (sink.getSourceOutPort() == sourceOutPort) {
-	// sink.process(object);
-	// }
-	// }
-	// fire(this.pushListDoneEvent);
-	// }
-	//
-	// @Override
-	// final public void transfer(Collection<T> object) {
-	// transfer(object, 0);
-	// }
-
-	// public boolean needsClone(int port) {
-	// return !hasSingleConsumer(port);
-	// }
-
-	// Classes for Objects not implementing IClone (e.g. ByteBuffer, String,
-	// etc.)
-	// MUST override this method (else there will be a ClassCastException)
-	// @SuppressWarnings("unchecked")
-	// protected T cloneIfNessessary(T object, int port) {
-	// if (needsClone(port)) {
-	// object = (T) ((IClone) object).clone();
-	// }
-	// return object;
-	// }
-
 	// ------------------------------------------------------------------------
 	// CLOSE
 	// ------------------------------------------------------------------------
@@ -574,7 +594,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		try {
 			openCloseLock.lock();
 			// this method is called, if the query contains only the source
-			// other queries may contain this source as part --> So do not close in every case
+			// other queries may contain this source as part --> So do not close
+			// in every case
 			doLocalClose();
 		} finally {
 			openCloseLock.unlock();
@@ -626,11 +647,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// call close) kept in list connectedSinks
 		// If all by open connected subscriptions are removed, close
 		// operator
-		if (activeSinkSubscriptions.size() == connectedSinks.size() || (activeSinkSubscriptions.size()-1 == connectedSinks.size())) {
+		if (activeSinkSubscriptions.size() == connectedSinks.size()
+				|| (activeSinkSubscriptions.size() - 1 == connectedSinks.size())) {
 			getLogger().trace("Closing " + toString());
 			fire(this.closeInitEvent);
 			this.process_close();
 			open.set(false);
+			started.set(false);
 			stopMonitoring();
 			fire(this.closeDoneEvent);
 			getLogger().trace("Closing " + toString() + " done");
@@ -796,7 +819,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
 		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
 				sink, sinkInPort, sourceOutPort, schema);
-		// All connected sinks needs a cloned version as the sinks are connected without
+		// All connected sinks needs a cloned version as the sinks are connected
+		// without
 		// running the query translation phase
 		sub.setNeedsClone(true);
 		sink.addOwner(this.getOwner());
@@ -882,7 +906,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")" + (blocked.get() ? "b" : "") + "(o="+isOpen()+")"+"(d="+isDone()+")";
+		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")" + (blocked.get() ? "b" : "") + "(o="
+				+ isOpen() + ")" + "(d=" + isDone() + ")";
 	}
 
 	@Override
@@ -1071,12 +1096,12 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// Provenance
 	// -----------------------
 	@Override
-	public void setLogicalOperator(ILogicalOperator op){
+	public void setLogicalOperator(ILogicalOperator op) {
 		this.definingOp = op;
 	}
 
 	@Override
-	public ILogicalOperator getLogicalOperator(){
+	public ILogicalOperator getLogicalOperator() {
 		return this.definingOp;
 	}
 
@@ -1084,7 +1109,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// see IStatefulPO
 
 	/**
-	 * Default implementation of {@link #setState(Serializable)} that does nothing. Override it for stateful operators.
+	 * Default implementation of {@link #setState(Serializable)} that does
+	 * nothing. Override it for stateful operators.
 	 */
 	protected void setStateInternal(Serializable state) {
 	}

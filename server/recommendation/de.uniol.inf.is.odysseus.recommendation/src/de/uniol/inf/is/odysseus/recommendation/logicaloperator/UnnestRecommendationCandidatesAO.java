@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 @LogicalOperator(name="UNNEST_RECOMMENDATION_CANDIDATES", maxInputPorts=1, minInputPorts=1, doc="UnnestRecommendationCandidates unnested the incoming RecommendationCandidates and send on the last item a TuplePunctuation.", category = { LogicalOperatorCategory.MINING })
 public class UnnestRecommendationCandidatesAO extends UnaryLogicalOp{
 
+	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory.getLogger(UnnestRecommendationCandidatesAO.class);
 	private static final long serialVersionUID = 1L;
 	private SDFAttribute attribute;
@@ -21,7 +22,7 @@ public class UnnestRecommendationCandidatesAO extends UnaryLogicalOp{
 	public UnnestRecommendationCandidatesAO(){
 		super();
 	}
-	
+
 	public UnnestRecommendationCandidatesAO(UnnestRecommendationCandidatesAO op){
 		super(op);
 		this.attribute = op.getAttribute();
@@ -31,15 +32,15 @@ public class UnnestRecommendationCandidatesAO extends UnaryLogicalOp{
 	public void setAttribute(final SDFAttribute attribute) {
 		this.attribute = attribute;
 	}
-	
+
 	public SDFAttribute getAttribute() {
 		return attribute;
 	}
-	
+
 	public int getAttributePosition(){
 		return this.getInputSchema().indexOf(this.attribute);
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new UnnestRecommendationCandidatesAO(this);

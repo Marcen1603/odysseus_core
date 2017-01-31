@@ -21,6 +21,7 @@ public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;
 	private Polygon polygon;
+	@SuppressWarnings("unused")
 	private int geometryPosition;
 
 	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
@@ -29,7 +30,7 @@ public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		this.dataStructure = dataStructure;
 		this.sweepArea = new DefaultTISweepArea<>();
 		this.geometryPosition = geometryPosition;
-		
+
 		// Create a polygon with the given points
 		GeometryFactory factory = new GeometryFactory();
 		LinearRing ring = factory.createLinearRing(

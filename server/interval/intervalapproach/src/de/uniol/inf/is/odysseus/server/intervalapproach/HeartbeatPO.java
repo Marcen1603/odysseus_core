@@ -68,6 +68,7 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 
 		@Override
 		public void run() {
+			LOG.trace("Starting heartbeat generator "+HeartbeatPO.this.toString());
 			while (!terminated) {
 				try {
 					restart = false;
@@ -147,8 +148,7 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	public synchronized void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		if (timestamp.afterOrEquals(getWatermark())) {
-			// LOG.debug("SEND PUNCTUATION "+punctuation+"
-			// oldWatermark="+getWatermark());
+			LOG.trace("SEND PUNCTUATION "+punctuation+" oldWatermark="+getWatermark());
 			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
 			restartTimer();
