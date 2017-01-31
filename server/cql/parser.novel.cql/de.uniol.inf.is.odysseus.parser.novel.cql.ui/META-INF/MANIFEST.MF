@@ -4,29 +4,28 @@ Bundle-Name: de.uniol.inf.is.odysseus.parser.novel.cql.ui
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.novel.cql.ui; singleton:=true
-Service-Component: OSGI-INF/CQLFileExecutor.xml, OSGI-INF/CQLEditorCompletionProvider.xml 
+Service-Component: OSGI-INF/CQLFileExecutor.xml, OSGI-INF/CQLEditorCompletionProvider.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.ui.codetemplates.ui,
- org.eclipse.ui.editors;bundle-version="3.5.0",
- org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui.editors,
+ org.eclipse.ui.ide,
  org.eclipse.ui,
  org.eclipse.compare,
  org.eclipse.jdt.core,
  org.antlr.runtime,
  org.eclipse.xtext.common.types.ui,
- org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.xtend.lib;resolution:=optional,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.emf.edit.ui,
  org.apache.commons.io,
  de.uniol.inf.is.odysseus.rcp.editor.text,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
- org.eclipse.xtext.builder;bundle-version="2.10.0",
- de.uniol.inf.is.odysseus.parser.novel.cql.ide;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ org.eclipse.xtext.builder,
+ de.uniol.inf.is.odysseus.parser.novel.cql.ide,
  de.uniol.inf.is.odysseus.rcp.base
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

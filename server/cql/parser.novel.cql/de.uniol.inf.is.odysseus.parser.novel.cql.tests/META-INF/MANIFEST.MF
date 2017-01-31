@@ -6,12 +6,12 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.novel.cql.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
- org.junit;bundle-version="4.7.0",
+ org.junit,
  org.eclipse.xtext.junit4,
  org.eclipse.xtext.xbase.junit,
  org.eclipse.xtext.xbase.lib,
- de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.tests
 Import-Package: de.uniol.inf.is.odysseus.core.sdf.schema,

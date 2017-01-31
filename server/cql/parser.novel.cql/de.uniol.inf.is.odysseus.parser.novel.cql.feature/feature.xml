@@ -54,16 +54,13 @@
       <import plugin="com.google.guava"/>
       <import plugin="org.eclipse.xtend.lib.macro"/>
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.10.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.10.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.common" version="2.10.1" match="greaterOrEqual"/>
       <import plugin="org.antlr.runtime" version="3.2.0" match="perfect"/>
       <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtext.util" version="2.10.0" match="compatible"/>
       <import plugin="org.eclipse.xtext.smap" version="2.10.0" match="compatible"/>
       <import plugin="org.eclipse.xtext" version="2.10.0" match="compatible"/>
       <import plugin="org.objectweb.asm" version="5.0.1" match="compatible"/>
-      <import plugin="org.eclipse.xtend.lib" version="2.10.0" match="compatible"/>
-      <import plugin="com.google.guava" version="14.0.0"/>
+      <import plugin="org.apache.commons.cli"/>
    </requires>
 
    <plugin
@@ -144,6 +141,117 @@
 
    <plugin
          id="org.hamcrest.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.mwe.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.mwe.utils"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.typesystem.emf"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.cli"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.lang"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.mwe2.runtime"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib.macro"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.codegen.ecore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xpand"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.codegen"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.jdt.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.jdt.launching"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.jdt.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.emf.common"
          download-size="0"
          install-size="0"
          version="0.0.0"

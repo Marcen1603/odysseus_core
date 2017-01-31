@@ -3,17 +3,20 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr;
 
-import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.internal.InternalCQLParser;
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.antlr.runtime.RecognitionException;
 import org.eclipse.xtext.AbstractElement;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.AbstractContentAssistParser;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.FollowElement;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.AbstractInternalContentAssistParser;
+
+import com.google.inject.Inject;
+
+import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.internal.InternalCQLParser;
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 
 public class CQLParser extends AbstractContentAssistParser {
 

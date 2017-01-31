@@ -245,7 +245,7 @@ public class CQLParser implements IQueryParser
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
-//		generator.doGenerate(model.eResource(), fsa, null);
+        generator.doGenerate(model.eResource(), fsa, null);
 		
 		List<IExecutorCommand> list = new ArrayList<>();
 		for(EObject obj : stuff)
