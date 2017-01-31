@@ -26,9 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -39,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -63,18 +61,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 	public static final String NAME = "XML2";
 
 	private static final Logger LOG = LoggerFactory.getLogger(XMLProtocolHandler2.class);
-	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-	private static DocumentBuilder db;
 	private static TransformerFactory tf = TransformerFactory.newInstance();
-
-	static {
-		try {
-			db = documentBuilderFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			LOG.error("Error while executing static block", e);
-			e.printStackTrace();
-		}
-	}
 
 	private InputStream input;
 	private BufferedWriter output;
