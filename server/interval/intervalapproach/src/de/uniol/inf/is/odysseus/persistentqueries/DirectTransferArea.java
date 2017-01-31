@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,14 +29,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 
 /**
  * This area does not tread order. It directly transfers all elements
- * 
+ *
  * @author Andre Bolles
  */
 public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>, W extends IStreamObject<? extends ITimeInterval>>
 		extends AbstractTransferArea<R, W> {
 
 	private static final long serialVersionUID = 2207860250465543159L;
-	
+
 	protected PointInTime[] minTs;
 	protected transient ITransfer<W> po;
 	protected PriorityQueue<W> outputQueue = new PriorityQueue<W>(11,
@@ -62,6 +62,11 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 	}
 
 	@Override
+	public PointInTime calcMaxEndTs() {
+		return null;
+	}
+
+	@Override
 	public void addNewInput(int port) {
 		// TODO Auto-generated method stub
 		throw new IllegalArgumentException(
@@ -83,7 +88,7 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 		}
 		this.outputQueue.clear();
 	}
-	
+
 	@Override
 	public void setTransfer(ITransfer<W> po) {
 		this.po = po;
@@ -126,7 +131,7 @@ public class DirectTransferArea<R extends IStreamObject<? extends ITimeInterval>
 	public int size() {
 		return outputQueue.size();
 	}
-	
+
 	@Override
 	public PointInTime getWatermark() {
 		return null;

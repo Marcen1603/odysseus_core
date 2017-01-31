@@ -78,6 +78,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.exception.Sc
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoDistribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryParams;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.PreTransformationHandlerParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
@@ -341,6 +342,14 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 								"Query with name " + queryName.getValue() + " already defined.");
 					}
 					query.setName(queryName.getValue());
+				}
+
+				ParameterQueryParams queryParams = parameters.get(ParameterQueryParams.class);
+
+				if (queryParams != null){
+					for(Entry<String, String> p: queryParams.getValue().entrySet()){
+						query.setUserParameter(p.getKey(), p.getValue());
+					}
 				}
 
 				if (Strings.isNullOrEmpty(query.getQueryText())) {

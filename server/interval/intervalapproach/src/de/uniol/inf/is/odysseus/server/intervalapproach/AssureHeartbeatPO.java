@@ -16,11 +16,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * This operator assures that every n time elements there will be a heartbeat on
- * the garantees, that no element (heartbeat or streamobject) is send, that is
+ * the guarantees that no element (heartbeat or streamobject) is send that is
  * older than the last send hearbeat (i.e. the generated heartbeats are in order
  * and indicate time progress). Heartbeats can be send periodically
  * (sendAlwaysHeartbeats = true) or only if no other stream elements indicate
- * time progess (e.g. in out of order scenarios) independent if a new element
+ * time progress (e.g. in out of order scenarios) independent if a new element
  * has been received or not.
  * 
  * @author Marco Grawunder
@@ -29,11 +29,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  *            The type of the StreamObject (must have ITimeInterval as metadata)
  */
 
-public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
-		extends AbstractPipe<R, R> {
+public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
 
 	static final Logger LOG = LoggerFactory.getLogger(AssureHeartbeatPO.class);
-	
+
 	private long realTimeDelay;
 	private long applicationTimeDelay;
 	private boolean sendAlwaysHeartbeat = false;
@@ -44,13 +43,14 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	public AssureHeartbeatPO() {
 		super();
 	}
+
 	public AssureHeartbeatPO(boolean startAtCurrentTime) {
 		super();
-		if(startAtCurrentTime) {
+		if (startAtCurrentTime) {
 			this._watermark = PointInTime.currentPointInTime();
 		}
 	}
-	
+
 	private class Runner extends Thread {
 
 		private boolean terminated = false;
@@ -75,8 +75,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 						wait(realTimeDelay);
 					}
 					if (!restart) {
-						PointInTime punctuation = getWatermark().sum(
-								applicationTimeDelay);
+						PointInTime punctuation = getWatermark().sum(applicationTimeDelay);
 						AssureHeartbeatPO.this.sendPunctuation(Heartbeat.createNewHeartbeat(punctuation));
 					}
 				} catch (InterruptedException e) {
@@ -98,16 +97,15 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	protected void process_open() throws OpenFailedException {
 		generateHeartbeat = new Runner();
-		if (!startTimerAfterFirstElement){
+		if (!startTimerAfterFirstElement) {
 			generateHeartbeat.start();
 		}
 	}
 
 	@Override
 	protected void process_next(R object, int port) {
-		//LOG.debug("New Element "+object);
-		if (startTimerAfterFirstElement){
-			if (!generateHeartbeat.isAlive()){
+		if (startTimerAfterFirstElement) {
+			if (!generateHeartbeat.isAlive()) {
 				generateHeartbeat.start();
 			}
 		}
@@ -120,7 +118,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 			}
 			restartTimer();
 		} else {
-			LOG.warn("Obejct removed because out of order "+object);
+			LOG.warn("Object removed because out of order " + object);
 			transfer(object, 99);
 		}
 	}
@@ -134,14 +132,14 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		PointInTime marker = punctuation.getTime();
-		if (marker.afterOrEquals(getWatermark())){
+		if (marker.afterOrEquals(getWatermark())) {
 			sendPunctuation(punctuation);
-			if (!allowOutofOrder){
+			if (!allowOutofOrder) {
 				setWatermark(marker);
 			}
 			restartTimer();
-		}else{
-			LOG.warn("Punctuation removed because out of order "+punctuation);
+		} else {
+			LOG.warn("Punctuation removed because out of order " + punctuation);
 		}
 	}
 
@@ -149,7 +147,8 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	public void sendPunctuation(IPunctuation punctuation) {
 		PointInTime timestamp = punctuation.getTime();
 		if (timestamp.afterOrEquals(getWatermark())) {
-			//LOG.debug("SEND PUNCTUATION "+punctuation+" oldWatermark="+getWatermark());
+			// LOG.debug("SEND PUNCTUATION "+punctuation+"
+			// oldWatermark="+getWatermark());
 			super.sendPunctuation(punctuation);
 			setWatermark(timestamp);
 			restartTimer();
@@ -169,13 +168,12 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	}
 
 	public synchronized void setWatermark(PointInTime watermark) {
-		//LOG.debug("Set new Watermark "+watermark);
+		// LOG.debug("Set new Watermark "+watermark);
 		this._watermark = watermark;
 	}
 
 	public void setRealTimeDelay(long realTimeDelay, TimeUnit timeUnit) {
 		this.realTimeDelay = timeUnit.toMillis(realTimeDelay);
-		;
 	}
 
 	public void setApplicationTimeDelay(long applicationTimeDelay) {
@@ -185,7 +183,7 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	public void setSendAlwaysHeartbeat(boolean sendAlwaysHeartbeat) {
 		this.sendAlwaysHeartbeat = sendAlwaysHeartbeat;
 	}
-	
+
 	public void setAllowOutOfOrder(boolean allowOutofOrder) {
 		this.allowOutofOrder = allowOutofOrder;
 	}
@@ -193,35 +191,34 @@ public class AssureHeartbeatPO<R extends IStreamObject<? extends ITimeInterval>>
 	/**
 	 * @param startTimerAfterFirstElement
 	 */
-	public void setStartTimerAfterFirstElement(
-			boolean startTimerAfterFirstElement) {
-		this.startTimerAfterFirstElement  = startTimerAfterFirstElement;
+	public void setStartTimerAfterFirstElement(boolean startTimerAfterFirstElement) {
+		this.startTimerAfterFirstElement = startTimerAfterFirstElement;
 	}
-	
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (!(ipo instanceof AssureHeartbeatPO)){
+		if (!(ipo instanceof AssureHeartbeatPO)) {
 			return false;
 		}
 		@SuppressWarnings("unchecked")
 		AssureHeartbeatPO<R> po = (AssureHeartbeatPO<R>) ipo;
-		
-		if (this.realTimeDelay != po.realTimeDelay){
+
+		if (this.realTimeDelay != po.realTimeDelay) {
 			return false;
 		}
-				
-		if (this.applicationTimeDelay != po.applicationTimeDelay){
+
+		if (this.applicationTimeDelay != po.applicationTimeDelay) {
 			return false;
 		}
-		
-		if (this.sendAlwaysHeartbeat != po.sendAlwaysHeartbeat){
+
+		if (this.sendAlwaysHeartbeat != po.sendAlwaysHeartbeat) {
 			return false;
 		}
-		
-		if (this.allowOutofOrder != po.allowOutofOrder){
+
+		if (this.allowOutofOrder != po.allowOutofOrder) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
