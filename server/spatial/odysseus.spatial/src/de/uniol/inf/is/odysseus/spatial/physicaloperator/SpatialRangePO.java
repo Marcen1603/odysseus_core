@@ -7,30 +7,35 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialRangeAO;
 
+/**
+ * This operator searches for all objects in the given range around the object
+ * that flows into this operator. It uses the queryCircle method of the data
+ * structure.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;
 	private int geometryPosition;
 	private double range;
 
-	public SpatialRangePO(int geometryPosition, double range) {
-		this.geometryPosition = geometryPosition;
-		this.range = range;
+	public SpatialRangePO(SpatialRangeAO ao) {
+		this.geometryPosition = ao.getGeometryPosition();
+		this.range = ao.getRange();
 
-		int rand = (int) (Math.random() * 1000);
-		this.dataStructure = SpatialDataStructureProvider.getInstance().getOrCreateDataStructure("spatialRange" + rand,
-				FastQuadTreeSTDataStructure.TYPE, geometryPosition);
-	}
-
-	public SpatialRangePO(IMovingObjectDataStructure dataStructure, int geometryPosition, double range) {
-		this.dataStructure = dataStructure;
-		this.geometryPosition = geometryPosition;
-		this.range = range;
+		this.dataStructure = SpatialDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
+		if (this.dataStructure == null) {
+			throw new RuntimeException("The spatial data structure with the name " + ao.getDataStructureName()
+					+ " does not exist. Use a SpatialStore operator to create and fill one.");
+		}
 	}
 
 	@Override
@@ -48,30 +53,33 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 		Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) object;
 
-		// Port mapping:
-		// 0: objects to store in the data structure
-		// 1: objects to query for
+		this.dataStructure.cleanUp(tuple.getMetadata().getStart());
+		List<Tuple<ITimeInterval>> neighbors = queryObject(tuple);
 
-		if (port == 0) {
-			this.dataStructure.add(tuple);
-		} else if (port == 1) {
-			this.dataStructure.cleanUp(tuple.getMetadata().getStart());
-			List<Tuple<ITimeInterval>> neighbors = queryObject(tuple);
+		/*
+		 * TODO What to do with this? Give the option or better only filter
+		 * later? Right now I think this should not be part of this operator.
+		 * 
+		 * Other argument: Put it into the data structures. Why? Well, if all
+		 * elements within the range are from the same vessel (which is
+		 * especially the case with kNN) but I want results from all other
+		 * vessels but me, I end up having nothing.
+		 */
 
-			// IAttributeResolver attributeResolver = new
-			// DirectAttributeResolver(this.getOutputSchema());
-			// IPredicate test =
-			// OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
-			// .createPredicate(attributeResolver, "MMSI != 316652310");
+		// IAttributeResolver attributeResolver = new
+		// DirectAttributeResolver(this.getOutputSchema());
+		// IPredicate test =
+		// OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
+		// .createPredicate(attributeResolver, "MMSI != 316652310");
 
-			// Tuple[] tuples = neighbors.stream().filter(e ->
-			// test.evaluate(e)).toArray(size -> new Tuple[size]);
-			// List<Tuple> filteredNeighbors = new
-			// ArrayList<Tuple>(Arrays.asList(tuples));
+		// Tuple[] tuples = neighbors.stream().filter(e ->
+		// test.evaluate(e)).toArray(size -> new Tuple[size]);
+		// List<Tuple> filteredNeighbors = new
+		// ArrayList<Tuple>(Arrays.asList(tuples));
 
-			Tuple<?> newTuple = tuple.append(neighbors);
-			transfer((T) newTuple);
-		}
+		Tuple<?> newTuple = tuple.append(neighbors);
+		transfer((T) newTuple);
+
 	}
 
 	/**
