@@ -118,7 +118,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 		// for marking if object should be transfered, not synchronized
 		boolean transfer = false;
 		boolean migrationFinished = false;
-		// check if new has caught up on old.
+		
 		synchronized (this) {
 
 			// happens if process_next is called while the migration is already
@@ -143,6 +143,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 					LOG.debug("Latestendtimestamp was at migration start in old plan was {}", this.migrationStart);
 					LOG.debug("First element of old plan not transfered was {}", object);
 					this.finished = true;
+					this.drainBuffer();
 					migrationFinished = true;
 				}
 			}
@@ -153,7 +154,7 @@ public class MigrationRouterPO<R extends IStreamObject<? extends ITimeInterval>>
 			}
 		}
 		if (migrationFinished) {
-				this.drainBuffer();
+				//this.drainBuffer();
 				fireMigrationFinishedEvent(this);
 		}
 	}

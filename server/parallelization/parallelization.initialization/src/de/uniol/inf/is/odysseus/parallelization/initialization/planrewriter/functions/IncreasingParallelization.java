@@ -53,7 +53,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 			Collection<IQueryBuildSetting<?>> settings) {
 		List<ILogicalOperator> parallelizedOperators = new ArrayList<>();
 		for (IParallelizationIndividualConfiguration config : possibleParallelizations) {
-			if (!parallelizedOperators.contains(config.getOperator())) {
+//			if (!parallelizedOperators.contains(config.getOperator())) {
 				config.setParallelizationDegree(parallelizationDegree);
 				config.setBufferSize(bufferSize);
 				LOG.debug("Set parallelization parallelizationDegree of operator "
@@ -61,7 +61,7 @@ public class IncreasingParallelization implements IPlanRewriteFunction {
 				LOG.debug("Partitioning strategy: " + config.getClass());
 				parallelizedOperators.add(config.getOperator());
 				config.execute(settings);
-			}
+//			}
 		}
 		parallelizationDegree++;
 

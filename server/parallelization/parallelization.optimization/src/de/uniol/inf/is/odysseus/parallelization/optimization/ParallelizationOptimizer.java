@@ -55,36 +55,38 @@ public class ParallelizationOptimizer {
 				"_migrate" + parallelizationNumber);
 		parallelizationNumber++;
 		walker0.prefixWalk(logicalQuery.getLogicalPlan(), appendVisitor);
-		
-		//remove sinks and make the operator which it is subscribed to the new root
+
+		// remove sinks and make the operator which it is subscribed to the new
+		// root
 		// only works if the sink is subscribed to only one source
 		ILogicalOperator top = logicalQuery.getLogicalPlan();
-		if(!(top instanceof TopAO)) {
+		if (!(top instanceof TopAO)) {
 			LOG.error("The top of the plan is not of Type TopAO");
 			return;
 		}
-		if(top.getSubscribedToSource().size()!=1) {
+		if (top.getSubscribedToSource().size() != 1) {
 			LOG.error("Top must be subscribed to exactly one operator.");
 			return;
 		}
 		LogicalSubscription topSubscription = top.getSubscribedToSource().iterator().next();
 		ILogicalOperator sinkToRemove = topSubscription.getTarget();
-		if(sinkToRemove.getSubscribedToSource().size() != 1){
+		if (sinkToRemove.getSubscribedToSource().size() != 1) {
 			LOG.error("The sink must be subscribed to  exactly one operator.");
 			return;
 		}
-		if(sinkToRemove instanceof AbstractSenderAO) {
+		if (sinkToRemove instanceof AbstractSenderAO) {
 			AbstractSenderAO sink = ((AbstractSenderAO) sinkToRemove);
 			Resource oldName = sink.getSinkname();
-			Resource newName = new Resource(oldName.getUser(),oldName.getResourceName()+"_temp");
+			Resource newName = new Resource(oldName.getUser(), oldName.getResourceName() + "_temp");
 			sink.setSink(newName);
 		}
-//		LogicalSubscription sinkSubscription = sinkToRemove.getSubscribedToSource().iterator().next();
-//		ILogicalOperator newRoot = sinkSubscription.getTarget();
-//		top.unsubscribeFromSource(topSubscription);
-//		sinkToRemove.unsubscribeFromSource(sinkSubscription);
-//		sinkToRemove.removeOwner(logicalQuery);
-//		newRoot.subscribeSink(top, 0, 0, top.getOutputSchema());
+		// LogicalSubscription sinkSubscription =
+		// sinkToRemove.getSubscribedToSource().iterator().next();
+		// ILogicalOperator newRoot = sinkSubscription.getTarget();
+		// top.unsubscribeFromSource(topSubscription);
+		// sinkToRemove.unsubscribeFromSource(sinkSubscription);
+		// sinkToRemove.removeOwner(logicalQuery);
+		// newRoot.subscribeSink(top, 0, 0, top.getOutputSchema());
 
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();

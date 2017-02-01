@@ -26,7 +26,7 @@ public class ReoptimzeParallelizationOsgiConsoleCommand implements CommandProvid
 	 */
 	@Override
 	public String getHelp() {
-		return "Starts an optimization of parallelilized operators in odysseus.";
+		return "Starts an optimization of parallelilized operators in odysseus. ";
 	}
 
 	public void _reparallelize(CommandInterpreter ci) throws Exception {
