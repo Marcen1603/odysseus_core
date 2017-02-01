@@ -131,7 +131,7 @@ public class TransformationExecutor implements ITransformation {
 			cleanup(env);
 			throw new TransformationException("Error during transformation.\n"
 					+ "Potential problem operator: " + logStillRemain
-					+ "\nAre metadata types (#METADATA) set correctly?");
+					+ "\nAre metadata types (#METADATA) or in ACCESS.METAATTRIBUTE set correctly?");
 		}
 
 		// FIX: Now done by an explicit RenanePO

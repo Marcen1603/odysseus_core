@@ -257,7 +257,7 @@ abstract public class AbstractTISyncArea<R extends IStreamObject<? extends ITime
 						if (logger.isTraceEnabled()) {
 							if (heartbeat.before(curHB)) {
 								logger.trace(
-										"Heart beat " + heartbeat + " ignored. Was older than last heartbeat " + curHB);
+										"Heart beat " + heartbeat + " ignored . Was older than last heartbeat " + curHB + " - (" + this.operator + "(" + operator.getName() + "))");
 							}
 						}
 					}

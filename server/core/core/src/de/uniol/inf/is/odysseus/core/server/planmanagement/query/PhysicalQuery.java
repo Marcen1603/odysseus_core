@@ -53,14 +53,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class PhysicalQuery implements IPhysicalQuery {
 
-	transient protected static Logger _logger = null;
-
-	protected synchronized static Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(PhysicalQuery.class);
-		}
-		return _logger;
-	}
+	transient protected static Logger _logger = LoggerFactory.getLogger(PhysicalQuery.class);
 
 	/**
 	 * The logical query, this physical query is build from
@@ -527,9 +520,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void removeOwnerschip() {
 
-		getLogger().debug("Remove ownership start");
+		_logger.debug("Remove ownership start");
 		for (IPhysicalOperator physicalOperator : this.physicalChilds) {
-			getLogger().debug("Remove Ownership for " + physicalOperator);
+			_logger.debug("Remove Ownership for " + physicalOperator);
 			physicalOperator.removeOwner(this);
 		}
 	}
@@ -544,12 +537,19 @@ public class PhysicalQuery implements IPhysicalQuery {
 			this.isStarting = true;
 			doneRoots.clear();
 			this.queryListener = queryListener;
-			queryStartedTS = System.currentTimeMillis();
+			_logger.debug("Calling open on query "+getID());
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open/started, the
 				// following roots will not be called any more.
 				curRoot.open(this);
+			}
+			_logger.debug("Calling start on query "+getID());
+			queryStartedTS = System.currentTimeMillis();
+			for (IPhysicalOperator curRoot : getRoots()) {
+				// this also works for cyclic plans,
+				// since if an operator is already open/started, the
+				// following roots will not be called any more.
 				curRoot.start(this);
 			}
 			setState(nextState);

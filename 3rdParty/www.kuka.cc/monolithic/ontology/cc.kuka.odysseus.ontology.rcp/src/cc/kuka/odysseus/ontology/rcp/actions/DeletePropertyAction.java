@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import cc.kuka.odysseus.ontology.common.model.Property;
 
+@SuppressWarnings("unused")
 public class DeletePropertyAction extends Action {
 
 	private Shell shell;

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.server.keyvalue.predicate;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -39,6 +40,12 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends AbstractPred
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
+			if (values[i] == null){
+				Pair<Integer, Integer> pos = leftSchema.indexOfMetaAttribute(neededAttributes.get(i).getURI());
+				if (pos != null){
+					values[i] = input.getMetadata().getValue(pos.getE1(), pos.getE2());
+				}
+			}
 		}
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();

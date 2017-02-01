@@ -168,6 +168,12 @@ public class SDFExpression implements Serializable, IClone {
 		return this.schema;
 	}
 
+	public void setSchema(List<SDFSchema> schema){
+		// when setting a new schema, the expression must be parsed again
+		this.expression = null;
+		init(null,this.expressionString, new DirectAttributeResolver(schema), expressionParser);
+	}
+
 	private String substituteAggregations(String value, Map<String, String> inverseAliasMappings) {
 		String result = "";
 		{

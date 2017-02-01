@@ -240,11 +240,11 @@ public class IfController {
 	private boolean canExecuteNow() {
 		for( Boolean b : inIfClause ) {
 			if( b == false ) {
-				LOG.trace("Line : false");
+				//LOG.trace("Line : false");
 				return false;
 			}
 		}
-		LOG.trace("Line : true");
+		//LOG.trace("Line : true");
 		return true;
 	}
 

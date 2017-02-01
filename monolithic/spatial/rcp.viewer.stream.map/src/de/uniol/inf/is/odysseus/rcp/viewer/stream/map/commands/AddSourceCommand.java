@@ -33,7 +33,6 @@ public class AddSourceCommand extends AbstractHandler implements IHandler {
 		@SuppressWarnings("unused")
 		Shell shell = editor.getScreenManager().getDisplay().getActiveShell();
 
-		@SuppressWarnings("unused")
 		ISession user = OdysseusRCPPlugIn.getActiveSession();
 		IExecutor executor = OdysseusRCPPlugIn.getExecutor();
 		IServerExecutor serverExecutor = null;

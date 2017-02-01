@@ -53,6 +53,7 @@ import de.uniol.inf.is.odysseus.server.opcua.binding.OPCUAComponent;
  * @param <T>
  *            the generic type
  */
+@SuppressWarnings("unused")
 public class OPCUATransportHandler<T> extends AbstractTransportHandler implements ITransportHandler {
 
 	/** The log. */
