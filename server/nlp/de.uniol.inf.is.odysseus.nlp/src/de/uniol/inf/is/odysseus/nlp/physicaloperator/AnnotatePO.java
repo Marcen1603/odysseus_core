@@ -14,12 +14,13 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.toolkits.*;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.NamedEntityAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
 
-public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, Tuple<M>> {
+public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, KeyValueObject<M>> {
 	private int max;
 	private int min;
 	private SDFAttribute attribute;
@@ -90,6 +91,7 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
+	
 		Tuple<M> output;
 		Annotation annotation;
 		annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
@@ -103,7 +105,9 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
     		append.add(getNamedEntities(annotation));
     	
     	output = object.appendList(append, true);
-		transfer(output);
+    	KeyValueObject<M> testOutput = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) output, getOutputSchema());
+
+		transfer(testOutput);
 	}
 		
 	

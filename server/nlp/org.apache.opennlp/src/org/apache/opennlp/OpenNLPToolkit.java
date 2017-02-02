@@ -72,7 +72,7 @@ public class OpenNLPToolkit extends NLPToolkit{
 			Span[] neSpan = nameFinder.find(tokens);
 			for(Span span : neSpan){
 				String namedEntity = "";
-				for(int i = span.getStart(); i <= span.getEnd(); i++){
+				for(int i = span.getStart(); i <= span.getEnd() && i < tokens.length; i++){
 					namedEntity += tokens[i];
 				}
 				namedEntities.add(namedEntity);

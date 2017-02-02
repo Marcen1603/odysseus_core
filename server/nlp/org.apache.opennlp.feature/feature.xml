@@ -22,6 +22,9 @@
 
    <requires>
       <import feature="de.uniol.inf.is.odysseus.nlp.feature" version="1.0.0.qualifier"/>
+      <import plugin="de.uniol.inf.is.odysseus.nlp" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.core"/>
+      <import plugin="org.eclipse.osgi"/>
    </requires>
 
    <plugin

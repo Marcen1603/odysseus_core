@@ -7,6 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -19,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.toolkits.Annotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
 import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
@@ -59,6 +61,8 @@ public class AnnotateAO extends UnaryLogicalOp {
 	private NLPToolkit nlpToolkit;
 	
 	private HashMap<String, Option> configuration;
+	
+	private SDFSchema outputSchema = null;
 	
 	public AnnotateAO(){
         super();		
@@ -133,8 +137,13 @@ public class AnnotateAO extends UnaryLogicalOp {
     
     @Override
     public SDFSchema getOutputSchemaIntern(int pos) {
-    	List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-
+    	if (outputSchema==null) 
+    		outputSchema = SDFSchemaFactory.createNewSchema(
+    			getInputSchema(0).getURI(),
+    			(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
+    					.getAttributes(), getInputSchema());
+    	//List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+    	/*
     	if(information.contains(Annotation.TOKENID))
     		attributes.add(tokensAttribute);
 
@@ -143,10 +152,10 @@ public class AnnotateAO extends UnaryLogicalOp {
     	
     	if(information.contains(Annotation.NERID))
     		attributes.add(namedEntityAttribute);
-    		
+    		*/
     	
-        SDFSchema schema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
-        return schema;
+        //SDFSchema schema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
+        return outputSchema;
     }
 
 	

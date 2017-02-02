@@ -19,8 +19,11 @@
    <requires>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
+      <import plugin="de.uniol.inf.is.odysseus.transform"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="de.uniol.inf.is.odysseus.slf4j"/>
+      <import plugin="org.slf4j.api"/>
+      <import plugin="de.uniol.inf.is.odysseus.keyvalue.datatype" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
