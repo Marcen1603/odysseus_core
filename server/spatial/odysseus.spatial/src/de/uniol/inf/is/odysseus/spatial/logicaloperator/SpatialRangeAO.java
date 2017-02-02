@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class SpatialRangeAO extends BinaryLogicalOp {
 
@@ -45,7 +45,7 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		return dataStructureName;
 	}
 
-	@Parameter(name = "dataStructureName", optional = true, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
+	@Parameter(name = "dataStructureName", optional = false, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
 	public void setDataStructureName(String dataStructureName) {
 		this.dataStructureName = dataStructureName;
 	}
@@ -85,5 +85,4 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
 	}
-
 }

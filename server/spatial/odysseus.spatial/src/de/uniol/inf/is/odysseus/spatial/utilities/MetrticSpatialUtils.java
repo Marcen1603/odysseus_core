@@ -81,6 +81,10 @@ public class MetrticSpatialUtils {
 		return distance;
 	}
 
+	public double calculateHaversineDistance(Coordinate coord1, Coordinate coord2) {
+		return getHaversineDistance(coord1.y, coord1.x, coord2.y, coord2.x);
+	}
+
 	/**
 	 * Calculates the distance between two points in meters in the WGS84
 	 * coordinate reference system (e.g. for GPS coordinates).
@@ -131,8 +135,7 @@ public class MetrticSpatialUtils {
 		org.geotools.referencing.GeodeticCalculator calc = new org.geotools.referencing.GeodeticCalculator();
 		// mind, this is lon/lat
 		calc.setStartingGeographicPoint(center.y, center.x);
-		
-		
+
 		// get upper left point
 		// go to the north
 		calc.setDirection(0 /* azimuth */, rangeMeters/* distance */);
@@ -140,17 +143,17 @@ public class MetrticSpatialUtils {
 		// go to the west
 		calc.setDirection(270, rangeMeters);
 		Point2D upperLeft = calc.getDestinationGeographicPoint();
-			
+
 		// go to upper right point
 		calc.setStartingGeographicPoint(upperLeft);
 		// from the top left go 2 times the range to the upper right
-		calc.setDirection(90, 2 * rangeMeters); 
+		calc.setDirection(90, 2 * rangeMeters);
 		Point2D upperRight = calc.getDestinationGeographicPoint();
-		
+
 		// go to lower right point
 		calc.setStartingGeographicPoint(upperRight);
 		// from the upper right go 2 times the range to the lower right
-		calc.setDirection(180, 2 * rangeMeters); 
+		calc.setDirection(180, 2 * rangeMeters);
 		Point2D lowerRight = calc.getDestinationGeographicPoint();
 
 		// Create an envelope from these three points
@@ -158,7 +161,7 @@ public class MetrticSpatialUtils {
 		env.expandToInclude(upperLeft.getY(), upperLeft.getX());
 		env.expandToInclude(upperRight.getY(), upperRight.getX());
 		env.expandToInclude(lowerRight.getY(), lowerRight.getX());
-		
+
 		return env;
 	}
 
