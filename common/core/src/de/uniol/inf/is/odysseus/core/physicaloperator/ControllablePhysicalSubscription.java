@@ -8,8 +8,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class ControllablePhysicalSubscription<K> extends
-		AbstractPhysicalSubscription<K> {
+public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscription<K> {
 
 	private static final long serialVersionUID = -9102495312187048754L;
 
@@ -19,8 +18,7 @@ public class ControllablePhysicalSubscription<K> extends
 	private int currentSheddingValue = 0;
 	private int suspendCalls = 0;
 
-	public ControllablePhysicalSubscription(K target, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public ControllablePhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		super(target, sinkInPort, sourceOutPort, schema);
 	}
 
@@ -28,7 +26,7 @@ public class ControllablePhysicalSubscription<K> extends
 	public void setTarget(K target) {
 		super.setTarget(target);
 	}
-	
+
 	@Override
 	public void setSinkInPort(int port) {
 		super.setSinkInPort(port);
@@ -82,7 +80,7 @@ public class ControllablePhysicalSubscription<K> extends
 		}
 	}
 
-	@SuppressWarnings({"rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public void process_internal(IStreamObject o) {
 		if (getOpenCalls() > 0 && getOpenCalls() == suspendCalls) {
 			synchronized (suspendBuffer) {
@@ -124,19 +122,26 @@ public class ControllablePhysicalSubscription<K> extends
 
 	@Override
 	public String toString() {
-		return super.toString() + " suspendCalls " + suspendCalls + " "
-				+ suspendBuffer;
+		/*
+		 * Synchronization is needed because list "suspendedBuffer" can change.
+		 * This would lead to a concurrency-Exception which leads to not
+		 * suspending the buffers correctly
+		 */
+		synchronized (suspendBuffer) {
+			return super.toString() + " suspendCalls " + suspendCalls + " " + suspendBuffer;
+		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public ImmutableList<IStreamObject> getBufferedElements() {
 		synchronized (this.suspendBuffer) {
 			return ImmutableList.copyOf(this.suspendBuffer);
 		}
 	}
-	
+
 	/**
-	 * Attention: Buffer of elements will be cleared and filled with new elements.
+	 * Attention: Buffer of elements will be cleared and filled with new
+	 * elements.
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setBufferedElements(List<IStreamObject> elements) {
@@ -145,5 +150,5 @@ public class ControllablePhysicalSubscription<K> extends
 			this.suspendBuffer.addAll(elements);
 		}
 	}
-	
+
 }
