@@ -16,9 +16,12 @@ import org.slf4j.LoggerFactory;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.ExceptionHandler;
 import com.rabbitmq.client.ShutdownListener;
 import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client.TopologyRecoveryException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
@@ -26,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class RabbitMQTransportHandler extends AbstractTransportHandler implements UncaughtExceptionHandler {
+public class RabbitMQTransportHandler extends AbstractTransportHandler implements UncaughtExceptionHandler, ExceptionHandler {
 
 	static final Logger LOG = LoggerFactory.getLogger(RabbitMQTransportHandler.class);
 
@@ -212,6 +215,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler implement
 
 	private void internalOpen() throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
+		factory.setExceptionHandler(this);
 		if (username != null) {
 			factory.setUsername(username);
 		}
@@ -293,6 +297,52 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler implement
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void handleUnexpectedConnectionDriverException(Connection conn, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleReturnListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleFlowListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConfirmListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleBlockedListenerException(Connection connection, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConsumerException(Channel channel, Throwable exception, Consumer consumer, String consumerTag,
+			String methodName) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConnectionRecoveryException(Connection conn, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleChannelRecoveryException(Channel ch, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleTopologyRecoveryException(Connection conn, Channel ch, TopologyRecoveryException exception) {
+		exception.printStackTrace();
 	}
 
 }
