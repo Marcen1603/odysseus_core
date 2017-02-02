@@ -144,7 +144,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 	/**
 	 * Removes the elements in an binary search approach.
-	 * 
+	 *
 	 * @param tuple
 	 *            The tuple to compare the elements with. Used for the
 	 *            timestamps.
@@ -219,7 +219,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 	/**
 	 * Removes the elements in an iterative approach.
-	 * 
+	 *
 	 * @param tuple
 	 *            The tuple to compare the elements with. Used for the
 	 *            timestamps.
@@ -290,7 +290,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 		List<T> removedElements = null;
 
 		Tuple<ITimeInterval> tuple = new Tuple<ITimeInterval>();
-		tuple.setMetadata(new TimeInterval(time.plus(1), time.plus(1)));
+		tuple.setMetadata(new TimeInterval(time, time.plus(1)));
 
 		synchronized (getElements()) {
 
@@ -640,7 +640,7 @@ abstract public class AbstractTISweepArea<T extends IStreamObject<? extends ITim
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.sweeparea.AbstractSweepArea#insertAll(java.util.
 	 * List)
