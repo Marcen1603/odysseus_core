@@ -50,8 +50,9 @@ public class MetrticSpatialUtils {
 	}
 
 	/**
-	 * DEPRECATED: This formula gives results with only limited accuracy (but
-	 * works without additional libraries). Use "calculateDistance" instead.
+	 * WARNING: This formula gives results with only limited accuracy (but works
+	 * without additional libraries). Use "calculateDistance" instead if you
+	 * need better precision.
 	 * 
 	 * Calculates the distance between two points on the earth in km. Uses the
 	 * Haversine formula and therefore takes the curvature of the earth into
@@ -68,7 +69,6 @@ public class MetrticSpatialUtils {
 	 *            Longitude value from the second point
 	 * @return The distance between the two points in km
 	 */
-	@Deprecated
 	public double getHaversineDistance(double lat1, double lng1, double lat2, double lng2) {
 		// This calculation is based on HEVERSINE formula
 		double earthRadius = 6371; // earthRadius in Kilometers
@@ -101,7 +101,8 @@ public class MetrticSpatialUtils {
 
 	/**
 	 * Calculates the distance between two points in meters in the given
-	 * coordinate reference system. If crs is null, WGS84 is used as default.
+	 * coordinate reference system. If CRS is null, WGS84 is used as default.
+	 * Uses the orthodromic distance from the JTS.
 	 * 
 	 * @param crs
 	 *            The coordinate reference system. If null, WGS84 is used as

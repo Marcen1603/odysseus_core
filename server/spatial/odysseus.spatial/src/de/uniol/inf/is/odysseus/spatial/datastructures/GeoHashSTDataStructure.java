@@ -33,9 +33,18 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 /**
- * Uses GeoHashes for a spatial indexing.
+ * Uses GeoHashes for a spatial indexing. This index structure is made for
+ * spatio-temporal data. When querying it uses the spatial as well as the
+ * temporal dimension.
+ * 
+ * Nevertheless, this is not optimized for moving objects, as every single entry
+ * is used independently. The id of the moving object (if the source is a MO) is
+ * not used. This results for example in different results for kNN queries when
+ * you only expect one neighbor per object. Here, the k nearest neighbors can be
+ * all of one object, possibly the querying object itself.
  * 
  * @author Tobias Brandt
+ * @since 2017
  *
  */
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
@@ -46,7 +55,10 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	private static final int BIT_PRECISION = 64;
 
-	private int geometryPosition;
+	// The position of the geometry-attribute within the tuple
+	private int geometryAttributePosition;
+
+	// The name of the data structure to access it
 	private String name;
 
 	// The number of elements currently in the index
@@ -62,7 +74,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	protected DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public GeoHashSTDataStructure(String name, int geometryPosition) {
-		this.geometryPosition = geometryPosition;
+		this.geometryAttributePosition = geometryPosition;
 		this.name = name;
 
 		/*
@@ -162,7 +174,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 			// Nevertheless, we have to filter out the elements which do
 			// not overlap on a timely level
-			List<Tuple<ITimeInterval>> filter = result.parallelStream()
+			List<Tuple<ITimeInterval>> filter = result.stream()
 					// temporal filter
 					.filter(f -> f.getMetadata().getStart().before(t.getEnd())
 							&& f.getMetadata().getEnd().after(t.getStart()))
@@ -225,7 +237,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			}
 
 			private Geometry getGeometry(Tuple<?> tuple) {
-				Object o = tuple.getAttribute(geometryPosition);
+				Object o = tuple.getAttribute(geometryAttributePosition);
 				GeometryWrapper geometryWrapper = null;
 				if (o instanceof GeometryWrapper) {
 					geometryWrapper = (GeometryWrapper) o;
@@ -261,24 +273,23 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
 		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
 
-		// Get all elements within that bounding box (filter step)
-		// TODO This results in doing the distance calculation twice as it is
-		// already done within the BoundingBox-method. Create another method
-		// that returns roughly the right coordinates and then do the distance
-		// calculation only once.
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
 		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
 				createPolygon(createBox(topLeft, lowerRight)));
 
 		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
 
+		// For every point in our list ask JTS if the points lies within the
+		// polygon (refinement step)
+
+		// TODO Do performance tests? stream vs parallelStream vs foreach
+		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
+		// TODO Maybe faster with Haversine. give choice?
 		// TODO Think about: maybe it is faster to first check if the point is
 		// within a polygon (cheap) and reduce the number of distance
 		// calculations (expensive)
 
-		// For every point in our list ask JTS if the points lies within the
-		// polygon (refinement step)
-		// TODO Do performance tests? stream vs parallelStream vs foreach
-		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
 		List<Tuple<ITimeInterval>> result = candidateCollection.keySet().stream()
 				/*
 				 * spatial filter (it's enough to do it only with the first
@@ -303,17 +314,6 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 				 */
 				.collect(Collectors.toList());
 
-		// TODO Maybe faster with haversine. give choice?
-		// List<Tuple<ITimeInterval>> result =
-		// candidateCollection.parallelStream()
-		// // temporal filter
-		// .filter(e -> e.getMetadata().getStart().before(t.getEnd())
-		// && e.getMetadata().getEnd().after(t.getStart()))
-		// // spatial filter
-		// .filter(f ->
-		// spatialUtils.calculateHaversineDistance(geometry.getCentroid().getCoordinate(),
-		// getGeometry(f).getCentroid().getCoordinate()) <= radius)
-		// .collect(Collectors.toList());
 		return result;
 	}
 
@@ -404,7 +404,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	@Override
 	public int getGeometryPosition() {
-		return this.geometryPosition;
+		return this.geometryAttributePosition;
 	}
 
 	/**
