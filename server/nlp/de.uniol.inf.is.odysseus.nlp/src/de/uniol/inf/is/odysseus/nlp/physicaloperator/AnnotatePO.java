@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -21,13 +22,11 @@ import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
 
 public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, KeyValueObject<M>> {
-	private int max;
-	private int min;
 	private SDFAttribute attribute;
 	private int attributePosition;
 	private NLPToolkit toolkit;
 	private String toolkitName;
-	private List<String> information;	
+	private Set<String> information;	
 	private HashMap<String, Option> configuration;
 	private boolean appendTokens = false;
 	private boolean appendSentences = false;
@@ -42,19 +41,19 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 		init(splitPO.toolkitName, splitPO.toolkit, splitPO.information, splitPO.attribute, splitPO.configuration);
     }
      
-    public AnnotatePO(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
+    public AnnotatePO(String toolkit, NLPToolkit nlpToolkit, Set<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
 		init(toolkit, nlpToolkit, information, attribute, configuration);
 	}
 
-	private void init(String toolkit, NLPToolkit nlpToolkit, List<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
+	private void init(String toolkit, NLPToolkit nlpToolkit, Set<String> information, SDFAttribute attribute, HashMap<String, Option> configuration) {
         this.toolkitName = toolkit;
         this.toolkit = nlpToolkit;
         this.information = information;
         this.attribute = attribute;
         this.configuration = configuration;
-        this.appendTokens = information.contains(Annotation.TOKENID);
-        this.appendSentences = information.contains(Annotation.SENTENCEID);
-        this.appendNamedEntities = information.contains(Annotation.NERID);
+        this.appendTokens = information.contains(TokenAnnotation.NAME);
+        this.appendSentences = information.contains(SentenceAnnotation.NAME);
+        this.appendNamedEntities = information.contains(NamedEntityAnnotation.NAME);
     }
     
     
@@ -83,7 +82,10 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	    }
 	    AnnotatePO<?> spo = (AnnotatePO<?>) ipo;
 	    if(this.hasSameSources(spo) &&
-	            this.max == spo.max && this.min == spo.min) {
+	            this.attribute.equals(spo.attribute) &&
+	            this.toolkit.equals(spo.toolkit) &&
+	            this.information.equals(information)	            
+	            ) {
 	        return true;
 	    }
 	    return false;
@@ -91,22 +93,20 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-	
-		Tuple<M> output;
 		Annotation annotation;
 		annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
-		
-		List<Object> append = new ArrayList<>();
-    	if(this.appendTokens)
-    		append.add(getTokens(annotation));
-    	if(this.appendSentences)
-    		append.add(getSentences(annotation));
-    	if(this.appendNamedEntities)
-    		append.add(getNamedEntities(annotation));
-    	
-    	output = object.appendList(append, true);
-    	KeyValueObject<M> testOutput = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) output, getOutputSchema());
+		    	
+    	KeyValueObject<M> testOutput = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) object, getOutputSchema());
+    	KeyValueObject<M> annotations = (KeyValueObject<M>) KeyValueObject.createInstance();
 
+    	if(this.appendTokens)
+    		annotations.setAttribute("tokens", getTokens(annotation).toArray());
+    	if(this.appendSentences)
+    		annotations.setAttribute("sentence", getSentences(annotation).toArray());
+    	if(this.appendNamedEntities)
+    		annotations.setAttribute("ner", getNamedEntities(annotation).toArray());
+    	
+    	testOutput.setAttribute("annotations", annotations);
 		transfer(testOutput);
 	}
 		

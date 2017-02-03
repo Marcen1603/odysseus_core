@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.IAnnotation;
@@ -19,15 +20,16 @@ import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupporte
 import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
 
 public abstract class NLPToolkit {
-	protected List<String> information;
+	public final static String[] DEFAULT_INFORMATION = {TokenAnnotation.NAME, SentenceAnnotation.NAME};
+	protected Set<String> information;
 	private HashMap<String, Option> configuration;
 	protected List<Class<? extends IAnnotation>> internalPipeline;
 	protected HashMap<Class<? extends IAnnotation>, Object> models;
 	private List<Class<? extends IAnnotation>> annotationClasses;
-
+	private Class<? extends IAnnotation> highestAnnotation;
 
 	
-	public NLPToolkit(List<String> information, HashMap<String, Option> configuration, List<Class<? extends IAnnotation>> pipeline) throws NLPInformationNotSupportedException, NLPModelNotFoundException{
+	public NLPToolkit(Set<String> information, HashMap<String, Option> configuration, List<Class<? extends IAnnotation>> pipeline) throws NLPInformationNotSupportedException, NLPModelNotFoundException{
 		this.annotationClasses = Arrays.asList(
 				SentenceAnnotation.class, 
 				TokenAnnotation.class,
@@ -38,25 +40,25 @@ public abstract class NLPToolkit {
 		this.information = information;
 		this.configuration = configuration;
 		this.init();
+		this.highestAnnotation = getHighestAnnotation();
 	}
 	
 	public abstract void init() throws NLPInformationNotSupportedException, NLPModelNotFoundException;
 
 	public Annotation annotate(String text) {
 		Annotation annotation = new Annotation(text);
-		Class<? extends IAnnotation> highestAnnotation = getHighestAnnotation();
 		
 		if(highestAnnotation != null){
 			try {
 				switch((String)highestAnnotation.getField("NAME").get(null)){
-				case Annotation.SENTENCEID:
+				case SentenceAnnotation.NAME:
 					annotateSentences(annotation);
 					break;
-				case Annotation.TOKENID:
+				case TokenAnnotation.NAME:
 					annotateSentences(annotation);
 					annotateTokens(annotation);
 					break;
-				case Annotation.NERID:
+				case NamedEntityAnnotation.NAME:
 					annotateSentences(annotation);
 					annotateTokens(annotation);
 					annotateNamedEntities(annotation);
@@ -123,5 +125,8 @@ public abstract class NLPToolkit {
 		}
 		return classes;
 	}
+	
+	@Override
+	public abstract boolean equals(Object object);
 
 }

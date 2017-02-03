@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.Annotation;
@@ -30,7 +31,7 @@ import opennlp.tools.util.Span;
 
 public class OpenNLPToolkit extends NLPToolkit{
 
-	public OpenNLPToolkit(List<String> information, HashMap<String, Option> configuration) throws NLPInformationNotSupportedException, NLPModelNotFoundException {
+	public OpenNLPToolkit(Set<String> information, HashMap<String, Option> configuration) throws NLPInformationNotSupportedException, NLPModelNotFoundException {
 		super(information, configuration, Arrays.asList(
 				SentenceAnnotation.class, 
 				TokenAnnotation.class,
@@ -90,11 +91,11 @@ public class OpenNLPToolkit extends NLPToolkit{
 		if(highestAnnotation != null){
 			try {
 				switch((String)highestAnnotation.getField("NAME").get(null)){
-					case Annotation.NERID:
+					case NamedEntityAnnotation.NAME:
 						loadModel(NamedEntityAnnotation.class);
-					case Annotation.TOKENID:
+					case TokenAnnotation.NAME:
 						loadModel(TokenAnnotation.class);
-					case Annotation.SENTENCEID:
+					case SentenceAnnotation.NAME:
 						loadModel(SentenceAnnotation.class);
 						break;
 					default:
@@ -110,13 +111,13 @@ public class OpenNLPToolkit extends NLPToolkit{
 			try (InputStream modelIn = getModelAsStream(clazz)) {
 				name = (String)clazz.getField("NAME").get(null);
 				switch(name){
-				case Annotation.TOKENID:
+				case TokenAnnotation.NAME:
 					models.put(clazz, new TokenizerME(new TokenizerModel(modelIn)));
 					break;
-				case Annotation.SENTENCEID:
+				case SentenceAnnotation.NAME:
 					models.put(clazz, new SentenceDetectorME(new SentenceModel(modelIn)));
 					break;
-				case Annotation.NERID:
+				case NamedEntityAnnotation.NAME:
 					models.put(clazz, new NameFinderME(new TokenNameFinderModel(modelIn)));
 					break;
 				default:
@@ -128,6 +129,12 @@ public class OpenNLPToolkit extends NLPToolkit{
 			}
 			
 		
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

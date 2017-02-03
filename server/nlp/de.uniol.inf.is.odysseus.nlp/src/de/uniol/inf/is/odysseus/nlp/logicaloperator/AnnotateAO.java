@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -40,6 +42,7 @@ public class AnnotateAO extends UnaryLogicalOp {
 
 	//List of information included in output stream (eg. tokens, sentences, pos-tags...)
 	private List<String> information;
+	private Set<String> informationSet;
 	
 	//user-specified nlp-toolkit (eg. opennlp)
 	private String toolkit;
@@ -47,15 +50,6 @@ public class AnnotateAO extends UnaryLogicalOp {
 	//user-specified attribute that is going to be analyzed
 	private SDFAttribute attribute;
 	
-	//output-attribute that represents the sentences 
-	private SDFAttribute sentencesAttribute = new SDFAttribute(null, Annotation.SENTENCEID,
-            SDFDatatype.LIST_STRING, null, null, null);
-	
-	//output-attribute that represents the tokens 
-	private SDFAttribute tokensAttribute = new SDFAttribute(null, Annotation.TOKENID,
-            SDFDatatype.LIST_STRING, null, null, null);
-	private SDFAttribute namedEntityAttribute = new SDFAttribute(null, Annotation.NERID,
-            SDFDatatype.LIST_STRING, null, null, null);
 	
 	//user-specified nlp-toolkit (eg. OpenNLPToolkit)
 	private NLPToolkit nlpToolkit;
@@ -72,11 +66,10 @@ public class AnnotateAO extends UnaryLogicalOp {
     public AnnotateAO(AnnotateAO annotateAO){
         super(annotateAO);
         this.information = annotateAO.information;
+        this.informationSet = annotateAO.informationSet;
         this.toolkit = annotateAO.toolkit;
         this.attribute = annotateAO.attribute;
         this.nlpToolkit = annotateAO.nlpToolkit;
-        this.sentencesAttribute = annotateAO.sentencesAttribute;
-        this.tokensAttribute = annotateAO.tokensAttribute;
         this.configuration = annotateAO.configuration;
     }
     
@@ -89,7 +82,7 @@ public class AnnotateAO extends UnaryLogicalOp {
 	public void setToolkit(String toolkit) {
 		this.toolkit = toolkit;	
 		try {
-			nlpToolkit = ToolkitFactory.get(toolkit, information, configuration);
+			nlpToolkit = ToolkitFactory.get(toolkit, informationSet, configuration);
 		} catch (ToolkitNotFoundException ignored) {
 			throw new ParameterException(toolkit + " not found.");
 		} catch (NLPInformationNotSupportedException e) {
@@ -105,11 +98,18 @@ public class AnnotateAO extends UnaryLogicalOp {
     
     @Parameter(name="information", type = StringParameter.class, isList = true, optional = false)
 	public void setInformation(List<String> information) {
-		this.information = information;
+    	this.information = information;
+		this.informationSet = new HashSet<String>();
+		this.informationSet.addAll(information);
+		this.informationSet.addAll(Arrays.asList(NLPToolkit.DEFAULT_INFORMATION));
 	}
     
 	public List<String> getInformation(){
 		return this.information;
+	}
+	
+	public Set<String> getInformationSet(){
+		return this.informationSet;
 	}
     
     @Parameter(name="options", type = OptionParameter.class, isList = true, optional = true)
@@ -158,10 +158,6 @@ public class AnnotateAO extends UnaryLogicalOp {
         return outputSchema;
     }
 
-	
-	public int getSentencesAttributeOutputPosition(){
-		return getOutputSchemaIntern(0).indexOf(sentencesAttribute);
-	}
 
 	public SDFAttribute getAttribute() {
 		return attribute;

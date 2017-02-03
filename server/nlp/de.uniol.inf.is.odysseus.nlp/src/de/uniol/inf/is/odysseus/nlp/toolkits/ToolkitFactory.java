@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.nlp.toolkits;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
@@ -16,11 +17,11 @@ public class ToolkitFactory {
 		toolkits.put(toolkit, clazz);
 	}
 
-	public static NLPToolkit get(String toolkit, List<String> information, HashMap<String, Option> configuration) throws ToolkitNotFoundException, NLPInformationNotSupportedException, NLPModelNotFoundException {
+	public static NLPToolkit get(String toolkit, Set<String> information, HashMap<String, Option> configuration) throws ToolkitNotFoundException, NLPInformationNotSupportedException, NLPModelNotFoundException {
 		Class<? extends NLPToolkit> clazz = toolkits.get(toolkit);
 		if(clazz != null){
 			try {
-				return clazz.getConstructor(List.class, HashMap.class).newInstance(information, configuration);
+				return clazz.getConstructor(Set.class, HashMap.class).newInstance(information, configuration);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException ignored) {
 			} catch (InvocationTargetException e){
 				if(e.getCause() instanceof NLPInformationNotSupportedException){
