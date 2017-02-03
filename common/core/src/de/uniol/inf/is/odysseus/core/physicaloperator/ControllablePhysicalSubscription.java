@@ -122,14 +122,7 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 
 	@Override
 	public String toString() {
-		/*
-		 * Synchronization is needed because list "suspendedBuffer" can change.
-		 * This would lead to a concurrency-Exception which leads to not
-		 * suspending the buffers correctly
-		 */
-		synchronized (suspendBuffer) {
-			return super.toString() + " suspendCalls " + suspendCalls + " " + suspendBuffer;
-		}
+		return super.toString() + " suspendCalls " + suspendCalls;
 	}
 
 	@SuppressWarnings("rawtypes")

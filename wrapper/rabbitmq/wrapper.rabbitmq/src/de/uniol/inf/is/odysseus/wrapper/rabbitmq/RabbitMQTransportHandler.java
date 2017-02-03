@@ -181,7 +181,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler implement
 
 				@Override
 				public void shutdownCompleted(ShutdownSignalException cause) {
-					LOG.warn("Connection shutdown.", cause);
+					LOG.trace("Connection shutdown.", cause);
 				}
 			});
 
@@ -189,7 +189,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler implement
 
 				@Override
 				public void shutdownCompleted(ShutdownSignalException cause) {
-					LOG.warn("Channel shutdown.", cause);
+					LOG.trace("Channel shutdown.", cause);
 				}
 			});
 		} catch (IOException e) {
