@@ -261,10 +261,70 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		return new ArrayList<Tuple<ITimeInterval>>(sortedTuples.subList(0, k));
 	}
 
+	// TODO Unfinished!
+	public void queryCircleWithDistance(Geometry geometry, double radius, ITimeInterval t) {
+		// Get the rectangular envelope for the circle
+		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
+				radius);
+		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
+		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
+		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
+				createPolygon(createBox(topLeft, lowerRight)));
+
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+
+		// For every point in our list ask JTS if the points lies within the
+		// polygon (refinement step)
+
+		for (GeoHash hash : candidateCollection.keySet()) {
+
+			/*
+			 * spatial filter (it's enough to do it only with the first element
+			 * as all elements in this list are on the exact same position (have
+			 * the same geohash)
+			 */
+			double distance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+					getGeometry(this.geoHashes.get(hash).get(0)).getCentroid().getCoordinate());
+
+			if (distance <= radius) {
+				for (Tuple<ITimeInterval> tupleList : this.geoHashes.get(hash)) {
+
+				}
+			}
+
+		}
+
+		List<Tuple<ITimeInterval>> result = candidateCollection.keySet().stream()
+				/*
+				 * spatial filter (it's enough to do it only with the first
+				 * element as all elements in this list are on the exact same
+				 * position (have the same geohash)
+				 */
+				.filter(f -> spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+						getGeometry(this.geoHashes.get(f).get(0)).getCentroid().getCoordinate()) <= radius)
+				/*
+				 * We have a list of tuples but need to do this for every tuple.
+				 * Therefore, we need to "unnest" the list, which is a flatMap
+				 * operation.
+				 */
+				.flatMap(tupleList -> candidateCollection.get(tupleList).stream())
+				/*
+				 * Temporal filter -> Valid time needs to overlap
+				 */
+				.filter(tuple -> tuple.getMetadata().getStart().before(t.getEnd())
+						&& tuple.getMetadata().getEnd().after(t.getStart()))
+				/*
+				 * Write result into a list
+				 */
+				.collect(Collectors.toList());
+	}
+
 	@Override
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
-
-		// This is basically a bounding box but for a circle
 
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),

@@ -21,6 +21,9 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 	// How much bigger the number of deleted elements over the remaining
 	// elements need to be to do a re-creation of the hashes
 	private static final double biggerFactor = 3;
+	
+	private int cleanUpCounter;
+	private static final int CLEAN_SKIPS = 10;
 
 	public FastGeoHashSTDataStructure(String name, int geometryPosition) {
 		super(name, geometryPosition);
@@ -28,6 +31,16 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 
 	@Override
 	public void cleanUp(PointInTime timestamp) {
+
+		// Test: As every query itself considers the time, cleaning up is not
+		// that important. We could skip a lot of cleanup.
+		if (cleanUpCounter < CLEAN_SKIPS) {
+			cleanUpCounter++;
+			return;
+		}
+		
+		cleanUpCounter = 0;
+
 		// Remove old elements from sweepArea
 		List<Tuple<ITimeInterval>> removed = this.sweepArea.extractElementsBeforeAsList(timestamp);
 
