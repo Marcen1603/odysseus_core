@@ -26,6 +26,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  * value of the method.
  * 
  * @author christoph Schröer
+ * @deprecated
  */
 public class InvokeFunction extends AbstractFunction<Object> {
 
@@ -55,7 +56,11 @@ public class InvokeFunction extends AbstractFunction<Object> {
 
 			Method methodObject;
 			try {
+				
+				// Method of the class
 				methodObject = returnObject.getClass().getMethod(methodName);
+				
+				// execute Method on returnObject (returnObject.methodObject)
 				returnObject = methodObject.invoke(returnObject);
 
 			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException

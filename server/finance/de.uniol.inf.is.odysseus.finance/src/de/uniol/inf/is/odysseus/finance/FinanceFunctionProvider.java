@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.finance.mep.GetSampleSizeFunction;
 import de.uniol.inf.is.odysseus.finance.mep.ValueAtRiskFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
@@ -43,6 +44,7 @@ public class FinanceFunctionProvider implements IFunctionProvider {
 		final List<IFunction<?>> functions = new ArrayList<>();
 
 		functions.add(new ValueAtRiskFunction());
+		functions.add(new GetSampleSizeFunction());
 		FinanceFunctionProvider.LOG.info(String.format("Register functions: %s", functions));
 		return functions;
 	}
