@@ -32,4 +32,8 @@ public class Annotated extends Annotation{
     	}
 		return keyvalue;
 	}
+
+	public String getText() {
+		return text;
+	}
 }

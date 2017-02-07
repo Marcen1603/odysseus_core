@@ -60,6 +60,9 @@ public abstract class Pipeline {
 				throw new NLPModelNotFoundException("One of the specified models were not found");
 			Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites = model.getConstructor().newInstance().prerequisites();
 			
+			/*
+			 * Add prerequisites beforehand, so they're annotated first
+			 */
 			for(Class<? extends AnnotationModel<? extends IAnnotation>> algorithm: prerequisites){
 				addModelToPipeline(algorithm, configuration);
 			}
@@ -120,6 +123,7 @@ public abstract class Pipeline {
 		}
 		return null;
 	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Pipeline){
@@ -128,7 +132,12 @@ public abstract class Pipeline {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Returns set of information to be included in Annotated object after annotation.
+	 * @see Pipeline#annotate(Annotated)
+	 * @return Set of strings with information to be included
+	 */
 	public Set<String> getInformation() {
 		return information;
 	}

@@ -23,8 +23,4 @@ public abstract class OpenNLPModel<A extends IAnnotation> extends FileStreamMode
 		super(configuration);	
 	}
 
-	public OpenNLPModel(InputStream stream) throws NLPException  {
-		super(stream);
-	}
-	
 }

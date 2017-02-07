@@ -29,9 +29,6 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 		super(configuration);
 	}
 	
-	public TokenModel(InputStream stream) throws NLPException {
-		super(stream);
-	}
 
 	@Override
 	public Class<? extends IAnnotation> type() {
@@ -40,7 +37,7 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 
 	@Override
 	public void annotate(Annotated annotated) {
-		Tokens annotation = new Tokens(tokenizer.tokenize(annotated.text));
+		Tokens annotation = new Tokens(tokenizer.tokenize(annotated.getText()));
 		annotated.put(annotation);
 	}
 
@@ -55,7 +52,7 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 	}
 	
 	@Override
-	public void addRequirements() {
+	protected void addRequirements() {
 		prerequisites.add(SentenceModel.class);
 	}
 

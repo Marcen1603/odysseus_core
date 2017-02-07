@@ -27,10 +27,6 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 		super(configuration);
 	}
 	
-	protected SentenceModel(InputStream stream) throws NLPException  {
-		super(stream);
-	}
-	
 	@Override
 	public Class<? extends IAnnotation> type() {
 		return Sentences.class;
@@ -38,7 +34,7 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 
 	@Override
 	public void annotate(Annotated annotated) {
-		opennlp.tools.util.Span[] sentences = detector.sentPosDetect(annotated.text);
+		opennlp.tools.util.Span[] sentences = detector.sentPosDetect(annotated.getText());
 		Span[] spans = new Span[sentences.length];
 		for(int i = 0; i < sentences.length; i++){
 			spans[i] = new Span(sentences[i].getStart(), sentences[i].getEnd());
@@ -59,7 +55,7 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 	}
 
 	@Override
-	public void addRequirements() {
+	protected void addRequirements() {
 	}
 	
 }
