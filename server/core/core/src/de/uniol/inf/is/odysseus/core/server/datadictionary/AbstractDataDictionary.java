@@ -596,20 +596,21 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			checkAccessRights(stream, caller, DataDictionaryPermission.REMOVE_STREAM);
 			op = streamDefinitions.remove(stream);
 			// viewOrStreamFromUser.remove(stream);
+			if (op != null) {
+				// Remove plan from wrapper plan factory
+				removeAccessPlan(stream);
+				// Remove registered ids
+				RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(
+						this, caller);
+				@SuppressWarnings("rawtypes")
+				GenericGraphWalker walker = new GenericGraphWalker();
+				walker.prefixWalk(op, visitor);
+				removeEntityForPlan(op, stream, EntityType.STREAM, caller);
 
-			// Remove plan from wrapper plan factory
-			removeAccessPlan(stream);
-			// Remove registered ids
-			RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(
-					this, caller);
-			@SuppressWarnings("rawtypes")
-			GenericGraphWalker walker = new GenericGraphWalker();
-			walker.prefixWalk(op, visitor);
-			removeEntityForPlan(op, stream, EntityType.STREAM, caller);
+				removeUntransformedAccessAOs(op);
 
-			removeUntransformedAccessAOs(op);
-
-			fireViewRemoveEvent(stream, op, false, caller);
+				fireViewRemoveEvent(stream, op, false, caller);
+			}
 		}
 		return op;
 	}
@@ -661,6 +662,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		ILogicalOperator op = getView(viewname, caller);
 		if (op == null) {
 			op = getStream(viewname, caller);
+			if (op == null) {
+				op = getAccessAO(viewname, caller);
+			}
 		}
 
 		if (op == null) {
@@ -1261,15 +1265,27 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 	}
 
+	private IAccessAO getAccessAO(String name, ISession caller) {
+		Resource opName;
+		if (name.contains(".")) {
+			opName = new Resource(name);
+		} else {
+			opName = new Resource(name, caller.getUser().getName());
+		}
+		return getAccessAO(opName);
+	}
+
 	@Override
 	public IAccessAO getAccessAO(Resource name) {
+		// TODO: Check user rights
+
 		return accessAOs.get(name);
 	}
 
 	@Override
 	public Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller) {
 		Set<Entry<Resource, IAccessAO>> res = new HashSet<>();
-		for (Entry<Resource, IAccessAO> ao:accessAOs.entrySet()){
+		for (Entry<Resource, IAccessAO> ao : accessAOs.entrySet()) {
 			// TODO: Access rights
 			res.add(ao);
 		}
