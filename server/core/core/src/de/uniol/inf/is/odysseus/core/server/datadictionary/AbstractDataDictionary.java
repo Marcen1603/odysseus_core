@@ -1284,10 +1284,13 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	@Override
 	public IAccessAO getAccessAO(Resource name, ISession caller) {
 		IAccessAO ao = accessAOs.get(name);
+		if (ao == null){
+			return null;
+		}
 
 		checkAccessRights(name, caller, DataDictionaryPermission.READ);
 
-		return ao;
+		return (IAccessAO) ao.clone();
 	}
 
 	@Override
