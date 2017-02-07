@@ -106,6 +106,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	transient private final Map<Resource, ISink<?>> sinks = Maps.newHashMap();
 	transient private final Map<Resource, ISource<?>> accessPOs = Maps.newHashMap();
 	transient private final Map<Resource, IAccessAO> accessAOs = Maps.newHashMap();
+	transient private final Map<Resource, Resource> accessAOViewMapping = Maps.newHashMap();
 
 	transient private final Map<Resource, IPhysicalOperator> operators = Maps.newHashMap();
 
@@ -386,7 +387,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 					// viewOrStreamFromUser.put(viewname, caller.getUser());
 					addEntityForPlan(topOperator, viewname, EntityType.VIEW, caller);
 				}
-				findAndAddAccessAO(topOperator);
+				findAndAddAccessAO(topOperator, viewname);
 
 				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
@@ -408,10 +409,11 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	// Add accessaos from plan to accessao map to allow checking if
 	// two plans contain accessao with different names that are not equal
-	private void findAndAddAccessAO(ILogicalOperator topOperator) {
+	private void findAndAddAccessAO(ILogicalOperator topOperator, Resource viewname) {
 		for (ILogicalOperator a : findSources(topOperator)) {
 			if (a instanceof IAccessAO) {
 				putAccessAO((IAccessAO) a);
+				accessAOViewMapping.put(((IAccessAO) a).getAccessAOName(), viewname);
 			}
 		}
 	}
@@ -436,12 +438,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		if (view != null) {
 			checkAccessRights(view, caller, DataDictionaryPermission.READ);
 			ILogicalOperator logicalPlan = this.viewDefinitions.get(view);
-			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-					(IOperatorOwner) null);
-			@SuppressWarnings("rawtypes")
-			GenericGraphWalker walker = new GenericGraphWalker();
-			walker.prefixWalk(logicalPlan, copyVisitor);
-			return copyVisitor.getResult();
+			if (logicalPlan != null) {
+				CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
+						(IOperatorOwner) null);
+				@SuppressWarnings("rawtypes")
+				GenericGraphWalker walker = new GenericGraphWalker();
+				walker.prefixWalk(logicalPlan, copyVisitor);
+				return copyVisitor.getResult();
+			}
 		}
 
 		return null;
@@ -472,7 +476,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				GenericGraphWalker walker = new GenericGraphWalker();
 				walker.prefixWalk(op, visitor);
 				removeEntityForPlan(op, viewname, EntityType.VIEW, caller);
-				removeUntransformedAccessAOs(op);
+				removeUntransformedAccessAOs(op, viewname);
 				fireViewRemoveEvent(viewname, op, true, caller);
 				fireDataDictionaryChangedEvent();
 			}
@@ -480,13 +484,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		return op;
 	}
 
-	private void removeUntransformedAccessAOs(ILogicalOperator op) {
+	private void removeUntransformedAccessAOs(ILogicalOperator op, Resource stream) {
 		List<ILogicalOperator> queryAccessAOs = findSources(op);
 		for (ILogicalOperator a : queryAccessAOs) {
 			if (a instanceof IAccessAO) {
 				Resource name = ((IAccessAO) a).getAccessAOName();
 				if (!accessPOs.containsKey(name)) {
 					accessAOs.remove(name);
+					accessAOViewMapping.remove(name);
 				}
 			}
 		}
@@ -517,7 +522,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				try {
 					streamDefinitions.put(streamname, plan);
 					// viewOrStreamFromUser.put(streamname, caller.getUser());
-					findAndAddAccessAO(plan);
+					findAndAddAccessAO(plan, streamname);
 					addEntityForPlan(plan, streamname, EntityType.STREAM, caller);
 				} catch (StoreException e) {
 					throw new RuntimeException(e);
@@ -607,7 +612,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				walker.prefixWalk(op, visitor);
 				removeEntityForPlan(op, stream, EntityType.STREAM, caller);
 
-				removeUntransformedAccessAOs(op);
+				removeUntransformedAccessAOs(op, stream);
 
 				fireViewRemoveEvent(stream, op, false, caller);
 			}
@@ -728,7 +733,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	@Override
 	public boolean containsViewOrStream(Resource viewName, ISession user) {
-		return viewDefinitions.containsKey(viewName) || streamDefinitions.containsKey(viewName);
+		return viewDefinitions.containsKey(viewName) || streamDefinitions.containsKey(viewName)
+				|| accessAOs.containsKey(viewName);
 	}
 
 	private String getCreator(Resource resource) {
@@ -1328,7 +1334,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				curEntry.getValue().unsubscribeFromAllSinks();
 				it.remove();
 			}
-			accessAOs.remove(curEntry.getKey());
+			if (!accessAOViewMapping.containsKey(curEntry.getKey())) {
+				accessAOs.remove(curEntry.getKey());
+			}
 		}
 
 	}
