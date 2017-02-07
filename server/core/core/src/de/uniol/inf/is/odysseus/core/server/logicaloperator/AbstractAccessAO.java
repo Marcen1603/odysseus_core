@@ -90,6 +90,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		super(po);
 		wrapper = po.wrapper;
 		optionsMap.addAll(po.optionsMap);
+		if (po.optionsList != null) {
+			this.optionsList = new ArrayList<>(po.optionsList);
+		}
 		inputSchema = po.inputSchema;
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
@@ -181,7 +184,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	public boolean getNewAccessFramework() {
 		return this.newAccessFramework;
 	}
-
 
 	public boolean isOverWriteSchemaSourceName() {
 		return overWriteSchemaSourceName;
@@ -299,63 +301,63 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 
 	@Override
 	public boolean isSemanticallyEqual(IAccessAO operator) {
-		if (!(operator instanceof AbstractAccessAO)){
+		if (!(operator instanceof AbstractAccessAO)) {
 			return false;
 		}
 		AbstractAccessAO other = (AbstractAccessAO) operator;
 
-		if (!Objects.equals(this.accessAOResource, other.accessAOResource)){
+		if (!Objects.equals(this.accessAOResource, other.accessAOResource)) {
 			return false;
 		}
 
-		if (!Objects.equals(this.wrapper, other.wrapper)){
+		if (!Objects.equals(this.wrapper, other.wrapper)) {
 			return false;
 		}
-		if (!Objects.equals(this.dataHandler, other.dataHandler)){
+		if (!Objects.equals(this.dataHandler, other.dataHandler)) {
 			return false;
 		}
-		if (!Objects.equals(this.protocolHandler, other.protocolHandler)){
+		if (!Objects.equals(this.protocolHandler, other.protocolHandler)) {
 			return false;
 		}
-		if (!Objects.equals(this.transportHandler, other.transportHandler)){
+		if (!Objects.equals(this.transportHandler, other.transportHandler)) {
 			return false;
 		}
-		if (!Objects.equals(this.optionsMap, other.optionsMap)){
-			return false;
-		}
-
-		if (!Objects.equals(this.optionsList, other.optionsList)){
+		if (!Objects.equals(this.optionsMap, other.optionsMap)) {
 			return false;
 		}
 
-		if (!Objects.equals(this.dateFormat, other.dateFormat)){
+		if (!Objects.equals(this.optionsList, other.optionsList)) {
 			return false;
 		}
 
-		if (!Objects.equals(this.outputSchema, other.outputSchema)){
-			return false;
-		}
-		if (!Objects.equals(this.inputSchema, other.inputSchema)){
+		if (!Objects.equals(this.dateFormat, other.dateFormat)) {
 			return false;
 		}
 
-		if (!Objects.equals(this.maxTimeToWaitForNewEventMS, other.maxTimeToWaitForNewEventMS)){
+		if (!Objects.equals(this.outputSchema, other.outputSchema)) {
 			return false;
 		}
-		if (!Objects.equals(this.newAccessFramework, other.newAccessFramework)){
-			return false;
-		}
-		if (!Objects.equals(this.localMetaAttribute, other.localMetaAttribute)){
-			return false;
-		}
-		if (!Objects.equals(this.readMetaData, other.readMetaData)){
+		if (!Objects.equals(this.inputSchema, other.inputSchema)) {
 			return false;
 		}
 
-		if (!Objects.equals(this.overWriteSchemaSourceName, other.overWriteSchemaSourceName)){
+		if (!Objects.equals(this.maxTimeToWaitForNewEventMS, other.maxTimeToWaitForNewEventMS)) {
 			return false;
 		}
-		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)){
+		if (!Objects.equals(this.newAccessFramework, other.newAccessFramework)) {
+			return false;
+		}
+		if (!Objects.equals(this.localMetaAttribute, other.localMetaAttribute)) {
+			return false;
+		}
+		if (!Objects.equals(this.readMetaData, other.readMetaData)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.overWriteSchemaSourceName, other.overWriteSchemaSourceName)) {
+			return false;
+		}
+		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)) {
 			return false;
 		}
 
@@ -379,7 +381,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 			type = Tuple.class;
 		}
 
-
 		// TODO: Move more things from TAccessAORule here ... if possible
 
 		OptionMap options = new OptionMap(optionsMap);
@@ -390,10 +391,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		if (getOverWrittenSchema() == null && ph != null) {
 			setOverWrittenSchema(ph.getSchema());
 		}
-		// For cases where the schema depends on the options, create a real instance of transport handler
+		// For cases where the schema depends on the options, create a real
+		// instance of transport handler
 		if (getOverWrittenSchema() == null) {
-			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph,
-					options);
+			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph, options);
 			setOverWrittenSchema(th != null ? th.getSchema() : null);
 		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -409,7 +410,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 
-		if (dateFormat != null){
+		if (dateFormat != null) {
 			constraints.put(SDFConstraint.DATE_FORMAT, new SDFConstraint(SDFConstraint.DATE_FORMAT, dateFormat));
 		}
 
@@ -426,7 +427,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
-				String sName = overWriteSchemaSourceName?getName():a.getSourceName();
+				String sName = overWriteSchemaSourceName ? getName() : a.getSourceName();
 				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
 						|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
 					List<SDFConstraint> c = new ArrayList<>();
@@ -512,7 +513,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	}
 
 	/**
-	 * @param overWrittenSchema the overWrittenSchema to set
+	 * @param overWrittenSchema
+	 *            the overWrittenSchema to set
 	 */
 	public void setOverWrittenSchema(SDFSchema overWrittenSchema) {
 		this.overWrittenSchema = overWrittenSchema;
