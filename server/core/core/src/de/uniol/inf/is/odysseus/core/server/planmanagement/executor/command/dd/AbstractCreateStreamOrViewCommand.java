@@ -41,7 +41,7 @@ public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutor
 
 		for (ILogicalOperator op : accessAO) {
 			IAccessAO operator = (IAccessAO)op;
-			IAccessAO other = dd.getAccessAO(operator.getAccessAOName());
+			IAccessAO other = dd.getAccessAO(operator.getAccessAOName(), getCaller());
 			if (other != null && !other.isSemanticallyEqual(operator)) {
 				throw new TransformationException(
 						"Duplicate AccessOperator with name " + operator.getAccessAOName() + "!");

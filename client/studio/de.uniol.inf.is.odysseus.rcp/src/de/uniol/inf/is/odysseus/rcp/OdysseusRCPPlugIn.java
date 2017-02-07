@@ -88,7 +88,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		super.start(bundleContext);
 		// Bilder registrieren
 		imageManager = new ImageManager(bundleContext.getBundle());
-		imageManager.register("access","icons/variable_view.gif");
+		imageManager.register("access","icons/repository_rep.gif");
 		imageManager.register("repository", "icons/repository_rep.gif");
 		imageManager.register("user", "icons/user.png");
 		imageManager.register("sla", "icons/document-block.png");

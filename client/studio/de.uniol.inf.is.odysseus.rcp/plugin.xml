@@ -317,8 +317,16 @@
             allPopups="false"
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SourcesView">
          <command
-               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropSourceCommand"
                icon="icons/delete.png"
+               id="DropSource"
+               label="Drop source"
+               style="push"
+               tooltip="Drop source">
+         </command>
+         <command
+               commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSources"
+               icon="icons/all-queries-delete.png"
                id="DropAllSources"
                label="Drop all sources"
                style="push"
@@ -382,13 +390,13 @@
                icon="icons/one-query-suspend.png"
                label="Suspend Query"
                style="push">
-         </command>         
+         </command>
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.ResumeQueryCommand"
                icon="icons/one-query-resume.png"
                label="Resume Query"
                style="push">
-         </command>         
+         </command>
          <separator
                name="de.uniol.inf.is.odysseus.rcp.base.separator2"
                visible="true">
@@ -554,7 +562,7 @@
             locationURI="toolbar:de.uniol.inf.is.odysseus.rcp.views.SinkView">
          <command
                commandId="de.uniol.inf.is.odysseus.rcp.commands.DropAllSinks"
-               icon="icons/delete.png"
+               icon="icons/all-queries-delete.png"
                label="Drop all sinks"
                style="push"
                tooltip="Drop all sinks">

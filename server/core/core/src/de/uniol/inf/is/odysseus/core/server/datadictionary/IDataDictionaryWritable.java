@@ -90,7 +90,7 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	void putSinkplan(Resource name, ISink<?> sinkPO);
 
 	ISource<?> getAccessPO(Resource name);
-	IAccessAO getAccessAO(Resource name);
+	IAccessAO getAccessAO(Resource name, ISession user);
 
 	void putAccessPO(Resource name, ISource<?> access);
 	void putAccessAO(IAccessAO access);

@@ -1272,22 +1272,25 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		} else {
 			opName = new Resource(name, caller.getUser().getName());
 		}
-		return getAccessAO(opName);
+		return getAccessAO(opName, caller);
 	}
 
 	@Override
-	public IAccessAO getAccessAO(Resource name) {
-		// TODO: Check user rights
+	public IAccessAO getAccessAO(Resource name, ISession caller) {
+		IAccessAO ao = accessAOs.get(name);
 
-		return accessAOs.get(name);
+		checkAccessRights(name, caller, DataDictionaryPermission.READ);
+
+		return ao;
 	}
 
 	@Override
 	public Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller) {
 		Set<Entry<Resource, IAccessAO>> res = new HashSet<>();
 		for (Entry<Resource, IAccessAO> ao : accessAOs.entrySet()) {
-			// TODO: Access rights
-			res.add(ao);
+			if (hasAccessRights(ao.getKey(), caller, DataDictionaryPermission.READ)) {
+				res.add(ao);
+			}
 		}
 		return res;
 	}

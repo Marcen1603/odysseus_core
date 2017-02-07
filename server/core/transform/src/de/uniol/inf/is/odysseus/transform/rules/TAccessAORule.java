@@ -79,7 +79,7 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 			inputPO = getDataDictionary().getAccessPO(operator.getAccessAOName());
 		}
 
-		IAccessAO other = getDataDictionary().getAccessAO(operator.getAccessAOName());
+		IAccessAO other = getDataDictionary().getAccessAO(operator.getAccessAOName(), getCaller());
 		if (other != null && !other.isSemanticallyEqual(operator)){
 			throw new TransformationException("Duplicate AccessOperator with name "+operator.getAccessAOName()+"!");
 		}
