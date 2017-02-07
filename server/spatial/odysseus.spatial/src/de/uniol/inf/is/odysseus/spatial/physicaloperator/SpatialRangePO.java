@@ -25,10 +25,13 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;
 	private int geometryPosition;
+//	private int idPosition;
 	private double range;
 
 	public SpatialRangePO(SpatialRangeAO ao) {
-		this.geometryPosition = ao.getGeometryPosition();
+		this.geometryPosition = ao.getInputSchema(0).findAttributeIndex(ao.getGeometryAttribute());
+//		this.idPosition = this.getInputSchema(0).findAttributeIndex(ao.getIdAttribute());
+
 		this.range = ao.getRange();
 
 		this.dataStructure = SpatialDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
