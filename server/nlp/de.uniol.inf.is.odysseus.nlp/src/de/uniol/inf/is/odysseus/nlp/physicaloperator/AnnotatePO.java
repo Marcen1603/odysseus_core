@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.physicaloperator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
@@ -16,10 +13,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
-import de.uniol.inf.is.odysseus.nlp.toolkits.*;
-import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.NamedEntityAnnotation;
-import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.SentenceAnnotation;
-import de.uniol.inf.is.odysseus.nlp.toolkits.annotations.TokenAnnotation;
+import de.uniol.inf.is.odysseus.nlp.datastructure.Annotated;
+import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 
 public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, KeyValueObject<M>> {
 	private SDFAttribute attribute;
@@ -28,10 +23,6 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	private String toolkitName;
 	private Set<String> information;	
 	private HashMap<String, Option> configuration;
-	private boolean appendTokens = false;
-	private boolean appendSentences = false;
-	private boolean appendNamedEntities = false;
-
 	public int getAttributePosition(){
 		return attributePosition;
 	}
@@ -51,9 +42,6 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
         this.information = information;
         this.attribute = attribute;
         this.configuration = configuration;
-        this.appendTokens = information.contains(TokenAnnotation.NAME);
-        this.appendSentences = information.contains(SentenceAnnotation.NAME);
-        this.appendNamedEntities = information.contains(NamedEntityAnnotation.NAME);
     }
     
     
@@ -93,43 +81,13 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 
 	@Override
 	protected void process_next(Tuple<M> object, int port) {
-		Annotation annotation;
-		annotation = toolkit.annotate(object.getAttribute(attributePosition).toString());
-		    	
-    	KeyValueObject<M> testOutput = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) object, getOutputSchema());
-    	KeyValueObject<M> annotations = (KeyValueObject<M>) KeyValueObject.createInstance();
-
-    	if(this.appendTokens)
-    		annotations.setAttribute("tokens", getTokens(annotation).toArray());
-    	if(this.appendSentences)
-    		annotations.setAttribute("sentence", getSentences(annotation).toArray());
-    	if(this.appendNamedEntities)
-    		annotations.setAttribute("ner", getNamedEntities(annotation).toArray());
+		Annotated annotated = this.toolkit.annotate(object.getAttribute(attributePosition).toString());
+		   	
+    	KeyValueObject<M> output = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) object, getOutputSchema());
+    	KeyValueObject<IMetaAttribute> annotations = annotated.toObject();
     	
-    	testOutput.setAttribute("annotations", annotations);
-		transfer(testOutput);
-	}
-		
-	
-	private List<String> getSentences(Annotation annotation){
-		SentenceAnnotation sentences = (SentenceAnnotation) annotation.getAnnotation(SentenceAnnotation.class);
-		return Arrays.asList(sentences.getSentences());
-	}
-	
-	private List<String> getTokens(Annotation annotation){
-		TokenAnnotation annot = (TokenAnnotation) annotation.getAnnotation(TokenAnnotation.class);
-		List<String> tokens = new ArrayList<>();
-		
-		for(String[] ts : annot.getTokens()){
-			tokens.addAll(Arrays.asList(ts));
-		}
-		
-		return tokens;		
-	}
-	
-	private List<String> getNamedEntities(Annotation annotation){
-		NamedEntityAnnotation namedEntityAnnotation = (NamedEntityAnnotation) annotation.getAnnotation(NamedEntityAnnotation.class);
-		return namedEntityAnnotation.getNamedEntities();
+    	output.setAttribute("annotations", annotations);
+		transfer(output);
 	}
 }
 

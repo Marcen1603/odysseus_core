@@ -1,5 +1,6 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure;
+package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 
+import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
 
 /**
  * @see ToolkitFactory#instantiate(String, java.util.Set, java.util.HashMap)

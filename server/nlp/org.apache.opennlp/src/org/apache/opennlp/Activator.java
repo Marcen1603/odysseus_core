@@ -3,7 +3,7 @@ package org.apache.opennlp;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
+import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
 
 public class Activator implements BundleActivator {
 
@@ -19,7 +19,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		ToolkitFactory.register("opennlp", OpenNLPToolkit.class);
+		ToolkitFactory.register("opennlp", OpenNLPToolkit.class);	
 	}
 
 	/*

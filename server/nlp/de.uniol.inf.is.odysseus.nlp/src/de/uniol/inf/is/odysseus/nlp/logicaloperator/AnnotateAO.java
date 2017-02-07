@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,13 +24,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParame
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
-import de.uniol.inf.is.odysseus.nlp.toolkits.Annotation;
-import de.uniol.inf.is.odysseus.nlp.toolkits.NLPToolkit;
-import de.uniol.inf.is.odysseus.nlp.toolkits.ToolkitFactory;
-import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPInformationNotSupportedException;
-import de.uniol.inf.is.odysseus.nlp.toolkits.exception.NLPModelNotFoundException;
-import de.uniol.inf.is.odysseus.nlp.toolkits.exception.ToolkitNotFoundException;
-
+import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
+import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
+import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkitNotFoundException;
 /**
  * Logical operator component of the ANNOTATE operator.
  * @author yannickhabecker
@@ -82,14 +79,14 @@ public class AnnotateAO extends UnaryLogicalOp {
 	public void setToolkit(String toolkit) {
 		this.toolkit = toolkit;	
 		try {
-			nlpToolkit = ToolkitFactory.get(toolkit, informationSet, configuration);
-		} catch (ToolkitNotFoundException ignored) {
-			throw new ParameterException(toolkit + " not found.");
-		} catch (NLPInformationNotSupportedException e) {
-			throw new ParameterException("Specified options in information parameter not supported.");
-		} catch (NLPModelNotFoundException e) {			
-			throw new ParameterException("Configuration not supported.");
-		}    	
+			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(Set.class, HashMap.class).newInstance(informationSet, configuration);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException 
+				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
+			throw new ParameterException(e.getMessage());
+		} catch (InvocationTargetException e) {
+			throw new ParameterException(e.getCause().getMessage());
+
+		}		
 	}
 
     public String getToolkit(){
@@ -101,7 +98,6 @@ public class AnnotateAO extends UnaryLogicalOp {
     	this.information = information;
 		this.informationSet = new HashSet<String>();
 		this.informationSet.addAll(information);
-		this.informationSet.addAll(Arrays.asList(NLPToolkit.DEFAULT_INFORMATION));
 	}
     
 	public List<String> getInformation(){
@@ -118,7 +114,6 @@ public class AnnotateAO extends UnaryLogicalOp {
     	for(Option option : options){
     		this.configuration.put(option.getName().toLowerCase(), option);
     	}    	
-    	//TODO check if required models are specified
     }
     
     public HashMap<String, Option> getConfiguration(){

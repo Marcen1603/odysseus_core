@@ -15,6 +15,11 @@ public abstract class Annotation implements IAnnotation{
 	public String identifier() {
 		return getClass().getSimpleName().toLowerCase();
 	}
+	
+	@Override
+	public void put(Annotation annotation) {
+		getAnnotations().put(annotation.identifier(), annotation);
+	}
 
 
 }
