@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -56,7 +57,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 /**
  * This rule handles all generic access operator implementations
- * 
+ *
  * @author Marco Grawunder
  * @author Christian Kuka <christian.kuka@offis.de>
  */
@@ -75,12 +76,20 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 		ISource<?> inputPO = null;
 
 		if (!config.isVirtualTransformation()) {
-			inputPO = getDataDictionary().getAccessAO(operator.getAccessAOName());
+			inputPO = getDataDictionary().getAccessPO(operator.getAccessAOName());
+		}
+
+		IAccessAO other = getDataDictionary().getAccessAO(operator.getAccessAOName());
+		if (other != null && !other.isSemanticallyEqual(operator)){
+			throw new TransformationException("Duplicate AccessOperator with name "+operator.getAccessAOName()+"!");
 		}
 
 		if (inputPO == null) {
 			inputPO = createInputPO(operator, config);
 		} else {
+
+			// Find cases where accessao is used with wrong name (--> same name but different parameters)
+
 			if (!config.hasOption("NO_METADATA")) {
 				Class<? extends IMetaAttribute>[] opMT = operator.getLocalMetaAttribute().getClasses();
 				List<String> acMT = inputPO.getOutputSchema().getMetaAttributeNames();
@@ -119,7 +128,8 @@ public class TAccessAORule extends AbstractTransformationRule<AbstractAccessAO> 
 
 		processOptions(inputPO, options);
 		if (!config.isVirtualTransformation()) {
-			getDataDictionary().putAccessAO(operator.getAccessAOName(), inputPO);
+			getDataDictionary().putAccessPO(operator.getAccessAOName(), inputPO);
+			getDataDictionary().putAccessAO(operator);
 		}
 		List<String> unusedOptions = options.getUnreadOptions();
 		if (unusedOptions.size() > 0) {
