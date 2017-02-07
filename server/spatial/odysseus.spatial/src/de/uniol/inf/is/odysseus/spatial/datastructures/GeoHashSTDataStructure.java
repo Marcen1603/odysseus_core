@@ -215,7 +215,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// TODO CandidateCollection could be filled with only or mostly not
 		// timely fitting tuples for this query
-		while (candidateCollection != null && candidateCollection.size() < k && guessRadius < maxRadius) {
+		do {
 			// Get the rectangular envelope for the circle
 			Envelope env = MetrticSpatialUtils.getInstance()
 					.getEnvelopeForRadius(geometry.getCentroid().getCoordinate(), guessRadius);
@@ -235,7 +235,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 				// radius.
 				break;
 			}
-		}
+		} while (candidateCollection != null && candidateCollection.size() < k && guessRadius < maxRadius);
 
 		// Query the guessed radius
 		List<Tuple<ITimeInterval>> circleResult = null;
@@ -256,9 +256,12 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 			@Override
 			public int compare(Tuple<?> o1, Tuple<?> o2) {
-				// Calculate the distance of both tuples to the center (here we
-				// can use this distance calculation, as we are only interested
-				// in the distance comparison, not in the real distances)
+				/*
+				 * Calculate the distance of both tuples to the center (here we
+				 * can use the non-metric distance calculation, as we are only
+				 * interested in the distance comparison, not in the real
+				 * distances)
+				 */
 				double distance1 = getGeometry(o1).distance(geometry);
 				double distance2 = getGeometry(o2).distance(geometry);
 
@@ -316,6 +319,22 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	}
 
+	/**
+	 * A circle query with a given candidate collection.
+	 * 
+	 * @param geometry
+	 *            The center of the circle to query
+	 * @param radius
+	 *            The radius of the circle to query
+	 * @param t
+	 *            The time interval that the returned elements have to intersect
+	 * @param candidateCollection
+	 *            The list of candidates. Should cover the whole are from the
+	 *            circle you want to query. You save a lookup of the candidates
+	 *            with this method, e.g., if you already have the list of
+	 *            candidates.
+	 * @return All elements from the candidates that are in the given circle.
+	 */
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection) {
 
