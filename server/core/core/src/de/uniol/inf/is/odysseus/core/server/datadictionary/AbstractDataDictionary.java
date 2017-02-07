@@ -1267,6 +1267,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@Override
+	public Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller) {
+		Set<Entry<Resource, IAccessAO>> res = new HashSet<>();
+		for (Entry<Resource, IAccessAO> ao:accessAOs.entrySet()){
+			// TODO: Access rights
+			res.add(ao);
+		}
+		return res;
+	}
+
+	@Override
 	public synchronized void removeAccessPlan(Resource uri) {
 		accessPlans.remove(uri);
 	}

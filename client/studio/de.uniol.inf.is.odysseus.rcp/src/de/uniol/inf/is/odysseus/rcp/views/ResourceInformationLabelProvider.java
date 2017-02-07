@@ -21,7 +21,7 @@ public class ResourceInformationLabelProvider extends AbstractViewLabelProvider 
 			return OdysseusRCPPlugIn.getImageManager().get(operatorImage);
 		}
 		if (element instanceof AbstractResourceInformation) {
-			return OdysseusRCPPlugIn.getImageManager().get(operatorImage);
+			return OdysseusRCPPlugIn.getImageManager().get(((AbstractResourceInformation)element).getType());
 		}
 		return super.getImage(element);
 	}

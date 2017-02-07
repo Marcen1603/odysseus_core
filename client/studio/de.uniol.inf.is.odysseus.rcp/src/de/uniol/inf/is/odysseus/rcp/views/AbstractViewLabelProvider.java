@@ -19,15 +19,15 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 		return false;
 	}
 
-	public Image getImage(Object element) {		
+	public Image getImage(Object element) {
 		if (element instanceof SDFAttribute) {
 			return OdysseusRCPPlugIn.getImageManager().get("attribute");
 		}
-		if (element instanceof SDFConstraint){
+		if (element instanceof SDFConstraint) {
 			return OdysseusRCPPlugIn.getImageManager().get("constraint");
 		}
-		
-		if (element instanceof SDFUnit){
+
+		if (element instanceof SDFUnit) {
 			return OdysseusRCPPlugIn.getImageManager().get("unit");
 		}
 		return null;
@@ -37,7 +37,7 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 	public void update(ViewerCell cell) {
 		Object obj = cell.getElement();
 		String text = getText(obj);
-		if (text == null){
+		if (text == null) {
 			text = "";
 		}
 		StyledString styledString = new StyledString(text);
@@ -67,19 +67,19 @@ public abstract class AbstractViewLabelProvider extends StyledCellLabelProvider 
 			// name.append(":").append(a.getDatatype().getURI());
 			return name.toString();
 		}
-		
-		if (element instanceof SDFConstraint){
+
+		if (element instanceof SDFConstraint) {
 			StringBuilder sb = new StringBuilder();
-			SDFConstraint dt = (SDFConstraint)element;
-			return sb.append(dt.getURI()).append(" = "+dt.getValue()).toString();
+			SDFConstraint dt = (SDFConstraint) element;
+			return sb.append(dt.getURI()).append(" = " + dt.getValue()).toString();
 		}
-		
-		if (element instanceof SDFUnit){
+
+		if (element instanceof SDFUnit) {
 			StringBuilder sb = new StringBuilder();
 			SDFUnit unit = (SDFUnit) element;
-			return sb.append(unit.getClass().getSimpleName()+": "+unit.getURI()).toString();
+			return sb.append(unit.getClass().getSimpleName() + ": " + unit.getURI()).toString();
 		}
-		
+
 		return null;
 	}
 
