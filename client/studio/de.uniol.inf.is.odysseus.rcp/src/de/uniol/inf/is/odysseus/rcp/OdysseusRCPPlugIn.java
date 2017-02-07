@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,7 +88,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		super.start(bundleContext);
 		// Bilder registrieren
 		imageManager = new ImageManager(bundleContext.getBundle());
-
+		imageManager.register("access","icons/repository_rep.gif");
 		imageManager.register("repository", "icons/repository_rep.gif");
 		imageManager.register("user", "icons/user.png");
 		imageManager.register("sla", "icons/document-block.png");

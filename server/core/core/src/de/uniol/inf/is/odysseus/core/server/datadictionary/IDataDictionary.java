@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -51,6 +52,8 @@ public interface IDataDictionary {
 	boolean containsViewOrStream(Resource viewName, ISession user);
 
 	Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+
+	Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller);
 
 	// -------------------------------------------------------------------------
 	// View Management

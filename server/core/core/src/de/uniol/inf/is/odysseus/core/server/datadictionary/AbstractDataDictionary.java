@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.ExecutorPermission;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
@@ -59,6 +60,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.server.util.ClearPhysicalSubscriptionsLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
@@ -80,7 +82,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	private IStore<Resource, IUser> entityFromUser;
 	private IStore<Resource, HashMap<String, ArrayList<Resource>>> entityUsedBy;
 	private IStore<String, SDFDatatype> datatypes;
-	private IStore<Integer, String> savedQueries; // store the query text because of serializability trouble
+	private IStore<Integer, String> savedQueries; // store the query text
+													// because of
+													// serializability trouble
 	private IStore<Integer, IUser> savedQueriesForUser;
 
 	private IStore<Integer, String> savedQueriesBuildParameterName;
@@ -100,10 +104,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 	transient private final Map<Resource, ISource<?>> accessPlans = Maps.newHashMap();
 	transient private final Map<Resource, ISink<?>> sinks = Maps.newHashMap();
-	transient private final Map<Resource, ISource<?>> accessAOs = Maps.newHashMap();
+	transient private final Map<Resource, ISource<?>> accessPOs = Maps.newHashMap();
+	transient private final Map<Resource, IAccessAO> accessAOs = Maps.newHashMap();
+
 	transient private final Map<Resource, IPhysicalOperator> operators = Maps.newHashMap();
 
-	transient private final Map<Resource, List<IStreamObject<?>> > listStores = Maps.newHashMap();
+	transient private final Map<Resource, List<IStreamObject<?>>> listStores = Maps.newHashMap();
 
 	protected ITenant tenant;
 
@@ -147,8 +153,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		storedProceduresFromUser = Preconditions.checkNotNull(createStoredProceduresFromUserStore(),
 				"Store for storedProceduresFromUser must not be null.");
 
-		stores =  Preconditions.checkNotNull(createStoresStore(),
-				"Store for stores must not be null.");
+		stores = Preconditions.checkNotNull(createStoresStore(), "Store for stores must not be null.");
 		storesFromUser = Preconditions.checkNotNull(createStoresFromUserStore(),
 				"Store for storesFromUser must not be null.");
 	}
@@ -183,7 +188,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	protected abstract IStore<Resource, IStore<String, Object>> createStoresStore();
 
 	protected abstract IStore<Resource, IUser> createStoresFromUserStore();
-
 
 	// -----------------------------------------------------------------
 	// Help method
@@ -314,11 +318,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	 * @param caller
 	 */
 	@SuppressWarnings("unchecked")
-	private void removeEntityForPlan(ILogicalOperator plan, Resource identifier, EntityType entityType,
+	private synchronized void removeEntityForPlan(ILogicalOperator plan, Resource identifier, EntityType entityType,
 			ISession caller) {
 		String type = entityType.toString();
-		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(
-				AbstractAccessAO.class);
+		FindSourcesLogicalVisitor<ILogicalOperator> collVisitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
 		@SuppressWarnings("rawtypes")
 		GenericGraphWalker collectWalker = new GenericGraphWalker();
 		collectWalker.prefixWalk(plan, collVisitor);
@@ -347,9 +350,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				}
 			}
 			if (empty) {
-				synchronized (this.entityFromUser) {
-					this.entityFromUser.remove(e.getKey());
-				}
+				this.entityFromUser.remove(e.getKey());
 				iterEntity.remove();
 			}
 		}
@@ -364,7 +365,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	// ------------------------------------------------------------------------
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void setView(String view, ILogicalOperator topOperator, ISession caller) throws DataDictionaryException {
 		if (view.contains(".")) {
 			throw new IllegalArgumentException("A '.' is not allowed in view names!");
@@ -379,14 +379,15 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			try {
 				// Remove Owner from View
 				RemoveOwnersGraphVisitor<ILogicalOperator> visitor = new RemoveOwnersGraphVisitor<ILogicalOperator>();
-				@SuppressWarnings("rawtypes")
-				GenericGraphWalker walker = new GenericGraphWalker();
+				GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
 				walker.prefixWalk(topOperator, visitor);
 				synchronized (viewDefinitions) {
 					this.viewDefinitions.put(viewname, topOperator);
 					// viewOrStreamFromUser.put(viewname, caller.getUser());
 					addEntityForPlan(topOperator, viewname, EntityType.VIEW, caller);
 				}
+				findAndAddAccessAO(topOperator);
+
 				fireDataDictionaryChangedEvent();
 			} catch (StoreException e) {
 				throw new RuntimeException(e);
@@ -403,6 +404,24 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		} else {
 			throw new PermissionException("User " + caller.getUser().getName() + " has no permission to add a view.");
 		}
+	}
+
+	// Add accessaos from plan to accessao map to allow checking if
+	// two plans contain accessao with different names that are not equal
+	private void findAndAddAccessAO(ILogicalOperator topOperator) {
+		for (ILogicalOperator a : findSources(topOperator)) {
+			if (a instanceof IAccessAO) {
+				putAccessAO((IAccessAO) a);
+			}
+		}
+	}
+
+	private List<ILogicalOperator> findSources(ILogicalOperator topOperator) {
+		GenericGraphWalker<ILogicalOperator> walker;
+		FindSourcesLogicalVisitor<ILogicalOperator> findSources = new FindSourcesLogicalVisitor<>();
+		walker = new GenericGraphWalker<ILogicalOperator>();
+		walker.prefixWalk(topOperator, findSources);
+		return findSources.getResult();
 	}
 
 	@Override
@@ -434,7 +453,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@SuppressWarnings("unchecked")
-	private ILogicalOperator removeView(Resource viewname, ISession caller) {
+	private synchronized ILogicalOperator removeView(Resource viewname, ISession caller) {
 		ILogicalOperator op = null;
 		if (viewname != null) {
 			try {
@@ -453,11 +472,24 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				GenericGraphWalker walker = new GenericGraphWalker();
 				walker.prefixWalk(op, visitor);
 				removeEntityForPlan(op, viewname, EntityType.VIEW, caller);
+				removeUntransformedAccessAOs(op);
 				fireViewRemoveEvent(viewname, op, true, caller);
 				fireDataDictionaryChangedEvent();
 			}
 		}
 		return op;
+	}
+
+	private void removeUntransformedAccessAOs(ILogicalOperator op) {
+		List<ILogicalOperator> queryAccessAOs = findSources(op);
+		for (ILogicalOperator a : queryAccessAOs) {
+			if (a instanceof IAccessAO) {
+				Resource name = ((IAccessAO) a).getAccessAOName();
+				if (!accessPOs.containsKey(name)) {
+					accessAOs.remove(name);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -485,6 +517,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				try {
 					streamDefinitions.put(streamname, plan);
 					// viewOrStreamFromUser.put(streamname, caller.getUser());
+					findAndAddAccessAO(plan);
 					addEntityForPlan(plan, streamname, EntityType.STREAM, caller);
 				} catch (StoreException e) {
 					throw new RuntimeException(e);
@@ -548,7 +581,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@SuppressWarnings("unchecked")
-	private ILogicalOperator removeStream(Resource stream, ISession caller) {
+	private synchronized ILogicalOperator removeStream(Resource stream, ISession caller) {
 		LOG.trace("Try to remove Stream " + stream + " for " + caller);
 		if (LOG.isTraceEnabled()) {
 			StringBuffer buffer = new StringBuffer();
@@ -563,17 +596,21 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			checkAccessRights(stream, caller, DataDictionaryPermission.REMOVE_STREAM);
 			op = streamDefinitions.remove(stream);
 			// viewOrStreamFromUser.remove(stream);
+			if (op != null) {
+				// Remove plan from wrapper plan factory
+				removeAccessPlan(stream);
+				// Remove registered ids
+				RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(
+						this, caller);
+				@SuppressWarnings("rawtypes")
+				GenericGraphWalker walker = new GenericGraphWalker();
+				walker.prefixWalk(op, visitor);
+				removeEntityForPlan(op, stream, EntityType.STREAM, caller);
 
-			// Remove plan from wrapper plan factory
-			removeAccessPlan(stream);
-			// Remove registered ids
-			RemoveIdLogicalGraphVisitor<ILogicalOperator> visitor = new RemoveIdLogicalGraphVisitor<ILogicalOperator>(
-					this, caller);
-			@SuppressWarnings("rawtypes")
-			GenericGraphWalker walker = new GenericGraphWalker();
-			walker.prefixWalk(op, visitor);
-			removeEntityForPlan(op, stream, EntityType.STREAM, caller);
-			fireViewRemoveEvent(stream, op, false, caller);
+				removeUntransformedAccessAOs(op);
+
+				fireViewRemoveEvent(stream, op, false, caller);
+			}
 		}
 		return op;
 	}
@@ -625,6 +662,9 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		ILogicalOperator op = getView(viewname, caller);
 		if (op == null) {
 			op = getStream(viewname, caller);
+			if (op == null) {
+				op = getAccessAO(viewname, caller);
+			}
 		}
 
 		if (op == null) {
@@ -923,7 +963,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@Override
-	public void removeQuery(ILogicalQuery q, ISession caller) {
+	public synchronized void removeQuery(ILogicalQuery q, ISession caller) {
 		this.savedQueries.remove(q.getID());
 		this.savedQueriesForUser.remove(q.getID());
 		this.savedQueriesBuildParameterName.remove(q.getID());
@@ -936,31 +976,31 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	// ----------------------------------------------------------------------------
 
 	@Override
-	public List<IStreamObject<?>> getOrCreateStore(Resource name){
-		List<IStreamObject<?>>  store = getStore(name);
-		if (store == null){
+	public List<IStreamObject<?>> getOrCreateStore(Resource name) {
+		List<IStreamObject<?>> store = getStore(name);
+		if (store == null) {
 			store = createStore(name);
 		}
 		return store;
 	}
 
 	@Override
-	public List<IStreamObject<?>>  getStore(Resource name){
+	public List<IStreamObject<?>> getStore(Resource name) {
 		return this.listStores.get(name);
 	}
 
 	@Override
-	public List<IStreamObject<?>>  createStore(Resource name){
-		if (listStores.containsKey(name)){
+	public List<IStreamObject<?>> createStore(Resource name) {
+		if (listStores.containsKey(name)) {
 			throw new RuntimeException("Store already exists. Remove first");
 		}
-		List<IStreamObject<?>>  list = new ArrayList<> ();
+		List<IStreamObject<?>> list = new ArrayList<>();
 		this.listStores.put(name, list);
 		return list;
 	}
 
 	@Override
-	public void deleteStore(Resource name){
+	public void deleteStore(Resource name) {
 		this.listStores.clear();
 	}
 
@@ -1202,16 +1242,57 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	@Override
-	public void putAccessAO(Resource name, ISource<?> access) {
-		if (accessAOs.containsKey(name)) {
+	public void putAccessPO(Resource name, ISource<?> access) {
+		if (accessPOs.containsKey(name)) {
 			throw new IllegalArgumentException("AccessAO " + name + " already registred! Remove first");
 		}
-		accessAOs.put(name, access);
+		accessPOs.put(name, access);
 	}
 
 	@Override
-	public ISource<?> getAccessAO(Resource name) {
-		return accessAOs.get(name);
+	public ISource<?> getAccessPO(Resource name) {
+		return accessPOs.get(name);
+	}
+
+	@Override
+	public void putAccessAO(IAccessAO access) {
+		Resource name = access.getAccessAOName();
+		IAccessAO other = accessAOs.get(name);
+		if (other == null) {
+			accessAOs.put(name, access);
+		} else if (!other.isSemanticallyEqual(access)) {
+			throw new IllegalArgumentException("AccessAO " + name + " already registred! Remove first");
+		}
+	}
+
+	private IAccessAO getAccessAO(String name, ISession caller) {
+		Resource opName;
+		if (name.contains(".")) {
+			opName = new Resource(name);
+		} else {
+			opName = new Resource(name, caller.getUser().getName());
+		}
+		return getAccessAO(opName, caller);
+	}
+
+	@Override
+	public IAccessAO getAccessAO(Resource name, ISession caller) {
+		IAccessAO ao = accessAOs.get(name);
+
+		checkAccessRights(name, caller, DataDictionaryPermission.READ);
+
+		return ao;
+	}
+
+	@Override
+	public Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller) {
+		Set<Entry<Resource, IAccessAO>> res = new HashSet<>();
+		for (Entry<Resource, IAccessAO> ao : accessAOs.entrySet()) {
+			if (hasAccessRights(ao.getKey(), caller, DataDictionaryPermission.READ)) {
+				res.add(ao);
+			}
+		}
+		return res;
 	}
 
 	@Override
@@ -1240,13 +1321,14 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 
 			}
 		}
-		it = accessAOs.entrySet().iterator();
+		it = accessPOs.entrySet().iterator();
 		while (it.hasNext()) {
 			Entry<Resource, ISource<?>> curEntry = it.next();
 			if (!curEntry.getValue().hasOwner()) {
 				curEntry.getValue().unsubscribeFromAllSinks();
 				it.remove();
 			}
+			accessAOs.remove(curEntry.getKey());
 		}
 
 	}
@@ -1371,7 +1453,6 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		return list;
 	}
 
-
 	// Stores
 
 	// -------------------------------------------------------------------------
@@ -1406,8 +1487,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				throw new DataDictionaryException("Store name does not exist");
 			}
 		} else {
-			throw new PermissionException(
-					"User " + caller.getUser().getName() + "has no permission to remove store.");
+			throw new PermissionException("User " + caller.getUser().getName() + "has no permission to remove store.");
 		}
 
 	}
