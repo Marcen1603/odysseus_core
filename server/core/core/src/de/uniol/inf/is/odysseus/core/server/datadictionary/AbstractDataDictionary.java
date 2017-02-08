@@ -491,8 +491,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 				Resource name = ((IAccessAO) a).getAccessAOName();
 				if (!accessPOs.containsKey(name)) {
 					accessAOs.remove(name);
-					accessAOViewMapping.remove(name);
 				}
+				accessAOViewMapping.remove(name);
 			}
 		}
 	}
