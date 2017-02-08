@@ -208,7 +208,7 @@ public class OptionMap {
 			 if (otherValue == null){
 				 return false;
 			 }
-			 if (!Objects.equal(e.getValue(), otherValue)){
+			 if (!Objects.equal(String.valueOf(e.getValue()), otherValue)){
 				 return false;
 			 }
 		}
