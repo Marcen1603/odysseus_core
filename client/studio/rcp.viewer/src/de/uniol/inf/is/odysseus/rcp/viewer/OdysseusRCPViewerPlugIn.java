@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,6 +59,8 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 
 		Bundle bundle = bundleContext.getBundle();
 		imageManager = new ImageManager(bundle);
+		// TODO: Find another image for a broken signal
+		imageManager.register("borken","icons/status.png");
 		imageManager.register("startStream", "icons/gear_run.png");
 		imageManager.register("stopStream", "icons/gear_stop.png");
 		imageManager.register("autoFocusActivate", "icons/autoFocusActivate.png");
@@ -108,7 +110,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	 * Methode <code>getExecutor()</code> kann diese zurückgeliefert werden.
 	 * <p>
 	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
-	 * 
+	 *
 	 * @param e
 	 *            Der neue <code>IExecutor</code>. Darf nicht <code>null</code>
 	 *            sein.
@@ -124,7 +126,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	 * <code>getExecutor()</code> ausschließlich <code>null</code>.
 	 * <p>
 	 * Der Nutzer sollte diese Funktion nicht selbst aufrufen.
-	 * 
+	 *
 	 * @param e
 	 *            Der neue <code>IExecutor</code>. Kann <code>null</code> sein.
 	 */
@@ -136,7 +138,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	 * Liefert den aktuellen, vom Declarative Service gelieferten
 	 * <code>IExecutor</code>. Je nach Zeitpunkt des Aufrufs könnte
 	 * <code>null</code> zurückgegeben werden.
-	 * 
+	 *
 	 * @return Aktuelle <code>IExecutor</code>-Instanz oder <code>null</code>.
 	 */
 	public static IExecutor getExecutor() {
@@ -146,7 +148,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in
 	 * relative path
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
