@@ -32,7 +32,6 @@ public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutor
 
 	protected void checkAccessAONames(IDataDictionaryWritable dd) {
 
-
 		FindSourcesLogicalVisitor<ILogicalOperator> visitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
 		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
 		walker.prefixWalk(rootAO, visitor);
@@ -40,11 +39,13 @@ public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutor
 		List<ILogicalOperator> accessAO = visitor.getResult();
 
 		for (ILogicalOperator op : accessAO) {
-			IAccessAO operator = (IAccessAO)op;
-			IAccessAO other = dd.getAccessAO(operator.getAccessAOName(), getCaller());
-			if (other != null && !other.isSemanticallyEqual(operator)) {
-				throw new TransformationException(
-						"Duplicate AccessOperator with name " + operator.getAccessAOName() + "!");
+			if (op instanceof IAccessAO) {
+				IAccessAO operator = (IAccessAO) op;
+				IAccessAO other = dd.getAccessAO(operator.getAccessAOName(), getCaller());
+				if (other != null && !other.isSemanticallyEqual(operator)) {
+					throw new TransformationException(
+							"Duplicate AccessOperator with name " + operator.getAccessAOName() + "!");
+				}
 			}
 		}
 
