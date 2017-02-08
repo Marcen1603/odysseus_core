@@ -60,7 +60,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		Bundle bundle = bundleContext.getBundle();
 		imageManager = new ImageManager(bundle);
 		// TODO: Find another image for a broken signal
-		imageManager.register("borken","icons/status.png");
+		imageManager.register("broken","icons/status.png");
 		imageManager.register("startStream", "icons/gear_run.png");
 		imageManager.register("stopStream", "icons/gear_stop.png");
 		imageManager.register("autoFocusActivate", "icons/autoFocusActivate.png");
@@ -74,6 +74,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		imageManager.register("schema", "icons/odata.png");
 		imageManager.register("pipe_icon", "icons/task.png");
 		imageManager.register("sink_icon", "icons/sinks.png");
+		imageManager.register("sink", "icons/sinks.png");
 		imageManager.register("source_icon", "icons/sources.png");
 		imageManager.register("partof_icon", "icons/graph.png");
 		imageManager.register("string", "icons/string.jpg");
