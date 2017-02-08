@@ -1362,6 +1362,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			SinkInformation si = new SinkInformation();
 			si.setName(s.getKey());
 			si.setOutputSchema(s.getValue().getOutputSchema());
+			si.setType("sink");
 			ret.add(si);
 		}
 		return ret;
