@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 
@@ -30,10 +31,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CLOSESTREAM", doc = "This operator allow to stop stream processing based on a predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Close+Stream+operator", category = { LogicalOperatorCategory.BENCHMARK })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CLOSESTREAM", doc = "This operator allow to stop stream processing based on a predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Close+Stream+operator", category = {
+		LogicalOperatorCategory.BENCHMARK })
 public class CloseStreamAO extends UnaryLogicalOp implements IHasPredicate {
 	private static final long serialVersionUID = 3215936185841514846L;
-	private int rate;
+	private long maxCount = 0;
 
 	private IPredicate<?> predicate;
 
@@ -41,19 +43,20 @@ public class CloseStreamAO extends UnaryLogicalOp implements IHasPredicate {
 		super();
 	}
 
-	public CloseStreamAO(CloseStreamAO po) {
-		super(po);
-		this.rate = po.rate;
-		this.predicate = po.predicate.clone();
+	public CloseStreamAO(CloseStreamAO ao) {
+		super(ao);
+		this.maxCount = ao.maxCount;
+		if (predicate != null) {
+			this.predicate = ao.predicate.clone();
+		}
 	}
 
 	public CloseStreamAO(IPredicate<?> predicate) {
 		setPredicate(predicate);
 	}
 
-
 	@SuppressWarnings("rawtypes")
-	@Parameter(type = PredicateParameter.class)
+	@Parameter(type = PredicateParameter.class, optional = true)
 	public void setPredicate(IPredicate predicate) {
 		this.predicate = predicate;
 
@@ -64,9 +67,27 @@ public class CloseStreamAO extends UnaryLogicalOp implements IHasPredicate {
 		return predicate;
 	}
 
+	@Parameter(name = "count", type = LongParameter.class, optional = true)
+	public void setMaxCount2(Long maxCount) {
+		this.maxCount = maxCount;
+	}
+
+	public long getMaxCount() {
+		return maxCount;
+	}
+
 	@Override
 	public CloseStreamAO clone() {
 		return new CloseStreamAO(this);
+	}
+
+	@Override
+	public boolean isValid() {
+		if (maxCount == 0 && predicate == null) {
+			addError("Must use maxCount or predicate");
+			return false;
+		}
+		return true;
 	}
 
 	@Override

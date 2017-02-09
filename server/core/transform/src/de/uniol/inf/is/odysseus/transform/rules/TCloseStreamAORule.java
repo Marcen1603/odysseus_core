@@ -31,10 +31,11 @@ public class TCloseStreamAORule extends AbstractTransformationRule<CloseStreamAO
 	}
 
 	@Override
-	public void execute(CloseStreamAO CloseStreamAO, TransformationConfiguration transformConfig) throws RuleException {
+	public void execute(CloseStreamAO closeStreamAO, TransformationConfiguration transformConfig) throws RuleException {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		CloseStreamPO<?> closeStreamPO = new CloseStreamPO(CloseStreamAO.getPredicate());
-		defaultExecute(CloseStreamAO, closeStreamPO, transformConfig, true, true);
+		CloseStreamPO<?> closeStreamPO = new CloseStreamPO(closeStreamAO.getPredicate());
+		closeStreamPO.setMaxCount(closeStreamAO.getMaxCount());
+		defaultExecute(closeStreamAO, closeStreamPO, transformConfig, true, true);
 	}
 
 	@Override
