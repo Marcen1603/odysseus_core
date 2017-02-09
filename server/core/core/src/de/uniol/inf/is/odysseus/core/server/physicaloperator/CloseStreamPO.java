@@ -30,8 +30,13 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 
 	private IPredicate<? super T> predicate;
 
+	private long count = 0;
+	private long maxCount = 0;
+
 	public CloseStreamPO(IPredicate<? super T> predicate) {
-		this.predicate = predicate.clone();
+		if (predicate != null){
+			this.predicate = predicate.clone();
+		}
 	}
 
 	@Override
@@ -53,9 +58,10 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 	protected void process_next(T object, int port) {
 		if (!isDone()) {
 			try {
-				if (predicate.evaluate(object)) {
+				if (maxCount > 0 && count >= maxCount || (predicate != null && predicate.evaluate(object))) {
 					propagateDone();
 				} else {
+					count++;
 					transfer(object);
 				}
 			} catch (Exception e) {
@@ -72,11 +78,16 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 
 	@Override
 	public void process_open() throws OpenFailedException {
+		count = 0;
+	}
+
+	public void setMaxCount(long maxCount) {
+		this.maxCount = maxCount;
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + " predicate: " + this.getPredicate().toString();
+		return super.toString() + " predicate: " + this.getPredicate()+ " count="+maxCount;
 	}
 
 
