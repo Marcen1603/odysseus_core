@@ -9,11 +9,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class KeyValuePredicateBuilder<T extends KeyValueObject<?>> implements IPredicateBuilder {
-	
+
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver, String predicate) {
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		KeyValuePredicate<T> pred = new KeyValuePredicate<>(expression);
+		KeyValuePredicate<T> pred = new KeyValuePredicate<>(expression, resolver.getSchema());
 		return pred;
 	}
 }
