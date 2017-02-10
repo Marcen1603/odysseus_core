@@ -62,6 +62,10 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	public static boolean hasUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
+		if (query == null){
+			return false;
+		}
+
 		return
 		// User has right
 		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
