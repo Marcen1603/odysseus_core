@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.admission.status.mep;
+package keyword;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,6 @@ public class AdmissionKeywordProvider implements IPreParserKeywordProvider {
 	public Map<String, Class<? extends IPreParserKeyword>> getKeywords() {
 		Map<String, Class<? extends IPreParserKeyword>> map = new HashMap<String, Class<? extends IPreParserKeyword>>();
 		map.put(LoadSheddingPreParserKeyword.LOADSHEDDING, LoadSheddingPreParserKeyword.class);
-		LoggerFactory.getLogger(this.getClass()).info("Keyword LoadShedding registered");
 		return map;
 	}
 

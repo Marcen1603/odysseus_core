@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
@@ -22,8 +24,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 
 	private final String NAME = "complexWP";
-	
-	private volatile int actPriority = -1;
+
+	private volatile int actIncreasingPriority = -1;
+	private volatile int actDecreasingPriority = -1;
 
 	private volatile Map<Integer, List<Integer>> priorityMap = new TreeMap<Integer, List<Integer>>();
 	
@@ -48,9 +51,9 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 				list.add(queryID);
 				priorityMap.replace(query.getPriority(), list);
 			}
-			if (actPriority < query.getPriority()) {
-				actPriority = query.getPriority();
-			}
+			actIncreasingPriority = getSmallestPriority();
+			actDecreasingPriority = getGreatestPriority();
+			
 			return true;
 		}
 		return false;
@@ -72,10 +75,9 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 					}
 				}
 			}
-			int greatestPrio = getGreatestPriority();
-			if (actPriority > greatestPrio) {
-				actPriority = greatestPrio;
-			}
+			actIncreasingPriority = getSmallestPriority();
+			actDecreasingPriority = getGreatestPriority();
+			
 			return true;	
 		}
 		return false;
@@ -142,7 +144,7 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 				simpleActiveQueries.remove(Integer.valueOf(partialQuery));
 			}
 		}
-		AdmissionStatusPlugIn.getServerExecutor().partialQuery(partialQuery, sheddingFactor, superUser);
+		setSheddingFactor(partialQuery, sheddingFactor);
 	}
 
 	@Override
@@ -177,7 +179,7 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 					simpleActiveQueries.remove(Integer.valueOf(partialQuery));
 				}
 			}
-			AdmissionStatusPlugIn.getServerExecutor().partialQuery(partialQuery, sheddingFactor, superUser);
+			setSheddingFactor(partialQuery, sheddingFactor);
 		}
 
 	}
@@ -222,23 +224,27 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 	 * @return
 	 */
 	private List<Integer> getIncreasingPriorityQueryList() {
-		if (actPriority < 0) {
+		if (actIncreasingPriority < 0) {
 			return null;
 		}
-		List<Integer> list = new ArrayList<>(priorityMap.get(actPriority));
-		for (int queryID : list) {
-			if (maxSheddingQueries.contains(queryID)) {
-				list.remove(Integer.valueOf(queryID));
+		
+		List<Integer> list = new ArrayList<>();
+		for (int queryID : priorityMap.get(actIncreasingPriority)) {
+			if (!maxSheddingQueries.contains(queryID)) {
+				list.add(Integer.valueOf(queryID));
 			}
 		}
 		if (!list.isEmpty()) {
 			return list;
 		} else {
-			int nextPrio = getNextPriority();
+			int nextPrio = getNextPriority(actIncreasingPriority);
 			if (nextPrio < 0) {
 				return null;
 			}
-			actPriority = nextPrio;
+			actIncreasingPriority = nextPrio;
+			if (actIncreasingPriority > actDecreasingPriority) {
+				actDecreasingPriority = actIncreasingPriority;
+			}
 			return getIncreasingPriorityQueryList();
 		}
 	}
@@ -249,34 +255,37 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 	 * @return
 	 */
 	private List<Integer> getDecreasingPriorityQueryIDList() {
-		if (actPriority < 0 || activeQueries.isEmpty()) {
+		if (actDecreasingPriority < 0 || activeQueries.isEmpty()) {
 			return null;
 		}
 		
-		List<Integer> list = new ArrayList<>(priorityMap.get(actPriority));
-		for (int queryID : list) {
-			if (!activeQueries.containsKey(queryID)) {
-				list.remove(Integer.valueOf(queryID));
+		List<Integer> list = new ArrayList<>();
+		for (int queryID : priorityMap.get(actDecreasingPriority)) {
+			if (activeQueries.containsKey(queryID)) {
+				list.add(Integer.valueOf(queryID));
 			}
 		}
 		if (!list.isEmpty()) {
 			return list;
 		} else {
-			int previousPrio = getPreviousPriority();
+			int previousPrio = getPreviousPriority(actDecreasingPriority);
 			if (previousPrio < 0) {
 				return null;
 			}
-			actPriority = previousPrio;
+			actDecreasingPriority = previousPrio;
+			if (actDecreasingPriority < actIncreasingPriority) {
+				actIncreasingPriority = actDecreasingPriority;
+			}
 			return getDecreasingPriorityQueryIDList();
 		}
 	}
 	
-	private int getNextPriority() {
+	private int getNextPriority(int oldPrio) {
 		int priority = -1;
 		Iterator<Integer> iterator = priorityMap.keySet().iterator();
 		while (iterator.hasNext()) {
 			int next = iterator.next();
-			if(next == actPriority) {
+			if(next == oldPrio) {
 				if (iterator.hasNext()) {
 					priority = iterator.next();
 				} 
@@ -286,12 +295,12 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 		return priority;
 	}
 	
-	private int getPreviousPriority() {
+	private int getPreviousPriority(int oldPrio) {
 		int priority = -1;
 		List<Integer> list = new ArrayList<>(priorityMap.keySet());
 		Collections.reverse((List<?>) list);
 		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i) == actPriority) {
+			if (list.get(i) == oldPrio) {
 				if ((i + 1) < list.size()) {
 					priority = list.get(i + 1);
 				}
@@ -306,12 +315,19 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 	}
 	
 	private List<IPhysicalQuery> removeQuerysWithMaxSheddingFactor(List<IPhysicalQuery> list) {
-		for(IPhysicalQuery query : list) {
+		Iterator<IPhysicalQuery> iter = list.iterator();
+
+		while (iter.hasNext()) {
+			IPhysicalQuery query = iter.next();
 			if (maxSheddingQueries.contains(query.getID())) {
-				list.remove(query);
+				iter.remove();
 			}
 		}
 		return list;
+	}
+	
+	private int getSmallestPriority() {
+		return Collections.min(priorityMap.keySet());
 	}
 	
 	private List<Integer> getIDList(List<IPhysicalQuery> physList) {

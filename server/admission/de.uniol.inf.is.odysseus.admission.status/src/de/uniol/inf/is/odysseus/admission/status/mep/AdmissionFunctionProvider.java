@@ -17,6 +17,9 @@ public class AdmissionFunctionProvider implements IFunctionProvider {
 		list.add(new RunLoadSheddingAdmissionFunction());
 		list.add(new RollbackLoadSheddingAdmissionFunction());
 		list.add(new ChooseLoadSheddingComponentFunction());
+		list.add(new ChooseLoadSheddingGrowthFunction());
+		list.add(new ChooseStandartLoadSheddingFactorFunction());
+		list.add(new MeasureStatusFunction());
 		return list;
 	}
 

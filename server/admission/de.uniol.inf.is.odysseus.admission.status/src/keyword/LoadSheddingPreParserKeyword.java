@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.admission.status.mep;
+package keyword;
 
 import java.util.HashMap;
 import java.util.List;

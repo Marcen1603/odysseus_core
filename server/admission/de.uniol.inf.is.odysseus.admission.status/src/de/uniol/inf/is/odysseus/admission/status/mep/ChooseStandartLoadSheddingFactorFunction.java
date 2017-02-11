@@ -15,7 +15,7 @@ public class ChooseStandartLoadSheddingFactorFunction extends AbstractFunction<C
 
 	@Override 
 	public Command getValue() {
-		final int factor = (int) getInputValue(0);
+		final int factor = ((Long) getInputValue(0)).intValue();
 		
 		return new Command() {
 			@Override public boolean run() {

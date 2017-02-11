@@ -15,7 +15,7 @@ public class ChooseLoadSheddingGrowthFunction extends AbstractFunction<Command> 
 
 	@Override 
 	public Command getValue() {
-		final int growth = (int) getInputValue(0);
+		final int growth = ((Long) getInputValue(0)).intValue();
 		
 		return new Command() {
 			@Override public boolean run() {

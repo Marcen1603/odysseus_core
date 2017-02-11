@@ -31,7 +31,6 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	
 	@Override
 	public void addQuery(IPhysicalQuery query) {
-		LoggerFactory.getLogger(this.getClass()).info("latency measurement add " + query.getID());
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
 			AdmissionSink<?> admissionSink = new AdmissionSink();
@@ -49,7 +48,6 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 				}
 			}
 			if (source != null) {
-				LoggerFactory.getLogger(this.getClass()).info("admissionSinkadded");
 				//subscribe und open
 				source.connectSink(admissionSink, 0, 0, source.getOutputSchema());
 			}
@@ -64,7 +62,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	public void updateMeasurement(IPhysicalQuery query, long latency) {
-		LoggerFactory.getLogger(this.getClass()).info("latency measurement on " + query.getID() + ". Latency : " + latency);
+		//LoggerFactory.getLogger(this.getClass()).info("latency measurement on " + query.getID() + ". Latency : " + latency);
 		if (latencies.isEmpty()) {
 			return;
 		}

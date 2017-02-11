@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
-
 /**
  * Provides the status for simple load shedding.
  * 
@@ -61,7 +59,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 			activeQueries.put(queryID, sheddingFactor);
 		}
 		
-		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
+		setSheddingFactor(queryID, sheddingFactor);
 	}
 	
 	@Override
@@ -80,7 +78,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 				sheddingFactor = 0;
 				activeQueries.remove(queryID);
 			}
-			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
+			setSheddingFactor(queryID, sheddingFactor);
 		}
 	}
 	
@@ -92,12 +90,12 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	 */
 	private int getRandomPossibleQueryID() {
 		
-		List<Integer> list = new ArrayList<Integer>(allowedQueries.keySet());
+		List<Integer> list = new ArrayList<Integer>();
 		
 		// remove queries which already have their maximal shedding-factor
-		for (int queryID : list) {
-			if (maxSheddingQueries.contains(queryID)) {
-				list.remove(Integer.valueOf(queryID));
+		for (int queryID : allowedQueries.keySet()) {
+			if (!maxSheddingQueries.contains(queryID)) {
+				list.add(Integer.valueOf(queryID));
 			}
 		}
 		if (list.isEmpty()){

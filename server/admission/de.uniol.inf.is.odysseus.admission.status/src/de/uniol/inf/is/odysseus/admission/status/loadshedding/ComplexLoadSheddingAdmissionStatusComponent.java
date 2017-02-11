@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  *
  */
 public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
-
+	
 	private final String NAME = "complex";
 	
 	private final QueueLengthsAdmissionMonitor QUEUE_LENGTHS_MONITOR = new QueueLengthsAdmissionMonitor();
@@ -96,7 +97,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 				simpleActiveQueries.remove(Integer.valueOf(queryID));
 			}
 		}
-		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
+		setSheddingFactor(queryID, sheddingFactor);
 	}
 
 	@Override
@@ -123,7 +124,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 					simpleActiveQueries.remove(Integer.valueOf(queryID));
 				}
 			}
-			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, sheddingFactor, superUser);
+			setSheddingFactor(queryID, sheddingFactor);
 		}
 	}
 
@@ -154,28 +155,39 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 					break;
 				}
 			}
-			if(!queryRanks.isEmpty()) {
-				int partialQuery = -1;
-				int rank = -1;
-				for (int queryID : queryRanks.keySet()) {
-					if(queryRanks.get(queryID) > rank) {
-						partialQuery = queryID;
-						rank = queryRanks.get(queryID);
-					}
-				}
-				return partialQuery;
-			}
+
+			return getQueryWithGreatestRank(queryRanks);
 		}
 		return -1;
+	}
+
+	private int getQueryWithGreatestRank(Map<Integer, Integer> queryRanks) {
+		if (queryRanks.isEmpty()) {
+			return -1;
+		}
+		
+		int partialQuery = -1;
+		int rank = -1;
+		for (int queryID : queryRanks.keySet()) {
+			if(queryRanks.get(queryID) > rank) {
+				partialQuery = queryID;
+				rank = queryRanks.get(queryID);
+			}
+		}
+		
+		return partialQuery;
 	}
 	
 	private int queryFromSimpleLoadShedding() {
 		List<Integer> list = new ArrayList<Integer>(allowedQueries.keySet());
 		
-		for (int queryID : list) {
+		Iterator<Integer> iter = list.iterator();
+		
+		while (iter.hasNext()) {
+			int queryID = iter.next();
 			if (maxSheddingQueries.contains(queryID) || 
 					(activeQueries.containsKey(queryID) && !simpleActiveQueries.contains(queryID))) {
-				list.remove(Integer.valueOf(queryID));
+				iter.remove();
 			}
 		}
 		
@@ -187,9 +199,12 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	}
 	
 	private List<IPhysicalQuery> removeQuerysWithMaxSheddingFactor(List<IPhysicalQuery> list) {
-		for(IPhysicalQuery query : list) {
+		Iterator<IPhysicalQuery> iter = list.iterator();
+
+		while (iter.hasNext()) {
+			IPhysicalQuery query = iter.next();
 			if (maxSheddingQueries.contains(query.getID())) {
-				list.remove(query);
+				iter.remove();
 			}
 		}
 		return list;

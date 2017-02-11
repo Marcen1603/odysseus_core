@@ -12,8 +12,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusComponent {
 	
-	static public final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
-	
 	/**
 	 * Adds the query to the StatusComponent.
 	 * @param query

@@ -67,11 +67,13 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 			for (ControllablePhysicalSubscription<ISink<?>> subscription : queuelengths.get(query).keySet()) {
 				
 				int tendency = estimateTendency(queuelengths.get(query).get(subscription));
-				if (!map.containsKey(query)) {
-					map.put(query, tendency);
-				} else {
-					if (map.get(query) < tendency) {
-						map.replace(query, tendency);
+				if (tendency > 0) {
+					if (!map.containsKey(query)) {
+						map.put(query, tendency);
+					} else {
+						if (map.get(query) < tendency) {
+							map.replace(query, tendency);
+						}
 					}
 				}
 			}
