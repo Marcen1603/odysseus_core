@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +24,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManag
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
-public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
-		IUpdateEventListener {
+public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
 
 	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
 
@@ -87,8 +86,11 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public void start(BundleContext bundleContext) throws Exception {
 		super.start(bundleContext);
 		// Bilder registrieren
-		imageManager = new ImageManager(bundleContext.getBundle());
 
+		imageManager = new ImageManager(bundleContext.getBundle());
+		// TODO: Find another image for a broken signal
+		imageManager.register("broken", "icons/status.png");
+		imageManager.register("access", "icons/repository_rep.gif");
 		imageManager.register("repository", "icons/repository_rep.gif");
 		imageManager.register("user", "icons/user.png");
 		imageManager.register("sla", "icons/document-block.png");
@@ -100,7 +102,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 		imageManager.register("sink", "icons/sinks.png");
 		imageManager.register("attribute", "icons/status.png");
 		imageManager.register("loggedinuser", "icons/user--plus.png");
-//		imageManager.register("user", "icons/user.png");
+		// imageManager.register("user", "icons/user.png");
 		imageManager.register("role", "icons/tick-small-circle.png");
 		imageManager.register("function", "icons/function.png");
 
@@ -131,14 +133,10 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 			if (name == null) {
 				name = "";
 			}
-			StatusBarManager.getInstance().setMessage(
-					StatusBarManager.EXECUTOR_ID,
-					name + " " + OdysseusNLS.Ready);
+			StatusBarManager.getInstance().setMessage(StatusBarManager.EXECUTOR_ID, name + " " + OdysseusNLS.Ready);
 
-			executor.addUpdateEventListener(this,
-					IUpdateEventListener.SCHEDULING, null);
-			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY,
-					null);
+			executor.addUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
+			executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
 
 			OdysseusRCPPlugIn.class.notifyAll();
 		}
@@ -155,10 +153,8 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 
 	public void unbindExecutor(IExecutor ex) {
 		if (executor == ex) {
-			executor.removeUpdateEventListener(this,
-					IUpdateEventListener.SCHEDULING, null);
-			executor.removeUpdateEventListener(this,
-					IUpdateEventListener.QUERY, null);
+			executor.removeUpdateEventListener(this, IUpdateEventListener.SCHEDULING, null);
+			executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
 			executor = null;
 		}
 	}
@@ -167,8 +163,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	public void eventOccured(String type) {
 		if (type == IUpdateEventListener.SCHEDULING) {
 			try {
-				StatusBarManager.getInstance().setMessage(
-						StatusBarManager.SCHEDULER_ID,
+				StatusBarManager.getInstance().setMessage(StatusBarManager.SCHEDULER_ID,
 						determineStatusManagerExecutorInfo());
 			} catch (PlanManagementException e) {
 				e.printStackTrace();
@@ -177,10 +172,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements
 	}
 
 	private String determineStatusManagerExecutorInfo() {
-		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn
-				.getActiveSession())
-				+ " ("
-				+ executor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn
-						.getActiveSession()) + ") ";
+		return executor.getCurrentSchedulerID(OdysseusRCPPlugIn.getActiveSession()) + " ("
+				+ executor.getCurrentSchedulingStrategyID(OdysseusRCPPlugIn.getActiveSession()) + ") ";
 	}
 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
@@ -52,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
 
-abstract public class AbstractAccessAO extends AbstractLogicalOperator {
+abstract public class AbstractAccessAO extends AbstractLogicalOperator implements IAccessAO {
 
 	private static final long serialVersionUID = -5423444612698319659L;
 
@@ -89,6 +90,9 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		super(po);
 		wrapper = po.wrapper;
 		optionsMap.addAll(po.optionsMap);
+		if (po.optionsList != null) {
+			this.optionsList = new ArrayList<>(po.optionsList);
+		}
 		inputSchema = po.inputSchema;
 		dataHandler = po.dataHandler;
 		protocolHandler = po.protocolHandler;
@@ -122,6 +126,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		this.accessAOResource = name;
 	}
 
+	@Override
 	public Resource getAccessAOName() {
 		return accessAOResource;
 	}
@@ -179,8 +184,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	public boolean getNewAccessFramework() {
 		return this.newAccessFramework;
 	}
-	
-	
+
 	public boolean isOverWriteSchemaSourceName() {
 		return overWriteSchemaSourceName;
 	}
@@ -295,6 +299,71 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 		return readMetaData;
 	}
 
+	@Override
+	public boolean isSemanticallyEqual(IAccessAO operator) {
+		if (!(operator instanceof AbstractAccessAO)) {
+			return false;
+		}
+		AbstractAccessAO other = (AbstractAccessAO) operator;
+
+		if (!Objects.equals(this.accessAOResource, other.accessAOResource)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.wrapper, other.wrapper)) {
+			return false;
+		}
+		if (!Objects.equals(this.dataHandler, other.dataHandler)) {
+			return false;
+		}
+		if (!Objects.equals(this.protocolHandler, other.protocolHandler)) {
+			return false;
+		}
+		if (!Objects.equals(this.transportHandler, other.transportHandler)) {
+			return false;
+		}
+		if (!Objects.equals(this.optionsMap, other.optionsMap)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.optionsList, other.optionsList)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.dateFormat, other.dateFormat)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.outputSchema, other.outputSchema)) {
+			return false;
+		}
+		if (!Objects.equals(this.inputSchema, other.inputSchema)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.maxTimeToWaitForNewEventMS, other.maxTimeToWaitForNewEventMS)) {
+			return false;
+		}
+		if (!Objects.equals(this.newAccessFramework, other.newAccessFramework)) {
+			return false;
+		}
+		if (!Objects.equals(this.localMetaAttribute, other.localMetaAttribute)) {
+			return false;
+		}
+		if (!Objects.equals(this.readMetaData, other.readMetaData)) {
+			return false;
+		}
+
+		if (!Objects.equals(this.overWriteSchemaSourceName, other.overWriteSchemaSourceName)) {
+			return false;
+		}
+		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)) {
+			return false;
+		}
+
+		return true;
+	}
+
 	// needed for PQL-Generator
 	public boolean getReadMetaData() {
 		return readMetaData();
@@ -312,21 +381,20 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			type = Tuple.class;
 		}
 
-		
 		// TODO: Move more things from TAccessAORule here ... if possible
-		
+
 		OptionMap options = new OptionMap(optionsMap);
-		
+
 		@SuppressWarnings("rawtypes")
 		IProtocolHandler ph = ProtocolHandlerRegistry.getIProtocolHandlerClass(protocolHandler);
-		
+
 		if (getOverWrittenSchema() == null && ph != null) {
 			setOverWrittenSchema(ph.getSchema());
 		}
-		// For cases where the schema depends on the options, create a real instance of transport handler
+		// For cases where the schema depends on the options, create a real
+		// instance of transport handler
 		if (getOverWrittenSchema() == null) {
-			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph,
-					options);
+			ITransportHandler th = TransportHandlerRegistry.getInstance(transportHandler, ph, options);
 			setOverWrittenSchema(th != null ? th.getSchema() : null);
 		}
 		TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -341,8 +409,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			}
 		}
 		constraints.put(SDFConstraint.BASE_TIME_UNIT, new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
-		
-		if (dateFormat != null){
+
+		if (dateFormat != null) {
 			constraints.put(SDFConstraint.DATE_FORMAT, new SDFConstraint(SDFConstraint.DATE_FORMAT, dateFormat));
 		}
 
@@ -359,13 +427,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 			// Add source name to attributes
 			for (SDFAttribute a : attributes) {
 				SDFAttribute newAttr;
-				String sName = overWriteSchemaSourceName?getName():a.getSourceName();
+				String sName = overWriteSchemaSourceName ? getName() : a.getSourceName();
 				if (a.getDatatype() == SDFDatatype.START_TIMESTAMP
 						|| a.getDatatype() == SDFDatatype.START_TIMESTAMP_STRING) {
 					List<SDFConstraint> c = new ArrayList<>();
 					c.add(new SDFConstraint(SDFConstraint.BASE_TIME_UNIT, timeUnit));
 					SDFUnit unit = new SDFTimeUnit(timeUnit.toString());
-					
+
 					newAttr = new SDFAttribute(sName, a.getAttributeName(), a, unit, c);
 				} else {
 					newAttr = new SDFAttribute(sName, a.getAttributeName(), a);
@@ -445,7 +513,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator {
 	}
 
 	/**
-	 * @param overWrittenSchema the overWrittenSchema to set
+	 * @param overWrittenSchema
+	 *            the overWrittenSchema to set
 	 */
 	public void setOverWrittenSchema(SDFSchema overWrittenSchema) {
 		this.overWrittenSchema = overWrittenSchema;

@@ -552,6 +552,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 				// following roots will not be called any more.
 				curRoot.start(this);
 			}
+			_logger.debug("Query "+getID()+" started.");
 			setState(nextState);
 			this.isStarting = false;
 		} catch (IllegalStateException e) {

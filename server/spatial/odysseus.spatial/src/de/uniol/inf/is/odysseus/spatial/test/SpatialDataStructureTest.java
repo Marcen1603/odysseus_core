@@ -40,6 +40,7 @@ public class SpatialDataStructureTest extends TestCase {
 	private GeometryFactory factory;
 
 	private TimeInterval testSearchInterval = new TimeInterval(new PointInTime(5000), new PointInTime(5100));
+	private TimeInterval testWrongTime = new TimeInterval(new PointInTime(6000), new PointInTime(6100));
 
 	// For kNN test
 	private Point kNNTestCenter;
@@ -148,14 +149,11 @@ public class SpatialDataStructureTest extends TestCase {
 		// Distances calculated with
 		// http://www.sunearthtools.com/tools/distance.php
 		Coordinate coord1 = new Coordinate(53.14, 8.215091); // about 136.5m
-		Coordinate coord2 = new Coordinate(53.140284, 8.217452); // about 292.2
-																	// m
-		Coordinate coord3 = new Coordinate(53.139872, 8.220799); // about 516.8
-																	// m
-		Coordinate coord4 = new Coordinate(53.140052, 8.224275); // about 747.5
-																	// m
-		Coordinate coord5 = new Coordinate(53.14188, 8.243115); // about 2.0129
-																// km
+		Coordinate coord2 = new Coordinate(53.140284, 8.217452); // about 292.2m
+		Coordinate coord3 = new Coordinate(53.139872, 8.220799); // about 516.8m
+		Coordinate coord4 = new Coordinate(53.140052, 8.224275); // about 747.5m
+		Coordinate coord5 = new Coordinate(53.14188,
+				8.243115); /* about 2.0129km */
 		// Huntebruecke, about 4.3577 km
 		Coordinate coord6 = new Coordinate(53.153488, 8.274529);
 		// Elsfleth, about 19.5791 km
@@ -164,24 +162,32 @@ public class SpatialDataStructureTest extends TestCase {
 		// Fill the extra list for the correct range result (as we do a 2.1 km
 		// range, we do not include the Huntebruecke and Elsfleth coordinates)
 		rangeNeighbors.add(factory.createPoint(coord1));
-		rangeNeighbors.add(factory.createPoint(coord2));
 		rangeNeighbors.add(factory.createPoint(coord3));
 		rangeNeighbors.add(factory.createPoint(coord4));
 		rangeNeighbors.add(factory.createPoint(coord5));
 
-		// And add the range neighbors to the normal list as well (and add the
-		// Elsfleth coordinate as well)
+		// And add the range neighbors to the normal list as well
 		for (Point point : rangeNeighbors) {
 			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
 			addToAll(tuple);
 		}
 
+		// Add the coordinates which are not within the correct result
+
+		// Huntebruecke (too far away)
 		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(coord6),
 				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
 		addToAll(tuple);
+
+		// Elsfleth (too far away)
 		tuple = createTuple(factory.createPoint(coord7), testSearchInterval.getStart().getMainPoint(),
 				testSearchInterval.getEnd().getMainPoint());
+		addToAll(tuple);
+
+		// Coord 2 (in range, but wrong time)
+		tuple = createTuple(factory.createPoint(coord2), testWrongTime.getStart().getMainPoint(),
+				testWrongTime.getEnd().getMainPoint());
 		addToAll(tuple);
 	}
 
@@ -211,27 +217,35 @@ public class SpatialDataStructureTest extends TestCase {
 
 		// Points that a slightly outside of the polygon
 		Coordinate noCoord1 = new Coordinate(53.149711, 8.181891); // Combi
-		Coordinate noCoord2 = new Coordinate(53.150425, 8.180614); // V
-																	// buildings
+		Coordinate noCoord2 = new Coordinate(53.150425, 8.180614); // V-buildings
 
 		// Add the correct points to the compare list
 		correctQueryResults.add(factory.createPoint(coord1));
 		correctQueryResults.add(factory.createPoint(coord2));
 		correctQueryResults.add(factory.createPoint(coord3));
-		correctQueryResults.add(factory.createPoint(coord4));
 
-		// Add all points to the whole data set
+		// Add correct result points to the whole data set
 		for (Point point : correctQueryResults) {
 			Tuple<ITimeInterval> tuple = createTuple(point, testSearchInterval.getStart().getMainPoint(),
 					testSearchInterval.getEnd().getMainPoint());
 			addToAll(tuple);
 		}
 
+		// Add wrong point to total data set
+		
+		// Combi (too far away)
 		Tuple<ITimeInterval> tuple = createTuple(factory.createPoint(noCoord1),
 				testSearchInterval.getStart().getMainPoint(), testSearchInterval.getEnd().getMainPoint());
 		addToAll(tuple);
+		
+		// V-buildings (too far away)
 		tuple = createTuple(factory.createPoint(noCoord2), testSearchInterval.getStart().getMainPoint(),
 				testSearchInterval.getEnd().getMainPoint());
+		addToAll(tuple);
+		
+		// Gym (wrong time)
+		tuple = createTuple(factory.createPoint(coord4), testWrongTime.getStart().getMainPoint(),
+				testWrongTime.getEnd().getMainPoint());
 		addToAll(tuple);
 	}
 

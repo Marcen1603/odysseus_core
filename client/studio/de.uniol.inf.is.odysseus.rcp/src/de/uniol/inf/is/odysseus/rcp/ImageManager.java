@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,16 +31,16 @@ import com.google.common.collect.Maps;
 public class ImageManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImageManager.class);
-	
+
 	private final Bundle bundle;
-	
+
 	private Map<String, String> imageIDs = Maps.newHashMap();
 	private Map<String, Image> loadedImages = Maps.newHashMap();
-	
+
 	public ImageManager( Bundle bundle ) {
 		this.bundle = Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
-	
+
 	public void register( String imageID, String fileName ) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
@@ -48,10 +48,10 @@ public class ImageManager {
 		if( imageIDs.containsKey(imageID)) {
 			LOG.warn("Registering already registered imageID {}.", imageID);
 		}
-		
+
 		imageIDs.put(imageID, fileName);
 	}
-	
+
 	public void unregister( String imageID ) {
 		if( imageIDs.containsKey(imageID)) {
 			imageIDs.remove(imageID);
@@ -62,42 +62,45 @@ public class ImageManager {
 			LOG.warn("Unregister an imageID {} which was not registered before.", imageID);
 		}
 	}
-	
+
 	public ImmutableList<String> getRegisteredImageIDs() {
 		return ImmutableList.copyOf(imageIDs.keySet());
 	}
-	
+
 	public ImmutableList<String> getLoadedImageIDs() {
 		return ImmutableList.copyOf(loadedImages.keySet());
 	}
-	
+
 	public Image get( String imageID ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
-		
+
+		if (Strings.isNullOrEmpty(imageID)){
+			imageID = "broken";
+		}
+
 		if( !loadedImages.containsKey(imageID)) {
 			// Load image
 			String filename = imageIDs.get(imageID);
 			if( filename == null )
 				throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
-			
+
 			ImageDescriptor img = ImageDescriptor.createFromURL(bundle.getEntry(filename));
 			Image image = img.createImage();
-			if( image == null ) 
+			if( image == null )
 				throw new IllegalArgumentException("Returned image with imageID=" + imageID + " is null!");
-			
+
 			loadedImages.put(imageID, image);
 		}
-		
+
 		return loadedImages.get(imageID);
 	}
-	
+
 	public boolean isLoaded( String imageID ) {
 		return loadedImages.containsKey(imageID);
 	}
-	
+
 	public void disposeAll() {
 		debugNotLoadedImages();
-		
+
 		for( Image image : loadedImages.values()) {
 			image.dispose();
 		}
@@ -111,7 +114,7 @@ public class ImageManager {
 			loadedImages.remove(imageID);
 		}
 	}
-	
+
 	private void debugNotLoadedImages() {
 		for( String imageID : imageIDs.keySet() ) {
 			if( loadedImages.containsKey(imageID)) {

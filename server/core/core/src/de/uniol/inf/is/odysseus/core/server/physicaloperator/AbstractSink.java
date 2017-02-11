@@ -316,6 +316,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	@Override
 	public void start(IOperatorOwner owner) throws StartFailedException {
 
+
 		List<IOperatorOwner> forOwners = null;
 		if (owner != null) {
 			forOwners = new ArrayList<>();
@@ -328,6 +329,8 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 	protected void start(List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
+
+		logger.trace("Calling start on "+this+ "for "+forOwners);
 
 		if (!isStarted()) {
 			process_start();

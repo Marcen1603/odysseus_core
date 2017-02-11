@@ -6,5 +6,5 @@ public class ViewInformation extends AbstractResourceInformation{
 	public ViewInformation() {
 		super();
 	}
-	
+
 }

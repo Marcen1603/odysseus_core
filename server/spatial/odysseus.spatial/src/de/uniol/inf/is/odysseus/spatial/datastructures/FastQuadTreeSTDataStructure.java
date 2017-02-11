@@ -53,8 +53,8 @@ public class FastQuadTreeSTDataStructure extends QuadTreeSTDataStructure {
 			if (removed.size() > 10000) {
 				_logger.warn("Removing " + removed.size() + " elements from QuadTree. This can take a while!");
 			}
-			int totalSize = this.sweepArea.size() + removed.size();
-			_logger.debug("Removing " + removed.size() + " elements from " + totalSize + " from QuadTree.");
+//			int totalSize = this.sweepArea.size() + removed.size();
+//			_logger.debug("Removing " + removed.size() + " elements from " + totalSize + " from QuadTree.");
 			removed.stream().forEach(e -> this.quadTree.remove(getGeometry(e).getEnvelopeInternal(), e));
 		}
 	}

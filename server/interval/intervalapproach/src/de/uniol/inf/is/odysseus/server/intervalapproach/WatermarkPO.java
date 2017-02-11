@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * 11:50 because it is guaranteed that no element will arrive earlier (later
  * incoming out-of-order elements could for example be dropped).
  * 
- * @author Cornelius Ludmann, Tobias Brandt (doc)
+ * @author Cornelius Ludmann, Tobias Brandt
  *
  */
 public class WatermarkPO<R extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<R, R> {
