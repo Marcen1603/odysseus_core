@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 
 	static final Logger LOG = LoggerFactory.getLogger(TSampleAORule.class);
- 	
+
 	@Override
 	public int getPriority() {
 		return 1;
@@ -47,7 +47,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 
 	@Override
 	public void execute(StreamAO operator, TransformationConfiguration transformConfig) throws RuleException {
-		
+
 		Resource name = operator.getStreamname();
 		LOG.trace("Trying to find view or stream "+name);
 		if (!getDataDictionary().containsViewOrStream(name, getCaller())) {
@@ -65,9 +65,12 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 				logicalPlan = getDataDictionary().getView(operator.getStreamname(), getCaller());
 			}
 			if (logicalPlan == null){
+				logicalPlan = getDataDictionary().getAccessAO(operator.getStreamname(), getCaller());
+			}
+			if (logicalPlan == null){
 				throw new TransformationException("Could not find a logical plan for "+name);
 			}
-			
+
 			// start a new sub-transformation
 			ITransformation transformation = new TransformationExecutor();
 			LOG.trace("Translation of "+name);
@@ -75,7 +78,7 @@ public class TStreamAORule extends AbstractTransformationRule<StreamAO> {
 			// we don't need the subscriptions anymore
 			LOG.trace("Clear physical subscriptions");
 			removePhysicalSubscriptions(logicalPlan);
-			
+
 			// get the first root, since this is the physical operator for the
 			// passed plan
 			// and this will be the connection to the current plan.

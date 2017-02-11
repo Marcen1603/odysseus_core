@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataUpdater;
@@ -47,7 +48,7 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 
 	protected IProtocolHandler<W> protocolHandler;
 	protected final boolean readMetaData;
-	
+
 	private IMetadataInitializer<M, W> metadataInitializer = new MetadataInitializerAdapter<>();
 	private IMetadataUpdater<M, W> metadataUpdater;
 
@@ -86,6 +87,11 @@ public class ReceiverPO<W extends IStreamObject<M>, M extends IMetaAttribute> ex
 				throw new OpenFailedException(e);
 			}
 		}
+	}
+
+	@Override
+	protected void process_start() throws StartFailedException {
+		protocolHandler.start();
 	}
 
 	@Override

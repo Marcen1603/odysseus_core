@@ -90,4 +90,5 @@ public class SpatialKNNAO extends UnaryLogicalOp {
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
 	}
+
 }

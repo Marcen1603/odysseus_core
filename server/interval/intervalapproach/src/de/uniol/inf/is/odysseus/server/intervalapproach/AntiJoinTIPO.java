@@ -17,17 +17,16 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.metadata.MetadataComparator;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
@@ -48,27 +47,29 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
     //
     private static final int RIGHT = 1;
     //
-    private final ISweepArea<T>[] sa;
+    private final ITimeIntervalSweepArea<T>[] sa;
+
     //
-    private final PriorityQueue<T> returnBuffer;
+    final ITransferArea<T,T> transferArea;
+    
     //
     private final PointInTime[] highestStart;
 
     //
     @SuppressWarnings("unchecked")
-    public AntiJoinTIPO(ExistenceAO ao, ISweepArea<T> leftArea, ISweepArea<T> rightArea) {
+    public AntiJoinTIPO(ExistenceAO ao, ITimeIntervalSweepArea<T> leftArea, ITimeIntervalSweepArea<T> rightArea, ITransferArea<T, T> transferArea) {
         super();
-        this.sa = new ISweepArea[] { leftArea, rightArea };
-        this.returnBuffer = new PriorityQueue<>(10, new MetadataComparator<ITimeInterval>());
+        this.sa = new ITimeIntervalSweepArea[] { leftArea, rightArea };
+        this.transferArea = transferArea;
         PointInTime startTime = PointInTime.getZeroTime();
         this.highestStart = new PointInTime[] { startTime, startTime };
     }
 
     //
     @SuppressWarnings("unchecked")
-    public AntiJoinTIPO(DifferenceAO ao, ISweepArea<T> leftArea, ISweepArea<T> rightArea) {
+    public AntiJoinTIPO(DifferenceAO ao, ITimeIntervalSweepArea<T> leftArea, ITimeIntervalSweepArea<T> rightArea, ITransferArea<T, T> transferArea) {
         super();
-        this.sa = new ISweepArea[] { leftArea, rightArea };
+        this.sa = new ITimeIntervalSweepArea[] { leftArea, rightArea };
         IPredicate<? super T> predicate = ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), EqualsPredicate.getInstance());
         if (ao.getPredicate() != null) {
             predicate = ComplexPredicateHelper.createOrPredicate(predicate, ComplexPredicateHelper.createNotPredicate(ao.getPredicate()));
@@ -76,7 +77,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
         leftArea.setQueryPredicate(predicate);
         rightArea.setQueryPredicate(predicate);
-        this.returnBuffer = new PriorityQueue<>(10, new MetadataComparator<ITimeInterval>());
+        this.transferArea = transferArea;
         PointInTime startTime = PointInTime.getZeroTime();
         this.highestStart = new PointInTime[] { startTime, startTime };
         setOutputSchema(ao.getOutputSchema());
@@ -93,11 +94,12 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 
     @Override
     protected void process_open() throws OpenFailedException {
-
+    	transferArea.init(this, 2);
     }
 
     @Override
     synchronized protected void process_next(T object, int port) {
+    	transferArea.newElement(object, port);
         T curInput = object;
         ITimeInterval curMetadata = curInput.getMetadata();
         PointInTime curStart = curMetadata.getStart();
@@ -106,7 +108,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
         if (port == LEFT) {
             sa[RIGHT].purgeElements(curInput, Order.LeftRight);
             if (!this.sa[RIGHT].isEmpty() && (curMetadata.getEnd().before(this.sa[RIGHT].peek().getMetadata().getStart()))) {
-                this.returnBuffer.add(curInput);
+                this.transferArea.transfer(curInput);
             }
             else {
                 Iterator<T> it = sa[RIGHT].query(curInput, Order.LeftRight);
@@ -121,7 +123,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
                             @SuppressWarnings("unchecked")
                             T newElement = (T) curInput.clone();
                             newElement.getMetadata().setEnd(nextMetadata.getStart());
-                            this.returnBuffer.add(newElement);
+                            this.transferArea.transfer(newElement);
                         }
                         if (curMetadata.getEnd().after(nextMetadata.getEnd())) {
                             curMetadata = new TimeInterval(nextMetadata.getEnd(), curMetadata.getEnd());
@@ -141,7 +143,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
             this.sa[RIGHT].insert(curInput);
             Iterator<T> extractIT = this.sa[LEFT].extractElements(curInput, Order.RightLeft);
             while (extractIT.hasNext()) {
-                this.returnBuffer.add(extractIT.next());
+                this.transferArea.transfer(extractIT.next());
             }
 
             LinkedList<T> newElements = new LinkedList<>();
@@ -155,7 +157,7 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
                     T newElement = (T) next.clone();
                     newElement.getMetadata().setStart(nextMetadata.getStart());
                     newElement.getMetadata().setEnd(curStart);
-                    this.returnBuffer.add(newElement);
+                    this.transferArea.transfer(newElement);
                 }
                 if (nextMetadata.getEnd().after(curMetadata.getEnd())) {
                     // MG: Auskommentiert, da eh nicht verwendet
@@ -169,11 +171,8 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
             this.sa[LEFT].insertAll(newElements);
         }
         PointInTime minStart = PointInTime.min(this.highestStart[LEFT], this.highestStart[RIGHT]);
-        T tmpElement = returnBuffer.peek();
-        while (tmpElement != null && tmpElement.getMetadata().getStart().beforeOrEquals(minStart)) {
-            transfer(returnBuffer.poll());
-            tmpElement = returnBuffer.peek();
-        }
+        transferArea.newHeartbeat(minStart, 0);
+        transferArea.newHeartbeat(minStart, 1);
     }
 
     @SuppressWarnings("unchecked")
@@ -193,7 +192,14 @@ public class AntiJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
     }
 
     @Override
-    public void processPunctuation(IPunctuation timestamp, int port) {
+    public synchronized void processPunctuation(IPunctuation punctuation, int port) {
+		if (punctuation.isHeartbeat()) {
+			// synchronized (this) {
+			this.sa[port ^ 1].purgeElementsBefore(punctuation.getTime());
+			// }
+		}
+		this.transferArea.sendPunctuation(punctuation);
+		this.transferArea.newElement(punctuation, port);
     }
 
     @Override

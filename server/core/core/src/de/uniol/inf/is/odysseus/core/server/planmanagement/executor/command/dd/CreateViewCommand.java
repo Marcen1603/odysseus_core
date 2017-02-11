@@ -24,7 +24,9 @@ public class CreateViewCommand extends AbstractCreateStreamOrViewCommand {
 
 	@Override
 	public void execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um, IServerExecutor executor) {		
+			IUserManagementWritable um, IServerExecutor executor) {
+		checkAccessAONames(dd);
+
 		RenameAO rename = new RenameAO();
 		rename.setKeepPosition(true);
 		// remove potential topAO!

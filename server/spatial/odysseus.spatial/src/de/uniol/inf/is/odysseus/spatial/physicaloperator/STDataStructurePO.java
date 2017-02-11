@@ -6,11 +6,15 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.STDataStructureAO;
 
 /**
  * This operator fills a given data structure with data from the incoming
  * stream. The data structure is a spatial data structure. The name of the data
  * structure can be used to access it.
+ * 
+ * It is possible that multiple operators write into the same data structure.
  * 
  * @author Tobias Brandt
  *
@@ -20,8 +24,9 @@ public class STDataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 	private IMovingObjectDataStructure dataStructure;
 
-	public STDataStructurePO(IMovingObjectDataStructure dataStructure) {
-		this.dataStructure = dataStructure;
+	public STDataStructurePO(STDataStructureAO ao) {
+		this.dataStructure = SpatialDataStructureProvider.getInstance().getOrCreateDataStructure(
+				ao.getDataStructureName(), ao.getDataStructureType(), ao.getGeometryPosition());
 	}
 
 	@Override

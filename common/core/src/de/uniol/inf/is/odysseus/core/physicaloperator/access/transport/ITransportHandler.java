@@ -57,6 +57,10 @@ public interface ITransportHandler {
 	 */
     void open() throws UnknownHostException, IOException;
 
+	void start();
+
+	void processInStart();
+
 	void processInOpen() throws IOException;
 
 	void processOutOpen() throws IOException;
@@ -168,5 +172,6 @@ public interface ITransportHandler {
      */
 
     void updateOption(String key, String value);
+
 
 }

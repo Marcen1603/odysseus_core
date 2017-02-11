@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public enum ExecutorPermission implements IPermission {
-	ADD_QUERY, GET_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY, SUSPEND_QUERY, RESUME_QUERY, PARTIAL_QUERY, START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES, GET_ALL_QUERIES;
+	ADD_QUERY, GET_QUERY, START_QUERY, STOP_QUERY, REMOVE_QUERY, SUSPEND_QUERY, RESUME_QUERY, PARTIAL_QUERY, START_ALL_QUERIES, STOP_ALL_QUERIES, REMOVE_ALL_QUERIES, GET_ALL_QUERIES, SET_SCHEDULER, START_SCHEDULER, STOP_SCHEDULER, RUN_COMMAND;
 
 	public final static String objectURI = "queryexecutor";
 
@@ -62,6 +62,10 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	public static boolean hasUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
+		if (query == null){
+			return false;
+		}
+
 		return
 		// User has right
 		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())

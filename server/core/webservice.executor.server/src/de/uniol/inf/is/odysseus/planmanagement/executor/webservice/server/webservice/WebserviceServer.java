@@ -217,22 +217,6 @@ public class WebserviceServer {
 		return new Response(false);
 	}
 
-	@Deprecated
-	public IntegerCollectionResponse addQuery(@WebParam(name = "securitytoken") String securityToken,
-			@WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
-			@WebParam(name = "transformationconfig") String transCfg, @WebParam(name = "context") Context context)
-					throws CreateQueryException, InvalidUserDataException {
-		ISession user = loginWithSecurityToken(securityToken);
-		try {
-			IntegerCollectionResponse response = new IntegerCollectionResponse(
-					ExecutorServiceBinding.getExecutor().addQuery(query, parser, user, transCfg, context), true);
-			return response;
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw new CreateQueryException(e.toString());
-		}
-	}
-
 	public IntegerCollectionResponse addQuery2(@WebParam(name = "securitytoken") String securityToken,
 			@WebParam(name = "parser") String parser, @WebParam(name = "query") String query,
 			@WebParam(name = "context") Context context) throws CreateQueryException, InvalidUserDataException {

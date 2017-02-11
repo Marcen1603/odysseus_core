@@ -55,7 +55,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 	/** Logger */
 	private final Logger LOG = LoggerFactory.getLogger(HTTPTransportHandler.class);
 	/** HTTP Client used for send command */
-	private final HttpClient client = new DefaultHttpClient();
+	private HttpClient client;
 	/** In and output for data transfer */
 	private InputStream input;
 	private OutputStream output;
@@ -106,12 +106,20 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 	@Override
 	public void send(final byte[] message) throws IOException {
 		try {
+			/*
+			 * Client needs to be created every single time as the connection is
+			 * shutdown every time.
+			 */
+			this.client = new DefaultHttpClient();
+
 			HttpRequestBase request = null;
 			switch (this.method) {
 			case PUT:
 				request = new HttpPut(this.uri);
-				// TODO: should the message length in case of chunked = false
-				// set to message.length() ?
+				/*
+				 * TODO: should the message length in case of chunked = false
+				 * set to message.length() ?
+				 */
 				final InputStreamEntity putRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message), -1);
 				putRequestEntity.setContentType(contentType);
 				putRequestEntity.setChunked(chunked);
@@ -132,8 +140,10 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 			case POST:
 			default:
 				request = new HttpPost(this.uri);
-				// TODO: should the message length in case of chunked = false
-				// set to message.length() ?
+				/*
+				 * TODO: should the message length in case of chunked = false
+				 * set to message.length() ?
+				 */
 				final InputStreamEntity postRequestEntity = new InputStreamEntity(new ByteArrayInputStream(message),
 						-1);
 				postRequestEntity.setContentType(contentType);
@@ -142,14 +152,13 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 				if (headers != null) {
 					request.setHeaders(headers);
 				}
-
 			}
-			this.client.execute(request);
-		} finally {
 
+			this.client.execute(request);
+
+		} finally {
 			client.getConnectionManager().shutdown();
 		}
-
 	}
 
 	@Override
@@ -175,14 +184,15 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 
 		contentType = options.get("contenttype", BINARY_OCTET_STREAM);
 
-		if (options.containsKey("httpheader")){
+		if (options.containsKey("httpheader")) {
 			String[] tokens = options.get("httpheader").split(",");
-			if (tokens.length%2 != 0){
-				throw new IllegalArgumentException("HttpHeader not correclty formatted. Use key1,value1,key2,value2, ...");
+			if (tokens.length % 2 != 0) {
+				throw new IllegalArgumentException(
+						"HttpHeader not correclty formatted. Use key1,value1,key2,value2, ...");
 			}
-			this.headers = new Header[tokens.length/2];
-			for (int i=0;i<tokens.length/2;i++){
-				this.headers[i] = new BasicHeader(tokens[i*2], tokens[(i*2)+1]);
+			this.headers = new Header[tokens.length / 2];
+			for (int i = 0; i < tokens.length / 2; i++) {
+				this.headers[i] = new BasicHeader(tokens[i * 2], tokens[(i * 2) + 1]);
 			}
 		}
 
@@ -222,6 +232,7 @@ public class HTTPTransportHandler extends AbstractPullTransportHandler {
 
 	@Override
 	public void processOutClose() throws IOException {
+		this.client.getConnectionManager().shutdown();
 		this.output = null;
 		this.fireOnDisconnect();
 	}

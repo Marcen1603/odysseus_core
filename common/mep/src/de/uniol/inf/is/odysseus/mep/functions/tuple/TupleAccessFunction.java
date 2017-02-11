@@ -15,7 +15,7 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 			new SDFDatatype[] { SDFDatatype.TUPLE, SDFDatatype.OBJECT }, SDFDatatype.NUMBERS };
 
 	public TupleAccessFunction() {
-		super("[]", 2, accTypes, null, false);
+		super("elementAt", 2, accTypes, null, false);
 	}
 
 	@Override
@@ -41,13 +41,13 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 		if (schema != null) {
 			return schema.get(pos).getDatatype();
 		}
-				
+
 		return SDFDatatype.OBJECT;
 	}
 
 	@Override
 	public String getAliasName() {
-		return "elementAt";
+		return "[]";
 	}
 
 }

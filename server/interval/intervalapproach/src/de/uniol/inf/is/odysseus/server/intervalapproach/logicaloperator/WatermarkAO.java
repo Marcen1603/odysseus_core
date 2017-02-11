@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParamete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
- * @author Cornelius Ludmann
+ * @author Cornelius Ludmann Tobias Brandt
  *
  */
 @LogicalOperator(minInputPorts = 0, maxInputPorts = Integer.MAX_VALUE, name = "Watermark", category = {
