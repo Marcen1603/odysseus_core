@@ -7,6 +7,7 @@ import cc.kuka.odysseus.ontology.common.SensorOntologyService;
 import cc.kuka.odysseus.ontology.common.model.condition.Condition;
 import cc.kuka.odysseus.ontology.rcp.SensorRegistryPlugIn;
 
+@SuppressWarnings("unused")
 public class DeleteConditionAction extends Action {
 	private Shell shell;
 	private Condition condition;

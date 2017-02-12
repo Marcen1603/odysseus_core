@@ -15,14 +15,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class SpatialRangeAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 1771804202859128706L;
 
 	private String dataStructureName;
-	private int geometryPosition;
+	private String idAttribute;
+	private String geometryAttribute;
 	private double range;
 
 	public SpatialRangeAO() {
@@ -32,8 +33,9 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	public SpatialRangeAO(SpatialRangeAO ao) {
 		super(ao);
 		this.dataStructureName = ao.getDataStructureName();
-		this.geometryPosition = ao.getGeometryPosition();
 		this.range = ao.getRange();
+		this.idAttribute = ao.getIdAttribute();
+		this.geometryAttribute = ao.getGeometryAttribute();
 	}
 
 	@Override
@@ -45,18 +47,9 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		return dataStructureName;
 	}
 
-	@Parameter(name = "dataStructureName", optional = true, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
+	@Parameter(name = "dataStructureName", optional = false, type = StringParameter.class, isList = false, doc = "The name of the data structure to search in.")
 	public void setDataStructureName(String dataStructureName) {
 		this.dataStructureName = dataStructureName;
-	}
-
-	public int getGeometryPosition() {
-		return geometryPosition;
-	}
-
-	@Parameter(name = "geometryPosition", optional = false, type = IntegerParameter.class, isList = false, doc = "The position in the tuple where the geometry is for which you want to have the neighbors.")
-	public void setGeometryPosition(int geometryPosition) {
-		this.geometryPosition = geometryPosition;
 	}
 
 	public double getRange() {
@@ -66,6 +59,24 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	@Parameter(name = "range", optional = false, type = IntegerParameter.class, isList = false, doc = "Range around the given spatial object in meters.")
 	public void setRange(double range) {
 		this.range = range;
+	}
+
+	public String getIdAttribute() {
+		return idAttribute;
+	}
+
+	@Parameter(name = "idAttribute", optional = true, type = StringParameter.class, isList = false, doc = "EXPERIMENTAL! Name of the attribute with the id of the object.")
+	public void setIdAttribute(String idAttribute) {
+		this.idAttribute = idAttribute;
+	}
+
+	public String getGeometryAttribute() {
+		return geometryAttribute;
+	}
+
+	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the object.F")
+	public void setGeometryAttribute(String geometryAttribute) {
+		this.geometryAttribute = geometryAttribute;
 	}
 
 	@Override

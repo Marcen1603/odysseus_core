@@ -4,6 +4,8 @@ import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Image;
 
+import com.google.common.base.Strings;
+
 import de.uniol.inf.is.odysseus.core.planmanagement.AbstractResourceInformation;
 import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
@@ -21,7 +23,11 @@ public class ResourceInformationLabelProvider extends AbstractViewLabelProvider 
 			return OdysseusRCPPlugIn.getImageManager().get(operatorImage);
 		}
 		if (element instanceof AbstractResourceInformation) {
-			return OdysseusRCPPlugIn.getImageManager().get(operatorImage);
+			String image = ((AbstractResourceInformation)element).getType();
+			if (Strings.isNullOrEmpty(image)){
+				image = operatorImage;
+			}
+			return OdysseusRCPPlugIn.getImageManager().get(image);
 		}
 		return super.getImage(element);
 	}

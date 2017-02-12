@@ -67,7 +67,7 @@ public class PlotBuilder {
 	private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 28);
 	private static final Font LEGEND_FONT = new Font("Arial", Font.PLAIN, 18);
 
-	private static final int LEGEND_ITEM_SIZE = 15;	
+	private static final int LEGEND_ITEM_SIZE = 15;
 
 	public enum OutputType {
 		PNG, PDF, JPEG, GNUPLOT
@@ -114,7 +114,7 @@ public class PlotBuilder {
         createPlots(runs, monitor, model, EvaluationType.MEMORY);
     }
 
-	private static void createPlots(EvaluationRunContainer container, IProgressMonitor monitor, EvaluationModel model, EvaluationType type) {
+	private synchronized static void createPlots(EvaluationRunContainer container, IProgressMonitor monitor, EvaluationModel model, EvaluationType type) {
 		monitor.subTask("Grouping files...");
 		// combine them to groups of variables with same values
 		Map<String, List<EvaluationRun>> groupedRuns = new HashMap<>();
@@ -233,7 +233,7 @@ public class PlotBuilder {
             e.printStackTrace();
         }
 
-        
+
         StringBuilder gnuPlotScript = new StringBuilder();
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
         gnuPlotScript.append("# gnuplot file created by Odysseus on " + sdf.format(Calendar.getInstance().getTime()) + "\n");
@@ -252,7 +252,7 @@ public class PlotBuilder {
             e.printStackTrace();
         }
     }
-    
+
 	private static void writeChart(String destination, JFreeChart chart, int width, int height, OutputType out) throws IOException {
 		LegendItemCollection legendItems = chart.getPlot().getLegendItems();
 		chart.removeLegend();
@@ -291,8 +291,8 @@ public class PlotBuilder {
     private static void writeAsJPG(String destination, JFreeChart chart, int width, int height) throws IOException {
         destination = destination + ".jpg";
         ChartUtilities.saveChartAsJPEG(new File(destination), chart, width, height);
-    }	
-	
+    }
+
 	public static void writeAsPDF(String destination, JFreeChart chart, int width, int height) throws IOException {
 		destination = destination + ".pdf";
 		File file = new File(destination);
