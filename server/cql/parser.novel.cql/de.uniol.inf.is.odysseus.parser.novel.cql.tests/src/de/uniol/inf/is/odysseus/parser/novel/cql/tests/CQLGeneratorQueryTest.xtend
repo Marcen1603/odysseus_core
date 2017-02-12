@@ -827,4 +827,59 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
+	@Test def void SelectExpressionTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1) FROM stream1;"
+			,
+			"operator_1 = DolToEur(attr1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest2()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1) + 10.0 - attr2 FROM stream1;"
+			,
+			"operator_1 = DolToEur(attr1) + 10.0 - attr2 "
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest3()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1 * attr2) + 10.0 - attr2 FROM stream1;"
+			,
+			"operator_1 = DolToEur(attr1 * attr2) + 10.0 - attr2 "
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest4()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2 FROM stream1;"
+			,
+			"operator_1 = DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2,"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest5()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT 'hello' + 'world' FROM stream1;"
+			,
+			"operator_1 = 'hello' + 'world',"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 }

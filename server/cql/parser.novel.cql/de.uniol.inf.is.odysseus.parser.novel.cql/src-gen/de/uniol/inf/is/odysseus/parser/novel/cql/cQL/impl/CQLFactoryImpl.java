@@ -73,8 +73,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.AGGREGATION: return createAggregation();
-      case CQLPackage.FUNCTION: return createFunction();
-      case CQLPackage.FUNCTION_EXPRESSION: return createFunctionExpression();
+      case CQLPackage.MAPPER: return createMapper();
+      case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.CONSTANT: return createConstant();
       case CQLPackage.EXPRESSION: return createExpression();
@@ -226,10 +226,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Function createFunction()
+  public Mapper createMapper()
   {
-    FunctionImpl function = new FunctionImpl();
-    return function;
+    MapperImpl mapper = new MapperImpl();
+    return mapper;
   }
 
   /**
@@ -237,10 +237,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public FunctionExpression createFunctionExpression()
+  public SelectExpression createSelectExpression()
   {
-    FunctionExpressionImpl functionExpression = new FunctionExpressionImpl();
-    return functionExpression;
+    SelectExpressionImpl selectExpression = new SelectExpressionImpl();
+    return selectExpression;
   }
 
   /**

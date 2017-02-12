@@ -465,4 +465,44 @@ public class CQLGeneratorQueryTest {
       "SELECT DISTINCT * FROM stream1;", 
       "operator_1 = DISTINCT(PROJECT({attributes=[\'stream1.attr1\', \'stream1.attr2\']}, stream1))", _cQLDictionaryHelper);
   }
+  
+  @Test
+  public void SelectExpressionTest1() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT DolToEur(attr1) FROM stream1;", 
+      "operator_1 = DolToEur(attr1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectExpressionTest2() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT DolToEur(attr1) + 10.0 - attr2 FROM stream1;", 
+      "operator_1 = DolToEur(attr1) + 10.0 - attr2 ", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectExpressionTest3() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT DolToEur(attr1 * attr2) + 10.0 - attr2 FROM stream1;", 
+      "operator_1 = DolToEur(attr1 * attr2) + 10.0 - attr2 ", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectExpressionTest4() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2 FROM stream1;", 
+      "operator_1 = DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2,", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectExpressionTest5() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT \'hello\' + \'world\' FROM stream1;", 
+      "operator_1 = \'hello\' + \'world\',", _cQLDictionaryHelper);
+  }
 }

@@ -49,6 +49,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
 
 //import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 
@@ -433,12 +434,11 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseSelectWithoutPredicate(Select stmt)
 	{
-		
 		if(!stmt.attributes.empty)//SELECT attr1, ...
 		{
 		    var String operator = null
 		    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
-			if(!stmt.aggregations.empty)
+			if(!stmt.aggregations.empty)//Contains aggregations like SELECT AVG(attr1), MAX(attr2) AS maxAttr2s FROM ..
 			{
 				var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
 				attributes = result.get(0) as List<String>
@@ -448,7 +448,8 @@ class CQLGenerator implements IGenerator2
 				attributes.addAll(
 					stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
 				)
-			}									
+			}
+			
 			var join = buildJoin(null, stmt.sources, operator)
 			attributes.addAll(selfJoin2)
 			var prj =  '''«buildProjectOP(attributes, join)»'''
@@ -456,6 +457,16 @@ class CQLGenerator implements IGenerator2
 		}
 		else//SELECT * ..
 		{
+			println("huhu")
+			
+			if(!stmt.expressions.empty)//Contains expressions like SELECT DolToEuro(attr1) * 20.05 AS alias1 FROM ..
+			{
+				println("hey")
+				var result = buildMapOperator(stmt.expressions, stmt.sources)
+				var operator = registerOperator(result.toString)
+				return operator
+			}
+			
 			if(stmt.aggregations.empty)
 			{
 				if(stmt.sources.size == 1)
@@ -465,6 +476,7 @@ class CQLGenerator implements IGenerator2
 				}
 				return registerOperator('''«buildJoin(stmt.sources)»''')
 			}
+			
 			var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
 			return registerOperator('''«operator.get(1).toString»''')
 		}
@@ -550,38 +562,74 @@ class CQLGenerator implements IGenerator2
 		return result
 	}
 	
-	
-	def private CharSequence buildRenameOperator(CharSequence operator)//TODO Documentation
+	def private CharSequence buildMapOperator(List<SelectExpression> expressions, List<Source> sources)
 	{
-		var list = newArrayList
-		for(Entry<AttributeStruct, List<String>> l : getAttributeAliases.entrySet)
+		for(SelectExpression exp : expressions)
 		{
-			list.add(l.key.attributename)
-			list.add(l.value.get(0))
+			selectexpression += parseSelectExpression(exp).toString + ","
+			
 		}
-		var rename = '''renamed_«getID()» = RENAME({aliases=[«generateListString(list)»], pairs='true'}, «operator»)'''
-		return rename
+		
+		return selectexpression
+		
+//		return "MAP({
+//		              expressions = [
+//		                                ['auction_id * 5','AuctionMult5'],
+//		                                'sqrt(auction_id)'
+//		                            ]
+//		             }, input)"
 	}
 	
-	def private CharSequence buildRenameOperator2(List<String> paired, String source)//TODO rename method
+	var selectexpression = ''
+	def private CharSequence parseSelectExpression(SelectExpression exp)
 	{
-		return '''RENAME({aliases=[«generateListString(paired)»], pairs='true'}, «source»)'''
-	}
-	
-	def private registerSourceAlias(Source source)
-	{
-		if(source.alias != null && source.nested == null)
-			registerOperator(source.name, source.alias.name)
-	}
-	
-	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
-	{
-		return buildAggregateOP(list, list2, buildJoin(srcs))
-	}
-	
-	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
-	{
-		return buildAggregateOP(list, list2, checkForNestedStatement(src))
+		var str = ''
+		if(exp.leftmapper != null)
+		{
+			str += exp.leftmapper.name + '('
+			if(exp.leftmapper.attribute != null)
+				str += exp.leftmapper.attribute.name + ')'
+			else 
+				str += parseSelectExpression(exp.leftmapper.innerexpression) + ')'
+		}
+		if(exp.leftattribute != null)
+			str += exp.leftattribute.name
+		if(exp.leftconstant != null)
+		{
+			var operator = ''
+			switch(exp.leftconstant)
+			{
+				IntConstant: 	operator = (exp.leftconstant as IntConstant).value + ''
+				FloatConstant:  operator = (exp.leftconstant as FloatConstant).value + ''
+				StringConstant: operator = "'" + (exp.leftconstant as StringConstant).value+ "'"
+				BoolConstant: 	operator = (exp.leftconstant as BoolConstant).value+ ''
+			}			
+			str += operator
+		}
+		
+		if(exp.operator != null)
+			str += exp.operator
+		else return str
+		
+		if(exp.innerexpression != null)
+			str += parseSelectExpression(exp.innerexpression)
+		
+		if(exp.rightconstant != null)
+		{
+			var operator = ''
+			switch(exp.rightconstant)
+			{
+				IntConstant: 	operator = (exp.rightconstant as IntConstant).value + ''
+				FloatConstant:  operator = (exp.rightconstant as FloatConstant).value + ''
+				StringConstant: operator = "'" + (exp.rightconstant as StringConstant).value+ "'"
+				BoolConstant: 	operator = (exp.rightconstant as BoolConstant).value + ''
+			}			
+			str += operator
+		}
+		if(exp.rightattribute != null)
+			str += exp.rightattribute.name
+		
+		return str
 	}
 	
 	def private Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
@@ -629,7 +677,40 @@ class CQLGenerator implements IGenerator2
 		}
 		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)''']
 	}
-		
+	
+	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
+	{
+		return buildAggregateOP(list, list2, buildJoin(srcs))
+	}
+	
+	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
+	{
+		return buildAggregateOP(list, list2, checkForNestedStatement(src))
+	}
+	
+	def private CharSequence buildRenameOperator(CharSequence operator)//TODO Documentation
+	{
+		var list = newArrayList
+		for(Entry<AttributeStruct, List<String>> l : getAttributeAliases.entrySet)
+		{
+			list.add(l.key.attributename)
+			list.add(l.value.get(0))
+		}
+		var rename = '''renamed_«getID()» = RENAME({aliases=[«generateListString(list)»], pairs='true'}, «operator»)'''
+		return rename
+	}
+	
+	def private CharSequence buildRenameOperator2(List<String> paired, String source)//TODO rename method
+	{
+		return '''RENAME({aliases=[«generateListString(paired)»], pairs='true'}, «source»)'''
+	}
+	
+	def private registerSourceAlias(Source source)
+	{
+		if(source.alias != null && source.nested == null)
+			registerOperator(source.name, source.alias.name)
+	}
+	
 	def private CharSequence parseCreateStream1(CreateStream1 create)
 	{
 		return registerOperator(buildCreate1("ACCESS", create.pars, create.attributes.attributes, create.attributes.datatypes, create.attributes.name).toString, create.attributes.name)
@@ -984,9 +1065,9 @@ class CQLGenerator implements IGenerator2
 			switch e
 			{
 				IntConstant: 	str = e.value + ''
-				FloatConstant:  str = e.value
+				FloatConstant:  str = e.value + ''
 				StringConstant: str = "'" + e.value + "'"
-				BoolConstant: 	str = e.value
+				BoolConstant: 	str = e.value + ''
 	
 			}
 			predicate += str

@@ -111,14 +111,14 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAggregationAdapter();
       }
       @Override
-      public Adapter caseFunction(Function object)
+      public Adapter caseMapper(Mapper object)
       {
-        return createFunctionAdapter();
+        return createMapperAdapter();
       }
       @Override
-      public Adapter caseFunctionExpression(FunctionExpression object)
+      public Adapter caseSelectExpression(SelectExpression object)
       {
-        return createFunctionExpressionAdapter();
+        return createSelectExpressionAdapter();
       }
       @Override
       public Adapter caseAlias(Alias object)
@@ -398,31 +398,31 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper <em>Mapper</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
    * @generated
    */
-  public Adapter createFunctionAdapter()
+  public Adapter createMapperAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression <em>Function Expression</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression <em>Select Expression</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
    * @generated
    */
-  public Adapter createFunctionExpressionAdapter()
+  public Adapter createSelectExpressionAdapter()
   {
     return null;
   }

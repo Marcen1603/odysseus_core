@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl#getAttribute <em>Attribute</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl#getAlias <em>Alias</em>}</li>
  * </ul>
  *
@@ -63,6 +65,16 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
    * @ordered
    */
   protected Attribute attribute;
+
+  /**
+   * The cached value of the '{@link #getExpression() <em>Expression</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected SelectExpression expression;
 
   /**
    * The cached value of the '{@link #getAlias() <em>Alias</em>}' containment reference.
@@ -171,6 +183,54 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
    * <!-- end-user-doc -->
    * @generated
    */
+  public SelectExpression getExpression()
+  {
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExpression(SelectExpression newExpression, NotificationChain msgs)
+  {
+    SelectExpression oldExpression = expression;
+    expression = newExpression;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.AGGREGATION__EXPRESSION, oldExpression, newExpression);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpression(SelectExpression newExpression)
+  {
+    if (newExpression != expression)
+    {
+      NotificationChain msgs = null;
+      if (expression != null)
+        msgs = ((InternalEObject)expression).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.AGGREGATION__EXPRESSION, null, msgs);
+      if (newExpression != null)
+        msgs = ((InternalEObject)newExpression).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.AGGREGATION__EXPRESSION, null, msgs);
+      msgs = basicSetExpression(newExpression, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.AGGREGATION__EXPRESSION, newExpression, newExpression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Alias getAlias()
   {
     return alias;
@@ -226,6 +286,8 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
     {
       case CQLPackage.AGGREGATION__ATTRIBUTE:
         return basicSetAttribute(null, msgs);
+      case CQLPackage.AGGREGATION__EXPRESSION:
+        return basicSetExpression(null, msgs);
       case CQLPackage.AGGREGATION__ALIAS:
         return basicSetAlias(null, msgs);
     }
@@ -246,6 +308,8 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
         return getName();
       case CQLPackage.AGGREGATION__ATTRIBUTE:
         return getAttribute();
+      case CQLPackage.AGGREGATION__EXPRESSION:
+        return getExpression();
       case CQLPackage.AGGREGATION__ALIAS:
         return getAlias();
     }
@@ -267,6 +331,9 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
         return;
       case CQLPackage.AGGREGATION__ATTRIBUTE:
         setAttribute((Attribute)newValue);
+        return;
+      case CQLPackage.AGGREGATION__EXPRESSION:
+        setExpression((SelectExpression)newValue);
         return;
       case CQLPackage.AGGREGATION__ALIAS:
         setAlias((Alias)newValue);
@@ -291,6 +358,9 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
       case CQLPackage.AGGREGATION__ATTRIBUTE:
         setAttribute((Attribute)null);
         return;
+      case CQLPackage.AGGREGATION__EXPRESSION:
+        setExpression((SelectExpression)null);
+        return;
       case CQLPackage.AGGREGATION__ALIAS:
         setAlias((Alias)null);
         return;
@@ -312,6 +382,8 @@ public class AggregationImpl extends MinimalEObjectImpl.Container implements Agg
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.AGGREGATION__ATTRIBUTE:
         return attribute != null;
+      case CQLPackage.AGGREGATION__EXPRESSION:
+        return expression != null;
       case CQLPackage.AGGREGATION__ALIAS:
         return alias != null;
     }

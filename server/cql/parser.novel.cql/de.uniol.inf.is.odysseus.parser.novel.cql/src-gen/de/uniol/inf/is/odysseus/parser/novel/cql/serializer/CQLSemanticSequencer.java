@@ -26,9 +26,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
@@ -36,6 +35,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
@@ -69,8 +69,15 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		if (epackage == CQLPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
 			case CQLPackage.AGGREGATION:
-				sequence_Aggregation(context, (Aggregation) semanticObject); 
-				return; 
+				if (rule == grammarAccess.getAggregationWithoutAliasDefinitionRule()) {
+					sequence_AggregationWithoutAliasDefinition(context, (Aggregation) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAggregationRule()) {
+					sequence_Aggregation(context, (Aggregation) semanticObject); 
+					return; 
+				}
+				else break;
 			case CQLPackage.ALIAS:
 				sequence_Alias(context, (Alias) semanticObject); 
 				return; 
@@ -130,7 +137,11 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_AttributeWithNestedStatement(context, (AttributeWithNestedStatement) semanticObject); 
 				return; 
 			case CQLPackage.BOOL_CONSTANT:
-				if (rule == grammarAccess.getExpressionRule()
+				if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
+					sequence_AtomicWithoutAttributeRef(context, (BoolConstant) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionRule()
 						|| rule == grammarAccess.getOrRule()
 						|| action == grammarAccess.getOrAccess().getOrLeftAction_1_0()
 						|| rule == grammarAccess.getAndRule()
@@ -251,7 +262,11 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_ExpressionsModel(context, (ExpressionsModel) semanticObject); 
 				return; 
 			case CQLPackage.FLOAT_CONSTANT:
-				if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
+				if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
+					sequence_AtomicWithoutAttributeRef(context, (FloatConstant) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
 					sequence_Atomic_ExpressionWithAliasDefintion(context, (FloatConstant) semanticObject); 
 					return; 
 				}
@@ -279,28 +294,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
-			case CQLPackage.FUNCTION:
-				if (rule == grammarAccess.getFunctionWithoutAliasDefinitionRule()) {
-					sequence_FunctionWithoutAliasDefinition(context, (Function) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getFunctionRule()) {
-					sequence_Function(context, (Function) semanticObject); 
-					return; 
-				}
-				else break;
-			case CQLPackage.FUNCTION_EXPRESSION:
-				if (rule == grammarAccess.getFunctionExpressionWithoutAliasDefinitionRule()) {
-					sequence_FunctionExpressionWithoutAliasDefinition(context, (FunctionExpression) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getFunctionExpressionRule()) {
-					sequence_FunctionExpression(context, (FunctionExpression) semanticObject); 
-					return; 
-				}
-				else break;
 			case CQLPackage.INT_CONSTANT:
-				if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
+				if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
+					sequence_AtomicWithoutAttributeRef(context, (IntConstant) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
 					sequence_Atomic_ExpressionWithAliasDefintion(context, (IntConstant) semanticObject); 
 					return; 
 				}
@@ -328,6 +327,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case CQLPackage.MAPPER:
+				sequence_Mapper(context, (Mapper) semanticObject); 
+				return; 
 			case CQLPackage.MINUS:
 				if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
 					sequence_ExpressionWithAliasDefintion_PlusOrMinus(context, (Minus) semanticObject); 
@@ -435,6 +437,44 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.SELECT:
 				sequence_Select(context, (Select) semanticObject); 
 				return; 
+			case CQLPackage.SELECT_EXPRESSION:
+				if (rule == grammarAccess.getSelectExpressionOnlyWithAttribute2Rule()) {
+					sequence_SelectExpressionOnlyWithAttribute2(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithAttributeAndConstant2Rule()) {
+					sequence_SelectExpressionOnlyWithAttributeAndConstant2(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithAttributeAndConstantRule()) {
+					sequence_SelectExpressionOnlyWithAttributeAndConstant(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithAttributeRule()) {
+					sequence_SelectExpressionOnlyWithAttribute(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithMapperRule()) {
+					sequence_SelectExpressionOnlyWithMapper(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithStringConstant2Rule()) {
+					sequence_SelectExpressionOnlyWithStringConstant2(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionOnlyWithStringConstantRule()) {
+					sequence_SelectExpressionOnlyWithStringConstant(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionWithoutAliasDefinitionRule()) {
+					sequence_SelectExpressionWithoutAliasDefinition(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getSelectExpressionRule()) {
+					sequence_SelectExpression(context, (SelectExpression) semanticObject); 
+					return; 
+				}
+				else break;
 			case CQLPackage.SOURCE:
 				sequence_Source(context, (Source) semanticObject); 
 				return; 
@@ -445,7 +485,15 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_StreamTo(context, (StreamTo) semanticObject); 
 				return; 
 			case CQLPackage.STRING_CONSTANT:
-				if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
+				if (rule == grammarAccess.getAtomicWithOnlyStringConstantRule()) {
+					sequence_AtomicWithOnlyStringConstant(context, (StringConstant) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
+					sequence_AtomicWithoutAttributeRef(context, (StringConstant) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getExpressionWithAliasDefintionRule()) {
 					sequence_Atomic_ExpressionWithAliasDefintion(context, (StringConstant) semanticObject); 
 					return; 
 				}
@@ -486,6 +534,30 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     AggregationWithoutAliasDefinition returns Aggregation
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             name='AVG' | 
+	 *             name='MIN' | 
+	 *             name='MAX' | 
+	 *             name='COUNT' | 
+	 *             name='SUM' | 
+	 *             name='MEDIAN' | 
+	 *             name='FIRST' | 
+	 *             name='LAST'
+	 *         ) 
+	 *         (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)
+	 *     )
+	 */
+	protected void sequence_AggregationWithoutAliasDefinition(ISerializationContext context, Aggregation semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Aggregation returns Aggregation
 	 *
 	 * Constraint:
@@ -500,7 +572,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             name='FIRST' | 
 	 *             name='LAST'
 	 *         ) 
-	 *         attribute=AttributeWithoutAliasDefinition 
+	 *         (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) 
 	 *         alias=Alias?
 	 *     )
 	 */
@@ -572,6 +644,90 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getAndAccess().getAndLeftAction_1_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getAndAccess().getRightEqualitiyParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.accept(grammarAccess.getExpressionWithAliasDefintionAccess().getAliasAliasParserRuleCall_2_0(), semanticObject.getAlias());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithOnlyStringConstant returns StringConstant
+	 *
+	 * Constraint:
+	 *     value=STRING
+	 */
+	protected void sequence_AtomicWithOnlyStringConstant(ISerializationContext context, StringConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithOnlyStringConstantAccess().getValueSTRINGTerminalRuleCall_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns BoolConstant
+	 *
+	 * Constraint:
+	 *     (value='TRUE' | value='FALSE')
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, BoolConstant semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns FloatConstant
+	 *
+	 * Constraint:
+	 *     value=FLOAT
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, FloatConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FLOAT_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FLOAT_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueFLOATTerminalRuleCall_1_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns IntConstant
+	 *
+	 * Constraint:
+	 *     value=INT
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, IntConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.INT_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.INT_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueINTTerminalRuleCall_0_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns StringConstant
+	 *
+	 * Constraint:
+	 *     value=STRING
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, StringConstant semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueSTRINGTerminalRuleCall_2_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1352,80 +1508,13 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     FunctionExpressionWithoutAliasDefinition returns FunctionExpression
+	 *     Mapper returns Mapper
 	 *
 	 * Constraint:
-	 *     (
-	 *         (function=FunctionWithoutAliasDefinition | attribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT) 
-	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
-	 *         innerexpression=FunctionExpressionWithoutAliasDefinition?
-	 *     )
+	 *     (name='DolToEur' (attribute=AttributeWithoutAliasDefinition | innerexpression=SelectExpressionOnlyWithAttributeAndConstant))
 	 */
-	protected void sequence_FunctionExpressionWithoutAliasDefinition(ISerializationContext context, FunctionExpression semanticObject) {
+	protected void sequence_Mapper(ISerializationContext context, Mapper semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     FunctionExpression returns FunctionExpression
-	 *
-	 * Constraint:
-	 *     (
-	 *         (function=FunctionWithoutAliasDefinition | leftattribute=AttributeWithoutAliasDefinition | leftconstant=FLOAT) 
-	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
-	 *         innerexpression=FunctionExpressionWithoutAliasDefinition? 
-	 *         (rightattribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT) 
-	 *         alias=Alias?
-	 *     )
-	 */
-	protected void sequence_FunctionExpression(ISerializationContext context, FunctionExpression semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     FunctionWithoutAliasDefinition returns Function
-	 *
-	 * Constraint:
-	 *     (name='DolToEur' attribute=AttributeWithoutAliasDefinition)
-	 */
-	protected void sequence_FunctionWithoutAliasDefinition(ISerializationContext context, Function semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FUNCTION__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FUNCTION__NAME));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FUNCTION__ATTRIBUTE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FUNCTION__ATTRIBUTE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getFunctionWithoutAliasDefinitionAccess().getNameDolToEurKeyword_0_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getFunctionWithoutAliasDefinitionAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0(), semanticObject.getAttribute());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Function returns Function
-	 *
-	 * Constraint:
-	 *     (name='DolToEur' attribute=AttributeWithoutAliasDefinition alias=Alias)
-	 */
-	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FUNCTION__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FUNCTION__NAME));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FUNCTION__ATTRIBUTE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FUNCTION__ATTRIBUTE));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.FUNCTION__ALIAS) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.FUNCTION__ALIAS));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getFunctionAccess().getNameDolToEurKeyword_0_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getFunctionAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0(), semanticObject.getAttribute());
-		feeder.accept(grammarAccess.getFunctionAccess().getAliasAliasParserRuleCall_5_0(), semanticObject.getAlias());
-		feeder.finish();
 	}
 	
 	
@@ -1619,6 +1708,148 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     SelectExpressionOnlyWithAttribute2 returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         leftattribute=AttributeWithoutAliasDefinition 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionOnlyWithAttribute2?
+	 *     )
+	 */
+	protected void sequence_SelectExpressionOnlyWithAttribute2(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         (leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
+	 *     )
+	 */
+	protected void sequence_SelectExpressionOnlyWithAttributeAndConstant2(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         (leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionOnlyWithAttributeAndConstant2? 
+	 *         (rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+	 *     )
+	 */
+	protected void sequence_SelectExpressionOnlyWithAttributeAndConstant(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithAttribute returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         leftattribute=AttributeWithoutAliasDefinition 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionOnlyWithAttribute2? 
+	 *         rightatttriute=AttributeWithoutAliasDefinition
+	 *     )
+	 */
+	protected void sequence_SelectExpressionOnlyWithAttribute(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithMapper returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (leftmapper=Mapper alias=Alias?)
+	 */
+	protected void sequence_SelectExpressionOnlyWithMapper(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithStringConstant2 returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (leftconstant=AtomicWithOnlyStringConstant (operator='+' | operator='-') innerexpression=SelectExpressionOnlyWithStringConstant2?)
+	 */
+	protected void sequence_SelectExpressionOnlyWithStringConstant2(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionOnlyWithStringConstant returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         leftconstant=AtomicWithOnlyStringConstant 
+	 *         (operator='+' | operator='-') 
+	 *         innerexpression=SelectExpressionOnlyWithStringConstant2? 
+	 *         rightconstant=AtomicWithOnlyStringConstant 
+	 *         alias=Alias?
+	 *     )
+	 */
+	protected void sequence_SelectExpressionOnlyWithStringConstant(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpressionWithoutAliasDefinition returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         (leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionWithoutAliasDefinition?
+	 *     )
+	 */
+	protected void sequence_SelectExpressionWithoutAliasDefinition(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     SelectExpression returns SelectExpression
+	 *
+	 * Constraint:
+	 *     (
+	 *         (leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) 
+	 *         (operator='+' | operator='-' | operator='/' | operator='*') 
+	 *         innerexpression=SelectExpressionWithoutAliasDefinition? 
+	 *         (rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef) 
+	 *         alias=Alias?
+	 *     )
+	 */
+	protected void sequence_SelectExpression(ISerializationContext context, SelectExpression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Select returns Select
 	 *     NestedStatement returns Select
 	 *
@@ -1627,9 +1858,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         name='SELECT' 
 	 *         distinct='DISTINCT'? 
 	 *         (
-	 *             (attributes+=Attribute | aggregations+=Aggregation | functions+=Function | expressions+=FunctionExpression)+ 
+	 *             (attributes+=Attribute | aggregations+=Aggregation | expressions+=SelectExpression)+ 
 	 *             attributes+=Attribute? 
-	 *             ((aggregations+=Aggregation | functions+=Function | expressions+=FunctionExpression)? attributes+=Attribute?)*
+	 *             ((aggregations+=Aggregation | expressions+=SelectExpression)? attributes+=Attribute?)*
 	 *         )? 
 	 *         sources+=Source+ 
 	 *         sources+=Source* 

@@ -87,22 +87,22 @@ public interface CQLFactory extends EFactory
   Aggregation createAggregation();
 
   /**
-   * Returns a new object of class '<em>Function</em>'.
+   * Returns a new object of class '<em>Mapper</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function</em>'.
+   * @return a new object of class '<em>Mapper</em>'.
    * @generated
    */
-  Function createFunction();
+  Mapper createMapper();
 
   /**
-   * Returns a new object of class '<em>Function Expression</em>'.
+   * Returns a new object of class '<em>Select Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function Expression</em>'.
+   * @return a new object of class '<em>Select Expression</em>'.
    * @generated
    */
-  FunctionExpression createFunctionExpression();
+  SelectExpression createSelectExpression();
 
   /**
    * Returns a new object of class '<em>Alias</em>'.

@@ -22,13 +22,15 @@ Select:
 	(distinct='DISTINCT')?
 	( '*' |
 		( 
-			(attributes+=Attribute | aggregations+=Aggregation
-				| functions+=Function 
-				| expressions+=FunctionExpression
+			(attributes+=Attribute 
+				| aggregations+=Aggregation
+//				| mapperss+=Mapper 
+				| expressions+=SelectExpression
 			)+  
-			((',' attributes+=Attribute) | (',' aggregations+=Aggregation) 
-				| (',' functions+=Function)
-				| (',' expressions+=FunctionExpression)
+			((',' attributes+=Attribute) 
+				| (',' aggregations+=Aggregation) 
+//				| (',' mappers+=Mapper)
+				| (',' expressions+=SelectExpression)
 			)*
 		)
 	)
@@ -76,38 +78,93 @@ AttributeWithNestedStatement:
  
 Aggregation://TODO That is not supposed to be hard coded! 
 	name=('AVG'|'MIN'|'MAX'|'COUNT'|'SUM'|'MEDIAN'|'FIRST'|'LAST')
-	'(' attribute=AttributeWithoutAliasDefinition ')'
+	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)')'
 	('AS' alias=Alias)?
 ;
 
-Function://TODO That is not supposed to be hard coded! 
-	name=('DolToEur')
-	'('
-	attribute=AttributeWithoutAliasDefinition
-	')'
-	'AS'
-	alias=Alias
+AggregationWithoutAliasDefinition returns Aggregation:
+	name=('AVG'|'MIN'|'MAX'|'COUNT'|'SUM'|'MEDIAN'|'FIRST'|'LAST')
+	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)')'
 ;
 
-FunctionWithoutAliasDefinition returns Function:
+Mapper://TODO That is not supposed to be hard coded! 
 	name=('DolToEur')
 	'('
-	attribute=AttributeWithoutAliasDefinition
+	(attribute=AttributeWithoutAliasDefinition 
+		| innerexpression = SelectExpressionOnlyWithAttributeAndConstant
+	)
 	')'
 ;
 
-FunctionExpression:
-	(function=FunctionWithoutAliasDefinition | leftattribute=AttributeWithoutAliasDefinition | leftconstant=FLOAT)
+SelectExpression:
+	(leftmapper=Mapper
+		| leftattribute=AttributeWithoutAliasDefinition 
+		| leftconstant=AtomicWithoutAttributeRef
+	)
 	operator=('+'|'-'|'/'|'*')
-	(innerexpression=FunctionExpressionWithoutAliasDefinition)?
-	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT)
+	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
 	('AS' alias=Alias)?
 ;
 
-FunctionExpressionWithoutAliasDefinition returns FunctionExpression:
-	(function=FunctionWithoutAliasDefinition | attribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT)
+SelectExpressionWithoutAliasDefinition returns SelectExpression:
+	(leftmapper=Mapper
+		| leftattribute=AttributeWithoutAliasDefinition 
+		| leftconstant=AtomicWithoutAttributeRef
+	)
 	operator=('+'|'-'|'/'|'*')
-	(innerexpression=FunctionExpressionWithoutAliasDefinition)?
+	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+;
+
+SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
+	(leftattribute=AttributeWithoutAliasDefinition 
+		| leftconstant=AtomicWithoutAttributeRef
+	)
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+	(rightattribute=AttributeWithoutAliasDefinition 
+		| rightconstant=AtomicWithoutAttributeRef
+	)
+;
+
+SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression:
+	(leftattribute=AttributeWithoutAliasDefinition 
+		| leftconstant=AtomicWithoutAttributeRef
+	)
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+;
+
+SelectExpressionOnlyWithMapper returns SelectExpression:
+	leftmapper=Mapper
+	('AS' alias=Alias)?
+;
+
+SelectExpressionOnlyWithStringConstant returns SelectExpression:
+	leftconstant=AtomicWithOnlyStringConstant
+	operator=('+'|'-')
+	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+	rightconstant=AtomicWithOnlyStringConstant
+	('AS' alias=Alias)?
+;
+
+SelectExpressionOnlyWithStringConstant2 returns SelectExpression:
+	leftconstant=AtomicWithOnlyStringConstant
+	operator=('+'|'-')
+	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+;
+
+SelectExpressionOnlyWithAttribute returns SelectExpression:
+	leftattribute=AttributeWithoutAliasDefinition
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+	rightatttriute=AttributeWithoutAliasDefinition
+;
+
+SelectExpressionOnlyWithAttribute2 returns SelectExpression:
+	leftattribute=AttributeWithoutAliasDefinition
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=SelectExpressionOnlyWithAttribute2)?
 ;
 
 Alias:
@@ -115,10 +172,10 @@ Alias:
 ;  
 
 Constant:
-	{IntConstant} value=INT |
-	{FloatConstant} value=FLOAT |
-	{StringConstant} value= STRING |
-	{BoolConstant} value=('TRUE' | 'FALSE')
+	{IntConstant} value=INT 
+	| {FloatConstant} value=FLOAT 
+	| {StringConstant} value= STRING 
+	| {BoolConstant} value=('TRUE' | 'FALSE')
 ;
 
 ExpressionWithAliasDefintion returns Expression:
@@ -363,14 +420,24 @@ Primary returns Expression:
 ;
 
 Atomic returns Expression:
-//	{NumberConstant} (value=INT | value=INT '.' INT) |
-	{IntConstant} value=INT |
-	{FloatConstant} value=FLOAT |
-	{StringConstant} value= STRING |
-	{BoolConstant} value=('TRUE' | 'FALSE') |
+	{IntConstant} value=INT 
+	| {FloatConstant} value=FLOAT 
+	| {StringConstant} value= STRING 
+	| {BoolConstant} value=('TRUE' | 'FALSE')
 	//TODO A SELECT * query offers no reference for an attribute.
 	//At the moment is no actual referencing possible!
-	{AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+;
+
+AtomicWithoutAttributeRef returns Expression:
+	{IntConstant} value=INT 
+	| {FloatConstant} value=FLOAT 
+	| {StringConstant} value= STRING 
+	| {BoolConstant} value=('TRUE' | 'FALSE')
+;
+
+AtomicWithOnlyStringConstant returns Expression:
+	{StringConstant} value= STRING 
 ;
 
 //TODO have to be dynamic -> use scope provider

@@ -122,17 +122,17 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.FUNCTION:
+      case CQLPackage.MAPPER:
       {
-        Function function = (Function)theEObject;
-        T result = caseFunction(function);
+        Mapper mapper = (Mapper)theEObject;
+        T result = caseMapper(mapper);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.FUNCTION_EXPRESSION:
+      case CQLPackage.SELECT_EXPRESSION:
       {
-        FunctionExpression functionExpression = (FunctionExpression)theEObject;
-        T result = caseFunctionExpression(functionExpression);
+        SelectExpression selectExpression = (SelectExpression)theEObject;
+        T result = caseSelectExpression(selectExpression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -481,33 +481,33 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Mapper</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Mapper</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseFunction(Function object)
+  public T caseMapper(Mapper object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Function Expression</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Select Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function Expression</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Select Expression</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseFunctionExpression(FunctionExpression object)
+  public T caseSelectExpression(SelectExpression object)
   {
     return null;
   }
