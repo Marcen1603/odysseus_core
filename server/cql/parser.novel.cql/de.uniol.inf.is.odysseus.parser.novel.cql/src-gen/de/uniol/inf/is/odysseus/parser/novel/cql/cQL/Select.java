@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getAggregations <em>Aggregations</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getFunctions <em>Functions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getExpressions <em>Expressions</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources <em>Sources</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates <em>Predicates</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getOrder <em>Order</em>}</li>
@@ -115,6 +117,38 @@ public interface Select extends EObject
    * @generated
    */
   EList<Aggregation> getAggregations();
+
+  /**
+   * Returns the value of the '<em><b>Functions</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Functions</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Functions</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Functions()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Function> getFunctions();
+
+  /**
+   * Returns the value of the '<em><b>Expressions</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expressions</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expressions</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Expressions()
+   * @model containment="true"
+   * @generated
+   */
+  EList<FunctionExpression> getExpressions();
 
   /**
    * Returns the value of the '<em><b>Sources</b></em>' containment reference list.

@@ -122,10 +122,38 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.FUNCTION_EXPRESSION:
+      {
+        FunctionExpression functionExpression = (FunctionExpression)theEObject;
+        T result = caseFunctionExpression(functionExpression);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.ALIAS:
       {
         Alias alias = (Alias)theEObject;
         T result = caseAlias(alias);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CONSTANT:
+      {
+        Constant constant = (Constant)theEObject;
+        T result = caseConstant(constant);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.EXPRESSION:
+      {
+        Expression expression = (Expression)theEObject;
+        T result = caseExpression(expression);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -213,17 +241,46 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.EXPRESSION:
-      {
-        Expression expression = (Expression)theEObject;
-        T result = caseExpression(expression);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.DATA_TYPE:
       {
         DataType dataType = (DataType)theEObject;
         T result = caseDataType(dataType);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.INT_CONSTANT:
+      {
+        IntConstant intConstant = (IntConstant)theEObject;
+        T result = caseIntConstant(intConstant);
+        if (result == null) result = caseConstant(intConstant);
+        if (result == null) result = caseExpression(intConstant);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.FLOAT_CONSTANT:
+      {
+        FloatConstant floatConstant = (FloatConstant)theEObject;
+        T result = caseFloatConstant(floatConstant);
+        if (result == null) result = caseConstant(floatConstant);
+        if (result == null) result = caseExpression(floatConstant);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.STRING_CONSTANT:
+      {
+        StringConstant stringConstant = (StringConstant)theEObject;
+        T result = caseStringConstant(stringConstant);
+        if (result == null) result = caseConstant(stringConstant);
+        if (result == null) result = caseExpression(stringConstant);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.BOOL_CONSTANT:
+      {
+        BoolConstant boolConstant = (BoolConstant)theEObject;
+        T result = caseBoolConstant(boolConstant);
+        if (result == null) result = caseConstant(boolConstant);
+        if (result == null) result = caseExpression(boolConstant);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -296,38 +353,6 @@ public class CQLSwitch<T> extends Switch<T>
         NOT not = (NOT)theEObject;
         T result = caseNOT(not);
         if (result == null) result = caseExpression(not);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.INT_CONSTANT:
-      {
-        IntConstant intConstant = (IntConstant)theEObject;
-        T result = caseIntConstant(intConstant);
-        if (result == null) result = caseExpression(intConstant);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.FLOAT_CONSTANT:
-      {
-        FloatConstant floatConstant = (FloatConstant)theEObject;
-        T result = caseFloatConstant(floatConstant);
-        if (result == null) result = caseExpression(floatConstant);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.STRING_CONSTANT:
-      {
-        StringConstant stringConstant = (StringConstant)theEObject;
-        T result = caseStringConstant(stringConstant);
-        if (result == null) result = caseExpression(stringConstant);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.BOOL_CONSTANT:
-      {
-        BoolConstant boolConstant = (BoolConstant)theEObject;
-        T result = caseBoolConstant(boolConstant);
-        if (result == null) result = caseExpression(boolConstant);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -456,6 +481,38 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Function Expression</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function Expression</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunctionExpression(FunctionExpression object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Alias</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -467,6 +524,38 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAlias(Alias object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Constant</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Constant</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConstant(Constant object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Expression</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Expression</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseExpression(Expression object)
   {
     return null;
   }
@@ -664,22 +753,6 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Expression</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Expression</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseExpression(Expression object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Data Type</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -691,6 +764,70 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDataType(DataType object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Int Constant</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Int Constant</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIntConstant(IntConstant object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Float Constant</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Float Constant</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFloatConstant(FloatConstant object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>String Constant</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>String Constant</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStringConstant(StringConstant object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Bool Constant</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Bool Constant</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseBoolConstant(BoolConstant object)
   {
     return null;
   }
@@ -835,70 +972,6 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseNOT(NOT object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Int Constant</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Int Constant</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseIntConstant(IntConstant object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Float Constant</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Float Constant</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFloatConstant(FloatConstant object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>String Constant</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>String Constant</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseStringConstant(StringConstant object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Bool Constant</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Bool Constant</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseBoolConstant(BoolConstant object)
   {
     return null;
   }

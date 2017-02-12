@@ -20,7 +20,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
  * @model
  * @generated
  */
-public interface IntConstant extends Expression
+public interface IntConstant extends Constant, Expression
 {
   /**
    * Returns the value of the '<em><b>Value</b></em>' attribute.

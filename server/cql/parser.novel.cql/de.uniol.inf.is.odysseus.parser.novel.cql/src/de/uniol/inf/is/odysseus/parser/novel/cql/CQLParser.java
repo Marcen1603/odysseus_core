@@ -168,22 +168,28 @@ public class CQLParser implements IQueryParser
 	
 	public synchronized void createDictionary(AttributeDefinition d, ISession user)
 	{
+//		System.out.println("ATTRIBUTEDEFINTION:: " + d.getName() + ", " + d.getAttributes().toString());
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		int s = d.getAttributes().size();
-		SDFAttribute[] attributes = new SDFAttribute[s];
-		for(int i = 0; i < s; i++)
+		int size = d.getAttributes().size();
+//		SDFAttribute[] attributes = new SDFAttribute[s];
+		List<SDFAttribute> attributes = new ArrayList<>(size);
+		for(int i = 0; i < size ; i++)
 		{
-			String name = d.getAttributes().get(i).getName();
-			SDFDatatype type = new SDFDatatype(d.getDatatypes().get(i).getValue());
-			attributes[i] = new SDFAttribute(d.getName(), name, type);
+			String attributename 	  = d.getAttributes().get(i).getName();
+			SDFDatatype attributetype = new SDFDatatype(d.getDatatypes().get(i).getValue());
+			attributes.add(new SDFAttribute(d.getName(), attributename, attributetype));
+//			System.out.println("sourcename:: " + d.getName() +", attributename:: " + attributename + ", attributetype:: " + attributetype.toString());
+//			String name = d.getAttributes().get(i).getName();
+//			SDFDatatype type = new SDFDatatype(d.getDatatypes().get(i).getValue());
+//			attributes[i] = new SDFAttribute(d.getName(), name, type);
 		}
-		dic.add(attributes);
+		dic.add(d.getName(), attributes);
+//		dic.add(attributes);
 	}
 	
 	public synchronized List<IExecutorCommand> translate(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
-//		System.out.println("ERROS:: " + resource.getErrors().toString());
 		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
 		{
 			resource.load(in, resourceSet.getLoadOptions());
@@ -194,15 +200,12 @@ public class CQLParser implements IQueryParser
 		}
 		
 		model = (Model) resource.getContents().get(0);
-		
+//		System.out.println(query);
 		for(AttributeDefinition d : EcoreUtil2.eAllOfType(model, AttributeDefinition.class))
 		{
 				createDictionary(d, user);
 		}
 		
-//		createDictionary(EcoreUtil2.eAllOfType(model, Create.class), user);
-		
-//		System.out.println(dic.toString());
 		//Get schemata from PQl queries
 		Set<SDFSchema> outerschema = executor.getExecutionPlan(user)
 										  .getQueries(user)
@@ -210,8 +213,10 @@ public class CQLParser implements IQueryParser
 										  .map(e -> e.getLogicalQuery().getLogicalPlan())
 										  .map(e -> e.getOutputSchema())
 										  .collect(Collectors.toSet());
-		//Get schemata from CQLDictionary
+		
+		System.out.println("outerschema"+outerschema.toString());
 		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
+		System.out.println("innerschema"+innerschema);
 		return generate(query.toString(), model, outerschema, innerschema, user, dd, context, metaAttribute, executor);
 	}
 	
@@ -230,6 +235,7 @@ public class CQLParser implements IQueryParser
 	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
+		
  		List<EObject> stuff = EcoreUtil2.eAllContentsAsList(model.eResource()).stream().filter(e -> {
  			if(e instanceof StatementImpl)
  				return true;
@@ -238,15 +244,11 @@ public class CQLParser implements IQueryParser
  			return false;
  		}).collect(Collectors.toList());
  		
-// 		System.out.println("lll= " + lll.toString());
-//		System.out.println("stuff= " +  stuff.toString());
-		
-//		Systm.out.println("Generated PQL query text: ");//TODO Remove after debugging
+// 		System.out.println("EObjects:: " + stuff);
+ 		
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
-        generator.doGenerate(model.eResource(), fsa, null);
-		
 		List<IExecutorCommand> list = new ArrayList<>();
 		for(EObject obj : stuff)
 		{
@@ -263,6 +265,7 @@ public class CQLParser implements IQueryParser
 					{
 					case("STREAM"):
 						exCmd = new DropStreamCommand(cmd.getValue1(), ifExists, user);
+						CQLDictionaryProvider.getDictionary(user).remove(cmd.getValue1());
 					break;
 					case("SINK"):
 						exCmd = new DropSinkCommand(cmd.getValue1(), ifExists, user);
@@ -278,16 +281,17 @@ public class CQLParser implements IQueryParser
 				generator.doGenerate(obj.eResource(), fsa, null);
 				for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
 				{
-					System.out.println(e.getValue().toString());
-					l.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), true));
+					if(e.getValue().toString() != "")//FIXME Currently a hack to prevent this: empty string is a result from a DROP Command that is wrongly interpreted as a Statement
+					{
+//						System.out.println("PQL:: "+ e.getValue().toString());
+						l.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
+					}
 				}
 				list.addAll(l);
 			}
-			l.clear();
 		}
 		
 		generator.clear();
-//		CQLDictionaryProvider.removeDictionary(user);
 		return list;
 	}
 	

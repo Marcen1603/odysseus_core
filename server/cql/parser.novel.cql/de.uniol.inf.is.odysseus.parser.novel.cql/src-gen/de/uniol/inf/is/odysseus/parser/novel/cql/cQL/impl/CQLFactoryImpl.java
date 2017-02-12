@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -72,7 +73,11 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.AGGREGATION: return createAggregation();
+      case CQLPackage.FUNCTION: return createFunction();
+      case CQLPackage.FUNCTION_EXPRESSION: return createFunctionExpression();
       case CQLPackage.ALIAS: return createAlias();
+      case CQLPackage.CONSTANT: return createConstant();
+      case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.CREATE_PARAMETERS: return createCreateParameters();
       case CQLPackage.ATTRIBUTE_DEFINITION: return createAttributeDefinition();
       case CQLPackage.CREATE_STREAM1: return createCreateStream1();
@@ -85,8 +90,11 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.WINDOW_TIMEBASED: return createWindow_Timebased();
       case CQLPackage.WINDOW_TUPLEBASED: return createWindow_Tuplebased();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
-      case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.DATA_TYPE: return createDataType();
+      case CQLPackage.INT_CONSTANT: return createIntConstant();
+      case CQLPackage.FLOAT_CONSTANT: return createFloatConstant();
+      case CQLPackage.STRING_CONSTANT: return createStringConstant();
+      case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -96,13 +104,43 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.MUL_OR_DIV: return createMulOrDiv();
       case CQLPackage.BRACKET: return createBracket();
       case CQLPackage.NOT: return createNOT();
-      case CQLPackage.INT_CONSTANT: return createIntConstant();
-      case CQLPackage.FLOAT_CONSTANT: return createFloatConstant();
-      case CQLPackage.STRING_CONSTANT: return createStringConstant();
-      case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
       case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case CQLPackage.CREATE_KEYWORD:
+        return createCreateKeywordFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case CQLPackage.CREATE_KEYWORD:
+        return convertCreateKeywordToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -188,10 +226,54 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Function createFunction()
+  {
+    FunctionImpl function = new FunctionImpl();
+    return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FunctionExpression createFunctionExpression()
+  {
+    FunctionExpressionImpl functionExpression = new FunctionExpressionImpl();
+    return functionExpression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Alias createAlias()
   {
     AliasImpl alias = new AliasImpl();
     return alias;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Constant createConstant()
+  {
+    ConstantImpl constant = new ConstantImpl();
+    return constant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression createExpression()
+  {
+    ExpressionImpl expression = new ExpressionImpl();
+    return expression;
   }
 
   /**
@@ -331,10 +413,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Expression createExpression()
+  public DataType createDataType()
   {
-    ExpressionImpl expression = new ExpressionImpl();
-    return expression;
+    DataTypeImpl dataType = new DataTypeImpl();
+    return dataType;
   }
 
   /**
@@ -342,10 +424,43 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DataType createDataType()
+  public IntConstant createIntConstant()
   {
-    DataTypeImpl dataType = new DataTypeImpl();
-    return dataType;
+    IntConstantImpl intConstant = new IntConstantImpl();
+    return intConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FloatConstant createFloatConstant()
+  {
+    FloatConstantImpl floatConstant = new FloatConstantImpl();
+    return floatConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StringConstant createStringConstant()
+  {
+    StringConstantImpl stringConstant = new StringConstantImpl();
+    return stringConstant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public BoolConstant createBoolConstant()
+  {
+    BoolConstantImpl boolConstant = new BoolConstantImpl();
+    return boolConstant;
   }
 
   /**
@@ -452,54 +567,32 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public IntConstant createIntConstant()
-  {
-    IntConstantImpl intConstant = new IntConstantImpl();
-    return intConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public FloatConstant createFloatConstant()
-  {
-    FloatConstantImpl floatConstant = new FloatConstantImpl();
-    return floatConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public StringConstant createStringConstant()
-  {
-    StringConstantImpl stringConstant = new StringConstantImpl();
-    return stringConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public BoolConstant createBoolConstant()
-  {
-    BoolConstantImpl boolConstant = new BoolConstantImpl();
-    return boolConstant;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public AttributeRef createAttributeRef()
   {
     AttributeRefImpl attributeRef = new AttributeRefImpl();
     return attributeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateKeyword createCreateKeywordFromString(EDataType eDataType, String initialValue)
+  {
+    CreateKeyword result = CreateKeyword.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertCreateKeywordToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

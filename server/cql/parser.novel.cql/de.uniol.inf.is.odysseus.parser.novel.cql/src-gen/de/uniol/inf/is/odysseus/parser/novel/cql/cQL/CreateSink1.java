@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getKeyword <em>Keyword</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getPars <em>Pars</em>}</li>
  * </ul>
@@ -24,6 +25,35 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface CreateSink1 extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Keyword</b></em>' attribute.
+   * The literals are from the enumeration {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Keyword</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Keyword</em>' attribute.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword
+   * @see #setKeyword(CreateKeyword)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateSink1_Keyword()
+   * @model
+   * @generated
+   */
+  CreateKeyword getKeyword();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getKeyword <em>Keyword</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Keyword</em>' attribute.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword
+   * @see #getKeyword()
+   * @generated
+   */
+  void setKeyword(CreateKeyword value);
+
   /**
    * Returns the value of the '<em><b>Attributes</b></em>' containment reference.
    * <!-- begin-user-doc -->

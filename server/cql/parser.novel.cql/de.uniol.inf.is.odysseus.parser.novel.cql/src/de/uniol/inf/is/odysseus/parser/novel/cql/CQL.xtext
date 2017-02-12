@@ -12,9 +12,9 @@ IDOrINT:
 	ID | INT
 ;
 
-Statement:	
+Statement:	//FIXME DROP has two types: Statement and Command -> causes error in detection commands while parsing!
 	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView) 
-	(';')?
+	(';')
 ;
  
 Select:
@@ -22,9 +22,14 @@ Select:
 	(distinct='DISTINCT')?
 	( '*' |
 		( 
-			(attributes+=Attribute | aggregations+=Aggregation)+  
-			& (',' attributes+=Attribute)* 
-			& (',' aggregations+=Aggregation)*
+			(attributes+=Attribute | aggregations+=Aggregation
+				| functions+=Function 
+				| expressions+=FunctionExpression
+			)+  
+			((',' attributes+=Attribute) | (',' aggregations+=Aggregation) 
+				| (',' functions+=Function)
+				| (',' expressions+=FunctionExpression)
+			)*
 		)
 	)
 	('FROM' sources+=Source+ (',' sources+=Source)*)
@@ -55,7 +60,7 @@ Attribute:
 	('AS' alias=Alias)?
 ;
  
-AttributeWithoutAlias returns Attribute: 
+AttributeWithoutAliasDefinition returns Attribute: 
 	name=AttributeName
 ; 
 
@@ -64,20 +69,63 @@ AttributeName:
 ;
 
 AttributeWithNestedStatement:
-	value=AttributeWithoutAlias
+	value=AttributeWithoutAliasDefinition
 	'IN'
 	nested=NestedStatement
 ;  
  
-Aggregation:
-	name=ID
-	'(' attribute=AttributeWithoutAlias ')'
+Aggregation://TODO That is not supposed to be hard coded! 
+	name=('AVG'|'MIN'|'MAX'|'COUNT'|'SUM'|'MEDIAN'|'FIRST'|'LAST')
+	'(' attribute=AttributeWithoutAliasDefinition ')'
 	('AS' alias=Alias)?
+;
+
+Function://TODO That is not supposed to be hard coded! 
+	name=('DolToEur')
+	'('
+	attribute=AttributeWithoutAliasDefinition
+	')'
+	'AS'
+	alias=Alias
+;
+
+FunctionWithoutAliasDefinition returns Function:
+	name=('DolToEur')
+	'('
+	attribute=AttributeWithoutAliasDefinition
+	')'
+;
+
+FunctionExpression:
+	(function=FunctionWithoutAliasDefinition | leftattribute=AttributeWithoutAliasDefinition | leftconstant=FLOAT)
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=FunctionExpressionWithoutAliasDefinition)?
+	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT)
+	('AS' alias=Alias)?
+;
+
+FunctionExpressionWithoutAliasDefinition returns FunctionExpression:
+	(function=FunctionWithoutAliasDefinition | attribute=AttributeWithoutAliasDefinition | rightconstant=FLOAT)
+	operator=('+'|'-'|'/'|'*')
+	(innerexpression=FunctionExpressionWithoutAliasDefinition)?
 ;
 
 Alias:
 	name=ID
 ;  
+
+Constant:
+	{IntConstant} value=INT |
+	{FloatConstant} value=FLOAT |
+	{StringConstant} value= STRING |
+	{BoolConstant} value=('TRUE' | 'FALSE')
+;
+
+ExpressionWithAliasDefintion returns Expression:
+	Or
+	'AS'
+	alias=Alias
+;
 
 //SelectWithoutWhere returns Select:
 //	name='SELECT'
@@ -142,6 +190,10 @@ Alias:
 //	direction=('ASC'|'DESC')
 //;
 
+enum CreateKeyword:
+	CREATE | ATTACH
+;
+
 CreateParameters:
 	'WRAPPER' wrapper=STRING
 	'PROTOCOL' protocol=STRING
@@ -156,28 +208,28 @@ AttributeDefinition:
 ;
 
 CreateStream1:
-	'CREATE'
+	keyword=CreateKeyword
 	'STREAM'
 	attributes=AttributeDefinition
 	pars=CreateParameters
 ;
 
 CreateSink1:
-	'CREATE'
+	keyword=CreateKeyword
 	'SINK'
 	attributes=AttributeDefinition
 	pars=CreateParameters
 ;
 
 CreateStreamChannel:
-	'CREATE'
+	keyword=CreateKeyword
 	'STREAM'
 	attributes=AttributeDefinition 
  	'CHANNEL' host=ID ':' port=INT
 ;
 
 CreateStreamFile:
-	'CREATE'
+	keyword=CreateKeyword
 	'STREAM'
 	attributes=AttributeDefinition
  	'FILE' filename=STRING 'AS' type=ID
@@ -234,6 +286,7 @@ Command:
 	value1   = ID
 	keyword3 = ID
 	value2   = ID
+	(";")?
 ;
 
 Drop returns Command:
@@ -243,6 +296,7 @@ Drop returns Command:
 	(keyword3='IF EXISTS')?
 	value2 = ID
 ;
+
 
 Window_Unbounded:  
 	'UNBOUNDED'
@@ -276,7 +330,7 @@ And returns Expression:
 
 Equalitiy returns Expression:
 	Comparison (
-		{Equality.left=current} op=('==' | '!=')
+		{Equality.left=current} op=('=' | '!=')
 		right=Comparison	
 	)*
 ;
@@ -316,11 +370,11 @@ Atomic returns Expression:
 	{BoolConstant} value=('TRUE' | 'FALSE') |
 	//TODO A SELECT * query offers no reference for an attribute.
 	//At the moment is no actual referencing possible!
-	{AttributeRef} (value=AttributeWithoutAlias | value=AttributeWithNestedStatement)
+	{AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
 ;
 
-//TODO have to dynamic -> use scope provider
+//TODO have to be dynamic -> use scope provider
 DataType: 
-	value=('INTEGER' | 'DOUBLE' | 'FLOAT' | 'STRING' | 'BOOLEAN' 
+	value=('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN' 
 	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 );

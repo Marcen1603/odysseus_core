@@ -7,6 +7,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 
@@ -38,6 +40,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getDistinct <em>Distinct</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getAggregations <em>Aggregations</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getFunctions <em>Functions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getExpressions <em>Expressions</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getSources <em>Sources</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getPredicates <em>Predicates</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getOrder <em>Order</em>}</li>
@@ -107,6 +111,26 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * @ordered
    */
   protected EList<Aggregation> aggregations;
+
+  /**
+   * The cached value of the '{@link #getFunctions() <em>Functions</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFunctions()
+   * @generated
+   * @ordered
+   */
+  protected EList<Function> functions;
+
+  /**
+   * The cached value of the '{@link #getExpressions() <em>Expressions</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpressions()
+   * @generated
+   * @ordered
+   */
+  protected EList<FunctionExpression> expressions;
 
   /**
    * The cached value of the '{@link #getSources() <em>Sources</em>}' containment reference list.
@@ -248,6 +272,34 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<Function> getFunctions()
+  {
+    if (functions == null)
+    {
+      functions = new EObjectContainmentEList<Function>(Function.class, this, CQLPackage.SELECT__FUNCTIONS);
+    }
+    return functions;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<FunctionExpression> getExpressions()
+  {
+    if (expressions == null)
+    {
+      expressions = new EObjectContainmentEList<FunctionExpression>(FunctionExpression.class, this, CQLPackage.SELECT__EXPRESSIONS);
+    }
+    return expressions;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<Source> getSources()
   {
     if (sources == null)
@@ -381,6 +433,10 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
         return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
       case CQLPackage.SELECT__AGGREGATIONS:
         return ((InternalEList<?>)getAggregations()).basicRemove(otherEnd, msgs);
+      case CQLPackage.SELECT__FUNCTIONS:
+        return ((InternalEList<?>)getFunctions()).basicRemove(otherEnd, msgs);
+      case CQLPackage.SELECT__EXPRESSIONS:
+        return ((InternalEList<?>)getExpressions()).basicRemove(otherEnd, msgs);
       case CQLPackage.SELECT__SOURCES:
         return ((InternalEList<?>)getSources()).basicRemove(otherEnd, msgs);
       case CQLPackage.SELECT__PREDICATES:
@@ -411,6 +467,10 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
         return getAttributes();
       case CQLPackage.SELECT__AGGREGATIONS:
         return getAggregations();
+      case CQLPackage.SELECT__FUNCTIONS:
+        return getFunctions();
+      case CQLPackage.SELECT__EXPRESSIONS:
+        return getExpressions();
       case CQLPackage.SELECT__SOURCES:
         return getSources();
       case CQLPackage.SELECT__PREDICATES:
@@ -447,6 +507,14 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
       case CQLPackage.SELECT__AGGREGATIONS:
         getAggregations().clear();
         getAggregations().addAll((Collection<? extends Aggregation>)newValue);
+        return;
+      case CQLPackage.SELECT__FUNCTIONS:
+        getFunctions().clear();
+        getFunctions().addAll((Collection<? extends Function>)newValue);
+        return;
+      case CQLPackage.SELECT__EXPRESSIONS:
+        getExpressions().clear();
+        getExpressions().addAll((Collection<? extends FunctionExpression>)newValue);
         return;
       case CQLPackage.SELECT__SOURCES:
         getSources().clear();
@@ -488,6 +556,12 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
       case CQLPackage.SELECT__AGGREGATIONS:
         getAggregations().clear();
         return;
+      case CQLPackage.SELECT__FUNCTIONS:
+        getFunctions().clear();
+        return;
+      case CQLPackage.SELECT__EXPRESSIONS:
+        getExpressions().clear();
+        return;
       case CQLPackage.SELECT__SOURCES:
         getSources().clear();
         return;
@@ -522,6 +596,10 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
         return attributes != null && !attributes.isEmpty();
       case CQLPackage.SELECT__AGGREGATIONS:
         return aggregations != null && !aggregations.isEmpty();
+      case CQLPackage.SELECT__FUNCTIONS:
+        return functions != null && !functions.isEmpty();
+      case CQLPackage.SELECT__EXPRESSIONS:
+        return expressions != null && !expressions.isEmpty();
       case CQLPackage.SELECT__SOURCES:
         return sources != null && !sources.isEmpty();
       case CQLPackage.SELECT__PREDICATES:

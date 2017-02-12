@@ -20,14 +20,12 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_Select_AsteriskKeyword_2_0_q;
-	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
+	protected AbstractElementAlias match_Command_SemicolonKeyword_5_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
-		match_Select_AsteriskKeyword_2_0_q = new TokenAlias(false, true, grammarAccess.getSelectAccess().getAsteriskKeyword_2_0());
-		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+		match_Command_SemicolonKeyword_5_q = new TokenAlias(false, true, grammarAccess.getCommandAccess().getSemicolonKeyword_5());
 	}
 	
 	@Override
@@ -42,41 +40,20 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Select_AsteriskKeyword_2_0_q.equals(syntax))
-				emit_Select_AsteriskKeyword_2_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
-				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			if (match_Command_SemicolonKeyword_5_q.equals(syntax))
+				emit_Command_SemicolonKeyword_5_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
 
 	/**
 	 * Ambiguous syntax:
-	 *     '*'?
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     distinct='DISTINCT' (ambiguity) 'FROM' sources+=Source
-	 *     name='SELECT' (ambiguity) 'FROM' sources+=Source
-	 */
-	protected void emit_Select_AsteriskKeyword_2_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
 	 *     ';'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     type=CreateSink1 (ambiguity) (rule end)
-	 *     type=CreateStream1 (ambiguity) (rule end)
-	 *     type=CreateStreamChannel (ambiguity) (rule end)
-	 *     type=CreateStreamFile (ambiguity) (rule end)
-	 *     type=CreateView (ambiguity) (rule end)
-	 *     type=Drop (ambiguity) (rule end)
-	 *     type=Select (ambiguity) (rule end)
-	 *     type=StreamTo (ambiguity) (rule end)
+	 *     value2=ID (ambiguity) (rule end)
 	 */
-	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Command_SemicolonKeyword_5_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

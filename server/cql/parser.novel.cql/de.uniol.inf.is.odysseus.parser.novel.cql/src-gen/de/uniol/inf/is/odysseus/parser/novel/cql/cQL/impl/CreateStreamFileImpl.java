@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl#getKeyword <em>Keyword</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl#getFilename <em>Filename</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl#getType <em>Type</em>}</li>
@@ -33,6 +35,26 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implements CreateStreamFile
 {
+  /**
+   * The default value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKeyword()
+   * @generated
+   * @ordered
+   */
+  protected static final CreateKeyword KEYWORD_EDEFAULT = CreateKeyword.CREATE;
+
+  /**
+   * The cached value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKeyword()
+   * @generated
+   * @ordered
+   */
+  protected CreateKeyword keyword = KEYWORD_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -102,6 +124,29 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
   protected EClass eStaticClass()
   {
     return CQLPackage.Literals.CREATE_STREAM_FILE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateKeyword getKeyword()
+  {
+    return keyword;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setKeyword(CreateKeyword newKeyword)
+  {
+    CreateKeyword oldKeyword = keyword;
+    keyword = newKeyword == null ? KEYWORD_EDEFAULT : newKeyword;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_STREAM_FILE__KEYWORD, oldKeyword, keyword));
   }
 
   /**
@@ -224,6 +269,8 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM_FILE__KEYWORD:
+        return getKeyword();
       case CQLPackage.CREATE_STREAM_FILE__ATTRIBUTES:
         return getAttributes();
       case CQLPackage.CREATE_STREAM_FILE__FILENAME:
@@ -244,6 +291,9 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM_FILE__KEYWORD:
+        setKeyword((CreateKeyword)newValue);
+        return;
       case CQLPackage.CREATE_STREAM_FILE__ATTRIBUTES:
         setAttributes((AttributeDefinition)newValue);
         return;
@@ -267,6 +317,9 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM_FILE__KEYWORD:
+        setKeyword(KEYWORD_EDEFAULT);
+        return;
       case CQLPackage.CREATE_STREAM_FILE__ATTRIBUTES:
         setAttributes((AttributeDefinition)null);
         return;
@@ -290,6 +343,8 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM_FILE__KEYWORD:
+        return keyword != KEYWORD_EDEFAULT;
       case CQLPackage.CREATE_STREAM_FILE__ATTRIBUTES:
         return attributes != null;
       case CQLPackage.CREATE_STREAM_FILE__FILENAME:
@@ -311,7 +366,9 @@ public class CreateStreamFileImpl extends MinimalEObjectImpl.Container implement
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (filename: ");
+    result.append(" (keyword: ");
+    result.append(keyword);
+    result.append(", filename: ");
     result.append(filename);
     result.append(", type: ");
     result.append(type);

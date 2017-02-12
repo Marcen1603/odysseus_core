@@ -29,6 +29,7 @@ public class CQLDictionaryProvider
 	
 	public static CQLDictionary removeDictionary(ISession user)
 	{
+		getDictionary(user).clear();
 		return map.remove(user.getUser().getName());
 	}
 	

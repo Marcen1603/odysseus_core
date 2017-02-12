@@ -3,12 +3,16 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -20,13 +24,24 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl#getAlias <em>Alias</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class IntConstantImpl extends ExpressionImpl implements IntConstant
+public class IntConstantImpl extends ConstantImpl implements IntConstant
 {
+  /**
+   * The cached value of the '{@link #getAlias() <em>Alias</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAlias()
+   * @generated
+   * @ordered
+   */
+  protected Alias alias;
+
   /**
    * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -73,6 +88,54 @@ public class IntConstantImpl extends ExpressionImpl implements IntConstant
    * <!-- end-user-doc -->
    * @generated
    */
+  public Alias getAlias()
+  {
+    return alias;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetAlias(Alias newAlias, NotificationChain msgs)
+  {
+    Alias oldAlias = alias;
+    alias = newAlias;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.INT_CONSTANT__ALIAS, oldAlias, newAlias);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAlias(Alias newAlias)
+  {
+    if (newAlias != alias)
+    {
+      NotificationChain msgs = null;
+      if (alias != null)
+        msgs = ((InternalEObject)alias).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.INT_CONSTANT__ALIAS, null, msgs);
+      if (newAlias != null)
+        msgs = ((InternalEObject)newAlias).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.INT_CONSTANT__ALIAS, null, msgs);
+      msgs = basicSetAlias(newAlias, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.INT_CONSTANT__ALIAS, newAlias, newAlias));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public int getValue()
   {
     return value;
@@ -97,10 +160,28 @@ public class IntConstantImpl extends ExpressionImpl implements IntConstant
    * @generated
    */
   @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case CQLPackage.INT_CONSTANT__ALIAS:
+        return basicSetAlias(null, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
     {
+      case CQLPackage.INT_CONSTANT__ALIAS:
+        return getAlias();
       case CQLPackage.INT_CONSTANT__VALUE:
         return getValue();
     }
@@ -117,6 +198,9 @@ public class IntConstantImpl extends ExpressionImpl implements IntConstant
   {
     switch (featureID)
     {
+      case CQLPackage.INT_CONSTANT__ALIAS:
+        setAlias((Alias)newValue);
+        return;
       case CQLPackage.INT_CONSTANT__VALUE:
         setValue((Integer)newValue);
         return;
@@ -134,6 +218,9 @@ public class IntConstantImpl extends ExpressionImpl implements IntConstant
   {
     switch (featureID)
     {
+      case CQLPackage.INT_CONSTANT__ALIAS:
+        setAlias((Alias)null);
+        return;
       case CQLPackage.INT_CONSTANT__VALUE:
         setValue(VALUE_EDEFAULT);
         return;
@@ -151,10 +238,50 @@ public class IntConstantImpl extends ExpressionImpl implements IntConstant
   {
     switch (featureID)
     {
+      case CQLPackage.INT_CONSTANT__ALIAS:
+        return alias != null;
       case CQLPackage.INT_CONSTANT__VALUE:
         return value != VALUE_EDEFAULT;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == Expression.class)
+    {
+      switch (derivedFeatureID)
+      {
+        case CQLPackage.INT_CONSTANT__ALIAS: return CQLPackage.EXPRESSION__ALIAS;
+        default: return -1;
+      }
+    }
+    return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == Expression.class)
+    {
+      switch (baseFeatureID)
+      {
+        case CQLPackage.EXPRESSION__ALIAS: return CQLPackage.INT_CONSTANT__ALIAS;
+        default: return -1;
+      }
+    }
+    return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
   }
 
   /**

@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1;
 
@@ -25,6 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl#getKeyword <em>Keyword</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl#getPars <em>Pars</em>}</li>
  * </ul>
@@ -33,6 +35,26 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public class CreateStream1Impl extends MinimalEObjectImpl.Container implements CreateStream1
 {
+  /**
+   * The default value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKeyword()
+   * @generated
+   * @ordered
+   */
+  protected static final CreateKeyword KEYWORD_EDEFAULT = CreateKeyword.CREATE;
+
+  /**
+   * The cached value of the '{@link #getKeyword() <em>Keyword</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKeyword()
+   * @generated
+   * @ordered
+   */
+  protected CreateKeyword keyword = KEYWORD_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -72,6 +94,29 @@ public class CreateStream1Impl extends MinimalEObjectImpl.Container implements C
   protected EClass eStaticClass()
   {
     return CQLPackage.Literals.CREATE_STREAM1;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateKeyword getKeyword()
+  {
+    return keyword;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setKeyword(CreateKeyword newKeyword)
+  {
+    CreateKeyword oldKeyword = keyword;
+    keyword = newKeyword == null ? KEYWORD_EDEFAULT : newKeyword;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_STREAM1__KEYWORD, oldKeyword, keyword));
   }
 
   /**
@@ -198,6 +243,8 @@ public class CreateStream1Impl extends MinimalEObjectImpl.Container implements C
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM1__KEYWORD:
+        return getKeyword();
       case CQLPackage.CREATE_STREAM1__ATTRIBUTES:
         return getAttributes();
       case CQLPackage.CREATE_STREAM1__PARS:
@@ -216,6 +263,9 @@ public class CreateStream1Impl extends MinimalEObjectImpl.Container implements C
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM1__KEYWORD:
+        setKeyword((CreateKeyword)newValue);
+        return;
       case CQLPackage.CREATE_STREAM1__ATTRIBUTES:
         setAttributes((AttributeDefinition)newValue);
         return;
@@ -236,6 +286,9 @@ public class CreateStream1Impl extends MinimalEObjectImpl.Container implements C
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM1__KEYWORD:
+        setKeyword(KEYWORD_EDEFAULT);
+        return;
       case CQLPackage.CREATE_STREAM1__ATTRIBUTES:
         setAttributes((AttributeDefinition)null);
         return;
@@ -256,12 +309,31 @@ public class CreateStream1Impl extends MinimalEObjectImpl.Container implements C
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_STREAM1__KEYWORD:
+        return keyword != KEYWORD_EDEFAULT;
       case CQLPackage.CREATE_STREAM1__ATTRIBUTES:
         return attributes != null;
       case CQLPackage.CREATE_STREAM1__PARS:
         return pars != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (keyword: ");
+    result.append(keyword);
+    result.append(')');
+    return result.toString();
   }
 
 } //CreateStream1Impl

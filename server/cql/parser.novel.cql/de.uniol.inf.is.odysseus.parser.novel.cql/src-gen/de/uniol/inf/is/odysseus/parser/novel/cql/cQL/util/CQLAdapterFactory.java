@@ -111,9 +111,29 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAggregationAdapter();
       }
       @Override
+      public Adapter caseFunction(Function object)
+      {
+        return createFunctionAdapter();
+      }
+      @Override
+      public Adapter caseFunctionExpression(FunctionExpression object)
+      {
+        return createFunctionExpressionAdapter();
+      }
+      @Override
       public Adapter caseAlias(Alias object)
       {
         return createAliasAdapter();
+      }
+      @Override
+      public Adapter caseConstant(Constant object)
+      {
+        return createConstantAdapter();
+      }
+      @Override
+      public Adapter caseExpression(Expression object)
+      {
+        return createExpressionAdapter();
       }
       @Override
       public Adapter caseCreateParameters(CreateParameters object)
@@ -176,14 +196,29 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createExpressionsModelAdapter();
       }
       @Override
-      public Adapter caseExpression(Expression object)
-      {
-        return createExpressionAdapter();
-      }
-      @Override
       public Adapter caseDataType(DataType object)
       {
         return createDataTypeAdapter();
+      }
+      @Override
+      public Adapter caseIntConstant(IntConstant object)
+      {
+        return createIntConstantAdapter();
+      }
+      @Override
+      public Adapter caseFloatConstant(FloatConstant object)
+      {
+        return createFloatConstantAdapter();
+      }
+      @Override
+      public Adapter caseStringConstant(StringConstant object)
+      {
+        return createStringConstantAdapter();
+      }
+      @Override
+      public Adapter caseBoolConstant(BoolConstant object)
+      {
+        return createBoolConstantAdapter();
       }
       @Override
       public Adapter caseOr(Or object)
@@ -229,26 +264,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseNOT(NOT object)
       {
         return createNOTAdapter();
-      }
-      @Override
-      public Adapter caseIntConstant(IntConstant object)
-      {
-        return createIntConstantAdapter();
-      }
-      @Override
-      public Adapter caseFloatConstant(FloatConstant object)
-      {
-        return createFloatConstantAdapter();
-      }
-      @Override
-      public Adapter caseStringConstant(StringConstant object)
-      {
-        return createStringConstantAdapter();
-      }
-      @Override
-      public Adapter caseBoolConstant(BoolConstant object)
-      {
-        return createBoolConstantAdapter();
       }
       @Override
       public Adapter caseAttributeRef(AttributeRef object)
@@ -383,6 +398,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
+   * @generated
+   */
+  public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression <em>Function Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionExpression
+   * @generated
+   */
+  public Adapter createFunctionExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias <em>Alias</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -393,6 +438,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAliasAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Constant <em>Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Constant
+   * @generated
+   */
+  public Adapter createConstantAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
+   * @generated
+   */
+  public Adapter createExpressionAdapter()
   {
     return null;
   }
@@ -578,21 +653,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression <em>Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
-   * @generated
-   */
-  public Adapter createExpressionAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -603,6 +663,66 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createDataTypeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant <em>Int Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
+   * @generated
+   */
+  public Adapter createIntConstantAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant <em>Float Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
+   * @generated
+   */
+  public Adapter createFloatConstantAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant <em>String Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+   * @generated
+   */
+  public Adapter createStringConstantAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant <em>Bool Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
+   * @generated
+   */
+  public Adapter createBoolConstantAdapter()
   {
     return null;
   }
@@ -738,66 +858,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createNOTAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant <em>Int Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
-   * @generated
-   */
-  public Adapter createIntConstantAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant <em>Float Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
-   * @generated
-   */
-  public Adapter createFloatConstantAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant <em>String Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-   * @generated
-   */
-  public Adapter createStringConstantAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant <em>Bool Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
-   * @generated
-   */
-  public Adapter createBoolConstantAdapter()
   {
     return null;
   }

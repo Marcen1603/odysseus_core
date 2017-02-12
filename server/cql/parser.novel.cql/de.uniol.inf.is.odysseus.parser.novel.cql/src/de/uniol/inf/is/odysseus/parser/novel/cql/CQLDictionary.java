@@ -63,6 +63,12 @@ public class CQLDictionary
 		}
 	}
 	
+	public void add(String sourcename, Collection<SDFAttribute> attr)
+	{
+	
+		attributes.put(sourcename, attr);
+	}
+	
 	public Map<String, Collection<SDFAttribute>> get()
 	{
 		return attributes;
@@ -78,15 +84,27 @@ public class CQLDictionary
 		return set;
 	}
 	
-	public Collection<SDFAttribute> get(String src)
+	public Set<SDFAttribute> get(String src)
 	{
-		Collection<SDFAttribute> c = attributes.get(src);
-		return c != null ? c : new ArrayList<SDFAttribute>();
+		HashSet<SDFAttribute> c = (HashSet<SDFAttribute>) attributes.get(src);
+		return c != null ? c : new HashSet<SDFAttribute>();
 	}
 	
 	@Override
 	public String toString() { return this.attributes.toString(); }
 
 	static CQLDictionary create(String user) { return new CQLDictionary(user); }
+
+	public void clear() 
+	{
+		attributes.clear();
+		attributes = null;
+		user = null;
+	}
+
+	public void remove(String name) 
+	{
+		attributes.remove(name);
+	}
 
 }

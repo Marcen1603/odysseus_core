@@ -38,18 +38,17 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
+import java.util.Collections
 import java.util.HashMap
 import java.util.List
 import java.util.Map
 import java.util.Map.Entry
-import java.util.Set
 import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import java.util.Collections
 
 //import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 
@@ -68,11 +67,13 @@ class CQLGenerator implements IGenerator2
 	var private predicate = ''
 	var private List<String> definitions = newArrayList
 	var private Map<String, String> operators = newHashMap
-	var private List<String> aggregationAttributes = newArrayList
 	var private Map<String, List<String>> nSelect = newHashMap
 	var private Map<String, List<String>> attributeAliases = newHashMap
 	var private List<SourceStruct> sources = newArrayList
 	var private List<String> sourcenames = newArrayList
+	var joinCounter = 1
+	var firstCall = true
+	var Map<String, List<String>> renamedAttributes = newHashMap
 	
 	val private String OP     = "operator_"
 	val private String VIEW   = "view_" 
@@ -87,11 +88,13 @@ class CQLGenerator implements IGenerator2
 		predicate = ''
 		definitions.clear()
 		operators.clear()
-		aggregationAttributes.clear()
 		nSelect.clear()
 		attributeAliases.clear()
 		sources.clear()
 		sourcenames.clear()
+		joinCounter = 1
+		firstCall = true
+		renamedAttributes.clear()
 //		outerattributes.clear()
 //		innerattributes.clear()
 //		aAliases.clear()
@@ -99,93 +102,8 @@ class CQLGenerator implements IGenerator2
 //		attributes.clear()
 //		model = ''
 	}
-
-	static private class AttributeStruct
-	{
-		String attributename;
-		String sourcename;
-		String datatype;
-		List<String> aliases;
-		
-		override equals(Object obj) 
-		{
-			if(obj instanceof AttributeStruct)
-				if(this.attributename.equals((obj as AttributeStruct).attributename)
-					&& this.sourcename.equals((obj as AttributeStruct).sourcename)
-					&& this.datatype.equals((obj as AttributeStruct).datatype)
-					&& this.aliases.equals((obj as AttributeStruct).aliases)
-				)
-					return true
-			return false
-		}
-		
-		override hashCode() {
-			return 0
-		}
-		
-		override toString() 
-		{
-			return "attributename " + attributename
-			+ "\n sourcename " + sourcename 
-			+ "\n datatype " + datatype 	
-			+ "\n aliases " + aliases.toString
-		}
-		
-	}
-
-	static private class SourceStruct
-	{
-		String sourcename;
-		List<AttributeStruct> attributes;
-		List<String> aliases;
-		boolean internal;
-		
-		def addRenamedAttributes(List<String> list)
-		{
-			var newStructs = newArrayList
-			for(AttributeStruct struct : attributes)
-				for(var i = 1; i < list.size; i++)
-				{
-					if(i % 2 == 1)
-					{
-						var name = list.get(i).split("\\.").get(1)
-						var newStruct = new AttributeStruct()
-						newStruct.attributename = name
-						newStruct.datatype = struct.datatype
-						newStruct.sourcename = struct.sourcename	
-						newStruct.aliases = newArrayList
-						newStructs.add(newStruct)
-					}
-				}
-			attributes.addAll(newStructs)
-		}
-		
-		override equals(Object obj) 
-		{
-			if (obj instanceof SourceStruct)
-				if(this.sourcename.equals((obj as SourceStruct).sourcename)
-					&& this.attributes.equals((obj as SourceStruct).attributes)
-					&& this.aliases.equals((obj as SourceStruct).aliases)
-					&& this.internal.equals((obj as SourceStruct).internal)
-				  )	
-					return true			
-			return false
-		}
-		
-		override hashCode() {
-			return 0
-		}
-		
-		override toString() {
-			return "sourename " + sourcename 
-			+ "\n attributes " + attributes.toString
-			+ "\n aliases " + aliases.toString
-			+ "\n internal " + internal
-		}
-		
-	}
 	
-	def private List<AttributeStruct> getAttributes()
+	def public List<AttributeStruct> getAttributes()
 	{
 		var list = newArrayList
 		for(SourceStruct source : sources)
@@ -193,7 +111,7 @@ class CQLGenerator implements IGenerator2
 		return list
 	}
 
-	def private Map<AttributeStruct, List<String>> getAttributeAliases()
+	def public Map<AttributeStruct, List<String>> getAttributeAliases()
 	{
 		var map = newHashMap
 		for(SourceStruct source : sources)
@@ -203,7 +121,7 @@ class CQLGenerator implements IGenerator2
 		return map
 	} 
 
-	def private List<String> getAttributeAliasesAsList()
+	def public List<String> getAttributeAliasesAsList()
 	{
 		var list = newArrayList
 		for(SourceStruct source : sources)
@@ -212,7 +130,7 @@ class CQLGenerator implements IGenerator2
 		return list
 	} 
 
-	def private Map<SourceStruct, List<String>> getSourceAliases()
+	def public Map<SourceStruct, List<String>> getSourceAliases()
 	{
 		var map = newHashMap
 		for(SourceStruct source : sources)
@@ -220,8 +138,23 @@ class CQLGenerator implements IGenerator2
 		return map
 	} 
 
-	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context)  {}
-	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {}
+	def public List<String> getAggregationAliases()
+	{
+		var list = newArrayList
+		for(SourceStruct source : sources)
+			for(AttributeStruct attribute : source.attributes)
+				list.addAll(attribute.aggregtions)
+		return list
+	} 
+
+	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context)  
+	{
+		clear()
+	}
+	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) 
+	{
+		clear()
+	}
 	
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
 	{
@@ -253,21 +186,21 @@ class CQLGenerator implements IGenerator2
 		for(Entry<SourceStruct, List<String>> entry : getSourceAliases.entrySet)
 		{
 			for(String alias : entry.value)
-				 model += alias + ASSIG1 + entry.key.sourcename + '\n'
+				 model += alias + ASSIG1 + entry.key.sourcename + System.getProperty("line.separator")
 		}
 		for(var i = 0; i < definitions.size; i++)
 		{
 			if(!definitions.get(i).contains(OP))
-				model +=  definitions.get(i) + ASSIG2 + operators.get(definitions.get(i)) + '\n'
+				model +=  definitions.get(i) + ASSIG2 + operators.get(definitions.get(i)) + System.getProperty("line.separator")
 			else
-				model +=  definitions.get(i) + ASSIG1 + operators.get(definitions.get(i)) + '\n'
+				model +=  definitions.get(i) + ASSIG1 + operators.get(definitions.get(i)) + System.getProperty("line.separator")
 			for(Entry<String, List<String>> entry : nSelect.entrySet)
 			{
 				if(entry.key.equals(definitions.get(i)))
 				{
 					var l = entry.value
 					for(String alias : l)
-						model += alias + ASSIG1 + entry.key + '\n'
+						model += alias + ASSIG1 + entry.key + System.getProperty("line.separator")
 				} 	
 			}
 		}
@@ -310,7 +243,7 @@ class CQLGenerator implements IGenerator2
 			{
 				if(source.sourcename.equals(name))
 				{
-					source.aliases.add(alias.name)					
+					source.aliases.add(alias.name)
 				}
 			}
 		}
@@ -500,44 +433,51 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseSelectWithoutPredicate(Select stmt)
 	{
+		
 		if(!stmt.attributes.empty)//SELECT attr1, ...
+		{
+		    var String operator = null
+		    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+			if(!stmt.aggregations.empty)
 			{
-			    var String operator = null
-			    var attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
-				if(!stmt.aggregations.empty)
-				{
-					var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-					attributes = result.get(0) as List<String>
-				    operator   = registerOperator(result.get(1).toString)
-				
-					//FIXME Not necessary, it has been done before!
-					attributes.addAll(
-						stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
-					)
-				}									
-				var join = buildJoin(null, stmt.sources, operator)
-				attributes.addAll(selfJoin2)
-				var prj =  '''«buildProjectOP(attributes, join)»'''
-				return prj
-			}
-			else//SELECT * ..
+				var result = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
+				attributes = result.get(0) as List<String>
+			    operator   = registerOperator(result.get(1).toString)
+			
+				//FIXME Not necessary, it has been done before!
+				attributes.addAll(
+					stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
+				)
+			}									
+			var join = buildJoin(null, stmt.sources, operator)
+			attributes.addAll(selfJoin2)
+			var prj =  '''«buildProjectOP(attributes, join)»'''
+			return prj
+		}
+		else//SELECT * ..
+		{
+			if(stmt.aggregations.empty)
 			{
-				if(stmt.aggregations.empty)
+				if(stmt.sources.size == 1)
 				{
-					if(stmt.sources.size == 1)
-					{
-						var prj = '''«buildProjectOP(stmt.sources.get(0))»'''
-						return prj
-					}
-					return registerOperator('''«buildJoin(stmt.sources)»''')
+					var prj = '''«buildProjectOP(stmt.sources.get(0))»'''
+					return prj
 				}
-				var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
-				return registerOperator('''«operator.get(1).toString»''')
+				return registerOperator('''«buildJoin(stmt.sources)»''')
 			}
+			var operator = buildAggregateOP(stmt.aggregations, stmt.order, stmt.sources)
+			return registerOperator('''«operator.get(1).toString»''')
+		}
 	}
 	
 	def private CharSequence parseSelectWithPredicate(Select stmt)
 	{
+		
+//		println("attributes:: " + stmt.attributes)
+//		println("functions:: " + stmt.functions)
+//		println("aggre:: " + stmt.aggregations)
+//		println("expressions:: " + stmt.expressions)
+				
 		predicate = ''
 	    var String operator = null
 	    var List<String>     attributes = stmt.attributes.stream.map(e|e.name).collect(Collectors.toList)
@@ -652,16 +592,27 @@ class CQLGenerator implements IGenerator2
 		for(var i = 0; i < aggAttr.length; i++)
 		{
 			args.add(aggAttr.get(i).name)
-			args.add(getAttributename(aggAttr.get(i).attribute.name))
+			args.add(getAttributename(aggAttr.get(i).attribute.name, null))
 			var alias = ''
 			if(aggAttr.get(i).alias != null)
-				alias= aggAttr.get(i).alias.name
+				alias = aggAttr.get(i).alias.name
 			else
 				alias = aggAttr.get(i).name + '_' + aggAttr.get(i).attribute.name
 			args.add(alias)
 			aliases.add(alias)
 			args.add(getDataTypeFrom(aggAttr.get(i).attribute))
-			aggregationAttributes.add(alias)
+			
+			////
+			for(SourceStruct struct : sources)
+			{
+				var attributeStruct = struct.findbyName(aggAttr.get(i).attribute.name)
+				if(attributeStruct != null)
+				{
+					attributeStruct.aggregtions.add(alias)
+					struct.update(attributeStruct)
+				}
+			}
+			
 			args.add(',')
 			argsstr += generateKeyValueString(args)
 			if(i != aggAttr.length - 1) argsstr += ','
@@ -673,7 +624,7 @@ class CQLGenerator implements IGenerator2
 		{
 			groupby += ',GROUP_BY=['
 			groupby += generateListString(
-				orderAttr.stream.map(e|getAttributename(e.name)).collect(Collectors.toList)
+				orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList)
 			) + ']'
 		}
 		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)''']
@@ -748,8 +699,8 @@ class CQLGenerator implements IGenerator2
 					','
 				  )
 		
-		var options = '''['filename','«file.filename»']'''		  
-		return registerOperator(buildCreate2('GenericPush', file.type, 'File', 'Tuple', schema, options, file.attributes.name).toString, file.attributes.name)
+		var options = '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"],['readfirstline','true']'''		  
+		return registerOperator(buildCreate2('GenericPull', file.type, 'File', 'Tuple', schema, options, file.attributes.name).toString, file.attributes.name)
 	}
 	
 	def private CharSequence parseCreateStreamChannel(CreateStreamChannel channel) 
@@ -802,9 +753,6 @@ class CQLGenerator implements IGenerator2
 		return ''
 	}
 
-	var joinCounter = 1
-	var firstCall = true
-	var Map<String, List<String>> renamedAttributes = newHashMap
 	def private String selfJoin(String scr1, String src2)
 	{
 		var source1 = scr1
@@ -855,7 +803,7 @@ class CQLGenerator implements IGenerator2
 			return '''JOIN(«source1»,«source2»)'''
 		}
 		list.remove(0)
-		if(predicate != null)//TODO There will never be a predicate != null, hence it's obsolete
+		if(predicate != null)//FIXME There will never be a predicate != null, hence it's obsolete
 		{
 			var predicateString = '''{predicate='«parsePredicate(predicate.elements.get(0))»'}'''
 			return '''JOIN(«predicateString»,«source1»,«buildJoin(null, list)»)'''
@@ -914,7 +862,7 @@ class CQLGenerator implements IGenerator2
 	{
 		return registerOperator('''PROJECT(
 				  	{
-				  		attributes=[«generateListString(attributes.stream.map(e|getAttributename(e)).collect(Collectors.toList))»]
+				  		attributes=[«generateListString(attributes.stream.map(e|getAttributename(e, null)).collect(Collectors.toList))»]
 				  	},«operator»)''')
 	}
 	
@@ -931,12 +879,12 @@ class CQLGenerator implements IGenerator2
 		{
 			return registerOperator('''PROJECT(
 						{
-							attributes=[«generateListString(getAttributeNamesFrom(src.name).stream.map(e|getAttributename(e)).collect(Collectors.toList))»]
+							attributes=[«generateListString(getAttributeNamesFrom(src.name).stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
 						},«checkForNestedStatement(src)»)''')
 		}
 		return registerOperator('''PROJECT(
 				  	{
-				  		attributes=[«generateListString(attributes.stream.map(e|getAttributename(e)).collect(Collectors.toList))»]
+				  		attributes=[«generateListString(attributes.stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
 				  	},«checkForNestedStatement(src)»)''')
 	}
 	
@@ -963,13 +911,16 @@ class CQLGenerator implements IGenerator2
 				Equality:
 				{
 					parsePredicate(e.left)
-					predicate += e.op
+					if(e.op.equals("="))
+						predicate += '=='
+					else
+						predicate += e.op
 					parsePredicate(e.right)
 				}
 				Comparision:
 				{
 					parsePredicate(e.left)
-					predicate += e.op
+					predicate += e.op	  
 					parsePredicate(e.right)	
 				}
 				Plus:
@@ -1022,7 +973,7 @@ class CQLGenerator implements IGenerator2
 					else
 					{
 						if(e.value instanceof Attribute)
-							predicate += getAttributename(e.value as Attribute)
+							predicate += getAttributename(e.value as Attribute, null)
 					}
 				}  	 
 			}
@@ -1213,7 +1164,7 @@ class CQLGenerator implements IGenerator2
 		return count_ID.toString
 	}
 
-	def private void registerSources(Set<SDFSchema> schema, boolean internal)
+	def private void registerSources(Collection<SDFSchema> schema, boolean internal)
 	{
 		for(SDFSchema s : schema)
 		{
@@ -1231,7 +1182,8 @@ class CQLGenerator implements IGenerator2
 						attribute.attributename = attributename.attributeName 
 						attribute.sourcename = sourcename
 						attribute.datatype = attributename.datatype.toString	
-						attribute.aliases = newArrayList()					
+						attribute.aliases = newArrayList()		
+						attribute.aggregtions = newArrayList()			
 						source.attributes.add(attribute)
 					}						
 				sources.add(source)
@@ -1239,12 +1191,12 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 
-	def void setOuterschema(Set<SDFSchema> schema)
+	def void setOuterschema(Collection<SDFSchema> schema)
 	{
 		registerSources(schema, false)
 	}
 
-	def void setInnerschema(Set<SDFSchema> schema)
+	def void setInnerschema(Collection<SDFSchema> schema)
 	{
 		registerSources(schema, true)
 	}
@@ -1268,7 +1220,7 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 	
-	def private String getDataTypeFrom(Attribute attribute) 
+	def public String getDataTypeFrom(Attribute attribute) 
 	{
 		if(attribute == null) throw new NullPointerException("given attribute was null")
 		
@@ -1293,7 +1245,7 @@ class CQLGenerator implements IGenerator2
 		throw new IllegalArgumentException("given attribute " + attribute.name + "unknown")		
 	}
 	
-	def private String getSourcenameFromAlias(String sourcealias)
+	def public String getSourcenameFromAlias(String sourcealias)
 	{
 		for(Entry<SourceStruct, List<String>> source : getSourceAliases().entrySet)
 			if(source.value.contains(sourcealias))
@@ -1302,18 +1254,31 @@ class CQLGenerator implements IGenerator2
 		throw new IllegalArgumentException("given alias " + sourcealias + " is invalid: no corresponding source found")									
 	}
 	
-	def private String getAttributenameFromAlias(String attributealias)
+	def public String getAttributenameFromAlias(String attributealias)
 	{
+		if(attributealias == null || attributealias.equals(""))
+			throw new IllegalArgumentException("given alias was null or an empty string")
+		
 		for(Entry<AttributeStruct, List<String>> entry : getAttributeAliases.entrySet)
 			for(String alias : entry.value)
 				if(alias.equals(attributealias))
 					return entry.key.attributename
+		
+		if(getAggregationAliases().contains(attributealias))
+			return attributealias			
 					
 		throw new IllegalArgumentException("given alias " + attributealias + " is invalid: no corresponding attribute found")									
 	}
 	
-	def private String getAttributename(String attribute)
+	def public String getAttributename(String attribute, String srcname)
 	{
+		if(srcname != null && !srcname.equals(""))
+		{
+			for(SourceStruct struct : sources)
+				if(struct.sourcename.equals(srcname))
+					return srcname + "." + struct.findbyName(attribute).attributename
+		}
+		
 		if(attribute.contains("."))
 		{
 			/*
@@ -1350,18 +1315,19 @@ class CQLGenerator implements IGenerator2
 			if(attr.attributename.equals(name))
 				return attr.sourcename + '.' + attr.attributename
 
-		if(aggregationAttributes.contains(attribute))
+		if(getAggregationAliases().contains(attribute))
 			return attribute		
 				
 		throw new IllegalArgumentException("attribute " + attribute + " could not be resolved" )		
 	}
 	
-	def private String getAttributename(Attribute attribute)
+	def public String getAttributename(Attribute attribute, String srcname)
 	{
-		return getAttributename(attribute.name)
+		return getAttributename(attribute.name, srcname)
 	}
 	
-	def private String getSimpleAttributename(String attribute)
+	//unused
+	def public String getSimpleAttributename(String attribute)
 	{
 		var name = ''	
 		if(attribute.contains("."))
@@ -1373,11 +1339,14 @@ class CQLGenerator implements IGenerator2
 	}
 	
 	/** Returns all {@link Attribute} elements to the corresponding source. */
-	def private List<String> getAttributeNamesFrom(String srcname) 
+	def public List<String> getAttributeNamesFrom(String srcname) 
 	{
  		for(SourceStruct source : sources)
 			if(source.sourcename.equals(srcname))
-				return source.attributes.stream.map(e|e.attributename).collect(Collectors.toList)
+			{
+				var list = source.attributes.stream.map(e|e.attributename).collect(Collectors.toList);
+				return list 
+			}
 	}
 	
 	

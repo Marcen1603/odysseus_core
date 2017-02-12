@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -35,16 +37,33 @@ public class CQLDictionaryHelper extends CQLDictionary
 	}
 	
 	
-	public CQLDictionaryHelper(String src, String ... datatypes) 
+//	public CQLDictionaryHelper(String src, String ... attribute) 
+//	{
+//		super.attributes = new HashMap<>();
+//		SDFAttribute[] attributes = new SDFAttribute[datatypes.length];
+//		for(int i = 0; i < datatypes.length; i++)
+//		{
+//			attributes[i] = new SDFAttribute(src, "attr"+(i+1), new SDFDatatype(datatypes[i]));
+//		}
+//		add(Arrays.asList(attributes));
+//	}
+	
+	public CQLDictionaryHelper(String src, String ... attributes) 
 	{
 		super.attributes = new HashMap<>();
-		SDFAttribute[] attributes = new SDFAttribute[datatypes.length];
-		for(int i = 0; i < datatypes.length; i++)
+//		for(String s : attributes)
+//			System.out.println(s);
+		List<SDFAttribute> attrs = new ArrayList<>();
+		List<String> processed = new ArrayList<>();
+		for(int i = 0; i < attributes.length; i++)
 		{
-			attributes[i] = new SDFAttribute(src, "attr"+(i+1), new SDFDatatype(datatypes[i]));
+			if(!processed.contains(attributes[i]))
+			{	
+				processed.add(attributes[i]);
+				attrs.add(new SDFAttribute(src, attributes[i], new SDFDatatype("INTEGER")));
+			}
 		}
-		add(Arrays.asList(attributes));
+		add(attrs);
 	}
-	
 	
 }
