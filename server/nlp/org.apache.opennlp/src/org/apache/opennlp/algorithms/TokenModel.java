@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
@@ -12,9 +13,19 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.To
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
+import opennlp.tools.dictionary.Dictionary;
+import opennlp.tools.tokenize.TokenSample;
+import opennlp.tools.tokenize.TokenSampleStream;
 import opennlp.tools.tokenize.Tokenizer;
+import opennlp.tools.tokenize.TokenizerFactory;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.tokenize.lang.Factory;
+import opennlp.tools.util.MarkableFileInputStreamFactory;
+import opennlp.tools.util.ObjectStream;
+import opennlp.tools.util.PlainTextByLineStream;
+import opennlp.tools.util.TrainingParameters;
 
 
 public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
@@ -60,11 +71,15 @@ public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
 
 	@Override
 	public void train(String languageCode, File file, String charSet) {
-		//ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
-		//ObjectStream<TokenSample> sampleStream = new TokenSampleStream(lineStream);
-
-		//Tokenizer model = TokenizerME.train(languageCode, sampleStream, true,  TrainingParameters.defaultParams());
-
+		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
+			ObjectStream<TokenSample> sampleStream = new TokenSampleStream(lineStream)) {
+			TokenizerFactory factory = new TokenizerFactory(languageCode, new Dictionary(), true, Pattern.compile(Factory.DEFAULT_ALPHANUMERIC));
+			TokenizerModel model = TokenizerME.train(sampleStream, factory,  TrainingParameters.defaultParams());
+			this.tokenizer = new TokenizerME(model);
+		} catch (IOException e) {
+			throw new NLPTrainingFailedException(e.getMessage());
+		}
+		
 	}
 
 }
