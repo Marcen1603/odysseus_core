@@ -1,13 +1,22 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Base64;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
-import de.uniol.inf.is.odysseus.nlp.datastructure.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.IAnnotationModel;
-import de.uniol.inf.is.odysseus.nlp.datastructure.Pipeline;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IAnnotationModel;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelSerializationFailed;
+import de.uniol.inf.is.odysseus.nlp.datastructure.pipeline.Pipeline;
 
 /**
  * Parent class for integrated nlp frameworks.
@@ -30,18 +39,27 @@ public abstract class NLPToolkit {
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	protected NLPToolkit(Set<String> information, HashMap<String, Option> configuration) throws NLPException{
-		this.instantiatePipeline(information, configuration);
+	public NLPToolkit(List<String> models, HashMap<String, Option> configuration) throws NLPException{
+		this.instantiatePipeline(models, configuration);
 	}
+
+	public NLPToolkit() {
+		this.instantiateEmptyPipeline();
+	}
+
+	/**
+	 * Instantiates empty subclass-specified pipeline for algorithm access only.
+	 */
+	protected abstract void instantiateEmptyPipeline();
 
 	/**
 	 * Instantiates the pipeline field with a subclass-specified pipeline.
 	 * 
-	 * @param information List of Annotation-Names that have to be included in the annotated object after annotation.
+	 * @param models List of Annotation-Names that have to be included in the annotated object after annotation.
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	protected abstract void instantiatePipeline(Set<String> information, HashMap<String, Option> configuration) throws NLPException;
+	protected abstract void instantiatePipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException;
 	
 	/**
 	 * Returns new {@link Annotated} object and annotates it with the configured pipeline.
@@ -49,10 +67,14 @@ public abstract class NLPToolkit {
 	 * @return fully annotated text
 	 */
 	public Annotated annotate(String text){
-		Annotated annotated = new Annotated(text, pipeline.getInformation());
+		Annotated annotated = new Annotated(text, pipeline.getModels());
 		pipeline.annotate(annotated);
 		return annotated;
 	}
+	
+	public abstract AnnotationModel<?> deserialize(String serializedModel);
+	public abstract String serialize(AnnotationModel<?> model);
+
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -61,5 +83,9 @@ public abstract class NLPToolkit {
 			return pipeline.equals(o.pipeline);
 		}
 		return false;
+	}
+
+	public Pipeline getPipeline() {
+		return pipeline;
 	}
 }
