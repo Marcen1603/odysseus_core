@@ -1,12 +1,9 @@
 package org.apache.opennlp.algorithms;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-
-import org.apache.opennlp.InputStreamFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
@@ -15,16 +12,9 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.To
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
-import opennlp.tools.sentdetect.SentenceSampleStream;
-import opennlp.tools.tokenize.TokenSample;
-import opennlp.tools.tokenize.TokenSampleStream;
 import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
-import opennlp.tools.util.MarkableFileInputStreamFactory;
-import opennlp.tools.util.ObjectStream;
-import opennlp.tools.util.PlainTextByLineStream;
-import opennlp.tools.util.TrainingParameters;
 
 
 public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
