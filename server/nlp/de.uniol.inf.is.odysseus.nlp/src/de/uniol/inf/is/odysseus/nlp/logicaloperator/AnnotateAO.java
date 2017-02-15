@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,12 +10,10 @@ import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
@@ -25,22 +21,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPToolkitNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
-import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkitNotFoundException;
 /**
- * Logical operator component of the ANNOTATE operator.
- * @author yannickhabecker
- *
+ * Logical operator component of the ANNOTATE operator
  */
-@LogicalOperator(name="ANNOTATE", minInputPorts=1, maxInputPorts=1, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
-public class AnnotateAO extends UnaryLogicalOp {
+@LogicalOperator(name="ANNOTATE", minInputPorts=1, maxInputPorts=9, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
+public class AnnotateAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = 2937642785475519576L;
 
 	//List of information included in output stream (eg. tokens, sentences, pos-tags...)
 	private List<String> information;
-	private Set<String> informationSet;
-	
+ 	
 	//user-specified nlp-toolkit (eg. opennlp)
 	private String toolkit;
 	
@@ -63,14 +56,23 @@ public class AnnotateAO extends UnaryLogicalOp {
     public AnnotateAO(AnnotateAO annotateAO){
         super(annotateAO);
         this.information = annotateAO.information;
-        this.informationSet = annotateAO.informationSet;
         this.toolkit = annotateAO.toolkit;
         this.attribute = annotateAO.attribute;
-        this.nlpToolkit = annotateAO.nlpToolkit;
+        this.nlpToolkit = annotateAO.getNlpToolkit();
         this.configuration = annotateAO.configuration;
     }
     
     public NLPToolkit getNlpToolkit(){
+    	if(nlpToolkit == null){
+    		try {
+    			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(List.class, HashMap.class).newInstance(information, configuration);
+    		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException 
+    				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
+    			throw new ParameterException(e.getMessage());
+    		} catch (InvocationTargetException e) {
+    			throw new ParameterException(e.getCause().getMessage());
+    		}		
+    	}
     	return nlpToolkit;
     }
 
@@ -78,15 +80,6 @@ public class AnnotateAO extends UnaryLogicalOp {
     @Parameter(name="toolkit", type = StringParameter.class, optional = false)
 	public void setToolkit(String toolkit) {
 		this.toolkit = toolkit;	
-		try {
-			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(Set.class, HashMap.class).newInstance(informationSet, configuration);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException 
-				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
-			throw new ParameterException(e.getMessage());
-		} catch (InvocationTargetException e) {
-			throw new ParameterException(e.getCause().getMessage());
-
-		}		
 	}
 
     public String getToolkit(){
@@ -96,17 +89,12 @@ public class AnnotateAO extends UnaryLogicalOp {
     @Parameter(name="information", type = StringParameter.class, isList = true, optional = false)
 	public void setInformation(List<String> information) {
     	this.information = information;
-		this.informationSet = new HashSet<String>();
-		this.informationSet.addAll(information);
 	}
     
 	public List<String> getInformation(){
 		return this.information;
 	}
 	
-	public Set<String> getInformationSet(){
-		return this.informationSet;
-	}
     
     @Parameter(name="options", type = OptionParameter.class, isList = true, optional = true)
     public void setOptions(List<Option> options){
@@ -136,7 +124,7 @@ public class AnnotateAO extends UnaryLogicalOp {
     		outputSchema = SDFSchemaFactory.createNewSchema(
     			getInputSchema(0).getURI(),
     			(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
-    					.getAttributes(), getInputSchema());
+    					.getAttributes(), getInputSchema(0));
     	//List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
     	/*
     	if(information.contains(Annotation.TOKENID))

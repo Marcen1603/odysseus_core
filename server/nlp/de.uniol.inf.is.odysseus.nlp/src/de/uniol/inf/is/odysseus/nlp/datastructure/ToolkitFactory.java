@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPToolkitNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
-import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkitNotFoundException;
 
 /**
  * This class manages installed NLP-Toolkits. New Toolkits can be registered with {@link ToolkitFactory#register(String, NLPToolkit)}
@@ -53,6 +55,18 @@ public class ToolkitFactory {
 			return toolkit;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException ignored) {
+		}
+		return null;
+	}
+	
+	public static NLPToolkit getEmptyToolkit(String toolkitName) throws NLPToolkitNotFoundException, NLPModelNotFoundException{
+		Class<? extends NLPToolkit> clazz = get(toolkitName);
+		NLPToolkit toolkit;
+		try {
+			toolkit = clazz.newInstance();
+			return toolkit;
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
