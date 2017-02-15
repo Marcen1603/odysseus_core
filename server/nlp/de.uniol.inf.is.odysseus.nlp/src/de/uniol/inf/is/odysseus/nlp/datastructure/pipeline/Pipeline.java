@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure;
+package de.uniol.inf.is.odysseus.nlp.datastructure.pipeline;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -8,8 +8,13 @@ import java.util.List;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelPrerequisitesNotFulfilledException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 
 /**
@@ -23,9 +28,15 @@ public abstract class Pipeline {
 	protected List<AnnotationModel<? extends IAnnotation>> pipeline = new LinkedList<>();
 
 	/**
+	 * Pipeline defined by fixed-order List of Annotation-Algorithms.
+	 * @see IAnnotationModel
+	 */
+	protected Set<Class<? extends AnnotationModel<? extends IAnnotation>>> pipelineClasses = new HashSet<>();
+
+	/**
 	 * List of Annotation-Names that have to be included in the annotated object after annotation.
 	 */
-	private Set<String> information;
+	private List<String> models;
 	
 	/**
 	 * A set, containing all possible models.
@@ -34,16 +45,25 @@ public abstract class Pipeline {
 	protected static Set<Class<? extends AnnotationModel<? extends IAnnotation>>> algorithms = new HashSet<>();
 	
 	/**
+	 * Internal constructor for unconfigured Pipeline for model-access.
+	 */
+	public Pipeline(){
+		configure();
+	}
+	
+	/**
 	 * Internal constructor for user-configured pipelines.
 	 * 
-	 * @param information List of Annotation-Names that have to be included in the annotated object after annotation.
+	 * @param models List of Annotation-Names that have to be included in the annotated object after annotation.
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	protected Pipeline(Set<String> information, HashMap<String, Option> configuration) throws NLPException{	
-		this.information = information;
+	public Pipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException{	
+		configure();
+		configure(models, configuration);
 		
-		for(String inf: information){
+		this.models = models;		
+		for(String inf: models){
 			try {
 				Class<? extends AnnotationModel<?>> model = identifierToModel(inf);
 				addModelToPipeline(model, configuration);
@@ -51,26 +71,27 @@ public abstract class Pipeline {
 			}
 		}
 		
-		configure(information, configuration);
 	}
 	
 	private void addModelToPipeline(Class<? extends AnnotationModel<? extends IAnnotation>> model, HashMap<String, Option> configuration) throws NLPException{
 		try {
 			if(model == null)
 				throw new NLPModelNotFoundException("One of the specified models were not found");
+			
 			Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites = model.getConstructor().newInstance().prerequisites();
-			
-			/*
-			 * Add prerequisites beforehand, so they're annotated first
-			 */
-			for(Class<? extends AnnotationModel<? extends IAnnotation>> algorithm: prerequisites){
-				addModelToPipeline(algorithm, configuration);
-			}
-			
 			AnnotationModel<? extends IAnnotation> instance = model.getConstructor(HashMap.class).newInstance(configuration);
-			
+
+			/*
+			 * Check if all prerequsites are fulfilled.
+			 */
+			if(!pipelineClasses.containsAll(prerequisites)){
+				throw new NLPModelPrerequisitesNotFulfilledException("Some of the prerequsites of " + instance.identifier() + " are not fulfilled. "
+						+ "Try to review the pipeline order and check if any nlp-algorithms may have to be run earlier than this one.");
+			}
+					
 			if(!pipeline.contains(instance)){
 				pipeline.add(instance);
+				pipelineClasses.add(model);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException
 				| NoSuchMethodException | SecurityException | InstantiationException ignored) {
@@ -88,7 +109,13 @@ public abstract class Pipeline {
 	 * @param information List of Annotation-Names that have to be included in the annotated object after annotation.
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 */
-	protected abstract void configure(Set<String> information, HashMap<String, Option> configuration);
+	protected abstract void configure(List<String> information, HashMap<String, Option> configuration);
+	
+	
+	/**
+	 * Used for adding models to algorithms set.
+	 */
+	protected abstract void configure();
 	
 	
 	/**
@@ -108,8 +135,9 @@ public abstract class Pipeline {
 	 * @param identifier of model
 	 * @return Class of model
 	 * @throws InstantiationException 
+	 * @throws NLPModelNotFoundException 
 	 */
-	private Class<? extends AnnotationModel<?>> identifierToModel(String identifier) throws InstantiationException {
+	public Class<? extends AnnotationModel<?>> identifierToModel(String identifier) throws InstantiationException, NLPModelNotFoundException {
 		for(Class<? extends AnnotationModel<?>> model : algorithms){
 			try {
 				String id = model.getConstructor().newInstance().identifier();
@@ -121,7 +149,7 @@ public abstract class Pipeline {
 				ignored.printStackTrace();
 			}
 		}
-		return null;
+		throw new NLPModelNotFoundException(identifier);
 	}
 	
 	@Override
@@ -138,8 +166,24 @@ public abstract class Pipeline {
 	 * @see Pipeline#annotate(Annotated)
 	 * @return Set of strings with information to be included
 	 */
-	public Set<String> getInformation() {
-		return information;
+	public List<String> getModels() {
+		return models;
 	}
-
+	
+	/**
+	 * This method can be used to exchange specific AnnotationModels in the pipeline
+	 * @param exchange the model to be inserted
+	 * 
+	 */
+	public void exchange(AnnotationModel<?> exchange){
+		int idx = -1;
+		for(int i = 0; i < pipeline.size(); i++){
+			if(pipeline.get(i).identifier().equals(exchange.identifier())){
+				idx = i;
+			}
+		}
+		if(idx != -1)
+			pipeline.set(idx, exchange);
+	}
+	
 }

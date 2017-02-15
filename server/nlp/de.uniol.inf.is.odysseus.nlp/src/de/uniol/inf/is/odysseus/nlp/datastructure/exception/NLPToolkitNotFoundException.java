@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
+package de.uniol.inf.is.odysseus.nlp.datastructure.exception;
 
 import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
 

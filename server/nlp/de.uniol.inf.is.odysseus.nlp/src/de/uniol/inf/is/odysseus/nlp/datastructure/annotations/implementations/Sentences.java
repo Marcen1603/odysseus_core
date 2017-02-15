@@ -1,7 +1,7 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
-import de.uniol.inf.is.odysseus.nlp.datastructure.Annotation;
-import de.uniol.inf.is.odysseus.nlp.datastructure.Span;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 
 /**
  * Annotation for wrapping information about sentences in a text with the usage of token indexes.

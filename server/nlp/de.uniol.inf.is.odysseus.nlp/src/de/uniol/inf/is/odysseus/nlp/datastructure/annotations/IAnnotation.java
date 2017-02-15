@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 
 import java.util.Map;
 

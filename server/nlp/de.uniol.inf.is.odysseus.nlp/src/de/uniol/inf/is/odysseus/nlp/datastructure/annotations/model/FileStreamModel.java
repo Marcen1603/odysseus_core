@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,12 +8,13 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
-import de.uniol.inf.is.odysseus.nlp.datastructure.AnnotationModel;
-import de.uniol.inf.is.odysseus.nlp.datastructure.IAnnotation;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationModel<A> {
+	private static final long serialVersionUID = -7469726621911779794L;
+
 	/**
 	 * Creates OpenNLP Model based on an user-specified configuration HashMap.
 	 * @param configuration contains information about model-location

@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
@@ -15,11 +15,11 @@ public class Annotated extends Annotation{
 	 * Text used for natural language processing.
 	 */
 	private String text;
-	private Set<String> information;
+	private List<String> models;
 	
-	public Annotated(String text, Set<String> information){
+	public Annotated(String text, List<String> models){
 		this.text = text;
-		this.information = information;
+		this.models = models;
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class Annotated extends Annotation{
     	KeyValueObject<IMetaAttribute> keyvalue = KeyValueObject.createInstance();
     	Map<String, IAnnotation> annotations = getAnnotations();
     	for(Entry<String, IAnnotation> entry : annotations.entrySet()){
-    		if(information.contains(entry.getValue().identifier()))
+    		if(models.contains(entry.getValue().identifier()))
     			keyvalue.setAttribute(entry.getKey(), entry.getValue().toObject());
     	}
 		return keyvalue;

@@ -1,4 +1,7 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model;
+
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 
 /**
  * Interface for Algorithms for IAnnotation based Annotating

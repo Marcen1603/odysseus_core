@@ -1,6 +1,6 @@
-package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
+package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
-import de.uniol.inf.is.odysseus.nlp.datastructure.Annotation;;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;;
 
 /**
  * Token annotation defines a set of tokens contained in an analyzed text.
