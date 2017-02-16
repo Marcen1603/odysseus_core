@@ -67,6 +67,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
     private boolean dirty = false;
     private EvaluationModel evaluationModel;
     private Button btnActivateLatencyMeasurements;
+    private Button btnUseMaxLatencyMeasurements;
     private Button btnActivateThroughputMeasurments;
     private Button btnActivateResourceMeasurments;
     private Text parameterValues;
@@ -96,7 +97,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
     /**
      * Create contents of the editor part.
-     * 
+     *
      * @param parent
      */
     @Override
@@ -386,6 +387,17 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         btnCreatePlotsForLatency.setText("Create plots for latencies");
         btnCreatePlotsForLatency.setSelection(this.evaluationModel.isCreateLatencyPlots());
         btnCreatePlotsForLatency.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+            }
+        });
+
+        btnUseMaxLatencyMeasurements = new Button(latencyComposite, SWT.CHECK);
+        btnUseMaxLatencyMeasurements.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        btnUseMaxLatencyMeasurements.setText("Use max latency");
+        btnUseMaxLatencyMeasurements.setSelection(this.evaluationModel.isUseMaxLatency());
+        btnUseMaxLatencyMeasurements.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setDirty(true);
@@ -683,6 +695,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         evaluationModel.setPlotFilesPath(this.plotFolder.getText());
         evaluationModel.setProcessingResultsPath(this.processingResultFolder.getText());
         evaluationModel.setWithLatency(btnActivateLatencyMeasurements.getSelection());
+        evaluationModel.setUseMaxLatency(btnUseMaxLatencyMeasurements.getSelection());
         evaluationModel.setWithThroughput(btnActivateThroughputMeasurments.getSelection());
         evaluationModel.setWithResource(btnActivateResourceMeasurments.getSelection());
         evaluationModel.setNumberOfRuns(numberOfTimesSpinner.getSelection());

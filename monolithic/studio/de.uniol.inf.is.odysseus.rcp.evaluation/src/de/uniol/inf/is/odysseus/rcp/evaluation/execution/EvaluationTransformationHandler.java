@@ -51,7 +51,7 @@ public class EvaluationTransformationHandler extends AbstractPreTransformationHa
 		EvaluationRun run = (EvaluationRun) modelObject;
 		if (run != null) {
 			if (run.getContext().getModel().isWithLatency()) {
-				addLatencyOperators(query.getLogicalPlan(), caller, run);
+				addLatencyOperators(query.getLogicalPlan(), caller, run, run.getContext().getModel().isUseMaxLatency());
 			}
 			if (run.getContext().getModel().isWithThroughput()) {
 				addThroughputOperators(query.getLogicalPlan(), caller, run);
@@ -66,13 +66,11 @@ public class EvaluationTransformationHandler extends AbstractPreTransformationHa
 
 	}
 
-	private static MapAO createMapOperatorForSimpleMetaAttribute(SDFAttribute attribute, ILogicalOperator source) {
+	private static MapAO createMapOperator(String expressioName, String expression, ILogicalOperator source) {
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
-		expressions.add(new NamedExpression(
-				attribute.getAttributeName(), new SDFExpression(attribute.getAttributeName(),
-						new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
-				attribute.getDatatype()));
+		SDFExpression sdfExpression = new SDFExpression(expression, new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
+		expressions.add(new NamedExpression(expressioName, sdfExpression));
 		map.setExpressions(expressions);
 		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return map;
@@ -82,7 +80,7 @@ public class EvaluationTransformationHandler extends AbstractPreTransformationHa
 		return base.replace('.', '_');
 	}
 
-	private void addLatencyOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
+	private void addLatencyOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run, boolean usMaxLatency) {
 		if (logicalPlan instanceof TopAO) {
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
@@ -92,7 +90,15 @@ public class EvaluationTransformationHandler extends AbstractPreTransformationHa
 				}
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO latencyOnly = createMapOperatorForSimpleMetaAttribute(Latency.schema.get(0).getAttribute(3), latency);
+				final String expressionName = "Latency";
+				final String expression;
+
+				if (usMaxLatency){
+					expression = Latency.schema.get(0).getAttribute(2)+"-"+Latency.schema.get(0).getAttribute(0);
+				}else{
+					expression = Latency.schema.get(0).getAttribute(3).getAttributeName();
+				}
+				MapAO latencyOnly = createMapOperator(expressionName, expression, latency);
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
 				fileAO.setNumberFormatter("##################################");
@@ -167,7 +173,7 @@ public class EvaluationTransformationHandler extends AbstractPreTransformationHa
 				}
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO sysloadOnly = createMapOperatorForSimpleMetaAttribute(SystemLoad.schema.get(0).getAttribute(0), systemload);
+				MapAO sysloadOnly = createMapOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(), SystemLoad.schema.get(0).getAttribute(0).getAttributeName(), systemload);
 
 				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
 				CSVFileSink fileCPU = new CSVFileSink();
