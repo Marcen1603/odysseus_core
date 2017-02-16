@@ -103,7 +103,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			for (ILogicalOperator o : sources) {
 				MetadataAO toInsert = new MetadataAO();
 				toInsert.setLocalMetaAttribute(metaAttribute);
-				RestructHelper.insertOperatorBefore(toInsert, o);
+				// TODO: Check why insertOperatorBefore seems to be right in other cases
+				RestructHelper.insertOperatorBefore2(toInsert, o);
 			}
 		}
 		// dumpPlan(logicalPlan);
