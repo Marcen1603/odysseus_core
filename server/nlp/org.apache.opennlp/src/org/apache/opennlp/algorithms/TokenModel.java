@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import org.apache.opennlp.OpenNLPModel;
+
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -28,9 +30,26 @@ import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
 
 
-public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
+public class TokenModel extends OpenNLPModel<Tokens> {
 	private static final long serialVersionUID = 8879738892852158758L;
+	private TokenizerModel tokenizerModel;
+
+	public TokenizerModel getTokenizerModel() {
+		return tokenizerModel;
+	}
+
 	private Tokenizer tokenizer;
+	
+	public void makeSerializable(){
+		tokenizer = null;
+	}
+	
+	public Tokenizer getTokenizer(){
+		if(tokenizer == null){
+			tokenizer = new TokenizerME(tokenizerModel);
+		}
+		return tokenizer;
+	}
 	
 	public TokenModel(){
 		super();
@@ -49,13 +68,14 @@ public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
 
 	@Override
 	public void annotate(Annotated annotated) {
-		Tokens annotation = new Tokens(tokenizer.tokenize(annotated.getText()));
+		Tokens annotation = new Tokens(getTokenizer().tokenize(annotated.getText()));
 		annotated.put(annotation);
 	}
 
 	@Override
 	protected void load(InputStream stream) throws IOException {
-		this.tokenizer = new TokenizerME(new TokenizerModel(stream));
+		this.tokenizerModel = new TokenizerModel(stream);
+		getTokenizer();
 	}
 
 	@Override
@@ -74,12 +94,11 @@ public class TokenModel extends TrainableFileAnnotationModel<Tokens> {
 		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
 			ObjectStream<TokenSample> sampleStream = new TokenSampleStream(lineStream)) {
 			TokenizerFactory factory = new TokenizerFactory(languageCode, new Dictionary(), true, Pattern.compile(Factory.DEFAULT_ALPHANUMERIC));
-			TokenizerModel model = TokenizerME.train(sampleStream, factory,  TrainingParameters.defaultParams());
-			this.tokenizer = new TokenizerME(model);
+			tokenizerModel = TokenizerME.train(sampleStream, factory,  TrainingParameters.defaultParams());
+			this.tokenizer = new TokenizerME(tokenizerModel);
 		} catch (IOException e) {
 			throw new NLPTrainingFailedException(e.getMessage());
 		}
-		
 	}
 
 }

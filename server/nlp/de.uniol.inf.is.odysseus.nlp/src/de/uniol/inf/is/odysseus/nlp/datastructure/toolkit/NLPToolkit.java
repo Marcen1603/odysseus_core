@@ -1,21 +1,17 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+
+import org.slf4j.LoggerFactory;
+
+import org.slf4j.Logger;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IAnnotationModel;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
-import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelSerializationFailed;
 import de.uniol.inf.is.odysseus.nlp.datastructure.pipeline.Pipeline;
 
 /**

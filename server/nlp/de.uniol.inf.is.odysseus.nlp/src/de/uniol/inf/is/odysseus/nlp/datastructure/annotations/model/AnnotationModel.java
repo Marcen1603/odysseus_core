@@ -35,6 +35,9 @@ public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotat
 	 */
 	protected abstract void addRequirements();
 	
+
+	public abstract void makeSerializable();
+	
 	public Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites(){
 		return prerequisites;
 	}

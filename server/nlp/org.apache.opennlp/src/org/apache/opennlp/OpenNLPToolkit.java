@@ -62,6 +62,7 @@ public class OpenNLPToolkit extends NLPToolkit{
 	public String serialize(AnnotationModel<?> model){
 		final ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try(ObjectOutputStream objectStream = new ObjectOutputStream(stream)){
+        	model.makeSerializable();
         	objectStream.writeObject(model);
         	objectStream.close();
             return Base64.getEncoder().encodeToString(stream.toByteArray());
