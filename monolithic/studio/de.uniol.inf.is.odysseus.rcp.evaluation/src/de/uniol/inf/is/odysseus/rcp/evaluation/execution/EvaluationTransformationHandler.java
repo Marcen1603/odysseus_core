@@ -17,12 +17,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
@@ -36,7 +37,7 @@ import de.uniol.inf.is.odysseus.rcp.evaluation.processing.logicaloperator.Measur
 import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadAO;
 
-public class EvaluationTransformationHandler implements IPreTransformationHandler {
+public class EvaluationTransformationHandler extends AbstractPreTransformationHandler {
 
 	@Override
 	public String getName() {
@@ -86,6 +87,9 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getTarget();
+				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
+					root = root.getSubscribedToSource(0).getTarget();
+				}
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
 				MapAO latencyOnly = createMapOperatorForSimpleMetaAttribute(Latency.schema.get(0).getAttribute(3), latency);
@@ -155,7 +159,7 @@ public class EvaluationTransformationHandler implements IPreTransformationHandle
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getTarget();
-				if (root instanceof CSVFileSink) {
+				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
 					root = root.getSubscribedToSource(0).getTarget();
 				}
 				if (root instanceof CalcLatencyAO) {

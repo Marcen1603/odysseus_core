@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -34,12 +34,12 @@ import de.uniol.inf.is.odysseus.parallelization.benchmark.logicaloperator.Observ
  * Simple transformation handler, which integrates an ObserverBenchmarkAO at the
  * end of the current logical plan. Could be used with #TRANSFORM keyword in
  * Odysseus script
- * 
+ *
  * @author ChrisToenjesDeye
  *
  */
-public class BenchmarkPreTransformationHandler implements
-		IPreTransformationHandler {
+public class BenchmarkPreTransformationHandler extends
+		AbstractPreTransformationHandler {
 
 	public static String NAME = "BenchmarkPreTransformation";
 
@@ -65,11 +65,11 @@ public class BenchmarkPreTransformationHandler implements
 			CopyOnWriteArrayList<LogicalSubscription> sourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
 					topAO.getSubscribedToSource());
 			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
-				// unsibscribe the topAO from all source subscriptions 
+				// unsibscribe the topAO from all source subscriptions
 				ILogicalOperator sourceOperator = logicalSubscription
 						.getTarget();
 				topAO.unsubscribeFromSource(logicalSubscription);
-				
+
 				// create ObserverBenchmark operator and connect to all existing sources
 				ObserverBenchmarkAO observerBenchmarkAO = new ObserverBenchmarkAO();
 				sourceOperator.subscribeSink(observerBenchmarkAO, 0,
