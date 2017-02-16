@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -162,14 +163,10 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 		String querytext = queryLines;
 
+		String prefix = "";
+
 		if (!setupTeardownEveryRun){
-			ids  = executor.addQuery(setupQueryLines, "OdysseusScript", caller, context);
-			monitor.subTask("Setting up query ...");
-			for (int id : ids) {
-				executor.startQuery(id, caller);
-			}
-			// Wait for end of processing could be optimized
-			Thread.sleep(1000);
+			runSetup(monitor, setupQueryLines, executor, caller, context, prefix);
 		}
 
 		for (int i = 1; i <= model.getNumberOfRuns(); i++) {
@@ -179,7 +176,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				throw new InterruptedException();
 			}
 
-			String prefix = prefixHeader;
+			prefix = prefixHeader;
 
 			for (Entry<String, String> currentValue : currentValues.entrySet()) {
 				prefix = prefix + " - " + currentValue.getKey() + ": " + currentValue.getValue() + "\n";
@@ -197,13 +194,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			context.put(EvaluationRun.class.getName(), evaluationRun);
 
 			if (setupTeardownEveryRun){
-				ids  = executor.addQuery(setupQueryLines, "OdysseusScript", caller, context);
-				monitor.subTask(prefix + "Setting up query ...");
-				for (int id : ids) {
-					executor.startQuery(id, caller);
-				}
-				// Wait for end of processing could be optimized
-				Thread.sleep(1000);
+				runSetup(monitor, setupQueryLines, executor, caller, context, prefix);
 			}
 
 
@@ -224,30 +215,49 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			}
 
 			if (setupTeardownEveryRun){
-				ids  = executor.addQuery(teardownQueryLines, "OdysseusScript", caller, context);
-				monitor.subTask(prefix + "Tearing down query ...");
-				for (int id : ids) {
-					executor.startQuery(id, caller);
-				}
-				// Wait for end of processing could be optimized
-				Thread.sleep(1000);
+				runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 			}
 
 			monitor.subTask(prefix + "Run done. Starting next...");
 		}
+		prefix = "";
 		if (!setupTeardownEveryRun){
-			ids  = executor.addQuery(teardownQueryLines, "OdysseusScript", caller, context);
-			monitor.subTask("Tearing down query ...");
-			for (int id : ids) {
-				executor.startQuery(id, caller);
-			}
-			// Wait for end of processing could be optimized
-			Thread.sleep(1000);
+			runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 		}
 		return counter;
 
 	}
 
+
+	private void runSetup(IProgressMonitor monitor, String setupQueryLines, IServerExecutor executor, ISession caller,
+			Context context, String prefix) throws InterruptedException {
+		String message = prefix + "Setting up query ...";
+		runAndWait(monitor, executor, caller, context, message, setupQueryLines);
+	}
+
+	private void runTearDown(IProgressMonitor monitor, String teardownQueryLines, IServerExecutor executor,
+			ISession caller, Context context, String prefix) throws InterruptedException {
+		String message = prefix + "Tearing down query ...";
+		runAndWait(monitor, executor, caller, context, message, teardownQueryLines);
+	}
+
+	private void runAndWait(IProgressMonitor monitor, IServerExecutor executor, ISession caller, Context context,
+			String message, String query) throws InterruptedException {
+		ids  = executor.addQuery(query, "OdysseusScript", caller, context);
+		monitor.subTask(message);
+		for (int id : ids) {
+			executor.startQuery(id, caller);
+		}
+		// Simple queries need to time and send to QUERY_STOP
+		Thread.sleep(1000);
+		for (int i:ids){
+			// If one query is still running ... wait
+			if (executor.getQueryState(i, caller) == QueryState.RUNNING){
+				this.wait(1000);
+			}
+		}
+
+	}
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
