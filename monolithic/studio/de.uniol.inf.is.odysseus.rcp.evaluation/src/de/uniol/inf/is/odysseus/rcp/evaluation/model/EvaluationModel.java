@@ -30,6 +30,7 @@ public class EvaluationModel implements Serializable {
     private static final String PROCESSING_RESULTS_PATH = "PROCESSINGRESULTSPATH";
     private static final String WITH_THROUGHPUT = "WITH_THROUGHPUT";
     private static final String WITH_LATENCY = "WITH_LATENCY";
+    private static final String USE_MAX_LATENCY = "USE_MAX_LATENCY";
     private static final String WITH_RESOURCE = "WITH_RESOURCE";
 
     private static final String NUMBER_OF_RUNS = "NUMBER_OF_RUNS";
@@ -50,6 +51,7 @@ public class EvaluationModel implements Serializable {
     private String plotFilesPath = "";
 
     private boolean withLatency = true;
+    private boolean useMaxLatency = false;
     private boolean withThroughput = true;
     private boolean withResource = true;
 
@@ -113,6 +115,7 @@ public class EvaluationModel implements Serializable {
         memento.putString(PROCESSING_RESULTS_PATH, this.processingResultsPath);
         memento.putString(PLOT_FILES_PATH, this.plotFilesPath);
         memento.putBoolean(WITH_LATENCY, this.withLatency);
+        memento.putBoolean(USE_MAX_LATENCY, this.useMaxLatency);
         memento.putBoolean(WITH_THROUGHPUT, this.withThroughput);
         memento.putBoolean(WITH_RESOURCE, this.withResource);
         memento.putBoolean(CREATE_LATENCY_PLOTS, this.createLatencyPlots);
@@ -152,7 +155,8 @@ public class EvaluationModel implements Serializable {
                 XMLMemento memento = XMLMemento.createReadRoot(sr);
                 this.processingResultsPath = memento.getString(PROCESSING_RESULTS_PATH);
                 this.plotFilesPath = memento.getString(PLOT_FILES_PATH);
-                this.withLatency = memento.getBoolean(WITH_LATENCY);
+                this.withLatency = checkNullAndSet(memento.getBoolean(WITH_LATENCY), this.withLatency);
+                this.useMaxLatency = checkNullAndSet(memento.getBoolean(USE_MAX_LATENCY), this.useMaxLatency);
                 this.withThroughput = memento.getBoolean(WITH_THROUGHPUT);
                 this.withResource = memento.getBoolean(WITH_RESOURCE);
 
@@ -236,7 +240,15 @@ public class EvaluationModel implements Serializable {
         }
     }
 
-    public boolean isWithThroughput() {
+    public boolean isUseMaxLatency() {
+		return useMaxLatency;
+	}
+
+	public void setUseMaxLatency(boolean useMaxLatency) {
+		this.useMaxLatency = useMaxLatency;
+	}
+
+	public boolean isWithThroughput() {
         return this.withThroughput;
     }
 
