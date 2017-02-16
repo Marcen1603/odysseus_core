@@ -475,7 +475,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
             }
         });
 
-        btnUseMaxLatencyMeasurements = new Button(latencyComposite, SWT.CHECK);
+        btnUseMaxLatencyMeasurements = new Button(grpLatency, SWT.CHECK);
         btnUseMaxLatencyMeasurements.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         btnUseMaxLatencyMeasurements.setText("Use max latency");
         btnUseMaxLatencyMeasurements.setSelection(this.evaluationModel.isUseMaxLatency());

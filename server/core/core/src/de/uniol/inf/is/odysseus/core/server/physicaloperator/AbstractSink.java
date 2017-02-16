@@ -367,6 +367,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 	@Override
 	final public void process(R object, int port) {
 		fire(processInitEvent[port]);
+		
 		process_next(object, port);
 		fire(processDoneEvent[port]);
 	}
