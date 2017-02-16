@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
@@ -47,12 +47,12 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.Transfor
 /**
  * PreTransformation handler for inter operator paralleization. this handler is
  * used to transform the existing logical plan.
- * 
+ *
  * @author ChrisToenjesDeye
  *
  */
-public class InterOperatorParallelizationPreTransformationHandler implements
-		IPreTransformationHandler {
+public class InterOperatorParallelizationPreTransformationHandler extends
+		AbstractPreTransformationHandler {
 
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final int PARAMETER_COUNT = 4;
@@ -105,7 +105,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	/**
 	 * cleans the results of the transformations. Removes the results with a
 	 * state = FAILED. this is needed for post optimization
-	 * 
+	 *
 	 * @param transformationResults
 	 */
 	private void cleanupResults(List<TransformationResult> transformationResults) {
@@ -120,7 +120,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 
 	/**
 	 * do all transformations of the plan
-	 * 
+	 *
 	 * @param query
 	 * @param logicalPlan
 	 * @param transformationResults
@@ -164,7 +164,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	 * done. Only the operators definied in odysseus script are transformed with
 	 * the selected strategy and fragmentation. if the stragety or fragmantation
 	 * are not selected, they are detectetd automatically
-	 * 
+	 *
 	 * @param logicalPlan
 	 * @return
 	 */
@@ -273,14 +273,14 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	 * do automatic transformations if no custom operator ids and configurations
 	 * are set. the operators are automatically detected from the given logical
 	 * plan and the preferred strategies and fragmentations are used
-	 * 
+	 *
 	 * @param logicalPlan
 	 * @return
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void doAutomaticTransformation(
 			ILogicalOperator logicalPlan, List<TransformationResult> transformationResults) {
-		
+
 		// get all strategies which are for an specific logical operator
 		Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 		List<Class<? extends ILogicalOperator>> validTypes = ParallelTransformationStrategyRegistry
@@ -318,7 +318,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 
 	/**
 	 * get operator specific configurations
-	 * 
+	 *
 	 * @param config
 	 */
 	private void getOperatorSpecificParameters(QueryBuildConfiguration config) {
@@ -333,7 +333,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	/**
 	 * gets the gobal parameters which are definied in the PARALLELIZATION
 	 * keyword
-	 * 
+	 *
 	 * @param handlerParameters
 	 */
 	private void getGlobalParameters(
@@ -376,7 +376,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 
 	/**
 	 * detects the preferred strategy for the given operator
-	 * 
+	 *
 	 * @param operatorForTransformation
 	 * @return
 	 */
