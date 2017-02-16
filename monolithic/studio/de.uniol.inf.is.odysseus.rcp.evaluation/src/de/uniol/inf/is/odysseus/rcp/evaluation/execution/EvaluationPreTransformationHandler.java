@@ -84,26 +84,29 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		SortedSet<String> types = new TreeSet<>();
 		EvaluationModel model = run.getContext().getModel();
 		types.addAll(logicalPlan.getOutputSchema().getMetaAttributeNames());
-		if (model.isWithLatency()) {
+		boolean added = false;
+		if (model.isWithLatency() && !types.contains(ILatency.class.getName())) {
 			types.add(ILatency.class.getName());
+			added = true;
 		}
-		if (model.isWithResource()) {
+		if (model.isWithResource() && !types.contains(ISystemLoad.class.getName())) {
 			types.add(ISystemLoad.class.getName());
+			added = true;
 		}
 
-		IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(types);
-		// find all accessao and set metadata
-		List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalPlan);
+		if (added) {
 
-		for (ILogicalOperator o : sources) {
-			MetadataAO toInsert = new MetadataAO();
-			toInsert.setLocalMetaAttribute(metaAttribute);
-			RestructHelper.insertOperatorBefore(toInsert, o);
+			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(types);
+			// find all accessao and set metadata
+			List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalPlan);
+
+			for (ILogicalOperator o : sources) {
+				MetadataAO toInsert = new MetadataAO();
+				toInsert.setLocalMetaAttribute(metaAttribute);
+				RestructHelper.insertOperatorBefore(toInsert, o);
+			}
 		}
-
-		// update schemata in subscriptions!!
-
-		//dumpPlan(logicalPlan);
+		// dumpPlan(logicalPlan);
 	}
 
 	@SuppressWarnings("unused")
@@ -130,7 +133,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 	private void addLatencyOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
 		if (logicalPlan instanceof TopAO) {
 
-			//dumpPlan(logicalPlan);
+			// dumpPlan(logicalPlan);
 
 			boolean usMaxLatency = run.getContext().getModel().isUseMaxLatency();
 			List<ILogicalOperator> newChilds = new ArrayList<>();
