@@ -54,6 +54,7 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 			throw new ParameterException("You have to define all parameters: "+String.join(",", MODELKEY, URIKEY, CHARSETKEY, LANGUAGECODEKEY));
 		}
 		this.language = options.get(LANGUAGECODEKEY);
+		this.charset = options.get(CHARSETKEY);
 		initModel(options.get(MODELKEY));
 		try {
 			initFile(options.get(URIKEY), options.get(CHARSETKEY));

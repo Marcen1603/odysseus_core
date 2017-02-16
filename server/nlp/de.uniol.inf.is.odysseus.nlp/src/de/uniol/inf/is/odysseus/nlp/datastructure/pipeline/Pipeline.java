@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -21,6 +24,8 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
  * This abstract class is used for the definition of a pipeline inside {@link NLPToolkit} classes.
  */
 public abstract class Pipeline {	
+	private final Logger LOGGER = LoggerFactory.getLogger(Pipeline.class);
+	
 	/**
 	 * Pipeline defined by fixed-order List of Annotation-Algorithms.
 	 * @see IAnnotationModel
@@ -182,8 +187,10 @@ public abstract class Pipeline {
 				idx = i;
 			}
 		}
-		if(idx != -1)
+		if(idx != -1){
+			LOGGER.info("Exchanged Model: "+exchange.identifier());
 			pipeline.set(idx, exchange);
+		}
 	}
 	
 }
