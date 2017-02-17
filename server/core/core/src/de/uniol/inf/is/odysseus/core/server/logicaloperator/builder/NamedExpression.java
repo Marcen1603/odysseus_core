@@ -16,6 +16,12 @@ public class NamedExpression implements IClone {
 		this.datatype = datatype;
 	}
 
+	public NamedExpression(String name, SDFExpression expression) {
+		this.name = name;
+		this.expression = expression;
+		this.datatype = expression.getType();
+	}
+
 	public NamedExpression(NamedExpression namedExpression) {
 		this.name = namedExpression.name;
 		this.expression = namedExpression.expression.clone();

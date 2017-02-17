@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +33,10 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 public class RestructHelper {
-	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(RestructHelper.class);
-	
+
 	public static Collection<ILogicalOperator> removeOperator(BinaryLogicalOp remove, boolean reserveOutputSchema) {
         List<ILogicalOperator> ret = new ArrayList<>();
         Collection<LogicalSubscription> fathers = remove.getSubscriptions();
@@ -102,7 +102,7 @@ public class RestructHelper {
 	 * subscriptions i.e. the new Operator gets all subscriptions currently
 	 * bound to the after operator (looking from root!) and create a new
 	 * subscription from toInsert to after
-	 * 
+	 *
 	 * @param toInsert
 	 *            Operator that should be inserted as child of the after
 	 *            operator
@@ -129,7 +129,7 @@ public class RestructHelper {
 	/**
 	 * Inserts a new logical operator (toInsert) before the operator before
 	 * (e.g. closer to the root!)
-	 * 
+	 *
 	 * @param toInsert
 	 * @param before
 	 * @return
@@ -151,6 +151,33 @@ public class RestructHelper {
 		return ret;
 
 	}
+	
+	/**
+	 * Inserts a new logical operator (toInsert) before the operator before
+	 * (e.g. closer to the root!)
+	 *
+	 * @param toInsert
+	 * @param before
+	 * @return
+	 */
+	public static Collection<ILogicalOperator> insertOperatorBefore2(
+			ILogicalOperator toInsert, ILogicalOperator before) {
+		List<ILogicalOperator> ret = new ArrayList<>();
+		Collection<LogicalSubscription> subs = before.getSubscriptions();
+		for (LogicalSubscription sub : subs) {
+			before.unsubscribeSink(sub);
+			// What about the source out port
+			toInsert.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+					sub.getSourceOutPort(), toInsert.getInputSchema(0));
+			ret.add(sub.getTarget());
+		}
+		toInsert.subscribeToSource(before, 0, 0, before.getOutputSchema());
+		ret.add(before);
+		ret.add(toInsert);
+		return ret;
+
+	}
+
 
 	public static Collection<ILogicalOperator> simpleOperatorSwitch(
 			UnaryLogicalOp father, UnaryLogicalOp son) {
@@ -228,7 +255,7 @@ public class RestructHelper {
 
 	/**
 	 * Replaces a logical leaf operator by a subplan.
-	 * 
+	 *
 	 * @param leafOp
 	 *            The logical operator to be replaced.
 	 * @param newOp
@@ -258,7 +285,7 @@ public class RestructHelper {
 
 	/**
 	 * Creates a new {@link TopAO} on top of the sinks.
-	 * 
+	 *
 	 * @param sinks
 	 *            The {@link ILogicalOperator}s which shall be subscribed to new
 	 *            {@link TopAO}.
@@ -279,7 +306,7 @@ public class RestructHelper {
 	/**
 	 * Removes all {@link TopAO} logical operators from a list of
 	 * {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
-	 * 
+	 *
 	 * @param operators
 	 *            The list of {@link ILogicalOperator}s representing an
 	 *            {@link ILogicalQuery}.
@@ -307,7 +334,7 @@ public class RestructHelper {
 	/**
 	 * Searches for a {@link LogicalSubscription} between two
 	 * {@link ILogicalOperator}s.
-	 * 
+	 *
 	 * @param source
 	 *            The relative source for the {@link LogicalSubscription}.
 	 * @param sink
@@ -332,7 +359,7 @@ public class RestructHelper {
 //	/**
 //	 * Generates a new {@link SDFSchema} with a given base name and adopting
 //	 * {@link SDFAttribute}s of an existing {@link SDFSchema}.
-//	 * 
+//	 *
 //	 * @param basename
 //	 *            The base name for the new {@link SDFSchema}.
 //	 * @param outputSchema
@@ -358,7 +385,7 @@ public class RestructHelper {
 	 * <code>ILogicalQuery</code>. <br />
 	 * This method should be called with {@link ILogicalQuery#getLogicalPlan()}
 	 * as <code>currentOperator</code>.
-	 * 
+	 *
 	 * @param currentOperator
 	 *            The <code>IlogicalOperator</code> to collect next.
 	 * @param list
@@ -383,7 +410,7 @@ public class RestructHelper {
 		}
 
 	}
-	
+
 	/**
 	 * Assigns a plane to every operator within a logical plan.
 	 * @param root The operator, which acts as the root of the logical plan.
@@ -391,34 +418,34 @@ public class RestructHelper {
 	 * The plane '0' will be assigned to <code>root</code>.
 	 */
 	public static Map<ILogicalOperator, Integer> assignOperatorPlanes(ILogicalOperator root) {
-		
+
 		Preconditions.checkNotNull(root);
-		
+
 		// The return value
 		Map<ILogicalOperator, Integer> planeToOperatorMap = Maps.newHashMap();
-		
+
 		assignOperatorPlanes(root, 0, planeToOperatorMap);
-		
+
 		return planeToOperatorMap;
-		
+
 	}
-	
+
 	/**
 	 * Assigns a plane to every operator within a logical plan.
 	 * @param currentOperator The current operator to be assigned.
 	 * @param currentPlane The plane of <code>currrentOperator</code>.
 	 * @param planeToOperatorMap A mapping of planes to the operators.
 	 */
-	private static void assignOperatorPlanes(ILogicalOperator currentOperator, int currentPlane, 
+	private static void assignOperatorPlanes(ILogicalOperator currentOperator, int currentPlane,
 			Map<ILogicalOperator, Integer> planeToOperatorMap) {
-		
+
 		Preconditions.checkNotNull(currentOperator);
 		Preconditions.checkNotNull(planeToOperatorMap);
-		
+
 		if(!planeToOperatorMap.containsKey(currentOperator)) {
-			
+
 			planeToOperatorMap.put(currentOperator, currentPlane);
-			
+
 			for(final LogicalSubscription subscription : currentOperator.getSubscriptions())
 				assignOperatorPlanes(subscription.getTarget(), currentPlane + 1, planeToOperatorMap);
 
@@ -426,7 +453,7 @@ public class RestructHelper {
 				assignOperatorPlanes(subscription.getTarget(), currentPlane - 1, planeToOperatorMap);
 
 		}
-		
+
 	}
 
 }
