@@ -197,8 +197,6 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
 			,
 			"
-			s1=stream1
-			s2=stream1
 			operator_1=PROJECT({attributes=['stream1.attr1','stream1.attr1_1','stream1.attr2_1']},
 						JOIN(
 							RENAME({aliases=['attr1','stream1.attr1_1','attr2','stream1.attr2_1'],pairs='true'},stream1),stream1))"
@@ -212,9 +210,6 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
 			,
 			"
-			s1=stream1
-			s2=stream1
-			s3=stream1
 			operator_1=PROJECT({attributes=['stream1.attr1','stream1.attr1_2','stream1.attr2_2']},
 						JOIN(
 							RENAME({aliases=['attr1','stream1.attr1_1','attr2','stream1.attr2_1'],pairs='true'},stream1),

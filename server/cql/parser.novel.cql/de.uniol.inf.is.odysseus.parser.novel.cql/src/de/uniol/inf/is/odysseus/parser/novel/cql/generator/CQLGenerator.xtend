@@ -83,8 +83,8 @@ class CQLGenerator implements IGenerator2
 	
 	val private String OP     = "operator_"
 	val private String VIEW   = "view_" 
-	val private String ASSIG1 = " = "
-	val private String ASSIG2 = " := "
+	val private String ASSIG1 = "="
+	val private String ASSIG2 = ":="
 
 	def void clear()
 	{
@@ -170,7 +170,20 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence formatOutputString(String sequence)
 	{
-		return sequence.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ","")
+		
+		var String str 
+		var replacement1 = 'AXZTGHHAJJJSUEJJ'
+		var replacement2 = 'BNHUEOLASJJKEOOS'
+		if(sequence.contains(ASSIG2))
+			str = sequence.replaceFirst(ASSIG2, replacement1)
+		else
+			str = sequence.replaceFirst(ASSIG1, replacement2)
+		
+		return str.replaceAll("\\s*[\\r\\n]+\\s*", "")
+					   .trim()
+					   .replace(" ","")
+					   .replace(replacement2," "+ASSIG1+" ")
+					   .replace(replacement1," "+ASSIG2+" ")
 	}	
 	
 	def CharSequence parseStatement(Statement stmt)
@@ -188,11 +201,11 @@ class CQLGenerator implements IGenerator2
 		
 		//Build model
 		var model = ''
-		for(Entry<SourceStruct, List<String>> entry : getSourceAliases.entrySet)
-		{
-			for(String alias : entry.value)
-				 model += formatOutputString(alias + ASSIG1 + entry.key.sourcename) + System.getProperty("line.separator")
-		}
+//		for(Entry<SourceStruct, List<String>> entry : getSourceAliases.entrySet)
+//		{
+//			for(String alias : entry.value)
+//				 model += formatOutputString(alias + ASSIG1 + entry.key.sourcename) + System.getProperty("line.separator")
+//		}
 		for(var i = 0; i < definitions.size; i++)
 		{
 			if(!definitions.get(i).contains(OP))
@@ -222,7 +235,7 @@ class CQLGenerator implements IGenerator2
 			if(parts != null)
 				model += formatOutputString(buildRenameOperator(parts.get(0)).toString)
 		}		
-		
+		println("MODEL:: " + model)
 		return model
 	}
 	

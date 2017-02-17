@@ -8,7 +8,7 @@ import com.google.inject.Provider;
 import com.google.inject.name.Names;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.CQLParser;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.PartialCQLContentAssistParser;
-import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.internal.InternalCQLLexer;
+import de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.lexer.InternalCQLLexer;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ui.contentassist.CQLProposalProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ui.labeling.CQLDescriptionLabelProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ui.labeling.CQLLabelProvider;
@@ -107,7 +107,7 @@ public abstract class AbstractCQLUiModule extends DefaultUiModule {
 	public void configureHighlightingLexer(Binder binder) {
 		binder.bind(org.eclipse.xtext.parser.antlr.Lexer.class)
 			.annotatedWith(Names.named(LexerIdeBindings.HIGHLIGHTING))
-			.to(de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal.InternalCQLLexer.class);
+			.to(de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer.InternalCQLLexer.class);
 	}
 	
 	// contributed by org.eclipse.xtext.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment2

@@ -10,3 +10,9 @@
 /.CQLGeneratorQueryTest.java._trace
 /.CQLTestSuite.java._trace
 /.CQLParserTestSuite.java._trace
+/.CQLGeneratorMethodTest.xtendbin
+/.CQLGeneratorQueryTest.xtendbin
+/.CQLParserTestSuite.xtendbin
+/CQLGeneratorMethodTest.java
+/CQLGeneratorQueryTest.java
+/CQLParserTestSuite.java

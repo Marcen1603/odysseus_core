@@ -27,7 +27,9 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
  org.eclipse.xtext.builder,
  de.uniol.inf.is.odysseus.parser.novel.cql.ide,
  de.uniol.inf.is.odysseus.rcp.base
-Import-Package: org.apache.log4j
+Import-Package: de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.lexer,
+ de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer,
+ org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.ui.quickfix,
  de.uniol.inf.is.odysseus.parser.novel.cql.ui.contentassist,

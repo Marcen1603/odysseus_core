@@ -11,6 +11,6 @@ public class CQLAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 	@Override
 	public InputStream getAntlrTokenFile() {
 		ClassLoader classLoader = getClass().getClassLoader();
-		return classLoader.getResourceAsStream("de/uniol/inf/is/odysseus/parser/novel/cql/parser/antlr/internal/InternalCQL.tokens");
+		return classLoader.getResourceAsStream("de/uniol/inf/is/odysseus/parser/novel/cql/parser/antlr/internal/InternalCQLParser.tokens");
 	}
 }

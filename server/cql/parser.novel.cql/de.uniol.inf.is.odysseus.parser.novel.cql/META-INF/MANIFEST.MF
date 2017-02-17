@@ -36,5 +36,6 @@ Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql,
  de.uniol.inf.is.odysseus.parser.novel.cql.services,
  de.uniol.inf.is.odysseus.parser.novel.cql.typing,
  de.uniol.inf.is.odysseus.parser.novel.cql.util,
- de.uniol.inf.is.odysseus.parser.novel.cql.validation
+ de.uniol.inf.is.odysseus.parser.novel.cql.validation,
+ de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer
 Import-Package: org.apache.log4j

@@ -154,7 +154,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 AS s1, stream1 AS s2;", 
-      "\n\t\t\ts1=stream1\n\t\t\ts2=stream1\n\t\t\toperator_1=PROJECT({attributes=[\'stream1.attr1\',\'stream1.attr1_1\',\'stream1.attr2_1\']},\n\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_1\',\'attr2\',\'stream1.attr2_1\'],pairs=\'true\'},stream1),stream1))", _cQLDictionaryHelper);
+      "\n\t\t\toperator_1=PROJECT({attributes=[\'stream1.attr1\',\'stream1.attr1_1\',\'stream1.attr2_1\']},\n\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_1\',\'attr2\',\'stream1.attr2_1\'],pairs=\'true\'},stream1),stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -162,7 +162,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;", 
-      "\n\t\t\ts1=stream1\n\t\t\ts2=stream1\n\t\t\ts3=stream1\n\t\t\toperator_1=PROJECT({attributes=[\'stream1.attr1\',\'stream1.attr1_2\',\'stream1.attr2_2\']},\n\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_1\',\'attr2\',\'stream1.attr2_1\'],pairs=\'true\'},stream1),\n\t\t\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_2\',\'attr2\',\'stream1.attr2_2\'],pairs=\'true\'},stream1),stream1)))", _cQLDictionaryHelper);
+      "\n\t\t\toperator_1=PROJECT({attributes=[\'stream1.attr1\',\'stream1.attr1_2\',\'stream1.attr2_2\']},\n\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_1\',\'attr2\',\'stream1.attr2_1\'],pairs=\'true\'},stream1),\n\t\t\t\t\t\t\t\tJOIN(\n\t\t\t\t\t\t\t\t\tRENAME({aliases=[\'attr1\',\'stream1.attr1_2\',\'attr2\',\'stream1.attr2_2\'],pairs=\'true\'},stream1),stream1)))", _cQLDictionaryHelper);
   }
   
   @Test
