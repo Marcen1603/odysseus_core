@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class TrainableFileAnnotationModel<T extends IAnnotation> extends FileStreamModel<T> implements ITrainableModel  {
+	private static final long serialVersionUID = 267063142301178985L;
+
 	public TrainableFileAnnotationModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException {
 		super(configuration);
 	}
@@ -16,6 +18,5 @@ public abstract class TrainableFileAnnotationModel<T extends IAnnotation> extend
 		super();
 	}
 
-	private static final long serialVersionUID = 267063142301178985L;
 
 }
