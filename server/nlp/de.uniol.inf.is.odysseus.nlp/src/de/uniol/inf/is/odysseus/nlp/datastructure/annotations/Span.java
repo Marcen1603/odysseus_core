@@ -3,15 +3,15 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 
 /**
- * Contains the beginning and end index of a token range. 
+ * Contains the beginning and end index of an integer range. 
  */
 public class Span {
 	int start, end;
 	
 	/**
 	 * Creates new Span Object
-	 * @param begin start index of token range
-	 * @param end end index of token range
+	 * @param begin start index
+	 * @param end end index
 	 * @throws InvalidSpanException if the end index is lower than the start index
 	 * @see Span
 	 */

@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 
 /**
- * Annotation for wrapping information about sentences in a text with the usage of token indexes.
+ * Annotation for wrapping information about sentences in a text with the usage of character indices.
  * 
  * @see Span
  */
@@ -13,9 +13,9 @@ public class Sentences extends Annotation {
 	private Span[] sentences;
 	
 	/**
-	 * Annotation for wrapping information about sentences in a text with the usage of token indexes.
+	 * Annotation for wrapping information about sentences in a text with the usage of character indices.
 	 * @see Sentences
-	 * @param sentences Array of span objects. Each span object defines a single sentence by the start and end token index.
+	 * @param sentences Array of span objects. Each span object defines a single sentence by the start and end character index.
 	 */
 	public Sentences(Span[] sentences){
 		this.sentences = sentences;
