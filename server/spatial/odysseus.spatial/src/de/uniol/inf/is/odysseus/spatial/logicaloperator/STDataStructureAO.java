@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STDataStructure", doc = "Fills a spatio temporal data structure", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SpatialStore", doc = "Fills a spatio temporal data structure", category = {
 		LogicalOperatorCategory.BASE })
 public class STDataStructureAO extends UnaryLogicalOp {
 

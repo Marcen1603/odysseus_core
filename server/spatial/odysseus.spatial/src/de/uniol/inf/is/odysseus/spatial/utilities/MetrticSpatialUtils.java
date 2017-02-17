@@ -50,8 +50,9 @@ public class MetrticSpatialUtils {
 	}
 
 	/**
-	 * DEPRECATED: This formula gives results with only limited accuracy (but
-	 * works without additional libraries). Use "calculateDistance" instead.
+	 * WARNING: This formula gives results with only limited accuracy (but works
+	 * without additional libraries). Use "calculateDistance" instead if you
+	 * need better precision.
 	 * 
 	 * Calculates the distance between two points on the earth in km. Uses the
 	 * Haversine formula and therefore takes the curvature of the earth into
@@ -68,7 +69,6 @@ public class MetrticSpatialUtils {
 	 *            Longitude value from the second point
 	 * @return The distance between the two points in km
 	 */
-	@Deprecated
 	public double getHaversineDistance(double lat1, double lng1, double lat2, double lng2) {
 		// This calculation is based on HEVERSINE formula
 		double earthRadius = 6371; // earthRadius in Kilometers
@@ -79,6 +79,10 @@ public class MetrticSpatialUtils {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = earthRadius * c;
 		return distance;
+	}
+
+	public double calculateHaversineDistance(Coordinate coord1, Coordinate coord2) {
+		return getHaversineDistance(coord1.y, coord1.x, coord2.y, coord2.x);
 	}
 
 	/**
@@ -97,7 +101,8 @@ public class MetrticSpatialUtils {
 
 	/**
 	 * Calculates the distance between two points in meters in the given
-	 * coordinate reference system. If crs is null, WGS84 is used as default.
+	 * coordinate reference system. If CRS is null, WGS84 is used as default.
+	 * Uses the orthodromic distance from the JTS.
 	 * 
 	 * @param crs
 	 *            The coordinate reference system. If null, WGS84 is used as
@@ -131,8 +136,7 @@ public class MetrticSpatialUtils {
 		org.geotools.referencing.GeodeticCalculator calc = new org.geotools.referencing.GeodeticCalculator();
 		// mind, this is lon/lat
 		calc.setStartingGeographicPoint(center.y, center.x);
-		
-		
+
 		// get upper left point
 		// go to the north
 		calc.setDirection(0 /* azimuth */, rangeMeters/* distance */);
@@ -140,17 +144,17 @@ public class MetrticSpatialUtils {
 		// go to the west
 		calc.setDirection(270, rangeMeters);
 		Point2D upperLeft = calc.getDestinationGeographicPoint();
-			
+
 		// go to upper right point
 		calc.setStartingGeographicPoint(upperLeft);
 		// from the top left go 2 times the range to the upper right
-		calc.setDirection(90, 2 * rangeMeters); 
+		calc.setDirection(90, 2 * rangeMeters);
 		Point2D upperRight = calc.getDestinationGeographicPoint();
-		
+
 		// go to lower right point
 		calc.setStartingGeographicPoint(upperRight);
 		// from the upper right go 2 times the range to the lower right
-		calc.setDirection(180, 2 * rangeMeters); 
+		calc.setDirection(180, 2 * rangeMeters);
 		Point2D lowerRight = calc.getDestinationGeographicPoint();
 
 		// Create an envelope from these three points
@@ -158,7 +162,7 @@ public class MetrticSpatialUtils {
 		env.expandToInclude(upperLeft.getY(), upperLeft.getX());
 		env.expandToInclude(upperRight.getY(), upperRight.getX());
 		env.expandToInclude(lowerRight.getY(), lowerRight.getX());
-		
+
 		return env;
 	}
 

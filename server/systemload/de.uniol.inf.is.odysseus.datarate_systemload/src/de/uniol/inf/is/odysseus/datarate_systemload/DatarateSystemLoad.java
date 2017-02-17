@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.datarate_systemload;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

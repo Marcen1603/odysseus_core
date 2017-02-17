@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -88,9 +89,11 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 
 	void putSinkplan(Resource name, ISink<?> sinkPO);
 
-	ISource<?> getAccessAO(Resource name);
+	ISource<?> getAccessPO(Resource name);
+	IAccessAO getAccessAO(Resource name, ISession user);
 
-	void putAccessAO(Resource name, ISource<?> access);
+	void putAccessPO(Resource name, ISource<?> access);
+	void putAccessAO(IAccessAO access);
 
 
 	// -------------------------------------------------------------------------

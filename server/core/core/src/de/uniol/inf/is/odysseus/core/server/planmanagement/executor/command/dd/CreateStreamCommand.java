@@ -19,6 +19,7 @@ public class CreateStreamCommand extends AbstractCreateStreamOrViewCommand {
 	
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+		checkAccessAONames(dd);
 		dd.setStream(name, rootAO, getCaller());		
 	}
 

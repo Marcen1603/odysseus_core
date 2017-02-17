@@ -72,6 +72,7 @@ import de.uniol.inf.is.odysseus.core.server.event.EventHandler;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.ExceptionEventType;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
@@ -1337,6 +1338,17 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			ViewInformation vi = new ViewInformation();
 			vi.setName(s.getKey());
 			vi.setOutputSchema(s.getValue().getOutputSchema());
+			// TODO: Change
+			vi.setType("source");
+			ret.add(vi);
+		}
+		// Add accessAos also
+		Set<Entry<Resource, IAccessAO>> accessAO = getDataDictionary(caller).getAccessAOs(caller);
+		for (Entry<Resource, IAccessAO> a:accessAO){
+			ViewInformation vi = new ViewInformation();
+			vi.setName(a.getKey());
+			vi.setOutputSchema(a.getValue().getOutputSchema());
+			vi.setType("access");
 			ret.add(vi);
 		}
 		return ret;
@@ -1350,6 +1362,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			SinkInformation si = new SinkInformation();
 			si.setName(s.getKey());
 			si.setOutputSchema(s.getValue().getOutputSchema());
+			si.setType("sink");
 			ret.add(si);
 		}
 		return ret;

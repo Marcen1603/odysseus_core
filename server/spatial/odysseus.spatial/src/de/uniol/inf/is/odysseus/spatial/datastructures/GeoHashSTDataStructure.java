@@ -10,6 +10,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -25,44 +28,121 @@ import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
+/**
+ * Uses GeoHashes for a spatial indexing. This index structure is made for
+ * spatio-temporal data. When querying it uses the spatial as well as the
+ * temporal dimension.
+ * 
+ * Nevertheless, this is not optimized for moving objects, as every single entry
+ * is used independently. The id of the moving object (if the source is a MO) is
+ * not used. This results for example in different results for kNN queries when
+ * you only expect one neighbor per object. Here, the k nearest neighbors can be
+ * all of one object, possibly the querying object itself.
+ * 
+ * @author Tobias Brandt
+ * @since 2017
+ *
+ */
 public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
+
+	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);
+
+	public static final String TYPE = "geohash";
 
 	private static final int BIT_PRECISION = 64;
 
-	private int geometryPosition;
+	// The position of the geometry-attribute within the tuple
+	private int geometryAttributePosition;
+
+	// The name of the data structure to access it
 	private String name;
 
-	private NavigableMap<GeoHash, Tuple<ITimeInterval>> geoHashes;
+	// The number of elements currently in the index
+	protected long elementCounter;
+
+	/*
+	 * All the objects. As there can be more than one object at the exact same
+	 * location, we need a list. Probably most lists are only of size 1.
+	 */
+	protected NavigableMap<GeoHash, List<Tuple<ITimeInterval>>> geoHashes;
+
+	// Index by time
+	protected DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
 	public GeoHashSTDataStructure(String name, int geometryPosition) {
-		this.geometryPosition = geometryPosition;
+		this.geometryAttributePosition = geometryPosition;
 		this.name = name;
+
+		/*
+		 * TODO Think about if such a tree is the fastest option or if there
+		 * should be a HashMap. Pro this solution: When searching, finding
+		 * similar values (based on geohashes) is simple and fast.
+		 */
 		this.geoHashes = new TreeMap<>();
+		this.sweepArea = new DefaultTISweepArea<>();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void add(Object o) {
-		//
 		if (o instanceof Tuple<?>) {
 			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
 
 			// Insert into map
 			GeoHash geoHash = this.fromGeometry(getGeometry(tuple));
-			geoHashes.put(geoHash, tuple);
+			List<Tuple<ITimeInterval>> geoHashList = this.geoHashes.get(geoHash);
+			if (geoHashList == null) {
+				/*
+				 * Probably we will only have one element in here as two objects
+				 * on the same location are unlikely (but depends on the
+				 * scenario)
+				 */
+				geoHashList = new ArrayList<>(1);
+			}
+
+			// Add the new tuple to the list
+			geoHashList.add(tuple);
+			this.geoHashes.put(geoHash, geoHashList);
 
 			// Insert in SweepArea
-			// this.sweepArea.insert(tuple);
+			this.sweepArea.insert(tuple);
+
+			// Count
+			elementCounter++;
 		}
 	}
 
 	@Override
 	public void cleanUp(PointInTime timestamp) {
-		// TODO Auto-generated method stub
+		// Remove old elements from sweepArea
+		List<Tuple<ITimeInterval>> removed = this.sweepArea.extractElementsBeforeAsList(timestamp);
 
+		// Update the counter
+		elementCounter -= removed.size();
+
+		// Warn
+		if (removed.size() > 50000) {
+			_logger.warn("Remove " + removed.size() + " elements from GeoHashIndex. This can take a while!");
+		}
+
+		// Remove the extracted elements from the map
+		for (Tuple<ITimeInterval> removedTuple : removed) {
+			GeoHash hash = this.fromGeometry(this.getGeometry(removedTuple));
+			List<Tuple<ITimeInterval>> geoHashList = this.geoHashes.get(hash);
+			if (geoHashList.size() == 1) {
+				// We don't have to compare or iterate, we can directly remove
+				// the list
+				this.geoHashes.remove(hash);
+			} else {
+				// We have to iterate through the list to find the right tuple
+				// to delete
+				geoHashList.remove(removedTuple);
+			}
+		}
 	}
 
 	@Override
@@ -73,24 +153,41 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<ITimeInterval>> queryKNN(Geometry geometry, int k, ITimeInterval t) {
 
-		// TODO Question to think about: First do temporal filter or first do
-		// spatial filter? Which is faster? I think spatial could be faster
-		// here.
+		/*
+		 * TODO Question to think about: First do temporal filter or first do
+		 * spatial filter? Which is faster? I think spatial could be faster
+		 * here.
+		 */
 
 		// This is a bit more tricky
 		// - how big should be starting area be? That's based on the density of
 		// the data points there.
 		// - What if there are not enough elements?
 
-		// Case 1: The total number of elements is smaller or equal to k -> We
-		// can return everything
-		if (geoHashes.size() <= k) {
-			// return everything
+		/*
+		 * Case 1: The total number of elements is smaller or equal to k -> We
+		 * can return everything.
+		 * 
+		 * Hint: We cannot use the size of "geoHashes" as there may be multiple
+		 * entries per hash
+		 */
+		if (elementCounter <= k) {
+
+			// get all tuples
 			List<Tuple<ITimeInterval>> result = new ArrayList<>();
-			result.addAll(geoHashes.values());
-			// TODO Nevertheless, we have to filter out the elements which do
-			// not overlap on a timely level
-			return result;
+			geoHashes.values().stream().forEach(e -> result.addAll(result));
+
+			/*
+			 * Nevertheless, we have to filter out the elements which do not
+			 * overlap on a timely level
+			 */
+			List<Tuple<ITimeInterval>> filter = result.stream()
+					// temporal filter
+					.filter(f -> f.getMetadata().getStart().before(t.getEnd())
+							&& f.getMetadata().getEnd().after(t.getStart()))
+					.collect(Collectors.toList());
+
+			return filter;
 		}
 
 		/*
@@ -108,27 +205,43 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// The max radius not totally necessary but useful to avoid an endless
 		// search
-		// TODO This maybe leads to wrong results 
+		// TODO This could lead to wrong results (when the elements are further
+		// away)
 		int maxRadius = 1000000;
+
+		// Guess a good start radius
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = null;
+		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
+
+		// TODO CandidateCollection could be filled with only or mostly not
+		// timely fitting tuples for this query
+		do {
+			// Get the rectangular envelope for the circle
+			Envelope env = MetrticSpatialUtils.getInstance()
+					.getEnvelopeForRadius(geometry.getCentroid().getCoordinate(), guessRadius);
+			Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
+			Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+			// Get all elements within that bounding box (filter step, just an
+			// approximation)
+			candidateCollection = approximateBoundinBox(createPolygon(createBox(topLeft, lowerRight)));
+
+			if (candidateCollection.size() < k) {
+				// Increase the radius and search on
+				guessRadius += guessRadius;
+				continue;
+			} else {
+				// Probably (not totally sure but sure enough) we have a good
+				// radius.
+				break;
+			}
+		} while (candidateCollection != null && candidateCollection.size() < k && guessRadius < maxRadius);
 
 		// Query the guessed radius
 		List<Tuple<ITimeInterval>> circleResult = null;
 		do {
 			// Get the results for the current radius
 			circleResult = queryCircle(geometry, guessRadius, t);
-
-			// Filter the results for the right time-interval
-			// TODO This needs to be done in the underlying method, not here
-			List<Tuple<ITimeInterval>> toRemove = new ArrayList<>(circleResult.size());
-			for (Tuple<ITimeInterval> tuple : circleResult) {
-				if (tuple.getMetadata().getStart().after(t.getEnd())
-						|| tuple.getMetadata().getEnd().beforeOrEquals(t.getStart())) {
-					// This tuple does not overlap the given time. We have to
-					// remove it
-					toRemove.add(tuple);
-				}
-			}
-			circleResult.removeAll(toRemove);
 
 			// Double the radius. This is needed for the next round if the don't
 			// find enough elements
@@ -143,9 +256,12 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 			@Override
 			public int compare(Tuple<?> o1, Tuple<?> o2) {
-				// Calculate the distance of both tuples to the center (here we
-				// can use this distance calculation, as we are only interested
-				// in the distance comparison, not in the real distances)
+				/*
+				 * Calculate the distance of both tuples to the center (here we
+				 * can use the non-metric distance calculation, as we are only
+				 * interested in the distance comparison, not in the real
+				 * distances)
+				 */
 				double distance1 = getGeometry(o1).distance(geometry);
 				double distance2 = getGeometry(o2).distance(geometry);
 
@@ -160,7 +276,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			}
 
 			private Geometry getGeometry(Tuple<?> tuple) {
-				Object o = tuple.getAttribute(geometryPosition);
+				Object o = tuple.getAttribute(geometryAttributePosition);
 				GeometryWrapper geometryWrapper = null;
 				if (o instanceof GeometryWrapper) {
 					geometryWrapper = (GeometryWrapper) o;
@@ -187,34 +303,78 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 	@Override
 	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
 
-		// This is basically a bounding box but for a circle
-
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
-		Point lowerRigt = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
 
-		// Get all elements within that bounding box
-		List<Tuple<ITimeInterval>> candidates = queryBoundingBox(topLeft, lowerRigt, t);
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
+				createPolygon(createBox(topLeft, lowerRight)));
 
-		// Check the candidates if they are in the circle
-		List<Tuple<ITimeInterval>> rangeTuples = new ArrayList<Tuple<ITimeInterval>>();
+		return queryCircle(geometry, radius, t, candidateCollection);
 
-		for (Tuple<ITimeInterval> tuple : candidates) {
-			Geometry tupleGeometry = getGeometry(tuple);
+	}
 
-			// TODO Use the right coordinate reference system
-			MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
-			double realDistance = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-					tupleGeometry.getCentroid().getCoordinate());
+	/**
+	 * A circle query with a given candidate collection.
+	 * 
+	 * @param geometry
+	 *            The center of the circle to query
+	 * @param radius
+	 *            The radius of the circle to query
+	 * @param t
+	 *            The time interval that the returned elements have to intersect
+	 * @param candidateCollection
+	 *            The list of candidates. Should cover the whole are from the
+	 *            circle you want to query. You save a lookup of the candidates
+	 *            with this method, e.g., if you already have the list of
+	 *            candidates.
+	 * @return All elements from the candidates that are in the given circle.
+	 */
+	public List<Tuple<ITimeInterval>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
+			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection) {
 
-			if (realDistance <= radius) {
-				rangeTuples.add(tuple);
-			}
-		}
-		return rangeTuples;
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+
+		// For every point in our list ask JTS if the points lies within the
+		// polygon (refinement step)
+
+		// TODO Do performance tests? stream vs parallelStream vs foreach
+		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
+		// TODO Maybe faster with Haversine. Give choice?
+		// TODO Think about: maybe it is faster to first check if the point is
+		// within a polygon (cheap) and reduce the number of distance
+		// calculations (expensive)
+
+		List<Tuple<ITimeInterval>> result = candidateCollection.keySet().stream()
+				/*
+				 * spatial filter (it's enough to do it only with the first
+				 * element as all elements in this list are on the exact same
+				 * position (have the same geohash)
+				 */
+				.filter(f -> spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+						getGeometry(this.geoHashes.get(f).get(0)).getCentroid().getCoordinate()) <= radius)
+				/*
+				 * We have a list of tuples but need to do this for every tuple.
+				 * Therefore, we need to "unnest" the list, which is a flatMap
+				 * operation.
+				 */
+				.flatMap(tupleList -> candidateCollection.get(tupleList).stream())
+				/*
+				 * Temporal filter -> Valid time needs to overlap
+				 */
+				.filter(tuple -> tuple.getMetadata().getStart().before(t.getEnd())
+						&& tuple.getMetadata().getEnd().after(t.getStart()))
+				/*
+				 * Write result into a list
+				 */
+				.collect(Collectors.toList());
+
+		return result;
 	}
 
 	public List<Tuple<ITimeInterval>> queryBoundingBox(Point topLeft, Point lowerRight, ITimeInterval t) {
@@ -226,9 +386,65 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	@Override
 	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
+		Polygon polygon = createPolygon(polygonPoints);
 
-		// TODO Use time interval
+		// Get all hashes that we have to calculate the distance for
+		Map<GeoHash, List<Tuple<ITimeInterval>>> allHashes = approximateBoundinBox(polygon);
 
+		// For every point in our list ask JTS if the points lies within the
+		// polygon
+		// TODO Do performance tests? stream vs parallelStream vs foreach
+		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
+		List<Tuple<ITimeInterval>> result = allHashes.keySet().stream()
+				/*
+				 * spatial filter (it's enough to do it only with the first
+				 * element as all elements in this list are on the exact same
+				 * position (have the same geohash)
+				 */
+				.filter(e -> polygon.contains(getGeometry(allHashes.get(e).get(0))))
+				/*
+				 * We have a list of tuples but need to do this for every tuple.
+				 * Therefore, we need to "unnest" the list, which is a flatMap
+				 * operation.
+				 */
+				.flatMap(tupleList -> allHashes.get(tupleList).stream())
+				/*
+				 * Temporal filter -> Valid time needs to overlap
+				 */
+				.filter(tuple -> tuple.getMetadata().getStart().before(t.getEnd())
+						&& tuple.getMetadata().getEnd().after(t.getStart()))
+				/*
+				 * Write result into a list
+				 */
+				.collect(Collectors.toList());
+
+		return result;
+	}
+
+	private Map<GeoHash, List<Tuple<ITimeInterval>>> approximateBoundinBox(Polygon polygon) {
+		Geometry envelope = polygon.getEnvelope();
+
+		// Get hashes that we have to search for
+		// TODO This is guessed. See which coordinate is which. ->
+		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
+		// with all polygonPoints
+		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
+		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
+		BoundingBox bBox = new BoundingBox(point1, point2);
+		GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
+		List<GeoHash> searchHashes = bbQuery.getSearchHashes();
+
+		// Get all hashes that we have to calculate the distance for
+		Map<GeoHash, List<Tuple<ITimeInterval>>> allHashes = new HashMap<>();
+		for (GeoHash hash : searchHashes) {
+			// Query all our hashes and use those which have the same prefix
+			// The whole list of hashes is used in "getByPrefix"
+			allHashes.putAll(getByPreffix(hash));
+		}
+		return allHashes;
+	}
+
+	private Polygon createPolygon(List<Point> polygonPoints) {
 		// Check if the first and the last point is equal. If not, we have to
 		// add the first point at the end to have a closed ring.
 		Point firstPoint = polygonPoints.get(0);
@@ -243,40 +459,21 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		LinearRing ring = factory.createLinearRing(
 				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
 		Polygon polygon = factory.createPolygon(ring, null);
-		Geometry envelope = polygon.getEnvelope();
-
-		// Get hashes that we have to search for
-		// TODO This is guessed. See which coordinate is which. ->
-		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
-		// with all polygonPoints
-		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
-		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
-		BoundingBox bBox = new BoundingBox(point1, point2);
-		GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
-		List<GeoHash> searchHashes = bbQuery.getSearchHashes();
-
-		// Get all hashes that we have to calculate the distance for
-		Map<GeoHash, Tuple<ITimeInterval>> allHashes = new HashMap<>();
-		for (GeoHash hash : searchHashes) {
-			// Query all our hashes and use those which have the same prefix
-			// The whole list of hashes is used in "getByPrefix"
-			allHashes.putAll(getByPreffix(hash));
-		}
-
-		// For every point in our list ask JTS if the points lies within the
-		// polygon
-		List<Tuple<ITimeInterval>> result = allHashes.keySet().parallelStream()
-				.filter(e -> polygon.contains(getGeometry(allHashes.get(e)))).map(e -> allHashes.get(e))
-				.collect(Collectors.toList());
-
-		return result;
+		return polygon;
 	}
 
 	@Override
 	public int getGeometryPosition() {
-		return this.geometryPosition;
+		return this.geometryAttributePosition;
 	}
 
+	/**
+	 * Get the geometry from a tuple
+	 * 
+	 * @param tuple
+	 *            The tuple with the geometry
+	 * @return The geometry
+	 */
 	protected Geometry getGeometry(Tuple<?> tuple) {
 		Object o = tuple.getAttribute(getGeometryPosition());
 		GeometryWrapper geometryWrapper = null;
@@ -289,13 +486,13 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		}
 	}
 
-	private SortedMap<GeoHash, Tuple<ITimeInterval>> getByPreffix(GeoHash preffix) {
+	private SortedMap<GeoHash, List<Tuple<ITimeInterval>>> getByPreffix(GeoHash preffix) {
 		// We have to add 1 to the given hash, as we search all between the
 		// given hash and the next one
 		return this.geoHashes.subMap(preffix, preffix.next());
 	}
 
-	private GeoHash fromGeometry(Geometry geometry) {
+	protected GeoHash fromGeometry(Geometry geometry) {
 		Point centroid = geometry.getCentroid();
 		GeoHash hash = GeoHash.withBitPrecision(centroid.getX(), centroid.getY(), BIT_PRECISION);
 		return hash;
