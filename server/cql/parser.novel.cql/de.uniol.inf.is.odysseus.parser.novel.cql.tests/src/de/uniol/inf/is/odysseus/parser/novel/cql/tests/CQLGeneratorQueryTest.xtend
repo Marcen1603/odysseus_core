@@ -79,7 +79,6 @@ class CQLGeneratorQueryTest
 			"SELECT * FROM stream1, stream2 AS s2, stream3 WHERE attr1 > 2 AND attr2 = 'Test';"
 			,
 			"
-			s2 = stream2
 			operator_1 = SELECT({predicate='stream1.attr1 > 2 && stream1.attr2 == 'Test''}, JOIN(stream1,JOIN(stream2,stream3)))
 			"
 		, new CQLDictionaryHelper())
@@ -92,6 +91,17 @@ class CQLGeneratorQueryTest
 			"SELECT * FROM stream1 WHERE attr1 > 2 AND attr2 = 'Test';"
 			,
 			"operator_1 = SELECT({predicate='stream1.attr1 > 2 && stream1.attr2 == 'Test''}, stream1)"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void SelectAllTest5() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT s1.* FROM stream1 AS s1 WHERE attr1 > 2 AND attr2 = 'Test';"
+			,
+			"operator_1 = PROJECT({attributes=['stream1.attr1','stream1.attr2']},stream1)
+			 operator_2 = SELECT({predicate='stream1.attr1>2&&stream1.attr2=='Test''},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 
@@ -598,7 +608,6 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] AS s1 , stream2 GROUP BY attr1, attr2;"
 			,
 			"
-			s1 = stream1
 			operator_1 = AGGREGATE
 			(
 				{

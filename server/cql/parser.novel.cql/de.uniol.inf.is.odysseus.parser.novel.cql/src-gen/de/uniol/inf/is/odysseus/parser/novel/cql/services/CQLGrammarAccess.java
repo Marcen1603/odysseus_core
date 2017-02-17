@@ -581,12 +581,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSourceNameParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
 		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final RuleCall cIDTerminalRuleCall_1_2 = (RuleCall)cGroup_1.eContents().get(2);
+		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
+		private final RuleCall cSourceNameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
+		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
+		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
 		//AttributeName:
-		//	ID | SourceName '.' ID;
+		//	ID | SourceName '.' ID | SourceName '.' '*';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | SourceName '.' ID
+		//ID | SourceName '.' ID | SourceName '.' '*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -603,6 +607,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ID
 		public RuleCall getIDTerminalRuleCall_1_2() { return cIDTerminalRuleCall_1_2; }
+		
+		//SourceName '.' '*'
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//SourceName
+		public RuleCall getSourceNameParserRuleCall_2_0() { return cSourceNameParserRuleCall_2_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_2_1() { return cFullStopKeyword_2_1; }
+		
+		//'*'
+		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
 	}
 	public class AttributeWithNestedStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
@@ -1993,10 +2009,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	value1=ID
 		//	keyword3=ID
 		//	value2=ID
-		//	";"?;
+		//	';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID ";"?
+		//keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID ';'?
 		public Group getGroup() { return cGroup; }
 		
 		//keyword1=ID
@@ -2029,7 +2045,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getValue2IDTerminalRuleCall_4_0() { return cValue2IDTerminalRuleCall_4_0; }
 		
-		//";"?
+		//';'?
 		public Keyword getSemicolonKeyword_5() { return cSemicolonKeyword_5; }
 	}
 	public class DropElements extends AbstractParserRuleElementFinder {
@@ -2043,19 +2059,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cKeyword2STREAMKeyword_1_0_1 = (Keyword)cKeyword2Alternatives_1_0.eContents().get(1);
 		private final Assignment cValue1Assignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cValue1IDTerminalRuleCall_2_0 = (RuleCall)cValue1Assignment_2.eContents().get(0);
-		private final Assignment cKeyword3Assignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final Keyword cKeyword3IFEXISTSKeyword_3_0 = (Keyword)cKeyword3Assignment_3.eContents().get(0);
-		private final Assignment cValue2Assignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cValue2IDTerminalRuleCall_4_0 = (RuleCall)cValue2Assignment_4.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Assignment cKeyword3Assignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final Keyword cKeyword3IFKeyword_3_0_0 = (Keyword)cKeyword3Assignment_3_0.eContents().get(0);
+		private final Keyword cEXISTSKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
 		
 		//Drop Command:
 		//	keyword1='DROP'
-		//	keyword2=('SINK' | 'STREAM') value1=ID
-		//	keyword3='IF EXISTS'?
-		//	value2=ID
+		//	keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
 		@Override public ParserRule getRule() { return rule; }
 		
-		//keyword1='DROP' keyword2=('SINK' | 'STREAM') value1=ID keyword3='IF EXISTS'? value2=ID
+		//keyword1='DROP' keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
 		public Group getGroup() { return cGroup; }
 		
 		//keyword1='DROP'
@@ -2082,17 +2096,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getValue1IDTerminalRuleCall_2_0() { return cValue1IDTerminalRuleCall_2_0; }
 		
-		//keyword3='IF EXISTS'?
-		public Assignment getKeyword3Assignment_3() { return cKeyword3Assignment_3; }
+		//(keyword3='IF' 'EXISTS')?
+		public Group getGroup_3() { return cGroup_3; }
 		
-		//'IF EXISTS'
-		public Keyword getKeyword3IFEXISTSKeyword_3_0() { return cKeyword3IFEXISTSKeyword_3_0; }
+		//keyword3='IF'
+		public Assignment getKeyword3Assignment_3_0() { return cKeyword3Assignment_3_0; }
 		
-		//value2=ID
-		public Assignment getValue2Assignment_4() { return cValue2Assignment_4; }
+		//'IF'
+		public Keyword getKeyword3IFKeyword_3_0_0() { return cKeyword3IFKeyword_3_0_0; }
 		
-		//ID
-		public RuleCall getValue2IDTerminalRuleCall_4_0() { return cValue2IDTerminalRuleCall_4_0; }
+		//'EXISTS'
+		public Keyword getEXISTSKeyword_3_1() { return cEXISTSKeyword_3_1; }
 	}
 	public class Window_UnboundedElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Window_Unbounded");
@@ -3163,7 +3177,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//AttributeName:
-	//	ID | SourceName '.' ID;
+	//	ID | SourceName '.' ID | SourceName '.' '*';
 	public AttributeNameElements getAttributeNameAccess() {
 		return pAttributeName;
 	}
@@ -3579,7 +3593,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	value1=ID
 	//	keyword3=ID
 	//	value2=ID
-	//	";"?;
+	//	';'?;
 	public CommandElements getCommandAccess() {
 		return pCommand;
 	}
@@ -3590,9 +3604,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Drop Command:
 	//	keyword1='DROP'
-	//	keyword2=('SINK' | 'STREAM') value1=ID
-	//	keyword3='IF EXISTS'?
-	//	value2=ID
+	//	keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
 	public DropElements getDropAccess() {
 		return pDrop;
 	}

@@ -68,7 +68,7 @@ AttributeWithoutAliasDefinition returns Attribute:
 ; 
 
 AttributeName:
-	(ID | SourceName '.' ID)
+	(ID | SourceName '.' ID | SourceName '.' '*')
 ;
 
 AttributeWithNestedStatement:
@@ -431,15 +431,14 @@ Command:
 	value1   = ID
 	keyword3 = ID
 	value2   = ID
-	(";")?
+	(';')?
 ;
 
 Drop returns Command:
 	keyword1='DROP'
 	keyword2=('SINK'|'STREAM')
 	value1=ID
-	(keyword3='IF EXISTS')?
-	value2 = ID
+	(keyword3='IF' 'EXISTS')?
 ;
 
 

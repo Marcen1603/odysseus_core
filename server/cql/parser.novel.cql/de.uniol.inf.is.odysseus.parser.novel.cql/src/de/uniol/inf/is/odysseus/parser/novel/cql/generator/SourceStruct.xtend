@@ -74,6 +74,12 @@ class SourceStruct
 					return attribute
 				else if(attribute.aliases.contains(name))
 					return attribute
+			return null
+		}
+		
+		def boolean containsAttribute(String attributename)
+		{
+			return if(findbyName(attributename) != null) true else false
 		}
 		
 		override equals(Object obj) 

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator;
 
+import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.AttributeStruct;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -111,6 +112,18 @@ public class SourceStruct {
       }
     }
     return null;
+  }
+  
+  public boolean containsAttribute(final String attributename) {
+    boolean _xifexpression = false;
+    AttributeStruct _findbyName = this.findbyName(attributename);
+    boolean _notEquals = (!Objects.equal(_findbyName, null));
+    if (_notEquals) {
+      _xifexpression = true;
+    } else {
+      _xifexpression = false;
+    }
+    return _xifexpression;
   }
   
   @Override

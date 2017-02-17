@@ -947,7 +947,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Drop returns Command
 	 *
 	 * Constraint:
-	 *     (keyword1='DROP' (keyword2='SINK' | keyword2='STREAM') value1=ID keyword3='IF EXISTS'? value2=ID)
+	 *     (keyword1='DROP' (keyword2='SINK' | keyword2='STREAM') value1=ID keyword3='IF'?)
 	 */
 	protected void sequence_Drop(ISerializationContext context, Command semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

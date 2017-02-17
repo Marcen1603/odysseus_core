@@ -94,6 +94,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAttributeAccess().getGroup(), "rule__Attribute__Group__0");
 					put(grammarAccess.getAttributeAccess().getGroup_1(), "rule__Attribute__Group_1__0");
 					put(grammarAccess.getAttributeNameAccess().getGroup_1(), "rule__AttributeName__Group_1__0");
+					put(grammarAccess.getAttributeNameAccess().getGroup_2(), "rule__AttributeName__Group_2__0");
 					put(grammarAccess.getAttributeWithNestedStatementAccess().getGroup(), "rule__AttributeWithNestedStatement__Group__0");
 					put(grammarAccess.getAggregationAccess().getGroup(), "rule__Aggregation__Group__0");
 					put(grammarAccess.getAggregationAccess().getGroup_4(), "rule__Aggregation__Group_4__0");
@@ -129,6 +130,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getStreamToAccess().getGroup(), "rule__StreamTo__Group__0");
 					put(grammarAccess.getCommandAccess().getGroup(), "rule__Command__Group__0");
 					put(grammarAccess.getDropAccess().getGroup(), "rule__Drop__Group__0");
+					put(grammarAccess.getDropAccess().getGroup_3(), "rule__Drop__Group_3__0");
 					put(grammarAccess.getWindow_TimebasedAccess().getGroup(), "rule__Window_Timebased__Group__0");
 					put(grammarAccess.getWindow_TimebasedAccess().getGroup_3(), "rule__Window_Timebased__Group_3__0");
 					put(grammarAccess.getWindow_TuplebasedAccess().getGroup(), "rule__Window_Tuplebased__Group__0");
@@ -266,8 +268,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getDropAccess().getKeyword1Assignment_0(), "rule__Drop__Keyword1Assignment_0");
 					put(grammarAccess.getDropAccess().getKeyword2Assignment_1(), "rule__Drop__Keyword2Assignment_1");
 					put(grammarAccess.getDropAccess().getValue1Assignment_2(), "rule__Drop__Value1Assignment_2");
-					put(grammarAccess.getDropAccess().getKeyword3Assignment_3(), "rule__Drop__Keyword3Assignment_3");
-					put(grammarAccess.getDropAccess().getValue2Assignment_4(), "rule__Drop__Value2Assignment_4");
+					put(grammarAccess.getDropAccess().getKeyword3Assignment_3_0(), "rule__Drop__Keyword3Assignment_3_0");
 					put(grammarAccess.getWindow_TimebasedAccess().getSizeAssignment_1(), "rule__Window_Timebased__SizeAssignment_1");
 					put(grammarAccess.getWindow_TimebasedAccess().getUnitAssignment_2(), "rule__Window_Timebased__UnitAssignment_2");
 					put(grammarAccess.getWindow_TimebasedAccess().getAdvance_sizeAssignment_3_1(), "rule__Window_Timebased__Advance_sizeAssignment_3_1");

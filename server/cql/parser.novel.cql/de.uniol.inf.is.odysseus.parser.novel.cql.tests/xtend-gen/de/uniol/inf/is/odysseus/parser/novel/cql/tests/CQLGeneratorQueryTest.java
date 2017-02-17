@@ -88,7 +88,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1, stream2 AS s2, stream3 WHERE attr1 > 2 AND attr2 = \'Test\';", 
-      "\n\t\t\ts2 = stream2\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1 > 2 && stream1.attr2 == \'Test\'\'}, JOIN(stream1,JOIN(stream2,stream3)))\n\t\t\t", _cQLDictionaryHelper);
+      "\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1 > 2 && stream1.attr2 == \'Test\'\'}, JOIN(stream1,JOIN(stream2,stream3)))\n\t\t\t", _cQLDictionaryHelper);
   }
   
   @Test
@@ -97,6 +97,14 @@ public class CQLGeneratorQueryTest {
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 WHERE attr1 > 2 AND attr2 = \'Test\';", 
       "operator_1 = SELECT({predicate=\'stream1.attr1 > 2 && stream1.attr2 == \'Test\'\'}, stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectAllTest5() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT s1.* FROM stream1 AS s1 WHERE attr1 > 2 AND attr2 = \'Test\';", 
+      "operator_1 = PROJECT({attributes=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>2&&stream1.attr2==\'Test\'\'},operator_1)", _cQLDictionaryHelper);
   }
   
   private final String aliasTestResult = "\n\t\ts1 = stream1\n\t\toperator_1 = PROJECT({attributes=[\'stream1.attr1\']}, stream1)\n\t\toperator_2 = SELECT({predicate=\'stream1.attr1 > 2\'}, operator_1)\n\t\trenamed_3=RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'},operator_2)";
@@ -367,7 +375,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] AS s1 , stream2 GROUP BY attr1, attr2;", 
-      "\n\t\t\ts1 = stream1\n\t\t\toperator_1 = AGGREGATE\n\t\t\t(\n\t\t\t\t{\n\t\t\t\t\tAGGREGATIONS=[\n\t\t\t\t\t\t\t\t\t[\'COUNT\', \'stream1.attr1\', \'Counter\', \'Integer\'],\n\t\t\t\t\t\t\t\t\t[\'AVG\', \'stream1.attr2\', \'AVG_attr2\', \'String\']\n\t\t\t\t\t\t\t\t ],\n\t\t\t\t\tGROUP_BY =[\'stream1.attr1\', \'stream1.attr2\']\n\t\t\t\t}, JOIN(TIMEWINDOW({size=[10, \'MINUTES\'], advance=[1, \'MINUTES\']},stream1), stream2)\n\t\t\t)", _cQLDictionaryHelper);
+      "\n\t\t\toperator_1 = AGGREGATE\n\t\t\t(\n\t\t\t\t{\n\t\t\t\t\tAGGREGATIONS=[\n\t\t\t\t\t\t\t\t\t[\'COUNT\', \'stream1.attr1\', \'Counter\', \'Integer\'],\n\t\t\t\t\t\t\t\t\t[\'AVG\', \'stream1.attr2\', \'AVG_attr2\', \'String\']\n\t\t\t\t\t\t\t\t ],\n\t\t\t\t\tGROUP_BY =[\'stream1.attr1\', \'stream1.attr2\']\n\t\t\t\t}, JOIN(TIMEWINDOW({size=[10, \'MINUTES\'], advance=[1, \'MINUTES\']},stream1), stream2)\n\t\t\t)", _cQLDictionaryHelper);
   }
   
   @Test
