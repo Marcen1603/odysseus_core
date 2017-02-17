@@ -6,6 +6,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -13,7 +15,6 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.ITrainableModel;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPToolkitNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
@@ -116,7 +117,9 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 			@Override
 			public void run(){
 				((ITrainableModel) getModel()).train(language, file, charset);
-				String[] output = {toolkit.serialize(getModel())};
+				//String[] output = {toolkit.serialize(getModel())};
+				Tuple<IMetaAttribute> output = new Tuple<>(1, true);
+				output.setAttribute(0, getModel());
 	            fireProcess(output);
 			}
 		};

@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.nlp.physicaloperator.TrainTransportHandler;
 public class TrainAO extends AbstractAccessAO {
 	private static final long serialVersionUID = 6100531335886603325L;
 	private SDFAttribute output = new SDFAttribute(null, "output",
-            SDFDatatype.STRING, null, null, null);
+            SDFDatatype.OBJECT, null, null, null);
 	//private ITrainableModel model;
 	//private String modelName;
 		
