@@ -49,28 +49,17 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Aggregation/expression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Aggregation/alias"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Mapper">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Mapper/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Mapper/attribute"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Mapper/innerexpression"/>
+    <genClasses ecoreClass="CQL.ecore#//ExpressionComponent">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionComponent/value"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//SelectExpression">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/leftmapper"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/leftattribute"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/leftconstant"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SelectExpression/operator"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/innerexpression"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/rightattribute"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/rightconstant"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/expressions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SelectExpression/operators"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/alias"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SelectExpression/rightatttriute"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//SelectExpressionWithoutAliasDefinition"/>
     <genClasses ecoreClass="CQL.ecore#//Alias">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Alias/name"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Constant"/>
-    <genClasses ecoreClass="CQL.ecore#//Expression">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Expression/alias"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//CreateParameters">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateParameters/wrapper"/>
@@ -137,20 +126,12 @@
     <genClasses ecoreClass="CQL.ecore#//ExpressionsModel">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionsModel/elements"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Expression"/>
     <genClasses ecoreClass="CQL.ecore#//DataType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//IntConstant">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//FloatConstant">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//FloatConstant/value"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//StringConstant">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StringConstant/value"/>
-    </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//BoolConstant">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//BoolConstant/value"/>
+    <genClasses ecoreClass="CQL.ecore#//Mapper">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Mapper/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Or">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Or/left"/>
@@ -188,6 +169,18 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//NOT">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//NOT/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//IntConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//IntConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//FloatConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//FloatConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//StringConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StringConstant/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//BoolConstant">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//BoolConstant/value"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//AttributeRef">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeRef/value"/>

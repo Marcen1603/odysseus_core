@@ -31,9 +31,7 @@ public class SourceStruct {
             newStruct.datatype = struct.datatype;
             newStruct.sourcename = struct.sourcename;
             ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
-            newStruct.aggregtions = _newArrayList;
-            ArrayList<String> _newArrayList_1 = CollectionLiterals.<String>newArrayList();
-            newStruct.aliases = _newArrayList_1;
+            newStruct.aliases = _newArrayList;
             newStructs.add(newStruct);
           }
         }

@@ -12,8 +12,6 @@ public class AttributeStruct {
   
   public List<String> aliases;
   
-  public List<String> aggregtions;
-  
   @Override
   public boolean equals(final Object obj) {
     if ((obj instanceof AttributeStruct)) {

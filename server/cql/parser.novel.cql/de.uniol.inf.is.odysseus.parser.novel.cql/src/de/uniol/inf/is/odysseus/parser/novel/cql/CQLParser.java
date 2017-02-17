@@ -112,79 +112,20 @@ public class CQLParser implements IQueryParser
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
-//		DataDictionaryProvider.getAllDatatypeNames().forEach(s -> types += s +"|");
-//		types = types.substring(0, types.length()-1);
-//		String queryType = "stream|sink|view";
-//		regex = ".*create[ ]*["+queryType+"][ ]*[a-z0-9]*[ ]+([a-z0-9]+){1}[ ]*[(]([a-z0-9]+[ ]+["+types+"]+[ ]*(, [a-z0-9]+[ ]+["+types+"]+)*)[)].*";
 	}
-	
-//	public synchronized void createDictionary(List<Create> list, ISession user)
-//	{
-//		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-//		for(Create stmt : list)
-//		{
-//			if(stmt.getAccessframework() != null && stmt.getAccessframework().getType().equals("SINK"))//TODO Refactore
-//			{
-//				// do nothing
-//			}
-//			else
-//			{
-//				if(stmt.getAccessframework() != null)
-//				{
-//					AccessFramework create = stmt.getAccessframework();
-//					int s = create.getAttributes().size();
-//					SDFAttribute[] attributes = new SDFAttribute[s];
-//					for(int i = 0; i < s; i++)
-//					{
-//						String name = create.getAttributes().get(i).getName();
-//						SDFDatatype type = new SDFDatatype(create.getDatatypes().get(i).getValue());
-//						attributes[i] = new SDFAttribute(create.getName(), name, type);
-//					}
-//					dic.add(attributes);
-//				}
-//				else//CHANNEL FORMAT
-//				{
-//					ChannelFormat create = stmt.getChannelformat();
-//					if(create.getStream() != null)//CREATE STREAN
-//					{
-//						int s = create.getStream().getAttributes().size();
-//						SDFAttribute[] attributes = new SDFAttribute[s];
-//						for(int i = 0; i < s; i++)
-//						{
-//							String name = create.getStream().getAttributes().get(i).getName();
-//							SDFDatatype type = new SDFDatatype(create.getStream().getDatatypes().get(i).getValue());
-//							attributes[i] = new SDFAttribute(create.getStream().getName(), name, type);
-//						}
-//						dic.add(attributes);
-//					}
-//					else// CREATE VIEW
-//					{
-//					}
-//				}
-//			}
-//		}
-//	}
-//	
 	
 	public synchronized void createDictionary(AttributeDefinition d, ISession user)
 	{
-//		System.out.println("ATTRIBUTEDEFINTION:: " + d.getName() + ", " + d.getAttributes().toString());
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
 		int size = d.getAttributes().size();
-//		SDFAttribute[] attributes = new SDFAttribute[s];
 		List<SDFAttribute> attributes = new ArrayList<>(size);
 		for(int i = 0; i < size ; i++)
 		{
 			String attributename 	  = d.getAttributes().get(i).getName();
 			SDFDatatype attributetype = new SDFDatatype(d.getDatatypes().get(i).getValue());
 			attributes.add(new SDFAttribute(d.getName(), attributename, attributetype));
-//			System.out.println("sourcename:: " + d.getName() +", attributename:: " + attributename + ", attributetype:: " + attributetype.toString());
-//			String name = d.getAttributes().get(i).getName();
-//			SDFDatatype type = new SDFDatatype(d.getDatatypes().get(i).getValue());
-//			attributes[i] = new SDFAttribute(d.getName(), name, type);
 		}
 		dic.add(d.getName(), attributes);
-//		dic.add(attributes);
 	}
 	
 	public synchronized List<IExecutorCommand> translate(String query, ISession user, IDataDictionary dd, Context context,
@@ -200,23 +141,30 @@ public class CQLParser implements IQueryParser
 		}
 		
 		model = (Model) resource.getContents().get(0);
-//		System.out.println(query);
+		System.out.println("QUERY STRING:: " + query);
 		for(AttributeDefinition d : EcoreUtil2.eAllOfType(model, AttributeDefinition.class))
 		{
+				System.out.println("add attribute definition:: " + d);
 				createDictionary(d, user);
 		}
 		
-		//Get schemata from PQl queries
-		Set<SDFSchema> outerschema = executor.getExecutionPlan(user)
-										  .getQueries(user)
-										  .stream()
-										  .map(e -> e.getLogicalQuery().getLogicalPlan())
-										  .map(e -> e.getOutputSchema())
-										  .collect(Collectors.toSet());
+		//Get schemata from PQl queries//FIXME Not working anymore...
+//		Set<SDFSchema> outerschema = executor.getExecutionPlan(user)
+//										  .getQueries(user)
+//										  .stream()
+//										  .map(e -> e.getLogicalQuery().getLogicalPlan())
+//										  .map(e -> e.getOutputSchema())
+//										  .collect(Collectors.toSet());
 		
-		System.out.println("outerschema"+outerschema.toString());
+		Set<SDFSchema> outerschema = executor.getDataDictionary(user)
+				.getStreamsAndViews(user)
+				.stream()
+				.map(e -> e.getValue().getOutputSchema())
+				.collect(Collectors.toSet());
+		
 		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
-		System.out.println("innerschema"+innerschema);
+		System.out.println("outerschema:: "+outerschema.toString());
+		System.out.println("innerschema:: "+innerschema);
 		return generate(query.toString(), model, outerschema, innerschema, user, dd, context, metaAttribute, executor);
 	}
 	

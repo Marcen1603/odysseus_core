@@ -417,50 +417,32 @@ public interface CQLPackage extends EPackage
   int AGGREGATION_FEATURE_COUNT = 4;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponent()
    * @generated
    */
-  int MAPPER = 7;
+  int EXPRESSION_COMPONENT = 7;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MAPPER__NAME = 0;
+  int EXPRESSION_COMPONENT__VALUE = 0;
 
   /**
-   * The feature id for the '<em><b>Attribute</b></em>' containment reference.
+   * The number of structural features of the '<em>Expression Component</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MAPPER__ATTRIBUTE = 1;
-
-  /**
-   * The feature id for the '<em><b>Innerexpression</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MAPPER__INNEREXPRESSION = 2;
-
-  /**
-   * The number of structural features of the '<em>Mapper</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MAPPER_FEATURE_COUNT = 3;
+  int EXPRESSION_COMPONENT_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionImpl <em>Select Expression</em>}' class.
@@ -473,67 +455,22 @@ public interface CQLPackage extends EPackage
   int SELECT_EXPRESSION = 8;
 
   /**
-   * The feature id for the '<em><b>Leftmapper</b></em>' containment reference.
+   * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SELECT_EXPRESSION__LEFTMAPPER = 0;
+  int SELECT_EXPRESSION__EXPRESSIONS = 0;
 
   /**
-   * The feature id for the '<em><b>Leftattribute</b></em>' containment reference.
+   * The feature id for the '<em><b>Operators</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SELECT_EXPRESSION__LEFTATTRIBUTE = 1;
-
-  /**
-   * The feature id for the '<em><b>Leftconstant</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__LEFTCONSTANT = 2;
-
-  /**
-   * The feature id for the '<em><b>Operator</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__OPERATOR = 3;
-
-  /**
-   * The feature id for the '<em><b>Innerexpression</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__INNEREXPRESSION = 4;
-
-  /**
-   * The feature id for the '<em><b>Rightattribute</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__RIGHTATTRIBUTE = 5;
-
-  /**
-   * The feature id for the '<em><b>Rightconstant</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__RIGHTCONSTANT = 6;
+  int SELECT_EXPRESSION__OPERATORS = 1;
 
   /**
    * The feature id for the '<em><b>Alias</b></em>' containment reference.
@@ -542,16 +479,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT_EXPRESSION__ALIAS = 7;
-
-  /**
-   * The feature id for the '<em><b>Rightatttriute</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION__RIGHTATTTRIUTE = 8;
+  int SELECT_EXPRESSION__ALIAS = 2;
 
   /**
    * The number of structural features of the '<em>Select Expression</em>' class.
@@ -560,7 +488,53 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT_EXPRESSION_FEATURE_COUNT = 9;
+  int SELECT_EXPRESSION_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl <em>Select Expression Without Alias Definition</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpressionWithoutAliasDefinition()
+   * @generated
+   */
+  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION = 9;
+
+  /**
+   * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__EXPRESSIONS = SELECT_EXPRESSION__EXPRESSIONS;
+
+  /**
+   * The feature id for the '<em><b>Operators</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__OPERATORS = SELECT_EXPRESSION__OPERATORS;
+
+  /**
+   * The feature id for the '<em><b>Alias</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__ALIAS = SELECT_EXPRESSION__ALIAS;
+
+  /**
+   * The number of structural features of the '<em>Select Expression Without Alias Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION_FEATURE_COUNT = SELECT_EXPRESSION_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AliasImpl <em>Alias</em>}' class.
@@ -570,7 +544,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAlias()
    * @generated
    */
-  int ALIAS = 9;
+  int ALIAS = 10;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -591,53 +565,6 @@ public interface CQLPackage extends EPackage
   int ALIAS_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ConstantImpl <em>Constant</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getConstant()
-   * @generated
-   */
-  int CONSTANT = 10;
-
-  /**
-   * The number of structural features of the '<em>Constant</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONSTANT_FEATURE_COUNT = 0;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl <em>Expression</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpression()
-   * @generated
-   */
-  int EXPRESSION = 11;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EXPRESSION__ALIAS = 0;
-
-  /**
-   * The number of structural features of the '<em>Expression</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EXPRESSION_FEATURE_COUNT = 1;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl <em>Create Parameters</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -645,7 +572,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateParameters()
    * @generated
    */
-  int CREATE_PARAMETERS = 12;
+  int CREATE_PARAMETERS = 11;
 
   /**
    * The feature id for the '<em><b>Wrapper</b></em>' attribute.
@@ -718,7 +645,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeDefinition()
    * @generated
    */
-  int ATTRIBUTE_DEFINITION = 13;
+  int ATTRIBUTE_DEFINITION = 12;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -764,7 +691,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStream1()
    * @generated
    */
-  int CREATE_STREAM1 = 14;
+  int CREATE_STREAM1 = 13;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -810,7 +737,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateSink1()
    * @generated
    */
-  int CREATE_SINK1 = 15;
+  int CREATE_SINK1 = 14;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -856,7 +783,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamChannel()
    * @generated
    */
-  int CREATE_STREAM_CHANNEL = 16;
+  int CREATE_STREAM_CHANNEL = 15;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -911,7 +838,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamFile()
    * @generated
    */
-  int CREATE_STREAM_FILE = 17;
+  int CREATE_STREAM_FILE = 16;
 
   /**
    * The feature id for the '<em><b>Keyword</b></em>' attribute.
@@ -966,7 +893,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateView()
    * @generated
    */
-  int CREATE_VIEW = 18;
+  int CREATE_VIEW = 17;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1003,7 +930,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStreamTo()
    * @generated
    */
-  int STREAM_TO = 19;
+  int STREAM_TO = 18;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1049,7 +976,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
    * @generated
    */
-  int COMMAND = 20;
+  int COMMAND = 19;
 
   /**
    * The feature id for the '<em><b>Keyword1</b></em>' attribute.
@@ -1113,7 +1040,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Timebased()
    * @generated
    */
-  int WINDOW_TIMEBASED = 21;
+  int WINDOW_TIMEBASED = 20;
 
   /**
    * The feature id for the '<em><b>Size</b></em>' attribute.
@@ -1168,7 +1095,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Tuplebased()
    * @generated
    */
-  int WINDOW_TUPLEBASED = 22;
+  int WINDOW_TUPLEBASED = 21;
 
   /**
    * The feature id for the '<em><b>Size</b></em>' attribute.
@@ -1214,7 +1141,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionsModel()
    * @generated
    */
-  int EXPRESSIONS_MODEL = 23;
+  int EXPRESSIONS_MODEL = 22;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -1233,6 +1160,25 @@ public interface CQLPackage extends EPackage
    * @ordered
    */
   int EXPRESSIONS_MODEL_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl <em>Expression</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpression()
+   * @generated
+   */
+  int EXPRESSION = 23;
+
+  /**
+   * The number of structural features of the '<em>Expression</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_FEATURE_COUNT = 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
@@ -1263,152 +1209,41 @@ public interface CQLPackage extends EPackage
   int DATA_TYPE_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl <em>Int Constant</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
    * @generated
    */
-  int INT_CONSTANT = 25;
+  int MAPPER = 25;
 
   /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int INT_CONSTANT__ALIAS = CONSTANT_FEATURE_COUNT + 0;
+  int MAPPER__VALUE = EXPRESSION_COMPONENT__VALUE;
 
   /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int INT_CONSTANT__VALUE = CONSTANT_FEATURE_COUNT + 1;
+  int MAPPER__NAME = EXPRESSION_COMPONENT_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Int Constant</em>' class.
+   * The number of structural features of the '<em>Mapper</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int INT_CONSTANT_FEATURE_COUNT = CONSTANT_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl <em>Float Constant</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
-   * @generated
-   */
-  int FLOAT_CONSTANT = 26;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FLOAT_CONSTANT__ALIAS = CONSTANT_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FLOAT_CONSTANT__VALUE = CONSTANT_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Float Constant</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int FLOAT_CONSTANT_FEATURE_COUNT = CONSTANT_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl <em>String Constant</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
-   * @generated
-   */
-  int STRING_CONSTANT = 27;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STRING_CONSTANT__ALIAS = CONSTANT_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STRING_CONSTANT__VALUE = CONSTANT_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>String Constant</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int STRING_CONSTANT_FEATURE_COUNT = CONSTANT_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl <em>Bool Constant</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
-   * @generated
-   */
-  int BOOL_CONSTANT = 28;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BOOL_CONSTANT__ALIAS = CONSTANT_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BOOL_CONSTANT__VALUE = CONSTANT_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>Bool Constant</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BOOL_CONSTANT_FEATURE_COUNT = CONSTANT_FEATURE_COUNT + 2;
+  int MAPPER_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
@@ -1418,16 +1253,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOr()
    * @generated
    */
-  int OR = 29;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OR__ALIAS = EXPRESSION__ALIAS;
+  int OR = 26;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1464,16 +1290,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAnd()
    * @generated
    */
-  int AND = 30;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AND__ALIAS = EXPRESSION__ALIAS;
+  int AND = 27;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1510,16 +1327,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getEquality()
    * @generated
    */
-  int EQUALITY = 31;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int EQUALITY__ALIAS = EXPRESSION__ALIAS;
+  int EQUALITY = 28;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1565,16 +1373,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComparision()
    * @generated
    */
-  int COMPARISION = 32;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMPARISION__ALIAS = EXPRESSION__ALIAS;
+  int COMPARISION = 29;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1620,16 +1419,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getPlus()
    * @generated
    */
-  int PLUS = 33;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int PLUS__ALIAS = EXPRESSION__ALIAS;
+  int PLUS = 30;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1666,16 +1456,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMinus()
    * @generated
    */
-  int MINUS = 34;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MINUS__ALIAS = EXPRESSION__ALIAS;
+  int MINUS = 31;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1712,16 +1493,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMulOrDiv()
    * @generated
    */
-  int MUL_OR_DIV = 35;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int MUL_OR_DIV__ALIAS = EXPRESSION__ALIAS;
+  int MUL_OR_DIV = 32;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1767,16 +1539,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBracket()
    * @generated
    */
-  int BRACKET = 36;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int BRACKET__ALIAS = EXPRESSION__ALIAS;
+  int BRACKET = 33;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -1804,16 +1567,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNOT()
    * @generated
    */
-  int NOT = 37;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int NOT__ALIAS = EXPRESSION__ALIAS;
+  int NOT = 34;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -1834,6 +1588,118 @@ public interface CQLPackage extends EPackage
   int NOT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl <em>Int Constant</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
+   * @generated
+   */
+  int INT_CONSTANT = 35;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INT_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Int Constant</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INT_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl <em>Float Constant</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
+   * @generated
+   */
+  int FLOAT_CONSTANT = 36;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FLOAT_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Float Constant</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FLOAT_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl <em>String Constant</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
+   * @generated
+   */
+  int STRING_CONSTANT = 37;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STRING_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>String Constant</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int STRING_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl <em>Bool Constant</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
+   * @generated
+   */
+  int BOOL_CONSTANT = 38;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BOOL_CONSTANT__VALUE = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Bool Constant</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int BOOL_CONSTANT_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeRefImpl <em>Attribute Ref</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1841,16 +1707,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeRef()
    * @generated
    */
-  int ATTRIBUTE_REF = 38;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE_REF__ALIAS = EXPRESSION__ALIAS;
+  int ATTRIBUTE_REF = 39;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1878,7 +1735,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateKeyword()
    * @generated
    */
-  int CREATE_KEYWORD = 39;
+  int CREATE_KEYWORD = 40;
 
 
   /**
@@ -2227,47 +2084,25 @@ public interface CQLPackage extends EPackage
   EReference getAggregation_Alias();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper <em>Mapper</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent <em>Expression Component</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Mapper</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
+   * @return the meta object for class '<em>Expression Component</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
    * @generated
    */
-  EClass getMapper();
+  EClass getExpressionComponent();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName <em>Name</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent#getValue <em>Value</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName()
-   * @see #getMapper()
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent#getValue()
+   * @see #getExpressionComponent()
    * @generated
    */
-  EAttribute getMapper_Name();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getAttribute <em>Attribute</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getAttribute()
-   * @see #getMapper()
-   * @generated
-   */
-  EReference getMapper_Attribute();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getInnerexpression <em>Innerexpression</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Innerexpression</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getInnerexpression()
-   * @see #getMapper()
-   * @generated
-   */
-  EReference getMapper_Innerexpression();
+  EReference getExpressionComponent_Value();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression <em>Select Expression</em>}'.
@@ -2280,81 +2115,26 @@ public interface CQLPackage extends EPackage
   EClass getSelectExpression();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftmapper <em>Leftmapper</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getExpressions <em>Expressions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Leftmapper</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftmapper()
+   * @return the meta object for the containment reference list '<em>Expressions</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getExpressions()
    * @see #getSelectExpression()
    * @generated
    */
-  EReference getSelectExpression_Leftmapper();
+  EReference getSelectExpression_Expressions();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftattribute <em>Leftattribute</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getOperators <em>Operators</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Leftattribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftattribute()
+   * @return the meta object for the attribute list '<em>Operators</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getOperators()
    * @see #getSelectExpression()
    * @generated
    */
-  EReference getSelectExpression_Leftattribute();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftconstant <em>Leftconstant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Leftconstant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getLeftconstant()
-   * @see #getSelectExpression()
-   * @generated
-   */
-  EReference getSelectExpression_Leftconstant();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getOperator <em>Operator</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Operator</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getOperator()
-   * @see #getSelectExpression()
-   * @generated
-   */
-  EAttribute getSelectExpression_Operator();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getInnerexpression <em>Innerexpression</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Innerexpression</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getInnerexpression()
-   * @see #getSelectExpression()
-   * @generated
-   */
-  EReference getSelectExpression_Innerexpression();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightattribute <em>Rightattribute</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Rightattribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightattribute()
-   * @see #getSelectExpression()
-   * @generated
-   */
-  EReference getSelectExpression_Rightattribute();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightconstant <em>Rightconstant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Rightconstant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightconstant()
-   * @see #getSelectExpression()
-   * @generated
-   */
-  EReference getSelectExpression_Rightconstant();
+  EAttribute getSelectExpression_Operators();
 
   /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getAlias <em>Alias</em>}'.
@@ -2368,15 +2148,14 @@ public interface CQLPackage extends EPackage
   EReference getSelectExpression_Alias();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightatttriute <em>Rightatttriute</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition <em>Select Expression Without Alias Definition</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Rightatttriute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression#getRightatttriute()
-   * @see #getSelectExpression()
+   * @return the meta object for class '<em>Select Expression Without Alias Definition</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition
    * @generated
    */
-  EReference getSelectExpression_Rightatttriute();
+  EClass getSelectExpressionWithoutAliasDefinition();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias <em>Alias</em>}'.
@@ -2398,37 +2177,6 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EAttribute getAlias_Name();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Constant <em>Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Constant
-   * @generated
-   */
-  EClass getConstant();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression <em>Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Expression</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
-   * @generated
-   */
-  EClass getExpression();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression#getAlias <em>Alias</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Alias</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression#getAlias()
-   * @see #getExpression()
-   * @generated
-   */
-  EReference getExpression_Alias();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters <em>Create Parameters</em>}'.
@@ -3002,6 +2750,16 @@ public interface CQLPackage extends EPackage
   EReference getExpressionsModel_Elements();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Expression</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
+   * @generated
+   */
+  EClass getExpression();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3023,88 +2781,25 @@ public interface CQLPackage extends EPackage
   EAttribute getDataType_Value();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant <em>Int Constant</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper <em>Mapper</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Int Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
+   * @return the meta object for class '<em>Mapper</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
    * @generated
    */
-  EClass getIntConstant();
+  EClass getMapper();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant#getValue <em>Value</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant#getValue()
-   * @see #getIntConstant()
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName()
+   * @see #getMapper()
    * @generated
    */
-  EAttribute getIntConstant_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant <em>Float Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Float Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
-   * @generated
-   */
-  EClass getFloatConstant();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant#getValue()
-   * @see #getFloatConstant()
-   * @generated
-   */
-  EAttribute getFloatConstant_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant <em>String Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>String Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-   * @generated
-   */
-  EClass getStringConstant();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant#getValue()
-   * @see #getStringConstant()
-   * @generated
-   */
-  EAttribute getStringConstant_Value();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant <em>Bool Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Bool Constant</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
-   * @generated
-   */
-  EClass getBoolConstant();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant#getValue()
-   * @see #getBoolConstant()
-   * @generated
-   */
-  EAttribute getBoolConstant_Value();
+  EAttribute getMapper_Name();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
@@ -3404,6 +3099,90 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EReference getNOT_Expression();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant <em>Int Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Int Constant</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
+   * @generated
+   */
+  EClass getIntConstant();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant#getValue()
+   * @see #getIntConstant()
+   * @generated
+   */
+  EAttribute getIntConstant_Value();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant <em>Float Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Float Constant</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
+   * @generated
+   */
+  EClass getFloatConstant();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant#getValue()
+   * @see #getFloatConstant()
+   * @generated
+   */
+  EAttribute getFloatConstant_Value();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant <em>String Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>String Constant</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+   * @generated
+   */
+  EClass getStringConstant();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant#getValue()
+   * @see #getStringConstant()
+   * @generated
+   */
+  EAttribute getStringConstant_Value();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant <em>Bool Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Bool Constant</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
+   * @generated
+   */
+  EClass getBoolConstant();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant#getValue()
+   * @see #getBoolConstant()
+   * @generated
+   */
+  EAttribute getBoolConstant_Value();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef <em>Attribute Ref</em>}'.
@@ -3730,38 +3509,22 @@ public interface CQLPackage extends EPackage
     EReference AGGREGATION__ALIAS = eINSTANCE.getAggregation_Alias();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponent()
      * @generated
      */
-    EClass MAPPER = eINSTANCE.getMapper();
+    EClass EXPRESSION_COMPONENT = eINSTANCE.getExpressionComponent();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute MAPPER__NAME = eINSTANCE.getMapper_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Attribute</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference MAPPER__ATTRIBUTE = eINSTANCE.getMapper_Attribute();
-
-    /**
-     * The meta object literal for the '<em><b>Innerexpression</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference MAPPER__INNEREXPRESSION = eINSTANCE.getMapper_Innerexpression();
+    EReference EXPRESSION_COMPONENT__VALUE = eINSTANCE.getExpressionComponent_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionImpl <em>Select Expression</em>}' class.
@@ -3774,60 +3537,20 @@ public interface CQLPackage extends EPackage
     EClass SELECT_EXPRESSION = eINSTANCE.getSelectExpression();
 
     /**
-     * The meta object literal for the '<em><b>Leftmapper</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Expressions</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT_EXPRESSION__LEFTMAPPER = eINSTANCE.getSelectExpression_Leftmapper();
+    EReference SELECT_EXPRESSION__EXPRESSIONS = eINSTANCE.getSelectExpression_Expressions();
 
     /**
-     * The meta object literal for the '<em><b>Leftattribute</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Operators</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT_EXPRESSION__LEFTATTRIBUTE = eINSTANCE.getSelectExpression_Leftattribute();
-
-    /**
-     * The meta object literal for the '<em><b>Leftconstant</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SELECT_EXPRESSION__LEFTCONSTANT = eINSTANCE.getSelectExpression_Leftconstant();
-
-    /**
-     * The meta object literal for the '<em><b>Operator</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SELECT_EXPRESSION__OPERATOR = eINSTANCE.getSelectExpression_Operator();
-
-    /**
-     * The meta object literal for the '<em><b>Innerexpression</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SELECT_EXPRESSION__INNEREXPRESSION = eINSTANCE.getSelectExpression_Innerexpression();
-
-    /**
-     * The meta object literal for the '<em><b>Rightattribute</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SELECT_EXPRESSION__RIGHTATTRIBUTE = eINSTANCE.getSelectExpression_Rightattribute();
-
-    /**
-     * The meta object literal for the '<em><b>Rightconstant</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SELECT_EXPRESSION__RIGHTCONSTANT = eINSTANCE.getSelectExpression_Rightconstant();
+    EAttribute SELECT_EXPRESSION__OPERATORS = eINSTANCE.getSelectExpression_Operators();
 
     /**
      * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
@@ -3838,12 +3561,14 @@ public interface CQLPackage extends EPackage
     EReference SELECT_EXPRESSION__ALIAS = eINSTANCE.getSelectExpression_Alias();
 
     /**
-     * The meta object literal for the '<em><b>Rightatttriute</b></em>' containment reference feature.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl <em>Select Expression Without Alias Definition</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpressionWithoutAliasDefinition()
      * @generated
      */
-    EReference SELECT_EXPRESSION__RIGHTATTTRIUTE = eINSTANCE.getSelectExpression_Rightatttriute();
+    EClass SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION = eINSTANCE.getSelectExpressionWithoutAliasDefinition();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AliasImpl <em>Alias</em>}' class.
@@ -3862,34 +3587,6 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EAttribute ALIAS__NAME = eINSTANCE.getAlias_Name();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ConstantImpl <em>Constant</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getConstant()
-     * @generated
-     */
-    EClass CONSTANT = eINSTANCE.getConstant();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl <em>Expression</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpression()
-     * @generated
-     */
-    EClass EXPRESSION = eINSTANCE.getExpression();
-
-    /**
-     * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference EXPRESSION__ALIAS = eINSTANCE.getExpression_Alias();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl <em>Create Parameters</em>}' class.
@@ -4340,6 +4037,16 @@ public interface CQLPackage extends EPackage
     EReference EXPRESSIONS_MODEL__ELEMENTS = eINSTANCE.getExpressionsModel_Elements();
 
     /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl <em>Expression</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpression()
+     * @generated
+     */
+    EClass EXPRESSION = eINSTANCE.getExpression();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl <em>Data Type</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4358,76 +4065,22 @@ public interface CQLPackage extends EPackage
     EAttribute DATA_TYPE__VALUE = eINSTANCE.getDataType_Value();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl <em>Int Constant</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
      * @generated
      */
-    EClass INT_CONSTANT = eINSTANCE.getIntConstant();
+    EClass MAPPER = eINSTANCE.getMapper();
 
     /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute INT_CONSTANT__VALUE = eINSTANCE.getIntConstant_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl <em>Float Constant</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
-     * @generated
-     */
-    EClass FLOAT_CONSTANT = eINSTANCE.getFloatConstant();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute FLOAT_CONSTANT__VALUE = eINSTANCE.getFloatConstant_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl <em>String Constant</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
-     * @generated
-     */
-    EClass STRING_CONSTANT = eINSTANCE.getStringConstant();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute STRING_CONSTANT__VALUE = eINSTANCE.getStringConstant_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl <em>Bool Constant</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
-     * @generated
-     */
-    EClass BOOL_CONSTANT = eINSTANCE.getBoolConstant();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute BOOL_CONSTANT__VALUE = eINSTANCE.getBoolConstant_Value();
+    EAttribute MAPPER__NAME = eINSTANCE.getMapper_Name();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
@@ -4670,6 +4323,78 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EReference NOT__EXPRESSION = eINSTANCE.getNOT_Expression();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl <em>Int Constant</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.IntConstantImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
+     * @generated
+     */
+    EClass INT_CONSTANT = eINSTANCE.getIntConstant();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute INT_CONSTANT__VALUE = eINSTANCE.getIntConstant_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl <em>Float Constant</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FloatConstantImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
+     * @generated
+     */
+    EClass FLOAT_CONSTANT = eINSTANCE.getFloatConstant();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute FLOAT_CONSTANT__VALUE = eINSTANCE.getFloatConstant_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl <em>String Constant</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StringConstantImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
+     * @generated
+     */
+    EClass STRING_CONSTANT = eINSTANCE.getStringConstant();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute STRING_CONSTANT__VALUE = eINSTANCE.getStringConstant_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl <em>Bool Constant</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.BoolConstantImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
+     * @generated
+     */
+    EClass BOOL_CONSTANT = eINSTANCE.getBoolConstant();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute BOOL_CONSTANT__VALUE = eINSTANCE.getBoolConstant_Value();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeRefImpl <em>Attribute Ref</em>}' class.

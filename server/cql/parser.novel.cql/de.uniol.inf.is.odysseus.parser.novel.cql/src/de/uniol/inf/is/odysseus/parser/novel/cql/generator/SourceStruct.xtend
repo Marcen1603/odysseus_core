@@ -22,7 +22,6 @@ class SourceStruct
 						newStruct.attributename = name
 						newStruct.datatype = struct.datatype
 						newStruct.sourcename = struct.sourcename	
-						newStruct.aggregtions = newArrayList
 						newStruct.aliases = newArrayList
 						newStructs.add(newStruct)
 					}

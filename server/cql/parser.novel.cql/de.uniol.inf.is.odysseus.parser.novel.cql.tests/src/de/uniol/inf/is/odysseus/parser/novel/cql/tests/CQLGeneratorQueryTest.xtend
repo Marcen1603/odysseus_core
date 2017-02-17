@@ -197,8 +197,11 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
 			,
 			"
-			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
-			operator_2 = SELECT({predicate='stream1.attr1 > 2'}, operator_1)"
+			s1=stream1
+			s2=stream1
+			operator_1=PROJECT({attributes=['stream1.attr1','stream1.attr1_1','stream1.attr2_1']},
+						JOIN(
+							RENAME({aliases=['attr1','stream1.attr1_1','attr2','stream1.attr2_1'],pairs='true'},stream1),stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -209,8 +212,14 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
 			,
 			"
-			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
-			operator_2 = SELECT({predicate='stream1.attr1 > 2'}, operator_1)"
+			s1=stream1
+			s2=stream1
+			s3=stream1
+			operator_1=PROJECT({attributes=['stream1.attr1','stream1.attr1_2','stream1.attr2_2']},
+						JOIN(
+							RENAME({aliases=['attr1','stream1.attr1_1','attr2','stream1.attr2_1'],pairs='true'},stream1),
+								JOIN(
+									RENAME({aliases=['attr1','stream1.attr1_2','attr2','stream1.attr2_2'],pairs='true'},stream1),stream1)))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -256,7 +265,7 @@ class CQLGeneratorQueryTest
 			,
 			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','avgAttr1','Integer']]},
 							JOIN(stream1,JOIN(stream2,stream3)))
-			 operator_2 = PROJECT({attributes=['avgAttr1','stream1.attr1','stream1.attr2','stream2.attr3']},
+			 operator_2 = PROJECT({attributes=['stream1.attr1','stream1.attr2','stream2.attr3', 'avgAttr1']},
 							JOIN(operator_1,JOIN(stream1,JOIN(stream2,stream3))))"
 		, new CQLDictionaryHelper())
 	}
@@ -625,7 +634,7 @@ class CQLGeneratorQueryTest
 				}, TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1)
 			)
 			operator_2 = PROJECT
-			({attributes=['Counter', 'stream1.attr2']}, 
+			({attributes=['stream1.attr2', 'Counter']}, 
 				JOIN(TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1), 
 				operator_1
 				)
@@ -650,7 +659,7 @@ class CQLGeneratorQueryTest
 				}, JOIN(stream1, stream2)
 			)
 			operator_2 = PROJECT
-			({attributes=['Counter', 'stream2.attr3']}, JOIN(operator_1, JOIN(stream1, stream2)))"
+			({attributes=['stream2.attr3', 'Counter']}, JOIN(operator_1, JOIN(stream1, stream2)))"
 			, new CQLDictionaryHelper()
 		)
 	}	
@@ -670,7 +679,7 @@ class CQLGeneratorQueryTest
 								 ]
 				}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),stream1))
 
-			operator_2=PROJECT({attributes=['Counter','stream2.attr3']},
+			operator_2=PROJECT({attributes=['stream2.attr3', 'Counter']},
 						JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),JOIN(operator_1,stream1)))"
 			, new CQLDictionaryHelper()
 		)
@@ -833,7 +842,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DolToEur(attr1) FROM stream1;"
 			,
-			"operator_1 = DolToEur(attr1)"
+			"operator_1=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -842,9 +851,9 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT DolToEur(attr1) + 10.0 - attr2 FROM stream1;"
+			"SELECT attr1 + attr1 AS attr1PlusAttr1 FROM stream1;"
 			,
-			"operator_1 = DolToEur(attr1) + 10.0 - attr2 "
+			"operator_1=MAP({expressions=[['stream1.attr1 + stream1.attr1','attr1PlusAttr1']]},stream1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -853,9 +862,9 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT DolToEur(attr1 * attr2) + 10.0 - attr2 FROM stream1;"
+			"SELECT DolToEur(attr1 * attr2) + 10.0 - attr2 AS exp1, DolToEur(attr1) AS exp2 FROM stream1;"
 			,
-			"operator_1 = DolToEur(attr1 * attr2) + 10.0 - attr2 "
+			"operator_1=MAP({expressions=[['DolToEur(stream1.attr1*stream1.attr2)+10.0-stream1.attr2','exp1'], ['DolToEur(stream1.attr1)','exp2']]},stream1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -864,9 +873,9 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2 FROM stream1;"
+			"SELECT DolToEur(DolToEur(attr1 + 20.25)) FROM stream1;"
 			,
-			"operator_1 = DolToEur(attr1 * attr2) + DolToEur(attr1/attr2) - attr2, attr1 + attr2,"
+			"operator_1=MAP({expressions=[['DolToEur(DolToEur(stream1.attr1 + 20.25))','expression_0']]},stream1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -877,7 +886,106 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT 'hello' + 'world' FROM stream1;"
 			,
-			"operator_1 = 'hello' + 'world',"
+			"operator_1=MAP({expressions=[['\"hello\"+\"world\"','expression_0']]},stream1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest6()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1), attr1 FROM stream1;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = PROJECT({attributes=['stream1.attr1','expression_0']},
+							JOIN(
+								operator_1,
+								stream1)
+							)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest7()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(attr1), attr1 FROM stream1;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = PROJECT({attributes=['stream1.attr1','expression_0']},
+							JOIN(
+								operator_1,
+								stream1)
+							)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest8()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1;"
+			,
+			"operator_1 = JOIN(
+							AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_attr1','Integer']]},stream1),
+							MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+						  )"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest9()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 AS a1 FROM stream1;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_attr1','Integer']]},stream1)
+			 operator_3 = PROJECT({attributes=['stream1.attr1','expression_0','AVG_attr1']}, JOIN(JOIN(operator_1,operator_2),stream1))
+			 renamed_4  = RENAME({aliases=['attr1','a1'],pairs='true'}, operator_3)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest10()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 FROM stream1 WHERE attr1 > 10;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_attr1','Integer']]},stream1)
+             operator_3 = PROJECT({attributes=['stream1.attr1','expression_0','AVG_attr1']},JOIN(JOIN(operator_1,operator_2),stream1))
+             operator_4 = SELECT({predicate='stream1.attr1>10'},operator_3)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest11()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1 WHERE attr1 > 10;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_attr1','Integer']]},stream1)
+			 operator_3 = SELECT({predicate='stream1.attr1>10'},JOIN(JOIN(operator_1,operator_2),stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void SelectExpressionTest12()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DolToEur(stream1.attr1) FROM stream1 WHERE attr1 > 10;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1,stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}

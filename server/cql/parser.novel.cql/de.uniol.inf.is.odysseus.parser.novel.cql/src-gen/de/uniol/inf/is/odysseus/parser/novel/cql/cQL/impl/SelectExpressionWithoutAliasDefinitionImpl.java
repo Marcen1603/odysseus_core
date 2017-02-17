@@ -4,27 +4,25 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Constant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition;
 
 import org.eclipse.emf.ecore.EClass;
 
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Constant</b></em>'.
+ * An implementation of the model object '<em><b>Select Expression Without Alias Definition</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class ConstantImpl extends MinimalEObjectImpl.Container implements Constant
+public class SelectExpressionWithoutAliasDefinitionImpl extends SelectExpressionImpl implements SelectExpressionWithoutAliasDefinition
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ConstantImpl()
+  protected SelectExpressionWithoutAliasDefinitionImpl()
   {
     super();
   }
@@ -37,7 +35,7 @@ public class ConstantImpl extends MinimalEObjectImpl.Container implements Consta
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.CONSTANT;
+    return CQLPackage.Literals.SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION;
   }
 
-} //ConstantImpl
+} //SelectExpressionWithoutAliasDefinitionImpl

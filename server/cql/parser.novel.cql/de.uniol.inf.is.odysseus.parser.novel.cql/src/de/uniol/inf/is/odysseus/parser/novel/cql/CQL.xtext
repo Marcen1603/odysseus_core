@@ -14,7 +14,7 @@ IDOrINT:
 
 Statement:	//FIXME DROP has two types: Statement and Command -> causes error in detection commands while parsing!
 	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView) 
-	(';')
+	(';')?
 ;
  
 Select:
@@ -24,13 +24,14 @@ Select:
 		( 
 			(attributes+=Attribute 
 				| aggregations+=Aggregation
-//				| mapperss+=Mapper 
 				| expressions+=SelectExpression
+//				| mappers+=Mapper
 			)+  
-			((',' attributes+=Attribute) 
+			(
+				(',' attributes+=Attribute) 
 				| (',' aggregations+=Aggregation) 
-//				| (',' mappers+=Mapper)
 				| (',' expressions+=SelectExpression)
+//				| (',' mappers+=Mapper)
 			)*
 		)
 	)
@@ -77,112 +78,199 @@ AttributeWithNestedStatement:
 ;  
  
 Aggregation://TODO That is not supposed to be hard coded! 
-	name=('AVG'|'MIN'|'MAX'|'COUNT'|'SUM'|'MEDIAN'|'FIRST'|'LAST')
-	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)')'
+	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')'
 	('AS' alias=Alias)?
 ;
 
 AggregationWithoutAliasDefinition returns Aggregation:
-	name=('AVG'|'MIN'|'MAX'|'COUNT'|'SUM'|'MEDIAN'|'FIRST'|'LAST')
-	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)')'
+	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+	'('(attribute=AttributeWithoutAliasDefinition) ')' 
 ;
 
-Mapper://TODO That is not supposed to be hard coded! 
+
+ExpressionComponent:
+	 (ExpressionComponentConstantOrAttribute(
+	 	{ExpressionComponent.value=current}
+	 ))
+	 | (ExpressionComponentMapperOrConstant(
+	 	{ExpressionComponent.value=current}
+	 ))
+;
+
+ExpressionComponentConstantOrAttribute returns ExpressionComponent:
+	(value = AtomicWithoutAttributeRef) | (value=AttributeWithoutAliasDefinition)
+;
+
+ExpressionComponentMapperOrConstant returns ExpressionComponent:
+	Mapper({ExpressionComponent.value=current})
+	| value = AtomicWithoutAttributeRef
+;
+
+ExpressionComponentOnlyAttribute returns ExpressionComponent:
+	value=AttributeWithoutAliasDefinition
+;
+
+ExpressionComponentOnlyConstant returns ExpressionComponent:
+	value=AtomicWithoutAttributeRef
+;
+
+ExpressionComponentOnlymapper returns ExpressionComponent:
+	Mapper({ExpressionComponent.value=current})
+;
+
+Mapper returns ExpressionComponent://TODO That is not supposed to be hard coded! 
+	{Mapper}
 	name=('DolToEur')
-	'('
-	(attribute=AttributeWithoutAliasDefinition 
-		| innerexpression = SelectExpressionOnlyWithAttributeAndConstant
-	)
-	')'
+	'('(value=SelectExpressionWithoutAliasDefinition)')'
 ;
 
 SelectExpression:
-	(leftmapper=Mapper
-		| leftattribute=AttributeWithoutAliasDefinition 
-		| leftconstant=AtomicWithoutAttributeRef
-	)
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionWithoutAliasDefinition)?
-	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+	(
+		( expressions+=(ExpressionComponentMapperOrConstant)
+		  (operators+=('+'|'-'|'*'|'/') 
+			expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		  )*
+		)
+		| (expressions+=(ExpressionComponentOnlyAttribute)
+			(operators+=('+'|'-'|'*'|'/') 
+			  expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+			)+
+		  )
+  	)
 	('AS' alias=Alias)?
 ;
 
 SelectExpressionWithoutAliasDefinition returns SelectExpression:
-	(leftmapper=Mapper
-		| leftattribute=AttributeWithoutAliasDefinition 
-		| leftconstant=AtomicWithoutAttributeRef
-	)
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionWithoutAliasDefinition)?
-;
-
-SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
-	(leftattribute=AttributeWithoutAliasDefinition 
-		| leftconstant=AtomicWithoutAttributeRef
-	)
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
-	(rightattribute=AttributeWithoutAliasDefinition 
-		| rightconstant=AtomicWithoutAttributeRef
+	SelectExpressionWithOnlyAttributeOrConstant(
+		(expressions+=(ExpressionComponentMapperOrConstant)
+			(operators+=('+'|'-'|'*'|'/') 
+				expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+				)*
+		)
+		| (expressions+=(ExpressionComponentOnlyAttribute)
+			(operators+=('+'|'-'|'*'|'/') 
+				 expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+				 )+
+		)
 	)
 ;
 
-SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression:
-	(leftattribute=AttributeWithoutAliasDefinition 
-		| leftconstant=AtomicWithoutAttributeRef
-	)
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAliasDefinition:
+		expressions+=ExpressionComponentConstantOrAttribute 
+		(operators+=('+'|'-'|'*'|'/') 
+			expressions+=(ExpressionComponentConstantOrAttribute)
+		)*	
 ;
 
-SelectExpressionOnlyWithMapper returns SelectExpression:
-	leftmapper=Mapper
-	('AS' alias=Alias)?
-;
+//SelectExpressionWithoutAliasDefinition returns SelectExpression:
+//	ExpressionComponent 
+//	|(expressions+=ExpressionComponent (operators+=('+'|'-'|'*'|'/') expressions+=ExpressionComponent)*)
+//;
 
-SelectExpressionOnlyWithStringConstant returns SelectExpression:
-	leftconstant=AtomicWithOnlyStringConstant
-	operator=('+'|'-')
-	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
-	rightconstant=AtomicWithOnlyStringConstant
-	('AS' alias=Alias)?
-;
-
-SelectExpressionOnlyWithStringConstant2 returns SelectExpression:
-	leftconstant=AtomicWithOnlyStringConstant
-	operator=('+'|'-')
-	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
-;
-
-SelectExpressionOnlyWithAttribute returns SelectExpression:
-	leftattribute=AttributeWithoutAliasDefinition
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionOnlyWithAttribute2)?
-	rightatttriute=AttributeWithoutAliasDefinition
-;
-
-SelectExpressionOnlyWithAttribute2 returns SelectExpression:
-	leftattribute=AttributeWithoutAliasDefinition
-	operator=('+'|'-'|'/'|'*')
-	(innerexpression=SelectExpressionOnlyWithAttribute2)?
-;
+//Mapper://TODO That is not supposed to be hard coded! 
+//	name=('DolToEur')
+//	'('
+//	(attribute=AttributeWithoutAliasDefinition 
+//		| innerexpression = SelectExpressionWithoutAliasDefinition2
+//	)
+//	')'
+//	('AS' alias=Alias)?
+//;
+//
+//MapperWithoutAlias returns Mapper://TODO That is not supposed to be hard coded! 
+//	name=('DolToEur')
+//	'('
+//	(attribute=AttributeWithoutAliasDefinition 
+//		| innerexpression = SelectExpressionWithoutAliasDefinition2
+//	)
+//	')'
+//;
+//
+//SelectExpressionWithOnlyMapper returns SelectExpression:
+//	leftmapper=Mapper
+//;
+//
+//SelectExpression:
+//	(leftmapper=MapperWithoutAlias
+//		| leftattribute=AttributeWithoutAliasDefinition 
+//		| leftconstant=AtomicWithoutAttributeRef
+//	)
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+//	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+//	('AS' alias=Alias)?
+//;
+//
+//SelectExpressionWithoutAliasDefinition returns SelectExpression:
+//	(leftmapper=MapperWithoutAlias
+//		| leftattribute=AttributeWithoutAliasDefinition 
+//		| leftconstant=AtomicWithoutAttributeRef
+//	)
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+//;
+//
+//SelectExpressionWithoutAliasDefinition2 returns SelectExpression:
+//	(leftmapper=MapperWithoutAlias
+//		| leftattribute=AttributeWithoutAliasDefinition 
+//		| leftconstant=AtomicWithoutAttributeRef
+//	)
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+//	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+//;
+//
+/////
+//SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
+//	(leftattribute=AttributeWithoutAliasDefinition 
+//		| leftconstant=AtomicWithoutAttributeRef
+//	)
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+//	(rightattribute=AttributeWithoutAliasDefinition 
+//		| rightconstant=AtomicWithoutAttributeRef
+//	)
+//;
+//
+//SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression:
+//	(leftattribute=AttributeWithoutAliasDefinition 
+//		| leftconstant=AtomicWithoutAttributeRef
+//	)
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+//;
+//
+//SelectExpressionOnlyWithStringConstant returns SelectExpression:
+//	leftconstant=AtomicWithOnlyStringConstant
+//	operator=('+'|'-')
+//	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+//	rightconstant=AtomicWithOnlyStringConstant
+//	('AS' alias=Alias)?
+//;
+//
+//SelectExpressionOnlyWithStringConstant2 returns SelectExpression:
+//	leftconstant=AtomicWithOnlyStringConstant
+//	operator=('+'|'-')
+//	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+//;
+//
+//SelectExpressionOnlyWithAttribute returns SelectExpression:
+//	leftattribute=AttributeWithoutAliasDefinition
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+//	rightatttriute=AttributeWithoutAliasDefinition
+//;
+//
+//SelectExpressionOnlyWithAttribute2 returns SelectExpression:
+//	leftattribute=AttributeWithoutAliasDefinition
+//	operator=('+'|'-'|'/'|'*')
+//	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+//;
 
 Alias:
 	name=ID
 ;  
-
-Constant:
-	{IntConstant} value=INT 
-	| {FloatConstant} value=FLOAT 
-	| {StringConstant} value= STRING 
-	| {BoolConstant} value=('TRUE' | 'FALSE')
-;
-
-ExpressionWithAliasDefintion returns Expression:
-	Or
-	'AS'
-	alias=Alias
-;
 
 //SelectWithoutWhere returns Select:
 //	name='SELECT'
@@ -422,7 +510,7 @@ Primary returns Expression:
 Atomic returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
-	| {StringConstant} value= STRING 
+	| {StringConstant} value=STRING 
 	| {BoolConstant} value=('TRUE' | 'FALSE')
 	//TODO A SELECT * query offers no reference for an attribute.
 	//At the moment is no actual referencing possible!
@@ -432,7 +520,7 @@ Atomic returns Expression:
 AtomicWithoutAttributeRef returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
-	| {StringConstant} value= STRING 
+	| {StringConstant} value=STRING 
 	| {BoolConstant} value=('TRUE' | 'FALSE')
 ;
 

@@ -87,13 +87,13 @@ public interface CQLFactory extends EFactory
   Aggregation createAggregation();
 
   /**
-   * Returns a new object of class '<em>Mapper</em>'.
+   * Returns a new object of class '<em>Expression Component</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Mapper</em>'.
+   * @return a new object of class '<em>Expression Component</em>'.
    * @generated
    */
-  Mapper createMapper();
+  ExpressionComponent createExpressionComponent();
 
   /**
    * Returns a new object of class '<em>Select Expression</em>'.
@@ -105,6 +105,15 @@ public interface CQLFactory extends EFactory
   SelectExpression createSelectExpression();
 
   /**
+   * Returns a new object of class '<em>Select Expression Without Alias Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Select Expression Without Alias Definition</em>'.
+   * @generated
+   */
+  SelectExpressionWithoutAliasDefinition createSelectExpressionWithoutAliasDefinition();
+
+  /**
    * Returns a new object of class '<em>Alias</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -112,24 +121,6 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Alias createAlias();
-
-  /**
-   * Returns a new object of class '<em>Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Constant</em>'.
-   * @generated
-   */
-  Constant createConstant();
-
-  /**
-   * Returns a new object of class '<em>Expression</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Expression</em>'.
-   * @generated
-   */
-  Expression createExpression();
 
   /**
    * Returns a new object of class '<em>Create Parameters</em>'.
@@ -240,6 +231,15 @@ public interface CQLFactory extends EFactory
   ExpressionsModel createExpressionsModel();
 
   /**
+   * Returns a new object of class '<em>Expression</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Expression</em>'.
+   * @generated
+   */
+  Expression createExpression();
+
+  /**
    * Returns a new object of class '<em>Data Type</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -249,40 +249,13 @@ public interface CQLFactory extends EFactory
   DataType createDataType();
 
   /**
-   * Returns a new object of class '<em>Int Constant</em>'.
+   * Returns a new object of class '<em>Mapper</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Int Constant</em>'.
+   * @return a new object of class '<em>Mapper</em>'.
    * @generated
    */
-  IntConstant createIntConstant();
-
-  /**
-   * Returns a new object of class '<em>Float Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Float Constant</em>'.
-   * @generated
-   */
-  FloatConstant createFloatConstant();
-
-  /**
-   * Returns a new object of class '<em>String Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>String Constant</em>'.
-   * @generated
-   */
-  StringConstant createStringConstant();
-
-  /**
-   * Returns a new object of class '<em>Bool Constant</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Bool Constant</em>'.
-   * @generated
-   */
-  BoolConstant createBoolConstant();
+  Mapper createMapper();
 
   /**
    * Returns a new object of class '<em>Or</em>'.
@@ -364,6 +337,42 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   NOT createNOT();
+
+  /**
+   * Returns a new object of class '<em>Int Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Constant</em>'.
+   * @generated
+   */
+  IntConstant createIntConstant();
+
+  /**
+   * Returns a new object of class '<em>Float Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Float Constant</em>'.
+   * @generated
+   */
+  FloatConstant createFloatConstant();
+
+  /**
+   * Returns a new object of class '<em>String Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>String Constant</em>'.
+   * @generated
+   */
+  StringConstant createStringConstant();
+
+  /**
+   * Returns a new object of class '<em>Bool Constant</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Bool Constant</em>'.
+   * @generated
+   */
+  BoolConstant createBoolConstant();
 
   /**
    * Returns a new object of class '<em>Attribute Ref</em>'.

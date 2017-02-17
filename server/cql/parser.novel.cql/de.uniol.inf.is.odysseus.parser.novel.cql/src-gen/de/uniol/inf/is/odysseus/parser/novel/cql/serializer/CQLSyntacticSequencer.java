@@ -21,11 +21,13 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_Command_SemicolonKeyword_5_q;
+	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
 		match_Command_SemicolonKeyword_5_q = new TokenAlias(false, true, grammarAccess.getCommandAccess().getSemicolonKeyword_5());
+		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
 	}
 	
 	@Override
@@ -42,6 +44,8 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if (match_Command_SemicolonKeyword_5_q.equals(syntax))
 				emit_Command_SemicolonKeyword_5_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
+				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -54,6 +58,24 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     value2=ID (ambiguity) (rule end)
 	 */
 	protected void emit_Command_SemicolonKeyword_5_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ';'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     type=CreateSink1 (ambiguity) (rule end)
+	 *     type=CreateStream1 (ambiguity) (rule end)
+	 *     type=CreateStreamChannel (ambiguity) (rule end)
+	 *     type=CreateStreamFile (ambiguity) (rule end)
+	 *     type=CreateView (ambiguity) (rule end)
+	 *     type=Drop (ambiguity) (rule end)
+	 *     type=Select (ambiguity) (rule end)
+	 *     type=StreamTo (ambiguity) (rule end)
+	 */
+	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

@@ -84,11 +84,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Statement:
 		//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-		//	type=CreateStreamFile | type=CreateView) ';';
+		//	type=CreateStreamFile | type=CreateView) ';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-		//type=CreateStreamFile | type=CreateView) ';'
+		//type=CreateStreamFile | type=CreateView) ';'?
 		public Group getGroup() { return cGroup; }
 		
 		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
@@ -143,7 +143,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//CreateView
 		public RuleCall getTypeCreateViewParserRuleCall_0_7_0() { return cTypeCreateViewParserRuleCall_0_7_0; }
 		
-		//';'
+		//';'?
 		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
 	}
 	public class SelectElements extends AbstractParserRuleElementFinder {
@@ -206,18 +206,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	name='SELECT'
 		//	distinct='DISTINCT'? ('*' | (attributes+=Attribute
 		//	| aggregations+=Aggregation
-		//	//				| mapperss+=Mapper 
-		//	| expressions+=SelectExpression)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ','
-		//	expressions+=SelectExpression)*) ('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE'
-		//	predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? ('HAVING'
-		//	having=ExpressionsModel)?;
+		//	| expressions+=SelectExpression
+		//	//				| mappers+=Mapper
+		//)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ',' expressions+=SelectExpression)*) ('FROM'
+		//	sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (','
+		//	order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name='SELECT' distinct='DISTINCT'? ('*' | (attributes+=Attribute | aggregations+=Aggregation //				| mapperss+=Mapper 
-		//| expressions+=SelectExpression)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ','
-		//expressions+=SelectExpression)*) ('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE'
-		//predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? ('HAVING'
-		//having=ExpressionsModel)?
+		//name='SELECT' distinct='DISTINCT'? ('*' | (attributes+=Attribute | aggregations+=Aggregation |
+		//expressions+=SelectExpression //				| mappers+=Mapper
+		//)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ',' expressions+=SelectExpression)*) ('FROM'
+		//sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (','
+		//order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?
 		public Group getGroup() { return cGroup; }
 		
 		//name='SELECT'
@@ -232,21 +232,19 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'DISTINCT'
 		public Keyword getDistinctDISTINCTKeyword_1_0() { return cDistinctDISTINCTKeyword_1_0; }
 		
-		//('*' | (attributes+=Attribute | aggregations+=Aggregation //				| mapperss+=Mapper 
-		//| expressions+=SelectExpression)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ','
-		//expressions+=SelectExpression)*)
+		//('*' | (attributes+=Attribute | aggregations+=Aggregation | expressions+=SelectExpression //				| mappers+=Mapper
+		//)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ',' expressions+=SelectExpression)*)
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//'*'
 		public Keyword getAsteriskKeyword_2_0() { return cAsteriskKeyword_2_0; }
 		
-		//(attributes+=Attribute | aggregations+=Aggregation //				| mapperss+=Mapper 
-		//| expressions+=SelectExpression)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ','
-		//expressions+=SelectExpression)*
+		//(attributes+=Attribute | aggregations+=Aggregation | expressions+=SelectExpression //				| mappers+=Mapper
+		//)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ',' expressions+=SelectExpression)*
 		public Group getGroup_2_1() { return cGroup_2_1; }
 		
-		//(attributes+=Attribute | aggregations+=Aggregation //				| mapperss+=Mapper 
-		//| expressions+=SelectExpression)+
+		//(attributes+=Attribute | aggregations+=Aggregation | expressions+=SelectExpression //				| mappers+=Mapper
+		//)+
 		public Alternatives getAlternatives_2_1_0() { return cAlternatives_2_1_0; }
 		
 		//attributes+=Attribute
@@ -657,7 +655,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cAttributeAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
 		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0 = (RuleCall)cAttributeAssignment_2_0.eContents().get(0);
 		private final Assignment cExpressionAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
-		private final RuleCall cExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0 = (RuleCall)cExpressionAssignment_2_1.eContents().get(0);
+		private final RuleCall cExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0 = (RuleCall)cExpressionAssignment_2_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
 		private final Keyword cASKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
@@ -666,13 +664,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Aggregation:
 		//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')' ('AS'
+		//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS'
 		//	alias=Alias)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		////TODO That is not supposed to be hard coded! 
 		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST') '('
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')' ('AS' alias=Alias)?
+		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
 		////TODO That is not supposed to be hard coded! 
@@ -709,7 +707,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)
+		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//attribute=AttributeWithoutAliasDefinition
@@ -718,11 +716,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//AttributeWithoutAliasDefinition
 		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0; }
 		
-		//expression=SelectExpressionOnlyWithAttribute
+		//expression=SelectExpressionWithoutAliasDefinition
 		public Assignment getExpressionAssignment_2_1() { return cExpressionAssignment_2_1; }
 		
-		//SelectExpressionOnlyWithAttribute
-		public RuleCall getExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0() { return cExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0; }
+		//SelectExpressionWithoutAliasDefinition
+		public RuleCall getExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0() { return cExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
@@ -753,20 +751,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNameFIRSTKeyword_0_0_6 = (Keyword)cNameAlternatives_0_0.eContents().get(6);
 		private final Keyword cNameLASTKeyword_0_0_7 = (Keyword)cNameAlternatives_0_0.eContents().get(7);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
-		private final Assignment cAttributeAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
-		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0 = (RuleCall)cAttributeAssignment_2_0.eContents().get(0);
-		private final Assignment cExpressionAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
-		private final RuleCall cExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0 = (RuleCall)cExpressionAssignment_2_1.eContents().get(0);
+		private final Assignment cAttributeAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0 = (RuleCall)cAttributeAssignment_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//AggregationWithoutAliasDefinition Aggregation:
 		//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')'
+		//	'(' attribute=AttributeWithoutAliasDefinition ')'
 		@Override public ParserRule getRule() { return rule; }
 		
 		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST') '('
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')'
+		//attribute=AttributeWithoutAliasDefinition ')'
 		public Group getGroup() { return cGroup; }
 		
 		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
@@ -802,440 +797,341 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute)
-		public Alternatives getAlternatives_2() { return cAlternatives_2; }
-		
 		//attribute=AttributeWithoutAliasDefinition
-		public Assignment getAttributeAssignment_2_0() { return cAttributeAssignment_2_0; }
+		public Assignment getAttributeAssignment_2() { return cAttributeAssignment_2; }
 		
 		//AttributeWithoutAliasDefinition
-		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0; }
-		
-		//expression=SelectExpressionOnlyWithAttribute
-		public Assignment getExpressionAssignment_2_1() { return cExpressionAssignment_2_1; }
-		
-		//SelectExpressionOnlyWithAttribute
-		public RuleCall getExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0() { return cExpressionSelectExpressionOnlyWithAttributeParserRuleCall_2_1_0; }
+		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
 	}
+	public class ExpressionComponentElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponent");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final RuleCall cExpressionComponentConstantOrAttributeParserRuleCall_0_0 = (RuleCall)cGroup_0.eContents().get(0);
+		private final Action cExpressionComponentValueAction_0_1 = (Action)cGroup_0.eContents().get(1);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final RuleCall cExpressionComponentMapperOrConstantParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
+		private final Action cExpressionComponentValueAction_1_1 = (Action)cGroup_1.eContents().get(1);
+		
+		//ExpressionComponent:
+		//	ExpressionComponentConstantOrAttribute {ExpressionComponent.value=current} | ExpressionComponentMapperOrConstant
+		//	{ExpressionComponent.value=current};
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ExpressionComponentConstantOrAttribute {ExpressionComponent.value=current} | ExpressionComponentMapperOrConstant
+		//{ExpressionComponent.value=current}
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//ExpressionComponentConstantOrAttribute {ExpressionComponent.value=current}
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionComponentConstantOrAttributeParserRuleCall_0_0() { return cExpressionComponentConstantOrAttributeParserRuleCall_0_0; }
+		
+		//{ExpressionComponent.value=current}
+		public Action getExpressionComponentValueAction_0_1() { return cExpressionComponentValueAction_0_1; }
+		
+		//ExpressionComponentMapperOrConstant {ExpressionComponent.value=current}
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//ExpressionComponentMapperOrConstant
+		public RuleCall getExpressionComponentMapperOrConstantParserRuleCall_1_0() { return cExpressionComponentMapperOrConstantParserRuleCall_1_0; }
+		
+		//{ExpressionComponent.value=current}
+		public Action getExpressionComponentValueAction_1_1() { return cExpressionComponentValueAction_1_1; }
+	}
+	public class ExpressionComponentConstantOrAttributeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentConstantOrAttribute");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cValueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cValueAtomicWithoutAttributeRefParserRuleCall_0_0 = (RuleCall)cValueAssignment_0.eContents().get(0);
+		private final Assignment cValueAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		
+		//ExpressionComponentConstantOrAttribute ExpressionComponent:
+		//	value=AtomicWithoutAttributeRef | value=AttributeWithoutAliasDefinition
+		@Override public ParserRule getRule() { return rule; }
+		
+		//value=AtomicWithoutAttributeRef | value=AttributeWithoutAliasDefinition
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//value=AtomicWithoutAttributeRef
+		public Assignment getValueAssignment_0() { return cValueAssignment_0; }
+		
+		//AtomicWithoutAttributeRef
+		public RuleCall getValueAtomicWithoutAttributeRefParserRuleCall_0_0() { return cValueAtomicWithoutAttributeRefParserRuleCall_0_0; }
+		
+		//value=AttributeWithoutAliasDefinition
+		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		
+		//AttributeWithoutAliasDefinition
+		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_1_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_1_0; }
+	}
+	public class ExpressionComponentMapperOrConstantElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentMapperOrConstant");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final RuleCall cMapperParserRuleCall_0_0 = (RuleCall)cGroup_0.eContents().get(0);
+		private final Action cExpressionComponentValueAction_0_1 = (Action)cGroup_0.eContents().get(1);
+		private final Assignment cValueAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cValueAtomicWithoutAttributeRefParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		
+		//ExpressionComponentMapperOrConstant ExpressionComponent:
+		//	Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+		@Override public ParserRule getRule() { return rule; }
+		
+		//Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//Mapper {ExpressionComponent.value=current}
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//Mapper
+		public RuleCall getMapperParserRuleCall_0_0() { return cMapperParserRuleCall_0_0; }
+		
+		//{ExpressionComponent.value=current}
+		public Action getExpressionComponentValueAction_0_1() { return cExpressionComponentValueAction_0_1; }
+		
+		//value=AtomicWithoutAttributeRef
+		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		
+		//AtomicWithoutAttributeRef
+		public RuleCall getValueAtomicWithoutAttributeRefParserRuleCall_1_0() { return cValueAtomicWithoutAttributeRefParserRuleCall_1_0; }
+	}
+	public class ExpressionComponentOnlyAttributeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyAttribute");
+		private final Assignment cValueAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_0 = (RuleCall)cValueAssignment.eContents().get(0);
+		
+		//ExpressionComponentOnlyAttribute ExpressionComponent:
+		//	value=AttributeWithoutAliasDefinition
+		@Override public ParserRule getRule() { return rule; }
+		
+		//value=AttributeWithoutAliasDefinition
+		public Assignment getValueAssignment() { return cValueAssignment; }
+		
+		//AttributeWithoutAliasDefinition
+		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_0; }
+	}
+	public class ExpressionComponentOnlyConstantElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyConstant");
+		private final Assignment cValueAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cValueAtomicWithoutAttributeRefParserRuleCall_0 = (RuleCall)cValueAssignment.eContents().get(0);
+		
+		//ExpressionComponentOnlyConstant ExpressionComponent:
+		//	value=AtomicWithoutAttributeRef
+		@Override public ParserRule getRule() { return rule; }
+		
+		//value=AtomicWithoutAttributeRef
+		public Assignment getValueAssignment() { return cValueAssignment; }
+		
+		//AtomicWithoutAttributeRef
+		public RuleCall getValueAtomicWithoutAttributeRefParserRuleCall_0() { return cValueAtomicWithoutAttributeRefParserRuleCall_0; }
+	}
+	public class ExpressionComponentOnlymapperElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cMapperParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Action cExpressionComponentValueAction_1 = (Action)cGroup.eContents().get(1);
+		
+		//ExpressionComponentOnlymapper ExpressionComponent:
+		//	Mapper {ExpressionComponent.value=current}
+		@Override public ParserRule getRule() { return rule; }
+		
+		//Mapper {ExpressionComponent.value=current}
+		public Group getGroup() { return cGroup; }
+		
+		//Mapper
+		public RuleCall getMapperParserRuleCall_0() { return cMapperParserRuleCall_0; }
+		
+		//{ExpressionComponent.value=current}
+		public Action getExpressionComponentValueAction_1() { return cExpressionComponentValueAction_1; }
+	}
 	public class MapperElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Mapper");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Keyword cNameDolToEurKeyword_0_0 = (Keyword)cNameAssignment_0.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
-		private final Assignment cAttributeAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
-		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0 = (RuleCall)cAttributeAssignment_2_0.eContents().get(0);
-		private final Assignment cInnerexpressionAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithAttributeAndConstantParserRuleCall_2_1_0 = (RuleCall)cInnerexpressionAssignment_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Action cMapperAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Keyword cNameDolToEurKeyword_1_0 = (Keyword)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
-		//Mapper:
-		//	name='DolToEur' '(' (attribute=AttributeWithoutAliasDefinition
-		//	| innerexpression=SelectExpressionOnlyWithAttributeAndConstant)
-		//	')';
+		//Mapper ExpressionComponent:
+		//	{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
 		@Override public ParserRule getRule() { return rule; }
 		
-		////TODO That is not supposed to be hard coded! 
-		//name='DolToEur' '(' (attribute=AttributeWithoutAliasDefinition |
-		//innerexpression=SelectExpressionOnlyWithAttributeAndConstant) ')'
+		//{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
 		public Group getGroup() { return cGroup; }
 		
-		////TODO That is not supposed to be hard coded! 
+		//{Mapper}
+		public Action getMapperAction_0() { return cMapperAction_0; }
+		
 		//name='DolToEur'
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
 		//'DolToEur'
-		public Keyword getNameDolToEurKeyword_0_0() { return cNameDolToEurKeyword_0_0; }
+		public Keyword getNameDolToEurKeyword_1_0() { return cNameDolToEurKeyword_1_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
+		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 		
-		//(attribute=AttributeWithoutAliasDefinition | innerexpression=SelectExpressionOnlyWithAttributeAndConstant)
-		public Alternatives getAlternatives_2() { return cAlternatives_2; }
+		//value=SelectExpressionWithoutAliasDefinition
+		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
 		
-		//attribute=AttributeWithoutAliasDefinition
-		public Assignment getAttributeAssignment_2_0() { return cAttributeAssignment_2_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0; }
-		
-		//innerexpression=SelectExpressionOnlyWithAttributeAndConstant
-		public Assignment getInnerexpressionAssignment_2_1() { return cInnerexpressionAssignment_2_1; }
-		
-		//SelectExpressionOnlyWithAttributeAndConstant
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithAttributeAndConstantParserRuleCall_2_1_0() { return cInnerexpressionSelectExpressionOnlyWithAttributeAndConstantParserRuleCall_2_1_0; }
+		//SelectExpressionWithoutAliasDefinition
+		public RuleCall getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0() { return cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
+		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
 	}
 	public class SelectExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpression");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cLeftmapperAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cLeftmapperMapperParserRuleCall_0_0_0 = (RuleCall)cLeftmapperAssignment_0_0.eContents().get(0);
-		private final Assignment cLeftattributeAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0 = (RuleCall)cLeftattributeAssignment_0_1.eContents().get(0);
-		private final Assignment cLeftconstantAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
-		private final RuleCall cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0 = (RuleCall)cLeftconstantAssignment_0_2.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
-		private final Assignment cRightattributeAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0 = (RuleCall)cRightattributeAssignment_3_0.eContents().get(0);
-		private final Assignment cRightconstantAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
-		private final RuleCall cRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0 = (RuleCall)cRightconstantAssignment_3_1.eContents().get(0);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cASKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cAliasAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cAliasAliasParserRuleCall_4_1_0 = (RuleCall)cAliasAssignment_4_1.eContents().get(0);
-		
-		//SelectExpression:
-		//	(leftmapper=Mapper
-		//	| leftattribute=AttributeWithoutAliasDefinition
-		//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-		//	innerexpression=SelectExpressionWithoutAliasDefinition? (rightattribute=AttributeWithoutAliasDefinition |
-		//	rightconstant=AtomicWithoutAttributeRef) ('AS' alias=Alias)?;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//(leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		//operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionWithoutAliasDefinition?
-		//(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef) ('AS' alias=Alias)?
-		public Group getGroup() { return cGroup; }
-		
-		//(leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
-		
-		//leftmapper=Mapper
-		public Assignment getLeftmapperAssignment_0_0() { return cLeftmapperAssignment_0_0; }
-		
-		//Mapper
-		public RuleCall getLeftmapperMapperParserRuleCall_0_0_0() { return cLeftmapperMapperParserRuleCall_0_0_0; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0_1() { return cLeftattributeAssignment_0_1; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0; }
-		
-		//leftconstant=AtomicWithoutAttributeRef
-		public Assignment getLeftconstantAssignment_0_2() { return cLeftconstantAssignment_0_2; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0() { return cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
-		
-		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
-		
-		//innerexpression=SelectExpressionWithoutAliasDefinition?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionWithoutAliasDefinition
-		public RuleCall getInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0() { return cInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0; }
-		
-		//(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_3() { return cAlternatives_3; }
-		
-		//rightattribute=AttributeWithoutAliasDefinition
-		public Assignment getRightattributeAssignment_3_0() { return cRightattributeAssignment_3_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0() { return cRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0; }
-		
-		//rightconstant=AtomicWithoutAttributeRef
-		public Assignment getRightconstantAssignment_3_1() { return cRightconstantAssignment_3_1; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0() { return cRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0; }
-		
-		//('AS' alias=Alias)?
-		public Group getGroup_4() { return cGroup_4; }
-		
-		//'AS'
-		public Keyword getASKeyword_4_0() { return cASKeyword_4_0; }
-		
-		//alias=Alias
-		public Assignment getAliasAssignment_4_1() { return cAliasAssignment_4_1; }
-		
-		//Alias
-		public RuleCall getAliasAliasParserRuleCall_4_1_0() { return cAliasAliasParserRuleCall_4_1_0; }
-	}
-	public class SelectExpressionWithoutAliasDefinitionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionWithoutAliasDefinition");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cLeftmapperAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cLeftmapperMapperParserRuleCall_0_0_0 = (RuleCall)cLeftmapperAssignment_0_0.eContents().get(0);
-		private final Assignment cLeftattributeAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0 = (RuleCall)cLeftattributeAssignment_0_1.eContents().get(0);
-		private final Assignment cLeftconstantAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
-		private final RuleCall cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0 = (RuleCall)cLeftconstantAssignment_0_2.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		
-		//SelectExpressionWithoutAliasDefinition SelectExpression:
-		//	(leftmapper=Mapper
-		//	| leftattribute=AttributeWithoutAliasDefinition
-		//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-		//	innerexpression=SelectExpressionWithoutAliasDefinition?
-		@Override public ParserRule getRule() { return rule; }
-		
-		//(leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		//operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionWithoutAliasDefinition?
-		public Group getGroup() { return cGroup; }
-		
-		//(leftmapper=Mapper | leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
-		
-		//leftmapper=Mapper
-		public Assignment getLeftmapperAssignment_0_0() { return cLeftmapperAssignment_0_0; }
-		
-		//Mapper
-		public RuleCall getLeftmapperMapperParserRuleCall_0_0_0() { return cLeftmapperMapperParserRuleCall_0_0_0; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0_1() { return cLeftattributeAssignment_0_1; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_1_0; }
-		
-		//leftconstant=AtomicWithoutAttributeRef
-		public Assignment getLeftconstantAssignment_0_2() { return cLeftconstantAssignment_0_2; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0() { return cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_2_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
-		
-		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
-		
-		//innerexpression=SelectExpressionWithoutAliasDefinition?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionWithoutAliasDefinition
-		public RuleCall getInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0() { return cInnerexpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_0; }
-	}
-	public class SelectExpressionOnlyWithAttributeAndConstantElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithAttributeAndConstant");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cLeftattributeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0 = (RuleCall)cLeftattributeAssignment_0_0.eContents().get(0);
-		private final Assignment cLeftconstantAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0 = (RuleCall)cLeftconstantAssignment_0_1.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		private final Alternatives cAlternatives_3 = (Alternatives)cGroup.eContents().get(3);
-		private final Assignment cRightattributeAssignment_3_0 = (Assignment)cAlternatives_3.eContents().get(0);
-		private final RuleCall cRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0 = (RuleCall)cRightattributeAssignment_3_0.eContents().get(0);
-		private final Assignment cRightconstantAssignment_3_1 = (Assignment)cAlternatives_3.eContents().get(1);
-		private final RuleCall cRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0 = (RuleCall)cRightconstantAssignment_3_1.eContents().get(0);
-		
-		//SelectExpressionOnlyWithAttributeAndConstant SelectExpression:
-		//	(leftattribute=AttributeWithoutAliasDefinition
-		//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-		//	innerexpression=SelectExpressionOnlyWithAttributeAndConstant2? (rightattribute=AttributeWithoutAliasDefinition
-		//	| rightconstant=AtomicWithoutAttributeRef)
-		@Override public ParserRule getRule() { return rule; }
-		
-		//(leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' |
-		//'*') innerexpression=SelectExpressionOnlyWithAttributeAndConstant2? (rightattribute=AttributeWithoutAliasDefinition |
-		//rightconstant=AtomicWithoutAttributeRef)
-		public Group getGroup() { return cGroup; }
-		
-		//(leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0_0() { return cLeftattributeAssignment_0_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0; }
-		
-		//leftconstant=AtomicWithoutAttributeRef
-		public Assignment getLeftconstantAssignment_0_1() { return cLeftconstantAssignment_0_1; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0() { return cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
-		
-		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
-		
-		//innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionOnlyWithAttributeAndConstant2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0; }
-		
-		//(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_3() { return cAlternatives_3; }
-		
-		//rightattribute=AttributeWithoutAliasDefinition
-		public Assignment getRightattributeAssignment_3_0() { return cRightattributeAssignment_3_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0() { return cRightattributeAttributeWithoutAliasDefinitionParserRuleCall_3_0_0; }
-		
-		//rightconstant=AtomicWithoutAttributeRef
-		public Assignment getRightconstantAssignment_3_1() { return cRightconstantAssignment_3_1; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0() { return cRightconstantAtomicWithoutAttributeRefParserRuleCall_3_1_0; }
-	}
-	public class SelectExpressionOnlyWithAttributeAndConstant2Elements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithAttributeAndConstant2");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cLeftattributeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0 = (RuleCall)cLeftattributeAssignment_0_0.eContents().get(0);
-		private final Assignment cLeftconstantAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0 = (RuleCall)cLeftconstantAssignment_0_1.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		
-		//SelectExpressionOnlyWithAttributeAndConstant2 SelectExpression:
-		//	(leftattribute=AttributeWithoutAliasDefinition
-		//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-		//	innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
-		@Override public ParserRule getRule() { return rule; }
-		
-		//(leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' |
-		//'*') innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
-		public Group getGroup() { return cGroup; }
-		
-		//(leftattribute=AttributeWithoutAliasDefinition | leftconstant=AtomicWithoutAttributeRef)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0_0() { return cLeftattributeAssignment_0_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0_0; }
-		
-		//leftconstant=AtomicWithoutAttributeRef
-		public Assignment getLeftconstantAssignment_0_1() { return cLeftconstantAssignment_0_1; }
-		
-		//AtomicWithoutAttributeRef
-		public RuleCall getLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0() { return cLeftconstantAtomicWithoutAttributeRefParserRuleCall_0_1_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
-		
-		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
-		
-		//innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionOnlyWithAttributeAndConstant2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithAttributeAndConstant2ParserRuleCall_2_0; }
-	}
-	public class SelectExpressionOnlyWithMapperElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithMapper");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cLeftmapperAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cLeftmapperMapperParserRuleCall_0_0 = (RuleCall)cLeftmapperAssignment_0.eContents().get(0);
+		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
+		private final Assignment cExpressionsAssignment_0_0_0 = (Assignment)cGroup_0_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentMapperOrConstantParserRuleCall_0_0_0_0 = (RuleCall)cExpressionsAssignment_0_0_0.eContents().get(0);
+		private final Group cGroup_0_0_1 = (Group)cGroup_0_0.eContents().get(1);
+		private final Assignment cOperatorsAssignment_0_0_1_0 = (Assignment)cGroup_0_0_1.eContents().get(0);
+		private final Alternatives cOperatorsAlternatives_0_0_1_0_0 = (Alternatives)cOperatorsAssignment_0_0_1_0.eContents().get(0);
+		private final Keyword cOperatorsPlusSignKeyword_0_0_1_0_0_0 = (Keyword)cOperatorsAlternatives_0_0_1_0_0.eContents().get(0);
+		private final Keyword cOperatorsHyphenMinusKeyword_0_0_1_0_0_1 = (Keyword)cOperatorsAlternatives_0_0_1_0_0.eContents().get(1);
+		private final Keyword cOperatorsAsteriskKeyword_0_0_1_0_0_2 = (Keyword)cOperatorsAlternatives_0_0_1_0_0.eContents().get(2);
+		private final Keyword cOperatorsSolidusKeyword_0_0_1_0_0_3 = (Keyword)cOperatorsAlternatives_0_0_1_0_0.eContents().get(3);
+		private final Assignment cExpressionsAssignment_0_0_1_1 = (Assignment)cGroup_0_0_1.eContents().get(1);
+		private final Alternatives cExpressionsAlternatives_0_0_1_1_0 = (Alternatives)cExpressionsAssignment_0_0_1_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0_1_1_0_0 = (RuleCall)cExpressionsAlternatives_0_0_1_1_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlymapperParserRuleCall_0_0_1_1_0_1 = (RuleCall)cExpressionsAlternatives_0_0_1_1_0.eContents().get(1);
+		private final Group cGroup_0_1 = (Group)cAlternatives_0.eContents().get(1);
+		private final Assignment cExpressionsAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlyAttributeParserRuleCall_0_1_0_0 = (RuleCall)cExpressionsAssignment_0_1_0.eContents().get(0);
+		private final Group cGroup_0_1_1 = (Group)cGroup_0_1.eContents().get(1);
+		private final Assignment cOperatorsAssignment_0_1_1_0 = (Assignment)cGroup_0_1_1.eContents().get(0);
+		private final Alternatives cOperatorsAlternatives_0_1_1_0_0 = (Alternatives)cOperatorsAssignment_0_1_1_0.eContents().get(0);
+		private final Keyword cOperatorsPlusSignKeyword_0_1_1_0_0_0 = (Keyword)cOperatorsAlternatives_0_1_1_0_0.eContents().get(0);
+		private final Keyword cOperatorsHyphenMinusKeyword_0_1_1_0_0_1 = (Keyword)cOperatorsAlternatives_0_1_1_0_0.eContents().get(1);
+		private final Keyword cOperatorsAsteriskKeyword_0_1_1_0_0_2 = (Keyword)cOperatorsAlternatives_0_1_1_0_0.eContents().get(2);
+		private final Keyword cOperatorsSolidusKeyword_0_1_1_0_0_3 = (Keyword)cOperatorsAlternatives_0_1_1_0_0.eContents().get(3);
+		private final Assignment cExpressionsAssignment_0_1_1_1 = (Assignment)cGroup_0_1_1.eContents().get(1);
+		private final Alternatives cExpressionsAlternatives_0_1_1_1_0 = (Alternatives)cExpressionsAssignment_0_1_1_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_1_1_1_0_0 = (RuleCall)cExpressionsAlternatives_0_1_1_1_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlymapperParserRuleCall_0_1_1_1_0_1 = (RuleCall)cExpressionsAlternatives_0_1_1_1_0.eContents().get(1);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cASKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cAliasAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cAliasAliasParserRuleCall_1_1_0 = (RuleCall)cAliasAssignment_1_1.eContents().get(0);
 		
-		//SelectExpressionOnlyWithMapper SelectExpression:
-		//	leftmapper=Mapper ('AS' alias=Alias)?
+		//SelectExpression:
+		//	(expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+		//	| expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+) ('AS' alias=Alias)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//leftmapper=Mapper ('AS' alias=Alias)?
+		//(expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))* |
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+) ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
-		//leftmapper=Mapper
-		public Assignment getLeftmapperAssignment_0() { return cLeftmapperAssignment_0; }
+		//(expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))* |
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+)
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//Mapper
-		public RuleCall getLeftmapperMapperParserRuleCall_0_0() { return cLeftmapperMapperParserRuleCall_0_0; }
+		//expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+		public Group getGroup_0_0() { return cGroup_0_0; }
+		
+		//expressions+=ExpressionComponentMapperOrConstant
+		public Assignment getExpressionsAssignment_0_0_0() { return cExpressionsAssignment_0_0_0; }
+		
+		//ExpressionComponentMapperOrConstant
+		public RuleCall getExpressionsExpressionComponentMapperOrConstantParserRuleCall_0_0_0_0() { return cExpressionsExpressionComponentMapperOrConstantParserRuleCall_0_0_0_0; }
+		
+		//(operators+=('+' | '-' | '*' | '/') expressions+=(ExpressionComponentConstantOrAttribute |
+		//ExpressionComponentOnlymapper))*
+		public Group getGroup_0_0_1() { return cGroup_0_0_1; }
+		
+		//operators+=('+' | '-' | '*' | '/')
+		public Assignment getOperatorsAssignment_0_0_1_0() { return cOperatorsAssignment_0_0_1_0; }
+		
+		//('+' | '-' | '*' | '/')
+		public Alternatives getOperatorsAlternatives_0_0_1_0_0() { return cOperatorsAlternatives_0_0_1_0_0; }
+		
+		//'+'
+		public Keyword getOperatorsPlusSignKeyword_0_0_1_0_0_0() { return cOperatorsPlusSignKeyword_0_0_1_0_0_0; }
+		
+		//'-'
+		public Keyword getOperatorsHyphenMinusKeyword_0_0_1_0_0_1() { return cOperatorsHyphenMinusKeyword_0_0_1_0_0_1; }
+		
+		//'*'
+		public Keyword getOperatorsAsteriskKeyword_0_0_1_0_0_2() { return cOperatorsAsteriskKeyword_0_0_1_0_0_2; }
+		
+		//'/'
+		public Keyword getOperatorsSolidusKeyword_0_0_1_0_0_3() { return cOperatorsSolidusKeyword_0_0_1_0_0_3; }
+		
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Assignment getExpressionsAssignment_0_0_1_1() { return cExpressionsAssignment_0_0_1_1; }
+		
+		//(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Alternatives getExpressionsAlternatives_0_0_1_1_0() { return cExpressionsAlternatives_0_0_1_1_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0_1_1_0_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0_1_1_0_0; }
+		
+		//ExpressionComponentOnlymapper
+		public RuleCall getExpressionsExpressionComponentOnlymapperParserRuleCall_0_0_1_1_0_1() { return cExpressionsExpressionComponentOnlymapperParserRuleCall_0_0_1_1_0_1; }
+		
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+
+		public Group getGroup_0_1() { return cGroup_0_1; }
+		
+		//expressions+=ExpressionComponentOnlyAttribute
+		public Assignment getExpressionsAssignment_0_1_0() { return cExpressionsAssignment_0_1_0; }
+		
+		//ExpressionComponentOnlyAttribute
+		public RuleCall getExpressionsExpressionComponentOnlyAttributeParserRuleCall_0_1_0_0() { return cExpressionsExpressionComponentOnlyAttributeParserRuleCall_0_1_0_0; }
+		
+		//(operators+=('+' | '-' | '*' | '/') expressions+=(ExpressionComponentConstantOrAttribute |
+		//ExpressionComponentOnlymapper))+
+		public Group getGroup_0_1_1() { return cGroup_0_1_1; }
+		
+		//operators+=('+' | '-' | '*' | '/')
+		public Assignment getOperatorsAssignment_0_1_1_0() { return cOperatorsAssignment_0_1_1_0; }
+		
+		//('+' | '-' | '*' | '/')
+		public Alternatives getOperatorsAlternatives_0_1_1_0_0() { return cOperatorsAlternatives_0_1_1_0_0; }
+		
+		//'+'
+		public Keyword getOperatorsPlusSignKeyword_0_1_1_0_0_0() { return cOperatorsPlusSignKeyword_0_1_1_0_0_0; }
+		
+		//'-'
+		public Keyword getOperatorsHyphenMinusKeyword_0_1_1_0_0_1() { return cOperatorsHyphenMinusKeyword_0_1_1_0_0_1; }
+		
+		//'*'
+		public Keyword getOperatorsAsteriskKeyword_0_1_1_0_0_2() { return cOperatorsAsteriskKeyword_0_1_1_0_0_2; }
+		
+		//'/'
+		public Keyword getOperatorsSolidusKeyword_0_1_1_0_0_3() { return cOperatorsSolidusKeyword_0_1_1_0_0_3; }
+		
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Assignment getExpressionsAssignment_0_1_1_1() { return cExpressionsAssignment_0_1_1_1; }
+		
+		//(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Alternatives getExpressionsAlternatives_0_1_1_1_0() { return cExpressionsAlternatives_0_1_1_1_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_1_1_1_0_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_1_1_1_0_0; }
+		
+		//ExpressionComponentOnlymapper
+		public RuleCall getExpressionsExpressionComponentOnlymapperParserRuleCall_0_1_1_1_0_1() { return cExpressionsExpressionComponentOnlymapperParserRuleCall_0_1_1_1_0_1; }
 		
 		//('AS' alias=Alias)?
 		public Group getGroup_1() { return cGroup_1; }
@@ -1249,240 +1145,315 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Alias
 		public RuleCall getAliasAliasParserRuleCall_1_1_0() { return cAliasAliasParserRuleCall_1_1_0; }
 	}
-	public class SelectExpressionOnlyWithStringConstantElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithStringConstant");
+	public class SelectExpressionWithoutAliasDefinitionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionWithoutAliasDefinition");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cLeftconstantAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0 = (RuleCall)cLeftconstantAssignment_0.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		private final Assignment cRightconstantAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cRightconstantAtomicWithOnlyStringConstantParserRuleCall_3_0 = (RuleCall)cRightconstantAssignment_3.eContents().get(0);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cASKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cAliasAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cAliasAliasParserRuleCall_4_1_0 = (RuleCall)cAliasAssignment_4_1.eContents().get(0);
+		private final RuleCall cSelectExpressionWithOnlyAttributeOrConstantParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
+		private final Assignment cExpressionsAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentMapperOrConstantParserRuleCall_1_0_0_0 = (RuleCall)cExpressionsAssignment_1_0_0.eContents().get(0);
+		private final Group cGroup_1_0_1 = (Group)cGroup_1_0.eContents().get(1);
+		private final Assignment cOperatorsAssignment_1_0_1_0 = (Assignment)cGroup_1_0_1.eContents().get(0);
+		private final Alternatives cOperatorsAlternatives_1_0_1_0_0 = (Alternatives)cOperatorsAssignment_1_0_1_0.eContents().get(0);
+		private final Keyword cOperatorsPlusSignKeyword_1_0_1_0_0_0 = (Keyword)cOperatorsAlternatives_1_0_1_0_0.eContents().get(0);
+		private final Keyword cOperatorsHyphenMinusKeyword_1_0_1_0_0_1 = (Keyword)cOperatorsAlternatives_1_0_1_0_0.eContents().get(1);
+		private final Keyword cOperatorsAsteriskKeyword_1_0_1_0_0_2 = (Keyword)cOperatorsAlternatives_1_0_1_0_0.eContents().get(2);
+		private final Keyword cOperatorsSolidusKeyword_1_0_1_0_0_3 = (Keyword)cOperatorsAlternatives_1_0_1_0_0.eContents().get(3);
+		private final Assignment cExpressionsAssignment_1_0_1_1 = (Assignment)cGroup_1_0_1.eContents().get(1);
+		private final Alternatives cExpressionsAlternatives_1_0_1_1_0 = (Alternatives)cExpressionsAssignment_1_0_1_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_0_1_1_0_0 = (RuleCall)cExpressionsAlternatives_1_0_1_1_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlymapperParserRuleCall_1_0_1_1_0_1 = (RuleCall)cExpressionsAlternatives_1_0_1_1_0.eContents().get(1);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Assignment cExpressionsAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlyAttributeParserRuleCall_1_1_0_0 = (RuleCall)cExpressionsAssignment_1_1_0.eContents().get(0);
+		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
+		private final Assignment cOperatorsAssignment_1_1_1_0 = (Assignment)cGroup_1_1_1.eContents().get(0);
+		private final Alternatives cOperatorsAlternatives_1_1_1_0_0 = (Alternatives)cOperatorsAssignment_1_1_1_0.eContents().get(0);
+		private final Keyword cOperatorsPlusSignKeyword_1_1_1_0_0_0 = (Keyword)cOperatorsAlternatives_1_1_1_0_0.eContents().get(0);
+		private final Keyword cOperatorsHyphenMinusKeyword_1_1_1_0_0_1 = (Keyword)cOperatorsAlternatives_1_1_1_0_0.eContents().get(1);
+		private final Keyword cOperatorsAsteriskKeyword_1_1_1_0_0_2 = (Keyword)cOperatorsAlternatives_1_1_1_0_0.eContents().get(2);
+		private final Keyword cOperatorsSolidusKeyword_1_1_1_0_0_3 = (Keyword)cOperatorsAlternatives_1_1_1_0_0.eContents().get(3);
+		private final Assignment cExpressionsAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
+		private final Alternatives cExpressionsAlternatives_1_1_1_1_0 = (Alternatives)cExpressionsAssignment_1_1_1_1.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_1_1_0_0 = (RuleCall)cExpressionsAlternatives_1_1_1_1_0.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentOnlymapperParserRuleCall_1_1_1_1_0_1 = (RuleCall)cExpressionsAlternatives_1_1_1_1_0.eContents().get(1);
 		
-		//SelectExpressionOnlyWithStringConstant SelectExpression:
-		//	leftconstant=AtomicWithOnlyStringConstant
-		//	operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-		//	rightconstant=AtomicWithOnlyStringConstant ('AS' alias=Alias)?
+		//SelectExpressionWithoutAliasDefinition SelectExpression:
+		//	SelectExpressionWithOnlyAttributeOrConstant (expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' |
+		//	'*' | '/') expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+		//	| expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+)
 		@Override public ParserRule getRule() { return rule; }
 		
-		//leftconstant=AtomicWithOnlyStringConstant operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-		//rightconstant=AtomicWithOnlyStringConstant ('AS' alias=Alias)?
+		//SelectExpressionWithOnlyAttributeOrConstant (expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' |
+		//'*' | '/') expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))* |
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+)
 		public Group getGroup() { return cGroup; }
 		
-		//leftconstant=AtomicWithOnlyStringConstant
-		public Assignment getLeftconstantAssignment_0() { return cLeftconstantAssignment_0; }
+		//SelectExpressionWithOnlyAttributeOrConstant
+		public RuleCall getSelectExpressionWithOnlyAttributeOrConstantParserRuleCall_0() { return cSelectExpressionWithOnlyAttributeOrConstantParserRuleCall_0; }
 		
-		//AtomicWithOnlyStringConstant
-		public RuleCall getLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0() { return cLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0; }
+		//(expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))* |
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+)
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
-		//operator=('+' | '-')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
+		//expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+		public Group getGroup_1_0() { return cGroup_1_0; }
 		
-		//('+' | '-')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
+		//expressions+=ExpressionComponentMapperOrConstant
+		public Assignment getExpressionsAssignment_1_0_0() { return cExpressionsAssignment_1_0_0; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
+		//ExpressionComponentMapperOrConstant
+		public RuleCall getExpressionsExpressionComponentMapperOrConstantParserRuleCall_1_0_0_0() { return cExpressionsExpressionComponentMapperOrConstantParserRuleCall_1_0_0_0; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
+		//(operators+=('+' | '-' | '*' | '/') expressions+=(ExpressionComponentConstantOrAttribute |
+		//ExpressionComponentOnlymapper))*
+		public Group getGroup_1_0_1() { return cGroup_1_0_1; }
 		
-		//innerexpression=SelectExpressionOnlyWithStringConstant2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
+		//operators+=('+' | '-' | '*' | '/')
+		public Assignment getOperatorsAssignment_1_0_1_0() { return cOperatorsAssignment_1_0_1_0; }
 		
-		//SelectExpressionOnlyWithStringConstant2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0; }
-		
-		//rightconstant=AtomicWithOnlyStringConstant
-		public Assignment getRightconstantAssignment_3() { return cRightconstantAssignment_3; }
-		
-		//AtomicWithOnlyStringConstant
-		public RuleCall getRightconstantAtomicWithOnlyStringConstantParserRuleCall_3_0() { return cRightconstantAtomicWithOnlyStringConstantParserRuleCall_3_0; }
-		
-		//('AS' alias=Alias)?
-		public Group getGroup_4() { return cGroup_4; }
-		
-		//'AS'
-		public Keyword getASKeyword_4_0() { return cASKeyword_4_0; }
-		
-		//alias=Alias
-		public Assignment getAliasAssignment_4_1() { return cAliasAssignment_4_1; }
-		
-		//Alias
-		public RuleCall getAliasAliasParserRuleCall_4_1_0() { return cAliasAliasParserRuleCall_4_1_0; }
-	}
-	public class SelectExpressionOnlyWithStringConstant2Elements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithStringConstant2");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cLeftconstantAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0 = (RuleCall)cLeftconstantAssignment_0.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		
-		//SelectExpressionOnlyWithStringConstant2 SelectExpression:
-		//	leftconstant=AtomicWithOnlyStringConstant
-		//	operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-		@Override public ParserRule getRule() { return rule; }
-		
-		//leftconstant=AtomicWithOnlyStringConstant operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-		public Group getGroup() { return cGroup; }
-		
-		//leftconstant=AtomicWithOnlyStringConstant
-		public Assignment getLeftconstantAssignment_0() { return cLeftconstantAssignment_0; }
-		
-		//AtomicWithOnlyStringConstant
-		public RuleCall getLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0() { return cLeftconstantAtomicWithOnlyStringConstantParserRuleCall_0_0; }
-		
-		//operator=('+' | '-')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
+		//('+' | '-' | '*' | '/')
+		public Alternatives getOperatorsAlternatives_1_0_1_0_0() { return cOperatorsAlternatives_1_0_1_0_0; }
 		
 		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
+		public Keyword getOperatorsPlusSignKeyword_1_0_1_0_0_0() { return cOperatorsPlusSignKeyword_1_0_1_0_0_0; }
 		
 		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//innerexpression=SelectExpressionOnlyWithStringConstant2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionOnlyWithStringConstant2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithStringConstant2ParserRuleCall_2_0; }
-	}
-	public class SelectExpressionOnlyWithAttributeElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithAttribute");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cLeftattributeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0 = (RuleCall)cLeftattributeAssignment_0.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		private final Assignment cRightatttriuteAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cRightatttriuteAttributeWithoutAliasDefinitionParserRuleCall_3_0 = (RuleCall)cRightatttriuteAssignment_3.eContents().get(0);
-		
-		//SelectExpressionOnlyWithAttribute SelectExpression:
-		//	leftattribute=AttributeWithoutAliasDefinition
-		//	operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionOnlyWithAttribute2?
-		//	rightatttriute=AttributeWithoutAliasDefinition
-		@Override public ParserRule getRule() { return rule; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition operator=('+' | '-' | '/' | '*')
-		//innerexpression=SelectExpressionOnlyWithAttribute2? rightatttriute=AttributeWithoutAliasDefinition
-		public Group getGroup() { return cGroup; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0() { return cLeftattributeAssignment_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
-		
-		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
+		public Keyword getOperatorsHyphenMinusKeyword_1_0_1_0_0_1() { return cOperatorsHyphenMinusKeyword_1_0_1_0_0_1; }
 		
 		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
-		
-		//innerexpression=SelectExpressionOnlyWithAttribute2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
-		
-		//SelectExpressionOnlyWithAttribute2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0; }
-		
-		//rightatttriute=AttributeWithoutAliasDefinition
-		public Assignment getRightatttriuteAssignment_3() { return cRightatttriuteAssignment_3; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getRightatttriuteAttributeWithoutAliasDefinitionParserRuleCall_3_0() { return cRightatttriuteAttributeWithoutAliasDefinitionParserRuleCall_3_0; }
-	}
-	public class SelectExpressionOnlyWithAttribute2Elements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionOnlyWithAttribute2");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cLeftattributeAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0 = (RuleCall)cLeftattributeAssignment_0.eContents().get(0);
-		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cOperatorAlternatives_1_0 = (Alternatives)cOperatorAssignment_1.eContents().get(0);
-		private final Keyword cOperatorPlusSignKeyword_1_0_0 = (Keyword)cOperatorAlternatives_1_0.eContents().get(0);
-		private final Keyword cOperatorHyphenMinusKeyword_1_0_1 = (Keyword)cOperatorAlternatives_1_0.eContents().get(1);
-		private final Keyword cOperatorSolidusKeyword_1_0_2 = (Keyword)cOperatorAlternatives_1_0.eContents().get(2);
-		private final Keyword cOperatorAsteriskKeyword_1_0_3 = (Keyword)cOperatorAlternatives_1_0.eContents().get(3);
-		private final Assignment cInnerexpressionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0 = (RuleCall)cInnerexpressionAssignment_2.eContents().get(0);
-		
-		//SelectExpressionOnlyWithAttribute2 SelectExpression:
-		//	leftattribute=AttributeWithoutAliasDefinition
-		//	operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionOnlyWithAttribute2?
-		@Override public ParserRule getRule() { return rule; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition operator=('+' | '-' | '/' | '*')
-		//innerexpression=SelectExpressionOnlyWithAttribute2?
-		public Group getGroup() { return cGroup; }
-		
-		//leftattribute=AttributeWithoutAliasDefinition
-		public Assignment getLeftattributeAssignment_0() { return cLeftattributeAssignment_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0() { return cLeftattributeAttributeWithoutAliasDefinitionParserRuleCall_0_0; }
-		
-		//operator=('+' | '-' | '/' | '*')
-		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
-		
-		//('+' | '-' | '/' | '*')
-		public Alternatives getOperatorAlternatives_1_0() { return cOperatorAlternatives_1_0; }
-		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_0_0() { return cOperatorPlusSignKeyword_1_0_0; }
-		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_0_1() { return cOperatorHyphenMinusKeyword_1_0_1; }
+		public Keyword getOperatorsAsteriskKeyword_1_0_1_0_0_2() { return cOperatorsAsteriskKeyword_1_0_1_0_0_2; }
 		
 		//'/'
-		public Keyword getOperatorSolidusKeyword_1_0_2() { return cOperatorSolidusKeyword_1_0_2; }
+		public Keyword getOperatorsSolidusKeyword_1_0_1_0_0_3() { return cOperatorsSolidusKeyword_1_0_1_0_0_3; }
+		
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Assignment getExpressionsAssignment_1_0_1_1() { return cExpressionsAssignment_1_0_1_1; }
+		
+		//(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Alternatives getExpressionsAlternatives_1_0_1_1_0() { return cExpressionsAlternatives_1_0_1_1_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_0_1_1_0_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_0_1_1_0_0; }
+		
+		//ExpressionComponentOnlymapper
+		public RuleCall getExpressionsExpressionComponentOnlymapperParserRuleCall_1_0_1_1_0_1() { return cExpressionsExpressionComponentOnlymapperParserRuleCall_1_0_1_1_0_1; }
+		
+		//expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+
+		public Group getGroup_1_1() { return cGroup_1_1; }
+		
+		//expressions+=ExpressionComponentOnlyAttribute
+		public Assignment getExpressionsAssignment_1_1_0() { return cExpressionsAssignment_1_1_0; }
+		
+		//ExpressionComponentOnlyAttribute
+		public RuleCall getExpressionsExpressionComponentOnlyAttributeParserRuleCall_1_1_0_0() { return cExpressionsExpressionComponentOnlyAttributeParserRuleCall_1_1_0_0; }
+		
+		//(operators+=('+' | '-' | '*' | '/') expressions+=(ExpressionComponentConstantOrAttribute |
+		//ExpressionComponentOnlymapper))+
+		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
+		
+		//operators+=('+' | '-' | '*' | '/')
+		public Assignment getOperatorsAssignment_1_1_1_0() { return cOperatorsAssignment_1_1_1_0; }
+		
+		//('+' | '-' | '*' | '/')
+		public Alternatives getOperatorsAlternatives_1_1_1_0_0() { return cOperatorsAlternatives_1_1_1_0_0; }
+		
+		//'+'
+		public Keyword getOperatorsPlusSignKeyword_1_1_1_0_0_0() { return cOperatorsPlusSignKeyword_1_1_1_0_0_0; }
+		
+		//'-'
+		public Keyword getOperatorsHyphenMinusKeyword_1_1_1_0_0_1() { return cOperatorsHyphenMinusKeyword_1_1_1_0_0_1; }
 		
 		//'*'
-		public Keyword getOperatorAsteriskKeyword_1_0_3() { return cOperatorAsteriskKeyword_1_0_3; }
+		public Keyword getOperatorsAsteriskKeyword_1_1_1_0_0_2() { return cOperatorsAsteriskKeyword_1_1_1_0_0_2; }
 		
-		//innerexpression=SelectExpressionOnlyWithAttribute2?
-		public Assignment getInnerexpressionAssignment_2() { return cInnerexpressionAssignment_2; }
+		//'/'
+		public Keyword getOperatorsSolidusKeyword_1_1_1_0_0_3() { return cOperatorsSolidusKeyword_1_1_1_0_0_3; }
 		
-		//SelectExpressionOnlyWithAttribute2
-		public RuleCall getInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0() { return cInnerexpressionSelectExpressionOnlyWithAttribute2ParserRuleCall_2_0; }
+		//expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Assignment getExpressionsAssignment_1_1_1_1() { return cExpressionsAssignment_1_1_1_1; }
+		
+		//(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
+		public Alternatives getExpressionsAlternatives_1_1_1_1_0() { return cExpressionsAlternatives_1_1_1_1_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_1_1_0_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_1_1_0_0; }
+		
+		//ExpressionComponentOnlymapper
+		public RuleCall getExpressionsExpressionComponentOnlymapperParserRuleCall_1_1_1_1_0_1() { return cExpressionsExpressionComponentOnlymapperParserRuleCall_1_1_1_1_0_1; }
+	}
+	public class SelectExpressionWithOnlyAttributeOrConstantElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionWithOnlyAttributeOrConstant");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cExpressionsAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0 = (RuleCall)cExpressionsAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Assignment cOperatorsAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final Alternatives cOperatorsAlternatives_1_0_0 = (Alternatives)cOperatorsAssignment_1_0.eContents().get(0);
+		private final Keyword cOperatorsPlusSignKeyword_1_0_0_0 = (Keyword)cOperatorsAlternatives_1_0_0.eContents().get(0);
+		private final Keyword cOperatorsHyphenMinusKeyword_1_0_0_1 = (Keyword)cOperatorsAlternatives_1_0_0.eContents().get(1);
+		private final Keyword cOperatorsAsteriskKeyword_1_0_0_2 = (Keyword)cOperatorsAlternatives_1_0_0.eContents().get(2);
+		private final Keyword cOperatorsSolidusKeyword_1_0_0_3 = (Keyword)cOperatorsAlternatives_1_0_0.eContents().get(3);
+		private final Assignment cExpressionsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_0 = (RuleCall)cExpressionsAssignment_1_1.eContents().get(0);
+		
+		//SelectExpressionWithOnlyAttributeOrConstant SelectExpressionWithoutAliasDefinition:
+		//	expressions+=ExpressionComponentConstantOrAttribute (operators+=('+' | '-' | '*' | '/')
+		//	expressions+=ExpressionComponentConstantOrAttribute)*
+		@Override public ParserRule getRule() { return rule; }
+		
+		//expressions+=ExpressionComponentConstantOrAttribute (operators+=('+' | '-' | '*' | '/')
+		//expressions+=ExpressionComponentConstantOrAttribute)*
+		public Group getGroup() { return cGroup; }
+		
+		//expressions+=ExpressionComponentConstantOrAttribute
+		public Assignment getExpressionsAssignment_0() { return cExpressionsAssignment_0; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_0_0; }
+		
+		//(operators+=('+' | '-' | '*' | '/') expressions+=ExpressionComponentConstantOrAttribute)*
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//operators+=('+' | '-' | '*' | '/')
+		public Assignment getOperatorsAssignment_1_0() { return cOperatorsAssignment_1_0; }
+		
+		//('+' | '-' | '*' | '/')
+		public Alternatives getOperatorsAlternatives_1_0_0() { return cOperatorsAlternatives_1_0_0; }
+		
+		//'+'
+		public Keyword getOperatorsPlusSignKeyword_1_0_0_0() { return cOperatorsPlusSignKeyword_1_0_0_0; }
+		
+		//'-'
+		public Keyword getOperatorsHyphenMinusKeyword_1_0_0_1() { return cOperatorsHyphenMinusKeyword_1_0_0_1; }
+		
+		//'*'
+		public Keyword getOperatorsAsteriskKeyword_1_0_0_2() { return cOperatorsAsteriskKeyword_1_0_0_2; }
+		
+		//'/'
+		public Keyword getOperatorsSolidusKeyword_1_0_0_3() { return cOperatorsSolidusKeyword_1_0_0_3; }
+		
+		//expressions+=ExpressionComponentConstantOrAttribute
+		public Assignment getExpressionsAssignment_1_1() { return cExpressionsAssignment_1_1; }
+		
+		//ExpressionComponentConstantOrAttribute
+		public RuleCall getExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_0() { return cExpressionsExpressionComponentConstantOrAttributeParserRuleCall_1_1_0; }
 	}
 	public class AliasElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Alias");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
+		////SelectExpressionWithoutAliasDefinition returns SelectExpression:
+		////	ExpressionComponent 
+		////	|(expressions+=ExpressionComponent (operators+=('+'|'-'|'*'|'/') expressions+=ExpressionComponent)*)
+		////;
+		////Mapper://TODO That is not supposed to be hard coded! 
+		////	name=('DolToEur')
+		////	'('
+		////	(attribute=AttributeWithoutAliasDefinition 
+		////		| innerexpression = SelectExpressionWithoutAliasDefinition2
+		////	)
+		////	')'
+		////	('AS' alias=Alias)?
+		////;
+		////
+		////MapperWithoutAlias returns Mapper://TODO That is not supposed to be hard coded! 
+		////	name=('DolToEur')
+		////	'('
+		////	(attribute=AttributeWithoutAliasDefinition 
+		////		| innerexpression = SelectExpressionWithoutAliasDefinition2
+		////	)
+		////	')'
+		////;
+		////
+		////SelectExpressionWithOnlyMapper returns SelectExpression:
+		////	leftmapper=Mapper
+		////;
+		////
+		////SelectExpression:
+		////	(leftmapper=MapperWithoutAlias
+		////		| leftattribute=AttributeWithoutAliasDefinition 
+		////		| leftconstant=AtomicWithoutAttributeRef
+		////	)
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+		////	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+		////	('AS' alias=Alias)?
+		////;
+		////
+		////SelectExpressionWithoutAliasDefinition returns SelectExpression:
+		////	(leftmapper=MapperWithoutAlias
+		////		| leftattribute=AttributeWithoutAliasDefinition 
+		////		| leftconstant=AtomicWithoutAttributeRef
+		////	)
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+		////;
+		////
+		////SelectExpressionWithoutAliasDefinition2 returns SelectExpression:
+		////	(leftmapper=MapperWithoutAlias
+		////		| leftattribute=AttributeWithoutAliasDefinition 
+		////		| leftconstant=AtomicWithoutAttributeRef
+		////	)
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+		////	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+		////;
+		////
+		///////
+		////SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
+		////	(leftattribute=AttributeWithoutAliasDefinition 
+		////		| leftconstant=AtomicWithoutAttributeRef
+		////	)
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+		////	(rightattribute=AttributeWithoutAliasDefinition 
+		////		| rightconstant=AtomicWithoutAttributeRef
+		////	)
+		////;
+		////
+		////SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression:
+		////	(leftattribute=AttributeWithoutAliasDefinition 
+		////		| leftconstant=AtomicWithoutAttributeRef
+		////	)
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+		////;
+		////
+		////SelectExpressionOnlyWithStringConstant returns SelectExpression:
+		////	leftconstant=AtomicWithOnlyStringConstant
+		////	operator=('+'|'-')
+		////	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+		////	rightconstant=AtomicWithOnlyStringConstant
+		////	('AS' alias=Alias)?
+		////;
+		////
+		////SelectExpressionOnlyWithStringConstant2 returns SelectExpression:
+		////	leftconstant=AtomicWithOnlyStringConstant
+		////	operator=('+'|'-')
+		////	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+		////;
+		////
+		////SelectExpressionOnlyWithAttribute returns SelectExpression:
+		////	leftattribute=AttributeWithoutAliasDefinition
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+		////	rightatttriute=AttributeWithoutAliasDefinition
+		////;
+		////
+		////SelectExpressionOnlyWithAttribute2 returns SelectExpression:
+		////	leftattribute=AttributeWithoutAliasDefinition
+		////	operator=('+'|'-'|'/'|'*')
+		////	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+		////;
 		//Alias:
 		//	name=ID;
 		@Override public ParserRule getRule() { return rule; }
@@ -1492,122 +1463,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_0() { return cNameIDTerminalRuleCall_0; }
-	}
-	public class ConstantElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Constant");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Action cIntConstantAction_0_0 = (Action)cGroup_0.eContents().get(0);
-		private final Assignment cValueAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cValueINTTerminalRuleCall_0_1_0 = (RuleCall)cValueAssignment_0_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Action cFloatConstantAction_1_0 = (Action)cGroup_1.eContents().get(0);
-		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cValueFLOATTerminalRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Action cStringConstantAction_2_0 = (Action)cGroup_2.eContents().get(0);
-		private final Assignment cValueAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cValueSTRINGTerminalRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
-		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Action cBoolConstantAction_3_0 = (Action)cGroup_3.eContents().get(0);
-		private final Assignment cValueAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final Alternatives cValueAlternatives_3_1_0 = (Alternatives)cValueAssignment_3_1.eContents().get(0);
-		private final Keyword cValueTRUEKeyword_3_1_0_0 = (Keyword)cValueAlternatives_3_1_0.eContents().get(0);
-		private final Keyword cValueFALSEKeyword_3_1_0_1 = (Keyword)cValueAlternatives_3_1_0.eContents().get(1);
-		
-		//Constant:
-		//	{IntConstant} value=INT
-		//	| {FloatConstant} value=FLOAT
-		//	| {StringConstant} value=STRING
-		//	| {BoolConstant} value=('TRUE' | 'FALSE');
-		@Override public ParserRule getRule() { return rule; }
-		
-		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=('TRUE' |
-		//'FALSE')
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//{IntConstant} value=INT
-		public Group getGroup_0() { return cGroup_0; }
-		
-		//{IntConstant}
-		public Action getIntConstantAction_0_0() { return cIntConstantAction_0_0; }
-		
-		//value=INT
-		public Assignment getValueAssignment_0_1() { return cValueAssignment_0_1; }
-		
-		//INT
-		public RuleCall getValueINTTerminalRuleCall_0_1_0() { return cValueINTTerminalRuleCall_0_1_0; }
-		
-		//{FloatConstant} value=FLOAT
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//{FloatConstant}
-		public Action getFloatConstantAction_1_0() { return cFloatConstantAction_1_0; }
-		
-		//value=FLOAT
-		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
-		
-		//FLOAT
-		public RuleCall getValueFLOATTerminalRuleCall_1_1_0() { return cValueFLOATTerminalRuleCall_1_1_0; }
-		
-		//{StringConstant} value=STRING
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//{StringConstant}
-		public Action getStringConstantAction_2_0() { return cStringConstantAction_2_0; }
-		
-		//value=STRING
-		public Assignment getValueAssignment_2_1() { return cValueAssignment_2_1; }
-		
-		//STRING
-		public RuleCall getValueSTRINGTerminalRuleCall_2_1_0() { return cValueSTRINGTerminalRuleCall_2_1_0; }
-		
-		//{BoolConstant} value=('TRUE' | 'FALSE')
-		public Group getGroup_3() { return cGroup_3; }
-		
-		//{BoolConstant}
-		public Action getBoolConstantAction_3_0() { return cBoolConstantAction_3_0; }
-		
-		//value=('TRUE' | 'FALSE')
-		public Assignment getValueAssignment_3_1() { return cValueAssignment_3_1; }
-		
-		//('TRUE' | 'FALSE')
-		public Alternatives getValueAlternatives_3_1_0() { return cValueAlternatives_3_1_0; }
-		
-		//'TRUE'
-		public Keyword getValueTRUEKeyword_3_1_0_0() { return cValueTRUEKeyword_3_1_0_0; }
-		
-		//'FALSE'
-		public Keyword getValueFALSEKeyword_3_1_0_1() { return cValueFALSEKeyword_3_1_0_1; }
-	}
-	public class ExpressionWithAliasDefintionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionWithAliasDefintion");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cOrParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Keyword cASKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cAliasAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cAliasAliasParserRuleCall_2_0 = (RuleCall)cAliasAssignment_2.eContents().get(0);
-		
-		//ExpressionWithAliasDefintion Expression:
-		//	Or
-		//	'AS'
-		//	alias=Alias
-		@Override public ParserRule getRule() { return rule; }
-		
-		//Or 'AS' alias=Alias
-		public Group getGroup() { return cGroup; }
-		
-		//Or
-		public RuleCall getOrParserRuleCall_0() { return cOrParserRuleCall_0; }
-		
-		//'AS'
-		public Keyword getASKeyword_1() { return cASKeyword_1; }
-		
-		//alias=Alias
-		public Assignment getAliasAssignment_2() { return cAliasAssignment_2; }
-		
-		//Alias
-		public RuleCall getAliasAliasParserRuleCall_2_0() { return cAliasAliasParserRuleCall_2_0; }
 	}
 	public class CreateParametersElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateParameters");
@@ -3062,19 +2917,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final AttributeWithNestedStatementElements pAttributeWithNestedStatement;
 	private final AggregationElements pAggregation;
 	private final AggregationWithoutAliasDefinitionElements pAggregationWithoutAliasDefinition;
+	private final ExpressionComponentElements pExpressionComponent;
+	private final ExpressionComponentConstantOrAttributeElements pExpressionComponentConstantOrAttribute;
+	private final ExpressionComponentMapperOrConstantElements pExpressionComponentMapperOrConstant;
+	private final ExpressionComponentOnlyAttributeElements pExpressionComponentOnlyAttribute;
+	private final ExpressionComponentOnlyConstantElements pExpressionComponentOnlyConstant;
+	private final ExpressionComponentOnlymapperElements pExpressionComponentOnlymapper;
 	private final MapperElements pMapper;
 	private final SelectExpressionElements pSelectExpression;
 	private final SelectExpressionWithoutAliasDefinitionElements pSelectExpressionWithoutAliasDefinition;
-	private final SelectExpressionOnlyWithAttributeAndConstantElements pSelectExpressionOnlyWithAttributeAndConstant;
-	private final SelectExpressionOnlyWithAttributeAndConstant2Elements pSelectExpressionOnlyWithAttributeAndConstant2;
-	private final SelectExpressionOnlyWithMapperElements pSelectExpressionOnlyWithMapper;
-	private final SelectExpressionOnlyWithStringConstantElements pSelectExpressionOnlyWithStringConstant;
-	private final SelectExpressionOnlyWithStringConstant2Elements pSelectExpressionOnlyWithStringConstant2;
-	private final SelectExpressionOnlyWithAttributeElements pSelectExpressionOnlyWithAttribute;
-	private final SelectExpressionOnlyWithAttribute2Elements pSelectExpressionOnlyWithAttribute2;
+	private final SelectExpressionWithOnlyAttributeOrConstantElements pSelectExpressionWithOnlyAttributeOrConstant;
 	private final AliasElements pAlias;
-	private final ConstantElements pConstant;
-	private final ExpressionWithAliasDefintionElements pExpressionWithAliasDefintion;
 	private final CreateKeywordElements eCreateKeyword;
 	private final CreateParametersElements pCreateParameters;
 	private final AttributeDefinitionElements pAttributeDefinition;
@@ -3127,19 +2980,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pAttributeWithNestedStatement = new AttributeWithNestedStatementElements();
 		this.pAggregation = new AggregationElements();
 		this.pAggregationWithoutAliasDefinition = new AggregationWithoutAliasDefinitionElements();
+		this.pExpressionComponent = new ExpressionComponentElements();
+		this.pExpressionComponentConstantOrAttribute = new ExpressionComponentConstantOrAttributeElements();
+		this.pExpressionComponentMapperOrConstant = new ExpressionComponentMapperOrConstantElements();
+		this.pExpressionComponentOnlyAttribute = new ExpressionComponentOnlyAttributeElements();
+		this.pExpressionComponentOnlyConstant = new ExpressionComponentOnlyConstantElements();
+		this.pExpressionComponentOnlymapper = new ExpressionComponentOnlymapperElements();
 		this.pMapper = new MapperElements();
 		this.pSelectExpression = new SelectExpressionElements();
 		this.pSelectExpressionWithoutAliasDefinition = new SelectExpressionWithoutAliasDefinitionElements();
-		this.pSelectExpressionOnlyWithAttributeAndConstant = new SelectExpressionOnlyWithAttributeAndConstantElements();
-		this.pSelectExpressionOnlyWithAttributeAndConstant2 = new SelectExpressionOnlyWithAttributeAndConstant2Elements();
-		this.pSelectExpressionOnlyWithMapper = new SelectExpressionOnlyWithMapperElements();
-		this.pSelectExpressionOnlyWithStringConstant = new SelectExpressionOnlyWithStringConstantElements();
-		this.pSelectExpressionOnlyWithStringConstant2 = new SelectExpressionOnlyWithStringConstant2Elements();
-		this.pSelectExpressionOnlyWithAttribute = new SelectExpressionOnlyWithAttributeElements();
-		this.pSelectExpressionOnlyWithAttribute2 = new SelectExpressionOnlyWithAttribute2Elements();
+		this.pSelectExpressionWithOnlyAttributeOrConstant = new SelectExpressionWithOnlyAttributeOrConstantElements();
 		this.pAlias = new AliasElements();
-		this.pConstant = new ConstantElements();
-		this.pExpressionWithAliasDefintion = new ExpressionWithAliasDefintionElements();
 		this.eCreateKeyword = new CreateKeywordElements();
 		this.pCreateParameters = new CreateParametersElements();
 		this.pAttributeDefinition = new AttributeDefinitionElements();
@@ -3230,7 +3081,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Statement:
 	//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-	//	type=CreateStreamFile | type=CreateView) ';';
+	//	type=CreateStreamFile | type=CreateView) ';'?;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -3243,11 +3094,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	name='SELECT'
 	//	distinct='DISTINCT'? ('*' | (attributes+=Attribute
 	//	| aggregations+=Aggregation
-	//	//				| mapperss+=Mapper 
-	//	| expressions+=SelectExpression)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ','
-	//	expressions+=SelectExpression)*) ('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE'
-	//	predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? ('HAVING'
-	//	having=ExpressionsModel)?;
+	//	| expressions+=SelectExpression
+	//	//				| mappers+=Mapper
+	//)+ (',' attributes+=Attribute | ',' aggregations+=Aggregation | ',' expressions+=SelectExpression)*) ('FROM'
+	//	sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (','
+	//	order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?;
 	public SelectElements getSelectAccess() {
 		return pSelect;
 	}
@@ -3335,7 +3186,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Aggregation:
 	//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')' ('AS'
+	//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS'
 	//	alias=Alias)?;
 	public AggregationElements getAggregationAccess() {
 		return pAggregation;
@@ -3347,7 +3198,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//AggregationWithoutAliasDefinition Aggregation:
 	//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionOnlyWithAttribute) ')'
+	//	'(' attribute=AttributeWithoutAliasDefinition ')'
 	public AggregationWithoutAliasDefinitionElements getAggregationWithoutAliasDefinitionAccess() {
 		return pAggregationWithoutAliasDefinition;
 	}
@@ -3356,10 +3207,69 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAggregationWithoutAliasDefinitionAccess().getRule();
 	}
 	
-	//Mapper:
-	//	name='DolToEur' '(' (attribute=AttributeWithoutAliasDefinition
-	//	| innerexpression=SelectExpressionOnlyWithAttributeAndConstant)
-	//	')';
+	//ExpressionComponent:
+	//	ExpressionComponentConstantOrAttribute {ExpressionComponent.value=current} | ExpressionComponentMapperOrConstant
+	//	{ExpressionComponent.value=current};
+	public ExpressionComponentElements getExpressionComponentAccess() {
+		return pExpressionComponent;
+	}
+	
+	public ParserRule getExpressionComponentRule() {
+		return getExpressionComponentAccess().getRule();
+	}
+	
+	//ExpressionComponentConstantOrAttribute ExpressionComponent:
+	//	value=AtomicWithoutAttributeRef | value=AttributeWithoutAliasDefinition
+	public ExpressionComponentConstantOrAttributeElements getExpressionComponentConstantOrAttributeAccess() {
+		return pExpressionComponentConstantOrAttribute;
+	}
+	
+	public ParserRule getExpressionComponentConstantOrAttributeRule() {
+		return getExpressionComponentConstantOrAttributeAccess().getRule();
+	}
+	
+	//ExpressionComponentMapperOrConstant ExpressionComponent:
+	//	Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+	public ExpressionComponentMapperOrConstantElements getExpressionComponentMapperOrConstantAccess() {
+		return pExpressionComponentMapperOrConstant;
+	}
+	
+	public ParserRule getExpressionComponentMapperOrConstantRule() {
+		return getExpressionComponentMapperOrConstantAccess().getRule();
+	}
+	
+	//ExpressionComponentOnlyAttribute ExpressionComponent:
+	//	value=AttributeWithoutAliasDefinition
+	public ExpressionComponentOnlyAttributeElements getExpressionComponentOnlyAttributeAccess() {
+		return pExpressionComponentOnlyAttribute;
+	}
+	
+	public ParserRule getExpressionComponentOnlyAttributeRule() {
+		return getExpressionComponentOnlyAttributeAccess().getRule();
+	}
+	
+	//ExpressionComponentOnlyConstant ExpressionComponent:
+	//	value=AtomicWithoutAttributeRef
+	public ExpressionComponentOnlyConstantElements getExpressionComponentOnlyConstantAccess() {
+		return pExpressionComponentOnlyConstant;
+	}
+	
+	public ParserRule getExpressionComponentOnlyConstantRule() {
+		return getExpressionComponentOnlyConstantAccess().getRule();
+	}
+	
+	//ExpressionComponentOnlymapper ExpressionComponent:
+	//	Mapper {ExpressionComponent.value=current}
+	public ExpressionComponentOnlymapperElements getExpressionComponentOnlymapperAccess() {
+		return pExpressionComponentOnlymapper;
+	}
+	
+	public ParserRule getExpressionComponentOnlymapperRule() {
+		return getExpressionComponentOnlymapperAccess().getRule();
+	}
+	
+	//Mapper ExpressionComponent:
+	//	{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
 	public MapperElements getMapperAccess() {
 		return pMapper;
 	}
@@ -3369,11 +3279,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//SelectExpression:
-	//	(leftmapper=Mapper
-	//	| leftattribute=AttributeWithoutAliasDefinition
-	//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-	//	innerexpression=SelectExpressionWithoutAliasDefinition? (rightattribute=AttributeWithoutAliasDefinition |
-	//	rightconstant=AtomicWithoutAttributeRef) ('AS' alias=Alias)?;
+	//	(expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' | '*' | '/')
+	//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+	//	| expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+	//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+) ('AS' alias=Alias)?;
 	public SelectExpressionElements getSelectExpressionAccess() {
 		return pSelectExpression;
 	}
@@ -3383,10 +3292,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//SelectExpressionWithoutAliasDefinition SelectExpression:
-	//	(leftmapper=Mapper
-	//	| leftattribute=AttributeWithoutAliasDefinition
-	//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-	//	innerexpression=SelectExpressionWithoutAliasDefinition?
+	//	SelectExpressionWithOnlyAttributeOrConstant (expressions+=ExpressionComponentMapperOrConstant (operators+=('+' | '-' |
+	//	'*' | '/') expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))*
+	//	| expressions+=ExpressionComponentOnlyAttribute (operators+=('+' | '-' | '*' | '/')
+	//	expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper))+)
 	public SelectExpressionWithoutAliasDefinitionElements getSelectExpressionWithoutAliasDefinitionAccess() {
 		return pSelectExpressionWithoutAliasDefinition;
 	}
@@ -3395,87 +3304,120 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getSelectExpressionWithoutAliasDefinitionAccess().getRule();
 	}
 	
-	//SelectExpressionOnlyWithAttributeAndConstant SelectExpression:
-	//	(leftattribute=AttributeWithoutAliasDefinition
-	//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-	//	innerexpression=SelectExpressionOnlyWithAttributeAndConstant2? (rightattribute=AttributeWithoutAliasDefinition
-	//	| rightconstant=AtomicWithoutAttributeRef)
-	public SelectExpressionOnlyWithAttributeAndConstantElements getSelectExpressionOnlyWithAttributeAndConstantAccess() {
-		return pSelectExpressionOnlyWithAttributeAndConstant;
+	//SelectExpressionWithOnlyAttributeOrConstant SelectExpressionWithoutAliasDefinition:
+	//	expressions+=ExpressionComponentConstantOrAttribute (operators+=('+' | '-' | '*' | '/')
+	//	expressions+=ExpressionComponentConstantOrAttribute)*
+	public SelectExpressionWithOnlyAttributeOrConstantElements getSelectExpressionWithOnlyAttributeOrConstantAccess() {
+		return pSelectExpressionWithOnlyAttributeOrConstant;
 	}
 	
-	public ParserRule getSelectExpressionOnlyWithAttributeAndConstantRule() {
-		return getSelectExpressionOnlyWithAttributeAndConstantAccess().getRule();
+	public ParserRule getSelectExpressionWithOnlyAttributeOrConstantRule() {
+		return getSelectExpressionWithOnlyAttributeOrConstantAccess().getRule();
 	}
 	
-	//SelectExpressionOnlyWithAttributeAndConstant2 SelectExpression:
-	//	(leftattribute=AttributeWithoutAliasDefinition
-	//	| leftconstant=AtomicWithoutAttributeRef) operator=('+' | '-' | '/' | '*')
-	//	innerexpression=SelectExpressionOnlyWithAttributeAndConstant2?
-	public SelectExpressionOnlyWithAttributeAndConstant2Elements getSelectExpressionOnlyWithAttributeAndConstant2Access() {
-		return pSelectExpressionOnlyWithAttributeAndConstant2;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithAttributeAndConstant2Rule() {
-		return getSelectExpressionOnlyWithAttributeAndConstant2Access().getRule();
-	}
-	
-	//SelectExpressionOnlyWithMapper SelectExpression:
-	//	leftmapper=Mapper ('AS' alias=Alias)?
-	public SelectExpressionOnlyWithMapperElements getSelectExpressionOnlyWithMapperAccess() {
-		return pSelectExpressionOnlyWithMapper;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithMapperRule() {
-		return getSelectExpressionOnlyWithMapperAccess().getRule();
-	}
-	
-	//SelectExpressionOnlyWithStringConstant SelectExpression:
-	//	leftconstant=AtomicWithOnlyStringConstant
-	//	operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-	//	rightconstant=AtomicWithOnlyStringConstant ('AS' alias=Alias)?
-	public SelectExpressionOnlyWithStringConstantElements getSelectExpressionOnlyWithStringConstantAccess() {
-		return pSelectExpressionOnlyWithStringConstant;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithStringConstantRule() {
-		return getSelectExpressionOnlyWithStringConstantAccess().getRule();
-	}
-	
-	//SelectExpressionOnlyWithStringConstant2 SelectExpression:
-	//	leftconstant=AtomicWithOnlyStringConstant
-	//	operator=('+' | '-') innerexpression=SelectExpressionOnlyWithStringConstant2?
-	public SelectExpressionOnlyWithStringConstant2Elements getSelectExpressionOnlyWithStringConstant2Access() {
-		return pSelectExpressionOnlyWithStringConstant2;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithStringConstant2Rule() {
-		return getSelectExpressionOnlyWithStringConstant2Access().getRule();
-	}
-	
-	//SelectExpressionOnlyWithAttribute SelectExpression:
-	//	leftattribute=AttributeWithoutAliasDefinition
-	//	operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionOnlyWithAttribute2?
-	//	rightatttriute=AttributeWithoutAliasDefinition
-	public SelectExpressionOnlyWithAttributeElements getSelectExpressionOnlyWithAttributeAccess() {
-		return pSelectExpressionOnlyWithAttribute;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithAttributeRule() {
-		return getSelectExpressionOnlyWithAttributeAccess().getRule();
-	}
-	
-	//SelectExpressionOnlyWithAttribute2 SelectExpression:
-	//	leftattribute=AttributeWithoutAliasDefinition
-	//	operator=('+' | '-' | '/' | '*') innerexpression=SelectExpressionOnlyWithAttribute2?
-	public SelectExpressionOnlyWithAttribute2Elements getSelectExpressionOnlyWithAttribute2Access() {
-		return pSelectExpressionOnlyWithAttribute2;
-	}
-	
-	public ParserRule getSelectExpressionOnlyWithAttribute2Rule() {
-		return getSelectExpressionOnlyWithAttribute2Access().getRule();
-	}
-	
+	////SelectExpressionWithoutAliasDefinition returns SelectExpression:
+	////	ExpressionComponent 
+	////	|(expressions+=ExpressionComponent (operators+=('+'|'-'|'*'|'/') expressions+=ExpressionComponent)*)
+	////;
+	////Mapper://TODO That is not supposed to be hard coded! 
+	////	name=('DolToEur')
+	////	'('
+	////	(attribute=AttributeWithoutAliasDefinition 
+	////		| innerexpression = SelectExpressionWithoutAliasDefinition2
+	////	)
+	////	')'
+	////	('AS' alias=Alias)?
+	////;
+	////
+	////MapperWithoutAlias returns Mapper://TODO That is not supposed to be hard coded! 
+	////	name=('DolToEur')
+	////	'('
+	////	(attribute=AttributeWithoutAliasDefinition 
+	////		| innerexpression = SelectExpressionWithoutAliasDefinition2
+	////	)
+	////	')'
+	////;
+	////
+	////SelectExpressionWithOnlyMapper returns SelectExpression:
+	////	leftmapper=Mapper
+	////;
+	////
+	////SelectExpression:
+	////	(leftmapper=MapperWithoutAlias
+	////		| leftattribute=AttributeWithoutAliasDefinition 
+	////		| leftconstant=AtomicWithoutAttributeRef
+	////	)
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+	////	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+	////	('AS' alias=Alias)?
+	////;
+	////
+	////SelectExpressionWithoutAliasDefinition returns SelectExpression:
+	////	(leftmapper=MapperWithoutAlias
+	////		| leftattribute=AttributeWithoutAliasDefinition 
+	////		| leftconstant=AtomicWithoutAttributeRef
+	////	)
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+	////;
+	////
+	////SelectExpressionWithoutAliasDefinition2 returns SelectExpression:
+	////	(leftmapper=MapperWithoutAlias
+	////		| leftattribute=AttributeWithoutAliasDefinition 
+	////		| leftconstant=AtomicWithoutAttributeRef
+	////	)
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionWithoutAliasDefinition)?
+	////	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
+	////;
+	////
+	///////
+	////SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
+	////	(leftattribute=AttributeWithoutAliasDefinition 
+	////		| leftconstant=AtomicWithoutAttributeRef
+	////	)
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+	////	(rightattribute=AttributeWithoutAliasDefinition 
+	////		| rightconstant=AtomicWithoutAttributeRef
+	////	)
+	////;
+	////
+	////SelectExpressionOnlyWithAttributeAndConstant2 returns SelectExpression:
+	////	(leftattribute=AttributeWithoutAliasDefinition 
+	////		| leftconstant=AtomicWithoutAttributeRef
+	////	)
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionOnlyWithAttributeAndConstant2)?
+	////;
+	////
+	////SelectExpressionOnlyWithStringConstant returns SelectExpression:
+	////	leftconstant=AtomicWithOnlyStringConstant
+	////	operator=('+'|'-')
+	////	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+	////	rightconstant=AtomicWithOnlyStringConstant
+	////	('AS' alias=Alias)?
+	////;
+	////
+	////SelectExpressionOnlyWithStringConstant2 returns SelectExpression:
+	////	leftconstant=AtomicWithOnlyStringConstant
+	////	operator=('+'|'-')
+	////	(innerexpression=SelectExpressionOnlyWithStringConstant2)?
+	////;
+	////
+	////SelectExpressionOnlyWithAttribute returns SelectExpression:
+	////	leftattribute=AttributeWithoutAliasDefinition
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+	////	rightatttriute=AttributeWithoutAliasDefinition
+	////;
+	////
+	////SelectExpressionOnlyWithAttribute2 returns SelectExpression:
+	////	leftattribute=AttributeWithoutAliasDefinition
+	////	operator=('+'|'-'|'/'|'*')
+	////	(innerexpression=SelectExpressionOnlyWithAttribute2)?
+	////;
 	//Alias:
 	//	name=ID;
 	public AliasElements getAliasAccess() {
@@ -3484,31 +3426,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getAliasRule() {
 		return getAliasAccess().getRule();
-	}
-	
-	//Constant:
-	//	{IntConstant} value=INT
-	//	| {FloatConstant} value=FLOAT
-	//	| {StringConstant} value=STRING
-	//	| {BoolConstant} value=('TRUE' | 'FALSE');
-	public ConstantElements getConstantAccess() {
-		return pConstant;
-	}
-	
-	public ParserRule getConstantRule() {
-		return getConstantAccess().getRule();
-	}
-	
-	//ExpressionWithAliasDefintion Expression:
-	//	Or
-	//	'AS'
-	//	alias=Alias
-	public ExpressionWithAliasDefintionElements getExpressionWithAliasDefintionAccess() {
-		return pExpressionWithAliasDefintion;
-	}
-	
-	public ParserRule getExpressionWithAliasDefintionRule() {
-		return getExpressionWithAliasDefintionAccess().getRule();
 	}
 	
 	//enum CreateKeyword:

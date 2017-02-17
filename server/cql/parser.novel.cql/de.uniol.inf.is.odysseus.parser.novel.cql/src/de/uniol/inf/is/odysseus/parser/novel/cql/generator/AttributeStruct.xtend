@@ -8,7 +8,6 @@ class AttributeStruct
 		public String sourcename;
 		public String datatype;
 		public List<String> aliases;
-		public List<String> aggregtions;
 		
 		override equals(Object obj) 
 		{
