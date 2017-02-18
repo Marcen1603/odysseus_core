@@ -36,7 +36,7 @@ public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotat
 	protected abstract void addRequirements();
 	
 
-	public abstract void makeSerializable();
+	//public abstract void makeSerializable();
 	
 	public Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites(){
 		return prerequisites;
@@ -46,7 +46,7 @@ public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotat
 	public boolean equals(Object obj) {
 		if(obj instanceof AnnotationModel<?>){
 			AnnotationModel<?> o = (AnnotationModel<?>) obj;
-			return o.identifier().equals(this.identifier());
+			return o.hashCode() == this.hashCode();
 		}
 		return false;
 	}

@@ -40,9 +40,10 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 
 	private Tokenizer tokenizer;
 	
+	/*
 	public void makeSerializable(){
 		tokenizer = null;
-	}
+	}*/
 	
 	public Tokenizer getTokenizer(){
 		if(tokenizer == null){

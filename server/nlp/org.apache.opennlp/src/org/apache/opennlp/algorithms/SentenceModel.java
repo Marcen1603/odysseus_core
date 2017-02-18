@@ -103,9 +103,9 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 			}
 	}
 
-	@Override
+	/*@Override
 	public void makeSerializable() {
 		detector = null;
-	}
+	}*/
 	
 }

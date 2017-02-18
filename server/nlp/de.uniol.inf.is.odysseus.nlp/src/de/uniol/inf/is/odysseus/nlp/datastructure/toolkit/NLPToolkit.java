@@ -3,13 +3,8 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
-
-import org.slf4j.Logger;
-
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.pipeline.Pipeline;
@@ -68,10 +63,36 @@ public abstract class NLPToolkit {
 		return annotated;
 	}
 	
-	public abstract AnnotationModel<?> deserialize(String serializedModel);
-	public abstract String serialize(AnnotationModel<?> model);
+	/*
+	public AnnotationModel<?> deserialize(String serializedModel){
+     
+		byte[] objectData = Base64.getDecoder().decode(serializedModel);
+
+	    ByteArrayInputStream byteInputStream = new ByteArrayInputStream(objectData);
+	    try (OsgiObjectInputStream objectInputStream = new OsgiObjectInputStream(byteInputStream)){
+		     Object obj = objectInputStream.readObject();
+		     
+		     if(obj instanceof TrainableFileAnnotationModel<?>)
+		    	return (AnnotationModel<?>) obj;
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	
+	public String serialize(AnnotationModel<?> model){
+		final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try(ObjectOutputStream objectStream = new ObjectOutputStream(stream)){
+        	model.makeSerializable();
+        	objectStream.writeObject(model);
+        	objectStream.close();
+            return Base64.getEncoder().encodeToString(stream.toByteArray());
+        }catch(IOException exception){
+        	throw new NLPModelSerializationFailed("Serialization of trained model failed."+exception.getMessage()); 
+        }
+	}
+	*/
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof NLPToolkit){
