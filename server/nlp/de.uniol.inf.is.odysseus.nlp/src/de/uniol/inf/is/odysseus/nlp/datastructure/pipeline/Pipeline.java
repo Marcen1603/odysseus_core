@@ -69,11 +69,8 @@ public abstract class Pipeline {
 		
 		this.models = models;		
 		for(String inf: models){
-			try {
-				Class<? extends AnnotationModel<?>> model = identifierToModel(inf);
-				addModelToPipeline(model, configuration);
-			} catch (InstantiationException ignored) {
-			}
+			Class<? extends AnnotationModel<?>> model = identifierToModel(inf);
+			addModelToPipeline(model, configuration);
 		}
 		
 	}
@@ -142,7 +139,7 @@ public abstract class Pipeline {
 	 * @throws InstantiationException 
 	 * @throws NLPModelNotFoundException 
 	 */
-	public Class<? extends AnnotationModel<?>> identifierToModel(String identifier) throws InstantiationException, NLPModelNotFoundException {
+	public Class<? extends AnnotationModel<?>> identifierToModel(String identifier) throws NLPModelNotFoundException {
 		for(Class<? extends AnnotationModel<?>> model : algorithms){
 			try {
 				String id = model.getConstructor().newInstance().identifier();
@@ -150,7 +147,7 @@ public abstract class Pipeline {
 					return model;
 				
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException ignored) {
+					| NoSuchMethodException | SecurityException | InstantiationException ignored) {
 				ignored.printStackTrace();
 			}
 		}
