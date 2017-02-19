@@ -2,8 +2,8 @@ package org.apache.opennlp;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.opennlp.algorithms.LemmasModel;
 import org.apache.opennlp.algorithms.NamedEntitiesModel;
 import org.apache.opennlp.algorithms.PartsOfSpeechModel;
 import org.apache.opennlp.algorithms.SentenceModel;
@@ -37,6 +37,7 @@ public class OpenNLPPipeline extends Pipeline{
 		algorithms.add(SentenceModel.class);
 		algorithms.add(NamedEntitiesModel.class);
 		algorithms.add(PartsOfSpeechModel.class);
+		algorithms.add(LemmasModel.class);
 	}
 
 }
