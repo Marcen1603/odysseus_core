@@ -61,8 +61,7 @@ public class ObjectDataHandler<M> extends AbstractDataHandler<M> {
 	
 	@Override
 	public Class<?> createsType() {
-		// Impossible to say ...
-		return null;
+		return Object.class;
 	}
 
 }
