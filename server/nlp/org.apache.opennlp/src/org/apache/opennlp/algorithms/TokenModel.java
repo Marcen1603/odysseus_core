@@ -74,12 +74,11 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 
 	@Override
 	public String identifier() {
-		return Tokens.class.getSimpleName().toLowerCase();
+		return Tokens.NAME;
 	}
 	
 	@Override
 	protected void addRequirements() {
-		prerequisites.add(SentenceModel.class);
 	}
 
 

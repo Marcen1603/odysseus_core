@@ -45,7 +45,7 @@ public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
 
 	@Override
 	public String identifier() {
-		return PartsOfSpeech.class.getSimpleName().toLowerCase();
+		return PartsOfSpeech.NAME;
 	}
 	
 	private POSTagger getTagger(){

@@ -43,7 +43,7 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 	@Override
 	public void annotate(Annotated annotated) {
 		Map<String, NamedEntity> map = new HashMap<>();
-		Tokens tokensAnnotation = (Tokens)annotated.getAnnotations().get(Tokens.class.getSimpleName().toLowerCase());
+		Tokens tokensAnnotation = (Tokens)annotated.getAnnotations().get(Tokens.NAME);
 		String[] tokens = tokensAnnotation.getTokens();
 		for(TokenNameFinder nameFinder : nameFinders){
 			opennlp.tools.util.Span[] tokenSpans = nameFinder.find(tokens);
@@ -64,7 +64,7 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 
 	@Override
 	public String identifier() {
-		return NamedEntities.class.getSimpleName().toLowerCase();
+		return NamedEntities.NAME;
 	}
 
 	@Override

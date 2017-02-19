@@ -57,7 +57,7 @@ public class LemmasModel extends OpenNLPModel<Lemmas> {
 
 	@Override
 	public String identifier() {
-		return Lemmas.class.getSimpleName().toLowerCase();
+		return Lemmas.NAME;
 	}
 
 	@Override

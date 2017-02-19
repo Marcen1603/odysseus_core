@@ -72,7 +72,7 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 
 	@Override
 	public String identifier() {
-		return Sentences.class.getSimpleName().toLowerCase();
+		return Sentences.NAME;
 	}
 
 	@Override
