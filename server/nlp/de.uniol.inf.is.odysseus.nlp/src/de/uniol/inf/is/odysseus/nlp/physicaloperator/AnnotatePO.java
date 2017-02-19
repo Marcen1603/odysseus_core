@@ -88,9 +88,9 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 			return;
 		}
 		//Else: trained model arrived
-		String serializedModel = (String)object.getAttribute(0);
+		//String serializedModel = (String)object.getAttribute(0);
 		
-		AnnotationModel<?> model = toolkit.deserialize(serializedModel);
+		AnnotationModel<?> model = (AnnotationModel<?>) object.getAttribute(0); //toolkit.deserialize(serializedModel);
 		if(model != null){
 			this.toolkit.getPipeline().exchange(model);
 		}
