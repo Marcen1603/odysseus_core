@@ -178,6 +178,7 @@ public abstract class Pipeline {
 	 * 
 	 */
 	public void exchange(AnnotationModel<?> exchange){
+		//TODO: Use Model join instead of exchange
 		int idx = -1;
 		for(int i = 0; i < pipeline.size(); i++){
 			if(pipeline.get(i).identifier().equals(exchange.identifier())){

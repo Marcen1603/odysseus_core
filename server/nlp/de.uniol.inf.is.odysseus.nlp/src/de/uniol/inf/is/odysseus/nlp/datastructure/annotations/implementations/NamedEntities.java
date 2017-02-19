@@ -1,23 +1,45 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-public class NamedEntities extends Annotation{
-	private String type;
-	private int[] namedEntities;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
+
+public class NamedEntities extends Annotation {
+
+	public NamedEntities(){
+	}
 	
-	public NamedEntities(String type, int[] namedEntities){
-		this.type = type;
-		this.namedEntities = namedEntities;
+	public NamedEntities(List<NamedEntity> list){
+		for(NamedEntity annotation : list){
+			getAnnotations().put(annotation.getType(), annotation);
+		}
+	}
+	
+	public void add(NamedEntity annotation){
+		getAnnotations().put(annotation.getType(), annotation);
+
 	}
 	
 	@Override
-	public Object toObject() {
-		return namedEntities;
+	public KeyValueObject<IMetaAttribute> toObject() {
+    	KeyValueObject<IMetaAttribute> keyvalue = KeyValueObject.createInstance();
+    	Map<String, IAnnotation> annotations = getAnnotations();
+    	for(Entry<String, IAnnotation> entry : annotations.entrySet()){
+    		NamedEntity annotation = (NamedEntity) entry.getValue();
+    		keyvalue.setAttribute(annotation.getType(), annotation.toObject());
+    	}
+		return keyvalue;
 	}
 	
-	public String getType(){
-		return type;
+
+	@Override
+	public String identifier() {
+		return NamedEntities.class.getSimpleName().toLowerCase();
 	}
 
 }

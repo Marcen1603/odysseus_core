@@ -62,11 +62,6 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 	
 
 	@Override
-	public Class<? extends IAnnotation> type() {
-		return Tokens.class;
-	}
-
-	@Override
 	public void annotate(Annotated annotated) {
 		Tokens annotation = new Tokens(getTokenizer().tokenize(annotated.getText()));
 		annotated.put(annotation);

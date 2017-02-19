@@ -42,10 +42,6 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 		super(configuration);
 	}
 	
-	@Override
-	public Class<? extends IAnnotation> type() {
-		return Sentences.class;
-	}
 
 	@Override
 	public void annotate(Annotated annotated) {

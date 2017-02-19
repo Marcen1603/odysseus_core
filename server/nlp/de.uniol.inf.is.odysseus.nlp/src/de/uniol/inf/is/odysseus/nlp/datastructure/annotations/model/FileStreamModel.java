@@ -27,13 +27,7 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 		if(option == null)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
 		
-		String[] paths = new String[1];
-		
-		if(option.getValue() instanceof String){
-			paths[0] = (String)option.getValue();
-		}else if(option.getValue() instanceof String[]){
-			paths = (String[])option.getValue();
-		}
+		String[] paths = ((String)option.getValue()).split(":");
 		
 		if(paths.length == 0)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());

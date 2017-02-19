@@ -38,5 +38,20 @@ public class Span {
 	public int[] toArray(){
 		return new int[]{start, end};
 	}
+
+	@Override
+	public int hashCode() {
+		return start*31+end;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Span){
+			return this.hashCode() == obj.hashCode();
+		}
+		return false;
+	}
+	
+	
 	
 }
