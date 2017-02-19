@@ -22,8 +22,8 @@ public class MetadataAO extends AbstractLogicalOperator {
 
 	public MetadataAO() {
 	}
-	
-	public MetadataAO(MetadataAO metadataAO) {	
+
+	public MetadataAO(MetadataAO metadataAO) {
 		super(metadataAO);
 		this.localMetaAttribute = metadataAO.localMetaAttribute;
 	}
@@ -32,15 +32,15 @@ public class MetadataAO extends AbstractLogicalOperator {
 	public void setLocalMetaAttribute(IMetaAttribute metaAttribute){
 		this.localMetaAttribute = metaAttribute;
 	}
-	
+
 	public List<String> getMetadataTypes(){
 		return new ArrayList<String>(MetadataRegistry.getNames());
 	}
-	
+
 	public IMetaAttribute getLocalMetaAttribute() {
 		return localMetaAttribute;
 	}
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		SDFSchema inputSchema = getInputSchema(0);
