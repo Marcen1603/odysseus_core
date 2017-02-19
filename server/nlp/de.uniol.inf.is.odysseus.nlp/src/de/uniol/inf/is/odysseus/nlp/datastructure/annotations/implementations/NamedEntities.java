@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 
 public class NamedEntities extends Annotation {
+	public static final String NAME = "namedentities";
 
 	public NamedEntities(){
 	}

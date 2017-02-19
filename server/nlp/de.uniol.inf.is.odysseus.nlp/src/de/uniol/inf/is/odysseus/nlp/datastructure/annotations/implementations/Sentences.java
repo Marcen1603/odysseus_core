@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
  * @see Span
  */
 public class Sentences extends Annotation {
+	public static final String NAME = "sentences";
 
 	private Span[] sentences;
 	
