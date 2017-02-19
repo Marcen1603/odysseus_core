@@ -3,8 +3,6 @@ package keyword;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 

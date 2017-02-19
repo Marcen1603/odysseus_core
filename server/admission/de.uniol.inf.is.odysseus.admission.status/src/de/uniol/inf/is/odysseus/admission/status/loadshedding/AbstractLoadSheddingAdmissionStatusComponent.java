@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -14,13 +13,17 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractLoadSheddingAdmissionStatusComponent implements ILoadSheddingAdmissionStatusComponent {
 
-	static public final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
+	/**
+	 * The ISession superUser is used to get access to the execution plan of the queries.
+	 */
+	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
 			.loginSuperUser(null);
 
 	/**
@@ -39,6 +42,9 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 	 */
 	protected volatile List<Integer> maxSheddingQueries = new ArrayList<Integer>();
 
+	/**
+	 * The Default Constructor adds the object of this class to the LoadSheddingAdmissionStatusRegistry.
+	 */
 	public AbstractLoadSheddingAdmissionStatusComponent() {
 		LoadSheddingAdmissionStatusRegistry.addLoadSheddingAdmissionComponent(this);
 	}
@@ -52,13 +58,11 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 		if (o != null) {
 			boolean enabled = Boolean.parseBoolean(o);
 			if (enabled) {
-				LoggerFactory.getLogger(this.getClass()).info("addquery");
 				String factor = logQuery.getUserParameter("maxSheddingFactor");
 				if (factor != null) {
 					int maxSheddingFactor = Integer.parseInt(factor);
 					if (maxSheddingFactor > 0) {
 						allowedQueries.put(queryID, maxSheddingFactor);
-						LoggerFactory.getLogger(this.getClass()).info("maxSheddingFactor : " + maxSheddingFactor);
 						return true;
 					} else {
 						return false;
@@ -92,21 +96,28 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 		if (allowedQueries.isEmpty()) {
 			return false;
 		}
-		if (allowedQueries.keySet().size() == maxSheddingQueries.size()) {
+		if (allowedQueries.keySet().size() <= maxSheddingQueries.size()) {
 			return false;
 		}
 		return true;
 	}
 
 	protected void setSheddingFactor(int queryID, int factor) {
-		AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, factor, superUser);
-		String text = queryID + " has shedding factor : " + factor;
-		LoggerFactory.getLogger(this.getClass()).info(text);
-		try {
-			Files.write(Paths.get("C:/Users/Jannes/Desktop/Uni/6.Semester/Bachelor_Arbeit/Evaluation/Ergebnis/sheddingfactor.txt"),
-					text.getBytes(), StandardOpenOption.APPEND);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (AdmissionStatusPlugIn.getServerExecutor().getQueryState(queryID, superUser) != QueryState.INACTIVE) {
+			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, factor, superUser);
+			String text = queryID + " has shedding factor : " + factor;
+			LoggerFactory.getLogger(this.getClass()).info(text);
+			try {
+				Files.write(Paths.get("C:/Users/Jannes/Desktop/Uni/6.Semester/Bachelor_Arbeit/Evaluation/Ergebnis/sheddingfactor.txt"),
+						text.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+	}
+	
+	protected IPhysicalQuery getQueryByID(int queryID) {
+		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueryById(queryID, superUser);
 	}
 }

@@ -13,7 +13,11 @@ public class LoadSheddingAdmissionStatusRegistry {
 
 	private static Map<String, ILoadSheddingAdmissionStatusComponent> components = Maps.newHashMap();
 	
+	private static QuerySelectionStrategy selectionStrategy = QuerySelectionStrategy.DEFAULT;
+	
 	private static ILoadSheddingAdmissionStatusComponent activeComponent;
+	
+	private static boolean first = true;
 	
 	public static void addLoadSheddingAdmissionComponent(ILoadSheddingAdmissionStatusComponent component) {
 		Preconditions.checkNotNull(component, "Admission status component must not be null!");
@@ -64,6 +68,22 @@ public class LoadSheddingAdmissionStatusRegistry {
 
 	public static void setStandartMaxSheddingFactor(int standartMaxSheddingFactor) {
 		LoadSheddingAdmissionStatusRegistry.standartMaxSheddingFactor = standartMaxSheddingFactor;
+	}
+
+	public static QuerySelectionStrategy getSelectionStrategy() {
+		return selectionStrategy;
+	}
+
+	public static void setSelectionStrategy(QuerySelectionStrategy selectionStrategy) {
+		LoadSheddingAdmissionStatusRegistry.selectionStrategy = selectionStrategy;
+	}
+
+	public static boolean isFirst() {
+		return first;
+	}
+
+	public static void setFirst(boolean first) {
+		LoadSheddingAdmissionStatusRegistry.first = first;
 	}
 	
 }

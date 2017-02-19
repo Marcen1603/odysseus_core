@@ -16,6 +16,21 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	
 	private final String NAME = "simple";
 	
+	private int actSheddingFactor = 0;
+	
+	private int actSheddingQuery = -1;
+
+	@Override
+	public boolean removeQuery(int queryID) {
+		if (super.removeQuery(queryID)) {
+			if(actSheddingQuery == queryID) {
+				actSheddingQuery = -1;
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void measureStatus() {
 		//Nothing to measure
@@ -27,7 +42,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 			return;
 		}
 		
-		int queryID = getRandomPossibleQueryID();
+		int queryID = getSheddingQueryID();
 		//It was not possible to find a queryID for load shedding.
 		if (queryID < 0) {
 			return;
@@ -64,7 +79,7 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	
 	@Override
 	public void rollbackLoadShedding() {
-		int queryID = getRandomActiveQueryID();
+		int queryID = getQueryIDToRollback();
 		if (queryID < 0) {
 			return;
 		}
@@ -77,8 +92,37 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 			if (sheddingFactor <= 0) {
 				sheddingFactor = 0;
 				activeQueries.remove(queryID);
+			} else {
+				activeQueries.replace(queryID, sheddingFactor);
 			}
 			setSheddingFactor(queryID, sheddingFactor);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private int getSheddingQueryID() {
+		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
+			return getSheddingQueryIDDefault();
+		} else if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.EQUALLY) {
+			return getSheddingQueryIDEqually();
+		} else if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.SEPARATELY) {
+			return getSheddingQueryIDSeparately();
+		} else {
+			return -1;
+		}
+	}
+	
+	private int getQueryIDToRollback() {
+		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
+			return getRandomActiveQueryIDDefault();
+		} else if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.EQUALLY) {
+			return getRandomActiveQueryIDEqually();
+		} else if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.SEPARATELY) {
+			return getRandomActiveQueryIDSeparately();
+		} else {
+			return -1;
 		}
 	}
 	
@@ -88,7 +132,22 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	 * Only queryIDs are returned, which query has not already its maximal shedding-factor.
 	 * @return
 	 */
-	private int getRandomPossibleQueryID() {
+	private int getSheddingQueryIDSeparately() {
+		if (actSheddingQuery > -1 && !maxSheddingQueries.contains(actSheddingQuery)) {
+			return actSheddingQuery;
+		}
+		
+		actSheddingQuery = getSheddingQueryIDDefault();
+		return actSheddingQuery;
+	}
+	
+	/**
+	 * Estimates a possible random queryID.
+	 * 
+	 * Only queryIDs are returned, which query has not already its maximal shedding-factor.
+	 * @return
+	 */
+	private int getSheddingQueryIDDefault() {
 		
 		List<Integer> list = new ArrayList<Integer>();
 		
@@ -106,16 +165,110 @@ public class SimpleLoadSheddingAdmissionStatusComponent extends AbstractLoadShed
 	}
 	
 	/**
+	 * Estimates a possible random queryID.
+	 * 
+	 * Only queryIDs are returned, which query has not already its maximal shedding-factor.
+	 * @return
+	 */
+	private int getSheddingQueryIDEqually() {
+		
+		if (actSheddingFactor <= 0) {
+			actSheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+		}
+		
+		List<Integer> list = new ArrayList<Integer>();
+		
+		// remove queries which already have their maximal shedding-factor
+		for (int queryID : allowedQueries.keySet()) {
+			if (!maxSheddingQueries.contains(queryID)) {
+				if (activeQueries.containsKey(queryID)) {
+					if (activeQueries.get(queryID) < actSheddingFactor) {
+						list.add(Integer.valueOf(queryID));
+					}
+				} else {
+					list.add(Integer.valueOf(queryID));
+				}
+			}
+		}
+		if (list.isEmpty()){
+			if(actSheddingFactor < 100) {
+				actSheddingFactor += LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+				if(actSheddingFactor > 100) {
+					actSheddingFactor = 100;
+				}
+				return getSheddingQueryIDEqually();
+			} else {
+				return -1;
+			}
+		}
+		Collections.shuffle(list);
+		return list.get(0);
+	}
+	
+	/**
 	 * Returns a queryID, which query has load shedding activated.
 	 * @return
 	 */
-	private int getRandomActiveQueryID() {
+	private int getRandomActiveQueryIDSeparately() {
+		if (activeQueries.isEmpty()) {
+			actSheddingQuery = -1;
+			return -1;
+		}
+		if(activeQueries.containsKey(actSheddingQuery)) {
+			return actSheddingQuery;
+		}
+		
+		actSheddingQuery = getRandomActiveQueryIDDefault();
+		return actSheddingQuery;
+	}
+	
+	/**
+	 * Returns a queryID, which query has load shedding activated.
+	 * @return
+	 */
+	private int getRandomActiveQueryIDDefault() {
 		if (activeQueries.isEmpty()) {
 			return -1;
 		}
 		List<Integer> list = new ArrayList<>(activeQueries.keySet());
-		Collections.shuffle(list);
-		return list.get(0);
+		if (!list.isEmpty()) {
+			Collections.shuffle(list);
+			return list.get(0);
+		} else {
+			return -1;
+		}
+	}
+	
+	/**
+	 * Returns a queryID, which query has load shedding activated.
+	 * @return
+	 */
+	private int getRandomActiveQueryIDEqually() {
+		if (activeQueries.isEmpty()) {
+			return -1;
+		}
+		List<Integer> list = new ArrayList<>();
+		
+		for (int queryID : activeQueries.keySet()) {
+			if (activeQueries.get(queryID) >= actSheddingFactor) {
+				list.add(queryID);
+			}
+		}
+		
+		if (!list.isEmpty()) {
+			Collections.shuffle(list);
+			return list.get(0);
+		} else {
+			if (actSheddingFactor > 0) {
+				actSheddingFactor -= LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
+				if (actSheddingFactor < 0) {
+					actSheddingFactor = 0;
+				}
+				return getRandomActiveQueryIDEqually();
+			} else {
+				return -1;
+			}
+		}
 	}
 
 	@Override

@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * Interface for all LoadSheddingAdmissionStatusComponents.

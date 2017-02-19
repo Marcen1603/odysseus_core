@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.admission.status.impl.AdmissionSink;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -25,7 +23,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	
 	static private final int LATENCY_MEASUREMENT_SIZE = 50;
-	static private final long TRESHOLD = 100;
 	
 	private Map<IPhysicalQuery, List<Long>> latencies = new HashMap<IPhysicalQuery, List<Long>>();
 	
@@ -62,7 +59,6 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	public void updateMeasurement(IPhysicalQuery query, long latency) {
-		//LoggerFactory.getLogger(this.getClass()).info("latency measurement on " + query.getID() + ". Latency : " + latency);
 		if (latencies.isEmpty()) {
 			return;
 		}
@@ -71,19 +67,18 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 		while (list.size() > LATENCY_MEASUREMENT_SIZE) {
 			list.remove(0);
 		}
+		latencies.replace(query, list);
 	}
 	
 	@Override
 	public List<IPhysicalQuery> getQuerysWithIncreasingTendency() {
-		
 		HashMap<IPhysicalQuery, Long> map = new HashMap<>();
 		for (IPhysicalQuery query : latencies.keySet()) {
 			long tendency = estimateTendency(latencies.get(query));
-			if (tendency > TRESHOLD) {
+			if (tendency > 0) {
 				map.put(query, tendency);
 			}
 		}
-
 		return getSortedListByValues(map);
 	}
 
