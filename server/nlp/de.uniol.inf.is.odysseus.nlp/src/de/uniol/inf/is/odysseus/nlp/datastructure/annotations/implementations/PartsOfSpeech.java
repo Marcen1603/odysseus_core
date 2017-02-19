@@ -8,19 +8,15 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 
 public class PartsOfSpeech extends Annotation {
-	private Map<Integer, String[]> tags;
+	private String[] tags;
 
-	public PartsOfSpeech(Map<Integer, String[]> tags){
+	public PartsOfSpeech(String[] tags){
 		this.tags = tags;
 	}
 	
 	@Override
-	public KeyValueObject<IMetaAttribute> toObject() {
-    	KeyValueObject<IMetaAttribute> keyvalue = KeyValueObject.createInstance();
-    	for(Entry<Integer, String[]> entry : tags.entrySet()){
-    		keyvalue.setAttribute(entry.getKey().toString(), entry.getValue());
-    	}
-		return keyvalue;
+	public Object toObject() {
+		return tags;
 	}
 
 }
