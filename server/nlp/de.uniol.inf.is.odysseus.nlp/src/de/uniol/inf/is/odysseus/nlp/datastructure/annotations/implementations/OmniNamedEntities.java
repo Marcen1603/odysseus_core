@@ -35,5 +35,11 @@ public class OmniNamedEntities extends Annotation {
     	}
 		return keyvalue;
 	}
+	
+
+	@Override
+	public String identifier() {
+		return NamedEntities.class.getSimpleName().toLowerCase();
+	}
 
 }

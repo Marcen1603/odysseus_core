@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Parent-interface for all annotations.
  */
-public interface IAnnotation {
+public interface IAnnotation extends IKeyValueObject {
 	/**
 	 * @return identifier of the annotation
 	 */
@@ -22,10 +22,4 @@ public interface IAnnotation {
 	 * @param annotation to be added
 	 */
 	public void put(Annotation annotation);
-		
-	/**
-	 * Returns KeyValue-Object for KeyValue-Outputstream
-	 * @return Object for KeyValue-Outputstream
-	 */
-	public Object toObject();
 }
