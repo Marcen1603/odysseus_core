@@ -38,7 +38,7 @@ public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
 	public void annotate(Annotated annotated) {
 		Tokens tokensAnnotation = (Tokens)annotated.getAnnotations().get(Tokens.class.getSimpleName().toLowerCase());
 		String[] tokens = tokensAnnotation.getTokens();
-		String[] tags = tagger.tag(tokens);
+		String[] tags = getTagger().tag(tokens);
 		PartsOfSpeech annotation = new PartsOfSpeech(tags);
 		annotated.put(annotation);
 	}
