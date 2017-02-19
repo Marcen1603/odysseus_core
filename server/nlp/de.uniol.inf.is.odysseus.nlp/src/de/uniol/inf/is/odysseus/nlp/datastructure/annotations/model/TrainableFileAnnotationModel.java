@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundExce
 public abstract class TrainableFileAnnotationModel<T extends IAnnotation> extends FileStreamModel<T> implements ITrainableModel  {
 	private static final long serialVersionUID = 267063142301178985L;
 
-	public TrainableFileAnnotationModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException {
+	public TrainableFileAnnotationModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException {
 		super(configuration);
 	}
 

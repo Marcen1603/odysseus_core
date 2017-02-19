@@ -3,14 +3,13 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.opennlp.OpenNLPModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
@@ -56,7 +55,7 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 	}
 	
 
-	public TokenModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
+	public TokenModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
 		super(configuration);
 	}
 	

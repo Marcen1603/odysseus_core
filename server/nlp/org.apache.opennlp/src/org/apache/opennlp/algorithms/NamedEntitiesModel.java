@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
@@ -13,8 +12,8 @@ import org.apache.opennlp.OpenNLPToolkit;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.NamedEntity;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.NamedEntities;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.NamedEntity;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
@@ -32,7 +31,7 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 		super();
 	}
 
-	public NamedEntitiesModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
+	public NamedEntitiesModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
 		super(configuration);
 	}
 	
@@ -60,7 +59,7 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 			}
 		}
 		NamedEntities namedEntities = new NamedEntities(new ArrayList<>(map.values()));
-		annotated.getAnnotations().put(identifier(), namedEntities);
+		annotated.put(namedEntities);
 	}
 
 	@Override

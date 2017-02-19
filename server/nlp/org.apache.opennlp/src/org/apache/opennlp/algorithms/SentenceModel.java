@@ -3,13 +3,12 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Sentences;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
@@ -38,7 +37,7 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 		super();
 	}
 
-	public SentenceModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
+	public SentenceModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
 		super(configuration);
 	}
 	

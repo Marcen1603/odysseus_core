@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -21,7 +21,7 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 	 * @throws NLPModelNotFoundException if the file was not found
 	 * @throws NLPException if something goes wrong besides the model was not found
 	 */
-	public FileStreamModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
+	public FileStreamModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException{
 		super(configuration);
 		Option option = configuration.get(AnnotationModel.NAME+"."+this.identifier());
 		if(option == null)

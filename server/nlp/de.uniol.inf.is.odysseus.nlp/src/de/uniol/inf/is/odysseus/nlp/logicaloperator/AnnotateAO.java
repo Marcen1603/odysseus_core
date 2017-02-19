@@ -70,6 +70,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
     				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
     			throw new ParameterException(e.getMessage());
     		} catch (InvocationTargetException e) {
+    			e.getCause().printStackTrace();
     			throw new ParameterException(e.getCause().toString()+":"+e.getCause().getMessage());
     		}		
     	}

@@ -1,6 +1,6 @@
 package org.apache.opennlp;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -16,7 +16,7 @@ public abstract class OpenNLPModel<A extends IAnnotation> extends TrainableFileA
 		super();
 	}
 	
-	public OpenNLPModel(HashMap<String, Option> configuration) throws NLPModelNotFoundException, NLPException {
+	public OpenNLPModel(Map<String, Option> configuration) throws NLPModelNotFoundException, NLPException {
 		super(configuration);	
 	}
 

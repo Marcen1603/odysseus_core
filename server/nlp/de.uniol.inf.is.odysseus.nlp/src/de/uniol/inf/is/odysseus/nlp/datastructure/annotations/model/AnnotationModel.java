@@ -1,10 +1,9 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
@@ -26,7 +25,7 @@ public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotat
 	 * Creates AnnotationModel and initializes it with the user-specified configuration.
 	 * @param configuration
 	 */
-	public AnnotationModel(HashMap<String, Option> configuration){
+	public AnnotationModel(Map<String, Option> configuration){
 		addRequirements();
 	}
 	

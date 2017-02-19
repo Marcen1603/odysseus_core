@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
@@ -81,7 +83,7 @@ public abstract class Pipeline {
 				throw new NLPModelNotFoundException("One of the specified models were not found");
 			
 			Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites = model.getConstructor().newInstance().prerequisites();
-			AnnotationModel<? extends IAnnotation> instance = model.getConstructor(HashMap.class).newInstance(configuration);
+			AnnotationModel<? extends IAnnotation> instance = model.getConstructor(Map.class).newInstance(configuration);
 
 			/*
 			 * Check if all prerequsites are fulfilled.
@@ -96,9 +98,11 @@ public abstract class Pipeline {
 				pipelineClasses.add(model);
 			}
 		} catch (IllegalAccessException | IllegalArgumentException
-				| NoSuchMethodException | SecurityException | InstantiationException ignored) {
+				 | SecurityException | InstantiationException ignored) {
 			ignored.printStackTrace();
-		} catch(InvocationTargetException e){
+		}catch(NoSuchMethodException e){
+			throw new ParameterException("AnnotationModels should implement both constructors AnnotationModel() and AnnotationModel(Map)");
+		}catch(InvocationTargetException e){
 			if(e.getCause() instanceof NLPException){
 				throw (NLPException)e.getCause();
 			}
