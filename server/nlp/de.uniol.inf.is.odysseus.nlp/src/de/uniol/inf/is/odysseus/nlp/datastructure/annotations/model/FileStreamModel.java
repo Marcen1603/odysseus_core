@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationModel<A> {
-	private static final long serialVersionUID = -7469726621911779794L;
+	private static final long serialVersionUID = -8698291176230199423L;
 
 	/**
 	 * Creates OpenNLP Model based on an user-specified configuration HashMap.
@@ -26,13 +26,36 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 		Option option = configuration.get(AnnotationModel.NAME+"."+this.identifier());
 		if(option == null)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
-		File file = new File((String)option.getValue());
-		try {
-			load(new FileInputStream(file));
+		
+		String[] paths = new String[1];
+		
+		if(option.getValue() instanceof String){
+			paths[0] = (String)option.getValue();
+		}else if(option.getValue() instanceof String[]){
+			paths = (String[])option.getValue();
+		}
+		
+		if(paths.length == 0)
+			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
+		
+		FileInputStream[] streams = new FileInputStream[paths.length];
+		try{
+			for(int i = 0; i < paths.length; i++){
+				streams[i] = new FileInputStream(new File(paths[i]));
+			}
+			load(streams);
 		} catch (FileNotFoundException e) {
 			throw new NLPModelNotFoundException(e.getMessage());
 		} catch (IOException e) {
 			throw new NLPException(e.getMessage());
+		} finally {
+			for(FileInputStream stream : streams){
+				if(stream != null)
+					try {
+						stream.close();
+					} catch (IOException ignored) {
+					}
+			}
 		}
 	}
 	
@@ -43,9 +66,9 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 	}
 
 	/**
-	 * Initializes Model with a model loaded by an input stream.
-	 * @param stream containing model data
+	 * Initializes Model with a multiple models loaded by input streams.
+	 * @param streams containing model data
 	 * @throws IOException if loading fails
 	 */
-	protected abstract void load(InputStream stream) throws IOException;
+	protected abstract void load(InputStream... stream) throws IOException;
 }

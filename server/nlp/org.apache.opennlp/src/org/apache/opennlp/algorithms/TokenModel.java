@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.TrainableFileAnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
@@ -74,8 +73,8 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 	}
 
 	@Override
-	protected void load(InputStream stream) throws IOException {
-		this.tokenizerModel = new TokenizerModel(stream);
+	protected void load(InputStream... stream) throws IOException {
+		this.tokenizerModel = new TokenizerModel(stream[0]);
 		getTokenizer();
 	}
 

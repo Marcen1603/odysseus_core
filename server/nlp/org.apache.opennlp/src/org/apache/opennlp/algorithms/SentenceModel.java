@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 
 import org.apache.opennlp.OpenNLPModel;
 
@@ -23,11 +22,6 @@ import opennlp.tools.sentdetect.SentenceDetectorFactory;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceSample;
 import opennlp.tools.sentdetect.SentenceSampleStream;
-import opennlp.tools.tokenize.TokenSample;
-import opennlp.tools.tokenize.TokenSampleStream;
-import opennlp.tools.tokenize.TokenizerFactory;
-import opennlp.tools.tokenize.TokenizerME;
-import opennlp.tools.tokenize.lang.Factory;
 import opennlp.tools.util.MarkableFileInputStreamFactory;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
@@ -75,8 +69,8 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 	}
 
 	@Override
-	protected void load(InputStream stream) throws IOException {
-		sentenceModel = new opennlp.tools.sentdetect.SentenceModel(stream);
+	protected void load(InputStream... stream) throws IOException {
+		sentenceModel = new opennlp.tools.sentdetect.SentenceModel(stream[0]);
 		getDetector();
 	}
 	
