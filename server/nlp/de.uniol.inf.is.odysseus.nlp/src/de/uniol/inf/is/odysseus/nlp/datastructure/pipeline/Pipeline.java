@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.pipeline;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +64,7 @@ public abstract class Pipeline {
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	public Pipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException{	
+	public Pipeline(List<String> models, Map<String, Option> configuration) throws NLPException{	
 		configure();
 		configure(models, configuration);
 		
@@ -77,7 +76,7 @@ public abstract class Pipeline {
 		
 	}
 	
-	private void addModelToPipeline(Class<? extends AnnotationModel<? extends IAnnotation>> model, HashMap<String, Option> configuration) throws NLPException{
+	private void addModelToPipeline(Class<? extends AnnotationModel<? extends IAnnotation>> model, Map<String, Option> configuration) throws NLPException{
 		try {
 			if(model == null)
 				throw new NLPModelNotFoundException("One of the specified models were not found");
@@ -115,7 +114,7 @@ public abstract class Pipeline {
 	 * @param information List of Annotation-Names that have to be included in the annotated object after annotation.
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 */
-	protected abstract void configure(List<String> information, HashMap<String, Option> configuration);
+	protected abstract void configure(List<String> information, Map<String, Option> configuration);
 	
 	
 	/**

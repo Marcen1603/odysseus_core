@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
@@ -30,7 +31,7 @@ public abstract class NLPToolkit {
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	public NLPToolkit(List<String> models, HashMap<String, Option> configuration) throws NLPException{
+	public NLPToolkit(List<String> models, Map<String, Option> configuration) throws NLPException{
 		this.instantiatePipeline(models, configuration);
 	}
 
@@ -50,7 +51,7 @@ public abstract class NLPToolkit {
 	 * @param configuration HashMap of properties for {@link IAnnotationModel} configuration
 	 * @throws NLPException 
 	 */
-	protected abstract void instantiatePipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException;
+	protected abstract void instantiatePipeline(List<String> models, Map<String, Option> configuration) throws NLPException;
 	
 	/**
 	 * Returns new {@link Annotated} object and annotates it with the configured pipeline.

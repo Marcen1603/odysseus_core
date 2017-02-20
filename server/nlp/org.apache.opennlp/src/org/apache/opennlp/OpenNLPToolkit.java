@@ -2,6 +2,7 @@ package org.apache.opennlp;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
@@ -25,12 +26,12 @@ public class OpenNLPToolkit extends NLPToolkit{
 		super();
 	}
 	
-	public OpenNLPToolkit(List<String> models, HashMap<String, Option> configuration) throws NLPException {
+	public OpenNLPToolkit(List<String> models, Map<String, Option> configuration) throws NLPException {
 		super(models, configuration);
 	}
 
 	@Override
-	protected void instantiatePipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException {
+	protected void instantiatePipeline(List<String> models, Map<String, Option> configuration) throws NLPException {
 		this.pipeline = new OpenNLPPipeline(models, configuration);
 	}
 

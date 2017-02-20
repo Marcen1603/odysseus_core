@@ -1,7 +1,7 @@
 package org.apache.opennlp;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.opennlp.algorithms.ChunksModel;
 import org.apache.opennlp.algorithms.LemmasModel;
@@ -21,14 +21,14 @@ public class OpenNLPPipeline extends Pipeline{
 		super();
 	}
 	
-	public OpenNLPPipeline(List<String> models, HashMap<String, Option> configuration) throws NLPException {
+	public OpenNLPPipeline(List<String> models, Map<String, Option> configuration) throws NLPException {
 		super(models, configuration);
 		
 	}
 
 
 	@Override
-	protected void configure(List<String> information, HashMap<String, Option> configuration) {
+	protected void configure(List<String> information, Map<String, Option> configuration) {
 		
 	}
 
