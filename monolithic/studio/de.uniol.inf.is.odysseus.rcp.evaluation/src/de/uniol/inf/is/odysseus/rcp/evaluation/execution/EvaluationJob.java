@@ -184,6 +184,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			String prefixHeader = "Performing Evaluation number " + i + " / " + model.getNumberOfRuns() + " for total "
 					+ counter + "/" + totalEvals + "\n";
 			if (monitor.isCanceled()) {
+				runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 				throw new InterruptedException();
 			}
 
