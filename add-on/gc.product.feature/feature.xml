@@ -305,8 +305,4 @@
          id="de.uniol.inf.is.odysseus.rcp.evaluation.feature"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.rcp.evaluation.feature"
-         version="0.0.0"/>
-
 </feature>
