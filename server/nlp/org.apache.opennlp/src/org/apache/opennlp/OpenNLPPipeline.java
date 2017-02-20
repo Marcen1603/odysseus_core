@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.opennlp.algorithms.ChunksModel;
 import org.apache.opennlp.algorithms.LemmasModel;
 import org.apache.opennlp.algorithms.NamedEntitiesModel;
+import org.apache.opennlp.algorithms.ParsedModel;
 import org.apache.opennlp.algorithms.PartsOfSpeechModel;
 import org.apache.opennlp.algorithms.SentenceModel;
 import org.apache.opennlp.algorithms.TokenModel;
@@ -40,6 +41,7 @@ public class OpenNLPPipeline extends Pipeline{
 		algorithms.add(PartsOfSpeechModel.class);
 		algorithms.add(LemmasModel.class);
 		algorithms.add(ChunksModel.class);
+		algorithms.add(ParsedModel.class);
 	}
 
 }

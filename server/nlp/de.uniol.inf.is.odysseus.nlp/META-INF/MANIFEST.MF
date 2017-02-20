@@ -21,6 +21,7 @@ Export-Package: de.uniol.inf.is.odysseus.nlp.datastructure,
  de.uniol.inf.is.odysseus.nlp.datastructure.annotations,
  de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations,
  de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model,
+ de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree,
  de.uniol.inf.is.odysseus.nlp.datastructure.exception,
  de.uniol.inf.is.odysseus.nlp.datastructure.pipeline,
  de.uniol.inf.is.odysseus.nlp.datastructure.toolkit
