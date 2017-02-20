@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 final public class SystemLoad extends AbstractBaseMetaAttribute implements ISystemLoad, Cloneable, Serializable {
 
+	public static final String SYSTEMLOAD = "Systemload";
 	private static final String LOCAL_NAME = "local";
 	private transient static final long serialVersionUID = 1L;
 
@@ -41,8 +42,8 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements ISyst
 		SDFSchema sysLoadEntry = SDFSchemaFactory.createNewSchema("SystemloadEntry", Tuple.class, sysLoadAttributes);
 
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("Systemload", "EntryList", SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, sysLoadEntry)));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("Systemload", Tuple.class, attributes, ISystemLoad.class));
+		attributes.add(new SDFAttribute(SYSTEMLOAD, "EntryList", SDFDatatype.createTypeWithSubSchema(SDFDatatype.LIST_TUPLE, sysLoadEntry)));
+		schema.add(SDFSchemaFactory.createNewMetaSchema(SYSTEMLOAD, Tuple.class, attributes, ISystemLoad.class));
 	}
 
 	@Override
@@ -178,7 +179,7 @@ final public class SystemLoad extends AbstractBaseMetaAttribute implements ISyst
 
 	@Override
 	public String getName() {
-		return "Systemload";
+		return SYSTEMLOAD;
 	}
 
 	@Override

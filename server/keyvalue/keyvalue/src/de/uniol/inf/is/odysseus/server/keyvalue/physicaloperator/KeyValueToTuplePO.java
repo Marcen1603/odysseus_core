@@ -14,11 +14,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ToTupleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
-import de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator.KeyValueToTupleAO;
 
 /**
  * This operator transforms a KeyValueObject to a Tuple
@@ -43,7 +43,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 		setOutputSchema(outputSchema);
 	}
 
-	public KeyValueToTuplePO(KeyValueToTupleAO operator) {
+	public KeyValueToTuplePO(ToTupleAO operator) {
 		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler
 				.createInstance(operator.getOutputSchema());
 		this.renameAttributes = operator.getAttributes();

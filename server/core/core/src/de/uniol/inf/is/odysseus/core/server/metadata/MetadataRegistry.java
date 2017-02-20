@@ -105,6 +105,7 @@ public class MetadataRegistry {
 		}
 		synchronized (combinedMetadataTypes) {
 			IMetaAttribute type = combinedMetadataTypes.get(types);
+
 			if (type == null) {
 
 				List<IMetaAttribute> metaDataTypes = new ArrayList<>();

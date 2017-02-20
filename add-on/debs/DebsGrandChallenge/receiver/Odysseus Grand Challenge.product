@@ -70,7 +70,6 @@ limitations under the License.
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.gc.product.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.debsgc2016.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

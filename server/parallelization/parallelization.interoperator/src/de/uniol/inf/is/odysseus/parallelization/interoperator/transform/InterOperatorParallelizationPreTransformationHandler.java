@@ -51,7 +51,8 @@ import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.Transfor
  * @author ChrisToenjesDeye
  *
  */
-public class InterOperatorParallelizationPreTransformationHandler implements IPreTransformationHandler {
+public class InterOperatorParallelizationPreTransformationHandler extends
+		AbstractPreTransformationHandler {
 
 	public static final String HANDLER_NAME = "InterOperatorParallelizationPreTransformationHandler";
 	private final int PARAMETER_COUNT = 4;

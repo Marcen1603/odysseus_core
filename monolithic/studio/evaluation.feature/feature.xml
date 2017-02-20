@@ -16,6 +16,18 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.latency.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.datarate_systemload.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.systemload.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
@@ -40,6 +52,7 @@
       <import plugin="de.uniol.inf.is.odysseus.ruleengine"/>
       <import plugin="org.eclipse.core.filesystem" version="1.3.100" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.systemload" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="de.uniol.inf.is.odysseus.mep"/>
    </requires>
 
    <plugin

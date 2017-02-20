@@ -418,7 +418,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 	}
 
-	private List<ILogicalOperator> findSources(ILogicalOperator topOperator) {
+	static public List<ILogicalOperator> findSources(ILogicalOperator topOperator) {
 		GenericGraphWalker<ILogicalOperator> walker;
 		FindSourcesLogicalVisitor<ILogicalOperator> findSources = new FindSourcesLogicalVisitor<>();
 		walker = new GenericGraphWalker<ILogicalOperator>();
