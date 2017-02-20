@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -42,6 +44,8 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class EvaluationJob extends Job implements IPlanModificationListener {
 
+	InfoService INFO = InfoServiceFactory.getInfoService(EvaluationJob.class);
+	
 	private EvaluationModel model;
 	private Collection<Integer> ids = new ArrayList<>();
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM EvaluationPreTransformation";
@@ -122,6 +126,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		} catch (InterruptedException ex) {
 			return Status.CANCEL_STATUS;
 		} catch (Throwable ex) {
+			INFO.error("Error in Evaluation", ex);
 			ex.printStackTrace();
 			return Status.CANCEL_STATUS;
 		}
@@ -184,6 +189,7 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			String prefixHeader = "Performing Evaluation number " + i + " / " + model.getNumberOfRuns() + " for total "
 					+ counter + "/" + totalEvals + "\n";
 			if (monitor.isCanceled()) {
+				runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 				throw new InterruptedException();
 			}
 
