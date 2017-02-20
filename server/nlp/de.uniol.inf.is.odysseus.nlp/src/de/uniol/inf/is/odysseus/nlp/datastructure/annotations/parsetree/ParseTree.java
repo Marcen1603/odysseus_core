@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 
 public class ParseTree extends ParseNode{
 	public ParseTree(String tag, String text, ParseNode... children){
@@ -16,13 +15,7 @@ public class ParseTree extends ParseNode{
     	return keyvalue;
 	}
 
-	public String getTag() {
-		return tag;
-	}
 
-	public String getText() {
-		return text;
-	}
 	
 	
 }

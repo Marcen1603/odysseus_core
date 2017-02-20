@@ -38,9 +38,4 @@ public class NamedEntities extends Annotation {
 	}
 	
 
-	@Override
-	public String identifier() {
-		return NamedEntities.class.getSimpleName().toLowerCase();
-	}
-
 }
