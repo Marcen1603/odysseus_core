@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
@@ -111,7 +110,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				RestructHelper.insertOperatorBefore2(toInsert, o);
 			}
 		}
-		// dumpPlan(logicalPlan);
+		 dumpPlan(logicalPlan);
 	}
 
 	@SuppressWarnings("unused")
@@ -119,29 +118,36 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
 		System.err.println(planPrinter.createString(logicalPlan));
 	}
-
-	private static ToTupleAO createMapAndTupleOperator(String expressioName, String expression, ILogicalOperator source) {
+	
+	
+	private static MapAO createMapAndTupleOperator(String expressionName, String expression, ILogicalOperator source) {
+		// Need to convert to tuples for csv file sink
+		ToTupleAO tupleAO = createTupleAO(source);
+		
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
 		SDFExpression sdfExpression = new SDFExpression(expression,
 				new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
-		expressions.add(new NamedExpression(expressioName, sdfExpression));
+		expressions.add(new NamedExpression(expressionName, sdfExpression));
 		map.setExpressions(expressions);
-		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		map.subscribeToSource(tupleAO, 0, 0, tupleAO.getOutputSchema());
 		
-		// Need to convert to tuples for csv file sink
+		
+		return map;
+	}
+
+	private static ToTupleAO createTupleAO(ILogicalOperator source) {
 		ToTupleAO tupleAO = new ToTupleAO();
 		List<RenameAttribute> attributes = new ArrayList<>();
-		SDFAttribute attr = sdfExpression.getAllAttributes().get(0);
-		attributes.add(new RenameAttribute(attr, expressioName));
+		// We only need the meta attributes, so remove all attributes from input object
 		tupleAO.setAttributes(attributes);
-		tupleAO.subscribeToSource(map, 0, 0, map.getOutputSchema());
-		
+		tupleAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
 		return tupleAO;
 	}
 
-	private static ToTupleAO createMapAndTupleOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos,
+	private static MapAO createMapOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos,
 			ILogicalOperator source) {
+		
 		MapAO map = new MapAO();
 		SDFExpression sdfExpression = new SDFExpression("elementAt(EntryList[0], " + attribute_pos + ")",
 				new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
@@ -153,15 +159,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 						attribType));
 		map.setExpressions(expressions);
 		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
-		// Need to convert to tuples for csv file sink
-		ToTupleAO tupleAO = new ToTupleAO();
-		List<RenameAttribute> attributes = new ArrayList<>();
-		SDFAttribute attr = new SDFAttribute("", attribute_str, attribType);
-		attributes.add(new RenameAttribute(attr, attribute_str));
-		tupleAO.setAttributes(attributes);
-		tupleAO.subscribeToSource(map, 0, 0, map.getOutputSchema());
-		
-		return tupleAO;
+
+		return map;
 	}
 
 	private static String createSinkName(String base) {
@@ -190,7 +189,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				} else {
 					expression = Latency.schema.get(0).getAttribute(3).getAttributeName();
 				}
-				ToTupleAO latencyOnly = createMapAndTupleOperator(expressionName, expression, latency);
+				MapAO latencyOnly = createMapAndTupleOperator(expressionName, expression, latency);
 				
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
@@ -255,11 +254,11 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
 				
-				ToTupleAO sysloadOnly = createMapAndTupleOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(),
+				MapAO sysloadOnly = createMapAndTupleOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(),
 						SystemLoad.schema.get(0).getAttribute(0).getAttributeName(), systemload);
 
 				
-				ToTupleAO cpuOnly = createMapAndTupleOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
+				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
 				
 				
 				CSVFileSink fileCPU = new CSVFileSink();
@@ -278,7 +277,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 				newChilds.add(fileCPU);
 
-				ToTupleAO memOnly = createMapAndTupleOperatorForSystemLoadAttribute("memory", 2, sysloadOnly);
+				MapAO memOnly = createMapOperatorForSystemLoadAttribute("memory", 2, sysloadOnly);
 													
 				CSVFileSink fileMemory = new CSVFileSink();
 				fileMemory.setWriteMetaData(false);
