@@ -2,9 +2,8 @@ package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -65,7 +64,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
     public NLPToolkit getNlpToolkit(){
     	if(nlpToolkit == null){
     		try {
-    			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(List.class, HashMap.class).newInstance(information, configuration);
+    			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(List.class, Map.class).newInstance(information, configuration);
     		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException 
     				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
     			throw new ParameterException(e.getMessage());

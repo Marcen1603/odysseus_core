@@ -116,7 +116,7 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 		Thread trainThread = new Thread(){
 			@Override
 			public void run(){
-				//((ITrainableModel) getModel()).train(language, file, charset);
+				((ITrainableModel) getModel()).train(language, file, charset);
 				//String[] output = {toolkit.serialize(getModel())};
 				Tuple<IMetaAttribute> output = new Tuple<>(1, true);
 				output.setAttribute(0, getModel());
