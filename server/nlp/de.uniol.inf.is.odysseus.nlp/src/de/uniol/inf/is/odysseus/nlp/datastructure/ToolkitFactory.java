@@ -2,11 +2,11 @@ package de.uniol.inf.is.odysseus.nlp.datastructure;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPToolkitNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
@@ -48,10 +48,10 @@ public class ToolkitFactory {
 	 * @return new NLPToolkit instance of specified Toolkit
 	 * @throws NLPToolkitNotFoundException if no toolkit found
 	 */
-	public static NLPToolkit instantiate(String name, Set<String> information, HashMap<String, Option> configuration) throws NLPToolkitNotFoundException{
+	public static NLPToolkit instantiate(String name, List<String> pipeline, Map<String, Option> configuration) throws NLPToolkitNotFoundException{
 		Class<? extends NLPToolkit> clazz = get(name);
 		try {
-			NLPToolkit toolkit = clazz.getConstructor(Set.class, HashMap.class).newInstance(information, configuration);
+			NLPToolkit toolkit = clazz.getConstructor(List.class, Map.class).newInstance(pipeline, configuration);
 			return toolkit;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException ignored) {
