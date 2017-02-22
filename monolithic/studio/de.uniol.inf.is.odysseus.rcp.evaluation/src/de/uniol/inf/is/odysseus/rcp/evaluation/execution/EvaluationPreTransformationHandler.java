@@ -26,8 +26,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MetadataAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ToTupleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
@@ -103,11 +105,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			for (ILogicalOperator o : sources) {
 				MetadataAO toInsert = new MetadataAO();
 				toInsert.setLocalMetaAttribute(metaAttribute);
-				// TODO: Check why insertOperatorBefore seems to be right in other cases
+				// TODO: Check why insertOperatorBefore seems to be right in
+				// other cases
 				RestructHelper.insertOperatorBefore2(toInsert, o);
 			}
 		}
-		// dumpPlan(logicalPlan);
+		 dumpPlan(logicalPlan);
 	}
 
 	@SuppressWarnings("unused")
@@ -115,15 +118,48 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
 		System.err.println(planPrinter.createString(logicalPlan));
 	}
-
-	private static MapAO createMapOperator(String expressioName, String expression, ILogicalOperator source) {
+	
+	
+	private static MapAO createMapAndTupleOperator(String expressionName, String expression, ILogicalOperator source) {
+		// Need to convert to tuples for csv file sink
+		ToTupleAO tupleAO = createTupleAO(source);
+		
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
 		SDFExpression sdfExpression = new SDFExpression(expression,
 				new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
-		expressions.add(new NamedExpression(expressioName, sdfExpression));
+		expressions.add(new NamedExpression(expressionName, sdfExpression));
+		map.setExpressions(expressions);
+		map.subscribeToSource(tupleAO, 0, 0, tupleAO.getOutputSchema());
+		
+		
+		return map;
+	}
+
+	private static ToTupleAO createTupleAO(ILogicalOperator source) {
+		ToTupleAO tupleAO = new ToTupleAO();
+		List<RenameAttribute> attributes = new ArrayList<>();
+		// We only need the meta attributes, so remove all attributes from input object
+		tupleAO.setAttributes(attributes);
+		tupleAO.subscribeToSource(source, 0, 0, source.getOutputSchema());
+		return tupleAO;
+	}
+
+	private static MapAO createMapOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos,
+			ILogicalOperator source) {
+		
+		MapAO map = new MapAO();
+		SDFExpression sdfExpression = new SDFExpression("elementAt(EntryList[0], " + attribute_pos + ")",
+				new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
+		SDFDatatype attribType = SDFDatatype.DOUBLE;
+		ArrayList<NamedExpression> expressions = new ArrayList<>();
+		expressions
+				.add(new NamedExpression(attribute_str,
+						sdfExpression,
+						attribType));
 		map.setExpressions(expressions);
 		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
+
 		return map;
 	}
 
@@ -153,7 +189,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				} else {
 					expression = Latency.schema.get(0).getAttribute(3).getAttributeName();
 				}
-				MapAO latencyOnly = createMapOperator(expressionName, expression, latency);
+				MapAO latencyOnly = createMapAndTupleOperator(expressionName, expression, latency);
+				
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
 				fileAO.setNumberFormatter("##################################");
@@ -201,19 +238,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		}
 	}
 
-	private static MapAO createMapOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos,
-			ILogicalOperator source) {
-		MapAO map = new MapAO();
-		ArrayList<NamedExpression> expressions = new ArrayList<>();
-		expressions
-				.add(new NamedExpression(attribute_str,
-						new SDFExpression("elementAt(EntryList[0], " + attribute_pos + ")",
-								new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance()),
-						SDFDatatype.DOUBLE));
-		map.setExpressions(expressions);
-		map.subscribeToSource(source, 0, 0, source.getOutputSchema());
-		return map;
-	}
+
 
 	private void addResourceOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
 		if (logicalPlan instanceof TopAO) {
@@ -228,10 +253,14 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				}
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				MapAO sysloadOnly = createMapOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(),
+				
+				MapAO sysloadOnly = createMapAndTupleOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(),
 						SystemLoad.schema.get(0).getAttribute(0).getAttributeName(), systemload);
 
+				
 				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
+				
+				
 				CSVFileSink fileCPU = new CSVFileSink();
 				fileCPU.setWriteMetaData(false);
 				fileCPU.setNumberFormatter("##################################");
@@ -249,6 +278,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				newChilds.add(fileCPU);
 
 				MapAO memOnly = createMapOperatorForSystemLoadAttribute("memory", 2, sysloadOnly);
+													
 				CSVFileSink fileMemory = new CSVFileSink();
 				fileMemory.setWriteMetaData(false);
 				fileMemory.setNumberFormatter("##################################");
