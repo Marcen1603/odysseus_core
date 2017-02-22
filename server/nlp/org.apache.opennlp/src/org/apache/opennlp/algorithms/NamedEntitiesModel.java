@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
@@ -42,23 +43,22 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 
 	@Override
 	public void annotate(Annotated annotated) {
-		Map<String, NamedEntity> map = new HashMap<>();
+		List<NamedEntity> list = new ArrayList<>();
 		Tokens tokensAnnotation = (Tokens)annotated.getAnnotations().get(Tokens.NAME);
 		String[] tokens = tokensAnnotation.getTokens();
 		for(TokenNameFinder nameFinder : nameFinders){
 			opennlp.tools.util.Span[] tokenSpans = nameFinder.find(tokens);
 			for(opennlp.tools.util.Span tokenSpan : tokenSpans){
-				if(!map.containsKey(tokenSpan.getType())){
-					map.put(tokenSpan.getType(), new NamedEntity(tokenSpan.getType()));
-				}
+				NamedEntity entity = new NamedEntity(tokenSpan.getType());
+				list.add(entity);
 				try {
-					map.get(tokenSpan.getType()).add(OpenNLPToolkit.convertOpenNLPSpanToSpan(tokenSpan));
+					entity.add(OpenNLPToolkit.convertOpenNLPSpanToSpan(tokenSpan));
 				} catch (InvalidSpanException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		NamedEntities namedEntities = new NamedEntities(new ArrayList<>(map.values()));
+		NamedEntities namedEntities = new NamedEntities(list);
 		annotated.put(namedEntities);
 	}
 
