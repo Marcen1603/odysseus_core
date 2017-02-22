@@ -110,7 +110,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				RestructHelper.insertOperatorBefore2(toInsert, o);
 			}
 		}
-		 dumpPlan(logicalPlan);
+		 ///dumpPlan(logicalPlan);
 	}
 
 	@SuppressWarnings("unused")
@@ -118,12 +118,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
 		System.err.println(planPrinter.createString(logicalPlan));
 	}
-	
-	
+
+
 	private static MapAO createMapAndTupleOperator(String expressionName, String expression, ILogicalOperator source) {
 		// Need to convert to tuples for csv file sink
 		ToTupleAO tupleAO = createTupleAO(source);
-		
+
 		MapAO map = new MapAO();
 		ArrayList<NamedExpression> expressions = new ArrayList<>();
 		SDFExpression sdfExpression = new SDFExpression(expression,
@@ -131,8 +131,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		expressions.add(new NamedExpression(expressionName, sdfExpression));
 		map.setExpressions(expressions);
 		map.subscribeToSource(tupleAO, 0, 0, tupleAO.getOutputSchema());
-		
-		
+
+
 		return map;
 	}
 
@@ -147,7 +147,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 	private static MapAO createMapOperatorForSystemLoadAttribute(String attribute_str, int attribute_pos,
 			ILogicalOperator source) {
-		
+
 		MapAO map = new MapAO();
 		SDFExpression sdfExpression = new SDFExpression("elementAt(EntryList[0], " + attribute_pos + ")",
 				new DirectAttributeResolver(source.getOutputSchema()), MEP.getInstance());
@@ -190,7 +190,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 					expression = Latency.schema.get(0).getAttribute(3).getAttributeName();
 				}
 				MapAO latencyOnly = createMapAndTupleOperator(expressionName, expression, latency);
-				
+
 				CSVFileSink fileAO = new CSVFileSink();
 				fileAO.setWriteMetaData(false);
 				fileAO.setNumberFormatter("##################################");
@@ -253,14 +253,14 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				}
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());
-				
+
 				MapAO sysloadOnly = createMapAndTupleOperator(SystemLoad.schema.get(0).getAttribute(0).getAttributeName(),
 						SystemLoad.schema.get(0).getAttribute(0).getAttributeName(), systemload);
 
-				
+
 				MapAO cpuOnly = createMapOperatorForSystemLoadAttribute("cpu", 1, sysloadOnly);
-				
-				
+
+
 				CSVFileSink fileCPU = new CSVFileSink();
 				fileCPU.setWriteMetaData(false);
 				fileCPU.setNumberFormatter("##################################");
@@ -278,7 +278,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				newChilds.add(fileCPU);
 
 				MapAO memOnly = createMapOperatorForSystemLoadAttribute("memory", 2, sysloadOnly);
-													
+
 				CSVFileSink fileMemory = new CSVFileSink();
 				fileMemory.setWriteMetaData(false);
 				fileMemory.setNumberFormatter("##################################");

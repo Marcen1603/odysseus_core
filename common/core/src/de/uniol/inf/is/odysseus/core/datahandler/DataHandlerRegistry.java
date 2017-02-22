@@ -192,7 +192,7 @@ public class DataHandlerRegistry {
 		registerDataHandler(new IntegerHandler());
 		registerDataHandler(new ListDataHandler());
 		registerDataHandler(new LongHandler());
-		registerDataHandler(new ObjectDataHandler<>());
+		registerDataHandler(new ObjectDataHandler());
 		registerDataHandler(new StringHandler());
 		registerDataHandler(new VectorDataHandler());
 		registerDataHandler(new MatrixDataHandler());
