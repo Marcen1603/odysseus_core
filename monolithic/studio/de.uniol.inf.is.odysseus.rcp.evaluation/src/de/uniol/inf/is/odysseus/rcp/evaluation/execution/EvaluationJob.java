@@ -302,6 +302,9 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 		if (!res.isSynchronized(IResource.DEPTH_ZERO)) {
 			res.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
+		if (!(res instanceof IFile)){
+			return "";
+		}
 		try {
 			IFile file = (IFile) res;
 
