@@ -2,12 +2,14 @@ package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
 import java.util.Map;
 
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 public class LoadSheddingAdmissionStatusRegistry {
 	
-	private static int standartMaxSheddingFactor = 50;
+	private static int defaultMaxSheddingFactor = 50;
 	
 	private static int sheddingGrowth = 20;
 
@@ -16,6 +18,8 @@ public class LoadSheddingAdmissionStatusRegistry {
 	private static QuerySelectionStrategy selectionStrategy = QuerySelectionStrategy.DEFAULT;
 	
 	private static ILoadSheddingAdmissionStatusComponent activeComponent;
+	
+	private static boolean active = false;
 	
 	private static boolean first = true;
 	
@@ -51,6 +55,9 @@ public class LoadSheddingAdmissionStatusRegistry {
 	}
 
 	public static void setSheddingGrowth(int sheddingGrowth) {
+		if (active) {
+			throw new ActiveLoadSheddingException();
+		}
 		LoadSheddingAdmissionStatusRegistry.sheddingGrowth = sheddingGrowth;
 	}
 
@@ -59,15 +66,21 @@ public class LoadSheddingAdmissionStatusRegistry {
 	}
 
 	public static void setActiveComponent(String activeComponentName) {
+		if (active) {
+			throw new ActiveLoadSheddingException();
+		}
 		LoadSheddingAdmissionStatusRegistry.activeComponent = getLoadSheddingAdmissionComponent(activeComponentName);
 	}
 
-	public static int getStandartMaxSheddingFactor() {
-		return standartMaxSheddingFactor;
+	public static int getDefaultMaxSheddingFactor() {
+		return defaultMaxSheddingFactor;
 	}
 
-	public static void setStandartMaxSheddingFactor(int standartMaxSheddingFactor) {
-		LoadSheddingAdmissionStatusRegistry.standartMaxSheddingFactor = standartMaxSheddingFactor;
+	public static void setDefaultMaxSheddingFactor(int defaultMaxSheddingFactor) {
+		if (active) {
+			throw new ActiveLoadSheddingException();
+		}
+		LoadSheddingAdmissionStatusRegistry.defaultMaxSheddingFactor = defaultMaxSheddingFactor;
 	}
 
 	public static QuerySelectionStrategy getSelectionStrategy() {
@@ -75,7 +88,16 @@ public class LoadSheddingAdmissionStatusRegistry {
 	}
 
 	public static void setSelectionStrategy(QuerySelectionStrategy selectionStrategy) {
+		if (active) {
+			LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class).info("AcitveLoadSheddingException");
+			throw new ActiveLoadSheddingException();
+		}
 		LoadSheddingAdmissionStatusRegistry.selectionStrategy = selectionStrategy;
+	}
+	
+	public static void setActive(boolean active) {
+		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class).info("setactive");
+		LoadSheddingAdmissionStatusRegistry.active = active;
 	}
 
 	public static boolean isFirst() {

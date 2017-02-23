@@ -71,7 +71,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	@Override
-	public List<IPhysicalQuery> getQuerysWithIncreasingTendency() {
+	public List<IPhysicalQuery> getQueriesWithIncreasingTendency() {
 		HashMap<IPhysicalQuery, Long> map = new HashMap<>();
 		for (IPhysicalQuery query : latencies.keySet()) {
 			long tendency = estimateTendency(latencies.get(query));

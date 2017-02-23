@@ -245,10 +245,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	private Map<Integer, Integer> getQueryRanks() {
 		
 		List<IPhysicalQuery> queuelengths = removeQueriesWithMaxSheddingFactor
-				(QUEUE_LENGTHS_MONITOR.getQuerysWithIncreasingTendency());
+				(QUEUE_LENGTHS_MONITOR.getQueriesWithIncreasingTendency());
 		
 		List<IPhysicalQuery> latencies = removeQueriesWithMaxSheddingFactor
-				(LATENCY_MONITOR.getQuerysWithIncreasingTendency());
+				(LATENCY_MONITOR.getQueriesWithIncreasingTendency());
 		
 		Map<Integer, Integer> queryRanks = new HashMap<>();
 		

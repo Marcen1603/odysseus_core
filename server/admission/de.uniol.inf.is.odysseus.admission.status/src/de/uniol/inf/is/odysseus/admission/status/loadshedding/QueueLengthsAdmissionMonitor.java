@@ -80,7 +80,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	@Override
-	public List<IPhysicalQuery> getQuerysWithIncreasingTendency() {
+	public List<IPhysicalQuery> getQueriesWithIncreasingTendency() {
 
 		Map<IPhysicalQuery, Integer> map = new HashMap<>();
 		for (IPhysicalQuery query : queuelengthsSubscriptions.keySet()) {

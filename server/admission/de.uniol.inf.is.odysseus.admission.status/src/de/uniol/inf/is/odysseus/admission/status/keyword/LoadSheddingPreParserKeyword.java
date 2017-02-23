@@ -1,4 +1,4 @@
-package keyword;
+package de.uniol.inf.is.odysseus.admission.status.keyword;
 
 import java.util.HashMap;
 import java.util.List;

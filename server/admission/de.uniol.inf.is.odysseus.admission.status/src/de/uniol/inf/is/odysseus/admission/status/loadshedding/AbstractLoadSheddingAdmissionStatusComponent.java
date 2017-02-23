@@ -1,15 +1,9 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -63,12 +57,14 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 					int maxSheddingFactor = Integer.parseInt(factor);
 					if (maxSheddingFactor > 0) {
 						allowedQueries.put(queryID, maxSheddingFactor);
+						LoadSheddingAdmissionStatusRegistry.setActive(true);
 						return true;
 					} else {
 						return false;
 					}
 				} else {
-					allowedQueries.put(queryID, LoadSheddingAdmissionStatusRegistry.getStandartMaxSheddingFactor());
+					allowedQueries.put(queryID, LoadSheddingAdmissionStatusRegistry.getDefaultMaxSheddingFactor());
+					LoadSheddingAdmissionStatusRegistry.setActive(true);
 					return true;
 				}
 			}
@@ -86,6 +82,10 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 				activeQueries.remove(queryID);
 			}
 			allowedQueries.remove(queryID);
+			
+			if (allowedQueries.isEmpty()) {
+				LoadSheddingAdmissionStatusRegistry.setActive(false);
+			}
 			return true;
 
 		}
@@ -105,14 +105,6 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 	protected void setSheddingFactor(int queryID, int factor) {
 		if (AdmissionStatusPlugIn.getServerExecutor().getQueryState(queryID, superUser) != QueryState.INACTIVE) {
 			AdmissionStatusPlugIn.getServerExecutor().partialQuery(queryID, factor, superUser);
-			String text = queryID + " has shedding factor : " + factor;
-			LoggerFactory.getLogger(this.getClass()).info(text);
-			try {
-				Files.write(Paths.get("C:/Users/Jannes/Desktop/Uni/6.Semester/Bachelor_Arbeit/Evaluation/Ergebnis/sheddingfactor.txt"),
-						text.getBytes(), StandardOpenOption.APPEND);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		
 	}

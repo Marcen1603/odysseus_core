@@ -85,14 +85,11 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 			return;
 		}
 		
-		boolean simple = false;
 		int partialQuery = getSheddingQueryID();
 		
 		int maxSheddingFactor = allowedQueries.get(partialQuery);
 		int sheddingFactor;
-		boolean first;
 		if (activeQueries.containsKey(partialQuery)) {
-			first = false;
 			sheddingFactor = activeQueries.get(partialQuery) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor >= maxSheddingFactor) {
 				sheddingFactor = maxSheddingFactor;
@@ -100,7 +97,6 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 			}
 			activeQueries.replace(partialQuery, sheddingFactor);
 		} else {
-			first = true;
 			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 			if (sheddingFactor >= maxSheddingFactor) {
 				sheddingFactor = maxSheddingFactor;
@@ -108,15 +104,7 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 			}
 			activeQueries.put(partialQuery, sheddingFactor);
 		}
-		if (simple) {
-			if (first) {
-				simpleActiveQueries.add(partialQuery);
-			}
-		} else {
-			if (simpleActiveQueries.contains(partialQuery)) {
-				simpleActiveQueries.remove(Integer.valueOf(partialQuery));
-			}
-		}
+		
 		setSheddingFactor(partialQuery, sheddingFactor);
 	}
 
@@ -306,10 +294,10 @@ public class ComplexLoadSheddingWPAdmissionStatusComponent extends AbstractLoadS
 	private Map<Integer, Integer> getQueryRanks() {
 		
 		List<IPhysicalQuery> queuelengths = removeQuerysWithMaxSheddingFactor
-				(QUEUE_LENGTHS_MONITOR.getQuerysWithIncreasingTendency());
+				(QUEUE_LENGTHS_MONITOR.getQueriesWithIncreasingTendency());
 		
 		List<IPhysicalQuery> latencies = removeQuerysWithMaxSheddingFactor
-				(LATENCY_MONITOR.getQuerysWithIncreasingTendency());
+				(LATENCY_MONITOR.getQueriesWithIncreasingTendency());
 				
 		Map<Integer, Integer> queryRanks = new HashMap<>();
 		

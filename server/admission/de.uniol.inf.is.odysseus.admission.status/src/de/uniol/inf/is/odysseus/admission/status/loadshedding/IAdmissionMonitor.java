@@ -28,5 +28,5 @@ public interface IAdmissionMonitor {
 	 * Returns a list with all queries, which have an increasing tendency.
 	 * @return
 	 */
-	public List<IPhysicalQuery> getQuerysWithIncreasingTendency();
+	public List<IPhysicalQuery> getQueriesWithIncreasingTendency();
 }

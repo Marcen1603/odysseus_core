@@ -28,15 +28,12 @@ public class ChooseLoadSheddingSelectionStrategy extends AbstractFunction<Comman
 				switch(strategy) {
 				case "equally":
 					LoadSheddingAdmissionStatusRegistry.setSelectionStrategy(QuerySelectionStrategy.EQUALLY);
-					LoggerFactory.getLogger(this.getClass()).info("Equally");
 					break;
 				case "separately":
 					LoadSheddingAdmissionStatusRegistry.setSelectionStrategy(QuerySelectionStrategy.SEPARATELY);
-					LoggerFactory.getLogger(this.getClass()).info("Separately");
 					break;
 				case "default":
 					LoadSheddingAdmissionStatusRegistry.setSelectionStrategy(QuerySelectionStrategy.DEFAULT);
-					LoggerFactory.getLogger(this.getClass()).info("Default");
 					break;
 				}
 				

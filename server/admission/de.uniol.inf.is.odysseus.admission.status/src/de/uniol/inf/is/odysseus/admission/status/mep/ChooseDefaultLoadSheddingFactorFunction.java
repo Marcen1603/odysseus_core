@@ -5,11 +5,11 @@ import de.uniol.inf.is.odysseus.core.command.Command;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-public class ChooseStandartLoadSheddingFactorFunction extends AbstractFunction<Command> {
+public class ChooseDefaultLoadSheddingFactorFunction extends AbstractFunction<Command> {
 
 	private static final long serialVersionUID = 1359170669833482294L;
 
-	public ChooseStandartLoadSheddingFactorFunction() {
+	public ChooseDefaultLoadSheddingFactorFunction() {
 		super("chooseStandartSheddingFactor", 1, null, SDFDatatype.COMMAND);
 	}
 
@@ -19,7 +19,7 @@ public class ChooseStandartLoadSheddingFactorFunction extends AbstractFunction<C
 		
 		return new Command() {
 			@Override public boolean run() {
-				LoadSheddingAdmissionStatusRegistry.setStandartMaxSheddingFactor(factor);
+				LoadSheddingAdmissionStatusRegistry.setDefaultMaxSheddingFactor(factor);
 				return true;
 			}
 		};
