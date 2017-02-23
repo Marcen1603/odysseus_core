@@ -18,7 +18,6 @@ import opennlp.tools.postag.POSTagger;
 import opennlp.tools.postag.POSTaggerME;
 
 public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
-	private static final long serialVersionUID = 3816907420196986638L;
 	private POSModel model;
 	private POSTagger tagger;
 	
@@ -64,6 +63,12 @@ public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
 	@Override
 	protected void addRequirements() {
 		prerequisites.add(TokenModel.class);
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

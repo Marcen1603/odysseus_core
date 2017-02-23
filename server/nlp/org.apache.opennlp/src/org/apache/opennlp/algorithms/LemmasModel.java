@@ -20,7 +20,6 @@ import opennlp.tools.lemmatizer.LemmatizerME;
 import opennlp.tools.lemmatizer.LemmatizerModel;
 
 public class LemmasModel extends OpenNLPModel<Lemmas> {
-	private static final long serialVersionUID = -1520950014473462548L;
 	private LemmatizerModel model;
 	private Lemmatizer lemmatizer;
 	private boolean isStatistical = false;
@@ -80,6 +79,12 @@ public class LemmasModel extends OpenNLPModel<Lemmas> {
 			lemmatizer = new LemmatizerME(model);
 		}
 		return lemmatizer;
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

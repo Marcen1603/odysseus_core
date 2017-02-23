@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +23,6 @@ import opennlp.tools.namefind.TokenNameFinder;
 import opennlp.tools.namefind.TokenNameFinderModel;
 
 public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
-	private static final long serialVersionUID = 958282844283877757L;
 	private TokenNameFinderModel[] namedEntitiesModels;
 	private TokenNameFinder[] nameFinders;
 
@@ -90,6 +88,12 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> {
 	@Override
 	protected void addRequirements() {
 		prerequisites.add(TokenModel.class);
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

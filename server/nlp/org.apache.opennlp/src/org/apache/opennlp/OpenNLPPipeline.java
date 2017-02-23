@@ -23,15 +23,12 @@ public class OpenNLPPipeline extends Pipeline{
 	
 	public OpenNLPPipeline(List<String> models, Map<String, Option> configuration) throws NLPException {
 		super(models, configuration);
-		
 	}
-
 
 	@Override
 	protected void configure(List<String> information, Map<String, Option> configuration) {
 		
 	}
-
 
 	@Override
 	protected void configure() {
@@ -43,5 +40,4 @@ public class OpenNLPPipeline extends Pipeline{
 		algorithms.add(ChunksModel.class);
 		algorithms.add(ParsedModel.class);
 	}
-
 }

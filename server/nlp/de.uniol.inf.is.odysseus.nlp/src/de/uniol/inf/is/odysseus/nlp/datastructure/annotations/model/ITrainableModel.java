@@ -4,4 +4,5 @@ import java.io.File;
 
 public interface ITrainableModel {
 	public void train(String languageCode, File file, String charSet);
+	public void store(File file);
 }

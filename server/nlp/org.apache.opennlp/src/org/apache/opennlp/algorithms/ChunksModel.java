@@ -19,7 +19,6 @@ import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 
 public class ChunksModel extends OpenNLPModel<Chunks> {
-	private static final long serialVersionUID = 1712373769774616803L;
 	private ChunkerModel model;
 	private Chunker chunker;
 	
@@ -66,6 +65,12 @@ public class ChunksModel extends OpenNLPModel<Chunks> {
 	@Override
 	protected void addRequirements() {
 		prerequisites.add(PartsOfSpeechModel.class);
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

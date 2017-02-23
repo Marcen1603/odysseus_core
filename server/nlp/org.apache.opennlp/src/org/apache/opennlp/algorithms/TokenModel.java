@@ -29,7 +29,6 @@ import opennlp.tools.util.TrainingParameters;
 
 
 public class TokenModel extends OpenNLPModel<Tokens> {
-	private static final long serialVersionUID = 8879738892852158758L;
 	private TokenizerModel tokenizerModel;
 
 	public TokenizerModel getTokenizerModel() {
@@ -92,6 +91,12 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 		} catch (IOException e) {
 			throw new NLPTrainingFailedException(e.getMessage());
 		}
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

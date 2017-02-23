@@ -27,8 +27,6 @@ import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
 
 public class SentenceModel extends OpenNLPModel<Sentences>{
-	private static final long serialVersionUID = 269539119735625215L;
-	
 	private SentenceDetector detector;
 
 	private opennlp.tools.sentdetect.SentenceModel sentenceModel;
@@ -90,6 +88,12 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 			} catch (IOException e) {
 				throw new NLPTrainingFailedException(e.getMessage());
 			}
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/*@Override

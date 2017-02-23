@@ -3,7 +3,6 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
@@ -14,7 +13,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Parsed;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Sentences;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree.ParseTree;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
@@ -25,7 +23,6 @@ import opennlp.tools.parser.ParserFactory;
 import opennlp.tools.parser.ParserModel;
 
 public class ParsedModel extends OpenNLPModel<Parsed> {
-	private static final long serialVersionUID = -3116819901236326950L;
 	private ParserModel model;
 	private Parser parser;
 
@@ -81,6 +78,12 @@ public class ParsedModel extends OpenNLPModel<Parsed> {
 	protected void addRequirements() {
 		prerequisites.add(SentenceModel.class);
 		prerequisites.add(TokenModel.class);
+	}
+
+	@Override
+	public void store(File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
