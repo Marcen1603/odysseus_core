@@ -17,6 +17,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
@@ -42,7 +45,7 @@ public class ParallelizationOptimizer {
 	private static final String MIGRATION_STRATEGY = "GeneralizedParallelTracksMigrationStrategy";
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void reoptimizeQuery(IPhysicalQuery physicalQuery, ISession user) {
+	public void reoptimizeQuery(IPhysicalQuery physicalQuery, ISession caller) {
 		ILogicalQuery logicalQuery = physicalQuery.getLogicalQuery();
 
 		// copy initial logical plan an rename it to avoid duplicate uniqueids
@@ -91,14 +94,29 @@ public class ParallelizationOptimizer {
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
 		logicalQueryList.add(logicalQuery);
-		StandardExecutor.getInstance().executePreTransformationHandlers(user,
+		StandardExecutor.getInstance().executePreTransformationHandlers(caller,
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery), logicalQueryList, Context.empty());
 		// rewrite
-
+		ParameterDoRewrite restruct = (new OptimizationConfiguration(
+				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery))).getParameterDoRewrite();
+		if (restruct != null && restruct == ParameterDoRewrite.TRUE) {
+			RewriteConfiguration rewriteConfig = (new OptimizationConfiguration(
+					StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery))).getRewriteConfiguration();
+			rewriteConfig
+					.setQueryBuildConfiguration(StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery));
+			logicalQuery
+					.setLogicalPlan(
+							StandardExecutor.getInstance().getCompiler().rewritePlan(logicalQuery.getLogicalPlan(),
+									rewriteConfig, caller, StandardExecutor.getInstance().getDataDictionary(caller)),
+							false);
+			LOG.debug("Plan rewritten");
+		} else {
+			LOG.debug("Rewritung of plan disabled.");
+		}
 		// transform
 		IPhysicalQuery newPhysicalQuery = StandardExecutor.getInstance().transform(logicalQuery,
 				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
-				user);
+				caller);
 		// load migration strategy
 		IMigrationStrategy planMigrationStrategy = null;
 		try {

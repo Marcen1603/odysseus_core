@@ -18,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
  *
  * @param <T>
  */
+@Deprecated
 public class MigrationBuffer<T extends IStreamObject<? extends ITimeInterval>> extends BufferPO<T> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MigrationBuffer.class);

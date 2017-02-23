@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Merlin Wasmann
  * 
  */
+@Deprecated
 public class MigrationMarkerPunctuation extends AbstractPunctuation {
 
 	private static final long serialVersionUID = 1L;
