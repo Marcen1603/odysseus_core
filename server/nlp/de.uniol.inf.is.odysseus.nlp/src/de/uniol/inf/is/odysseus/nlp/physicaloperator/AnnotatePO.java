@@ -17,28 +17,26 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 
-public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, KeyValueObject<M>> {
+public class AnnotatePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObject<IMetaAttribute>> {
 	private SDFAttribute attribute;
 	private int attributePosition;
 	private NLPToolkit toolkit;
-	private String toolkitName;
 	private HashMap<String, Option> configuration;
 	private List<String> models;
 	public int getAttributePosition(){
 		return attributePosition;
 	}
 
-    public AnnotatePO(AnnotatePO<M> splitPO) {
+    public AnnotatePO(AnnotatePO splitPO) {
         super();
-		init(splitPO.toolkitName, splitPO.toolkit, splitPO.models, splitPO.attribute, splitPO.configuration);
+		init(splitPO.toolkit, splitPO.models, splitPO.attribute, splitPO.configuration);
     }
      
-    public AnnotatePO(String toolkit, NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
-		init(toolkit, nlpToolkit, models, attribute, configuration);
+    public AnnotatePO(NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
+		init(nlpToolkit, models, attribute, configuration);
 	}
 
-	private void init(String toolkit, NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
-        this.toolkitName = toolkit;
+	private void init(NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
         this.toolkit = nlpToolkit;
         this.models = models;
         this.attribute = attribute;
@@ -69,7 +67,7 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	    if(!(ipo instanceof AnnotatePO)) {
 	        return false;
 	    }
-	    AnnotatePO<?> spo = (AnnotatePO<?>) ipo;
+	    AnnotatePO spo = (AnnotatePO) ipo;
 	    if(this.hasSameSources(spo) &&
 	            this.attribute.equals(spo.attribute) &&
 	            this.toolkit.equals(spo.toolkit) &&
@@ -82,7 +80,7 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 	}
 
 	@Override
-	protected void process_next(Tuple<M> object, int port) {
+	protected void process_next(Tuple<IMetaAttribute> object, int port) {
 		if(port == 0){
 			processAnnotation(object);
 			return;
@@ -96,10 +94,10 @@ public class AnnotatePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>,
 		}
 	}
 
-	private void processAnnotation(Tuple<M> object) {
+	private void processAnnotation(Tuple<IMetaAttribute> object) {
 		Annotated annotated = this.toolkit.annotate(object.getAttribute(attributePosition).toString());
 	   	
-    	KeyValueObject<M> output = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) object, getOutputSchema());
+    	KeyValueObject<IMetaAttribute> output = KeyValueObject.fromTuple((Tuple<IMetaAttribute>) object, getOutputSchema());
     	KeyValueObject<IMetaAttribute> annotations = annotated.toObject();
     	
     	output.setAttribute("annotations", annotations);

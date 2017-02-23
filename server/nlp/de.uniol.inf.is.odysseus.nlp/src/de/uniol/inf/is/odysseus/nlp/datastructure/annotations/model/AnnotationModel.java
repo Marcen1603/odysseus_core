@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -8,9 +7,7 @@ import java.util.Set;
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 
-public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotationModel<T>, Serializable {
-	private static final long serialVersionUID = -5602583923531732056L;
-	
+public abstract class AnnotationModel<T extends IAnnotation> implements IAnnotationModel<T> {
 	public final static String NAME = "model";
 	protected Set<Class<? extends AnnotationModel<? extends IAnnotation>>> prerequisites = new HashSet<>();
 

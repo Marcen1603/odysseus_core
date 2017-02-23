@@ -13,8 +13,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationModel<A> {
-	private static final long serialVersionUID = -8698291176230199423L;
-
 	/**
 	 * Creates OpenNLP Model based on an user-specified configuration HashMap.
 	 * @param configuration contains information about model-location

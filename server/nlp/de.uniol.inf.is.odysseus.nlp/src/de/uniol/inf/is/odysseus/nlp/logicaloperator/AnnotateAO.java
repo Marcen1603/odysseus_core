@@ -118,13 +118,15 @@ public class AnnotateAO extends AbstractLogicalOperator {
         return new AnnotateAO(this);
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public SDFSchema getOutputSchemaIntern(int pos) {
-    	if (outputSchema==null) 
+    	if (outputSchema==null) {
     		outputSchema = SDFSchemaFactory.createNewSchema(
     			getInputSchema(0).getURI(),
     			(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
     					.getAttributes(), getInputSchema(0));
+    	}
     	//List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
     	/*
     	if(information.contains(Annotation.TOKENID))

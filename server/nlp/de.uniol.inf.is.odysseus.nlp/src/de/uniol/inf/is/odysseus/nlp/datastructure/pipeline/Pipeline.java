@@ -85,7 +85,7 @@ public abstract class Pipeline {
 			AnnotationModel<? extends IAnnotation> instance = model.getConstructor(Map.class).newInstance(configuration);
 
 			/*
-			 * Check if all prerequsites are fulfilled.
+			 * Check if all prerequisites are fulfilled.
 			 */
 			if(!pipelineClasses.containsAll(prerequisites)){
 				throw new NLPModelPrerequisitesNotFulfilledException("Some of the prerequsites of " + instance.identifier() + " are not fulfilled. "

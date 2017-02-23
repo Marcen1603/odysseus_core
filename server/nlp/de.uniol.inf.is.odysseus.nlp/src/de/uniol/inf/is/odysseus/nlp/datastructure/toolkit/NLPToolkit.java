@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.toolkit;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
