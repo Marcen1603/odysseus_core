@@ -18,10 +18,10 @@ public class SpatialDataStructureProvider {
 	static Logger logger = LoggerFactory.getLogger(SpatialDataStructureProvider.class);
 
 	private static SpatialDataStructureProvider instance;
-	private Map<String, IMovingObjectDataStructure> dataStructureMap;
+	private Map<String, ISpatioTemporalDataStructure> dataStructureMap;
 
 	private SpatialDataStructureProvider() {
-		this.dataStructureMap = new HashMap<String, IMovingObjectDataStructure>();
+		this.dataStructureMap = new HashMap<String, ISpatioTemporalDataStructure>();
 	}
 
 	public static SpatialDataStructureProvider getInstance() {
@@ -47,12 +47,12 @@ public class SpatialDataStructureProvider {
 	 *            attribute is.
 	 * @return A spatial data structure
 	 */
-	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition) {
+	public ISpatioTemporalDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition) {
 		if (!dataStructureExists(name)) {
-			Class<?> dataStructureClass = MovingObjectDataStructuresRegistry.getDataStructureClass(type);
-			IMovingObjectDataStructure dataStrucure = null;
+			Class<?> dataStructureClass = SpatioTemporalDataStructuresRegistry.getDataStructureClass(type);
+			ISpatioTemporalDataStructure dataStrucure = null;
 			try {
-				dataStrucure = (IMovingObjectDataStructure) dataStructureClass
+				dataStrucure = (ISpatioTemporalDataStructure) dataStructureClass
 						.getDeclaredConstructor(String.class, int.class).newInstance(name, geometryPosition);
 				addDataStructure(dataStrucure);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -73,7 +73,7 @@ public class SpatialDataStructureProvider {
 	 * @param dataStructure
 	 *            The data structure to add
 	 */
-	public void addDataStructure(IMovingObjectDataStructure dataStructure) {
+	public void addDataStructure(ISpatioTemporalDataStructure dataStructure) {
 		dataStructureMap.put(dataStructure.getName(), dataStructure);
 	}
 
@@ -85,7 +85,7 @@ public class SpatialDataStructureProvider {
 	 *            The name of the data structure
 	 * @return The data structure or null, if it does not exist
 	 */
-	public IMovingObjectDataStructure getDataStructure(String name) {
+	public ISpatioTemporalDataStructure getDataStructure(String name) {
 		return this.dataStructureMap.get(name);
 	}
 

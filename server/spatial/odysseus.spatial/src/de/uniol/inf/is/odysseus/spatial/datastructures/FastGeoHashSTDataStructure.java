@@ -21,7 +21,7 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 	// How much bigger the number of deleted elements over the remaining
 	// elements need to be to do a re-creation of the hashes
 	private static final double biggerFactor = 3;
-	
+
 	private int cleanUpCounter;
 	private static final int CLEAN_SKIPS = 10;
 
@@ -38,7 +38,7 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 			cleanUpCounter++;
 			return;
 		}
-		
+
 		cleanUpCounter = 0;
 
 		// Remove old elements from sweepArea
@@ -64,7 +64,8 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 			// GeoHash
 			this.sweepArea.queryAllElementsAsList().stream().forEach(tuple -> {
 				// Insert into map
-				GeoHash geoHash = this.fromGeometry(getGeometry(tuple));
+				GeoHash geoHash = GeoHashHelper.fromGeometry(GeoHashHelper.getGeometry(tuple, getGeometryPosition()),
+						BIT_PRECISION);
 				List<Tuple<ITimeInterval>> geoHashList = this.geoHashes.get(geoHash);
 				if (geoHashList == null) {
 					/*
@@ -88,7 +89,8 @@ public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 			}
 
 			// Remove the extracted elements from the quadTree
-			removed.stream().forEach(e -> this.geoHashes.remove(this.fromGeometry(getGeometry(e))));
+			removed.stream().forEach(e -> this.geoHashes.remove(
+					GeoHashHelper.fromGeometry(GeoHashHelper.getGeometry(e, getGeometryPosition()), BIT_PRECISION)));
 		}
 
 	}

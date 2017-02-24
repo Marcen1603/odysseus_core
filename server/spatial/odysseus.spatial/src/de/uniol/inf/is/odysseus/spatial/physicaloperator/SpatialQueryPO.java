@@ -14,18 +14,18 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
-	private IMovingObjectDataStructure dataStructure;
+	private ISpatioTemporalDataStructure dataStructure;
 	private Polygon polygon;
 //	private int geometryPosition;
 
 	private DefaultTISweepArea<Tuple<ITimeInterval>> sweepArea;
 
-	public SpatialQueryPO(IMovingObjectDataStructure dataStructure, List<Point> polygonPoints, int geometryPosition) {
+	public SpatialQueryPO(ISpatioTemporalDataStructure dataStructure, List<Point> polygonPoints, int geometryPosition) {
 		this.dataStructure = dataStructure;
 		this.sweepArea = new DefaultTISweepArea<>();
 //		this.geometryPosition = geometryPosition;

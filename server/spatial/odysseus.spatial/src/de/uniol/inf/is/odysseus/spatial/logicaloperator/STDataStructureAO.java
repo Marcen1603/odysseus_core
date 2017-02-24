@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SpatialStore", doc = "Fills a spatio temporal data structure", category = {
@@ -24,7 +23,7 @@ public class STDataStructureAO extends UnaryLogicalOp {
 
 	private String dataStructureName;
 	private String dataStructureType;
-	private int geometryPosition;
+	private String geometryAttribute;
 
 	public STDataStructureAO() {
 		super();
@@ -32,9 +31,9 @@ public class STDataStructureAO extends UnaryLogicalOp {
 
 	public STDataStructureAO(STDataStructureAO ao) {
 		super(ao);
-		setDataStructureName(ao.dataStructureName);
-		setDataStructureType(ao.dataStructureType);
-		setGeometryPosition(ao.geometryPosition);
+		setDataStructureName(ao.getDataStructureName());
+		setDataStructureType(ao.getDataStructureType());
+		setGeometryAttribute(ao.getGeometryAttribute());
 	}
 
 	@Override
@@ -59,14 +58,14 @@ public class STDataStructureAO extends UnaryLogicalOp {
 	public String getDataStructureType() {
 		return this.dataStructureType;
 	}
-	
-	public int getGeometryPosition() {
-		return geometryPosition;
+
+	public String getGeometryAttribute() {
+		return geometryAttribute;
 	}
 
-	@Parameter(name = "geometryPosition", optional = false, type = IntegerParameter.class, isList = false, doc = "The position in the incoming tuples where the geometry attribute is.")
-	public void setGeometryPosition(int geometryPosition) {
-		this.geometryPosition = geometryPosition;
+	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the object.F")
+	public void setGeometryAttribute(String geometryAttribute) {
+		this.geometryAttribute = geometryAttribute;
 	}
 
 	@Override
@@ -74,9 +73,10 @@ public class STDataStructureAO extends UnaryLogicalOp {
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
 		SDFAttribute attr = new SDFAttribute("dataStructureName", "dataStructureName", SDFDatatype.STRING);
 		attributeList.add(attr);
-		
+
 		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema("spatialschema", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList, getInputSchema());
+		SDFSchema schema = SDFSchemaFactory.createNewSchema("spatialschema",
+				(Class<? extends IStreamObject<?>>) Tuple.class, attributeList, getInputSchema());
 		return schema;
 	}
 }

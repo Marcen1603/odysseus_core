@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.spatial.datastructures.FastGeoHashSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.MovingObjectDataStructuresRegistry;
+import de.uniol.inf.is.odysseus.spatial.datastructures.SpatioTemporalDataStructuresRegistry;
 import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
@@ -30,12 +30,12 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		TransportHandlerRegistry.register(new SpatioTemporalDataStructureTransportHandler());
-		MovingObjectDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure.TYPE);
-		MovingObjectDataStructuresRegistry.register(QuadTreeSTDataStructure.class, QuadTreeSTDataStructure.TYPE);
-		MovingObjectDataStructuresRegistry.register(FastQuadTreeSTDataStructure.class,
+		SpatioTemporalDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure.TYPE);
+		SpatioTemporalDataStructuresRegistry.register(QuadTreeSTDataStructure.class, QuadTreeSTDataStructure.TYPE);
+		SpatioTemporalDataStructuresRegistry.register(FastQuadTreeSTDataStructure.class,
 				FastQuadTreeSTDataStructure.TYPE);
-		MovingObjectDataStructuresRegistry.register(GeoHashSTDataStructure.class, GeoHashSTDataStructure.TYPE);
-		MovingObjectDataStructuresRegistry.register(FastGeoHashSTDataStructure.class, FastGeoHashSTDataStructure.TYPE);
+		SpatioTemporalDataStructuresRegistry.register(GeoHashSTDataStructure.class, GeoHashSTDataStructure.TYPE);
+		SpatioTemporalDataStructuresRegistry.register(FastGeoHashSTDataStructure.class, FastGeoHashSTDataStructure.TYPE);
 	}
 
 	/*

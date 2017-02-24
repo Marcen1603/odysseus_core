@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialRangeAO;
@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialRangeAO;
  */
 public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
-	private IMovingObjectDataStructure dataStructure;
+	private ISpatioTemporalDataStructure dataStructure;
 	private int geometryPosition;
 //	private int idPosition;
 	private double range;

@@ -1,3 +1,4 @@
+
 package de.uniol.inf.is.odysseus.spatial.datastructures;
 
 import java.util.ArrayList;
@@ -6,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -17,7 +17,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -47,13 +46,13 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @since 2017
  *
  */
-public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
+public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 
 	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);
 
 	public static final String TYPE = "geohash";
 
-	private static final int BIT_PRECISION = 64;
+	protected static final int BIT_PRECISION = 64;
 
 	// The position of the geometry-attribute within the tuple
 	private int geometryAttributePosition;
@@ -93,7 +92,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
 
 			// Insert into map
-			GeoHash geoHash = this.fromGeometry(getGeometry(tuple));
+			GeoHash geoHash = GeoHashHelper.fromGeometry(GeoHashHelper.getGeometry(tuple, getGeometryPosition()),
+					BIT_PRECISION);
 			List<Tuple<ITimeInterval>> geoHashList = this.geoHashes.get(geoHash);
 			if (geoHashList == null) {
 				/*
@@ -131,7 +131,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 		// Remove the extracted elements from the map
 		for (Tuple<ITimeInterval> removedTuple : removed) {
-			GeoHash hash = this.fromGeometry(this.getGeometry(removedTuple));
+			GeoHash hash = GeoHashHelper
+					.fromGeometry(GeoHashHelper.getGeometry(removedTuple, this.getGeometryPosition()), BIT_PRECISION);
 			List<Tuple<ITimeInterval>> geoHashList = this.geoHashes.get(hash);
 			if (geoHashList.size() == 1) {
 				// We don't have to compare or iterate, we can directly remove
@@ -224,7 +225,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 			// Get all elements within that bounding box (filter step, just an
 			// approximation)
-			candidateCollection = approximateBoundinBox(createPolygon(createBox(topLeft, lowerRight)));
+			candidateCollection = approximateBoundinBox(
+					GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
 
 			if (candidateCollection.size() < k) {
 				// Increase the radius and search on
@@ -313,7 +315,7 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		// Get all elements within that bounding box (filter step, just an
 		// approximation)
 		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
-				createPolygon(createBox(topLeft, lowerRight)));
+				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
 
 		return queryCircle(geometry, radius, t, candidateCollection);
 
@@ -357,7 +359,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 				 * position (have the same geohash)
 				 */
 				.filter(f -> spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-						getGeometry(this.geoHashes.get(f).get(0)).getCentroid().getCoordinate()) <= radius)
+						GeoHashHelper.getGeometry(this.geoHashes.get(f).get(0), getGeometryPosition()).getCentroid()
+								.getCoordinate()) <= radius)
 				/*
 				 * We have a list of tuples but need to do this for every tuple.
 				 * Therefore, we need to "unnest" the list, which is a flatMap
@@ -379,14 +382,14 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 
 	public List<Tuple<ITimeInterval>> queryBoundingBox(Point topLeft, Point lowerRight, ITimeInterval t) {
 		// Create the polygon to query
-		List<Point> polygonPoints = createBox(topLeft, lowerRight);
+		List<Point> polygonPoints = GeoHashHelper.createBox(topLeft, lowerRight);
 
 		return queryBoundingBox(polygonPoints, t);
 	}
 
 	@Override
 	public List<Tuple<ITimeInterval>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
-		Polygon polygon = createPolygon(polygonPoints);
+		Polygon polygon = GeoHashHelper.createPolygon(polygonPoints);
 
 		// Get all hashes that we have to calculate the distance for
 		Map<GeoHash, List<Tuple<ITimeInterval>>> allHashes = approximateBoundinBox(polygon);
@@ -401,7 +404,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 				 * element as all elements in this list are on the exact same
 				 * position (have the same geohash)
 				 */
-				.filter(e -> polygon.contains(getGeometry(allHashes.get(e).get(0))))
+				.filter(e -> polygon
+						.contains(GeoHashHelper.getGeometry(allHashes.get(e).get(0), getGeometryPosition())))
 				/*
 				 * We have a list of tuples but need to do this for every tuple.
 				 * Therefore, we need to "unnest" the list, which is a flatMap
@@ -421,7 +425,8 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		return result;
 	}
 
-	private Map<GeoHash, List<Tuple<ITimeInterval>>> approximateBoundinBox(Polygon polygon) {
+	@SuppressWarnings("unchecked")
+	protected Map<GeoHash, List<Tuple<ITimeInterval>>> approximateBoundinBox(Polygon polygon) {
 		Geometry envelope = polygon.getEnvelope();
 
 		// Get hashes that we have to search for
@@ -439,79 +444,15 @@ public class GeoHashSTDataStructure implements IMovingObjectDataStructure {
 		for (GeoHash hash : searchHashes) {
 			// Query all our hashes and use those which have the same prefix
 			// The whole list of hashes is used in "getByPrefix"
-			allHashes.putAll(getByPreffix(hash));
+			allHashes.putAll((Map<? extends GeoHash, ? extends List<Tuple<ITimeInterval>>>) GeoHashHelper
+					.getByPreffix(hash, this.geoHashes));
 		}
 		return allHashes;
-	}
-
-	private Polygon createPolygon(List<Point> polygonPoints) {
-		// Check if the first and the last point is equal. If not, we have to
-		// add the first point at the end to have a closed ring.
-		Point firstPoint = polygonPoints.get(0);
-		Point lastPoint = polygonPoints.get(polygonPoints.size() - 1);
-		if (!firstPoint.equals(lastPoint)) {
-			polygonPoints.add(firstPoint);
-		}
-
-		// Find the ones which are really within the box
-		// Create a polygon with the given points
-		GeometryFactory factory = new GeometryFactory();
-		LinearRing ring = factory.createLinearRing(
-				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
-		Polygon polygon = factory.createPolygon(ring, null);
-		return polygon;
 	}
 
 	@Override
 	public int getGeometryPosition() {
 		return this.geometryAttributePosition;
-	}
-
-	/**
-	 * Get the geometry from a tuple
-	 * 
-	 * @param tuple
-	 *            The tuple with the geometry
-	 * @return The geometry
-	 */
-	protected Geometry getGeometry(Tuple<?> tuple) {
-		Object o = tuple.getAttribute(getGeometryPosition());
-		GeometryWrapper geometryWrapper = null;
-		if (o instanceof GeometryWrapper) {
-			geometryWrapper = (GeometryWrapper) o;
-			Geometry geometry = geometryWrapper.getGeometry();
-			return geometry;
-		} else {
-			return null;
-		}
-	}
-
-	private SortedMap<GeoHash, List<Tuple<ITimeInterval>>> getByPreffix(GeoHash preffix) {
-		// We have to add 1 to the given hash, as we search all between the
-		// given hash and the next one
-		return this.geoHashes.subMap(preffix, preffix.next());
-	}
-
-	protected GeoHash fromGeometry(Geometry geometry) {
-		Point centroid = geometry.getCentroid();
-		GeoHash hash = GeoHash.withBitPrecision(centroid.getX(), centroid.getY(), BIT_PRECISION);
-		return hash;
-	}
-
-	private List<Point> createBox(Point topLeft, Point lowerRight) {
-		// Create the polygon
-		GeometryFactory factory = new GeometryFactory(topLeft.getPrecisionModel(), topLeft.getSRID());
-		Point topRight = factory.createPoint(new Coordinate(lowerRight.getX(), topLeft.getY()));
-		Point lowerLeft = factory.createPoint(new Coordinate(topLeft.getX(), lowerRight.getY()));
-
-		List<Point> polygonPoints = new ArrayList<>(5);
-		polygonPoints.add(topLeft);
-		polygonPoints.add(topRight);
-		polygonPoints.add(lowerRight);
-		polygonPoints.add(lowerLeft);
-		polygonPoints.add(topLeft);
-
-		return polygonPoints;
 	}
 
 }

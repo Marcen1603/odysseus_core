@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.spatial.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialQueryAO;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.SpatialQueryPO;
@@ -14,7 +14,7 @@ public class TSpatialQueryAOTransformRule extends AbstractTransformationRule<Spa
 
 	@Override
 	public void execute(SpatialQueryAO operator, TransformationConfiguration config) throws RuleException {
-		IMovingObjectDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
+		ISpatioTemporalDataStructure dataStructure = SpatialDataStructureProvider.getInstance()
 				.getDataStructure(operator.getDataStructureName());
 		defaultExecute(operator,
 				new SpatialQueryPO<>(dataStructure, operator.getPolygonPoints(), operator.getGeometryPosition()),
