@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.SpatioTemporalDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.SpatialRangeAO;
 
@@ -34,7 +34,7 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 		this.range = ao.getRange();
 
-		this.dataStructure = SpatialDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
+		this.dataStructure = SpatioTemporalDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
 		if (this.dataStructure == null) {
 			throw new RuntimeException("The spatial data structure with the name " + ao.getDataStructureName()
 					+ " does not exist. Use a SpatialStore operator to create and fill one.");

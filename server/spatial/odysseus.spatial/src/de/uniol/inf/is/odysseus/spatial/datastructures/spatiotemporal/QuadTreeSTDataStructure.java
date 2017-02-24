@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal;
 
 import java.util.HashMap;
 import java.util.List;

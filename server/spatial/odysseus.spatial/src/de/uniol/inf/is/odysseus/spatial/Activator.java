@@ -4,12 +4,14 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastGeoHashSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatioTemporalDataStructuresRegistry;
-import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.QuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectDataStructureRegistry;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.FastGeoHashSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.FastQuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.GeoHashSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.NaiveSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.QuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.SpatioTemporalDataStructuresRegistry;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
 
 public class Activator implements BundleActivator {
@@ -30,12 +32,18 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
 		TransportHandlerRegistry.register(new SpatioTemporalDataStructureTransportHandler());
+
+		// Spatio temporal data structures
 		SpatioTemporalDataStructuresRegistry.register(NaiveSTDataStructure.class, NaiveSTDataStructure.TYPE);
 		SpatioTemporalDataStructuresRegistry.register(QuadTreeSTDataStructure.class, QuadTreeSTDataStructure.TYPE);
 		SpatioTemporalDataStructuresRegistry.register(FastQuadTreeSTDataStructure.class,
 				FastQuadTreeSTDataStructure.TYPE);
 		SpatioTemporalDataStructuresRegistry.register(GeoHashSTDataStructure.class, GeoHashSTDataStructure.TYPE);
-		SpatioTemporalDataStructuresRegistry.register(FastGeoHashSTDataStructure.class, FastGeoHashSTDataStructure.TYPE);
+		SpatioTemporalDataStructuresRegistry.register(FastGeoHashSTDataStructure.class,
+				FastGeoHashSTDataStructure.TYPE);
+
+		// Moving object data structures
+		MovingObjectDataStructureRegistry.register(GeoHashMODataStructure.class, GeoHashMODataStructure.TYPE);
 	}
 
 	/*

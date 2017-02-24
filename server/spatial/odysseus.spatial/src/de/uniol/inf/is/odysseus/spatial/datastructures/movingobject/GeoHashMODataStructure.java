@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 
 	private static final int BIT_PRECISION = 64;
+	public static final String TYPE = "mo_geohash";
 
 	private int idPosition;
 	private double distancePerMovingObject;
@@ -42,11 +43,12 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	private Map<String, TrajectoryElement> latestTrajectoryElementMap;
 	private Map<String, Double> movingObjectDistances;
 
-	public GeoHashMODataStructure(String name, int geometryPosition, int idPosition) {
+	public GeoHashMODataStructure(String name, int geometryPosition, int idPosition, double distancePerMovingObject) {
 		this.name = name;
 		this.geometryAttributePosition = geometryPosition;
-
 		this.idPosition = idPosition;
+		this.distancePerMovingObject = distancePerMovingObject;
+
 		this.pointMap = new TreeMap<>();
 		this.latestTrajectoryElementMap = new HashMap<>();
 		this.movingObjectDistances = new HashMap<>();
@@ -85,12 +87,14 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 			this.pointMap.put(geoHash, geoHashList);
 
 			// Calculate the new total distance of this trajectory
-			double newDistance = movingObjectDistances.get(id) + trajectoryElement.getDistanceToPreviousElement();
+			double newDistance = (movingObjectDistances.get(id) == null ? 0.0 : movingObjectDistances.get(id))
+					+ trajectoryElement.getDistanceToPreviousElement();
 			movingObjectDistances.put(id, newDistance);
 
 			// Search for the last but one element
 			TrajectoryElement element = trajectoryElement;
-			while (element != null && element.getPreviousElement() != null) {
+			while (element != null && element.getPreviousElement() != null
+					&& element.getPreviousElement().getPreviousElement() != null) {
 				element = element.getPreviousElement();
 			}
 

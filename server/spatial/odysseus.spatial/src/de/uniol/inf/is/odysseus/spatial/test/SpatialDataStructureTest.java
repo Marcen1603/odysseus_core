@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.FastQuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.GeoHashSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import junit.framework.TestCase;
 

@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.spatial.datastructures.ISpatioTemporalDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {

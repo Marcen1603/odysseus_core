@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal;
 
 import java.util.ArrayList;
 import java.util.Comparator;

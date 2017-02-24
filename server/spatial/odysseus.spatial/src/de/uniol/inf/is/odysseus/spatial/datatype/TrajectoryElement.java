@@ -19,16 +19,18 @@ public class TrajectoryElement {
 	public TrajectoryElement(TrajectoryElement previousElement, GeoHash geoHash,
 			IStreamObject<? extends IMetaAttribute> streamElement) {
 		this.previousElement = previousElement;
-		this.previousElement.nextElement = this;
+		if (this.previousElement != null) {
+			this.previousElement.nextElement = this;
+		}
 		this.geoHash = geoHash;
 		this.streamElement = streamElement;
 
 		// Calculate distance to previous element
 		if (previousElement != null) {
 			distanceToPreviousElement = MetrticSpatialUtils.getInstance().calculateDistance(null,
-					new Coordinate(geoHash.getPoint().getLongitude(), geoHash.getPoint().getLatitude()),
-					new Coordinate(previousElement.getGeoHash().getPoint().getLongitude(),
-							previousElement.getGeoHash().getPoint().getLatitude()));
+					new Coordinate(geoHash.getPoint().getLatitude(), geoHash.getPoint().getLongitude()),
+					new Coordinate(previousElement.getGeoHash().getPoint().getLatitude(),
+							previousElement.getGeoHash().getPoint().getLongitude()));
 		}
 	}
 

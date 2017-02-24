@@ -1,5 +1,5 @@
 
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
+import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
@@ -50,7 +51,7 @@ public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 
 	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);
 
-	public static final String TYPE = "geohash";
+	public static final String TYPE = "st_geohash";
 
 	protected static final int BIT_PRECISION = 64;
 

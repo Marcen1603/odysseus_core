@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.movingobject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -7,26 +7,20 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * All spatial data structures can be accessed or created with this provider.
- * 
- * @author Tobias Brandt
- *
- */
-public class SpatialDataStructureProvider {
+public class MovingObjectDataStructureProvider {
 
-	static Logger logger = LoggerFactory.getLogger(SpatialDataStructureProvider.class);
+	static Logger logger = LoggerFactory.getLogger(MovingObjectDataStructureProvider.class);
 
-	private static SpatialDataStructureProvider instance;
-	private Map<String, ISpatioTemporalDataStructure> dataStructureMap;
+	private static MovingObjectDataStructureProvider instance;
+	private Map<String, IMovingObjectDataStructure> dataStructureMap;
 
-	private SpatialDataStructureProvider() {
-		this.dataStructureMap = new HashMap<String, ISpatioTemporalDataStructure>();
+	private MovingObjectDataStructureProvider() {
+		this.dataStructureMap = new HashMap<String, IMovingObjectDataStructure>();
 	}
 
-	public static SpatialDataStructureProvider getInstance() {
+	public static MovingObjectDataStructureProvider getInstance() {
 		if (instance == null) {
-			instance = new SpatialDataStructureProvider();
+			instance = new MovingObjectDataStructureProvider();
 		}
 		return instance;
 	}
@@ -47,13 +41,15 @@ public class SpatialDataStructureProvider {
 	 *            attribute is.
 	 * @return A spatial data structure
 	 */
-	public ISpatioTemporalDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition) {
+	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition,
+			int idPosition, double distanePerMovingObject) {
 		if (!dataStructureExists(name)) {
-			Class<?> dataStructureClass = SpatioTemporalDataStructuresRegistry.getDataStructureClass(type);
-			ISpatioTemporalDataStructure dataStrucure = null;
+			Class<?> dataStructureClass = MovingObjectDataStructureRegistry.getDataStructureClass(type);
+			IMovingObjectDataStructure dataStrucure = null;
 			try {
-				dataStrucure = (ISpatioTemporalDataStructure) dataStructureClass
-						.getDeclaredConstructor(String.class, int.class).newInstance(name, geometryPosition);
+				dataStrucure = (IMovingObjectDataStructure) dataStructureClass
+						.getDeclaredConstructor(String.class, int.class, int.class, double.class)
+						.newInstance(name, geometryPosition, idPosition, distanePerMovingObject);
 				addDataStructure(dataStrucure);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
@@ -73,7 +69,7 @@ public class SpatialDataStructureProvider {
 	 * @param dataStructure
 	 *            The data structure to add
 	 */
-	public void addDataStructure(ISpatioTemporalDataStructure dataStructure) {
+	public void addDataStructure(IMovingObjectDataStructure dataStructure) {
 		dataStructureMap.put(dataStructure.getName(), dataStructure);
 	}
 
@@ -85,7 +81,7 @@ public class SpatialDataStructureProvider {
 	 *            The name of the data structure
 	 * @return The data structure or null, if it does not exist
 	 */
-	public ISpatioTemporalDataStructure getDataStructure(String name) {
+	public IMovingObjectDataStructure getDataStructure(String name) {
 		return this.dataStructureMap.get(name);
 	}
 
