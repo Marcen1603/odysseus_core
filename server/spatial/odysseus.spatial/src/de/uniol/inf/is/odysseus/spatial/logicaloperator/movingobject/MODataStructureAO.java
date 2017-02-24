@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.logicaloperator;
+package de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject;
 
 import java.util.ArrayList;
 import java.util.List;

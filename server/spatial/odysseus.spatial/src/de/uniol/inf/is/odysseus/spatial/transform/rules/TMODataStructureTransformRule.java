@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.spatial.transform.rules;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.spatial.logicaloperator.MODataStructureAO;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MODataStructureAO;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.MODataStructurePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;

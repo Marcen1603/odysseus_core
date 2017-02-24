@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectDataStructureProvider;
-import de.uniol.inf.is.odysseus.spatial.logicaloperator.MODataStructureAO;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MODataStructureAO;
 
 public class MODataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
