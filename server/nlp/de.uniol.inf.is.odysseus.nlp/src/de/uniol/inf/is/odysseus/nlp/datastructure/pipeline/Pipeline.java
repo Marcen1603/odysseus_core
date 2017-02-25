@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IAnnotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IAnnotationModel;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IJoinable;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelPrerequisitesNotFulfilledException;
@@ -190,7 +191,13 @@ public abstract class Pipeline {
 		}
 		if(idx != -1){
 			LOGGER.info("Exchanged Model: "+exchange.identifier());
-			pipeline.set(idx, exchange);
+			if(exchange instanceof IJoinable){
+				IJoinable old = (IJoinable) pipeline.get(idx);
+				AnnotationModel<?> model = old.join(exchange, true); 
+				pipeline.set(idx, model);
+			}else{
+				pipeline.set(idx, exchange);
+			}
 		}
 	}
 	
