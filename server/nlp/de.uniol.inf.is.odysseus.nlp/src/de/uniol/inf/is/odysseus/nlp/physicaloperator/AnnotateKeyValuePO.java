@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 
-public class AnnotatePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObject<IMetaAttribute>> {
+public class AnnotateKeyValuePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObject<IMetaAttribute>> {
 	private SDFAttribute attribute;
 	private int attributePosition;
 	private NLPToolkit toolkit;
@@ -27,12 +27,12 @@ public class AnnotatePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObje
 		return attributePosition;
 	}
 
-    public AnnotatePO(AnnotatePO splitPO) {
+    public AnnotateKeyValuePO(AnnotateKeyValuePO splitPO) {
         super();
 		init(splitPO.toolkit, splitPO.models, splitPO.attribute, splitPO.configuration);
     }
      
-    public AnnotatePO(NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
+    public AnnotateKeyValuePO(NLPToolkit nlpToolkit, List<String> models, SDFAttribute attribute, HashMap<String, Option> configuration) {
 		init(nlpToolkit, models, attribute, configuration);
 	}
 
@@ -64,10 +64,10 @@ public class AnnotatePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObje
 	
 	@Override
 	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
-	    if(!(ipo instanceof AnnotatePO)) {
+	    if(!(ipo instanceof AnnotateKeyValuePO)) {
 	        return false;
 	    }
-	    AnnotatePO spo = (AnnotatePO) ipo;
+	    AnnotateKeyValuePO spo = (AnnotateKeyValuePO) ipo;
 	    if(this.hasSameSources(spo) &&
 	            this.attribute.equals(spo.attribute) &&
 	            this.toolkit.equals(spo.toolkit) &&

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
@@ -25,7 +27,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 /**
  * Logical operator component of the ANNOTATE operator
  */
-@LogicalOperator(name="ANNOTATE", minInputPorts=1, maxInputPorts=9, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
+@LogicalOperator(name="ANNOTATENLP", minInputPorts=1, maxInputPorts=9, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
 public class AnnotateAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = 2937642785475519576L;
@@ -47,6 +49,11 @@ public class AnnotateAO extends AbstractLogicalOperator {
 	
 	private SDFSchema outputSchema = null;
 	
+	private String outputType = "KeyValueObject";
+
+	private SDFAttribute objectOutput = new SDFAttribute(null, "output",
+            SDFDatatype.OBJECT, null, null, null);
+	
 	public AnnotateAO(){
         super();		
 
@@ -59,6 +66,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
         this.attribute = annotateAO.attribute;
         this.nlpToolkit = annotateAO.getNlpToolkit();
         this.configuration = annotateAO.configuration;
+        this.outputType = annotateAO.outputType;
     }
     
     public NLPToolkit getNlpToolkit(){
@@ -82,6 +90,22 @@ public class AnnotateAO extends AbstractLogicalOperator {
 		this.toolkit = toolkit;	
 	}
 
+    @Parameter(name="output", type = StringParameter.class, optional = true)
+	public void setOutput(String output) {
+    	switch(output){
+	    	case "Object":
+	    	case "KeyValueObject":
+	    		this.outputType = output;
+	    		break;
+	    	default:
+	    		throw new ParameterException("Output must be either Object or KeyValueObject.");
+    	}
+	}
+
+    public String getOutputType(){
+    	return outputType;
+    }
+    
     public String getToolkit(){
     	return toolkit;
     }
@@ -121,11 +145,19 @@ public class AnnotateAO extends AbstractLogicalOperator {
     @SuppressWarnings("unchecked")
 	@Override
     public SDFSchema getOutputSchemaIntern(int pos) {
-    	if (outputSchema==null) {
+    	if(outputSchema != null)
+    		return outputSchema;
+    	
+    	if(outputType.equals("KeyValueObject")){
     		outputSchema = SDFSchemaFactory.createNewSchema(
     			getInputSchema(0).getURI(),
     			(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
     					.getAttributes(), getInputSchema(0));
+    	
+    	}else{
+    		List<SDFAttribute> attributes = new ArrayList<>();
+    		attributes.add(objectOutput);
+    		outputSchema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
     	}
     	//List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
     	/*
@@ -140,7 +172,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
     		*/
     	
         //SDFSchema schema = SDFSchemaFactory.createNewAddAttributes(attributes, getInputSchema(0));
-        return outputSchema;
+        return getOutputSchemaIntern(pos);
     }
 
 
