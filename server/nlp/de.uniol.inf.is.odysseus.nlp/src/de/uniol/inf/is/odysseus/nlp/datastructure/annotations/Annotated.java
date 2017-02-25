@@ -30,6 +30,7 @@ public class Annotated extends Annotation{
     		if(models.contains(entry.getValue().identifier()))
     			keyvalue.setAttribute(entry.getKey(), entry.getValue().toObject());
     	}
+    	keyvalue.setAttribute("text", text);
 		return keyvalue;
 	}
 
