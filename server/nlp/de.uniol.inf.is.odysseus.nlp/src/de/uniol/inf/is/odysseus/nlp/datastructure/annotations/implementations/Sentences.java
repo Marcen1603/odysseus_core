@@ -28,11 +28,11 @@ public class Sentences extends Annotation {
 	
 	@Override
 	public Object toObject() {
-		int[][] sentenceSpans = new int[sentences.length][2];
-		for(int i = 0; i < sentences.length; i++){
-			sentenceSpans[i] = sentences[i].toArray();
+		String[] sentences = new String[this.sentences.length];
+		for(int i = 0; i < this.sentences.length; i++){
+			sentences[i] = this.sentences[i].getText();
 		}
-		return sentenceSpans;
+		return sentences;
 	}
 
 }
