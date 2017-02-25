@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.nlp.logicaloperator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -11,12 +12,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.util.Constants;
 import de.uniol.inf.is.odysseus.nlp.physicaloperator.TrainTransportHandler;
 
 
-@LogicalOperator(name="TRAIN", minInputPorts=0, maxInputPorts=0, doc = "Trains specific NLP-model and outputs the model as serialzed object.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
+@LogicalOperator(name="TRAINNLP", minInputPorts=0, maxInputPorts=0, doc = "Trains specific NLP-model and outputs the model as serialzed object.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
 public class TrainAO extends AbstractAccessAO {
 	private static final long serialVersionUID = 6100531335886603325L;
 	private SDFAttribute output = new SDFAttribute(null, "output",
@@ -75,6 +77,14 @@ public class TrainAO extends AbstractAccessAO {
 	public void setCharset(String charset) {
 		addOption(TrainTransportHandler.CHARSETKEY, charset);
 	}
+	
+	
+    @Parameter(name=TrainTransportHandler.OPTIONSKEY, type = OptionParameter.class, isList = true, optional = true)
+    public void setOptions(List<Option> options){
+    	for(Option op:options){
+    		addOption(op.getName(), op.getValue());
+    	}
+    }
 
 
 	@Override

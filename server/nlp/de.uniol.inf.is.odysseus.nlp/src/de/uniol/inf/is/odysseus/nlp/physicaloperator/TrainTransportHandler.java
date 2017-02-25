@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.ToolkitFactory;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.ITrainableModel;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelStoringFailed;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPToolkitNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 
@@ -26,6 +27,11 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 	public static final String CHARSETKEY = "charset";
 	public static final String MODELKEY = "model";
 	public static final String LANGUAGECODEKEY = "language";
+
+	public static final String OPTIONSKEY = "options";
+	public static final String OVERWRITEKEY = "overwrite";
+
+	public static final String STOREKEY = "store";
 	
 	private AnnotationModel<?> model;
 	private NLPToolkit toolkit;
@@ -38,6 +44,9 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 	private File file;
 
 	private String language;
+	private OptionMap options;
+
+	private String store;
 	
 	public TrainTransportHandler(){
 		
@@ -62,6 +71,15 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 		} catch (URISyntaxException e) {
 			throw new ParameterException("Wrong URI syntax in option "+URIKEY);
 		}
+		
+		//if model will overwrite another one during join then the following option might be set
+		//it defines the filename of the joined model, which has to be overriden
+		//see NamedEntitiesModel of OpenNLP-Framework
+
+		String overwriteKey = options.get(OVERWRITEKEY);
+		store = options.get(STOREKEY);
+		if(overwriteKey != null)
+			this.options.setOption(OVERWRITEKEY, options.get(OVERWRITEKEY));			
 	}
 
 	private void initFile(String uri, String charset) throws URISyntaxException {
@@ -112,11 +130,18 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 
 
 	@Override
-	public void processInOpen() throws IOException{
+	public void processInOpen() throws IOException{		
 		Thread trainThread = new Thread(){
 			@Override
 			public void run(){
-				((ITrainableModel) getModel()).train(language, file, charset);
+				((ITrainableModel) getModel()).train(language, file, charset, options);
+				if(store != null)
+					try {
+						((ITrainableModel) getModel()).store(new File(store));
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new NLPModelStoringFailed(e.getMessage());
+					}
 				//String[] output = {toolkit.serialize(getModel())};
 				Tuple<IMetaAttribute> output = new Tuple<>(1, true);
 				output.setAttribute(0, getModel());
@@ -124,6 +149,7 @@ public class TrainTransportHandler extends AbstractPushTransportHandler {
 			}
 		};
 		trainThread.start();
+
 	}
 
 

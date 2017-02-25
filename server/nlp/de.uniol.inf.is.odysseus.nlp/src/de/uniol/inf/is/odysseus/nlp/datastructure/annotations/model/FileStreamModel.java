@@ -13,6 +13,8 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationModel<A> {
+	protected String[] filenames;
+
 	/**
 	 * Creates OpenNLP Model based on an user-specified configuration HashMap.
 	 * @param configuration contains information about model-location
@@ -26,6 +28,7 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
 		
 		String[] paths = ((String)option.getValue()).split(":");
+		filenames = new String[paths.length];
 		
 		if(paths.length == 0)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
@@ -33,8 +36,11 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 		FileInputStream[] streams = new FileInputStream[paths.length];
 		try{
 			for(int i = 0; i < paths.length; i++){
-				streams[i] = new FileInputStream(new File(paths[i]));
+				File file = new File(paths[i]);
+				filenames[i] = file.getName();
+				streams[i] = new FileInputStream(file);
 			}
+			
 			load(streams);
 		} catch (FileNotFoundException e) {
 			throw new NLPModelNotFoundException(e.getMessage());
