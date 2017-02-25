@@ -11,6 +11,10 @@ public class Lemmas extends Annotation {
 		this.lemmas = lemmas;
 	}
 	
+	public String[] getLemmas(){
+		return lemmas;
+	}
+	
 	@Override
 	public Object toObject() {
 		return lemmas;

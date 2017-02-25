@@ -18,6 +18,10 @@ public class NamedEntity extends Annotation{
 		namedEntities.add(span);
 	}
 	
+	public Set<Span> getSpans(){
+		return namedEntities;
+	}
+	
 	@Override
 	public Object toObject() {
 		int[][] spans = new int[namedEntities.size()][2];

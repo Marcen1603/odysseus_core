@@ -23,7 +23,6 @@ public class NamedEntities extends Annotation {
 	
 	public void add(NamedEntity annotation){
 		getAnnotations().put(annotation.getType(), annotation);
-
 	}
 	
 	@Override
