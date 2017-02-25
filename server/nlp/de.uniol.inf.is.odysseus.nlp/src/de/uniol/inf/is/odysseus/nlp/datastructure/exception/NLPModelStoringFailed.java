@@ -1,9 +1,9 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.exception;
 
-public class NLPModelSerializationFailed extends RuntimeException {
+public class NLPModelStoringFailed extends RuntimeException {
 	private static final long serialVersionUID = 1055587850843151874L;
 
-	public NLPModelSerializationFailed(String message) {
+	public NLPModelStoringFailed(String message) {
 		super(message);
 	}
 }

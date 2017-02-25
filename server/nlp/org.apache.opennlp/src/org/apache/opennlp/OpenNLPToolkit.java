@@ -1,12 +1,10 @@
 package org.apache.opennlp;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Parsed;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree.ParseLeaf;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree.ParseNode;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree.ParseTree;
@@ -41,7 +39,7 @@ public class OpenNLPToolkit extends NLPToolkit{
 	}
 	
 	public static Span convertOpenNLPSpanToSpan(opennlp.tools.util.Span span) throws InvalidSpanException{
-		return new Span(span.getStart(), span.getEnd());
+		return new Span(span.getStart(), span.getEnd(), span.toString());
 	}
 
 	public static ParseTree convertParseToParseTree(Parse parse) {
