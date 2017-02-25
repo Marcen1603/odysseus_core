@@ -22,6 +22,7 @@ import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
+import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
@@ -69,7 +70,7 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 			TrajectoryElement latestElement = latestTrajectoryElementMap.get(id);
 
 			// Create the new "latest" element and save it
-			TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, geoHash, tuple);
+			TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash, tuple);
 			latestTrajectoryElementMap.put(id, trajectoryElement);
 
 			List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
@@ -107,7 +108,7 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	}
 
 	@Override
-	public Map<String, List<TrajectoryElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
 
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
@@ -141,32 +142,43 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	 *            candidates.
 	 * @return All elements from the candidates that are in the given circle.
 	 */
-	public Map<String, List<TrajectoryElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection) {
 
 		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
 
-		// TODO Do performance tests? stream vs parallelStream vs foreach
-		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
 		// TODO Maybe faster with Haversine. Give choice?
 		// TODO Think about: maybe it is faster to first check if the point is
 		// within a polygon (cheap) and reduce the number of distance
 		// calculations (expensive)
 
-		List<GeoHash> result = candidateCollection.keySet().stream()
-				/*
-				 * spatial filter (it's enough to do it only with the first
-				 * element as all elements in this list are on the exact same
-				 * position (have the same geohash)
-				 */
-				.filter(e -> spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-						new Coordinate(e.getPoint().getLongitude(), e.getPoint().getLatitude())) <= radius)
-				/*
-				 * Write result into a list
-				 */
-				.collect(Collectors.toList());
+		Map<String, List<ResultElement>> resultMap = new HashMap<>();
 
-		return convertToResultMap(result);
+		// Check all candidates
+		for (GeoHash key : candidateCollection.keySet()) {
+
+			double meters = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
+					new Coordinate(key.getPoint().getLatitude(), key.getPoint().getLongitude()));
+
+			// Check if they are in the given radius
+			if (meters <= radius) {
+				// All elements that are at this point (key) need to be added to
+				// the result
+				for (TrajectoryElement element : pointMap.get(key)) {
+					// Check if we already have results for this key
+					List<ResultElement> listOfMOInRadius = resultMap.get(element.getMovingObjectID());
+					if (listOfMOInRadius == null) {
+						// No: Add a result list
+						listOfMOInRadius = new ArrayList<ResultElement>();
+						resultMap.put(element.getMovingObjectID(), listOfMOInRadius);
+					}
+					ResultElement resultElement = new ResultElement(element, meters);
+					listOfMOInRadius.add(resultElement);
+				}
+			}
+		}
+
+		return resultMap;
 	}
 
 	public Map<String, List<TrajectoryElement>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
@@ -194,7 +206,7 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 				 */
 				.collect(Collectors.toList());
 
-		return convertToResultMap(result);
+		return convertToTrajectoryMap(result);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -222,7 +234,7 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		return allHashes;
 	}
 
-	private Map<String, List<TrajectoryElement>> convertToResultMap(List<GeoHash> unsortedList) {
+	private Map<String, List<TrajectoryElement>> convertToTrajectoryMap(List<GeoHash> unsortedList) {
 		Map<String, List<TrajectoryElement>> resultMap = new HashMap<>();
 
 		for (GeoHash hash : unsortedList) {

@@ -10,18 +10,19 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 public class TrajectoryElement {
 
 	private String movingObjectID;
-	private TrajectoryElement previousElement;
-	private TrajectoryElement nextElement;
+	private transient TrajectoryElement previousElement;
+	private transient TrajectoryElement nextElement;
 	private GeoHash geoHash;
 	private double distanceToPreviousElement;
 	private IStreamObject<? extends IMetaAttribute> streamElement;
 
-	public TrajectoryElement(TrajectoryElement previousElement, GeoHash geoHash,
+	public TrajectoryElement(TrajectoryElement previousElement, String movingObjectID, GeoHash geoHash,
 			IStreamObject<? extends IMetaAttribute> streamElement) {
 		this.previousElement = previousElement;
 		if (this.previousElement != null) {
 			this.previousElement.nextElement = this;
 		}
+		this.movingObjectID = movingObjectID;
 		this.geoHash = geoHash;
 		this.streamElement = streamElement;
 

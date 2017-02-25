@@ -7,6 +7,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
 public interface IMovingObjectDataStructure {
@@ -65,7 +66,7 @@ public interface IMovingObjectDataStructure {
 	 * @return A list with all tuples for which their geometry is in the
 	 *         neighborhood around the given geometry
 	 */
-	public Map<String, List<TrajectoryElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a
