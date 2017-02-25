@@ -7,20 +7,23 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException
  */
 public class Span {
 	int start, end;
+	private String text;
 	
 	/**
 	 * Creates new Span Object
 	 * @param begin start index
 	 * @param end end index
+	 * @param text of span
 	 * @throws InvalidSpanException if the end index is lower than the start index
 	 * @see Span
 	 */
-	public Span(int start, int end) throws InvalidSpanException {
+	public Span(int start, int end, String text) throws InvalidSpanException {
 		if(end < start){
 			throw new InvalidSpanException();
 		}
 		this.start = start;
 		this.end = end;
+		this.text = text;
 	}
 	
 	public int getStart() {
@@ -38,6 +41,14 @@ public class Span {
 	public int[] toArray(){
 		return new int[]{start, end};
 	}
+	
+	/**
+	 * Returns text of span
+	 * @return text
+	 */
+	public String getText(){
+		return text;
+	}
 
 	@Override
 	public int hashCode() {
@@ -51,7 +62,4 @@ public class Span {
 		}
 		return false;
 	}
-	
-	
-	
 }

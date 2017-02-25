@@ -3,11 +3,13 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Sentences;
@@ -46,7 +48,8 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 		Span[] spans = new Span[sentences.length];
 		for(int i = 0; i < sentences.length; i++){
 			try {
-				spans[i] = new Span(sentences[i].getStart(), sentences[i].getEnd());
+				String text = annotated.getText().substring(sentences[i].getStart(), sentences[i].getEnd());
+				spans[i] = new Span(sentences[i].getStart(), sentences[i].getEnd(), text);
 			} catch (InvalidSpanException ignored) {
 				//never thrown in OpenNLP sentence detection
 			}
@@ -78,7 +81,7 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 	}
 
 	@Override
-	public void train(String languageCode, File file, String charSet) {
+	public void train(String languageCode, File file, String charSet, OptionMap options) {
 		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
 				ObjectStream<SentenceSample> sampleStream = new SentenceSampleStream(lineStream)) {
 				char[] eosCharacters = {'!', '?', '.', ':'};
@@ -90,12 +93,11 @@ public class SentenceModel extends OpenNLPModel<Sentences>{
 			}
 	}
 
-	@Override
-	public void store(File file) {
-		// TODO Auto-generated method stub
-		
-	}
 
+	@Override
+	protected void store(OutputStream modelOut) throws IOException {
+		sentenceModel.serialize(modelOut);
+	}
 	/*@Override
 	public void makeSerializable() {
 		detector = null;
