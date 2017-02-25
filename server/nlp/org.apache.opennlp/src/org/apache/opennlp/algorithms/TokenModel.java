@@ -3,12 +3,14 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.opennlp.OpenNLPModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
@@ -82,7 +84,7 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 
 
 	@Override
-	public void train(String languageCode, File file, String charSet) {
+	public void train(String languageCode, File file, String charSet, OptionMap options) {
 		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
 			ObjectStream<TokenSample> sampleStream = new TokenSampleStream(lineStream)) {
 			TokenizerFactory factory = new TokenizerFactory(languageCode, new Dictionary(), true, Pattern.compile(Factory.DEFAULT_ALPHANUMERIC));
@@ -93,10 +95,10 @@ public class TokenModel extends OpenNLPModel<Tokens> {
 		}
 	}
 
+
 	@Override
-	public void store(File file) {
-		// TODO Auto-generated method stub
-		
+	protected void store(OutputStream modelOut) throws IOException {
+		tokenizerModel.serialize(modelOut);
 	}
 
 }

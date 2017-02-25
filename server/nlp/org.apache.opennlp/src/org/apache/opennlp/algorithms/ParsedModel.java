@@ -3,12 +3,14 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
 import org.apache.opennlp.OpenNLPToolkit;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Parsed;
@@ -35,7 +37,7 @@ public class ParsedModel extends OpenNLPModel<Parsed> {
 	}
 
 	@Override
-	public void train(String languageCode, File file, String charSet) {
+	public void train(String languageCode, File file, String charSet, OptionMap options) {
 		
 	}
 
@@ -80,8 +82,9 @@ public class ParsedModel extends OpenNLPModel<Parsed> {
 		prerequisites.add(TokenModel.class);
 	}
 
+
 	@Override
-	public void store(File file) {
+	protected void store(OutputStream modelOut) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

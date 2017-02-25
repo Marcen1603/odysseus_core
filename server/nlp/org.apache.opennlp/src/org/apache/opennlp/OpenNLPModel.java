@@ -1,5 +1,11 @@
 package org.apache.opennlp;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
@@ -10,8 +16,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundExce
 
 
 public abstract class OpenNLPModel<A extends IAnnotation> extends TrainableFileAnnotationModel<A>{
-	private static final long serialVersionUID = -5883316418476673362L;
-
 	public OpenNLPModel(){
 		super();
 	}
@@ -20,4 +24,14 @@ public abstract class OpenNLPModel<A extends IAnnotation> extends TrainableFileA
 		super(configuration);	
 	}
 
+	@Override
+	public void store(File file) throws FileNotFoundException, IOException {
+		try(OutputStream modelOut = new BufferedOutputStream(new FileOutputStream(file))){
+		  store(modelOut);
+		}
+		            
+	}
+
+	protected abstract void store(OutputStream modelOut) throws IOException;
+	
 }

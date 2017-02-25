@@ -3,11 +3,13 @@ package org.apache.opennlp.algorithms;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.opennlp.OpenNLPModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.PartsOfSpeech;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
@@ -29,7 +31,7 @@ public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
 		super(configuration);
 	}
 	@Override
-	public void train(String languageCode, File file, String charSet) {
+	public void train(String languageCode, File file, String charSet, OptionMap options) {
 		// TODO Auto-generated method stub
 	}
 
@@ -65,10 +67,10 @@ public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
 		prerequisites.add(TokenModel.class);
 	}
 
+
 	@Override
-	public void store(File file) {
+	protected void store(OutputStream modelOut) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}
-
 }
