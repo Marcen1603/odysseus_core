@@ -6,9 +6,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
  * Interface for all admission monitors.
- * 
- * @author Jannes
- *
  */
 public interface IAdmissionMonitor {
 	
@@ -26,7 +23,7 @@ public interface IAdmissionMonitor {
 	
 	/**
 	 * Returns a list with all queries, which have an increasing tendency.
-	 * @return
+	 * @return List<IPhysicalQuery>
 	 */
 	public List<IPhysicalQuery> getQueriesWithIncreasingTendency();
 }

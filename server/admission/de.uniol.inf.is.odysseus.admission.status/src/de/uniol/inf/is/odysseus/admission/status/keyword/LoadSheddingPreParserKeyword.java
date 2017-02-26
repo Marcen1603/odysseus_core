@@ -11,18 +11,27 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+/**
+ * The LoadSheddingPreParserKeyword manages the handling of Queries which allow load shedding.
+ */
 public class LoadSheddingPreParserKeyword extends AbstractPreParserKeyword {
 
+	/**
+	 * The load shedding keyword.
+	 */
 	public static String LOADSHEDDING = "LOADSHEDDING";
 	
 	@Override
 	public void validate(Map<String, Object> variables, String parameter, ISession caller, Context context,
 			IServerExecutor executor) throws OdysseusScriptException {
+		//Nothing to validate
 	}
 
 	@Override
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller,
 			Context context, IServerExecutor executor) throws OdysseusScriptException {
+		
+		// A new QParam is added.
 		Map<String, String> qParams = new HashMap<String, String>();
 		qParams.put("LOADSHEDDINGENABLED", "true");
 		

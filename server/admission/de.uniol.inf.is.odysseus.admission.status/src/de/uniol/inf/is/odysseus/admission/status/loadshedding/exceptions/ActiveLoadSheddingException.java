@@ -1,15 +1,13 @@
-package de.uniol.inf.is.odysseus.admission.status.loadshedding;
+package de.uniol.inf.is.odysseus.admission.status.loadshedding.exceptions;
 
 /**
- * 
- * This Exception is thrown, if the User tries to change the settings while a Load Shedding Component is active.
- *
+ * This Exception is thrown, if the user tries to change the settings while a load shedding component is active.
  */
 public class ActiveLoadSheddingException extends RuntimeException {
 
 	private static final long serialVersionUID = -389098802980852689L;
 	
-	protected ActiveLoadSheddingException() {
+	public ActiveLoadSheddingException() {
 		super("The Load Shedding settings cannot be changed, while a Load Shedding Component is active.");
 	}
 

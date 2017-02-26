@@ -6,6 +6,9 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
+/**
+ * This class adds the LOADSHEDDING keyword to the usable keywords in PQL.
+ */
 public class AdmissionKeywordProvider implements IPreParserKeywordProvider {
 
 	@Override

@@ -15,29 +15,38 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
- * Measures the latency of all active queries.
- * 
- * @author Jannes
- *
+ * Measures the latency of all added active queries.
  */
 public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	
-	static private final int LATENCY_MEASUREMENT_SIZE = 50;
+	/**
+	 * The size of the latency measurements is set here.
+	 */
+	private final int LATENCY_MEASUREMENT_SIZE = 50;
 	
+	/**
+	 * Each query with a list of its latencies is saved here.
+	 */
 	private Map<IPhysicalQuery, List<Long>> latencies = new HashMap<IPhysicalQuery, List<Long>>();
 	
 	@Override
 	public void addQuery(IPhysicalQuery query) {
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
+			
+			//A new AdmissionSink is created here.
 			AdmissionSink<?> admissionSink = new AdmissionSink();
 			admissionSink.setLatencyAdmissionMonitor(this);
 			ISource source = null;
+			
+			//All last operators of the query plans are checked.
 			for(IPhysicalOperator operator : query.getRoots()) {
 				if(operator.isSource()) {
+					//The last operator is a source so the AdmissionSink can directly be subscribed.
 					source = (ISource) operator;
 					break;
 				} else if (operator.isSink()) {
+					//The last operator is not a source so the AdmissionSink has to be added to the operator before this.
 					source = getPreviousSource(operator, query); 
 					if(source != null) {
 						break;
@@ -45,7 +54,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 				}
 			}
 			if (source != null) {
-				//subscribe und open
+				//Subscribe the AdmissionSink to the source and open it.
 				source.connectSink(admissionSink, 0, 0, source.getOutputSchema());
 			}
 		}
@@ -58,6 +67,11 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 		}
 	}
 	
+	/**
+	 * Adds the given latency measurement to the given query.
+	 * @param query IPhysicalQuery
+	 * @param latency long
+	 */
 	public void updateMeasurement(IPhysicalQuery query, long latency) {
 		if (latencies.isEmpty()) {
 			return;
@@ -83,9 +97,9 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	}
 
 	/**
-	 * Returns the tendency for the given list as int.
+	 * Returns the tendency for the given list as long.
 	 * @param list
-	 * @return
+	 * @return tendency
 	 */
 	private long estimateTendency(List<Long> list) {
 		long tendency = 0;
@@ -99,7 +113,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	/**
 	 * Returns an arrayList with the queryIDs sorted by their tendency in ascending order.
 	 * @param map
-	 * @return
+	 * @return sorted List
 	 */
 	private List<IPhysicalQuery> getSortedListByValues(Map<IPhysicalQuery, Long> map) {
 	    List<IPhysicalQuery> queries = new ArrayList<>(map.keySet());
@@ -128,6 +142,12 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	    return sortedList;
 	}
 	
+	/**
+	 * Returns a previous operator of the given operator from the given physical query. 
+	 * @param operator IPhysicalOperator
+	 * @param query IPhysicalQuery
+	 * @return ISource
+	 */
 	private ISource getPreviousSource(IPhysicalOperator operator, IPhysicalQuery query) {
 		for (IPhysicalOperator previous : query.getAllOperators()) {
 			if (previous.isSource()) {
@@ -136,7 +156,6 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 				Collection<?> subscriptions = source.getSubscriptions();
 				
 				for (Object obj : subscriptions) {
-					@SuppressWarnings("unchecked")
 					ISubscription subscription = (ISubscription) obj;
 					IPhysicalOperator targetOperator = (IPhysicalOperator) subscription.getTarget();
 					if(targetOperator.equals(operator)) {

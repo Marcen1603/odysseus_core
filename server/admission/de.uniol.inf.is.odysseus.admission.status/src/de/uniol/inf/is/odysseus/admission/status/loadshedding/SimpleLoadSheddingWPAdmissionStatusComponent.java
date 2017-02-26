@@ -4,31 +4,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Provides the status for simple load shedding in consideration of priorities.
  * 
  * Only the CPU load is used in this status component.
- * 
- * @author Jannes
- *
  */
 public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 
+	/**
+	 * The name of this status component.
+	 */
 	private final String NAME = "simpleWP";
 	
-	private PriorityHandler priorityHandler = new PriorityHandler();
+	/**
+	 * The priorityHandler is used for the correct handling of priorities.
+	 */
+	private volatile PriorityHandler priorityHandler = new PriorityHandler();
 	
+	//These variables save the actual priority.
 	private volatile int actIncreasingPriority = -1;
 	private volatile int actDecreasingPriority = -1;
 	
-	private int actSheddingQuery = -1;
+	//This is used in the separately strategy.
+	private volatile int actSheddingQuery = -1;
 	
-	private int actSheddingFactor = 0;
+	//This is used in the equally strategy.
+	private volatile int actSheddingFactor = 0;
 	
 	@Override
 	public boolean addQuery(int queryID) {
 		if (super.addQuery(queryID)) {
+			//The query is added to the priority handling.
 			priorityHandler.addQuery(queryID);
 			actIncreasingPriority = priorityHandler.getSmallestPriority();
 			actDecreasingPriority = priorityHandler.getGreatestPriority();
@@ -41,6 +50,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	@Override
 	public boolean removeQuery(int queryID) {
 		if (super.removeQuery(queryID)) {
+			//The query is removed from the priority handling.
 			priorityHandler.removeQuery(queryID);
 			actIncreasingPriority = priorityHandler.getSmallestPriority();
 			actDecreasingPriority = priorityHandler.getGreatestPriority();
@@ -55,7 +65,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	
 	@Override
 	public void measureStatus() {
-		//Nothing to measure
+		//Nothing to measure.
 	}
 
 	@Override
@@ -63,31 +73,12 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		if(!isSheddingPossible()) {
 			return;
 		}
-		
 		int queryID = getSheddingQueryID();
+		LoggerFactory.getLogger(getClass()).info("" + queryID);
 		if (queryID < 0) {
 			return;
 		}
-		
-		int maxSheddingFactor = allowedQueries.get(queryID);
-		
-		int sheddingFactor;
-		if (activeQueries.containsKey(queryID)) {
-			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor >= maxSheddingFactor) {
-				sheddingFactor = maxSheddingFactor;
-				maxSheddingQueries.add(queryID);
-			}
-			activeQueries.replace(queryID, sheddingFactor);
-		} else {
-			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor >= maxSheddingFactor) {
-				sheddingFactor = maxSheddingFactor;
-				maxSheddingQueries.add(queryID);
-			}
-			activeQueries.put(queryID, sheddingFactor);
-		}
-		setSheddingFactor(queryID, sheddingFactor);
+		increaseFactor(queryID);
 	}
 
 	@Override
@@ -95,29 +86,16 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		if (actDecreasingPriority < 0 || activeQueries.isEmpty()) {
 			return;
 		}
-		
 		int queryID = getQueryIDToRollback();
 		if (queryID < 0) {
 			return;
 		}
-		
-		if (activeQueries.containsKey(queryID)) {
-			if (maxSheddingQueries.contains(queryID)) {
-				maxSheddingQueries.remove(Integer.valueOf(queryID));
-			}
-			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor <= 0) {
-				sheddingFactor = 0;
-				activeQueries.remove(queryID);
-			} else {
-				activeQueries.replace(queryID, sheddingFactor);
-			}
-			setSheddingFactor(queryID, sheddingFactor);
-		}
+		decreaseFactor(queryID);
 	}
 	
 	/**
-	 * 
+	 * Returns a query, which should increase its shedding factor, depending on the selected load shedding strategy.
+	 * @return queryID
 	 */
 	private int getSheddingQueryID() {
 		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
@@ -131,6 +109,10 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		}
 	}
 	
+	/**
+	 * Returns a query, which should decrease its shedding factor, depending on the selected load shedding strategy.
+	 * @return queryID
+	 */
 	private int getQueryIDToRollback() {
 		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
 			return getDecreasingPriorityQueryIDDefault();
@@ -144,11 +126,14 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	}
 	
 	/**
-	 * Recursive method to find a query with minimal priority, which has not its maximal shedding factor. 
-	 * @return
+	 * Recursive method to find a query with minimal priority, which has not its maximal shedding factor.
+	 * This method is used by the default strategy.
+	 * @return queryID
 	 */
 	private int getIncreasingPriorityQueryIDDefault() {
 		List<Integer> list = new ArrayList<>();
+		//All queries with the actual priority are added to the list, if they have not reached
+		//their maximal shedding factor.
 		for (int queryID : priorityHandler.getQueriesByPriority(actIncreasingPriority)) {
 			if (!maxSheddingQueries.contains(queryID)) {
 				list.add(Integer.valueOf(queryID));
@@ -158,6 +143,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 			Collections.shuffle(list);
 			return list.get(0);
 		} else {
+			//The next greater priority has to be checked.
 			int nextPrio = priorityHandler.getNextPriority(actIncreasingPriority);
 			if (nextPrio < 0) {
 				return -1;
@@ -171,6 +157,11 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		}
 	}
 	
+	/**
+	 * Method to find a query with minimal priority, which has not its maximal shedding factor.
+	 * This method is used by the separately strategy.
+	 * @return queryID
+	 */
 	private int getIncreasingPriorityQueryIDSeparately() {
 		if (actSheddingQuery > -1 && !maxSheddingQueries.contains(actSheddingQuery)) {
 			return actSheddingQuery;
@@ -181,12 +172,13 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	}
 	
 	/**
-	 * Recursive method to find the active query with the maximal priority.
-	 * @param actPriority
-	 * @return
+	 * Recursive method to find a query with active load shedding and the maximal priority.
+	 * This method is used by the default strategy.
+	 * @return queryID
 	 */
 	private int getDecreasingPriorityQueryIDDefault() {
 		List<Integer> list = new ArrayList<>();
+		//All queries with the actual priority are added to the list, if they have active load shedding.
 		for (int queryID : priorityHandler.getQueriesByPriority(actDecreasingPriority)) {
 			if (activeQueries.containsKey(queryID)) {
 				list.add(Integer.valueOf(queryID));
@@ -196,6 +188,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 			Collections.shuffle(list);
 			return list.get(0);
 		} else {
+			//The next smaller priority has to checked.
 			int previousPrio = priorityHandler.getPreviousPriority(actDecreasingPriority);
 			if (previousPrio < 0) {
 				return -1;
@@ -208,6 +201,11 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		}
 	}
 	
+	/**
+	 * Method to find a query with active load shedding and the maximal priority.
+	 * This method is used by the default strategy.
+	 * @return queryID
+	 */
 	private int getDecreasingPriorityQueryIDSeparately() {
 		if (actSheddingQuery > -1 && activeQueries.containsKey(actSheddingQuery)) {
 			return actSheddingQuery;
@@ -218,8 +216,9 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	}
 	
 	/**
-	 * Recursive method to find a query with minimal priority, which has not its maximal shedding factor. 
-	 * @return
+	 * Recursive method to find a query with minimal priority, which has not its maximal shedding factor.
+	 * This method is used in the equally strategy.
+	 * @return queryID
 	 */
 	private int getIncreasingPriorityQueryIDEqually() {	
 		if (actSheddingFactor <= 0) {
@@ -228,6 +227,8 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 		
 		while (actSheddingFactor <= 100) {
 			List<Integer> possibleList = new ArrayList<>();
+			//All queries with the actual priority are added to the list, if they have not reached
+			//their maximal shedding factor and their shedding factor is smaller than the actual shedding factor.
 			for (int queryID : priorityHandler.getQueriesByPriority(actIncreasingPriority)) {
 				if (!maxSheddingQueries.contains(queryID)) {
 					if (activeQueries.containsKey(queryID)) {
@@ -243,6 +244,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 				Collections.shuffle(possibleList);
 				return possibleList.get(0);
 			} else {
+				//No query with this priority has a smaller shedding factor than the actual shedding factor.
 				if (actSheddingFactor < 100) {
 					actSheddingFactor += LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 					if (actSheddingFactor > 100) {
@@ -254,6 +256,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 			}
 		}
 		
+		//No query in the actual priority can increase its shedding factor so the next priority has to be checked.
 		int nextPrio = priorityHandler.getNextPriority(actIncreasingPriority);
 		if (nextPrio < 0) {
 			return -1;
@@ -268,13 +271,14 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 	}
 	
 	/**
-	 * Recursive method to find the active query with the maximal priority.
-	 * @param actPriority
-	 * @return
-	 */
+	 * Recursive method to find the query with active load shedding and the maximal priority.
+	 * This method is used in the equally strategy.
+	 * @return queryID
+	 */ 
 	private int getDecreasingPriorityQueryIDEqually() {
 		while (actSheddingFactor >= 0) {
 			List<Integer> list = new ArrayList<>();
+			//All queries with the actual priority are added to the list, if they have active load shedding.
 			for (int queryID : priorityHandler.getQueriesByPriority(actDecreasingPriority)) {
 				if (activeQueries.containsKey(queryID) && activeQueries.get(queryID) >= actSheddingFactor) {
 					list.add(Integer.valueOf(queryID));
@@ -284,6 +288,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 				Collections.shuffle(list);
 				return list.get(0);
 			} else {
+				//No query with this priority has a greater shedding factor than the actual shedding factor.
 				if (actSheddingFactor > 0) {
 					actSheddingFactor -= LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 					if (actSheddingFactor < 0) {
@@ -295,6 +300,7 @@ public class SimpleLoadSheddingWPAdmissionStatusComponent extends AbstractLoadSh
 			}
 		}
 		
+		//The next smaller priority has to checked.
 		int previousPrio = priorityHandler.getPreviousPriority(actDecreasingPriority);
 		if (previousPrio < 0) {
 			return -1;

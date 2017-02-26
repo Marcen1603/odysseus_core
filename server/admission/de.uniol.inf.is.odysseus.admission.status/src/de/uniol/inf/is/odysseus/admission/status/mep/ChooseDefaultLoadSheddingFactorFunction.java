@@ -10,7 +10,7 @@ public class ChooseDefaultLoadSheddingFactorFunction extends AbstractFunction<Co
 	private static final long serialVersionUID = 1359170669833482294L;
 
 	public ChooseDefaultLoadSheddingFactorFunction() {
-		super("chooseStandartSheddingFactor", 1, null, SDFDatatype.COMMAND);
+		super("chooseDefaultSheddingFactor", 1, null, SDFDatatype.COMMAND);
 	}
 
 	@Override 

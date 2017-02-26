@@ -1,28 +1,40 @@
 package de.uniol.inf.is.odysseus.admission.status.loadshedding;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.admission.status.loadshedding.exceptions.ActiveLoadSheddingException;
+import de.uniol.inf.is.odysseus.admission.status.loadshedding.exceptions.NoSuchStatusComponentException;
+
+/**
+ * In this registry are all load shedding status components stored.
+ * Also provides this class all attributes, which can be changed by the user.
+ */
 public class LoadSheddingAdmissionStatusRegistry {
-	
-	private static int defaultMaxSheddingFactor = 50;
-	
-	private static int sheddingGrowth = 20;
 
-	private static Map<String, ILoadSheddingAdmissionStatusComponent> components = Maps.newHashMap();
+	private volatile static int defaultMaxSheddingFactor = 50;
 	
-	private static QuerySelectionStrategy selectionStrategy = QuerySelectionStrategy.DEFAULT;
+	private volatile static int sheddingGrowth = 20;
+
+	/**
+	 * All ILoadSheddingAdmissionStatusComponents are stored here.
+	 */
+	private volatile static Map<String, ILoadSheddingAdmissionStatusComponent> components = new HashMap<>();
 	
-	private static ILoadSheddingAdmissionStatusComponent activeComponent;
+	private volatile static QuerySelectionStrategy selectionStrategy = QuerySelectionStrategy.DEFAULT;
 	
-	private static boolean active = false;
+	private volatile static ILoadSheddingAdmissionStatusComponent activeComponent;
 	
-	private static boolean first = true;
+	private volatile static boolean active = false;
 	
+	/**
+	 * Stores the given ILoadSheddingAdmissionStatusComponent for later use.
+	 * @param component ILoadSheddingAdmissionStatusComponent
+	 */
 	public static void addLoadSheddingAdmissionComponent(ILoadSheddingAdmissionStatusComponent component) {
 		Preconditions.checkNotNull(component, "Admission status component must not be null!");
 		
@@ -33,21 +45,42 @@ public class LoadSheddingAdmissionStatusRegistry {
 		}
 	}
 	
+	/**
+	 * Removes the given ILoadSheddingAdmissionStatusComponent.
+	 * @param component ILoadSheddingAdmissionStatusComponent
+	 */
 	public static void removeLoadSheddingAdmissionComponent(ILoadSheddingAdmissionStatusComponent component) {
 		Preconditions.checkNotNull(component, "Admission status component must not be null!");
 		
 		components.remove(component.getComponentName());
 	}
 	
+	/**
+	 * Returns true if a ILoadSheddingAdmissionStatusComponent with the given name was was stored.
+	 * @param name String
+	 * @return
+	 */
 	public static boolean hasLoadSheddingAdmissionComponent(String name) {
 		if (components.containsKey(name)) {
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 	
+	/**
+	 * Returns the ILoadSheddingAdmissionStatusComponent with the given name.
+	 * 
+	 * If no such component was stored a NoSuchStatusComponentException is thrown
+	 * @param name String
+	 * @return ILoadSheddingAdmissionStatusComponent
+	 */
 	public static ILoadSheddingAdmissionStatusComponent getLoadSheddingAdmissionComponent(String name) {
-		return components.get(name);
+		if (components.containsKey(name)) {
+			return components.get(name);
+		} else {
+			throw new NoSuchStatusComponentException();
+		}
 	}
 
 	public static int getSheddingGrowth() {
@@ -59,6 +92,7 @@ public class LoadSheddingAdmissionStatusRegistry {
 			throw new ActiveLoadSheddingException();
 		}
 		LoadSheddingAdmissionStatusRegistry.sheddingGrowth = sheddingGrowth;
+		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class).info("Changed the sheddingGrowth to " + sheddingGrowth);
 	}
 
 	public static ILoadSheddingAdmissionStatusComponent getActiveComponent() {
@@ -70,6 +104,8 @@ public class LoadSheddingAdmissionStatusRegistry {
 			throw new ActiveLoadSheddingException();
 		}
 		LoadSheddingAdmissionStatusRegistry.activeComponent = getLoadSheddingAdmissionComponent(activeComponentName);
+		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class)
+			.info("Changed the active component to " + activeComponentName);
 	}
 
 	public static int getDefaultMaxSheddingFactor() {
@@ -81,6 +117,8 @@ public class LoadSheddingAdmissionStatusRegistry {
 			throw new ActiveLoadSheddingException();
 		}
 		LoadSheddingAdmissionStatusRegistry.defaultMaxSheddingFactor = defaultMaxSheddingFactor;
+		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class)
+			.info("Changed the default maximal shedding factor to " + defaultMaxSheddingFactor);
 	}
 
 	public static QuerySelectionStrategy getSelectionStrategy() {
@@ -89,23 +127,15 @@ public class LoadSheddingAdmissionStatusRegistry {
 
 	public static void setSelectionStrategy(QuerySelectionStrategy selectionStrategy) {
 		if (active) {
-			LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class).info("AcitveLoadSheddingException");
 			throw new ActiveLoadSheddingException();
 		}
 		LoadSheddingAdmissionStatusRegistry.selectionStrategy = selectionStrategy;
+		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class)
+			.info("Changed the selection strategy to " + selectionStrategy.toString());
 	}
 	
 	public static void setActive(boolean active) {
-		LoggerFactory.getLogger(LoadSheddingAdmissionStatusRegistry.class).info("setactive");
 		LoadSheddingAdmissionStatusRegistry.active = active;
-	}
-
-	public static boolean isFirst() {
-		return first;
-	}
-
-	public static void setFirst(boolean first) {
-		LoadSheddingAdmissionStatusRegistry.first = first;
 	}
 	
 }

@@ -7,6 +7,9 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.mep.IFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
+/**
+ * This class creates all functions, which the user can execute via PQL.
+ */
 public class AdmissionFunctionProvider implements IFunctionProvider {
 
 	@Override

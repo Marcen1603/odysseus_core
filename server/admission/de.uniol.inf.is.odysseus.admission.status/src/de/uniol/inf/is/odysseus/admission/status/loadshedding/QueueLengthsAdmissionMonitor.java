@@ -16,18 +16,26 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
- * Measures the queue lengths for each active query.
- * 
- * @author Jannes
- *
+ * Measures the queue lengths of all added active queries.
  */
 public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	
-	static private final int QUEUE_MEASUREMENT_SIZE = 10;
+	/**
+	 * The size of the queue length measurements is set here.
+	 */
+	private final int QUEUE_MEASUREMENT_SIZE = 10;
 	
+	/**
+	 * This map stores all subscriptions with buffers to their queries.
+	 * A list with measurements is assigned to each subscription. 
+	 */
 	private Map<IPhysicalQuery, Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>> queuelengthsSubscriptions
 		= new HashMap<IPhysicalQuery, Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>>();
 	
+	/**
+	 * This map stores all BufferPOs to their queries.
+	 * A list with measurements is assigned to each buffer. 
+	 */
 	private Map<IPhysicalQuery, Map<BufferPO, List<Integer>>> queuelengthsBufferPOs
 		= new HashMap<IPhysicalQuery, Map<BufferPO, List<Integer>>>();
 
@@ -117,7 +125,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	/**
-	 * Adds a new map for the given query to queuelengths.
+	 * Adds a new maps for the subscriptions and buffers of given query.
 	 * @param query
 	 */
 	private void getSubscriptionsAndBuffersForQuery(IPhysicalQuery query) {
@@ -135,7 +143,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	/**
-	 * Adds all subscriptions from the given query to the map in queuelengths.
+	 * Adds all subscriptions from the given query to the subscription map in queue lengths.
 	 * @param operator
 	 * @param query
 	 */
@@ -157,9 +165,9 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	/**
-	 * Returns the tendency for the given list as int.
+	 * Returns the tendency for the given list as Integer.
 	 * @param list
-	 * @return
+	 * @return tendency
 	 */
 	private int estimateTendency(List<Integer> list) {
 		int tendency = 0;
@@ -170,9 +178,9 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	}
 	
 	/**
-	 * Returns an arrayList with the queries sorted by their tendency in ascending order.
+	 * Returns a list with the queries sorted by their tendency in ascending order.
 	 * @param passedMap
-	 * @return
+	 * @return sorted List
 	 */
 	private List<IPhysicalQuery> getSortedListByValues(Map<IPhysicalQuery, Integer> passedMap) {
 	    List<IPhysicalQuery> queries = new ArrayList<>(passedMap.keySet());

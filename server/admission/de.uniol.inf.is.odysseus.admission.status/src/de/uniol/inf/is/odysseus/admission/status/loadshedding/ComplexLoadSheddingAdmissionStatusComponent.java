@@ -10,7 +10,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 /**
- * Provides the status for complex load shedding.
+ * Provides the status for load shedding with latencies and queue lengths.
  * 
  * The CPU load together which the latency and queue lengths of each query is used in this status component.
  * 
@@ -19,22 +19,27 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
  */
 public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadSheddingAdmissionStatusComponent {
 	
+	/**
+	 * The name of this status component.
+	 */
 	private final String NAME = "complex";
 	
+	//The different admission monitors.
 	private final QueueLengthsAdmissionMonitor QUEUE_LENGTHS_MONITOR = new QueueLengthsAdmissionMonitor();
 	private final LatencyAdmissionMonitor LATENCY_MONITOR = new LatencyAdmissionMonitor();
 	
-	private List<Integer> simpleActiveQueries = new ArrayList<>();
+	//These variables are used for the separately load shedding strategy.
+	private volatile int actSheddingQueryUp = -1;
+	private volatile int actSheddingQueryDown = -1;
 	
-	private int actSheddingQueryUp = -1;
-	private int actSheddingQueryDown = -1;
-	
-	private int actComplexFactor = 0;
-	private int actSimpleFactor = 0;
+	//These variables are used for the equally load shedding strategy.
+	private volatile int actComplexFactor = 0;
+	private volatile int actSimpleFactor = 0;
 	
 	@Override
 	public boolean addQuery(int queryID) {
 		if(super.addQuery(queryID)) {
+			//The query is added to the admission monitors.
 			IPhysicalQuery query = getQueryByID(queryID);
 			QUEUE_LENGTHS_MONITOR.addQuery(query);
 			LATENCY_MONITOR.addQuery(query);
@@ -47,10 +52,12 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	@Override
 	public boolean removeQuery(int queryID) {
 		if (super.removeQuery(queryID)) {
+			//The query is removed from the admission monitors.
 			IPhysicalQuery query = getQueryByID(queryID);
 			QUEUE_LENGTHS_MONITOR.removeQuery(query);
 			LATENCY_MONITOR.removeQuery(query);
 			
+			//The query is removed from all variables.
 			if (simpleActiveQueries.contains(queryID)) {
 				simpleActiveQueries.remove(Integer.valueOf(queryID));
 			}
@@ -71,31 +78,12 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		if (!isSheddingPossible()) {
 			return;
 		}
-		
 		int queryID = getSheddingQueryID();
 		if(queryID < 0) {
 			return;
 		}
 		
-		int maxSheddingFactor = allowedQueries.get(queryID);
-		int sheddingFactor;
-		if (activeQueries.containsKey(queryID)) {
-			sheddingFactor = activeQueries.get(queryID) + LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor >= maxSheddingFactor) {
-				sheddingFactor = maxSheddingFactor;
-				maxSheddingQueries.add(queryID);
-			}
-			activeQueries.replace(queryID, sheddingFactor);
-		} else {
-			sheddingFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor >= maxSheddingFactor) {
-				sheddingFactor = maxSheddingFactor;
-				maxSheddingQueries.add(queryID);
-			}
-			activeQueries.put(queryID, sheddingFactor);
-		}
-		
-		setSheddingFactor(queryID, sheddingFactor);
+		increaseFactor(queryID);
 	}
 
 	@Override
@@ -104,34 +92,24 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 			return;
 		}
 		
+		//Gets the next query, which should decrease its shedding factor.
 		int queryID = getQueryIDToRollback();
 		if (queryID < 0) {
 			return;
 		}
-		
-		if (activeQueries.containsKey(queryID)) {
-			if (maxSheddingQueries.contains(queryID)) {
-				maxSheddingQueries.remove(Integer.valueOf(queryID));
-			}
-			int sheddingFactor = activeQueries.get(queryID) - LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
-			if (sheddingFactor <= 0) {
-				sheddingFactor = 0;
-				activeQueries.remove(queryID);
-				if (simpleActiveQueries.contains(queryID)) {
-					simpleActiveQueries.remove(Integer.valueOf(queryID));
-				}
-			} else {
-				activeQueries.replace(queryID, sheddingFactor);
-			}
-			setSheddingFactor(queryID, sheddingFactor);
-		}
+		decreaseFactor(queryID);
 	}
 
 	@Override
 	public void measureStatus() {
+		//The queue lengths have to update their status.
 		QUEUE_LENGTHS_MONITOR.updateMeasurements();
 	}
 	
+	/**
+	 * Returns a query, which should increase its shedding factor, depending on the selected load shedding strategy.
+	 * @return queryID
+	 */
 	private int getSheddingQueryID() {
 		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
 			return getSheddingQueryIDDefault();
@@ -144,6 +122,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		}
 	}
 	
+	/**
+	 * Returns a query, which should decrease its shedding factor, depending on the selected load shedding strategy.
+	 * @return queryID
+	 */
 	private int getQueryIDToRollback() {
 		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.DEFAULT) {
 			return getQueryIDToRollbackDefault();
@@ -156,9 +138,15 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		}
 	}
 	
+	/**
+	 * Returns the next query with the default strategy.
+	 * @return queryID
+	 */
 	private int getSheddingQueryIDDefault() {
 		Map<Integer, Integer> queryRanks = getQueryRanks();
 		int partialQuery = getQueryWithGreatestRank(queryRanks);
+		
+		//No query was found with complex load shedding.
 		if (partialQuery < 0) {
 			partialQuery = queryFromSimpleLoadShedding();
 			if (partialQuery > 0) {
@@ -170,9 +158,14 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return partialQuery;
 	}
 	
+	/**
+	 * Returns the next query with the separately strategy.
+	 * @return queryID
+	 */
 	private int getSheddingQueryIDSeparately() {
 		int partialQuery = -1;
 		if (actSheddingQueryUp > -1 && !maxSheddingQueries.contains(actSheddingQueryUp)) {
+			//The shedding factor of the chosen query can still be increased.
 			partialQuery = actSheddingQueryUp;
 		} else {
 			partialQuery = getSheddingQueryIDDefault();
@@ -182,13 +175,18 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return partialQuery;
 	}
 	
+	/**
+	 * Returns the next query with the equally strategy.
+	 * @return queryID
+	 */
 	private int getSheddingQueryIDEqually() {
 		if (actComplexFactor <= 0) {
 			actComplexFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 		}
 		Map<Integer, Integer> queryRanks = getQueryRanks();
 		int partialQuery = getQueryWithGreatestRank(queryRanks);
-			
+		
+		//Try to get query from complex load shedding.
 		while (partialQuery < 0) {
 			if (actComplexFactor < 100) {
 				actComplexFactor += LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
@@ -203,6 +201,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		if (partialQuery > 0) {
 			removeFromSimpleQueries(partialQuery);
 		} else {
+			//No query from complex load shedding was found.
 			partialQuery = queryFromSimpleLoadSheddingEqually();
 			if (partialQuery > 0) {
 				addToSimpleQueries(partialQuery);
@@ -211,6 +210,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return partialQuery;
 	}
 	
+	/**
+	 * Returns the query to roll back with the default strategy.
+	 * @return queryID
+	 */
 	private int getQueryIDToRollbackDefault() {
 		int queryID;
 		if (!simpleActiveQueries.isEmpty()) {
@@ -221,6 +224,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return queryID;
 	}
 	
+	/**
+	 * Returns the query to roll back with the separately strategy.
+	 * @return queryID
+	 */
 	private int getQueryIDToRollbackSeparately() {
 		int queryID = -1;
 		if (actSheddingQueryDown > -1 && activeQueries.containsKey(actSheddingQueryDown)) {
@@ -232,6 +239,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return queryID;
 	}
 	
+	/**
+	 * Returns the query to roll back with the equally strategy.
+	 * @return queryID
+	 */
 	private int getQueryIDToRollbackEqually() {
 		int queryID = -1;
 		if (!simpleActiveQueries.isEmpty()) {
@@ -242,6 +253,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return queryID;
 	}
 	
+	/**
+	 * Returns a map with all queries, which have increasing tendencies.
+	 * @return queryID
+	 */
 	private Map<Integer, Integer> getQueryRanks() {
 		
 		List<IPhysicalQuery> queuelengths = removeQueriesWithMaxSheddingFactor
@@ -252,10 +267,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		
 		Map<Integer, Integer> queryRanks = new HashMap<>();
 		
+		//The rank is calculated here.
 		for(int q = 0; q < queuelengths.size(); q++) {
 			queryRanks.put(queuelengths.get(q).getID(), (q));
 		}
-		
 		for(int l = 0; l < latencies.size(); l++) {
 			if (queryRanks.containsKey(latencies.get(l).getID())) {
 				int q = queryRanks.get(latencies.get(l).getID());
@@ -268,23 +283,21 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return queryRanks;
 	}
 	
-	private int getQueryWithGreatestRank(Map<Integer, Integer> queryRanks) {
-		if (queryRanks.isEmpty()) {
+	/**
+	 * Returns the query with the greatest rank from the given map.
+	 * @param queryRanks
+	 * @return queryID
+	 */
+	protected int getQueryWithGreatestRank(Map<Integer, Integer> queryRanks) {
+		int partialQuery = super.getQueryWithGreatestRank(queryRanks);
+		if(partialQuery < 0) {
 			return -1;
 		}
-		
-		int partialQuery = -1;
-		int rank = -1;
-		for (int queryID : queryRanks.keySet()) {
-			if(queryRanks.get(queryID) > rank) {
-				partialQuery = queryID;
-				rank = queryRanks.get(queryID);
-			}
-		}
-		
+		//For the equally strategy is it important to check if the shedding factor matches
 		if (LoadSheddingAdmissionStatusRegistry.getSelectionStrategy() == QuerySelectionStrategy.EQUALLY) {
 			if (activeQueries.containsKey(partialQuery)) {
 				if (activeQueries.get(partialQuery) >= actComplexFactor) {
+					//The shedding factor of this query is to great.
 					Map<Integer, Integer> newQueryRanks = new HashMap<>(queryRanks);
 					newQueryRanks.remove(partialQuery);
 					return getQueryWithGreatestRank(newQueryRanks);
@@ -295,6 +308,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return partialQuery;
 	}
 	
+	/**
+	 * Returns a randomly selected query for the default and separately strategy.
+	 * @return queryID
+	 */
 	private int queryFromSimpleLoadShedding() {
 		List<Integer> list = new ArrayList<Integer>(allowedQueries.keySet());
 		
@@ -315,6 +332,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		return list.get(0);
 	}
 	
+	/**
+	 * Returns a randomly selected query for the equally strategy.
+	 * @return queryID
+	 */
 	private int queryFromSimpleLoadSheddingEqually() {
 		if (actSimpleFactor <= 0) {
 			actSimpleFactor = LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
@@ -337,13 +358,14 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 			}
 		}
 		
+		//No query was found with a smaller shedding factor than the actSimpleFactor.
 		if (list.isEmpty()){
 			if (actSimpleFactor < 100) {
 				actSimpleFactor += LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 				if (actSimpleFactor > 100) {
 					actSimpleFactor = 100;
 				}
-				return queryFromSimpleLoadShedding();
+				return queryFromSimpleLoadSheddingEqually();
 			} else {
 				return -1;
 			}
@@ -353,22 +375,10 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		}
 	}
 	
-	private List<IPhysicalQuery> removeQueriesWithMaxSheddingFactor(List<IPhysicalQuery> list) {
-		Iterator<IPhysicalQuery> iter = list.iterator();
-
-		while (iter.hasNext()) {
-			IPhysicalQuery query = iter.next();
-			if (maxSheddingQueries.contains(query.getID())) {
-				iter.remove();
-			}
-		}
-		return list;
-	}
-	
 	/**
 	 * Returns a queryID, which query has load shedding activated and 
 	 * was activated through simple load shedding.
-	 * @return
+	 * @return queryID
 	 */
 	private int getSimpleActiveQueryID() {
 		Collections.shuffle(simpleActiveQueries);
@@ -378,7 +388,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	/**
 	 * Returns a queryID, which query has load shedding activated and 
 	 * was activated through complex load shedding.
-	 * @return
+	 * @return queryID
 	 */
 	private int getComplexActiveQueryID() {
 		List<Integer> list = new ArrayList<>(activeQueries.keySet());
@@ -388,8 +398,8 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	
 	/**
 	 * Returns a queryID, which query has load shedding activated and 
-	 * was activated through simple load shedding.
-	 * @return
+	 * was activated through simple load shedding with the equslly strategy.
+	 * @return queryID
 	 */
 	private int getSimpleActiveQueryIDEqually() {
 		List<Integer> list = new ArrayList<Integer>(simpleActiveQueries);
@@ -404,6 +414,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		}
 		
 		if (list.isEmpty()) {
+			//No query was found with a greater shedding factor than the actSimpleFactor.
 			if (actSimpleFactor > 0) {
 				actSimpleFactor -= LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 				if (actSimpleFactor < 0) {
@@ -421,8 +432,8 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 	
 	/**
 	 * Returns a queryID, which query has load shedding activated and 
-	 * was activated through complex load shedding.
-	 * @return
+	 * was activated through complex load shedding with the equally strategy.
+	 * @return queryID
 	 */
 	private int getComplexActiveQueryIDEqually() {
 		List<Integer> list = new ArrayList<Integer>(activeQueries.keySet());
@@ -437,6 +448,7 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		}
 		
 		if (list.isEmpty()) {
+			//No query was found with a greater shedding factor than the actComplexFactor.
 			if (actComplexFactor > 0) {
 				actComplexFactor -= LoadSheddingAdmissionStatusRegistry.getSheddingGrowth();
 				if (actComplexFactor < 0) {
@@ -449,18 +461,6 @@ public class ComplexLoadSheddingAdmissionStatusComponent extends AbstractLoadShe
 		} else {
 			Collections.shuffle(list);
 			return list.get(0);
-		}
-	}
-	
-	private void addToSimpleQueries(int queryID) {
-		if (!activeQueries.containsKey(queryID)) {
-			simpleActiveQueries.add(Integer.valueOf(queryID));
-		}
-	}
-	
-	private void removeFromSimpleQueries(int queryID) {
-		if (simpleActiveQueries.contains(queryID)) {
-			simpleActiveQueries.remove(Integer.valueOf(queryID));
 		}
 	}
 

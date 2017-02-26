@@ -4,9 +4,6 @@ import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
 
 /**
  * Interface for all LoadSheddingAdmissionStatusComponents.
- * 
- * @author Jannes
- *
  */
 public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusComponent {
 	
@@ -39,7 +36,7 @@ public interface ILoadSheddingAdmissionStatusComponent extends IAdmissionStatusC
 
 	/**
 	 * Returns the name of this component.
-	 * @return
+	 * @return componentName - String
 	 */
 	public String getComponentName();
 

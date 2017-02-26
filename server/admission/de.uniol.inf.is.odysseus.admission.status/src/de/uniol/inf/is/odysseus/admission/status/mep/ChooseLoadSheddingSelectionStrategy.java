@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.admission.status.mep;
 
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.admission.status.loadshedding.LoadSheddingAdmissionStatusRegistry;
 import de.uniol.inf.is.odysseus.admission.status.loadshedding.QuerySelectionStrategy;
 import de.uniol.inf.is.odysseus.core.command.Command;
@@ -10,9 +8,6 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 public class ChooseLoadSheddingSelectionStrategy extends AbstractFunction<Command> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1009270106426313893L;
 
 	public ChooseLoadSheddingSelectionStrategy() {
