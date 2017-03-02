@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.DataSet;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.layer.RasterLayer;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.model.layer.TracemapLayerConfiguration;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class TraceLayer extends RasterLayer {
 
@@ -50,8 +51,7 @@ public class TraceLayer extends RasterLayer {
 	}
 
 	@Override
-	public void init(ScreenManager screenManager, SDFSchema schema,
-			SDFAttribute attribute) {
+	public void init(ScreenManager screenManager, SDFSchema schema, SDFAttribute attribute) {
 		this.screenManager = screenManager;
 		this.srid = screenManager.getSRID();
 	}
@@ -64,8 +64,7 @@ public class TraceLayer extends RasterLayer {
 			Set<Integer> keySet = linesToDraw.keySet();
 			for (Integer key : keySet) {
 				// Draw with the right color
-				drawLineString(linesToDraw.get(key), gc,
-						config.getColorForId(key));
+				drawLineString(linesToDraw.get(key), gc, config.getColorForId(key));
 			}
 		}
 	}
@@ -81,15 +80,14 @@ public class TraceLayer extends RasterLayer {
 		searchEnv.init(new Coordinate(49.7, 11.7)); // Maybe somewhere in
 													// Germany
 		// Get everything
-		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE,
-				Integer.MAX_VALUE)); // Top left
-		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE,
-				Integer.MIN_VALUE)); // Bottom right
+		searchEnv.expandToInclude(new Coordinate(Integer.MIN_VALUE, Integer.MAX_VALUE)); // Top
+																							// left
+		searchEnv.expandToInclude(new Coordinate(Integer.MAX_VALUE, Integer.MIN_VALUE)); // Bottom
+																							// right
 
 		List<?> data = new ArrayList<Object>();
 		try {
-			data = layerUpdater.query(searchEnv,
-					config.getGeometricAttributePosition());
+			data = layerUpdater.query(searchEnv, config.getGeometricAttributePosition());
 		} catch (ClassCastException e) {
 			// Do nothing. The setting, which past of the query was the
 			// geometric attribute was wrong
@@ -102,18 +100,22 @@ public class TraceLayer extends RasterLayer {
 
 		for (Object dataSet : data) {
 			// Get the data from the Tuple (point, id and starttime)
-			Tuple<?> tuple = ((DataSet) dataSet).getTuple();	
-			
+			Tuple<?> tuple = ((DataSet) dataSet).getTuple();
+
 			Point point = null;
-			if (tuple.getAttribute(0) instanceof GeometryCollection) {
-				GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(0);
+			int geometryPosition = config.getGeometricAttributePosition();
+			if (tuple.getAttribute(geometryPosition) instanceof GeometryCollection) {
+				GeometryCollection geoColl = (GeometryCollection) tuple.getAttribute(geometryPosition);
 				point = geoColl.getCentroid();
-			} else if (tuple.getAttribute(0) instanceof Point) {
-				point = (Point) tuple.getAttribute(0);
+			} else if (tuple.getAttribute(geometryPosition) instanceof Point) {
+				point = (Point) tuple.getAttribute(geometryPosition);
+			} else if (tuple.getAttribute(geometryPosition) instanceof GeometryWrapper) {
+				point = ((GeometryWrapper) tuple.getAttribute(geometryPosition)).getGeometry().getCentroid();
 			} else {
-				throw new RuntimeException("tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in TraceLayer");
+				throw new RuntimeException(
+						"tuple attribute type " + tuple.getAttribute(0).getClass() + " not supported in TraceLayer");
 			}
-			
+
 			TimeInterval timeInterval = (TimeInterval) tuple.getMetadata();
 			PointInTime startTime = timeInterval.getStart();
 
@@ -121,12 +123,10 @@ public class TraceLayer extends RasterLayer {
 			zoomEnv.expandToInclude(point.getCoordinate());
 
 			// Create new LineElement
-			TraceElement lineElement = new TraceElement(point.getCoordinate(),
-					startTime);
+			TraceElement lineElement = new TraceElement(point.getCoordinate(), startTime);
 
 			try {
-				int id = java.lang.Math.toIntExact(tuple.getAttribute(config
-						.getValueAttributePosition()));
+				int id = java.lang.Math.toIntExact(tuple.getAttribute(config.getValueAttributePosition()));
 
 				// If this is the first coordinate for this key,
 				// create a new ArrayList
@@ -166,8 +166,7 @@ public class TraceLayer extends RasterLayer {
 			PointInTime[] startEndTime = new PointInTime[2];
 			if (tempList.size() > 0) {
 				startEndTime[0] = tempList.get(0).getStartTime();
-				startEndTime[1] = tempList.get(tempList.size() - 1)
-						.getStartTime();
+				startEndTime[1] = tempList.get(tempList.size() - 1).getStartTime();
 			}
 			timeHashMap.put(key, startEndTime);
 
@@ -197,6 +196,9 @@ public class TraceLayer extends RasterLayer {
 	 * @param color
 	 */
 	private void drawLineString(LineString line, GC gc, Color color) {
+
+		boolean latitudeFirst = true;
+
 		ScreenTransformation transformation = screenManager.getTransformation();
 		Coordinate[] coords = line.getCoordinates();
 
@@ -231,26 +233,22 @@ public class TraceLayer extends RasterLayer {
 				// position)
 				if (config.isMarkEndpoint()) {
 					int circleWidth = config.getLineWidth() * 2;
-					coordinate2 = transformation.transformCoord(coord,
-							line.getSRID());
+					coordinate2 = transformation.transformCoord(coord, line.getSRID(), latitudeFirst);
 					// Circle around should be red (red border)
 					gc.setForeground(new Color(Display.getDefault(), 255, 0, 0));
 					// Background (for circle around)
-					gc.drawOval(coordinate2[0] - 2 - (circleWidth / 2),
-							coordinate2[1] - 2 - (circleWidth / 2),
+					gc.drawOval(coordinate2[0] - 2 - (circleWidth / 2), coordinate2[1] - 2 - (circleWidth / 2),
 							circleWidth + 4, circleWidth + 4);
 					gc.setForeground(color);
-					gc.drawOval(coordinate2[0] - (circleWidth / 2),
-							coordinate2[1] - (circleWidth / 2), circleWidth,
+					gc.drawOval(coordinate2[0] - (circleWidth / 2), coordinate2[1] - (circleWidth / 2), circleWidth,
 							circleWidth); // Foreground (Point)
 				}
 			}
-			coordinate2 = transformation.transformCoord(coord, line.getSRID());
+			coordinate2 = transformation.transformCoord(coord, line.getSRID(), latitudeFirst);
 
 			if (coordinate1 != null) {
 				// We have more than one point
-				gc.drawLine(coordinate1[0], coordinate1[1], coordinate2[0],
-						coordinate2[1]);
+				gc.drawLine(coordinate1[0], coordinate1[1], coordinate2[0], coordinate2[1]);
 
 				// Transparency (newer lines should be better to see)
 				alpha -= alphaStep;
@@ -315,8 +313,7 @@ public class TraceLayer extends RasterLayer {
 	}
 
 	private Color rgbToColor(double r, double g, double b) {
-		Color color = new Color(Display.getDefault(), (int) (r * 256),
-				(int) (g * 256), (int) (b * 256));
+		Color color = new Color(Display.getDefault(), (int) (r * 256), (int) (g * 256), (int) (b * 256));
 		return color;
 	}
 
@@ -324,17 +321,14 @@ public class TraceLayer extends RasterLayer {
 	 * 
 	 * @return length in km
 	 */
-	private double getDistance(double lat1, double long1, double lat2,
-			double long2) {
+	private double getDistance(double lat1, double long1, double lat2, double long2) {
 		double degreeRadians = Math.PI / 180.0;
 		double earthRadius = 6371; // in km
 
 		double degreeLong = (long2 - long1) * degreeRadians;
 		double degreeLat = (lat2 - lat1) * degreeRadians;
-		double a = Math.pow(Math.sin(degreeLat / 2.0), 2.0)
-				+ Math.cos(lat1 * degreeRadians)
-				* Math.cos(lat2 * degreeRadians)
-				* Math.pow(Math.sin(degreeLong / 2.0), 2.0);
+		double a = Math.pow(Math.sin(degreeLat / 2.0), 2.0) + Math.cos(lat1 * degreeRadians)
+				* Math.cos(lat2 * degreeRadians) * Math.pow(Math.sin(degreeLong / 2.0), 2.0);
 		double c = 2D * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
 		double d = earthRadius * c;
 
@@ -358,8 +352,7 @@ public class TraceLayer extends RasterLayer {
 			}
 			tempCoord2 = coord;
 			if (tempCoord1 != null && tempCoord2 != null)
-				distanceInKm += getDistance(tempCoord1.y, tempCoord1.x,
-						tempCoord2.y, tempCoord2.x);
+				distanceInKm += getDistance(tempCoord1.y, tempCoord1.x, tempCoord2.y, tempCoord2.x);
 		}
 		return distanceInKm;
 	}
@@ -393,8 +386,7 @@ public class TraceLayer extends RasterLayer {
 			// hours
 			long time1 = timeHashMap.get(key)[0].getMainPoint();
 			long time2 = timeHashMap.get(key)[1].getMainPoint();
-			double durationInHours = (double) (time1 - time2)
-					/ (double) msToHours;
+			double durationInHours = (double) (time1 - time2) / (double) msToHours;
 			double speed = distance / durationInHours;
 			speeds.put(key, speed);
 		}
@@ -407,25 +399,20 @@ public class TraceLayer extends RasterLayer {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		CoordinateTransform ct = screenManager.getTransformation()
-				.getCoordinateTransform(config.getSrid(),
-						screenManager.getSRID());
+		CoordinateTransform ct = screenManager.getTransformation().getCoordinateTransform(config.getSrid(),
+				screenManager.getSRID());
 		Envelope geoEnv = config.getCoverage();
 
-		if (zoomEnv != null && zoomEnv.getMaxX() != -1
-				&& zoomEnv.getMaxY() != -1) {
+		if (zoomEnv != null && zoomEnv.getMaxX() != -1 && zoomEnv.getMaxY() != -1) {
 			geoEnv = zoomEnv;
 		}
-		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(),
-				geoEnv.getMaxY());
-		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(),
-				geoEnv.getMinY());
+		ProjCoordinate srcMax = new ProjCoordinate(geoEnv.getMaxX(), geoEnv.getMaxY());
+		ProjCoordinate srcMin = new ProjCoordinate(geoEnv.getMinX(), geoEnv.getMinY());
 		ProjCoordinate destMax = new ProjCoordinate();
 		ProjCoordinate destMin = new ProjCoordinate();
 		ct.transform(srcMax, destMax);
 		ct.transform(srcMin, destMin);
-		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y,
-				destMax.y);
+		Envelope coverage = new Envelope(destMin.x, destMax.x, destMin.y, destMax.y);
 
 		return coverage;
 	}

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
-public class QuadTreeSTDataStructure implements IMovingObjectDataStructure {
+public class QuadTreeSTDataStructure implements ISpatioTemporalDataStructure {
 
 	public static final String TYPE = "quadtree";
 

@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.SpatioTemporalDataStructureProvider;
 
 public class DropSTIndexCommand extends AbstractExecutorCommand {
 
@@ -21,7 +21,7 @@ public class DropSTIndexCommand extends AbstractExecutorCommand {
 
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
-		boolean removed = SpatialDataStructureProvider.getInstance().removeDataStructure(this.name);
+		boolean removed = SpatioTemporalDataStructureProvider.getInstance().removeDataStructure(this.name);
 
 		if (!removed) {
 			throw new QueryParseException("Index with name " + this.name + " does not exist.");
