@@ -101,6 +101,20 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 
 			if (newDistance - element.getDistanceToPreviousElement() > distancePerMovingObject) {
 				// We can delete the last element
+				
+				// Remove from all elements
+				TrajectoryElement previousElement = element.getPreviousElement();
+				List<TrajectoryElement> elemList = pointMap.get(previousElement.getGeoHash());
+				
+				if (elemList != null && elemList.size() <= 1) {
+					// Remove the whole list
+					pointMap.remove(previousElement.getGeoHash());
+				} else if (elemList != null) {
+					// Only remove the one element from the list
+					elemList.remove(previousElement);
+				}
+				
+				// Remove from chained list
 				element.setPreviousElement(null);
 				movingObjectDistances.put(id, newDistance - element.getDistanceToPreviousElement());
 			}
@@ -165,6 +179,16 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 				// All elements that are at this point (key) need to be added to
 				// the result
 				for (TrajectoryElement element : pointMap.get(key)) {
+
+					// Check if the result is within the given time interval
+					if (element.getStreamElement().getMetadata() instanceof ITimeInterval) {
+						ITimeInterval time = (ITimeInterval) element.getStreamElement().getMetadata();
+						if (!(time.getStart().before(t.getEnd()) && time.getEnd().after(t.getStart()))) {
+							// It's not in the right time interval
+							continue;
+						}
+					}
+
 					// Check if we already have results for this key
 					List<ResultElement> listOfMOInRadius = resultMap.get(element.getMovingObjectID());
 					if (listOfMOInRadius == null) {
