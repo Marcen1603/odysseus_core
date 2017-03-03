@@ -70,6 +70,7 @@ public class FilterPO extends AbstractPipe<Tuple<IMetaAttribute>, KeyValueObject
 			KeyValueObject<IMetaAttribute> output = new KeyValueObject<IMetaAttribute>();
 	    	KeyValueObject<IMetaAttribute> annotations = annotated.toObject();
 	    	output.setAttribute("annotations", annotations);
+	    	output.setMetadata(input.getMetadata());
 			transfer(output);
 		}
 		

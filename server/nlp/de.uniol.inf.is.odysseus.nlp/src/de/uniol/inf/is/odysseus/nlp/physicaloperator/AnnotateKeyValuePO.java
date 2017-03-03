@@ -101,6 +101,7 @@ public class AnnotateKeyValuePO extends AbstractPipe<Tuple<IMetaAttribute>, KeyV
     	KeyValueObject<IMetaAttribute> annotations = annotated.toObject();
     	
     	output.setAttribute("annotations", annotations);
+    	output.setMetadata(object.getMetadata());
 		transfer(output);
 	}
 }

@@ -97,6 +97,7 @@ public class AnnotateObjectPO extends AbstractPipe<Tuple<IMetaAttribute>, Tuple<
 		Annotated annotated = this.toolkit.annotate(object.getAttribute(attributePosition).toString());
     	Tuple<IMetaAttribute> tuple = new Tuple<>(1, true);
     	tuple.setAttribute(0, annotated);
+    	tuple.setMetadata(object.getMetadata());
 		transfer(tuple);
 	}
 }
