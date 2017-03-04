@@ -6,7 +6,7 @@
       provider-name="University of Oldenburg">
 
    <description>
-      Provides the possibility to process spatial data by adding spatial datatypes like point or line and correspoding functions like &quot;crosses&quot; or &quot;contains&quot;
+      Provides the possibility to process spatial data by adding spatial datatypes like point or line and correspoding functions like &quot;crosses&quot; or &quot;contains&quot;. Also adds the map view.
    </description>
 
    <copyright>
