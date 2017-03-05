@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.spatial.physicaloperator.STDataStructurePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSpatioTemporalDataStructurePO extends AbstractTransformationRule<STDataStructureAO> {
+public class TSTDataStructureAOTransformRule extends AbstractTransformationRule<STDataStructureAO> {
 
 	@Override
 	public void execute(STDataStructureAO operator, TransformationConfiguration config) throws RuleException {

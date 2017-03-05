@@ -14,10 +14,10 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.datastructures.FastQuadTreeSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashSTDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.NaiveSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.FastQuadTreeSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.GeoHashSTDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.NaiveSTDataStructure;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import junit.framework.TestCase;
 
@@ -34,9 +34,9 @@ public class SpatialDataStructureTest extends TestCase {
 	private static final String DATA_STRUCTURE_NAME = "test";
 	private static final int GEOMETRY_POSITION = 0;
 
-	private IMovingObjectDataStructure dataStructureNaive;
-	private IMovingObjectDataStructure dataStructureFastQuadTree;
-	private IMovingObjectDataStructure dataStructureGeoHash;
+	private ISpatioTemporalDataStructure dataStructureNaive;
+	private ISpatioTemporalDataStructure dataStructureFastQuadTree;
+	private ISpatioTemporalDataStructure dataStructureGeoHash;
 	private GeometryFactory factory;
 
 	private TimeInterval testSearchInterval = new TimeInterval(new PointInTime(5000), new PointInTime(5100));
