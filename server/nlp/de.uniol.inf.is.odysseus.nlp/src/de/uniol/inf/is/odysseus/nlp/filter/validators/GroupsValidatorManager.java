@@ -7,6 +7,10 @@ import de.uniol.inf.is.odysseus.nlp.filter.validators.groups.AndValidator;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.groups.NAndValidator;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.groups.OrValidator;
 
+
+/**
+ * Manages group-validators (eg. and, nand, or)
+ */
 public class GroupsValidatorManager{
 	private static Map<String, IGroupValidator> validators = new HashMap<>();
 	

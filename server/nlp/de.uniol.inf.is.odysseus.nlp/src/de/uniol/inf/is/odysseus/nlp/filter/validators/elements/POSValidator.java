@@ -8,6 +8,9 @@ import de.uniol.inf.is.odysseus.nlp.filter.ExpressionAtom;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IElementValidator;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.ValidationAnnotatedException;
 
+/**
+ * Validator-class for finding part-of-speech-types.
+ */
 public class POSValidator implements IElementValidator {
 	public final static String NAME = "pos";
 	

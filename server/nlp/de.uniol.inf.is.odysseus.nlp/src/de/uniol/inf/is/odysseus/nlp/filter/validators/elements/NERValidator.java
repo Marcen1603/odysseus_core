@@ -12,6 +12,9 @@ import de.uniol.inf.is.odysseus.nlp.filter.ExpressionAtom;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IElementValidator;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.ValidationAnnotatedException;
 
+/**
+ * Validator-class for finding named-entities.
+ */
 public class NERValidator implements IElementValidator {
 	public static final String NAME = "ne";
 	@Override

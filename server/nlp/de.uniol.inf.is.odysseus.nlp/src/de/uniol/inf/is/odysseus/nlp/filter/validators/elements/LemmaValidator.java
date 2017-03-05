@@ -8,8 +8,13 @@ import de.uniol.inf.is.odysseus.nlp.filter.ExpressionAtom;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IElementValidator;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.ValidationAnnotatedException;
 
+
+/**
+ * Validator class for finding lemmas.
+ */
 public class LemmaValidator implements IElementValidator {
 	public static final String NAME = "lemma";
+	
 	
 	@Override
 	public boolean validate(ExpressionAtom element, Annotated annotated, AtomicInteger tokenId) {

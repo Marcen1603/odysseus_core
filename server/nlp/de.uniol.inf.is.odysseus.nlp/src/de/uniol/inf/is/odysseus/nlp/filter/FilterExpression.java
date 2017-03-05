@@ -31,10 +31,16 @@ public class FilterExpression {
 		return incrementing;
 	}
 	
+	
+	/**
+	 * Translates a sequence into the internal datastructure.
+	 * Eg.  ["token"="get"]["lemma"="VB"] or  ["token"="get"](nand=["lemma"="VB"])
+	 * @param expression string representation of expression
+	 * @return new ExpressionSequence
+	 * @throws MalformedExpression if there's anything wrong in the expression
+	 */
 	public ExpressionSequence fromSequence(String expression) throws MalformedExpression{
-		ExpressionSequence sequence = new ExpressionSequence();
-		int j = 0;
-		
+		ExpressionSequence sequence = new ExpressionSequence();	
 		for(AtomicInteger i = new AtomicInteger(0); i.intValue() < expression.length(); i.addAndGet(1)){
 			char c = expression.charAt(i.intValue());
 			switch(c){
@@ -50,6 +56,13 @@ public class FilterExpression {
 		return sequence;
 	}
 	
+	/**
+	 * Translates a group (and=...) into the internal datastructure
+	 * @param expression the expression that should be translated
+	 * @param start start-index that will increase during translation
+	 * @return new Group
+	 * @throws MalformedExpression if the expression has errors
+	 */
 	public IExpressionElement fromGroup(String expression, AtomicInteger start) throws MalformedExpression{
 		boolean escaped = false;// \( means ( is escaped so will not be investigated
 		boolean awaitType = true;
@@ -86,8 +99,14 @@ public class FilterExpression {
 		throw new MalformedExpression();
 	}	
 	
+	/**
+	 * Atoms or elementary Objects are eg. ["token"="change"].
+	 * @param expression the expression to be translated
+	 * @param start start-index that will increase during translation
+	 * @return
+	 * @throws MalformedExpression
+	 */
 	public IExpressionElement fromAtom(String expression, AtomicInteger start) throws MalformedExpression{
-		ExpressionAtom element = null;
 		boolean escaped = false;
 		//'..'='..'
 		String type = null;

@@ -8,6 +8,9 @@ import de.uniol.inf.is.odysseus.core.server.event.error.ParameterException;
 import de.uniol.inf.is.odysseus.nlp.filter.exception.FilterNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.filter.filters.SimpleFilter;
 
+/**
+ * Manages the filters (eg. simple) and allows to create new filters of a specific kind and expression.
+ */
 public class FilterFactory {
 	private static Map<String, Class<? extends IFilter>> filters = new HashMap<>();
 	

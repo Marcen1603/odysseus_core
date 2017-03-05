@@ -8,6 +8,9 @@ import de.uniol.inf.is.odysseus.nlp.filter.IExpressionElement;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IGroupValidator;
 
 
+/**
+ * Objects of this kind validate {@link Annotated}, if any condition in a condition-set is fulfilled.
+ */
 public class OrValidator implements IGroupValidator {
 	public static final String NAME = "or";
 

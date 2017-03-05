@@ -7,6 +7,9 @@ import de.uniol.inf.is.odysseus.nlp.filter.ExpressionSequence;
 import de.uniol.inf.is.odysseus.nlp.filter.IExpressionElement;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IGroupValidator;
 
+/**
+ * Objects of this kind validate {@link Annotated}, if a number of conditions are all fulfilled.
+ */
 public class AndValidator implements IGroupValidator {
 	public static final String NAME = "and";
 
