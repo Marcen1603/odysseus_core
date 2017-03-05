@@ -43,7 +43,6 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> implements I
 	public void train(String languageCode, File file, String charSet, OptionMap trainOptions) {
 		//the filename of the model that will be overwritten during join
 		filenames = new String[]{trainOptions.get("overwrite")};
-		
 	}
 
 	@Override

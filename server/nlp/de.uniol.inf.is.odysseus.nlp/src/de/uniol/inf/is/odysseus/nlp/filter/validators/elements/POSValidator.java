@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.nlp.filter.validators.elements;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotated;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Lemmas;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.PartsOfSpeech;
 import de.uniol.inf.is.odysseus.nlp.filter.ExpressionAtom;
 import de.uniol.inf.is.odysseus.nlp.filter.validators.IElementValidator;
