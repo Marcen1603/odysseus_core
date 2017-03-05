@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 
 public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationModel<A> {
+	public final String SEPARATOR = "::";
 	protected String[] filenames;
 
 	/**
@@ -29,7 +30,7 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 		if(option == null)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
 		
-		String[] paths = ((String)option.getValue()).split(":");
+		String[] paths = ((String)option.getValue()).split(SEPARATOR);
 		filenames = new String[paths.length];
 		
 		URI[] uris = new URI[paths.length];

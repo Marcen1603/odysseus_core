@@ -103,8 +103,11 @@ public abstract class Pipeline {
 		}catch(NoSuchMethodException e){
 			throw new ParameterException("AnnotationModels should implement both constructors AnnotationModel() and AnnotationModel(Map)");
 		}catch(InvocationTargetException e){
-			if(e.getCause() instanceof NLPException){
+			Throwable ex = e.getCause();
+			if(ex instanceof NLPException || ex instanceof NLPModelNotFoundException){
 				throw (NLPException)e.getCause();
+			}else{
+				e.printStackTrace();
 			}
 		}
 	}
