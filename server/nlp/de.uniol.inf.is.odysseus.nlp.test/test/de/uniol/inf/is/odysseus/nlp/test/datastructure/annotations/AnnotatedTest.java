@@ -25,7 +25,7 @@ public class AnnotatedTest {
 	public void setUp() throws Exception {
 		annotated = new Annotated("This is a test.", Arrays.asList("tokens", "sentences"));
 		tokens = new Tokens(new String[]{"This", "is", "a", "test", "."});
-		sentences = new Sentences(new Span[]{new Span(0, 15)});
+		sentences = new Sentences(new Span[]{new Span(0, 15, annotated.getText())});
 		annotated.put(tokens);
 		annotated.put(sentences);
 	}

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.test.datastructure.annotations;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -14,11 +15,11 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Se
 public class SentencesTest {
 
 	private Sentences sentences;
-	private int[][] sentenceSpans = {{0,1}, {1,2}};
+	private String[] text = {"Beispiel Satz 1.", "Beispiel Satz 2."};
 
 	@Before
 	public void setUp() throws Exception {
-		Span[] spans = {new Span(0,1), new Span(1,2)};	
+		Span[] spans = {new Span(0,1, text[0]), new Span(1,2, text[1])};	
 		sentences = new Sentences(spans);
 	}
 
@@ -28,7 +29,11 @@ public class SentencesTest {
 
 	@Test
 	public void testToObject() {
-		assertTrue(Arrays.deepEquals((Object[]) sentences.toObject(), sentenceSpans));
+		Object obj = sentences.toObject();
+		assertTrue(obj instanceof String[]);
+		String[] out = (String[])obj;
+		
+		assertTrue(Arrays.equals(out, text));
 	}
 
 }

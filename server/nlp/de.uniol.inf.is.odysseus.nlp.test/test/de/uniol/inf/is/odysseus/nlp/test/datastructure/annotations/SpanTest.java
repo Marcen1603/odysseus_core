@@ -9,12 +9,12 @@ public class SpanTest {
 
 	@Test(expected=InvalidSpanException.class)
 	public void constructorFailedTest() throws InvalidSpanException {
-		new Span(0,-1);
+		new Span(0,-1, "Beispiel Satz.");
 	}
 	
 	@Test
 	public void constructorTest() throws InvalidSpanException{
-		new Span(0, 1);
+		new Span(0, 1, "Beispiel Satz.");
 	}
 
 }
