@@ -17,10 +17,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.To
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
-import opennlp.tools.chunker.ChunkSample;
-import opennlp.tools.chunker.ChunkSampleStream;
-import opennlp.tools.chunker.ChunkerFactory;
-import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.lemmatizer.DictionaryLemmatizer;
 import opennlp.tools.lemmatizer.LemmaSample;
 import opennlp.tools.lemmatizer.LemmaSampleStream;
