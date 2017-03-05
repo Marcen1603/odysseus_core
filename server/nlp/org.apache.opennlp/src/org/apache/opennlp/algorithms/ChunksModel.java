@@ -16,9 +16,17 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Pa
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.Tokens;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
+import opennlp.tools.chunker.ChunkSample;
+import opennlp.tools.chunker.ChunkSampleStream;
 import opennlp.tools.chunker.Chunker;
+import opennlp.tools.chunker.ChunkerFactory;
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
+import opennlp.tools.util.MarkableFileInputStreamFactory;
+import opennlp.tools.util.ObjectStream;
+import opennlp.tools.util.PlainTextByLineStream;
+import opennlp.tools.util.TrainingParameters;
 
 public class ChunksModel extends OpenNLPModel<Chunks> {
 	private ChunkerModel model;
@@ -34,8 +42,14 @@ public class ChunksModel extends OpenNLPModel<Chunks> {
 
 	@Override
 	public void train(String languageCode, File file, String charSet, OptionMap options) {
-		// TODO Auto-generated method stub
-		
+		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
+				ObjectStream<ChunkSample> sampleStream = new ChunkSampleStream(lineStream)) {
+				ChunkerFactory factory = new ChunkerFactory();
+				model = ChunkerME.train(languageCode, sampleStream, TrainingParameters.defaultParams(), factory);
+				this.chunker = new ChunkerME(model);
+			} catch (IOException e) {
+				throw new NLPTrainingFailedException(e.getMessage());
+			}
 	}
 
 	@Override
