@@ -101,8 +101,7 @@ public class LemmasModel extends OpenNLPTrainableModel<Lemmas> {
 
 	@Override
 	protected void store(OutputStream modelOut) throws IOException {
-		// TODO Auto-generated method stub
-		
+		model.serialize(modelOut);		
 	}
 	
 }

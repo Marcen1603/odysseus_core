@@ -70,7 +70,6 @@ public class PartsOfSpeechModel extends OpenNLPTrainableModel<PartsOfSpeech> {
 
 	@Override
 	protected void store(OutputStream modelOut) throws IOException {
-		// TODO Auto-generated method stub
-		
+		model.serialize(modelOut);		
 	}
 }

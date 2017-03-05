@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IJoinable;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelStoringFailed;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.NameSample;
@@ -157,7 +158,9 @@ public class NamedEntitiesModel extends OpenNLPTrainableModel<NamedEntities> imp
 
 	@Override
 	protected void store(OutputStream modelOut) throws IOException {
-		// TODO Auto-generated method stub
-		
+		if(namedEntitiesModels.length != 1){
+			throw new NLPModelStoringFailed("Cannot store NamedEntitiesModel, if more than one named-entities-models are used");
+		}
+		namedEntitiesModels[0].serialize(modelOut);				
 	}
 }

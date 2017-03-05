@@ -85,8 +85,7 @@ public class ChunksModel extends OpenNLPTrainableModel<Chunks> {
 
 	@Override
 	protected void store(OutputStream modelOut) throws IOException {
-		// TODO Auto-generated method stub
-		
+		model.serialize(modelOut);			
 	}
 
 }
