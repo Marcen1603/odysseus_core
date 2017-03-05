@@ -122,12 +122,6 @@ public class NamedEntitiesModel extends OpenNLPTrainableModel<NamedEntities> imp
 	}
 
 	@Override
-	public void store(File file) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public AnnotationModel<?> join(AnnotationModel<?> join, boolean overwrite) {
 		if (join instanceof NamedEntitiesModel){
 			NamedEntitiesModel model = (NamedEntitiesModel) join;
