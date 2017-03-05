@@ -13,9 +13,9 @@ public class TAnnotateAORule extends AbstractTransformationRule<AnnotateAO> {
 	@Override
 	public void execute(AnnotateAO operator, TransformationConfiguration config) throws RuleException {
 		if(operator.getOutputType().equals("KeyValueObject"))
-			defaultExecute(operator, new AnnotateKeyValuePO(operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute(), operator.getConfiguration()), config, true, true);	
+			defaultExecute(operator, new AnnotateKeyValuePO(operator.getNlpToolkit(), operator.getPipeline(), operator.getAttribute(), operator.getConfiguration()), config, true, true);	
 		else
-			defaultExecute(operator, new AnnotateObjectPO(operator.getNlpToolkit(), operator.getInformation(), operator.getAttribute(), operator.getConfiguration()), config, true, true);	
+			defaultExecute(operator, new AnnotateObjectPO(operator.getNlpToolkit(), operator.getPipeline(), operator.getAttribute(), operator.getConfiguration()), config, true, true);	
 	}
 
 	@Override

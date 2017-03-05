@@ -27,13 +27,13 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.toolkit.NLPToolkit;
 /**
  * Logical operator component of the ANNOTATE operator
  */
-@LogicalOperator(name="ANNOTATENLP", minInputPorts=1, maxInputPorts=9, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
+@LogicalOperator(name="ANNOTATENLP", minInputPorts=1, maxInputPorts=Integer.MAX_VALUE, doc = "Annotates a specific attribute of an input stream with natural language processing methods.", url = "http://example.com/MyOperator.html", category = { LogicalOperatorCategory.ADVANCED })
 public class AnnotateAO extends AbstractLogicalOperator {
 	
 	private static final long serialVersionUID = 2937642785475519576L;
 
 	//List of information included in output stream (eg. tokens, sentences, pos-tags...)
-	private List<String> information;
+	private List<String> pipeline;
  	
 	//user-specified nlp-toolkit (eg. opennlp)
 	private String toolkit;
@@ -61,7 +61,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
      
     public AnnotateAO(AnnotateAO annotateAO){
         super(annotateAO);
-        this.information = annotateAO.information;
+        this.pipeline = annotateAO.pipeline;
         this.toolkit = annotateAO.toolkit;
         this.attribute = annotateAO.attribute;
         this.nlpToolkit = annotateAO.getNlpToolkit();
@@ -72,7 +72,7 @@ public class AnnotateAO extends AbstractLogicalOperator {
     public NLPToolkit getNlpToolkit(){
     	if(nlpToolkit == null){
     		try {
-    			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(List.class, Map.class).newInstance(information, configuration);
+    			nlpToolkit = ToolkitFactory.get(toolkit).getConstructor(List.class, Map.class).newInstance(pipeline, configuration);
     		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException 
     				| NoSuchMethodException | SecurityException | NLPToolkitNotFoundException e) {
     			throw new ParameterException(e.getMessage());
@@ -110,13 +110,13 @@ public class AnnotateAO extends AbstractLogicalOperator {
     	return toolkit;
     }
     
-    @Parameter(name="information", type = StringParameter.class, isList = true, optional = false)
-	public void setInformation(List<String> information) {
-    	this.information = information;
+    @Parameter(name="pipeline", type = StringParameter.class, isList = true, optional = false)
+	public void setPipeline(List<String> pipeline) {
+    	this.pipeline = pipeline;
 	}
     
-	public List<String> getInformation(){
-		return this.information;
+	public List<String> getPipeline(){
+		return this.pipeline;
 	}
 	
     
