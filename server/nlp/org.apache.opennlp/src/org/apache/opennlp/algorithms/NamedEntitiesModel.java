@@ -23,9 +23,17 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.IJoinable;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPException;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundException;
+import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPTrainingFailedException;
 import opennlp.tools.namefind.NameFinderME;
+import opennlp.tools.namefind.NameSample;
+import opennlp.tools.namefind.NameSampleDataStream;
 import opennlp.tools.namefind.TokenNameFinder;
+import opennlp.tools.namefind.TokenNameFinderFactory;
 import opennlp.tools.namefind.TokenNameFinderModel;
+import opennlp.tools.util.MarkableFileInputStreamFactory;
+import opennlp.tools.util.ObjectStream;
+import opennlp.tools.util.PlainTextByLineStream;
+import opennlp.tools.util.TrainingParameters;
 
 public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> implements IJoinable {
 	private TokenNameFinderModel[] namedEntitiesModels;
@@ -41,8 +49,24 @@ public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> implements I
 	
 	@Override
 	public void train(String languageCode, File file, String charSet, OptionMap trainOptions) {
+		String type = trainOptions.get("type");
+		if(type == null)
+			throw new NLPTrainingFailedException("Error: option type (e.g. person, location,...) should be set.");
+		String overwrite = trainOptions.get("overwrite");
+		if(overwrite == null)
+			throw new NLPTrainingFailedException("Error: overwrite type should be set. Sets filename of models which will be overriden if train is connected to annotate");
 		//the filename of the model that will be overwritten during join
-		filenames = new String[]{trainOptions.get("overwrite")};
+		filenames = new String[]{overwrite};
+		namedEntitiesModels = new TokenNameFinderModel[1];
+		try(ObjectStream<String> lineStream = new PlainTextByLineStream(new MarkableFileInputStreamFactory(file), charSet);
+				ObjectStream<NameSample> sampleStream = new NameSampleDataStream(lineStream)) {
+				TokenNameFinderFactory factory = new TokenNameFinderFactory();
+				namedEntitiesModels[0] = NameFinderME.train(languageCode, type, sampleStream, TrainingParameters.defaultParams(), factory);
+				nameFinders = null;
+				getNameFinders();
+			} catch (IOException e) {
+				throw new NLPTrainingFailedException(e.getMessage());
+			}
 	}
 
 	@Override
