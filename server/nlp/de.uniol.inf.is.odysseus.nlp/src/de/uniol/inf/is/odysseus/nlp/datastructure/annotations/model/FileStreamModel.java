@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
@@ -30,13 +32,23 @@ public abstract class FileStreamModel<A extends IAnnotation> extends AnnotationM
 		String[] paths = ((String)option.getValue()).split(":");
 		filenames = new String[paths.length];
 		
+		URI[] uris = new URI[paths.length];
+		
+		for(int i=0; i < paths.length; i++){
+			try {
+				uris[i] = new URI(paths[i]);
+			} catch (URISyntaxException e) {
+				throw new NLPModelNotFoundException(e.getMessage());
+			}
+		}
+		
 		if(paths.length == 0)
 			throw new NLPModelNotFoundException(AnnotationModel.NAME+"."+this.identifier());
 		
 		FileInputStream[] streams = new FileInputStream[paths.length];
 		try{
-			for(int i = 0; i < paths.length; i++){
-				File file = new File(paths[i]);
+			for(int i = 0; i < uris.length; i++){
+				File file = new File(uris[i]);
 				filenames[i] = file.getName();
 				streams[i] = new FileInputStream(file);
 			}
