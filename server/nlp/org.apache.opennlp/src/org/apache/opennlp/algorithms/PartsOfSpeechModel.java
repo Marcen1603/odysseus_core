@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.apache.opennlp.OpenNLPModel;
+import org.apache.opennlp.OpenNLPTrainableModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -19,7 +19,7 @@ import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTagger;
 import opennlp.tools.postag.POSTaggerME;
 
-public class PartsOfSpeechModel extends OpenNLPModel<PartsOfSpeech> {
+public class PartsOfSpeechModel extends OpenNLPTrainableModel<PartsOfSpeech> {
 	private POSModel model;
 	private POSTagger tagger;
 	

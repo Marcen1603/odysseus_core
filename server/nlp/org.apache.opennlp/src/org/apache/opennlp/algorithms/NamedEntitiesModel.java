@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.opennlp.OpenNLPModel;
 import org.apache.opennlp.OpenNLPToolkit;
+import org.apache.opennlp.OpenNLPTrainableModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -35,7 +35,7 @@ import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
 
-public class NamedEntitiesModel extends OpenNLPModel<NamedEntities> implements IJoinable {
+public class NamedEntitiesModel extends OpenNLPTrainableModel<NamedEntities> implements IJoinable {
 	private TokenNameFinderModel[] namedEntitiesModels;
 	private NameFinderME[] nameFinders;
 

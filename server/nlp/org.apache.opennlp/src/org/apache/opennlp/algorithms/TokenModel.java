@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.opennlp.OpenNLPModel;
+import org.apache.opennlp.OpenNLPTrainableModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -30,7 +30,7 @@ import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
 
 
-public class TokenModel extends OpenNLPModel<Tokens> {
+public class TokenModel extends OpenNLPTrainableModel<Tokens> {
 	private TokenizerModel tokenizerModel;
 
 	public TokenizerModel getTokenizerModel() {

@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-import org.apache.opennlp.OpenNLPModel;
+import org.apache.opennlp.OpenNLPTrainableModel;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -29,7 +29,7 @@ import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 import opennlp.tools.util.TrainingParameters;
 
-public class LemmasModel extends OpenNLPModel<Lemmas> {
+public class LemmasModel extends OpenNLPTrainableModel<Lemmas> {
 	private LemmatizerModel model;
 	private Lemmatizer lemmatizer;
 	private boolean isStatistical = false;
