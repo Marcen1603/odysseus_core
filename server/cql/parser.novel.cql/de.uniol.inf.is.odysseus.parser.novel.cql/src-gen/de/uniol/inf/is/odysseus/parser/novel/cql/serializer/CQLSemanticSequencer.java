@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
@@ -85,6 +86,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.AND:
 				sequence_And(context, (And) semanticObject); 
+				return; 
+			case CQLPackage.ARGUMENT:
+				sequence_Argument(context, (Argument) semanticObject); 
 				return; 
 			case CQLPackage.ATTRIBUTE:
 				if (rule == grammarAccess.getAttributeWithoutAliasDefinitionRule()) {
@@ -426,6 +430,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getAndAccess().getAndLeftAction_1_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getAndAccess().getRightEqualitiyParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Argument returns Argument
+	 *
+	 * Constraint:
+	 *     (attribute=Attribute | aggregation=Aggregation | expression=SelectExpression)
+	 */
+	protected void sequence_Argument(ISerializationContext context, Argument semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1372,11 +1388,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (
 	 *         name='SELECT' 
 	 *         distinct='DISTINCT'? 
-	 *         (
-	 *             (attributes+=Attribute | aggregations+=Aggregation | expressions+=SelectExpression)+ 
-	 *             attributes+=Attribute? 
-	 *             ((aggregations+=Aggregation | expressions+=SelectExpression)? attributes+=Attribute?)*
-	 *         )? 
+	 *         (arguments+=Argument+ arguments+=Argument*)? 
 	 *         sources+=Source+ 
 	 *         sources+=Source* 
 	 *         predicates=ExpressionsModel? 

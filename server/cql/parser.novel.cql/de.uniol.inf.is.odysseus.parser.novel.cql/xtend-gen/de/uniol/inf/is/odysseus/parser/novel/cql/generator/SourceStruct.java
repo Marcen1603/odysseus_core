@@ -114,6 +114,45 @@ public class SourceStruct {
     return null;
   }
   
+  public List<AttributeStruct> findByType(final String datatype) {
+    ArrayList<AttributeStruct> list = CollectionLiterals.<AttributeStruct>newArrayList();
+    for (final AttributeStruct attribute : this.attributes) {
+      String _lowerCase = attribute.datatype.toLowerCase();
+      String _lowerCase_1 = datatype.toLowerCase();
+      boolean _equals = _lowerCase.equals(_lowerCase_1);
+      if (_equals) {
+        list.add(attribute);
+      }
+    }
+    return list;
+  }
+  
+  public AttributeStruct getStarttimeStamp() {
+    List<AttributeStruct> a = this.findByType("StartTimestamp");
+    AttributeStruct _xifexpression = null;
+    boolean _isEmpty = a.isEmpty();
+    boolean _not = (!_isEmpty);
+    if (_not) {
+      _xifexpression = a.get(0);
+    } else {
+      _xifexpression = null;
+    }
+    return _xifexpression;
+  }
+  
+  public AttributeStruct getEndtimeStamp() {
+    List<AttributeStruct> a = this.findByType("EndTimestamp");
+    AttributeStruct _xifexpression = null;
+    boolean _isEmpty = a.isEmpty();
+    boolean _not = (!_isEmpty);
+    if (_not) {
+      _xifexpression = a.get(0);
+    } else {
+      _xifexpression = null;
+    }
+    return _xifexpression;
+  }
+  
   public boolean containsAttribute(final String attributename) {
     boolean _xifexpression = false;
     AttributeStruct _findbyName = this.findbyName(attributename);

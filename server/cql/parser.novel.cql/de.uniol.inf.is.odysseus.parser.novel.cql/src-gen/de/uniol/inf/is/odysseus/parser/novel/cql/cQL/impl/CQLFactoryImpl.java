@@ -69,6 +69,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
       case CQLPackage.SELECT: return createSelect();
+      case CQLPackage.ARGUMENT: return createArgument();
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
@@ -176,6 +177,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     SelectImpl select = new SelectImpl();
     return select;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Argument createArgument()
+  {
+    ArgumentImpl argument = new ArgumentImpl();
+    return argument;
   }
 
   /**

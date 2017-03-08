@@ -3,12 +3,11 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 
 import java.util.Collection;
@@ -37,9 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getDistinct <em>Distinct</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getAttributes <em>Attributes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getAggregations <em>Aggregations</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getExpressions <em>Expressions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getSources <em>Sources</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getPredicates <em>Predicates</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getOrder <em>Order</em>}</li>
@@ -91,34 +88,14 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   protected String distinct = DISTINCT_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' containment reference list.
+   * The cached value of the '{@link #getArguments() <em>Arguments</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAttributes()
+   * @see #getArguments()
    * @generated
    * @ordered
    */
-  protected EList<Attribute> attributes;
-
-  /**
-   * The cached value of the '{@link #getAggregations() <em>Aggregations</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getAggregations()
-   * @generated
-   * @ordered
-   */
-  protected EList<Aggregation> aggregations;
-
-  /**
-   * The cached value of the '{@link #getExpressions() <em>Expressions</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getExpressions()
-   * @generated
-   * @ordered
-   */
-  protected EList<SelectExpression> expressions;
+  protected EList<Argument> arguments;
 
   /**
    * The cached value of the '{@link #getSources() <em>Sources</em>}' containment reference list.
@@ -232,41 +209,13 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Attribute> getAttributes()
+  public EList<Argument> getArguments()
   {
-    if (attributes == null)
+    if (arguments == null)
     {
-      attributes = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.SELECT__ATTRIBUTES);
+      arguments = new EObjectContainmentEList<Argument>(Argument.class, this, CQLPackage.SELECT__ARGUMENTS);
     }
-    return attributes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<Aggregation> getAggregations()
-  {
-    if (aggregations == null)
-    {
-      aggregations = new EObjectContainmentEList<Aggregation>(Aggregation.class, this, CQLPackage.SELECT__AGGREGATIONS);
-    }
-    return aggregations;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<SelectExpression> getExpressions()
-  {
-    if (expressions == null)
-    {
-      expressions = new EObjectContainmentEList<SelectExpression>(SelectExpression.class, this, CQLPackage.SELECT__EXPRESSIONS);
-    }
-    return expressions;
+    return arguments;
   }
 
   /**
@@ -403,12 +352,8 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__ATTRIBUTES:
-        return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
-      case CQLPackage.SELECT__AGGREGATIONS:
-        return ((InternalEList<?>)getAggregations()).basicRemove(otherEnd, msgs);
-      case CQLPackage.SELECT__EXPRESSIONS:
-        return ((InternalEList<?>)getExpressions()).basicRemove(otherEnd, msgs);
+      case CQLPackage.SELECT__ARGUMENTS:
+        return ((InternalEList<?>)getArguments()).basicRemove(otherEnd, msgs);
       case CQLPackage.SELECT__SOURCES:
         return ((InternalEList<?>)getSources()).basicRemove(otherEnd, msgs);
       case CQLPackage.SELECT__PREDICATES:
@@ -435,12 +380,8 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
         return getName();
       case CQLPackage.SELECT__DISTINCT:
         return getDistinct();
-      case CQLPackage.SELECT__ATTRIBUTES:
-        return getAttributes();
-      case CQLPackage.SELECT__AGGREGATIONS:
-        return getAggregations();
-      case CQLPackage.SELECT__EXPRESSIONS:
-        return getExpressions();
+      case CQLPackage.SELECT__ARGUMENTS:
+        return getArguments();
       case CQLPackage.SELECT__SOURCES:
         return getSources();
       case CQLPackage.SELECT__PREDICATES:
@@ -470,17 +411,9 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
       case CQLPackage.SELECT__DISTINCT:
         setDistinct((String)newValue);
         return;
-      case CQLPackage.SELECT__ATTRIBUTES:
-        getAttributes().clear();
-        getAttributes().addAll((Collection<? extends Attribute>)newValue);
-        return;
-      case CQLPackage.SELECT__AGGREGATIONS:
-        getAggregations().clear();
-        getAggregations().addAll((Collection<? extends Aggregation>)newValue);
-        return;
-      case CQLPackage.SELECT__EXPRESSIONS:
-        getExpressions().clear();
-        getExpressions().addAll((Collection<? extends SelectExpression>)newValue);
+      case CQLPackage.SELECT__ARGUMENTS:
+        getArguments().clear();
+        getArguments().addAll((Collection<? extends Argument>)newValue);
         return;
       case CQLPackage.SELECT__SOURCES:
         getSources().clear();
@@ -516,14 +449,8 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
       case CQLPackage.SELECT__DISTINCT:
         setDistinct(DISTINCT_EDEFAULT);
         return;
-      case CQLPackage.SELECT__ATTRIBUTES:
-        getAttributes().clear();
-        return;
-      case CQLPackage.SELECT__AGGREGATIONS:
-        getAggregations().clear();
-        return;
-      case CQLPackage.SELECT__EXPRESSIONS:
-        getExpressions().clear();
+      case CQLPackage.SELECT__ARGUMENTS:
+        getArguments().clear();
         return;
       case CQLPackage.SELECT__SOURCES:
         getSources().clear();
@@ -555,12 +482,8 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.SELECT__DISTINCT:
         return DISTINCT_EDEFAULT == null ? distinct != null : !DISTINCT_EDEFAULT.equals(distinct);
-      case CQLPackage.SELECT__ATTRIBUTES:
-        return attributes != null && !attributes.isEmpty();
-      case CQLPackage.SELECT__AGGREGATIONS:
-        return aggregations != null && !aggregations.isEmpty();
-      case CQLPackage.SELECT__EXPRESSIONS:
-        return expressions != null && !expressions.isEmpty();
+      case CQLPackage.SELECT__ARGUMENTS:
+        return arguments != null && !arguments.isEmpty();
       case CQLPackage.SELECT__SOURCES:
         return sources != null && !sources.isEmpty();
       case CQLPackage.SELECT__PREDICATES:

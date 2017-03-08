@@ -77,6 +77,29 @@ class SourceStruct
 			return null
 		}
 		
+		def List<AttributeStruct> findByType(String datatype)
+		{
+			var list = newArrayList
+			for(AttributeStruct attribute : attributes)
+			{
+				if(attribute.datatype.toLowerCase.equals(datatype.toLowerCase))
+					list.add(attribute)
+			}
+			return list
+		}
+		
+		def AttributeStruct getStarttimeStamp()
+		{
+			var a = findByType('StartTimestamp')
+			return  if(!a.empty) a.get(0) else null
+		}
+		
+		def AttributeStruct getEndtimeStamp()
+		{
+			var a = findByType('EndTimestamp')
+			return  if(!a.empty) a.get(0) else null
+		}
+		
 		def boolean containsAttribute(String attributename)
 		{
 			return if(findbyName(attributename) != null) true else false

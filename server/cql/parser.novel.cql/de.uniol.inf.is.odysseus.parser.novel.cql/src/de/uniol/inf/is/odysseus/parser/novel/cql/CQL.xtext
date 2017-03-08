@@ -17,24 +17,10 @@ Statement:	//FIXME DROP has two types: Statement and Command -> causes error in 
 	(';')?
 ;
  
-Select:
+Select: // FIXME attributes, aggregations and expressions order must be recognizable
 	name='SELECT'
 	(distinct='DISTINCT')?
-	( '*' |
-		( 
-			(attributes+=Attribute 
-				| aggregations+=Aggregation
-				| expressions+=SelectExpression
-//				| mappers+=Mapper
-			)+  
-			(
-				(',' attributes+=Attribute) 
-				| (',' aggregations+=Aggregation) 
-				| (',' expressions+=SelectExpression)
-//				| (',' mappers+=Mapper)
-			)*
-		)
-	)
+	( '*' |  (arguments+=Argument+  ( ',' arguments+=Argument) *))
 	('FROM' sources+=Source+ (',' sources+=Source)*)
 	('WHERE' predicates=ExpressionsModel)?
 	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //ordering+=Attribute+ ('ASC' | 'DESC')?)?)
@@ -43,16 +29,16 @@ Select:
 
 NestedStatement returns Select: '(' Select ')' ;
 
+Argument:
+	(attribute=Attribute | aggregation=Aggregation | expression=SelectExpression)
+;
+
 Source: 
 	name=SourceName 
 	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased) ']')? ('AS' alias=Alias)?
 	|
 	(nested=NestedStatement 'AS' alias=Alias)
 ;
-
-//SourceAsNestedSelect returns Source:
-//		nested=NestedStatement 'AS' alias=Alias
-//;
 
 SourceName:
 	ID
@@ -79,7 +65,7 @@ AttributeWithNestedStatement:
  
 Aggregation://TODO That is not supposed to be hard coded! 
 	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')'
+	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)')'
 	('AS' alias=Alias)?
 ;
 
@@ -87,7 +73,6 @@ AggregationWithoutAliasDefinition returns Aggregation:
 	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
 	'('(attribute=AttributeWithoutAliasDefinition) ')' 
 ;
-
 
 ExpressionComponent:
 	 (ExpressionComponentConstantOrAttribute(
@@ -162,65 +147,6 @@ SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAlias
 			expressions+=(ExpressionComponentConstantOrAttribute)
 		)*	
 ;
-
-//SelectExpressionWithoutAliasDefinition returns SelectExpression:
-//	ExpressionComponent 
-//	|(expressions+=ExpressionComponent (operators+=('+'|'-'|'*'|'/') expressions+=ExpressionComponent)*)
-//;
-
-//Mapper://TODO That is not supposed to be hard coded! 
-//	name=('DolToEur')
-//	'('
-//	(attribute=AttributeWithoutAliasDefinition 
-//		| innerexpression = SelectExpressionWithoutAliasDefinition2
-//	)
-//	')'
-//	('AS' alias=Alias)?
-//;
-//
-//MapperWithoutAlias returns Mapper://TODO That is not supposed to be hard coded! 
-//	name=('DolToEur')
-//	'('
-//	(attribute=AttributeWithoutAliasDefinition 
-//		| innerexpression = SelectExpressionWithoutAliasDefinition2
-//	)
-//	')'
-//;
-//
-//SelectExpressionWithOnlyMapper returns SelectExpression:
-//	leftmapper=Mapper
-//;
-//
-//SelectExpression:
-//	(leftmapper=MapperWithoutAlias
-//		| leftattribute=AttributeWithoutAliasDefinition 
-//		| leftconstant=AtomicWithoutAttributeRef
-//	)
-//	operator=('+'|'-'|'/'|'*')
-//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
-//	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
-//	('AS' alias=Alias)?
-//;
-//
-//SelectExpressionWithoutAliasDefinition returns SelectExpression:
-//	(leftmapper=MapperWithoutAlias
-//		| leftattribute=AttributeWithoutAliasDefinition 
-//		| leftconstant=AtomicWithoutAttributeRef
-//	)
-//	operator=('+'|'-'|'/'|'*')
-//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
-//;
-//
-//SelectExpressionWithoutAliasDefinition2 returns SelectExpression:
-//	(leftmapper=MapperWithoutAlias
-//		| leftattribute=AttributeWithoutAliasDefinition 
-//		| leftconstant=AtomicWithoutAttributeRef
-//	)
-//	operator=('+'|'-'|'/'|'*')
-//	(innerexpression=SelectExpressionWithoutAliasDefinition)?
-//	(rightattribute=AttributeWithoutAliasDefinition | rightconstant=AtomicWithoutAttributeRef)
-//;
-//
 /////
 //SelectExpressionOnlyWithAttributeAndConstant returns SelectExpression:
 //	(leftattribute=AttributeWithoutAliasDefinition 
@@ -271,69 +197,6 @@ SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAlias
 Alias:
 	name=ID
 ;  
-
-//SelectWithoutWhere returns Select:
-//	name='SELECT'
-//	(distinct='DISTINCT')?
-//	( '*' |
-//		( 
-//			(attributes+=Attribute | aggregations+=Aggregation)+  
-//			& (',' attributes+=Attribute)* 
-//			& (',' aggregations+=Aggregation)*
-//		)
-//	)
-//	('FROM' sources+=Source+ (',' sources+=Source)*)
-//	'GROUP' 'BY' order+=Attribute+ (',' order+=Attribute) //ordering+=Attribute+ ('ASC' | 'DESC')?)?
-//	'HAVING' having=ExpressionsModel
-//;
-//
-//SelectWithoutWhere returns Select:
-//	name='SELECT'
-//	(distinct='DISTINCT')?
-//	( '*' |
-//		( 
-//			(attributes+=Attribute | aggregations+=Aggregation)+  
-//			& (',' attributes+=Attribute)* 
-//			& (',' aggregations+=Aggregation)*
-//		)
-//	)
-//	('FROM' sources+=Source+ (',' sources+=Source)*)
-//	'GROUP' 'BY' order+=Attribute+ (',' order+=Attribute) //ordering+=Attribute+ ('ASC' | 'DESC')?)?
-//	'HAVING' having=ExpressionsModel
-//;
-//
-//SelectWithoutGroupBy returns Select:
-//	name='SELECT'
-//	(distinct='DISTINCT')?
-//	( '*' |
-//		( 
-//			(attributes+=Attribute | aggregations+=Aggregation)+  
-//			& (',' attributes+=Attribute)* 
-//			& (',' aggregations+=Aggregation)*
-//		)
-//	)
-//	('FROM' sources+=Source+ (',' sources+=Source)*)
-//	'WHERE' predicates=ExpressionsModel
-//;
-//
-//SelectWithoutWhereAndGroupBy returns Select:
-//	name='SELECT'
-//	(distinct='DISTINCT')?
-//	( '*' |
-//		( 
-//			(attributes+=Attribute | aggregations+=Aggregation)+  
-//			& (',' attributes+=Attribute)* 
-//			& (',' aggregations+=Aggregation)*
-//		)
-//	)
-//	('FROM' sources+=Source+ (',' sources+=Source)*)
-//;
-
-
-//Order:
-//	attribute=Attribute
-//	direction=('ASC'|'DESC')
-//;
 
 enum CreateKeyword:
 	CREATE | ATTACH

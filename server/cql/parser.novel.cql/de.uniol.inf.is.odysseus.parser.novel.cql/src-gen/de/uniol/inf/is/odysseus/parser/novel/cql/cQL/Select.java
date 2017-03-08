@@ -18,9 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getAttributes <em>Attributes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getAggregations <em>Aggregations</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getExpressions <em>Expressions</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getArguments <em>Arguments</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources <em>Sources</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates <em>Predicates</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getOrder <em>Order</em>}</li>
@@ -86,52 +84,20 @@ public interface Select extends EObject
   void setDistinct(String value);
 
   /**
-   * Returns the value of the '<em><b>Attributes</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute}.
+   * Returns the value of the '<em><b>Arguments</b></em>' containment reference list.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Attributes</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Arguments</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Attributes</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Attributes()
+   * @return the value of the '<em>Arguments</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Arguments()
    * @model containment="true"
    * @generated
    */
-  EList<Attribute> getAttributes();
-
-  /**
-   * Returns the value of the '<em><b>Aggregations</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Aggregations</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Aggregations</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Aggregations()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Aggregation> getAggregations();
-
-  /**
-   * Returns the value of the '<em><b>Expressions</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Expressions</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Expressions</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Expressions()
-   * @model containment="true"
-   * @generated
-   */
-  EList<SelectExpression> getExpressions();
+  EList<Argument> getArguments();
 
   /**
    * Returns the value of the '<em><b>Sources</b></em>' containment reference list.

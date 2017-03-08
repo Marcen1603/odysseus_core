@@ -51,6 +51,15 @@ public interface CQLFactory extends EFactory
   Select createSelect();
 
   /**
+   * Returns a new object of class '<em>Argument</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Argument</em>'.
+   * @generated
+   */
+  Argument createArgument();
+
+  /**
    * Returns a new object of class '<em>Source</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
