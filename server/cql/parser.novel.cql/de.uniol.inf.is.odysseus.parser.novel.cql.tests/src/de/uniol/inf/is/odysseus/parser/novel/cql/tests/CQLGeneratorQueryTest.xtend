@@ -57,7 +57,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT * FROM stream1;"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, stream1)"
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -105,7 +105,7 @@ class CQLGeneratorQueryTest
 
 	val aliasTestResult = "
 		operator_1 = SELECT({predicate='stream1.attr1 > 2'}, stream1)
-		operator_2 = PROJECT({attributes=['stream1.attr1']}, operator_1)
+		operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)
 		renamed_3 = RENAME({aliases=['attr1','value1'],pairs='true'}, operator_2)"
 
 	@Test def void AliasTest1()
@@ -169,7 +169,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=stream1.attr1",
 			"operator_1=SELECT({predicate='stream1.attr1==stream1.attr1'},JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
-			 operator_2=PROJECT({attributes=['stream1.attr1']},operator_1)
+			 operator_2=MAP({expressions=['stream1.attr1']},operator_1)
 			 renamed_3=RENAME({aliases=['attr1','aid'],pairs='true'},operator_2)"
 			, new CQLDictionaryHelper()
 		)
@@ -206,7 +206,7 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = SELECT({predicate='stream1.attr1>2'},stream1)
-			operator_2 = PROJECT({attributes=['stream1.attr1']},operator_1)"
+			operator_2 = MAP({expressions=['stream1.attr1']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -217,7 +217,7 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
 			,
 			"
-			operator_1=PROJECT({attributes=['stream1.attr1-1', 'stream1.attr1']},
+			operator_1=MAP({expressions=['stream1.attr1-1', 'stream1.attr1']},
 						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))"
 		, new CQLDictionaryHelper())
 	}
@@ -229,7 +229,7 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
 			,
 			"
-			operator_1=PROJECT({attributes=['stream1.attr1-2','stream1.attr1']},
+			operator_1=MAP({expressions=['stream1.attr1-2','stream1.attr1']},
 						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),
 							JOIN(RENAME({aliases=['attr1','stream1.attr1-2','attr2','stream1.attr2-2'],pairs='true'},stream1),stream1)))"
 		, new CQLDictionaryHelper())
@@ -244,7 +244,7 @@ class CQLGeneratorQueryTest
 			"
 			operator_1=SELECT({predicate='stream1.attr1>stream1.attr2'},
 				JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
-			operator_2=PROJECT({attributes=['stream1.attr1-1','stream1.attr1']},operator_1)"
+			operator_2=MAP({expressions=['stream1.attr1-1','stream1.attr1']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -256,7 +256,7 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = SELECT({predicate='stream1.attr1>2'},JOIN(stream1,JOIN(stream2,stream3)))
-			operator_2 = PROJECT({attributes=['stream1.attr1']},operator_1)"
+			operator_2 = MAP({expressions=['stream1.attr1']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -266,7 +266,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1;"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)"
+			"operator_1 = MAP({expressions=['stream1.attr1']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -276,7 +276,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1, attr2, attr3 FROM stream1, stream2, stream3;"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2', 'stream2.attr3']},
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2', 'stream2.attr3']},
 							JOIN(stream1, 
 								JOIN(stream2, stream3)))"
 		, new CQLDictionaryHelper())
@@ -289,7 +289,7 @@ class CQLGeneratorQueryTest
 			"SELECT attr1, AVG(attr1) AS avgAttr1, attr2, attr3 FROM stream1, stream2, stream3;"
 			,
 			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','avgAttr1','Integer']]},JOIN(stream1,JOIN(stream2,stream3)))
-			 operator_2 = PROJECT({attributes=['stream1.attr1','avgAttr1','stream1.attr2','stream2.attr3']},JOIN(operator_1,JOIN(stream1,JOIN(stream2,stream3))))"
+			 operator_2 = MAP({expressions=['stream1.attr1','avgAttr1','stream1.attr2','stream2.attr3']}, operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -300,7 +300,7 @@ class CQLGeneratorQueryTest
 			"SELECT attr1, attr2 FROM stream1 WHERE attr1=7 OR attr1=20 OR attr1=21 OR attr1=59 OR attr1=87;"
 			,
 			"operator_1 = SELECT({predicate='stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87'},stream1)
-			 operator_2 = PROJECT({attributes=['stream1.attr1','stream1.attr2']},operator_1)"
+			 operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -314,7 +314,7 @@ class CQLGeneratorQueryTest
 			)"
 			,
 			"
-			operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, stream1)
+			operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)
 			view_2 := operator_1
 			"
 			, new CQLDictionaryHelper	
@@ -435,7 +435,7 @@ class CQLGeneratorQueryTest
 					dataHandler='TUPLE',
 					options=[['filename','outfile1']]
 				},
-				SELECT({predicate='stream1.attr2!=stream1.attr1'}, PROJECT({attributes=['stream2.attr1','stream1.attr2']},stream1)))"
+				SELECT({predicate='stream1.attr2!=stream1.attr1'}, MAP({expressions=['stream2.attr1','stream1.attr2']},stream1)))"
 			, new CQLDictionaryHelper()	
 		)	
 	}
@@ -476,7 +476,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT * FROM stream1 [UNBOUNDED];"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, stream1)"
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -486,7 +486,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']},
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']},
 							 TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream1))"
 		, new CQLDictionaryHelper())
 	}
@@ -497,7 +497,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 MINUTES ADVANCE 1 SECONDS TIME];"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, 
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, 
 							TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'SECONDS']}, stream1))"
 		, new CQLDictionaryHelper())
 	}
@@ -508,7 +508,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT * FROM stream1 [SIZE 5 TUPLE];"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, 
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, 
 							ELEMENTWINDOW({size=5,advance=1}, stream1))"
 		, new CQLDictionaryHelper())
 	}
@@ -540,7 +540,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3;"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1','stream1.attr2','stream2.attr4']}, 
+			"operator_1 = MAP({expressions=['stream1.attr1','stream1.attr2','stream2.attr4']}, 
 							JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), 
 								JOIN(TIMEWINDOW({size=[5, 'MINUTES'], advance=[1, 'MINUTES']}, stream2), stream3)))"
 		, new CQLDictionaryHelper())
@@ -555,7 +555,7 @@ class CQLGeneratorQueryTest
 			"
 			operator_1 = SELECT({predicate='stream2.attr4 != stream1.attr1'}, JOIN(ELEMENTWINDOW({size=5,advance=1},stream1),
 								JOIN(TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream2),stream3)))
-			operator_2 = PROJECT({attributes=['stream1.attr1','stream1.attr2','stream2.attr4']}, operator_1)"
+			operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2','stream2.attr4']}, operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -577,7 +577,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 [SIZE 5 TUPLE];"
 			,
-			"operator_1 = PROJECT({attributes=['stream1.attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
+			"operator_1 = MAP({expressions=['stream1.attr1']}, ELEMENTWINDOW({size=5,advance=1}, stream1))"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -652,11 +652,7 @@ class CQLGeneratorQueryTest
 					AGGREGATIONS=[['COUNT', 'stream1.attr1', 'Counter', 'Integer']]
 				}, TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1)
 			)
-			operator_2 = PROJECT({attributes=['Counter', 'stream1.attr2']}, 
-				JOIN(TIMEWINDOW({size=[5,'MINUTES'], advance=[1, 'MINUTES']}, stream1), 
-				operator_1
-				)
-			)"
+			operator_2 = MAP({expressions=['Counter', 'stream1.attr2']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}	
@@ -676,8 +672,7 @@ class CQLGeneratorQueryTest
 								 ]
 				}, JOIN(stream1, stream2)
 			)
-			operator_2 = PROJECT
-			({attributes=['Counter', 'stream2.attr3']}, JOIN(operator_1, JOIN(stream1, stream2)))"
+			operator_2 = MAP({expressions=['Counter', 'stream2.attr3']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}	
@@ -697,8 +692,7 @@ class CQLGeneratorQueryTest
 								 ]
 				}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),stream1))
 
-			operator_2=PROJECT({attributes=['Counter', 'stream2.attr3']},
-						JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),JOIN(operator_1,stream1)))"
+			operator_2=MAP({expressions=['Counter', 'stream2.attr3']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -718,9 +712,8 @@ class CQLGeneratorQueryTest
 								 ]
 				}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1))
 			)
-			operator_2 = SELECT({predicate='stream2.attr3 > 100'}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),
-								JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1), operator_1)))
-			operator_3 = PROJECT({attributes=['Counter', 'stream2.attr3']},operator_2)"
+			operator_2 = SELECT({predicate='stream2.attr3 > 100'}, operator_1)
+			operator_3 = MAP({expressions=['Counter', 'stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -735,9 +728,8 @@ class CQLGeneratorQueryTest
 			operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},
 							JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),
 								TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1)))
-			operator_2 = SELECT({predicate='Counter>1000&&stream2.attr3>100'}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),
-								JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),operator_1)))
-			operator_3 = PROJECT({attributes=['Counter', 'stream2.attr3']}, operator_2)"
+			operator_2 = SELECT({predicate='Counter>1000&&stream2.attr3>100'}, operator_1)
+			operator_3 = MAP({expressions=['Counter', 'stream2.attr3']}, operator_2)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -749,9 +741,9 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM (SELECT attr1 FROM stream1) AS str1"
 			,
 			"
-			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
+			operator_1 = MAP({expressions=['stream1.attr1']}, stream1)
 			str1 = operator_1 
-			operator_2 = PROJECT({attributes=['stream1.attr1']}, str1)"
+			operator_2 = MAP({expressions=['stream1.attr1']}, str1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -763,11 +755,11 @@ class CQLGeneratorQueryTest
 			"SELECT attr1, attr3 FROM (SELECT attr1 FROM stream1) AS s1, (SELECT * FROM stream2) AS s2"
 			,
 			"
-			operator_1 = PROJECT({attributes=['stream1.attr1']}, stream1)
+			operator_1 = MAP({expressions=['stream1.attr1']}, stream1)
 			s1 = operator_1
-			operator_2 = PROJECT({attributes=['stream2.attr3', 'stream2.attr4']}, stream2)
+			operator_2 = MAP({expressions=['stream2.attr3', 'stream2.attr4']}, stream2)
 			s2 = operator_2
-			operator_3 = PROJECT({attributes=['stream1.attr1', 'stream2.attr3']}, JOIN(s1, s2))"
+			operator_3 = MAP({expressions=['stream1.attr1', 'stream2.attr3']}, JOIN(s1, s2))"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -780,7 +772,7 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = SELECT({predicate='stream1.attr1 > 1000'}, stream1)
-			operator_2 = PROJECT({attributes=['stream1.attr1']}, operator_1)"
+			operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -793,7 +785,7 @@ class CQLGeneratorQueryTest
 			,
 			"	
 			operator_1 = SELECT({predicate='stream1.attr1>1000&&stream2.attr3!=2'}, stream1)
-			operator_2 = PROJECT({attributes=['stream1.attr1']}, operator_1)
+			operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)
 
 			"
 			, new CQLDictionaryHelper()
@@ -816,7 +808,7 @@ class CQLGeneratorQueryTest
 							&& stream1.attr1 != 0 
 							&&  stream1.attr1 < 100 
 							&& stream1.attr2 > 1.92'}, stream1)
-			operator_2 = PROJECT({attributes=['stream1.attr1','stream1.attr2']}, operator_1)"
+			operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -830,16 +822,10 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = SELECT({predicate='stream1.attr1<1234'},stream1)
-			s1=operator_1
- 			operator_2 = PROJECT({attributes=['stream2.attr3','stream2.attr4']},stream2)
-			s2=operator_2
-			operator_3 = SELECT({predicate='stream1.attr1<1234'},JOIN(s1,JOIN(s2,stream1)))
-			operator_4 = PROJECT({attributes=['stream1.attr1','stream1.attr2']}, operator_3)"
+			operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
-	
-	//SELECT * FROM nexmark:person2 WHERE ID IN (SELECT ID FROM (SELECT * FROM nexmark:person2) AS s1 WHERE ID < 1000);
 	
 	@Test def void DistinctTest()
 	{
@@ -847,7 +833,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DISTINCT * FROM stream1;"
 			,
-			"operator_1 = DISTINCT(PROJECT({attributes=['stream1.attr1', 'stream1.attr2']}, stream1))"
+			"operator_1 = DISTINCT(MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -914,7 +900,7 @@ class CQLGeneratorQueryTest
 			"SELECT DolToEur(attr1), attr1 FROM stream1;"
 			,
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
-			 operator_2 = PROJECT({attributes=['expression_0','stream1.attr1']},
+			 operator_2 = MAP({expressions=['expression_0','stream1.attr1']},
 							JOIN(
 								operator_1,
 								stream1)
@@ -930,7 +916,7 @@ class CQLGeneratorQueryTest
 			"SELECT DolToEur(attr1), attr1 FROM stream1;"
 			,
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
-			 operator_2 = PROJECT({attributes=['expression_0','stream1.attr1']},
+			 operator_2 = MAP({expressions=['expression_0','stream1.attr1']},
 							JOIN(
 								operator_1,
 								stream1)
@@ -961,7 +947,7 @@ class CQLGeneratorQueryTest
 			,
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
 			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
-			 operator_3 = PROJECT({attributes=['expression_0','AVG_0','stream1.attr1']}, JOIN(JOIN(operator_1,operator_2),stream1))
+			 operator_3 = MAP({expressions=['expression_0','AVG_0','stream1.attr1']}, JOIN(JOIN(operator_1,operator_2),stream1))
 			 renamed_4  = RENAME({aliases=['attr1','a1'],pairs='true'}, operator_3)"
 			, new CQLDictionaryHelper()
 		)
@@ -976,7 +962,7 @@ class CQLGeneratorQueryTest
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
 			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
              operator_3 = SELECT({predicate='stream1.attr1>10'},JOIN(JOIN(operator_1,operator_2),stream1))
-             operator_4 = PROJECT({attributes=['expression_0','AVG_0', 'stream1.attr1']},operator_3)"
+             operator_4 = MAP({expressions=['expression_0','AVG_0', 'stream1.attr1']},operator_3)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -991,7 +977,7 @@ class CQLGeneratorQueryTest
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
 			 operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
 			 operator_3 = SELECT({predicate='stream1.attr1>10'},JOIN(JOIN(operator_1,operator_2),stream1))
-			 operator_4 = PROJECT({attributes=['expression_0','AVG_0']}, operator_3)"
+			 operator_4 = MAP({expressions=['expression_0','AVG_0']}, operator_3)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -1005,7 +991,7 @@ class CQLGeneratorQueryTest
 			,
 			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
 			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1,stream1))
-			 operator_3 = PROJECT({attributes=['expression_0']},o perator_2)"
+			 operator_3 = MAP({expressions=['expression_0']},o perator_2)"
 			, new CQLDictionaryHelper()
 		)
 	}

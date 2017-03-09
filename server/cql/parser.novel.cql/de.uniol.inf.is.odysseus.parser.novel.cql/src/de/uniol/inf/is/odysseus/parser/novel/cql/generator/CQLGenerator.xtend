@@ -1249,11 +1249,12 @@ class CQLGenerator implements IGenerator2
 				}
 			}		
 		}
-					
-		return registerOperator('''PROJECT(
-						{
-							attributes=[«generateListString(orderedAttributes)»]
-						},«operator»)''')
+		
+		return registerOperator('''MAP({expressions=[«generateListString(orderedAttributes)»]},«operator»)''')			
+//		return registerOperator('''PROJECT(
+//						{
+//							attributes=[«generateListString(orderedAttributes)»]
+//						},«operator»)''')
 	}
 	
 	def private CharSequence buildProjectOP(String[] attributes, Source src)
@@ -1262,14 +1263,14 @@ class CQLGenerator implements IGenerator2
 		
 		if(attributes.empty)
 		{
-			return registerOperator('''PROJECT(
+			return registerOperator('''MAP(
 						{
-							attributes=[«generateListString(getAttributeNamesFrom(src.name).stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
+							expressions=[«generateListString(getAttributeNamesFrom(src.name).stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
 						},«checkForNestedStatement(src)»)''')
 		}
-		return registerOperator('''PROJECT(
+		return registerOperator('''MAP(
 				  	{
-				  		attributes=[«generateListString(attributes.stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
+				  		expressions=[«generateListString(attributes.stream.map(e|getAttributename(e,src.name)).collect(Collectors.toList))»]
 				  	},«checkForNestedStatement(src)»)''')
 	}
 	
