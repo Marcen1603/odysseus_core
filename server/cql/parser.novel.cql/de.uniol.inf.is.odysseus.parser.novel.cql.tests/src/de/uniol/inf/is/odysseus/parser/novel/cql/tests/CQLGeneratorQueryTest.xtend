@@ -176,27 +176,18 @@ class CQLGeneratorQueryTest
 		
 	}
 	
-//	@Test def void AliasTest6()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
-//			,
-//			aliasTestResult
-//			, new CQLDictionaryHelper()
-//		)
-//	}
-//	
-//	@Test def void AliasTest7()
-//	{
-//		assertCorrectGenerated
-//		(
-//			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2 WHERE s1.attr1 > s2.attr1;"
-//			,
-//			aliasTestResult
-//			, new CQLDictionaryHelper()
-//		)
-//	}
+	@Test def void AliasTest7()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
+			,
+			"operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','value1','Integer']]}, stream1)
+			 operator_2 = SELECT({predicate='stream1.attr1>2'}, operator_1)
+			 operator_3 = MAP({expressions=['value1']}, operator_2)"   
+			, new CQLDictionaryHelper()
+		)
+	}
 	
 	@Test def void SelectAttr1Test1() 
 	{ 
@@ -207,44 +198,6 @@ class CQLGeneratorQueryTest
 			"
 			operator_1 = SELECT({predicate='stream1.attr1>2'},stream1)
 			operator_2 = MAP({expressions=['stream1.attr1']},operator_1)"
-		, new CQLDictionaryHelper())
-	}
-	
-	@Test def void SelfJoinTest1() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
-			,
-			"
-			operator_1=MAP({expressions=['stream1.attr1-1', 'stream1.attr1']},
-						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))"
-		, new CQLDictionaryHelper())
-	}
-	
-	@Test def void SelfJoinTest2() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
-			,
-			"
-			operator_1=MAP({expressions=['stream1.attr1-2','stream1.attr1']},
-						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),
-							JOIN(RENAME({aliases=['attr1','stream1.attr1-2','attr2','stream1.attr2-2'],pairs='true'},stream1),stream1)))"
-		, new CQLDictionaryHelper())
-	}
-	
-	@Test def void SelfJoinTest3() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2 WHERE s1.attr1 > s2.attr2;"
-			,
-			"
-			operator_1=SELECT({predicate='stream1.attr1>stream1.attr2'},
-				JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
-			operator_2=MAP({expressions=['stream1.attr1-1','stream1.attr1']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
 	
@@ -425,17 +378,20 @@ class CQLGeneratorQueryTest
 
 			STREAM TO out1 SELECT attr1, attr2 FROM stream1 WHERE attr2 != attr1;"
 			,
-			"out1 := SENDER
-			(
-				{
-					sink='out1',
-					wrapper='GenericPush',
-					protocol='CSV',
-					transport='FILE',
-					dataHandler='TUPLE',
-					options=[['filename','outfile1']]
-				},
-				SELECT({predicate='stream1.attr2!=stream1.attr1'}, MAP({expressions=['stream2.attr1','stream1.attr2']},stream1)))"
+			"operator_1 = SELECT({predicate='stream1.attr2!=stream1.attr1'},stream1) 
+			 operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)
+			 out1 := SENDER
+				  (
+					{	  
+						sink      = 'out1', 
+						wrapper     = 'GenericPush',
+						protocol    = 'CSV',
+						transport   = 'FILE',
+						dataHandler = 'TUPLE',
+						options =[['filename','outfile1']]
+					 }
+					 ,operator_2
+				   )"
 			, new CQLDictionaryHelper()	
 		)	
 	}
@@ -454,18 +410,7 @@ class CQLGeneratorQueryTest
 
 			STREAM TO out1 stream1;"
 			,
-			"out1 := SENDER
-			(
-				{
-					sink='out1',
-					wrapper='GenericPush',
-					protocol='CSV',
-					transport='FILE',
-					dataHandler='TUPLE',
-					options=[['filename','outfile1']]
-				},
-				stream1
-			)"
+			"out1:=SENDER({sink='out1',wrapper='GenericPush',protocol='CSV',transport='FILE',dataHandler='TUPLE',options=[['filename','outfile1']]}, out1)"
 			, new CQLDictionaryHelper()	
 		)	
 	}
@@ -827,17 +772,6 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	@Test def void DistinctTest()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT DISTINCT * FROM stream1;"
-			,
-			"operator_1 = DISTINCT(MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1))"
-			, new CQLDictionaryHelper()
-		)
-	}
-	
 	@Test def void SelectExpressionTest1()
 	{
 		assertCorrectGenerated
@@ -967,7 +901,6 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	//TODO Project operator is missing
 	@Test def void SelectExpressionTest11()
 	{
 		assertCorrectGenerated
@@ -982,7 +915,6 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	//TODO Project operator is missing
 	@Test def void SelectExpressionTest12()
 	{
 		assertCorrectGenerated
@@ -995,4 +927,55 @@ class CQLGeneratorQueryTest
 			, new CQLDictionaryHelper()
 		)
 	}
+	
+		
+	@Test def void SelfJoinTest1() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
+			,
+			"
+			operator_1=MAP({expressions=['stream1.attr1-1', 'stream1.attr1']},
+						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void SelfJoinTest2() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
+			,
+			"
+			operator_1=MAP({expressions=['stream1.attr1-2','stream1.attr1']},
+						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),
+							JOIN(RENAME({aliases=['attr1','stream1.attr1-2','attr2','stream1.attr2-2'],pairs='true'},stream1),stream1)))"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void SelfJoinTest3() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2 WHERE s1.attr1 > s2.attr2;"
+			,
+			"
+			operator_1=SELECT({predicate='stream1.attr1>stream1.attr2'},
+				JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
+			operator_2=MAP({expressions=['stream1.attr1-1','stream1.attr1']},operator_1)"
+		, new CQLDictionaryHelper())
+	}
+	
+	@Test def void DistinctTest()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT DISTINCT * FROM stream1;"
+			,
+			"operator_1 = DISTINCT(MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 }
