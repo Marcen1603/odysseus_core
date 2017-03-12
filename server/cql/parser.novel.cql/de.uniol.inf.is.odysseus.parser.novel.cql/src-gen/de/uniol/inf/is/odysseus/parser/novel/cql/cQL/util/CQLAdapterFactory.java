@@ -111,14 +111,14 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAttributeWithNestedStatementAdapter();
       }
       @Override
-      public Adapter caseAggregation(Aggregation object)
-      {
-        return createAggregationAdapter();
-      }
-      @Override
       public Adapter caseExpressionComponent(ExpressionComponent object)
       {
         return createExpressionComponentAdapter();
+      }
+      @Override
+      public Adapter caseFunction(Function object)
+      {
+        return createFunctionAdapter();
       }
       @Override
       public Adapter caseSelectExpression(SelectExpression object)
@@ -206,9 +206,9 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createDataTypeAdapter();
       }
       @Override
-      public Adapter caseMapper(Mapper object)
+      public Adapter caseFunctionWithoutAlias(FunctionWithoutAlias object)
       {
-        return createMapperAdapter();
+        return createFunctionWithoutAliasAdapter();
       }
       @Override
       public Adapter caseOr(Or object)
@@ -408,21 +408,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation <em>Aggregation</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation
-   * @generated
-   */
-  public Adapter createAggregationAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent <em>Expression Component</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -433,6 +418,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createExpressionComponentAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
+   * @generated
+   */
+  public Adapter createFunctionAdapter()
   {
     return null;
   }
@@ -693,16 +693,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper <em>Mapper</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias <em>Function Without Alias</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias
    * @generated
    */
-  public Adapter createMapperAdapter()
+  public Adapter createFunctionWithoutAliasAdapter()
   {
     return null;
   }

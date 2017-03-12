@@ -87,15 +87,6 @@ public interface CQLFactory extends EFactory
   AttributeWithNestedStatement createAttributeWithNestedStatement();
 
   /**
-   * Returns a new object of class '<em>Aggregation</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Aggregation</em>'.
-   * @generated
-   */
-  Aggregation createAggregation();
-
-  /**
    * Returns a new object of class '<em>Expression Component</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -103,6 +94,15 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   ExpressionComponent createExpressionComponent();
+
+  /**
+   * Returns a new object of class '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Function</em>'.
+   * @generated
+   */
+  Function createFunction();
 
   /**
    * Returns a new object of class '<em>Select Expression</em>'.
@@ -258,13 +258,13 @@ public interface CQLFactory extends EFactory
   DataType createDataType();
 
   /**
-   * Returns a new object of class '<em>Mapper</em>'.
+   * Returns a new object of class '<em>Function Without Alias</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Mapper</em>'.
+   * @return a new object of class '<em>Function Without Alias</em>'.
    * @generated
    */
-  Mapper createMapper();
+  FunctionWithoutAlias createFunctionWithoutAlias();
 
   /**
    * Returns a new object of class '<em>Or</em>'.

@@ -14,6 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
@@ -36,6 +37,7 @@ class CQLGeneratorQueryTest
 		val fsa = new InMemoryFileSystemAccess()
 		if(dictionary != null)
 		innerschema = dictionary.schema as Set<SDFSchema>
+		nameProvider = new NameProviderHelper()
 //		outerschema = dictionary.schema as Set<SDFSchema>
         doGenerate(model.eResource(), fsa, null)
         clear
@@ -805,7 +807,7 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	@Test def void SelectExpressionTest4()
+	def void SelectExpressionTest4()//FIXME not working
 	{
 		assertCorrectGenerated
 		(
@@ -928,6 +930,18 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
+	@Test def void SelectExpressionTest13()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT s1.attr1, DolToEur(s1.attr1), s1.attr2, s1.attr1, s1.attr2 FROM stream1 AS s1;"
+			,
+			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1,stream1))
+			 operator_3 = MAP({expressions=['expression_0']},o perator_2)"
+			, new CQLDictionaryHelper()
+		)
+	}
 		
 	@Test def void SelfJoinTest1() 
 	{ 

@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper;
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +43,8 @@ public class CQLGeneratorQueryTest {
         Collection<SDFSchema> _schema = dictionary.getSchema();
         this._cQLGenerator.setInnerschema(((Set<SDFSchema>) _schema));
       }
+      NameProviderHelper _nameProviderHelper = new NameProviderHelper();
+      this._cQLGenerator.setNameProvider(_nameProviderHelper);
       Resource _eResource = model.eResource();
       this._cQLGenerator.doGenerate(_eResource, fsa, null);
       this._cQLGenerator.clear();
@@ -490,7 +493,6 @@ public class CQLGeneratorQueryTest {
       "operator_1=MAP({expressions=[[\'DolToEur(stream1.attr1*stream1.attr2)+10.0-stream1.attr2\',\'exp1\'], [\'DolToEur(stream1.attr1)\',\'exp2\']]},stream1)", _cQLDictionaryHelper);
   }
   
-  @Test
   public void SelectExpressionTest4() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
@@ -559,6 +561,14 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT DolToEur(stream1.attr1) FROM stream1 WHERE attr1 > 10;", 
+      "operator_1 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\']]},stream1)\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1,stream1))\n\t\t\t operator_3 = MAP({expressions=[\'expression_0\']},o perator_2)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectExpressionTest13() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT s1.attr1, DolToEur(s1.attr1), s1.attr2, s1.attr1, s1.attr2 FROM stream1 AS s1;", 
       "operator_1 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\']]},stream1)\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1,stream1))\n\t\t\t operator_3 = MAP({expressions=[\'expression_0\']},o perator_2)", _cQLDictionaryHelper);
   }
   

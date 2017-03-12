@@ -344,16 +344,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Assignment cAttributeAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
 		private final RuleCall cAttributeAttributeParserRuleCall_0_0 = (RuleCall)cAttributeAssignment_0.eContents().get(0);
-		private final Assignment cAggregationAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cAggregationAggregationParserRuleCall_1_0 = (RuleCall)cAggregationAssignment_1.eContents().get(0);
-		private final Assignment cExpressionAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cExpressionSelectExpressionParserRuleCall_2_0 = (RuleCall)cExpressionAssignment_2.eContents().get(0);
+		private final Assignment cExpressionAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cExpressionSelectExpressionParserRuleCall_1_0 = (RuleCall)cExpressionAssignment_1.eContents().get(0);
 		
 		//Argument:
-		//	attribute=Attribute | aggregation=Aggregation | expression=SelectExpression;
+		//	attribute=Attribute | expression=SelectExpression;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//attribute=Attribute | aggregation=Aggregation | expression=SelectExpression
+		//attribute=Attribute | expression=SelectExpression
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//attribute=Attribute
@@ -362,17 +360,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Attribute
 		public RuleCall getAttributeAttributeParserRuleCall_0_0() { return cAttributeAttributeParserRuleCall_0_0; }
 		
-		//aggregation=Aggregation
-		public Assignment getAggregationAssignment_1() { return cAggregationAssignment_1; }
-		
-		//Aggregation
-		public RuleCall getAggregationAggregationParserRuleCall_1_0() { return cAggregationAggregationParserRuleCall_1_0; }
-		
 		//expression=SelectExpression
-		public Assignment getExpressionAssignment_2() { return cExpressionAssignment_2; }
+		public Assignment getExpressionAssignment_1() { return cExpressionAssignment_1; }
 		
 		//SelectExpression
-		public RuleCall getExpressionSelectExpressionParserRuleCall_2_0() { return cExpressionSelectExpressionParserRuleCall_2_0; }
+		public RuleCall getExpressionSelectExpressionParserRuleCall_1_0() { return cExpressionSelectExpressionParserRuleCall_1_0; }
 	}
 	public class SourceElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Source");
@@ -622,174 +614,111 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//NestedStatement
 		public RuleCall getNestedNestedStatementParserRuleCall_2_0() { return cNestedNestedStatementParserRuleCall_2_0; }
 	}
-	public class AggregationElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Aggregation");
+	public class FunctionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Function");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
-		private final Keyword cNameAVGKeyword_0_0_0 = (Keyword)cNameAlternatives_0_0.eContents().get(0);
-		private final Keyword cNameMINKeyword_0_0_1 = (Keyword)cNameAlternatives_0_0.eContents().get(1);
-		private final Keyword cNameMAXKeyword_0_0_2 = (Keyword)cNameAlternatives_0_0.eContents().get(2);
-		private final Keyword cNameCOUNTKeyword_0_0_3 = (Keyword)cNameAlternatives_0_0.eContents().get(3);
-		private final Keyword cNameSUMKeyword_0_0_4 = (Keyword)cNameAlternatives_0_0.eContents().get(4);
-		private final Keyword cNameMEDIANKeyword_0_0_5 = (Keyword)cNameAlternatives_0_0.eContents().get(5);
-		private final Keyword cNameFIRSTKeyword_0_0_6 = (Keyword)cNameAlternatives_0_0.eContents().get(6);
-		private final Keyword cNameLASTKeyword_0_0_7 = (Keyword)cNameAlternatives_0_0.eContents().get(7);
-		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
-		private final Assignment cAttributeAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
-		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0 = (RuleCall)cAttributeAssignment_2_0.eContents().get(0);
-		private final Assignment cExpressionAssignment_2_1 = (Assignment)cAlternatives_2.eContents().get(1);
-		private final RuleCall cExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0 = (RuleCall)cExpressionAssignment_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cASKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cAliasAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cAliasAliasParserRuleCall_4_1_0 = (RuleCall)cAliasAssignment_4_1.eContents().get(0);
+		private final Action cFunctionAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cASKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cAliasAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cAliasAliasParserRuleCall_5_1_0 = (RuleCall)cAliasAssignment_5_1.eContents().get(0);
 		
-		//Aggregation:
-		//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS'
-		//	alias=Alias)?;
+		////Aggregation://TODO That is not supposed to be hard coded! 
+		////	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+		////	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)')'
+		////	('AS' alias=Alias)?
+		////;
+		////
+		////AggregationWithoutAliasDefinition returns Aggregation:
+		////	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+		////	'('(attribute=AttributeWithoutAliasDefinition) ')' 
+		////;
+		//Function ExpressionComponent:
+		//	{Function} name=ID
+		//	'(' value=SelectExpressionWithoutAliasDefinition ')' ('AS' alias=Alias)?
 		@Override public ParserRule getRule() { return rule; }
 		
-		////TODO That is not supposed to be hard coded! 
-		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST') '('
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS' alias=Alias)?
+		//{Function} name=ID '(' value=SelectExpressionWithoutAliasDefinition ')' ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
-		////TODO That is not supposed to be hard coded! 
-		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+		//{Function}
+		public Action getFunctionAction_0() { return cFunctionAction_0; }
 		
-		//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//'AVG'
-		public Keyword getNameAVGKeyword_0_0_0() { return cNameAVGKeyword_0_0_0; }
-		
-		//'MIN'
-		public Keyword getNameMINKeyword_0_0_1() { return cNameMINKeyword_0_0_1; }
-		
-		//'MAX'
-		public Keyword getNameMAXKeyword_0_0_2() { return cNameMAXKeyword_0_0_2; }
-		
-		//'COUNT'
-		public Keyword getNameCOUNTKeyword_0_0_3() { return cNameCOUNTKeyword_0_0_3; }
-		
-		//'SUM'
-		public Keyword getNameSUMKeyword_0_0_4() { return cNameSUMKeyword_0_0_4; }
-		
-		//'MEDIAN'
-		public Keyword getNameMEDIANKeyword_0_0_5() { return cNameMEDIANKeyword_0_0_5; }
-		
-		//'FIRST'
-		public Keyword getNameFIRSTKeyword_0_0_6() { return cNameFIRSTKeyword_0_0_6; }
-		
-		//'LAST'
-		public Keyword getNameLASTKeyword_0_0_7() { return cNameLASTKeyword_0_0_7; }
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
+		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 		
-		//(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)
-		public Alternatives getAlternatives_2() { return cAlternatives_2; }
-		
-		//attribute=AttributeWithoutAliasDefinition
-		public Assignment getAttributeAssignment_2_0() { return cAttributeAssignment_2_0; }
-		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0_0; }
-		
-		//expression=SelectExpressionWithoutAliasDefinition
-		public Assignment getExpressionAssignment_2_1() { return cExpressionAssignment_2_1; }
+		//value=SelectExpressionWithoutAliasDefinition
+		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
 		
 		//SelectExpressionWithoutAliasDefinition
-		public RuleCall getExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0() { return cExpressionSelectExpressionWithoutAliasDefinitionParserRuleCall_2_1_0; }
+		public RuleCall getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0() { return cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
+		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
 		
 		//('AS' alias=Alias)?
-		public Group getGroup_4() { return cGroup_4; }
+		public Group getGroup_5() { return cGroup_5; }
 		
 		//'AS'
-		public Keyword getASKeyword_4_0() { return cASKeyword_4_0; }
+		public Keyword getASKeyword_5_0() { return cASKeyword_5_0; }
 		
 		//alias=Alias
-		public Assignment getAliasAssignment_4_1() { return cAliasAssignment_4_1; }
+		public Assignment getAliasAssignment_5_1() { return cAliasAssignment_5_1; }
 		
 		//Alias
-		public RuleCall getAliasAliasParserRuleCall_4_1_0() { return cAliasAliasParserRuleCall_4_1_0; }
+		public RuleCall getAliasAliasParserRuleCall_5_1_0() { return cAliasAliasParserRuleCall_5_1_0; }
 	}
-	public class AggregationWithoutAliasDefinitionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AggregationWithoutAliasDefinition");
+	public class FunctionWithoutAliasElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FunctionWithoutAlias");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
-		private final Keyword cNameAVGKeyword_0_0_0 = (Keyword)cNameAlternatives_0_0.eContents().get(0);
-		private final Keyword cNameMINKeyword_0_0_1 = (Keyword)cNameAlternatives_0_0.eContents().get(1);
-		private final Keyword cNameMAXKeyword_0_0_2 = (Keyword)cNameAlternatives_0_0.eContents().get(2);
-		private final Keyword cNameCOUNTKeyword_0_0_3 = (Keyword)cNameAlternatives_0_0.eContents().get(3);
-		private final Keyword cNameSUMKeyword_0_0_4 = (Keyword)cNameAlternatives_0_0.eContents().get(4);
-		private final Keyword cNameMEDIANKeyword_0_0_5 = (Keyword)cNameAlternatives_0_0.eContents().get(5);
-		private final Keyword cNameFIRSTKeyword_0_0_6 = (Keyword)cNameAlternatives_0_0.eContents().get(6);
-		private final Keyword cNameLASTKeyword_0_0_7 = (Keyword)cNameAlternatives_0_0.eContents().get(7);
-		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cAttributeAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0 = (RuleCall)cAttributeAssignment_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Action cFunctionWithoutAliasAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
-		//AggregationWithoutAliasDefinition Aggregation:
-		//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		//	'(' attribute=AttributeWithoutAliasDefinition ')'
+		//FunctionWithoutAlias Function:
+		//	{FunctionWithoutAlias} name=ID
+		//	'(' value=SelectExpressionWithoutAliasDefinition ')'
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST') '('
-		//attribute=AttributeWithoutAliasDefinition ')'
+		//{FunctionWithoutAlias} name=ID '(' value=SelectExpressionWithoutAliasDefinition ')'
 		public Group getGroup() { return cGroup; }
 		
-		//name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+		//{FunctionWithoutAlias}
+		public Action getFunctionWithoutAliasAction_0() { return cFunctionWithoutAliasAction_0; }
 		
-		//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
-		//'AVG'
-		public Keyword getNameAVGKeyword_0_0_0() { return cNameAVGKeyword_0_0_0; }
-		
-		//'MIN'
-		public Keyword getNameMINKeyword_0_0_1() { return cNameMINKeyword_0_0_1; }
-		
-		//'MAX'
-		public Keyword getNameMAXKeyword_0_0_2() { return cNameMAXKeyword_0_0_2; }
-		
-		//'COUNT'
-		public Keyword getNameCOUNTKeyword_0_0_3() { return cNameCOUNTKeyword_0_0_3; }
-		
-		//'SUM'
-		public Keyword getNameSUMKeyword_0_0_4() { return cNameSUMKeyword_0_0_4; }
-		
-		//'MEDIAN'
-		public Keyword getNameMEDIANKeyword_0_0_5() { return cNameMEDIANKeyword_0_0_5; }
-		
-		//'FIRST'
-		public Keyword getNameFIRSTKeyword_0_0_6() { return cNameFIRSTKeyword_0_0_6; }
-		
-		//'LAST'
-		public Keyword getNameLASTKeyword_0_0_7() { return cNameLASTKeyword_0_0_7; }
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
+		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 		
-		//attribute=AttributeWithoutAliasDefinition
-		public Assignment getAttributeAssignment_2() { return cAttributeAssignment_2; }
+		//value=SelectExpressionWithoutAliasDefinition
+		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
 		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_2_0; }
+		//SelectExpressionWithoutAliasDefinition
+		public RuleCall getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0() { return cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
+		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
 	}
 	public class ExpressionComponentElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponent");
@@ -859,23 +788,23 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentMapperOrConstant");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final RuleCall cMapperParserRuleCall_0_0 = (RuleCall)cGroup_0.eContents().get(0);
+		private final RuleCall cFunctionWithoutAliasParserRuleCall_0_0 = (RuleCall)cGroup_0.eContents().get(0);
 		private final Action cExpressionComponentValueAction_0_1 = (Action)cGroup_0.eContents().get(1);
 		private final Assignment cValueAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final RuleCall cValueAtomicWithoutAttributeRefParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
 		
 		//ExpressionComponentMapperOrConstant ExpressionComponent:
-		//	Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+		//	FunctionWithoutAlias {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
 		@Override public ParserRule getRule() { return rule; }
 		
-		//Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+		//FunctionWithoutAlias {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//Mapper {ExpressionComponent.value=current}
+		//FunctionWithoutAlias {ExpressionComponent.value=current}
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//Mapper
-		public RuleCall getMapperParserRuleCall_0_0() { return cMapperParserRuleCall_0_0; }
+		//FunctionWithoutAlias
+		public RuleCall getFunctionWithoutAliasParserRuleCall_0_0() { return cFunctionWithoutAliasParserRuleCall_0_0; }
 		
 		//{ExpressionComponent.value=current}
 		public Action getExpressionComponentValueAction_0_1() { return cExpressionComponentValueAction_0_1; }
@@ -919,60 +848,21 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	public class ExpressionComponentOnlymapperElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cMapperParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final RuleCall cFunctionWithoutAliasParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Action cExpressionComponentValueAction_1 = (Action)cGroup.eContents().get(1);
 		
 		//ExpressionComponentOnlymapper ExpressionComponent:
-		//	Mapper {ExpressionComponent.value=current}
+		//	FunctionWithoutAlias {ExpressionComponent.value=current}
 		@Override public ParserRule getRule() { return rule; }
 		
-		//Mapper {ExpressionComponent.value=current}
+		//FunctionWithoutAlias {ExpressionComponent.value=current}
 		public Group getGroup() { return cGroup; }
 		
-		//Mapper
-		public RuleCall getMapperParserRuleCall_0() { return cMapperParserRuleCall_0; }
+		//FunctionWithoutAlias
+		public RuleCall getFunctionWithoutAliasParserRuleCall_0() { return cFunctionWithoutAliasParserRuleCall_0; }
 		
 		//{ExpressionComponent.value=current}
 		public Action getExpressionComponentValueAction_1() { return cExpressionComponentValueAction_1; }
-	}
-	public class MapperElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Mapper");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cMapperAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Keyword cNameDolToEurKeyword_1_0 = (Keyword)cNameAssignment_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
-		
-		//Mapper ExpressionComponent:
-		//	{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
-		@Override public ParserRule getRule() { return rule; }
-		
-		//{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
-		public Group getGroup() { return cGroup; }
-		
-		//{Mapper}
-		public Action getMapperAction_0() { return cMapperAction_0; }
-		
-		//name='DolToEur'
-		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
-		
-		//'DolToEur'
-		public Keyword getNameDolToEurKeyword_1_0() { return cNameDolToEurKeyword_1_0; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
-		
-		//value=SelectExpressionWithoutAliasDefinition
-		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
-		
-		//SelectExpressionWithoutAliasDefinition
-		public RuleCall getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0() { return cValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
 	}
 	public class SelectExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpression");
@@ -2842,15 +2732,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final AttributeWithoutAliasDefinitionElements pAttributeWithoutAliasDefinition;
 	private final AttributeNameElements pAttributeName;
 	private final AttributeWithNestedStatementElements pAttributeWithNestedStatement;
-	private final AggregationElements pAggregation;
-	private final AggregationWithoutAliasDefinitionElements pAggregationWithoutAliasDefinition;
+	private final FunctionElements pFunction;
+	private final FunctionWithoutAliasElements pFunctionWithoutAlias;
 	private final ExpressionComponentElements pExpressionComponent;
 	private final ExpressionComponentConstantOrAttributeElements pExpressionComponentConstantOrAttribute;
 	private final ExpressionComponentMapperOrConstantElements pExpressionComponentMapperOrConstant;
 	private final ExpressionComponentOnlyAttributeElements pExpressionComponentOnlyAttribute;
 	private final ExpressionComponentOnlyConstantElements pExpressionComponentOnlyConstant;
 	private final ExpressionComponentOnlymapperElements pExpressionComponentOnlymapper;
-	private final MapperElements pMapper;
 	private final SelectExpressionElements pSelectExpression;
 	private final SelectExpressionWithoutAliasDefinitionElements pSelectExpressionWithoutAliasDefinition;
 	private final SelectExpressionWithOnlyAttributeOrConstantElements pSelectExpressionWithOnlyAttributeOrConstant;
@@ -2906,15 +2795,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pAttributeWithoutAliasDefinition = new AttributeWithoutAliasDefinitionElements();
 		this.pAttributeName = new AttributeNameElements();
 		this.pAttributeWithNestedStatement = new AttributeWithNestedStatementElements();
-		this.pAggregation = new AggregationElements();
-		this.pAggregationWithoutAliasDefinition = new AggregationWithoutAliasDefinitionElements();
+		this.pFunction = new FunctionElements();
+		this.pFunctionWithoutAlias = new FunctionWithoutAliasElements();
 		this.pExpressionComponent = new ExpressionComponentElements();
 		this.pExpressionComponentConstantOrAttribute = new ExpressionComponentConstantOrAttributeElements();
 		this.pExpressionComponentMapperOrConstant = new ExpressionComponentMapperOrConstantElements();
 		this.pExpressionComponentOnlyAttribute = new ExpressionComponentOnlyAttributeElements();
 		this.pExpressionComponentOnlyConstant = new ExpressionComponentOnlyConstantElements();
 		this.pExpressionComponentOnlymapper = new ExpressionComponentOnlymapperElements();
-		this.pMapper = new MapperElements();
 		this.pSelectExpression = new SelectExpressionElements();
 		this.pSelectExpressionWithoutAliasDefinition = new SelectExpressionWithoutAliasDefinitionElements();
 		this.pSelectExpressionWithOnlyAttributeOrConstant = new SelectExpressionWithOnlyAttributeOrConstantElements();
@@ -3042,7 +2930,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Argument:
-	//	attribute=Attribute | aggregation=Aggregation | expression=SelectExpression;
+	//	attribute=Attribute | expression=SelectExpression;
 	public ArgumentElements getArgumentAccess() {
 		return pArgument;
 	}
@@ -3115,27 +3003,36 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeWithNestedStatementAccess().getRule();
 	}
 	
-	//Aggregation:
-	//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	//	'(' (attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition) ')' ('AS'
-	//	alias=Alias)?;
-	public AggregationElements getAggregationAccess() {
-		return pAggregation;
+	////Aggregation://TODO That is not supposed to be hard coded! 
+	////	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+	////	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)')'
+	////	('AS' alias=Alias)?
+	////;
+	////
+	////AggregationWithoutAliasDefinition returns Aggregation:
+	////	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+	////	'('(attribute=AttributeWithoutAliasDefinition) ')' 
+	////;
+	//Function ExpressionComponent:
+	//	{Function} name=ID
+	//	'(' value=SelectExpressionWithoutAliasDefinition ')' ('AS' alias=Alias)?
+	public FunctionElements getFunctionAccess() {
+		return pFunction;
 	}
 	
-	public ParserRule getAggregationRule() {
-		return getAggregationAccess().getRule();
+	public ParserRule getFunctionRule() {
+		return getFunctionAccess().getRule();
 	}
 	
-	//AggregationWithoutAliasDefinition Aggregation:
-	//	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	//	'(' attribute=AttributeWithoutAliasDefinition ')'
-	public AggregationWithoutAliasDefinitionElements getAggregationWithoutAliasDefinitionAccess() {
-		return pAggregationWithoutAliasDefinition;
+	//FunctionWithoutAlias Function:
+	//	{FunctionWithoutAlias} name=ID
+	//	'(' value=SelectExpressionWithoutAliasDefinition ')'
+	public FunctionWithoutAliasElements getFunctionWithoutAliasAccess() {
+		return pFunctionWithoutAlias;
 	}
 	
-	public ParserRule getAggregationWithoutAliasDefinitionRule() {
-		return getAggregationWithoutAliasDefinitionAccess().getRule();
+	public ParserRule getFunctionWithoutAliasRule() {
+		return getFunctionWithoutAliasAccess().getRule();
 	}
 	
 	//ExpressionComponent:
@@ -3160,7 +3057,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ExpressionComponentMapperOrConstant ExpressionComponent:
-	//	Mapper {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
+	//	FunctionWithoutAlias {ExpressionComponent.value=current} | value=AtomicWithoutAttributeRef
 	public ExpressionComponentMapperOrConstantElements getExpressionComponentMapperOrConstantAccess() {
 		return pExpressionComponentMapperOrConstant;
 	}
@@ -3190,23 +3087,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ExpressionComponentOnlymapper ExpressionComponent:
-	//	Mapper {ExpressionComponent.value=current}
+	//	FunctionWithoutAlias {ExpressionComponent.value=current}
 	public ExpressionComponentOnlymapperElements getExpressionComponentOnlymapperAccess() {
 		return pExpressionComponentOnlymapper;
 	}
 	
 	public ParserRule getExpressionComponentOnlymapperRule() {
 		return getExpressionComponentOnlymapperAccess().getRule();
-	}
-	
-	//Mapper ExpressionComponent:
-	//	{Mapper} name='DolToEur' '(' value=SelectExpressionWithoutAliasDefinition ')'
-	public MapperElements getMapperAccess() {
-		return pMapper;
-	}
-	
-	public ParserRule getMapperRule() {
-		return getMapperAccess().getRule();
 	}
 	
 	//SelectExpression:

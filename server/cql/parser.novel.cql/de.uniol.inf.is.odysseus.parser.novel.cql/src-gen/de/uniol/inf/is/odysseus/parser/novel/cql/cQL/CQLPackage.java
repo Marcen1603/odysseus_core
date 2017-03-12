@@ -216,22 +216,13 @@ public interface CQLPackage extends EPackage
   int ARGUMENT__ATTRIBUTE = 0;
 
   /**
-   * The feature id for the '<em><b>Aggregation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ARGUMENT__AGGREGATION = 1;
-
-  /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ARGUMENT__EXPRESSION = 2;
+  int ARGUMENT__EXPRESSION = 1;
 
   /**
    * The number of structural features of the '<em>Argument</em>' class.
@@ -240,7 +231,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ARGUMENT_FEATURE_COUNT = 3;
+  int ARGUMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl <em>Source</em>}' class.
@@ -390,61 +381,6 @@ public interface CQLPackage extends EPackage
   int ATTRIBUTE_WITH_NESTED_STATEMENT_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl <em>Aggregation</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAggregation()
-   * @generated
-   */
-  int AGGREGATION = 7;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AGGREGATION__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Attribute</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AGGREGATION__ATTRIBUTE = 1;
-
-  /**
-   * The feature id for the '<em><b>Expression</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AGGREGATION__EXPRESSION = 2;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AGGREGATION__ALIAS = 3;
-
-  /**
-   * The number of structural features of the '<em>Aggregation</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int AGGREGATION_FEATURE_COUNT = 4;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -452,7 +388,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponent()
    * @generated
    */
-  int EXPRESSION_COMPONENT = 8;
+  int EXPRESSION_COMPONENT = 7;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -471,6 +407,52 @@ public interface CQLPackage extends EPackage
    * @ordered
    */
   int EXPRESSION_COMPONENT_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl <em>Function</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFunction()
+   * @generated
+   */
+  int FUNCTION = 8;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__VALUE = EXPRESSION_COMPONENT__VALUE;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__NAME = EXPRESSION_COMPONENT_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Alias</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__ALIAS = EXPRESSION_COMPONENT_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Function</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionImpl <em>Select Expression</em>}' class.
@@ -1237,14 +1219,14 @@ public interface CQLPackage extends EPackage
   int DATA_TYPE_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionWithoutAliasImpl <em>Function Without Alias</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionWithoutAliasImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFunctionWithoutAlias()
    * @generated
    */
-  int MAPPER = 26;
+  int FUNCTION_WITHOUT_ALIAS = 26;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1253,7 +1235,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MAPPER__VALUE = EXPRESSION_COMPONENT__VALUE;
+  int FUNCTION_WITHOUT_ALIAS__VALUE = FUNCTION__VALUE;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1262,16 +1244,25 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MAPPER__NAME = EXPRESSION_COMPONENT_FEATURE_COUNT + 0;
+  int FUNCTION_WITHOUT_ALIAS__NAME = FUNCTION__NAME;
 
   /**
-   * The number of structural features of the '<em>Mapper</em>' class.
+   * The feature id for the '<em><b>Alias</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MAPPER_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 1;
+  int FUNCTION_WITHOUT_ALIAS__ALIAS = FUNCTION__ALIAS;
+
+  /**
+   * The number of structural features of the '<em>Function Without Alias</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION_WITHOUT_ALIAS_FEATURE_COUNT = FUNCTION_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
@@ -1917,17 +1908,6 @@ public interface CQLPackage extends EPackage
   EReference getArgument_Attribute();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAggregation <em>Aggregation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Aggregation</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAggregation()
-   * @see #getArgument()
-   * @generated
-   */
-  EReference getArgument_Aggregation();
-
-  /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getExpression <em>Expression</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2079,60 +2059,6 @@ public interface CQLPackage extends EPackage
   EReference getAttributeWithNestedStatement_Nested();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation <em>Aggregation</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Aggregation</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation
-   * @generated
-   */
-  EClass getAggregation();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getName()
-   * @see #getAggregation()
-   * @generated
-   */
-  EAttribute getAggregation_Name();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getAttribute <em>Attribute</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getAttribute()
-   * @see #getAggregation()
-   * @generated
-   */
-  EReference getAggregation_Attribute();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getExpression <em>Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Expression</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getExpression()
-   * @see #getAggregation()
-   * @generated
-   */
-  EReference getAggregation_Expression();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getAlias <em>Alias</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Alias</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation#getAlias()
-   * @see #getAggregation()
-   * @generated
-   */
-  EReference getAggregation_Alias();
-
-  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent <em>Expression Component</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2152,6 +2078,38 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EReference getExpressionComponent_Value();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Function</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
+   * @generated
+   */
+  EClass getFunction();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getName()
+   * @see #getFunction()
+   * @generated
+   */
+  EAttribute getFunction_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getAlias <em>Alias</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Alias</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getAlias()
+   * @see #getFunction()
+   * @generated
+   */
+  EReference getFunction_Alias();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression <em>Select Expression</em>}'.
@@ -2830,25 +2788,14 @@ public interface CQLPackage extends EPackage
   EAttribute getDataType_Value();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper <em>Mapper</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias <em>Function Without Alias</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Mapper</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
+   * @return the meta object for class '<em>Function Without Alias</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias
    * @generated
    */
-  EClass getMapper();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper#getName()
-   * @see #getMapper()
-   * @generated
-   */
-  EAttribute getMapper_Name();
+  EClass getFunctionWithoutAlias();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
@@ -3408,14 +3355,6 @@ public interface CQLPackage extends EPackage
     EReference ARGUMENT__ATTRIBUTE = eINSTANCE.getArgument_Attribute();
 
     /**
-     * The meta object literal for the '<em><b>Aggregation</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ARGUMENT__AGGREGATION = eINSTANCE.getArgument_Aggregation();
-
-    /**
      * The meta object literal for the '<em><b>Expression</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3534,48 +3473,6 @@ public interface CQLPackage extends EPackage
     EReference ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED = eINSTANCE.getAttributeWithNestedStatement_Nested();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl <em>Aggregation</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AggregationImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAggregation()
-     * @generated
-     */
-    EClass AGGREGATION = eINSTANCE.getAggregation();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute AGGREGATION__NAME = eINSTANCE.getAggregation_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Attribute</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference AGGREGATION__ATTRIBUTE = eINSTANCE.getAggregation_Attribute();
-
-    /**
-     * The meta object literal for the '<em><b>Expression</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference AGGREGATION__EXPRESSION = eINSTANCE.getAggregation_Expression();
-
-    /**
-     * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference AGGREGATION__ALIAS = eINSTANCE.getAggregation_Alias();
-
-    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3592,6 +3489,32 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EReference EXPRESSION_COMPONENT__VALUE = eINSTANCE.getExpressionComponent_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl <em>Function</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFunction()
+     * @generated
+     */
+    EClass FUNCTION = eINSTANCE.getFunction();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute FUNCTION__NAME = eINSTANCE.getFunction_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference FUNCTION__ALIAS = eINSTANCE.getFunction_Alias();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionImpl <em>Select Expression</em>}' class.
@@ -4132,22 +4055,14 @@ public interface CQLPackage extends EPackage
     EAttribute DATA_TYPE__VALUE = eINSTANCE.getDataType_Value();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl <em>Mapper</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionWithoutAliasImpl <em>Function Without Alias</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MapperImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMapper()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionWithoutAliasImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFunctionWithoutAlias()
      * @generated
      */
-    EClass MAPPER = eINSTANCE.getMapper();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MAPPER__NAME = eINSTANCE.getMapper_Name();
+    EClass FUNCTION_WITHOUT_ALIAS = eINSTANCE.getFunctionWithoutAlias();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.

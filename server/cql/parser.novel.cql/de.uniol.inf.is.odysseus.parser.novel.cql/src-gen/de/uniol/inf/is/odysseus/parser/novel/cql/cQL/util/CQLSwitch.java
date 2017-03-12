@@ -122,17 +122,18 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.AGGREGATION:
-      {
-        Aggregation aggregation = (Aggregation)theEObject;
-        T result = caseAggregation(aggregation);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.EXPRESSION_COMPONENT:
       {
         ExpressionComponent expressionComponent = (ExpressionComponent)theEObject;
         T result = caseExpressionComponent(expressionComponent);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.FUNCTION:
+      {
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = caseExpressionComponent(function);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -256,11 +257,12 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.MAPPER:
+      case CQLPackage.FUNCTION_WITHOUT_ALIAS:
       {
-        Mapper mapper = (Mapper)theEObject;
-        T result = caseMapper(mapper);
-        if (result == null) result = caseExpressionComponent(mapper);
+        FunctionWithoutAlias functionWithoutAlias = (FunctionWithoutAlias)theEObject;
+        T result = caseFunctionWithoutAlias(functionWithoutAlias);
+        if (result == null) result = caseFunction(functionWithoutAlias);
+        if (result == null) result = caseExpressionComponent(functionWithoutAlias);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -493,22 +495,6 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Aggregation</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Aggregation</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAggregation(Aggregation object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Expression Component</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -520,6 +506,22 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseExpressionComponent(ExpressionComponent object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFunction(Function object)
   {
     return null;
   }
@@ -797,17 +799,17 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Mapper</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Function Without Alias</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Mapper</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Function Without Alias</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseMapper(Mapper object)
+  public T caseFunctionWithoutAlias(FunctionWithoutAlias object)
   {
     return null;
   }

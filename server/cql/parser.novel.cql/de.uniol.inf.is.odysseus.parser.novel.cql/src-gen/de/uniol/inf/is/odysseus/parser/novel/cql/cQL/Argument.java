@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAttribute <em>Attribute</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAggregation <em>Aggregation</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getExpression <em>Expression</em>}</li>
  * </ul>
  *
@@ -50,32 +49,6 @@ public interface Argument extends EObject
    * @generated
    */
   void setAttribute(Attribute value);
-
-  /**
-   * Returns the value of the '<em><b>Aggregation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Aggregation</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Aggregation</em>' containment reference.
-   * @see #setAggregation(Aggregation)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getArgument_Aggregation()
-   * @model containment="true"
-   * @generated
-   */
-  Aggregation getAggregation();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAggregation <em>Aggregation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Aggregation</em>' containment reference.
-   * @see #getAggregation()
-   * @generated
-   */
-  void setAggregation(Aggregation value);
 
   /**
    * Returns the value of the '<em><b>Expression</b></em>' containment reference.

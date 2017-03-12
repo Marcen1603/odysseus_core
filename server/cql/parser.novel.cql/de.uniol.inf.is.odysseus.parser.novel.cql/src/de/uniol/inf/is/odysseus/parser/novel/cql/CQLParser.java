@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.NameProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLExpressionsValidator;
 
 public class CQLParser implements IQueryParser 
@@ -154,6 +155,7 @@ public class CQLParser implements IQueryParser
 // 		System.out.println("EObjects:: " + stuff);
  		
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+		generator.setNameProvider(new NameProvider());
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
 		List<IExecutorCommand> list = new ArrayList<>();

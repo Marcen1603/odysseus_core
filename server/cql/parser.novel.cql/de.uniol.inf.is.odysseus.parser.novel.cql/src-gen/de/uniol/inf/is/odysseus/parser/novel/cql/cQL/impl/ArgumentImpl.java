@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
@@ -27,7 +26,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl#getAttribute <em>Attribute</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl#getAggregation <em>Aggregation</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl#getExpression <em>Expression</em>}</li>
  * </ul>
  *
@@ -44,16 +42,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
    * @ordered
    */
   protected Attribute attribute;
-
-  /**
-   * The cached value of the '{@link #getAggregation() <em>Aggregation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getAggregation()
-   * @generated
-   * @ordered
-   */
-  protected Aggregation aggregation;
 
   /**
    * The cached value of the '{@link #getExpression() <em>Expression</em>}' containment reference.
@@ -139,54 +127,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
    * <!-- end-user-doc -->
    * @generated
    */
-  public Aggregation getAggregation()
-  {
-    return aggregation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetAggregation(Aggregation newAggregation, NotificationChain msgs)
-  {
-    Aggregation oldAggregation = aggregation;
-    aggregation = newAggregation;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.ARGUMENT__AGGREGATION, oldAggregation, newAggregation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setAggregation(Aggregation newAggregation)
-  {
-    if (newAggregation != aggregation)
-    {
-      NotificationChain msgs = null;
-      if (aggregation != null)
-        msgs = ((InternalEObject)aggregation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.ARGUMENT__AGGREGATION, null, msgs);
-      if (newAggregation != null)
-        msgs = ((InternalEObject)newAggregation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.ARGUMENT__AGGREGATION, null, msgs);
-      msgs = basicSetAggregation(newAggregation, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.ARGUMENT__AGGREGATION, newAggregation, newAggregation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public SelectExpression getExpression()
   {
     return expression;
@@ -242,8 +182,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
     {
       case CQLPackage.ARGUMENT__ATTRIBUTE:
         return basicSetAttribute(null, msgs);
-      case CQLPackage.ARGUMENT__AGGREGATION:
-        return basicSetAggregation(null, msgs);
       case CQLPackage.ARGUMENT__EXPRESSION:
         return basicSetExpression(null, msgs);
     }
@@ -262,8 +200,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
     {
       case CQLPackage.ARGUMENT__ATTRIBUTE:
         return getAttribute();
-      case CQLPackage.ARGUMENT__AGGREGATION:
-        return getAggregation();
       case CQLPackage.ARGUMENT__EXPRESSION:
         return getExpression();
     }
@@ -282,9 +218,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
     {
       case CQLPackage.ARGUMENT__ATTRIBUTE:
         setAttribute((Attribute)newValue);
-        return;
-      case CQLPackage.ARGUMENT__AGGREGATION:
-        setAggregation((Aggregation)newValue);
         return;
       case CQLPackage.ARGUMENT__EXPRESSION:
         setExpression((SelectExpression)newValue);
@@ -306,9 +239,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
       case CQLPackage.ARGUMENT__ATTRIBUTE:
         setAttribute((Attribute)null);
         return;
-      case CQLPackage.ARGUMENT__AGGREGATION:
-        setAggregation((Aggregation)null);
-        return;
       case CQLPackage.ARGUMENT__EXPRESSION:
         setExpression((SelectExpression)null);
         return;
@@ -328,8 +258,6 @@ public class ArgumentImpl extends MinimalEObjectImpl.Container implements Argume
     {
       case CQLPackage.ARGUMENT__ATTRIBUTE:
         return attribute != null;
-      case CQLPackage.ARGUMENT__AGGREGATION:
-        return aggregation != null;
       case CQLPackage.ARGUMENT__EXPRESSION:
         return expression != null;
     }

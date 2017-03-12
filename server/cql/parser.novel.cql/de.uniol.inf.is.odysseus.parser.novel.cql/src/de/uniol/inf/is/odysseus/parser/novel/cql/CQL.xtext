@@ -30,7 +30,7 @@ Select: // FIXME attributes, aggregations and expressions order must be recogniz
 NestedStatement returns Select: '(' Select ')' ;
 
 Argument:
-	(attribute=Attribute | aggregation=Aggregation | expression=SelectExpression)
+	(attribute=Attribute | expression=SelectExpression)
 ;
 
 Source: 
@@ -63,15 +63,28 @@ AttributeWithNestedStatement:
 	nested=NestedStatement
 ;  
  
-Aggregation://TODO That is not supposed to be hard coded! 
-	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)')'
+//Aggregation://TODO That is not supposed to be hard coded! 
+//	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+//	'('(attribute=AttributeWithoutAliasDefinition | expression=SelectExpressionWithoutAliasDefinition)')'
+//	('AS' alias=Alias)?
+//;
+//
+//AggregationWithoutAliasDefinition returns Aggregation:
+//	name=ID//('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
+//	'('(attribute=AttributeWithoutAliasDefinition) ')' 
+//;
+
+Function returns ExpressionComponent://TODO That is not supposed to be hard coded! 
+	{Function}
+	name=ID
+	'('(value=SelectExpressionWithoutAliasDefinition)')'
 	('AS' alias=Alias)?
 ;
 
-AggregationWithoutAliasDefinition returns Aggregation:
-	name=('AVG' | 'MIN' | 'MAX' | 'COUNT' | 'SUM' | 'MEDIAN' | 'FIRST' | 'LAST')
-	'('(attribute=AttributeWithoutAliasDefinition) ')' 
+FunctionWithoutAlias returns Function://TODO That is not supposed to be hard coded! 
+	{Function}
+	name=ID
+	'('(value=SelectExpressionWithoutAliasDefinition)')'
 ;
 
 ExpressionComponent:
@@ -88,7 +101,7 @@ ExpressionComponentConstantOrAttribute returns ExpressionComponent:
 ;
 
 ExpressionComponentMapperOrConstant returns ExpressionComponent:
-	Mapper({ExpressionComponent.value=current})
+	FunctionWithoutAlias({ExpressionComponent.value=current})
 	| value = AtomicWithoutAttributeRef
 ;
 
@@ -101,18 +114,12 @@ ExpressionComponentOnlyConstant returns ExpressionComponent:
 ;
 
 ExpressionComponentOnlymapper returns ExpressionComponent:
-	Mapper({ExpressionComponent.value=current})
-;
-
-Mapper returns ExpressionComponent://TODO That is not supposed to be hard coded! 
-	{Mapper}
-	name=('DolToEur')
-	'('(value=SelectExpressionWithoutAliasDefinition)')'
+	FunctionWithoutAlias({ExpressionComponent.value=current})
 ;
 
 SelectExpression:
 	(
-		( expressions+=(ExpressionComponentMapperOrConstant)
+		(expressions+=(ExpressionComponentMapperOrConstant)
 		  (operators+=('+'|'-'|'*'|'/') 
 			expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlymapper)
 		  )*

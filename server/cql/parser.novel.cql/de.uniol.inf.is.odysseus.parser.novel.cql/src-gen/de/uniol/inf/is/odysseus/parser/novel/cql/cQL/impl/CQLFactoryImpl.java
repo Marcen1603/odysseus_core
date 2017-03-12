@@ -73,8 +73,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
-      case CQLPackage.AGGREGATION: return createAggregation();
       case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
+      case CQLPackage.FUNCTION: return createFunction();
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION: return createSelectExpressionWithoutAliasDefinition();
       case CQLPackage.ALIAS: return createAlias();
@@ -92,7 +92,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.DATA_TYPE: return createDataType();
-      case CQLPackage.MAPPER: return createMapper();
+      case CQLPackage.FUNCTION_WITHOUT_ALIAS: return createFunctionWithoutAlias();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -228,10 +228,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Aggregation createAggregation()
+  public ExpressionComponent createExpressionComponent()
   {
-    AggregationImpl aggregation = new AggregationImpl();
-    return aggregation;
+    ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
+    return expressionComponent;
   }
 
   /**
@@ -239,10 +239,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ExpressionComponent createExpressionComponent()
+  public Function createFunction()
   {
-    ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
-    return expressionComponent;
+    FunctionImpl function = new FunctionImpl();
+    return function;
   }
 
   /**
@@ -437,10 +437,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Mapper createMapper()
+  public FunctionWithoutAlias createFunctionWithoutAlias()
   {
-    MapperImpl mapper = new MapperImpl();
-    return mapper;
+    FunctionWithoutAliasImpl functionWithoutAlias = new FunctionWithoutAliasImpl();
+    return functionWithoutAlias;
   }
 
   /**

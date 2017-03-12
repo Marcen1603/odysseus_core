@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Aggregation
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
@@ -50,10 +49,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess.AtomicWithoutAttributeRefElements
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Mapper
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
+import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry
+import java.util.regex.Pattern
+import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias
 
 //import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 
@@ -83,6 +86,7 @@ class CQLGenerator implements IGenerator2
 	var private firstJoinInQuery = true
 	var private String expressionString = null
 	var private Map<String, List<String>> renamedAttributes = newHashMap
+	var private NameProvider nameProvider
 	
 	val private String OP     = "operator_"
 	val private String VIEW   = "view_" 
@@ -122,6 +126,7 @@ class CQLGenerator implements IGenerator2
 	
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) 
 	{
+		
 		var i = 0 ;
 		for(e : resource.allContents.toIterable.filter(typeof(Statement)))
 		{
@@ -223,6 +228,9 @@ class CQLGenerator implements IGenerator2
 		var aggregations = extractAggregationsFromArgument(stmt.arguments)
 		var expressions = extractSelectExpressionsFromArgument(stmt.arguments)
 		
+		println("aggregations:: " + aggregations.toString)
+		println("expressions:: " + expressions.toString)
+		
 		if(!attributes.empty)//SELECT attr1, ...
 		{
 			var String operator1 = null
@@ -283,7 +291,7 @@ class CQLGenerator implements IGenerator2
 	 			////
 	 		}
 	 		attributes2.put('', attributeList)
-	 		println(attributes2.toString)
+	 		println("ATTRIBUTES FOR PROJECT:: " + attributes2.toString)
 	 		///
 			return '''«buildProjectOP(attributes2, join2, stmt.arguments)»'''
 		}
@@ -583,9 +591,10 @@ class CQLGenerator implements IGenerator2
 		for(var i = 0; i < e.expressions.size; i++)
 		{
 			var component = (e.expressions.get(i) as ExpressionComponent).value
+			println(component)
 			switch(component)
 			{
-				Mapper: str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
+				FunctionWithoutAlias: str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
 				Attribute: str += getAttributename(component.name)
 				IntConstant: 	str += component.value + ''
 				FloatConstant:  str += component.value + ''
@@ -593,7 +602,7 @@ class CQLGenerator implements IGenerator2
 				BoolConstant: 	str += component.value + ''
 			}
 			if(i != e.expressions.size - 1)
-			str += e.operators.get(i)
+				str += e.operators.get(i)
 		}
 		return str
 	}	
@@ -763,28 +772,77 @@ class CQLGenerator implements IGenerator2
 		return buildMapOperator(expression, buildJoin(sources))
 	}
 	
-	def private Object[] buildAggregateOP(List<Aggregation> aggAttr, List<Attribute> orderAttr, CharSequence input)
+	def private Object[] buildMapOperator(SelectExpression expression, CharSequence sources)
 	{
+		var list = newArrayList
+		list.add(expression)
+		return buildMapOperator(list, sources)
+	}
+	
+	def private Object[] buildAggregateOP(List<SelectExpression> aggAttr, List<Attribute> orderAttr, CharSequence input)
+	{
+		//TODO Add expressions
 		var argsstr 			 = ''
-		var List<String> args    = newArrayList()
-		var List<String> aliases = newArrayList()
+		var List<String> args    = newArrayList
+		var List<String> aliases = newArrayList
+		var List<String> inputs = newArrayList
+		
+		println("AGGREGATION COUNT= " + aggAttr.size)
+		
 		for(var i = 0; i < aggAttr.length; i++)
 		{
-			args.add(aggAttr.get(i).name.toString)
-			//TODO Add expressions
-			args.add(getAttributename(aggAttr.get(i).attribute.name, null))
+			
+			var aggregation = aggAttr.get(i).expressions.get(0).value as Function
+			
+			args.add(aggregation.name)
+			
+			var attributename = ''
+			var datatype = ''
+			var components = (aggregation.value as SelectExpression).expressions
+			if(components.size == 1)
+			{
+				var comp = components.get(0).value
+				switch(comp)
+				{
+					Attribute:
+					{
+						attributename = getAttributename(comp.name)
+						datatype = getDataTypeFrom(attributename)
+					}
+				}
+			}
+			else
+			{
+				
+			}
+//			switch(components)
+//			{
+//				Attribute: attributename = getAttributename(components.name)
+//				Function,
+//				IntConstant,
+//				FloatConstant,
+//				StringConstant,
+//				BoolConstant: 
+//				{
+//					var result = buildMapOperator(aggAttr.get(i).value as SelectExpression, input)
+//					attributename = (result.get(0) as List<String>).get(0)
+//					var mapOperator = result.get(1).toString
+//					inputs.add(registerOperator(mapOperator))
+//				}
+//			}
+			
+			args.add(attributename)
+			
 			var alias = ''
 			if(aggAttr.get(i).alias != null)
 				alias = aggAttr.get(i).alias.name
 			else
-				alias = aggAttr.get(i).name + '_' + (aggregationCounter++)
+				alias = aggregation.name + '_' + (aggregationCounter++)
+				
 			args.add(alias)
 			aliases.add(alias)
-			args.add(getDataTypeFrom(aggAttr.get(i).attribute))
-			
-			////
+			if(attributename != '') args.add(datatype)//If no data type is given, it will be double
 			aggregations.add(alias)
-			
 			args.add(',')
 			argsstr += generateKeyValueString(args)
 			if(i != aggAttr.length - 1) argsstr += ','
@@ -799,15 +857,16 @@ class CQLGenerator implements IGenerator2
 				orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList)
 			) + ']'
 		}
+		println("New ATTRIBUTES:: " + aliases.toString)
 		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)''']
 	}
 	
-	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, List<Source> srcs)
+	def private Object[] buildAggregateOP(List<SelectExpression> list, List<Attribute> list2, List<Source> srcs)
 	{
 		return buildAggregateOP(list, list2, buildJoin(srcs))
 	}
 	
-	def private Object[] buildAggregateOP(List<Aggregation> list, List<Attribute> list2, Source src)
+	def private Object[] buildAggregateOP(List<SelectExpression> list, List<Attribute> list2, Source src)
 	{
 		return buildAggregateOP(list, list2, checkForNestedStatement(src))
 	}
@@ -978,7 +1037,7 @@ class CQLGenerator implements IGenerator2
 				for(String attributename : e.value)
 					attributes.add(getAttributename(attributename, e.key))			
 		}
-		var aggreagtionCounter = 0
+		var aggregationCounter = 0
 		var expressionCounter = 0
 		var orderedAttributes = newArrayList
 		//Sort attributes with given order
@@ -1005,36 +1064,63 @@ class CQLGenerator implements IGenerator2
 					else if(attribute.contains('-'))//TODO mark - as keyword for renamed attribute during self join
 						orderedAttributes.add(attribute)
 				}
-				else if(arg.aggregation != null)
-				{
-					if(arg.aggregation.alias != null)
-					{
-						if(attribute.equals(arg.aggregation.alias.name))
-								orderedAttributes.add(attribute)
-					}
-					else
-					{
-						if(attribute.equals(arg.aggregation.name + '_' + (aggreagtionCounter)))
-						{
-							orderedAttributes.add(attribute)
-							aggreagtionCounter++
-						}
-					}
-				}
 				else if(arg.expression != null)
 				{
-					if(arg.expression.alias != null)
+					if(arg.expression.expressions.size == 1)
 					{
-						if(attribute.equals(arg.expression.alias.name))
-							orderedAttributes.add(attribute)
-					}
+						var aggregation = arg.expression.expressions.get(0) 
+						var function = aggregation.value
+						if(function instanceof Function)
+						{
+							if(nameProvider.isAggregation(function.name))
+							{
+								if(arg.expression.alias != null)
+								{
+									if(attribute.equals(arg.expression.alias.name))
+										orderedAttributes.add(attribute)
+								}
+								else
+								{
+									if(attribute.equals(function.name + '_' + aggregationCounter))
+									{
+										orderedAttributes.add(attribute)
+										aggregationCounter++
+									}
+								}								
+							}
+							else
+							{
+								if(arg.expression.alias != null)
+								{
+									if(attribute.equals(arg.expression.alias.name))
+										orderedAttributes.add(attribute)
+								}
+								else
+								{
+									if(attribute.equals('expression_' + (expressionCounter)))
+									{
+										orderedAttributes.add(attribute)
+										expressionCounter++
+									}	
+								}
+							}
+						}
+					}				
 					else
 					{
-						if(attribute.equals('expression_' + (expressionCounter)))
+						if(arg.expression.alias != null)
 						{
-							orderedAttributes.add(attribute)
-							expressionCounter++
-						}	
+							if(attribute.equals(arg.expression.alias.name))
+								orderedAttributes.add(attribute)
+						}
+						else
+						{
+							if(attribute.equals('expression_' + (expressionCounter)))
+							{
+								orderedAttributes.add(attribute)
+								expressionCounter++
+							}	
+						}
 					}
 				}
 			}		
@@ -1170,7 +1256,7 @@ class CQLGenerator implements IGenerator2
 		
 		//Check if it's a select * query
 		if(attributes.empty 
-			&& EcoreUtil2.getAllContentsOfType(select, Aggregation).empty
+//			&& EcoreUtil2.getAllContentsOfType(select, Aggregation).empty//TODO Remove this after debugging
 			&& EcoreUtil2.getAllContentsOfType(select, SelectExpression).empty
 		)
 		{
@@ -1301,13 +1387,23 @@ class CQLGenerator implements IGenerator2
 		return list
 	}
 	
-	
-	def List<Aggregation> extractAggregationsFromArgument(List<Argument> args)
+	def List<SelectExpression> extractAggregationsFromArgument(List<Argument> args)
 	{
-		var List<Aggregation> list = newArrayList
+		var List<SelectExpression> list = newArrayList
 		for(Argument a : args)
-			if(a.aggregation != null)
-				list.add(a.aggregation)
+			if(a.expression != null)
+			{
+				if(a.expression.expressions.size == 1)
+				{
+					var aggregation = a.expression.expressions.get(0) 
+					var function = aggregation.value
+					if(function instanceof Function)
+					{
+						if(nameProvider.isAggregation(function.name))
+							list.add(a.expression)
+					}
+				}
+			}
 		return list
 	}
 	
@@ -1316,7 +1412,24 @@ class CQLGenerator implements IGenerator2
 		var List<SelectExpression> list = newArrayList
 		for(Argument a : args)
 			if(a.expression != null)
-				list.add(a.expression)
+			{
+				if(a.expression.expressions.size == 1)
+				{
+					var aggregation = a.expression.expressions.get(0) 
+					var function = aggregation.value
+					if(function instanceof Function)
+					{
+						if(nameProvider.isMapper(function.name))
+							list.add(a.expression)
+							
+//						println(((a.expression.expressions.get(0).value as Function).value as SelectExpressionWithoutAliasDefinition).expressions)
+					}
+				}
+				else
+				{
+					list.add(a.expression)
+				}		
+			}
 		return list
 	}
 
@@ -1512,6 +1625,11 @@ class CQLGenerator implements IGenerator2
 		}
 	}
 
+	def void setNameProvider(NameProvider provider)
+	{
+		nameProvider = provider
+	}
+
 	def void setOuterschema(Collection<SDFSchema> schema)
 	{
 		registerSources(schema, false)
@@ -1577,27 +1695,32 @@ class CQLGenerator implements IGenerator2
 	
 	def public String getDataTypeFrom(Attribute attribute) 
 	{
+		return getDataTypeFrom(attribute.name)
+	}
+	
+	def public String getDataTypeFrom(String attribute) 
+	{
 		if(attribute == null) throw new NullPointerException("given attribute was null")
 		
-		var attributename = attribute.name
-		if(attribute.name.contains("."))
+		var attributename = attribute
+		if(attribute.contains("."))
 		{
-			var String[] name = attribute.name.split("\\.")
+			var String[] name = attribute.split("\\.")
 			if(attributeAliasesAsList.contains(name.get(1)))
 				attributename = getAttributenameFromAlias(name.get(1))	
 			else 
 				attributename = name.get(1)
 		}
 		else
-			if(attributeAliasesAsList.contains(attribute.name))
-				attributename = getAttributenameFromAlias(attribute.name)
+			if(attributeAliasesAsList.contains(attribute))
+				attributename = getAttributenameFromAlias(attribute)
 		
 //		println(getAttributes().stream.map(e|e.attributename).collect(Collectors.toList))
 		for(AttributeStruct attr : getAttributes())
 			if(attr.attributename.equals(attributename))
 				return attr.datatype		
 				
-		throw new IllegalArgumentException("given attribute " + attribute.name + "unknown")		
+		throw new IllegalArgumentException("given attribute " + attribute + "unknown")		
 	}
 	
 	def public String getSourcenameFromAlias(String sourcealias)
@@ -1627,6 +1750,7 @@ class CQLGenerator implements IGenerator2
 	
 	def public String getAttributename(String attribute, String srcname)
 	{
+		println("getAttributename():: " +attribute)
 		if(srcname != null && !srcname.equals(""))
 		{
 			for(SourceStruct struct : sources)
