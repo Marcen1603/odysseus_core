@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -15,7 +14,7 @@ public class CQLDictionaryProvider
 	/** Returns a {@link CQLDictionary} with the given ISession object. 
 	 *  If there is no dictionary with the specified ISession object,
 	 *  a new dictionary will be created.
-	 **/
+	 */
 	public static CQLDictionary getDictionary(ISession user) 
 	{
 		CQLDictionary c = map.get(user.getUser().getName());

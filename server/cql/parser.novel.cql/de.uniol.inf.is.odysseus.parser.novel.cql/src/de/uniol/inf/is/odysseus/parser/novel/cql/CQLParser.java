@@ -38,6 +38,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateUserCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropUserCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantPermissionCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
@@ -177,6 +180,9 @@ public class CQLParser implements IQueryParser
 						CQLDictionaryProvider.getDictionary(user).remove(cmd.getValue1());
 					break;
 					case("SINK"):
+//						DropUserCommand
+//						GrantPermissionCommand
+//						CreateUserCommand
 						exCmd = new DropSinkCommand(cmd.getValue1(), ifExists, user);
 					break;
 					}

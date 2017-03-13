@@ -338,7 +338,7 @@ public class MEP implements IExpressionParser {
 	 *            The function instance
 	 */
 	public static void registerFunction(IFunction<?> function) {
-
+		
 		try {
 			registerFunctionWithName(function, function.getSymbol());
 			if (function instanceof IHasAlias) {
