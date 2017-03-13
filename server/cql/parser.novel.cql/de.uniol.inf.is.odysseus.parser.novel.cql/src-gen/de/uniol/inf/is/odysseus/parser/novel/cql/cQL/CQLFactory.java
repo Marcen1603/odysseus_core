@@ -87,24 +87,6 @@ public interface CQLFactory extends EFactory
   AttributeWithNestedStatement createAttributeWithNestedStatement();
 
   /**
-   * Returns a new object of class '<em>Expression Component</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Expression Component</em>'.
-   * @generated
-   */
-  ExpressionComponent createExpressionComponent();
-
-  /**
-   * Returns a new object of class '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function</em>'.
-   * @generated
-   */
-  Function createFunction();
-
-  /**
    * Returns a new object of class '<em>Select Expression</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -121,6 +103,24 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   SelectExpressionWithoutAliasDefinition createSelectExpressionWithoutAliasDefinition();
+
+  /**
+   * Returns a new object of class '<em>Expression Component</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Expression Component</em>'.
+   * @generated
+   */
+  ExpressionComponent createExpressionComponent();
+
+  /**
+   * Returns a new object of class '<em>Set Operator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Set Operator</em>'.
+   * @generated
+   */
+  SetOperator createSetOperator();
 
   /**
    * Returns a new object of class '<em>Alias</em>'.
@@ -258,13 +258,13 @@ public interface CQLFactory extends EFactory
   DataType createDataType();
 
   /**
-   * Returns a new object of class '<em>Function Without Alias</em>'.
+   * Returns a new object of class '<em>Function</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Function Without Alias</em>'.
+   * @return a new object of class '<em>Function</em>'.
    * @generated
    */
-  FunctionWithoutAlias createFunctionWithoutAlias();
+  Function createFunction();
 
   /**
    * Returns a new object of class '<em>Or</em>'.

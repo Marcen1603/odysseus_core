@@ -123,8 +123,8 @@ public class CQLParser implements IQueryParser
 				.collect(Collectors.toSet());
 		
 		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
-		System.out.println("outerschema:: "+outerschema.toString());
-		System.out.println("innerschema:: "+innerschema);
+//		System.out.println("outerschema:: "+outerschema.toString());
+//		System.out.println("innerschema:: "+innerschema);
 		return generate(query.toString(), model, outerschema, innerschema, user, dd, context, metaAttribute, executor);
 	}
 	

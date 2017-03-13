@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
@@ -40,6 +39,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
@@ -117,20 +117,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass expressionComponentEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass functionEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass selectExpressionEClass = null;
 
   /**
@@ -139,6 +125,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass selectExpressionWithoutAliasDefinitionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass expressionComponentEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass setOperatorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -250,7 +250,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass functionWithoutAliasEClass = null;
+  private EClass functionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -705,56 +705,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getExpressionComponent()
-  {
-    return expressionComponentEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getExpressionComponent_Value()
-  {
-    return (EReference)expressionComponentEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getFunction()
-  {
-    return functionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getFunction_Name()
-  {
-    return (EAttribute)functionEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getFunction_Alias()
-  {
-    return (EReference)functionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getSelectExpression()
   {
     return selectExpressionEClass;
@@ -798,6 +748,66 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EClass getSelectExpressionWithoutAliasDefinition()
   {
     return selectExpressionWithoutAliasDefinitionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getExpressionComponent()
+  {
+    return expressionComponentEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getExpressionComponent_Value()
+  {
+    return (EReference)expressionComponentEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getSetOperator()
+  {
+    return setOperatorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSetOperator_Left()
+  {
+    return (EReference)setOperatorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSetOperator_Name()
+  {
+    return (EAttribute)setOperatorEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSetOperator_Right()
+  {
+    return (EReference)setOperatorEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1385,9 +1395,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getFunctionWithoutAlias()
+  public EClass getFunction()
   {
-    return functionWithoutAliasEClass;
+    return functionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getFunction_Name()
+  {
+    return (EAttribute)functionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1845,19 +1865,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEReference(attributeWithNestedStatementEClass, ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE);
     createEReference(attributeWithNestedStatementEClass, ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED);
 
-    expressionComponentEClass = createEClass(EXPRESSION_COMPONENT);
-    createEReference(expressionComponentEClass, EXPRESSION_COMPONENT__VALUE);
-
-    functionEClass = createEClass(FUNCTION);
-    createEAttribute(functionEClass, FUNCTION__NAME);
-    createEReference(functionEClass, FUNCTION__ALIAS);
-
     selectExpressionEClass = createEClass(SELECT_EXPRESSION);
     createEReference(selectExpressionEClass, SELECT_EXPRESSION__EXPRESSIONS);
     createEAttribute(selectExpressionEClass, SELECT_EXPRESSION__OPERATORS);
     createEReference(selectExpressionEClass, SELECT_EXPRESSION__ALIAS);
 
     selectExpressionWithoutAliasDefinitionEClass = createEClass(SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION);
+
+    expressionComponentEClass = createEClass(EXPRESSION_COMPONENT);
+    createEReference(expressionComponentEClass, EXPRESSION_COMPONENT__VALUE);
+
+    setOperatorEClass = createEClass(SET_OPERATOR);
+    createEReference(setOperatorEClass, SET_OPERATOR__LEFT);
+    createEAttribute(setOperatorEClass, SET_OPERATOR__NAME);
+    createEReference(setOperatorEClass, SET_OPERATOR__RIGHT);
 
     aliasEClass = createEClass(ALIAS);
     createEAttribute(aliasEClass, ALIAS__NAME);
@@ -1932,7 +1953,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     dataTypeEClass = createEClass(DATA_TYPE);
     createEAttribute(dataTypeEClass, DATA_TYPE__VALUE);
 
-    functionWithoutAliasEClass = createEClass(FUNCTION_WITHOUT_ALIAS);
+    functionEClass = createEClass(FUNCTION);
+    createEAttribute(functionEClass, FUNCTION__NAME);
 
     orEClass = createEClass(OR);
     createEReference(orEClass, OR__LEFT);
@@ -2019,9 +2041,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    functionEClass.getESuperTypes().add(this.getExpressionComponent());
     selectExpressionWithoutAliasDefinitionEClass.getESuperTypes().add(this.getSelectExpression());
-    functionWithoutAliasEClass.getESuperTypes().add(this.getFunction());
+    functionEClass.getESuperTypes().add(this.getExpressionComponent());
     orEClass.getESuperTypes().add(this.getExpression());
     andEClass.getESuperTypes().add(this.getExpression());
     equalityEClass.getESuperTypes().add(this.getExpression());
@@ -2073,19 +2094,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEReference(getAttributeWithNestedStatement_Value(), this.getAttribute(), null, "value", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAttributeWithNestedStatement_Nested(), this.getSelect(), null, "nested", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(expressionComponentEClass, ExpressionComponent.class, "ExpressionComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getExpressionComponent_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ExpressionComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFunction_Alias(), this.getAlias(), null, "alias", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(selectExpressionEClass, SelectExpression.class, "SelectExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectExpression_Expressions(), this.getExpressionComponent(), null, "expressions", null, 0, -1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSelectExpression_Operators(), ecorePackage.getEString(), "operators", null, 0, -1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelectExpression_Alias(), this.getAlias(), null, "alias", null, 0, 1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(selectExpressionWithoutAliasDefinitionEClass, SelectExpressionWithoutAliasDefinition.class, "SelectExpressionWithoutAliasDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(expressionComponentEClass, ExpressionComponent.class, "ExpressionComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getExpressionComponent_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ExpressionComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(setOperatorEClass, SetOperator.class, "SetOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getSetOperator_Left(), this.getSelect(), null, "left", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSetOperator_Name(), ecorePackage.getEString(), "name", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSetOperator_Right(), this.getSelect(), null, "right", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(aliasEClass, Alias.class, "Alias", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAlias_Name(), ecorePackage.getEString(), "name", null, 0, 1, Alias.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2160,7 +2182,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(dataTypeEClass, DataType.class, "DataType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getDataType_Value(), ecorePackage.getEString(), "value", null, 0, 1, DataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(functionWithoutAliasEClass, FunctionWithoutAlias.class, "FunctionWithoutAlias", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(orEClass, Or.class, "Or", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOr_Left(), this.getExpression(), null, "left", null, 0, 1, Or.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

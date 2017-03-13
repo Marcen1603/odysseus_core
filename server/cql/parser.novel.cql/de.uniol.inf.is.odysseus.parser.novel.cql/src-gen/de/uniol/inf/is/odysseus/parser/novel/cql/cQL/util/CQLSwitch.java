@@ -122,21 +122,6 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.EXPRESSION_COMPONENT:
-      {
-        ExpressionComponent expressionComponent = (ExpressionComponent)theEObject;
-        T result = caseExpressionComponent(expressionComponent);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.FUNCTION:
-      {
-        Function function = (Function)theEObject;
-        T result = caseFunction(function);
-        if (result == null) result = caseExpressionComponent(function);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.SELECT_EXPRESSION:
       {
         SelectExpression selectExpression = (SelectExpression)theEObject;
@@ -149,6 +134,20 @@ public class CQLSwitch<T> extends Switch<T>
         SelectExpressionWithoutAliasDefinition selectExpressionWithoutAliasDefinition = (SelectExpressionWithoutAliasDefinition)theEObject;
         T result = caseSelectExpressionWithoutAliasDefinition(selectExpressionWithoutAliasDefinition);
         if (result == null) result = caseSelectExpression(selectExpressionWithoutAliasDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.EXPRESSION_COMPONENT:
+      {
+        ExpressionComponent expressionComponent = (ExpressionComponent)theEObject;
+        T result = caseExpressionComponent(expressionComponent);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.SET_OPERATOR:
+      {
+        SetOperator setOperator = (SetOperator)theEObject;
+        T result = caseSetOperator(setOperator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -257,12 +256,11 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.FUNCTION_WITHOUT_ALIAS:
+      case CQLPackage.FUNCTION:
       {
-        FunctionWithoutAlias functionWithoutAlias = (FunctionWithoutAlias)theEObject;
-        T result = caseFunctionWithoutAlias(functionWithoutAlias);
-        if (result == null) result = caseFunction(functionWithoutAlias);
-        if (result == null) result = caseExpressionComponent(functionWithoutAlias);
+        Function function = (Function)theEObject;
+        T result = caseFunction(function);
+        if (result == null) result = caseExpressionComponent(function);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -495,38 +493,6 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Expression Component</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Expression Component</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseExpressionComponent(ExpressionComponent object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseFunction(Function object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Select Expression</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -554,6 +520,38 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseSelectExpressionWithoutAliasDefinition(SelectExpressionWithoutAliasDefinition object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Expression Component</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Expression Component</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseExpressionComponent(ExpressionComponent object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Set Operator</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Set Operator</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseSetOperator(SetOperator object)
   {
     return null;
   }
@@ -799,17 +797,17 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Function Without Alias</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Function Without Alias</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Function</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseFunctionWithoutAlias(FunctionWithoutAlias object)
+  public T caseFunction(Function object)
   {
     return null;
   }

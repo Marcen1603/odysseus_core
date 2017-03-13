@@ -930,18 +930,18 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	@Test def void SelectExpressionTest13()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT s1.attr1, DolToEur(s1.attr1), s1.attr2, s1.attr1, s1.attr2 FROM stream1 AS s1;"
-			,
-			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
-			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1,stream1))
-			 operator_3 = MAP({expressions=['expression_0']},o perator_2)"
-			, new CQLDictionaryHelper()
-		)
-	}
+//	@Test def void SelectExpressionTest13()//TODO Add correct output to the test case
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT s1.attr1, DolToEur(s1.attr1), s1.attr2, s1.attr1, s1.attr2 FROM stream1 AS s1;"
+//			,
+//			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
+//			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1,stream1))
+//			 operator_3 = MAP({expressions=['expression_0']},o perator_2)"
+//			, new CQLDictionaryHelper()
+//		)
+//	}
 		
 	@Test def void SelfJoinTest1() 
 	{ 

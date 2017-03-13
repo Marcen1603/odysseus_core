@@ -14,7 +14,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getAlias <em>Alias</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getFunction()
@@ -48,31 +47,5 @@ public interface Function extends ExpressionComponent
    * @generated
    */
   void setName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Alias</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Alias</em>' containment reference.
-   * @see #setAlias(Alias)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getFunction_Alias()
-   * @model containment="true"
-   * @generated
-   */
-  Alias getAlias();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function#getAlias <em>Alias</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Alias</em>' containment reference.
-   * @see #getAlias()
-   * @generated
-   */
-  void setAlias(Alias value);
 
 } // Function

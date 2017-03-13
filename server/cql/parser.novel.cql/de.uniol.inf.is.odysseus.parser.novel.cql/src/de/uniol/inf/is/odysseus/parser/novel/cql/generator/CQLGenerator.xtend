@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
@@ -21,8 +22,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
@@ -30,6 +33,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
@@ -48,19 +52,9 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry
-import java.util.regex.Pattern
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory
 
-//import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
-
-//TODO Documentation
 /**
  * Generates code from your model files on save.
  * 
@@ -68,7 +62,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FunctionWithoutAlias
  */
 class CQLGenerator implements IGenerator2
 {
-
+	static val private InfoService infoService = InfoServiceFactory.getInfoService("CQLGenerator");//TODO Produces INFO  RCPInfoServiceListener  - Generated PQL Query:
 	var private Map<String, String> sinks = new HashMap	
 	var private Map<String, String> registry_StreamTo = newHashMap	
 	var private Map<String, String> registry_Sinks = newHashMap
@@ -151,7 +145,7 @@ class CQLGenerator implements IGenerator2
 		}
 		
 		var model= createModel()
-//		println("MODEL:: " + model)
+		infoService.info("Generated PQL Query:"+ System.getProperty("line.separator") + model)
 		return model
 	}
 	
@@ -188,7 +182,6 @@ class CQLGenerator implements IGenerator2
 				model += formatOutputString(buildRenameOperator(parts.get(0)).toString)
 		}
 		
-		println("MODELL:: " + model)
 		
 		return model
 	}
@@ -227,9 +220,6 @@ class CQLGenerator implements IGenerator2
 		var attributes = extractAttributesFromArgument(stmt.arguments)
 		var aggregations = extractAggregationsFromArgument(stmt.arguments)
 		var expressions = extractSelectExpressionsFromArgument(stmt.arguments)
-		
-		println("aggregations:: " + aggregations.toString)
-		println("expressions:: " + expressions.toString)
 		
 		if(!attributes.empty)//SELECT attr1, ...
 		{
@@ -291,7 +281,6 @@ class CQLGenerator implements IGenerator2
 	 			////
 	 		}
 	 		attributes2.put('', attributeList)
-	 		println("ATTRIBUTES FOR PROJECT:: " + attributes2.toString)
 	 		///
 			return '''«buildProjectOP(attributes2, join2, stmt.arguments)»'''
 		}
@@ -591,10 +580,9 @@ class CQLGenerator implements IGenerator2
 		for(var i = 0; i < e.expressions.size; i++)
 		{
 			var component = (e.expressions.get(i) as ExpressionComponent).value
-			println(component)
 			switch(component)
 			{
-				FunctionWithoutAlias: str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
+				Function: str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
 				Attribute: str += getAttributename(component.name)
 				IntConstant: 	str += component.value + ''
 				FloatConstant:  str += component.value + ''
@@ -787,8 +775,6 @@ class CQLGenerator implements IGenerator2
 		var List<String> aliases = newArrayList
 		var List<String> inputs = newArrayList
 		
-		println("AGGREGATION COUNT= " + aggAttr.size)
-		
 		for(var i = 0; i < aggAttr.length; i++)
 		{
 			
@@ -857,7 +843,6 @@ class CQLGenerator implements IGenerator2
 				orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList)
 			) + ']'
 		}
-		println("New ATTRIBUTES:: " + aliases.toString)
 		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «input»)''']
 	}
 	
@@ -1750,7 +1735,6 @@ class CQLGenerator implements IGenerator2
 	
 	def public String getAttributename(String attribute, String srcname)
 	{
-		println("getAttributename():: " +attribute)
 		if(srcname != null && !srcname.equals(""))
 		{
 			for(SourceStruct struct : sources)
@@ -1830,7 +1814,6 @@ class CQLGenerator implements IGenerator2
 	/** Returns all {@link Attribute} elements to the corresponding source. */
 	def public List<String> getAttributeNamesFrom(String srcname) 
 	{
-		println(srcname)
  		for(SourceStruct source : sources)
 			if(source.sourcename.equals(srcname))
 			{

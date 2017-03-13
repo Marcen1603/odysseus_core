@@ -73,10 +73,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
-      case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
-      case CQLPackage.FUNCTION: return createFunction();
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION: return createSelectExpressionWithoutAliasDefinition();
+      case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
+      case CQLPackage.SET_OPERATOR: return createSetOperator();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.CREATE_PARAMETERS: return createCreateParameters();
       case CQLPackage.ATTRIBUTE_DEFINITION: return createAttributeDefinition();
@@ -92,7 +92,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.DATA_TYPE: return createDataType();
-      case CQLPackage.FUNCTION_WITHOUT_ALIAS: return createFunctionWithoutAlias();
+      case CQLPackage.FUNCTION: return createFunction();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -228,28 +228,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public ExpressionComponent createExpressionComponent()
-  {
-    ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
-    return expressionComponent;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Function createFunction()
-  {
-    FunctionImpl function = new FunctionImpl();
-    return function;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public SelectExpression createSelectExpression()
   {
     SelectExpressionImpl selectExpression = new SelectExpressionImpl();
@@ -265,6 +243,28 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     SelectExpressionWithoutAliasDefinitionImpl selectExpressionWithoutAliasDefinition = new SelectExpressionWithoutAliasDefinitionImpl();
     return selectExpressionWithoutAliasDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExpressionComponent createExpressionComponent()
+  {
+    ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
+    return expressionComponent;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SetOperator createSetOperator()
+  {
+    SetOperatorImpl setOperator = new SetOperatorImpl();
+    return setOperator;
   }
 
   /**
@@ -437,10 +437,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public FunctionWithoutAlias createFunctionWithoutAlias()
+  public Function createFunction()
   {
-    FunctionWithoutAliasImpl functionWithoutAlias = new FunctionWithoutAliasImpl();
-    return functionWithoutAlias;
+    FunctionImpl function = new FunctionImpl();
+    return function;
   }
 
   /**

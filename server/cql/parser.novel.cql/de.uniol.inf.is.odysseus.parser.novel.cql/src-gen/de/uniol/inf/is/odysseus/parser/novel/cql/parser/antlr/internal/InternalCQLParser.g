@@ -1062,261 +1062,6 @@ ruleAttributeWithNestedStatement returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleFunctionWithoutAlias
-entryRuleFunctionWithoutAlias returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getFunctionWithoutAliasRule()); }
-	iv_ruleFunctionWithoutAlias=ruleFunctionWithoutAlias
-	{ $current=$iv_ruleFunctionWithoutAlias.current; }
-	EOF;
-
-// Rule FunctionWithoutAlias
-ruleFunctionWithoutAlias returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			{
-				$current = forceCreateModelElement(
-					grammarAccess.getFunctionWithoutAliasAccess().getFunctionWithoutAliasAction_0(),
-					$current);
-			}
-		)
-		(
-			(
-				lv_name_1_0=RULE_ID
-				{
-					newLeafNode(lv_name_1_0, grammarAccess.getFunctionWithoutAliasAccess().getNameIDTerminalRuleCall_1_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getFunctionWithoutAliasRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_1_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
-				}
-			)
-		)
-		otherlv_2=LeftParenthesis
-		{
-			newLeafNode(otherlv_2, grammarAccess.getFunctionWithoutAliasAccess().getLeftParenthesisKeyword_2());
-		}
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getFunctionWithoutAliasAccess().getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0());
-				}
-				lv_value_3_0=ruleSelectExpressionWithoutAliasDefinition
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getFunctionWithoutAliasRule());
-					}
-					set(
-						$current,
-						"value",
-						lv_value_3_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionWithoutAliasDefinition");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		otherlv_4=RightParenthesis
-		{
-			newLeafNode(otherlv_4, grammarAccess.getFunctionWithoutAliasAccess().getRightParenthesisKeyword_4());
-		}
-	)
-;
-
-// Entry rule entryRuleExpressionComponentConstantOrAttribute
-entryRuleExpressionComponentConstantOrAttribute returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeRule()); }
-	iv_ruleExpressionComponentConstantOrAttribute=ruleExpressionComponentConstantOrAttribute
-	{ $current=$iv_ruleExpressionComponentConstantOrAttribute.current; }
-	EOF;
-
-// Rule ExpressionComponentConstantOrAttribute
-ruleExpressionComponentConstantOrAttribute returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeAccess().getValueAtomicWithoutAttributeRefParserRuleCall_0_0());
-				}
-				lv_value_0_0=ruleAtomicWithoutAttributeRef
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getExpressionComponentConstantOrAttributeRule());
-					}
-					set(
-						$current,
-						"value",
-						lv_value_0_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithoutAttributeRef");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_1_0());
-				}
-				lv_value_1_0=ruleAttributeWithoutAliasDefinition
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getExpressionComponentConstantOrAttributeRule());
-					}
-					set(
-						$current,
-						"value",
-						lv_value_1_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-	)
-;
-
-// Entry rule entryRuleExpressionComponentMapperOrConstant
-entryRuleExpressionComponentMapperOrConstant returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getExpressionComponentMapperOrConstantRule()); }
-	iv_ruleExpressionComponentMapperOrConstant=ruleExpressionComponentMapperOrConstant
-	{ $current=$iv_ruleExpressionComponentMapperOrConstant.current; }
-	EOF;
-
-// Rule ExpressionComponentMapperOrConstant
-ruleExpressionComponentMapperOrConstant returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			{
-				newCompositeNode(grammarAccess.getExpressionComponentMapperOrConstantAccess().getFunctionWithoutAliasParserRuleCall_0_0());
-			}
-			this_FunctionWithoutAlias_0=ruleFunctionWithoutAlias
-			{
-				$current = $this_FunctionWithoutAlias_0.current;
-				afterParserOrEnumRuleCall();
-			}
-			(
-				{
-					$current = forceCreateModelElementAndSet(
-						grammarAccess.getExpressionComponentMapperOrConstantAccess().getExpressionComponentValueAction_0_1(),
-						$current);
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getExpressionComponentMapperOrConstantAccess().getValueAtomicWithoutAttributeRefParserRuleCall_1_0());
-				}
-				lv_value_2_0=ruleAtomicWithoutAttributeRef
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getExpressionComponentMapperOrConstantRule());
-					}
-					set(
-						$current,
-						"value",
-						lv_value_2_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithoutAttributeRef");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-	)
-;
-
-// Entry rule entryRuleExpressionComponentOnlyAttribute
-entryRuleExpressionComponentOnlyAttribute returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getExpressionComponentOnlyAttributeRule()); }
-	iv_ruleExpressionComponentOnlyAttribute=ruleExpressionComponentOnlyAttribute
-	{ $current=$iv_ruleExpressionComponentOnlyAttribute.current; }
-	EOF;
-
-// Rule ExpressionComponentOnlyAttribute
-ruleExpressionComponentOnlyAttribute returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			{
-				newCompositeNode(grammarAccess.getExpressionComponentOnlyAttributeAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_0());
-			}
-			lv_value_0_0=ruleAttributeWithoutAliasDefinition
-			{
-				if ($current==null) {
-					$current = createModelElementForParent(grammarAccess.getExpressionComponentOnlyAttributeRule());
-				}
-				set(
-					$current,
-					"value",
-					lv_value_0_0,
-					"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
-				afterParserOrEnumRuleCall();
-			}
-		)
-	)
-;
-
-// Entry rule entryRuleExpressionComponentOnlymapper
-entryRuleExpressionComponentOnlymapper returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getExpressionComponentOnlymapperRule()); }
-	iv_ruleExpressionComponentOnlymapper=ruleExpressionComponentOnlymapper
-	{ $current=$iv_ruleExpressionComponentOnlymapper.current; }
-	EOF;
-
-// Rule ExpressionComponentOnlymapper
-ruleExpressionComponentOnlymapper returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		{
-			newCompositeNode(grammarAccess.getExpressionComponentOnlymapperAccess().getFunctionWithoutAliasParserRuleCall_0());
-		}
-		this_FunctionWithoutAlias_0=ruleFunctionWithoutAlias
-		{
-			$current = $this_FunctionWithoutAlias_0.current;
-			afterParserOrEnumRuleCall();
-		}
-		(
-			{
-				$current = forceCreateModelElementAndSet(
-					grammarAccess.getExpressionComponentOnlymapperAccess().getExpressionComponentValueAction_1(),
-					$current);
-			}
-		)
-	)
-;
-
 // Entry rule entryRuleSelectExpression
 entryRuleSelectExpression returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getSelectExpressionRule()); }
@@ -1338,9 +1083,9 @@ ruleSelectExpression returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentMapperOrConstantParserRuleCall_0_0_0_0());
+							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentFunctionOrConstantParserRuleCall_0_0_0_0());
 						}
-						lv_expressions_0_0=ruleExpressionComponentMapperOrConstant
+						lv_expressions_0_0=ruleExpressionComponentFunctionOrConstant
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getSelectExpressionRule());
@@ -1349,7 +1094,7 @@ ruleSelectExpression returns [EObject current=null]
 								$current,
 								"expressions",
 								lv_expressions_0_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentMapperOrConstant");
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentFunctionOrConstant");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1424,9 +1169,9 @@ ruleSelectExpression returns [EObject current=null]
 								}
 								    |
 								{
-									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlymapperParserRuleCall_0_0_1_1_0_1());
+									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlyWithFunctionParserRuleCall_0_0_1_1_0_1());
 								}
-								lv_expressions_2_2=ruleExpressionComponentOnlymapper
+								lv_expressions_2_2=ruleExpressionComponentOnlyWithFunction
 								{
 									if ($current==null) {
 										$current = createModelElementForParent(grammarAccess.getSelectExpressionRule());
@@ -1435,7 +1180,7 @@ ruleSelectExpression returns [EObject current=null]
 										$current,
 										"expressions",
 										lv_expressions_2_2,
-										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
+										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithFunction");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -1448,9 +1193,9 @@ ruleSelectExpression returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlyAttributeParserRuleCall_0_1_0_0());
+							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlyWithAttributeParserRuleCall_0_1_0_0());
 						}
-						lv_expressions_3_0=ruleExpressionComponentOnlyAttribute
+						lv_expressions_3_0=ruleExpressionComponentOnlyWithAttribute
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getSelectExpressionRule());
@@ -1459,7 +1204,7 @@ ruleSelectExpression returns [EObject current=null]
 								$current,
 								"expressions",
 								lv_expressions_3_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyAttribute");
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithAttribute");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1534,9 +1279,9 @@ ruleSelectExpression returns [EObject current=null]
 								}
 								    |
 								{
-									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlymapperParserRuleCall_0_1_1_1_0_1());
+									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentOnlyWithFunctionParserRuleCall_0_1_1_1_0_1());
 								}
-								lv_expressions_5_2=ruleExpressionComponentOnlymapper
+								lv_expressions_5_2=ruleExpressionComponentOnlyWithFunction
 								{
 									if ($current==null) {
 										$current = createModelElementForParent(grammarAccess.getSelectExpressionRule());
@@ -1545,7 +1290,7 @@ ruleSelectExpression returns [EObject current=null]
 										$current,
 										"expressions",
 										lv_expressions_5_2,
-										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
+										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithFunction");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -1611,9 +1356,9 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentMapperOrConstantParserRuleCall_1_0_0_0());
+							newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentFunctionOrConstantParserRuleCall_1_0_0_0());
 						}
-						lv_expressions_1_0=ruleExpressionComponentMapperOrConstant
+						lv_expressions_1_0=ruleExpressionComponentFunctionOrConstant
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getSelectExpressionWithoutAliasDefinitionRule());
@@ -1622,7 +1367,7 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 								$current,
 								"expressions",
 								lv_expressions_1_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentMapperOrConstant");
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentFunctionOrConstant");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1697,9 +1442,9 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 								}
 								    |
 								{
-									newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlymapperParserRuleCall_1_0_1_1_0_1());
+									newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlyWithFunctionParserRuleCall_1_0_1_1_0_1());
 								}
-								lv_expressions_3_2=ruleExpressionComponentOnlymapper
+								lv_expressions_3_2=ruleExpressionComponentOnlyWithFunction
 								{
 									if ($current==null) {
 										$current = createModelElementForParent(grammarAccess.getSelectExpressionWithoutAliasDefinitionRule());
@@ -1708,7 +1453,7 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 										$current,
 										"expressions",
 										lv_expressions_3_2,
-										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
+										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithFunction");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -1721,9 +1466,9 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlyAttributeParserRuleCall_1_1_0_0());
+							newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlyWithAttributeParserRuleCall_1_1_0_0());
 						}
-						lv_expressions_4_0=ruleExpressionComponentOnlyAttribute
+						lv_expressions_4_0=ruleExpressionComponentOnlyWithAttribute
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getSelectExpressionWithoutAliasDefinitionRule());
@@ -1732,7 +1477,7 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 								$current,
 								"expressions",
 								lv_expressions_4_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyAttribute");
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithAttribute");
 							afterParserOrEnumRuleCall();
 						}
 					)
@@ -1807,9 +1552,9 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 								}
 								    |
 								{
-									newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlymapperParserRuleCall_1_1_1_1_0_1());
+									newCompositeNode(grammarAccess.getSelectExpressionWithoutAliasDefinitionAccess().getExpressionsExpressionComponentOnlyWithFunctionParserRuleCall_1_1_1_1_0_1());
 								}
-								lv_expressions_6_2=ruleExpressionComponentOnlymapper
+								lv_expressions_6_2=ruleExpressionComponentOnlyWithFunction
 								{
 									if ($current==null) {
 										$current = createModelElementForParent(grammarAccess.getSelectExpressionWithoutAliasDefinitionRule());
@@ -1818,7 +1563,7 @@ ruleSelectExpressionWithoutAliasDefinition returns [EObject current=null]
 										$current,
 										"expressions",
 										lv_expressions_6_2,
-										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlymapper");
+										"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentOnlyWithFunction");
 									afterParserOrEnumRuleCall();
 								}
 							)
@@ -1935,6 +1680,261 @@ ruleSelectExpressionWithOnlyAttributeOrConstant returns [EObject current=null]
 				)
 			)
 		)*
+	)
+;
+
+// Entry rule entryRuleFunction
+entryRuleFunction returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getFunctionRule()); }
+	iv_ruleFunction=ruleFunction
+	{ $current=$iv_ruleFunction.current; }
+	EOF;
+
+// Rule Function
+ruleFunction returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				$current = forceCreateModelElement(
+					grammarAccess.getFunctionAccess().getFunctionAction_0(),
+					$current);
+			}
+		)
+		(
+			(
+				lv_name_1_0=RULE_ID
+				{
+					newLeafNode(lv_name_1_0, grammarAccess.getFunctionAccess().getNameIDTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getFunctionRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_1_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+				}
+			)
+		)
+		otherlv_2=LeftParenthesis
+		{
+			newLeafNode(otherlv_2, grammarAccess.getFunctionAccess().getLeftParenthesisKeyword_2());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getFunctionAccess().getValueSelectExpressionWithoutAliasDefinitionParserRuleCall_3_0());
+				}
+				lv_value_3_0=ruleSelectExpressionWithoutAliasDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getFunctionRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SelectExpressionWithoutAliasDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_4=RightParenthesis
+		{
+			newLeafNode(otherlv_4, grammarAccess.getFunctionAccess().getRightParenthesisKeyword_4());
+		}
+	)
+;
+
+// Entry rule entryRuleExpressionComponentConstantOrAttribute
+entryRuleExpressionComponentConstantOrAttribute returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeRule()); }
+	iv_ruleExpressionComponentConstantOrAttribute=ruleExpressionComponentConstantOrAttribute
+	{ $current=$iv_ruleExpressionComponentConstantOrAttribute.current; }
+	EOF;
+
+// Rule ExpressionComponentConstantOrAttribute
+ruleExpressionComponentConstantOrAttribute returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeAccess().getValueAtomicWithoutAttributeRefParserRuleCall_0_0());
+				}
+				lv_value_0_0=ruleAtomicWithoutAttributeRef
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getExpressionComponentConstantOrAttributeRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_0_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithoutAttributeRef");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getExpressionComponentConstantOrAttributeAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_1_0());
+				}
+				lv_value_1_0=ruleAttributeWithoutAliasDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getExpressionComponentConstantOrAttributeRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_1_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleExpressionComponentFunctionOrConstant
+entryRuleExpressionComponentFunctionOrConstant returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionComponentFunctionOrConstantRule()); }
+	iv_ruleExpressionComponentFunctionOrConstant=ruleExpressionComponentFunctionOrConstant
+	{ $current=$iv_ruleExpressionComponentFunctionOrConstant.current; }
+	EOF;
+
+// Rule ExpressionComponentFunctionOrConstant
+ruleExpressionComponentFunctionOrConstant returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				newCompositeNode(grammarAccess.getExpressionComponentFunctionOrConstantAccess().getFunctionParserRuleCall_0_0());
+			}
+			this_Function_0=ruleFunction
+			{
+				$current = $this_Function_0.current;
+				afterParserOrEnumRuleCall();
+			}
+			(
+				{
+					$current = forceCreateModelElementAndSet(
+						grammarAccess.getExpressionComponentFunctionOrConstantAccess().getExpressionComponentValueAction_0_1(),
+						$current);
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getExpressionComponentFunctionOrConstantAccess().getValueAtomicWithoutAttributeRefParserRuleCall_1_0());
+				}
+				lv_value_2_0=ruleAtomicWithoutAttributeRef
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getExpressionComponentFunctionOrConstantRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithoutAttributeRef");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleExpressionComponentOnlyWithAttribute
+entryRuleExpressionComponentOnlyWithAttribute returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionComponentOnlyWithAttributeRule()); }
+	iv_ruleExpressionComponentOnlyWithAttribute=ruleExpressionComponentOnlyWithAttribute
+	{ $current=$iv_ruleExpressionComponentOnlyWithAttribute.current; }
+	EOF;
+
+// Rule ExpressionComponentOnlyWithAttribute
+ruleExpressionComponentOnlyWithAttribute returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				newCompositeNode(grammarAccess.getExpressionComponentOnlyWithAttributeAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_0());
+			}
+			lv_value_0_0=ruleAttributeWithoutAliasDefinition
+			{
+				if ($current==null) {
+					$current = createModelElementForParent(grammarAccess.getExpressionComponentOnlyWithAttributeRule());
+				}
+				set(
+					$current,
+					"value",
+					lv_value_0_0,
+					"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
+				afterParserOrEnumRuleCall();
+			}
+		)
+	)
+;
+
+// Entry rule entryRuleExpressionComponentOnlyWithFunction
+entryRuleExpressionComponentOnlyWithFunction returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionComponentOnlyWithFunctionRule()); }
+	iv_ruleExpressionComponentOnlyWithFunction=ruleExpressionComponentOnlyWithFunction
+	{ $current=$iv_ruleExpressionComponentOnlyWithFunction.current; }
+	EOF;
+
+// Rule ExpressionComponentOnlyWithFunction
+ruleExpressionComponentOnlyWithFunction returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		{
+			newCompositeNode(grammarAccess.getExpressionComponentOnlyWithFunctionAccess().getFunctionParserRuleCall_0());
+		}
+		this_Function_0=ruleFunction
+		{
+			$current = $this_Function_0.current;
+			afterParserOrEnumRuleCall();
+		}
+		(
+			{
+				$current = forceCreateModelElementAndSet(
+					grammarAccess.getExpressionComponentOnlyWithFunctionAccess().getExpressionComponentValueAction_1(),
+					$current);
+			}
+		)
 	)
 ;
 
