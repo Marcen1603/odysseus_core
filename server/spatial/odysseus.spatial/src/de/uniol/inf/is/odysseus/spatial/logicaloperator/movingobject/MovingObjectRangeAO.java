@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.logicaloperator;
+package de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,22 +15,22 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SPATIALRANGE", doc = "Puts out all objects in the given range around the given spatial object in the given data structure.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MOVINGOBJECTRANGE", doc = "Puts out all objects in the given range around the given moving object in the given data structure.", category = {
 		LogicalOperatorCategory.SPATIAL })
-public class SpatialRangeAO extends BinaryLogicalOp {
+public class MovingObjectRangeAO extends BinaryLogicalOp {
 
-	private static final long serialVersionUID = 1771804202859128706L;
-
+	private static final long serialVersionUID = -1956793493229036126L;
+	
 	private String dataStructureName;
 	private String idAttribute;
 	private String geometryAttribute;
 	private double range;
 
-	public SpatialRangeAO() {
+	public MovingObjectRangeAO() {
 		super();
 	}
 
-	public SpatialRangeAO(SpatialRangeAO ao) {
+	public MovingObjectRangeAO(MovingObjectRangeAO ao) {
 		super(ao);
 		this.dataStructureName = ao.getDataStructureName();
 		this.range = ao.getRange();
@@ -40,9 +40,9 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new SpatialRangeAO(this);
+		return new MovingObjectRangeAO(this);
 	}
-
+	
 	public String getDataStructureName() {
 		return dataStructureName;
 	}
@@ -78,9 +78,11 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	public void setGeometryAttribute(String geometryAttribute) {
 		this.geometryAttribute = geometryAttribute;
 	}
-
+	
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
+		// TODO What is the best way to put the result out?
+		
 		// Put out the original tuple with an extra field that contains a list
 		// with the elements in the range
 
@@ -89,7 +91,7 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 		List<SDFAttribute> attributes = new ArrayList<>(inputSchema.getAttributes());
 
 		// Add the list of spatial points
-		SDFAttribute attr = new SDFAttribute("neighbors", "neighbors", SDFDatatype.LIST_TUPLE);
+		SDFAttribute attr = new SDFAttribute("neighbors", "neighbors", SDFDatatype.STRING);
 		attributes.add(attr);
 
 		// Create the new schema

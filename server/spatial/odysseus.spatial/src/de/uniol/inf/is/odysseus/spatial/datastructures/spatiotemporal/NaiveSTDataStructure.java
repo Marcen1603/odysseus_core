@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @author Tobias Brandt
  *
  */
-public class NaiveSTDataStructure implements IMovingObjectDataStructure {
+public class NaiveSTDataStructure implements ISpatioTemporalDataStructure {
 
 	public static final String TYPE = "naive";
 
