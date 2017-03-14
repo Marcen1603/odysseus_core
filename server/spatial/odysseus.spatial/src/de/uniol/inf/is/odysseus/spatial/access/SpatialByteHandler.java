@@ -33,6 +33,7 @@ import com.vividsolutions.jts.io.WKTReader;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 /**
  * @author Andr� Bolles, Alexander Funk
@@ -99,49 +100,15 @@ public class SpatialByteHandler extends AbstractDataHandler<Object>{
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
-		byte[] binData = this.wkbWriter.write((Geometry) data);
-		
-//
-//		// split integer into 4 bytes
-//		byte[] length = this.intToByteArray(binData.length);
-//		byte[] dataAndLength = new byte[binData.length + length.length];
-//
-//		// first put length
-//		System.arraycopy(length, 0, dataAndLength, 0, length.length);
-//		// then put data
-//		System.arraycopy(binData, 0, dataAndLength, length.length, binData.length);
-//		
+		GeometryWrapper wrapper = (GeometryWrapper) data;
+		byte[] binData = this.wkbWriter.write(wrapper.getGeometry());
+			
+		// write the length into the byte buffer
 		buffer.putInt(binData.length);
-		
-		//System.out.println(buffer.capacity());
-		
-		//System.out.println("Send: " + binData.length);
 		
 		// put the data into the byte buffer
 		buffer.put(binData);
 	}
-
-//	private byte[] intToByteArray(int number) {
-//		byte[] data = new byte[4];
-//
-//		for (int i = 0; i < 4; ++i) {
-//			int shift = i << 3; // i * 8
-//			data[3 - i] = (byte) ((number & (0xff << shift)) >>> shift);
-//		}
-//
-//		return data;
-//
-//	}
-
-	// private int byteArrayToInt(byte[] data){
-	// // byte[] -> int
-	// int number = 0;
-	// for (int i = 0; i < 4; ++i) {
-	// number |= (data[3-i] & 0xff) << (i << 3);
-	// }
-	//
-	// return number;
-	// }
 
 	@Override
 	final public List<String> getSupportedDataTypes() {

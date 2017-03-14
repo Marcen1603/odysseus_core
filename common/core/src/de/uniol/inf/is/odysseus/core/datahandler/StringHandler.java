@@ -140,7 +140,11 @@ public class StringHandler extends AbstractDataHandler<String> {
 	@Override
 	public int memSize(Object attribute) {
 		try {
-			int val = encoder.encode(CharBuffer.wrap((String) attribute)).limit() + Integer.SIZE / 8;
+			String attr = (String) attribute;
+			if (attr == null) {
+				attr = "";
+			}
+			int val = encoder.encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
 			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);
