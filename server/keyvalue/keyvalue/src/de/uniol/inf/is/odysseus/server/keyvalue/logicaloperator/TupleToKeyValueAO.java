@@ -16,15 +16,11 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "TupleToKeyValue", doc = "Converts a tuple to a key-value/JSON object", category = { LogicalOperatorCategory.TRANSFORM })
-public class TupleToKeyValueAO extends UnaryLogicalOp {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "TupleToKeyValue", doc = "deprecated. Use ToKeyValue instead", category = { LogicalOperatorCategory.TRANSFORM }, deprecation=true, hidden= true)
+@Deprecated
+public class TupleToKeyValueAO extends ToKeyValueAO {
 	private static final long serialVersionUID = 3215936185841514847L;
 
 	public TupleToKeyValueAO() {
@@ -34,21 +30,5 @@ public class TupleToKeyValueAO extends UnaryLogicalOp {
 		super(tupleToKeyValue);
 	}
 
-	@Override
-	public TupleToKeyValueAO clone() {
-		return new TupleToKeyValueAO(this);
-	}
 
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(
-				getInputSchema(0).getURI(),
-				(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
-						.getAttributes(), getInputSchema());
-
-		setOutputSchema(newOutputSchema);
-		return newOutputSchema;
-	}
 }
