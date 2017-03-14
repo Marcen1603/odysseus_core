@@ -27,9 +27,9 @@ public class CQLDictionaryHelper extends CQLDictionary
 					new SDFAttribute(src2, "attr3", new SDFDatatype("Integer")),
 					new SDFAttribute(src2, "attr4", new SDFDatatype("String")),
 					new SDFAttribute(src3, "attr5", new SDFDatatype("Integer")),
-					new SDFAttribute(src3, "attr6", new SDFDatatype("String"))
-//					new SDFAttribute(src4, "attr1", new SDFDatatype("Integer")),
-//					new SDFAttribute(src4, "attr2", new SDFDatatype("String"))
+					new SDFAttribute(src3, "attr6", new SDFDatatype("String")),
+					new SDFAttribute(src4, "attr1", new SDFDatatype("String")),
+					new SDFAttribute(src4, "attr2", new SDFDatatype("String"))
 					// ...
 			};
 		

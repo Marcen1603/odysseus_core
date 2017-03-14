@@ -15,6 +15,8 @@ import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper
+import org.junit.rules.ExpectedException
+import org.junit.Rule
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
@@ -24,10 +26,7 @@ class CQLGeneratorQueryTest
 	@Inject extension CQLGenerator
 	@Inject extension ParseHelper<Model>
 	
-//	val keyword0 = CQLGenerator.getKeyword(0)
-//	val keyword1 = CQLGenerator.getKeyword(1)
-//	val keyword2 = CQLGenerator.getKeyword(2)
-//	val keyword3 = CQLGenerator.getKeyword(3)
+	@Rule public ExpectedException thrown = ExpectedException.none()
 	
 	def void assertCorrectGenerated(String s, String t, CQLDictionaryHelper dictionary) 
 	{
@@ -105,8 +104,67 @@ class CQLGeneratorQueryTest
 		, new CQLDictionaryHelper())
 	}
 
+    @Test def void SelectAllTest6()
+    {
+        assertCorrectGenerated
+        (
+            "SELECT stream1.* FROM stream1"
+            ,
+            "operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)"
+        , new CQLDictionaryHelper()) 
+    }
+
+    @Test def void SelectAllTest7()
+    {
+        assertCorrectGenerated
+        (
+            "SELECT attr1 AS a1, attr1 AS a2 FROM stream1"
+            ,
+            "operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr1']}, stream1)"
+        , new CQLDictionaryHelper()) 
+    }
+
+    @Test def void AmbiguouseAttributeTest1()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT attr1 AS a1, attr1 AS a2 FROM stream1, stream4"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
+    @Test def void AmbiguouseAttributeTest2()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT stream1.attr1 AS a1, attr1 AS a2 FROM stream1, stream4"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+	
+    @Test def void AmbiguouseAttributeTest3()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT attr1 AS a1, stream4.attr1 AS a2 FROM stream1, stream4"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
 	val aliasTestResult = "
-		operator_1 = SELECT({predicate='stream1.attr1 > 2'}, stream1)
+		operator_1 = SELECT({predicate='stream1.value1 > 2'}, stream1)
 		operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)
 		renamed_3 = RENAME({aliases=['attr1','value1'],pairs='true'}, operator_2)"
 
@@ -114,82 +172,84 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE value1 > 2;"
-			,		
-			aliasTestResult
+			"SELECT attr1 AS value1 FROM stream1;"
+			,
+			"renamed_1  = RENAME({aliases=['attr1','value1'],pairs='true'}, stream1)
+			 
+			 operator_2 = MAP({expressions=['stream1.value1']}, renamed_1)"		
 			, new CQLDictionaryHelper()
 		)
 	}
 
-	@Test def void AliasTest2()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.value1 > 2;"
-			,
-			aliasTestResult
-			, new CQLDictionaryHelper()
-		)
-	}
-	
-	@Test def void AliasTest3()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.attr1 > 2;"
-			,
-			aliasTestResult
-			, new CQLDictionaryHelper()
-		)
-	}
-	
-	@Test def void AliasTest4()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE stream1.value1 > 2;"
-			,
-			aliasTestResult
-			, new CQLDictionaryHelper()
-		)
-	}
-	
-	@Test def void AliasTest5()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
-			,
-			aliasTestResult
-			, new CQLDictionaryHelper()
-		)
-	}
-	
-	@Test def void AliasTest6()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=stream1.attr1",
-			"operator_1=SELECT({predicate='stream1.attr1==stream1.attr1'},JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
-			 operator_2=MAP({expressions=['stream1.attr1']},operator_1)
-			 renamed_3=RENAME({aliases=['attr1','aid'],pairs='true'},operator_2)"
-			, new CQLDictionaryHelper()
-		)
-		
-	}
-	
-	@Test def void AliasTest7()
-	{
-		assertCorrectGenerated
-		(
-			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
-			,
-			"operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','value1','Integer']]}, stream1)
-			 operator_2 = SELECT({predicate='stream1.attr1>2'}, operator_1)
-			 operator_3 = MAP({expressions=['value1']}, operator_2)"   
-			, new CQLDictionaryHelper()
-		)
-	}
+//	@Test def void AliasTest2()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.value1 > 2;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+//	
+//	@Test def void AliasTest3()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.attr1 > 2;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+//	
+//	@Test def void AliasTest4()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE stream1.value1 > 2;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+//	
+//	@Test def void AliasTest5()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT attr1 AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
+//			,
+//			aliasTestResult
+//			, new CQLDictionaryHelper()
+//		)
+//	}
+//	
+//	@Test def void AliasTest6()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=stream1.attr1",
+//			"operator_1=SELECT({predicate='stream1.attr1==stream1.attr1'},JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
+//			 operator_2=MAP({expressions=['stream1.attr1']},operator_1)
+//			 renamed_3=RENAME({aliases=['attr1','aid'],pairs='true'},operator_2)"
+//			, new CQLDictionaryHelper()
+//		)
+//		
+//	}
+//	
+//	@Test def void AliasTest7()
+//	{
+//		assertCorrectGenerated
+//		(
+//			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
+//			,
+//			"operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','value1','Integer']]}, stream1)
+//			 operator_2 = SELECT({predicate='stream1.attr1>2'}, operator_1)
+//			 operator_3 = MAP({expressions=['value1']}, operator_2)"   
+//			, new CQLDictionaryHelper()
+//		)
+//	}
 	
 	@Test def void SelectAttr1Test1() 
 	{ 
@@ -258,7 +318,18 @@ class CQLGeneratorQueryTest
 			 operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)"
 		, new CQLDictionaryHelper())
 	}
+//	SELECT a.auction AS aid FROM bid AS a, bid AS b WHERE aid=b.auction
 	
+    @Test def void SelectAttr1Test7() 
+    { 
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=b.attr1;"
+            ,
+            "operator_1 = SELECT({predicate='stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87'},stream1)
+             operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)"
+        , new CQLDictionaryHelper())
+    }
 	
 	@Test def void CreateViewTest1()
 	{
@@ -681,7 +752,7 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
-	@Test def void NestedStatementTest1()
+	@Test def void NestedStatementTest1()//TODO Wrong operator plan
 	{
 		assertCorrectGenerated
 		(
@@ -728,10 +799,10 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr3 != 2"
+			"SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr2 != 2"
 			,
 			"	
-			operator_1 = SELECT({predicate='stream1.attr1>1000&&stream2.attr3!=2'}, stream1)
+			operator_1 = SELECT({predicate='stream1.attr1>1000&&stream1.attr2!=2'}, stream1)
 			operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)
 
 			"

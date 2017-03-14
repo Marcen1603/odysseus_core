@@ -139,23 +139,11 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            boolean _and = false;
-            IQLArgumentsMap _argsMap = e.getArgsMap();
-            boolean _notEquals_1 = (!Objects.equal(_argsMap, null));
-            if (!_notEquals_1) {
-              _and = false;
-            } else {
-              IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size_1 = _elements.size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              _and = _greaterThan_1;
-            }
-            if (_and) {
+            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _ref = e.getRef();
-              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap_2, context);
+              IQLArgumentsMap _argsMap = e.getArgsMap();
+              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap, context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -167,34 +155,12 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLAttribute a : attributes) {
           {
-            boolean _and_1 = false;
-            boolean _and_2 = false;
-            IQLVariableInitialization _init = a.getInit();
-            boolean _notEquals_2 = (!Objects.equal(_init, null));
-            if (!_notEquals_2) {
-              _and_2 = false;
-            } else {
-              IQLVariableInitialization _init_1 = a.getInit();
-              IQLArgumentsMap _argsMap_3 = _init_1.getArgsMap();
-              boolean _notEquals_3 = (!Objects.equal(_argsMap_3, null));
-              _and_2 = _notEquals_3;
-            }
-            if (!_and_2) {
-              _and_1 = false;
-            } else {
-              IQLVariableInitialization _init_2 = a.getInit();
-              IQLArgumentsMap _argsMap_4 = _init_2.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_4.getElements();
-              int _size_2 = _elements_1.size();
-              boolean _greaterThan_2 = (_size_2 > 0);
-              _and_1 = _greaterThan_2;
-            }
-            if (_and_1) {
+            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmTypeReference _type = a.getType();
-              IQLVariableInitialization _init_3 = a.getInit();
-              IQLArgumentsMap _argsMap_5 = _init_3.getArgsMap();
-              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type, _argsMap_5, context);
+              IQLVariableInitialization _init = a.getInit();
+              IQLArgumentsMap _argsMap_1 = _init.getArgsMap();
+              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type, _argsMap_1, context);
               _builder.append(_createGetterMethod_1, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -206,29 +172,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            boolean _and_3 = false;
-            boolean _and_4 = false;
-            IQLVariableInitialization _init_4 = a_1.getInit();
-            boolean _notEquals_4 = (!Objects.equal(_init_4, null));
-            if (!_notEquals_4) {
-              _and_4 = false;
-            } else {
-              IQLVariableInitialization _init_5 = a_1.getInit();
-              IQLArgumentsMap _argsMap_6 = _init_5.getArgsMap();
-              boolean _notEquals_5 = (!Objects.equal(_argsMap_6, null));
-              _and_4 = _notEquals_5;
-            }
-            if (!_and_4) {
-              _and_3 = false;
-            } else {
-              IQLVariableInitialization _init_6 = a_1.getInit();
-              IQLArgumentsMap _argsMap_7 = _init_6.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_2 = _argsMap_7.getElements();
-              int _size_3 = _elements_2.size();
-              boolean _greaterThan_3 = (_size_3 > 0);
-              _and_3 = _greaterThan_3;
-            }
-            if (_and_3) {
+            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -237,9 +181,9 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
               JvmTypeReference type = decl.getRef();
               _builder.newLineIfNotEmpty();
               _builder.append("\t");
-              IQLVariableInitialization _init_7 = a_1.getInit();
-              IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();
-              CharSequence _createGetterMethod_2 = this.createGetterMethod(type, _argsMap_8, context);
+              IQLVariableInitialization _init_1 = a_1.getInit();
+              IQLArgumentsMap _argsMap_2 = _init_1.getArgsMap();
+              CharSequence _createGetterMethod_2 = this.createGetterMethod(type, _argsMap_2, context);
               _builder.append(_createGetterMethod_2, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -397,34 +341,12 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     {
       String className = this.helper.getClassName(m);
       String returnT = "";
-      boolean _and = false;
-      JvmTypeReference _returnType = m.getReturnType();
-      boolean _notEquals = (!Objects.equal(_returnType, null));
-      if (!_notEquals) {
-        _and = false;
-      } else {
-        String _simpleName = m.getSimpleName();
-        boolean _equalsIgnoreCase = _simpleName.equalsIgnoreCase(className);
-        boolean _not = (!_equalsIgnoreCase);
-        _and = _not;
-      }
-      if (_and) {
-        JvmTypeReference _returnType_1 = m.getReturnType();
-        String _compile = this.typeCompiler.compile(_returnType_1, context, false);
+      if (((!Objects.equal(m.getReturnType(), null)) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+        JvmTypeReference _returnType = m.getReturnType();
+        String _compile = this.typeCompiler.compile(_returnType, context, false);
         returnT = _compile;
       } else {
-        boolean _and_1 = false;
-        JvmTypeReference _returnType_2 = m.getReturnType();
-        boolean _equals = Objects.equal(_returnType_2, null);
-        if (!_equals) {
-          _and_1 = false;
-        } else {
-          String _simpleName_1 = m.getSimpleName();
-          boolean _equalsIgnoreCase_1 = _simpleName_1.equalsIgnoreCase(className);
-          boolean _not_1 = (!_equalsIgnoreCase_1);
-          _and_1 = _not_1;
-        }
-        if (_and_1) {
+        if ((Objects.equal(m.getReturnType(), null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
           returnT = "void";
         }
       }
@@ -439,13 +361,13 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       _builder.append("public ");
       _builder.append(returnT, "");
       _builder.append(" ");
-      String _simpleName_2 = m.getSimpleName();
-      _builder.append(_simpleName_2, "");
+      String _simpleName = m.getSimpleName();
+      _builder.append(_simpleName, "");
       _builder.append("(");
       {
         EList<JvmFormalParameter> _parameters = m.getParameters();
-        boolean _notEquals_1 = (!Objects.equal(_parameters, null));
-        if (_notEquals_1) {
+        boolean _notEquals = (!Objects.equal(_parameters, null));
+        if (_notEquals) {
           EList<JvmFormalParameter> _parameters_1 = m.getParameters();
           final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
             return this.compile(p, context);

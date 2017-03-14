@@ -82,6 +82,8 @@ class CQLGenerator implements IGenerator2
 	var private firstJoinInQuery = true
 	//Provides different names e.g. to identify valid names for aggregations and map functions 
 	var private NameProvider nameProvider
+	//
+	var private List<Source> querySources = newArrayList
 	
 	val private String OP     = "operator_"
 	val private String VIEW   = "view_" 
@@ -105,6 +107,7 @@ class CQLGenerator implements IGenerator2
 		selfJoinCounter = 1
 		predicateString = null
 		expressionString = null
+		querySources = newArrayList
 		firstJoinInQuery = true
 	}
 
@@ -186,9 +189,14 @@ class CQLGenerator implements IGenerator2
 	/** Parse a select statement and returns its last operator name. */
 	def parseSelect(Select stmt)
 	{
-		// Add source aliases
 		for(Source source : stmt.sources)
-			registerAlias(source)
+		{
+		    if(!querySources.contains(source) && source.nested == null)
+		    {
+		        querySources.add(source)
+				registerAlias(source)
+			}
+		}
 		firstJoinInQuery = true
 		expressionCounter = 0
 		aggregationCounter = 0
@@ -230,12 +238,7 @@ class CQLGenerator implements IGenerator2
 			 	operator1 = result1.get(1).toString//changed
 			 	for(String attributename : (result1.get(0) as List<String>))
 			 	{
-			 		var attributeList = attributes2.get('')
-			 		if(attributeList == null)
-			 			attributeList = newArrayList
-			 		if(!attributeList.contains(attributename))
-			 			attributeList.add(attributename)
-			 		attributes2.put('', attributeList)
+			 		attributes2 = addToMap(attributes2, attributename, '')
 		 		}
 			}
 			if(!aggregations.empty)//Contains aggregations like SELECT AVG(attr1), MAX(attr2) AS maxAttr2s FROM ..
@@ -244,12 +247,7 @@ class CQLGenerator implements IGenerator2
 			    operator2   = registerOperator(result2.get(1).toString)
 			 	for(String attributename : (result2.get(0) as List<String>))
 			 	{
-			 		var attributeList = attributes2.get('')
-			 		if(attributeList == null)
-			 			attributeList = newArrayList
-			 		if(!attributeList.contains(attributename))
-			 			attributeList.add(attributename)
-			 		attributes2.put('', attributeList)
+			 		attributes2 = addToMap(attributes2, attributename, '')
 	 			}
 			}
 			
@@ -293,11 +291,9 @@ class CQLGenerator implements IGenerator2
 						list = newArrayList
 					for(String attributename : getAttributeNamesFrom(source.name))
 					{
-						if(!list.contains(attributename))
-							list.add(attributename)
-						attributes2.put(source.name, list)
-						}
+						attributes2 = addToMap(attributes2, attributename, source.name)
 					}
+				}
 					////
 				if(stmt.sources.size == 1)
 					return '''«buildProjectOP(attributes2, buildJoin(stmt.sources), null, stmt.sources)»'''
@@ -305,27 +301,22 @@ class CQLGenerator implements IGenerator2
 			}
 			else 
 			{
-				println("YXHERE")
 				var String operator1 = null
 				var String operator2 = null
 				if(!expressions.empty)//Contains expressions like SELECT DolToEuro(attr1) * 20.05 AS alias1 FROM ..
 				{
-					println("EXPRESSIONYX")
 					var result1 = buildMapOperator(expressions, stmt.sources)
 				 	operator1 = result1.get(1).toString
-				 	println("registry:: " + registry_Expressions.toString)
 				}
 				
 				if(!aggregations.empty)
 				{
-					println("AGGREGATIONYX")
 				 	var result2 = buildAggregateOP(aggregations, stmt.order, stmt.sources)
 					operator2 = result2.get(1).toString
 				}
 				
 				if(operator1 != null && operator2 != null)
 				{
-					println("HHHEHYY")
 					return registerOperator(buildJoin(#[operator1, operator2]))//FIXME Wrong operator plan
 				}
 				else if(operator1 != null)
@@ -520,7 +511,10 @@ class CQLGenerator implements IGenerator2
 					else
 					{
 						if(e.value instanceof Attribute)
-							predicateString += getAttributename(e.value as Attribute, null)
+						{
+						    
+							predicateString += getAttributename(e.value as Attribute)
+						}
 					}
 				}  	 
 			}
@@ -1029,113 +1023,126 @@ class CQLGenerator implements IGenerator2
 			var m = map.get("")
 			var List<String> attributes = newArrayList
 			//Add attributes to list
-			for(Entry<String, List<String>> e : map.entrySet)
+			for(Entry<String, List<String>> entry : map.entrySet)
 			{
-				if(e.key.equals(""))
+				if(entry.key.equals(""))
 				{
 					if(m != null) for(String attributename : m)
 						attributes.add(getAttributename(attributename, ""))
 				}
 				else 
-					for(String attributename : e.value)
-						attributes.add(getAttributename(attributename, e.key))	
-				println("-> " +attributes.toString)		
+					for(String attributename : entry.value)
+					{
+					    println(attributename)
+						attributes.add(getAttributename(attributename, entry.key))
+						
+						}	
 			}
 
-			//Sort attributes with given order
-			for(Argument arg : order)
+			//Sort attributes by given order
+			if(!order.isEmpty)
 			{
-				for(String attribute : attributes)
-				{
-					if(arg.attribute != null && attribute.contains('.'))
-					{
-						if(attribute.split('\\.').get(1).equals(arg.attribute.name))
-							orderedAttributes.add(attribute)
-						else if(arg.attribute.name.contains('.'))
-						{
-							var sourcename = arg.attribute.name.split('\\.').get(0)
-							var realSourcename = getSourcenameFromAlias(sourcename)
-							if(realSourcename.equals(''))
-								realSourcename = sourcename
-							
-							if(realSourcename.equals(attribute.split('\\.').get(0))
-								&& arg.attribute.name.split('\\.').get(1).equals(attribute.split('\\.').get(1))
-							)
-								orderedAttributes.add(attribute)
-						}
-						else if(attribute.contains('-'))//TODO mark - as keyword for renamed attribute during self join
-							orderedAttributes.add(attribute)
-					}
-					else if(arg.expression != null)
-					{
-						if(arg.expression.expressions.size == 1)
-						{
-							var aggregation = arg.expression.expressions.get(0) 
-							var function = aggregation.value
-							if(function instanceof Function)
-							{
-								if(nameProvider.isAggregation(function.name))
-								{
-									if(arg.expression.alias != null)
-									{
-										if(attribute.equals(arg.expression.alias.name))
-											orderedAttributes.add(attribute)
-									}
-									else
-									{
-										if(attribute.equals(function.name + '_' + aggregationCounter))
-										{
-											orderedAttributes.add(attribute)
-											aggregationCounter++
-										}
-									}								
-								}
-								else//TODO same -> refactoring
-								{
-									if(attribute.contains(","))
-									{
-										var splitted = attribute.split(",").get(1)
-										var realAttributename = splitted.substring(splitted.indexOf("'") + 1, splitted.lastIndexOf("'"))
-										if(arg.expression.alias != null)
-										{
-											if(realAttributename.equals(arg.expression.alias.name))
-												orderedAttributes.add(attribute)
-										}
-										else
-										{
-											if(realAttributename.equals('expression_' + (expressionCounter)))
-											{
-												orderedAttributes.add(attribute)
-												expressionCounter++
-											}	
-										}
-									}
-								}
-							}
-						}				
-						else//TODO same -> refactoring
-						{
-							if(attribute.contains(","))
-							{
-								var splitted = attribute.split(",").get(1)
-								var realAttributename = splitted.substring(splitted.indexOf("'") + 1, splitted.lastIndexOf("'"))
-								if(arg.expression.alias != null)
-								{
-									if(realAttributename.equals(arg.expression.alias.name))
-										orderedAttributes.add(attribute)
-								}
-								else
-								{
-									if(realAttributename.equals('expression_' + (expressionCounter)))
-									{
-										orderedAttributes.add(attribute)
-										expressionCounter++
-									}	
-								}
-							}
-						}
-					}
-				}		
+    			for(Argument arg : order)
+    			{
+    				for(String attribute : attributes)
+    				{
+    					if(arg.attribute != null && attribute.contains('.'))
+    					{///
+    					    if(arg.attribute.name.contains('.*'))
+    					    {
+    					        orderedAttributes.add(attribute)
+    					    }
+    					    else
+    					    {
+        						if(attribute.split('\\.').get(1).equals(arg.attribute.name))
+        							orderedAttributes.add(attribute)
+        						else if(arg.attribute.name.contains('.'))
+        						{
+        							var sourcename = arg.attribute.name.split('\\.').get(0)
+        							var realSourcename = getSourcenameFromAlias(sourcename)
+        							if(realSourcename.equals(''))
+        								realSourcename = sourcename
+        							
+        							if(realSourcename.equals(attribute.split('\\.').get(0))
+        								&& arg.attribute.name.split('\\.').get(1).equals(attribute.split('\\.').get(1))
+        							)
+        								orderedAttributes.add(attribute)
+        						}
+        						else if(attribute.contains('-'))//TODO mark - as keyword for renamed attribute during self join
+        							orderedAttributes.add(attribute)
+    					    }
+    					}
+    					else if(arg.expression != null)
+    					{
+    						if(arg.expression.expressions.size == 1)
+    						{
+    							var aggregation = arg.expression.expressions.get(0) 
+    							var function = aggregation.value
+    							if(function instanceof Function)
+    							{
+    								if(nameProvider.isAggregation(function.name))
+    								{
+    									if(arg.expression.alias != null)
+    									{
+    										if(attribute.equals(arg.expression.alias.name))
+    											orderedAttributes.add(attribute)
+    									}
+    									else
+    									{
+    										if(attribute.equals(function.name + '_' + aggregationCounter))
+    										{
+    											orderedAttributes.add(attribute)
+    											aggregationCounter++
+    										}
+    									}								
+    								}
+    								else//TODO same -> refactoring
+    								{
+    									if(attribute.contains(","))
+    									{
+    										var splitted = attribute.split(",").get(1)
+    										var realAttributename = splitted.substring(splitted.indexOf("'") + 1, splitted.lastIndexOf("'"))
+    										if(arg.expression.alias != null)
+    										{
+    											if(realAttributename.equals(arg.expression.alias.name))
+    												orderedAttributes.add(attribute)
+    										}
+    										else
+    										{
+    											if(realAttributename.equals('expression_' + (expressionCounter)))
+    											{
+    												orderedAttributes.add(attribute)
+    												expressionCounter++
+    											}	
+    										}
+    									}
+    								}
+    							}
+    						}				
+    						else//TODO same -> refactoring
+    						{
+    							if(attribute.contains(","))
+    							{
+    								var splitted = attribute.split(",").get(1)
+    								var realAttributename = splitted.substring(splitted.indexOf("'") + 1, splitted.lastIndexOf("'"))
+    								if(arg.expression.alias != null)
+    								{
+    									if(realAttributename.equals(arg.expression.alias.name))
+    										orderedAttributes.add(attribute)
+    								}
+    								else
+    								{
+    									if(realAttributename.equals('expression_' + (expressionCounter)))
+    									{
+    										orderedAttributes.add(attribute)
+    										expressionCounter++
+    									}	
+    								}
+    							}
+    						}
+    					}
+    				}		
+    			}
 			}
 		}
 		
@@ -1265,137 +1272,142 @@ class CQLGenerator implements IGenerator2
 		return list
 	}
 		
-	/** Returns all attributes with its corresponding sources from a select statement within a map. */
-	def private Map<String, List<String>> extractAttributeInformation(Select select, Map<String, List<String>> map)
+	def private Map<String, List<String>> addToMap(Map<String, List<String>> map, String attribute, String realSourcename)
 	{
+        var attributeList = map.get(realSourcename)
+        if(attributeList == null)
+            attributeList = newArrayList
+        if(!attributeList.contains(attribute))
+            attributeList.add(attribute)
+        map.put(realSourcename, attributeList)
+        return map
+	}	
+		
+	static private interface AttributeParser{ }	
+		
+	/** Returns all attributes with its corresponding sources from a select statement within a map. */
+	def private Map<String, List<String>> extractAttributeInformation(Select select, Map<String, List<String>> var2)
+	{
+	    val attributeParser = new AttributeParser()
+	    {
+	        var String attributename
+            var List<String> list
+	        var String sourcename
+	        
+	        def private parse(String name)
+            {
+                if(name.contains('.'))
+                {
+                   var split = name.split("\\.")
+                   attributename = split.get(1)
+                   sourcename = split.get(0)
+                   if(!sourceNames.contains(sourcename))
+                       sourcename = getSourcenameFromAlias(sourcename)
+                   if(sourcename.equals(''))
+                       throw new IllegalArgumentException("source with name " + split.get(0) + " is unkown")
+                   if(attributename.contains('*'))
+                   {
+                       list = newArrayList
+                       for(String str : getAttributeNamesFrom(sourcename))
+                           list.add(str)
+                   }
+                   else
+                       attributename = null
+                }
+                attributename = name
+            }
+            
+            def private clear() { attributename = null list = null sourcename = null}
+	    }
+	    
+	    var map = var2
 		var List<Attribute> attributes = newArrayList
 		for(Argument argument : select.arguments)
 			if(argument.attribute != null)
 				attributes.add(argument.attribute)
 		var List<Source> sources = select.sources
 		
-		//Check if it's a select * query
-		if(attributes.empty 
-//			&& EcoreUtil2.getAllContentsOfType(select, Aggregation).empty//TODO Remove this after debugging
-			&& EcoreUtil2.getAllContentsOfType(select, SelectExpression).empty
-		)
+		//Check if it's a select * query and add for each source its attributes
+		if(attributes.empty && EcoreUtil2.getAllContentsOfType(select, SelectExpression).empty)
 		{
-			//Add for each source all attributes
 			for(Source source : sources)
-			{
-				var attributeList = map.get(source.name)
-				if(attributeList == null)
-					attributeList = newArrayList
-				for(String name : getAttributeNamesFrom(source.name))
-				if(!attributeList.contains(name))
-					attributeList.add(name)
-				map.put(source.name, attributeList)
-			}				
-		}
+                for(String attribute : getAttributeNamesFrom(source.name))
+                    map = addToMap(map, attribute, source.name)
+        }
 		else
 		{
 			for(Attribute attribute : attributes)
 			{
-				//Count sources that contain the current attribute by its given name
-				var containtedBySource = newArrayList
+				//Count sources that contain the current attribute by its name
+				var containedBySources = newArrayList
 				for(Source source1 : sources)
 				{
 					if(source1.nested == null)
 					{
-						for(SourceStruct source2 : this.registry_Sources)
-						{
-							if(!containtedBySource.contains(source2))
-								if(source2.sourcename.equals(source1.name) && source2.containsAttribute(attribute.name))
-								{
-									var realSourcename = source2.sourcename
-									if(getSourceAliasesAsList().contains(realSourcename))
-										realSourcename = getSourcenameFromAlias(realSourcename)
-									containtedBySource.add(source2)
-								}
-							}
+						for(SourceStruct source2 : registry_Sources)
+							if(!containedBySources.contains(source2))
+								if(source2.containsAttribute(attribute.name) 
+								    && sources.stream.map(e|e.name).collect(Collectors.toList).contains(source2.sourcename)
+								)
+									containedBySources.add(source2)
 					}
 					else//If source is a nested select, call the method recursively
-					{
 						map.putAll(extractAttributeInformation(source1.nested, map))
-					}
 				}
-				//Only one source contains the current attribute		
-				if(containtedBySource.size == 1)
-				{
-					//Add the attribute and its source to the maps
-					var attributeList = map.get(containtedBySource.get(0).sourcename)
-					if(attributeList == null)
-						attributeList = newArrayList
-					var realAttributename = attribute.name
-					if(realAttributename.contains('.'))
+				
+                attributeParser.clear()
+				attributeParser.parse(attribute.name)
+				var String realAttributename = attributeParser.attributename
+				var String realSourcename    = attributeParser.sourcename		
+				
+	            if (containedBySources.size > 0) 
+	            {
+					if (containedBySources.size == 1) 
 					{
-						var sourcename = attribute.name.split('\\.').get(0)
-						var realSourcename = sourcename
-						if(getSourceAliasesAsList().contains(sourcename))
-							realSourcename = getSourcenameFromAlias(sourcename)
-						var attributename = attribute.name.split('\\.').get(1)
-						realAttributename = attributename 
-						if(getAttributeAliasesAsList().contains(realAttributename))
-							realAttributename = getAttributenameFromAlias(realAttributename) 
-					}///
-					if(!attributeList.contains(realAttributename))
-						attributeList.add(realAttributename)
-					map.put(containtedBySource.get(0).sourcename, attributeList)
-					//Register the alias for the attribute
-					for(AttributeStruct attr1 : containtedBySource.get(0).attributes)
-						if(attr1.attributename.equals(realAttributename) && attribute.alias != null)
+					    realSourcename = containedBySources.get(0).sourcename
+						if (attributeParser.list != null)
+							for (String attributename : attributeParser.list)
+								map = addToMap(map, attributename, realSourcename)
+					} 
+					else if (containedBySources.size > 1 && realSourcename == null) 
+					{
+						throw new IllegalArgumentException(
+							"attribute " + realAttributename + " is ambiguous: possible sources are " +
+								containedBySources.toString
+						)
+					}
+					map = addToMap(map, realAttributename, realSourcename)
+					containedBySources.clear()
+					
+					var simpleAttributename = realAttributename
+					if(simpleAttributename.contains('.'))
+						simpleAttributename = simpleAttributename.split("\\.").get(1)				
+					for (AttributeStruct attr1 : getSource(realSourcename).attributes)
+						if (attr1.attributename.equals(simpleAttributename) 
+						    && attribute.alias != null
+						)
 							attr1.aliases.add(attribute.alias.name)
 				}
-				else//More then one source contains the current attributes
+				else 
 				{
-					if(attribute.name.contains("."))
-					{
-						var sourcename = attribute.name.split("\\.").get(0)
-						var realSourcename = sourcename
-						if(getSourceAliasesAsList().contains(sourcename))
-							realSourcename = getSourcenameFromAlias(sourcename)
-						//Source is not known by its name and alias
-						if(!getSourceNames().contains(sourcename) && !getSourceAliasesAsList().contains(sourcename))
-							throw new IllegalArgumentException("Given source " + sourcename + " corresponds to no registered source")
-						else if(attribute.name.split("\\.").get(1).equals('*'))//If the attribute is like source1.*
-						{
-							//Add all attributes for the corresponding source
-					
-							var attributeList = map.get(realSourcename)
-							if(attributeList == null)
-								attributeList = newArrayList
-							for(String attributename : getAttributeNamesFrom(realSourcename))
-								if(!attributeList.contains(attributename))							
-									attributeList.add(attributename)
-							map.put(realSourcename, attributeList)
-						}
-						else//If the attribute is like source1.attr1
-						{
-							//Get its realSourcename because the source1 can either be an alias or not
-						
-							var attributeList = map.get(realSourcename)
-							if(attributeList == null)
-								attributeList = newArrayList
-							if(!attributeList.contains(attribute.name))
-								attributeList.add(attribute.name)
-							map.put(realSourcename, attributeList)
-							
-							for(SourceStruct source1 : this.registry_Sources)
-								if(source1.sourcename.equals(realSourcename))
-									for(AttributeStruct attr1 : containtedBySource.get(0).attributes)
-										if(attr1.attributename.equals(attribute.name) && attribute.alias != null)
-											attr1.aliases.add(attribute.alias.name)				
-						}
-					}
-	//				else
-	//				{
-	//						
-	//				}
+				    if(attributeParser.list != null)
+				    	for (String attributename : attributeParser.list)
+				    		map = addToMap(map, attributename, realSourcename)
 				}
-				containtedBySource.clear()
 			}
 		}
+		
+		println("map="+map.toString)
+		
 		return map
+	}
+	
+	def private SourceStruct getSource(String name)
+	{
+	    for(SourceStruct source : registry_Sources)
+	       if(source.sourcename.equals(name))
+	           return source
+	    return null
 	}
 	
 	def List<Attribute> extractAttributesFromArgument(List<Argument> args)
@@ -1411,6 +1423,7 @@ class CQLGenerator implements IGenerator2
 	{
 		var List<SelectExpression> list = newArrayList
 		for(Argument a : args)
+		{
 			if(a.expression != null)
 			{
 				if(a.expression.expressions.size == 1)
@@ -1424,6 +1437,7 @@ class CQLGenerator implements IGenerator2
 					}
 				}
 			}
+		}
 		return list
 	}
 	
@@ -1523,29 +1537,8 @@ class CQLGenerator implements IGenerator2
 	
 	def private registerAlias(Source src)
 	{
-		var name  = src.name
-		var alias = src.alias
-		if(alias != null && name != null)
-			for(SourceStruct source : registry_Sources)
-				if(source.sourcename.equals(name))
-				{
-					source.aliases.add(alias.name)
-//					if(source.aliases.size > 1)
-//					{
-//						
-//						var paired = newArrayList
-//						var attributes = newArrayList
-//						for(String attributenme : getAttributeNamesFrom(source.sourcename))
-//						{
-//							var attributename = source.sourcename + "." + name + "_" + joinCounter.toString
-//							paired.add(name)
-//							paired.add(attributename)
-//							attributes.add(attributename)
-//						}
-//							renamedAttributes.put(source.sourcename, paired)			
-//							buildRenameOperator2(paired, source.sourcename)
-//					}
-				}
+	    if(src.alias != null)
+	    	getSource(src.name).aliases.add(src.alias.name)
 	}
 	
 	//TODO Remove source that came from a cql query and are identical with a source that came from a pql query
@@ -1681,10 +1674,10 @@ class CQLGenerator implements IGenerator2
 	def public List<String> getAttributeAliasesAsList()
 	{
 		var list = newArrayList
-		for(SourceStruct source : registry_Sources)
-			for(AttributeStruct attribute : source.attributes)
-				list.addAll(attribute.aliases)
-		return list
+		for(List<String> l : getAttributeAliases().values)
+			for(String alias : l)
+				list.add(alias)	
+		return list 
 	} 
 
 	def public Map<SourceStruct, List<String>> getSourceAliases()
@@ -1695,33 +1688,16 @@ class CQLGenerator implements IGenerator2
 		return map
 	} 
 	
-	def public String getDataTypeFrom(Attribute attribute) 
-	{
-		return getDataTypeFrom(attribute.name)
-	}
+	def public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.name) }
 	
 	def public String getDataTypeFrom(String attribute) 
 	{
-		if(attribute == null) throw new NullPointerException("given attribute was null")
-		
-		var attributename = attribute
-		if(attribute.contains("."))
-		{
-			var String[] name = attribute.split("\\.")
-			if(attributeAliasesAsList.contains(name.get(1)))
-				attributename = getAttributenameFromAlias(name.get(1))	
-			else 
-				attributename = name.get(1)
-		}
-		else
-			if(attributeAliasesAsList.contains(attribute))
-				attributename = getAttributenameFromAlias(attribute)
-		
-		for(AttributeStruct attr : getAttributes())
-			if(attr.attributename.equals(attributename))
-				return attr.datatype		
-				
-		throw new IllegalArgumentException("given attribute " + attribute + "unknown")		
+		var attributename = getAttributename(attribute)
+		var splitted = attributename.split("\\.")
+		var sourcename = splitted.get(0)
+	    for(AttributeStruct attr : getSource(sourcename).attributes)
+	        if(attr.attributename.equals(splitted.get(1)))
+	            return attr.datatype		
 	}
 	
 	def public String getSourcenameFromAlias(String sourcealias)
@@ -1733,20 +1709,24 @@ class CQLGenerator implements IGenerator2
 		return ''								
 	}
 	
-	def public String getAttributenameFromAlias(String attributealias)
+	def public AttributeStruct getAttributeFromAlias(String alias)
 	{
-		if(attributealias == null || attributealias.equals(""))
-			throw new IllegalArgumentException("given alias was null or an empty string")
-		
-		for(Entry<AttributeStruct, List<String>> entry : getAttributeAliases.entrySet)
-			for(String alias : entry.value)
-				if(alias.equals(attributealias))
-					return entry.key.attributename
+	    for(Entry<AttributeStruct, List<String>> entry : getAttributeAliases().entrySet)
+	    	if(entry.value.contains(alias))
+	    		return entry.key
+	    return null
+	}
+	
+	def public String getAttributenameFromAlias(String alias)
+	{
+		var attribute = getAttributeFromAlias(alias)
+		if(attribute != null)
+			return attribute.attributename
 
-		if(this.registry_Aggregations.contains(attributealias) || this.registry_Expressions.keySet.contains(attributealias))
-			return attributealias			
-					
-		throw new IllegalArgumentException("given alias " + attributealias + " is invalid: no corresponding attribute found")									
+		if(this.registry_Aggregations.contains(alias) 
+		    || this.registry_Expressions.keySet.contains(alias)
+		)
+			return alias			
 	}
 	
 	def public String getAttributename(String attribute, String srcname)
@@ -1786,20 +1766,32 @@ class CQLGenerator implements IGenerator2
 			throw new IllegalArgumentException("attribute " + attribute + " could not be resolved" )
 		}
 		
+        if(this.registry_Aggregations.contains(attribute))
+            return attribute            
+        if(registry_Expressions.keySet.contains(attribute))
+            return registry_Expressions.get(attribute)
+		
 		var String name = attribute
-		for(List<String> l : getAttributeAliases.values)
-			if(l.contains(attribute))
-				name = getAttributenameFromAlias(attribute)
-		for(AttributeStruct attr : getAttributes)
-			if(attr.attributename.equals(name))
-				return attr.sourcename + '.' + attr.attributename
-
-		if(this.registry_Aggregations.contains(attribute))
-			return attribute			
-		if(registry_Expressions.keySet.contains(attribute))//changed
-			return registry_Expressions.get(attribute)
+		if(getAttributeAliasesAsList().contains(name))
+			name = getAttributenameFromAlias(name)
+			
+		var containedBySources = newArrayList	
+		var usedNames = newArrayList
+		for(Source source1 : querySources)
+		{
+		    if(!usedNames.contains(source1.name))
+		    {
+		        usedNames.add(source1.name)
+			    var source2 = getSource(source1.name)
+			    for(AttributeStruct attr : source2.attributes)
+				    if(attr.attributename.equals(name))
+				        containedBySources.add(source2)
+	        }
+        }
+        if(containedBySources.size == 1)
+            return containedBySources.get(0).sourcename + '.' + name
 				
-		throw new IllegalArgumentException("attribute " + attribute + " could not be resolved" )		
+		throw new IllegalArgumentException("attribute " + name + " could not be resolved" )		
 	}
 	
 	//TODO Implement a method to parse an attribute instead of using the same sequence in different methods
@@ -1821,16 +1813,9 @@ class CQLGenerator implements IGenerator2
 		return getAttributename(attribute, null)
 	}
 	
-	//TODO Remove unused method
 	def public String getSimpleAttributename(String attribute)
 	{
-		var name = ''	
-		if(attribute.contains("."))
-			name = attribute.split("\\.").get(1)
-			
-		if(attributeAliasesAsList.contains(name))
-			return getAttributenameFromAlias(attribute)
-		return name		
+		return getAttributename(attribute).split("\\.").get(1)	
 	}
 	
 	/** Returns all {@link Attribute} elements to the corresponding source. */

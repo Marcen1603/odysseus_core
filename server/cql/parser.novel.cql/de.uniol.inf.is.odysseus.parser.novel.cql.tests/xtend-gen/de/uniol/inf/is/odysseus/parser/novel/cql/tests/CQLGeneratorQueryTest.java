@@ -19,7 +19,9 @@ import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
@@ -33,6 +35,9 @@ public class CQLGeneratorQueryTest {
   @Inject
   @Extension
   private ParseHelper<Model> _parseHelper;
+  
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
   
   public void assertCorrectGenerated(final String s, final String t, final CQLDictionaryHelper dictionary) {
     try {
@@ -110,62 +115,60 @@ public class CQLGeneratorQueryTest {
       "operator_1 = SELECT({predicate=\'stream1.attr1>2&&stream1.attr2==\'Test\'\'}, stream1)", _cQLDictionaryHelper);
   }
   
-  private final String aliasTestResult = "\n\t\toperator_1 = SELECT({predicate=\'stream1.attr1 > 2\'}, stream1)\n\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']}, operator_1)\n\t\trenamed_3 = RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'}, operator_2)";
+  @Test
+  public void SelectAllTest6() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT stream1.* FROM stream1", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectAllTest7() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT attr1 AS a1, attr1 AS a2 FROM stream1", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr1\']}, stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void AmbiguouseAttributeTest1() {
+    this.thrown.expect(IllegalArgumentException.class);
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT attr1 AS a1, attr1 AS a2 FROM stream1, stream4", 
+      "", _cQLDictionaryHelper);
+    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
+  }
+  
+  @Test
+  public void AmbiguouseAttributeTest2() {
+    this.thrown.expect(IllegalArgumentException.class);
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT stream1.attr1 AS a1, attr1 AS a2 FROM stream1, stream4", 
+      "", _cQLDictionaryHelper);
+    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
+  }
+  
+  @Test
+  public void AmbiguouseAttributeTest3() {
+    this.thrown.expect(IllegalArgumentException.class);
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT attr1 AS a1, stream4.attr1 AS a2 FROM stream1, stream4", 
+      "", _cQLDictionaryHelper);
+    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
+  }
+  
+  private final String aliasTestResult = "\n\t\toperator_1 = SELECT({predicate=\'stream1.value1 > 2\'}, stream1)\n\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']}, operator_1)\n\t\trenamed_3 = RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'}, operator_2)";
   
   @Test
   public void AliasTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE value1 > 2;", 
-      this.aliasTestResult, _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest2() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.value1 > 2;", 
-      this.aliasTestResult, _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest3() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.attr1 > 2;", 
-      this.aliasTestResult, _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest4() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE stream1.value1 > 2;", 
-      this.aliasTestResult, _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest5() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE attr1 > 2;", 
-      this.aliasTestResult, _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest6() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=stream1.attr1", 
-      "operator_1=SELECT({predicate=\'stream1.attr1==stream1.attr1\'},JOIN(RENAME({aliases=[\'attr1\',\'stream1.attr1-1\',\'attr2\',\'stream1.attr2-1\'],pairs=\'true\'},stream1),stream1))\n\t\t\t operator_2=MAP({expressions=[\'stream1.attr1\']},operator_1)\n\t\t\t renamed_3=RENAME({aliases=[\'attr1\',\'aid\'],pairs=\'true\'},operator_2)", _cQLDictionaryHelper);
-  }
-  
-  @Test
-  public void AliasTest7() {
-    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
-    this.assertCorrectGenerated(
-      "SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;", 
-      "operator_1 = AGGREGATE({AGGREGATIONS=[[\'COUNT\',\'stream1.attr1\',\'value1\',\'Integer\']]}, stream1)\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>2\'}, operator_1)\n\t\t\t operator_3 = MAP({expressions=[\'value1\']}, operator_2)", _cQLDictionaryHelper);
+      "SELECT attr1 AS value1 FROM stream1;", 
+      "renamed_1  = RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'}, stream1)\n\t\t\t \n\t\t\t operator_2 = MAP({expressions=[\'stream1.value1\']}, renamed_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -214,6 +217,14 @@ public class CQLGeneratorQueryTest {
     this.assertCorrectGenerated(
       "SELECT attr1, attr2 FROM stream1 WHERE attr1=7 OR attr1=20 OR attr1=21 OR attr1=59 OR attr1=87;", 
       "operator_1 = SELECT({predicate=\'stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87\'},stream1)\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void SelectAttr1Test7() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=b.attr1;", 
+      "operator_1 = SELECT({predicate=\'stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87\'},stream1)\n             operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -449,8 +460,8 @@ public class CQLGeneratorQueryTest {
   public void NestedStatementTest4() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr3 != 2", 
-      "\t\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>1000&&stream2.attr3!=2\'}, stream1)\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']}, operator_1)\n\n\t\t\t", _cQLDictionaryHelper);
+      "SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1 WHERE attr1 > 1000) AND attr2 != 2", 
+      "\t\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>1000&&stream1.attr2!=2\'}, stream1)\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']}, operator_1)\n\n\t\t\t", _cQLDictionaryHelper);
   }
   
   @Test
