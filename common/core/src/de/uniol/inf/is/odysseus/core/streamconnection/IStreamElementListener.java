@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,11 @@ public interface IStreamElementListener<In> {
 
 	public void streamElementReceived(IPhysicalOperator senderOperator, In element, int port );
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port);
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port );
-	
+
+	/*
+	 * SecurityPunction is deprecated (but will be implemented soon by a student). However, this method is nowhere really implemented. MBr
+	 */
+	@Deprecated
+	public default void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port ) { throw new UnsupportedOperationException(); };
+
 }

@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -15,7 +14,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 public class StreamIntervalEditor implements IStreamEditorType {
 
 	private IntervalCanvas intervalCanvas;
-	
+
 	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
 
@@ -33,7 +32,7 @@ public class StreamIntervalEditor implements IStreamEditorType {
 
 	@Override
 	public void setFocus() {
-		
+
 	}
 
 	@Override
@@ -44,17 +43,12 @@ public class StreamIntervalEditor implements IStreamEditorType {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void streamElementReceived(IPhysicalOperator senderOperator, Object elementObject, int port) {
-		IStreamObject<? extends ITimeInterval> streamElement = (IStreamObject<? extends ITimeInterval>)elementObject;
+		IStreamObject<? extends ITimeInterval> streamElement = (IStreamObject<? extends ITimeInterval>) elementObject;
 		intervalCanvas.addElement(streamElement);
 	}
 
 	@Override
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {
-
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 
 	}
 }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -43,18 +42,18 @@ import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
 public class PositionsView extends AbstractSoccerView implements IStreamEditorType{
 	private static final Logger LOG = LoggerFactory.getLogger(PositionsView.class);
 	private SDFSchema schema;
-	
+
 	private ConcurrentHashMap<Integer, Tuple<?>> currentTuple;
-	
+
 	Runnable runnable;
-	
+
 	final int playerSize = 6;
 	final int refereeSize = 6;
 	final int ballSize = 10;
 	final int fontSize = 8;
-	
+
 	final int sensorIdToRecognizeTimeProgress = 13;
-	
+
 	@Override
 	public void streamElementReceived(IPhysicalOperator senderOperator, Object element, int port) {
 		if (!(element instanceof Tuple<?>)) {
@@ -62,43 +61,39 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 			return;
 		}
 		Tuple<?> tuple = (Tuple<?>) element;
-		
+
 		if(attributeIndexMap.get("sid")!=null){
 			currentTuple.put((Integer)tuple.getAttribute(attributeIndexMap.get("sid")), tuple);
 		}
 //		LOG.info(tuple.getAttribute(1).toString());
-		
+
 	}
 
 	@Override
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {}
 
 	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {}
-
-	@Override
 	public void init(StreamEditor editorPart, IStreamEditorInput editorInput) {
 		LOG.info("----------- PositionsView opened -----------");
-		
-		
+
+
 		setSchema(editorInput.getStreamConnection().getOutputSchema());
-		
+
 		attributeIndexMap = new ConcurrentHashMap<>();
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			attributeIndexMap.put(schema.getAttribute(i).getAttributeName(), i);
 		}
-		
-		
-		
+
+
+
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			LOG.info(schema.getAttribute(i).getAttributeName() + "  "+schema.getAttribute(i).getDatatype().getQualName());
 		}
-		
+
 		initMetadata();
-		
+
 		currentTuple = new ConcurrentHashMap<>();
-		
+
 	}
 
 
@@ -117,14 +112,14 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 				  Font fontPlayerId = new Font(e.display,"Arial", fontSize, SWT.BOLD | SWT.ITALIC);
 				  Font fontTime = new Font(e.display,"Arial", 9, SWT.BOLD | SWT.ITALIC);
 				  gc.setFont(fontPlayerId);
-				  
+
 				  for(Entry<Integer, Tuple<?> > entry : currentTuple.entrySet()) {
 					    Integer sid = entry.getKey();
 					    Tuple<?> soccerTuple = entry.getValue();
 					    if(		attributeIndexMap.get("x")!=null & attributeIndexMap.get("y")!=null){
 					    	Integer x = (Integer)soccerTuple.getAttribute(attributeIndexMap.get("y"));
 					    	Integer y = (Integer)soccerTuple.getAttribute(attributeIndexMap.get("x"));
-					    	
+
 					    	if(sidBalls.contains(sid)){
 						    	gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_YELLOW));
 						    	gc.fillOval(getCoordX(x)-(ballSize/2), getCoordY(y)-(ballSize/2), ballSize, ballSize);
@@ -153,7 +148,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 					  gc.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 					  gc.setFont(fontTime);
 					  long millis = (Long.parseLong(currentTuple.get(sensorIdToRecognizeTimeProgress).getAttribute(attributeIndexMap.get("ts")).toString())-10748401988186756L)/1000000000;
-					  String time = String.format("%d min %d sec %d ms", 
+					  String time = String.format("%d min %d sec %d ms",
 							    TimeUnit.MILLISECONDS.toMinutes(millis),
 							    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)),
 							    millis - TimeUnit.SECONDS.toMillis(TimeUnit.MILLISECONDS.toSeconds(millis))
@@ -165,7 +160,7 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 				  gc.dispose();
 			}
 		});
-		
+
 		SoccerFieldViewUpdater up = new SoccerFieldViewUpdater(soccerFieldDraw);
 		up.schedule(100);
 	}
@@ -187,29 +182,29 @@ public class PositionsView extends AbstractSoccerView implements IStreamEditorTy
 		this.schema = schema; // kann auch null sein!
 	}
 
-	
+
 	class SoccerFieldViewUpdater implements Runnable{
 	    private Canvas canvas;
 	    private int milliseconds;
-	 
+
 	    public SoccerFieldViewUpdater(Canvas canvas) {
 	        super();
 	        this.canvas = canvas;
 	    }
-	    
+
 	    public void schedule(int milliseconds){
 	        this.milliseconds = milliseconds;
 	        canvas.getDisplay().timerExec(milliseconds, this);
 	    }
-	    
+
 	    @Override
 	    public void run() {
 	    	if(!canvas.isDisposed()){
 		        canvas.redraw();
 		        canvas.getDisplay().timerExec(milliseconds, this);
-	    	}	        
+	    	}
 	    }
 	}
-	
+
 
 }
