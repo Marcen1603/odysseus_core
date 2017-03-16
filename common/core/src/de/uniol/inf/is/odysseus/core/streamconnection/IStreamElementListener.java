@@ -17,18 +17,11 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 
 public interface IStreamElementListener<In> {
 
 	public void streamElementReceived(IPhysicalOperator senderOperator, In element, int port );
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port);
-
-	/*
-	 * SecurityPunction is deprecated (but will be implemented soon by a student). However, this method is nowhere really implemented. MBr
-	 */
-	@Deprecated
-	public default void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port ) { throw new UnsupportedOperationException(); };
 
 }

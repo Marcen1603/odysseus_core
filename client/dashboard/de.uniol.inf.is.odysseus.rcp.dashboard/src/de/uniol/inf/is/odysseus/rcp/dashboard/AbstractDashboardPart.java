@@ -39,7 +39,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public abstract class AbstractDashboardPart implements IDashboardPart {
 
@@ -266,19 +265,6 @@ public abstract class AbstractDashboardPart implements IDashboardPart {
 	@Deprecated
 	protected void punctuationElementRecieved(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		// Just for migration cases
-		securityPunctuationElementRecieved(senderOperator, sp, port);
-	}
-
-	@Deprecated
-	protected void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-
 	}
 
 }
