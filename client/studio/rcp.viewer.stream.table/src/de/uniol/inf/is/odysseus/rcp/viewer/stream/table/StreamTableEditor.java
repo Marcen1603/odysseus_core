@@ -60,7 +60,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.mep.ParseException;
 import de.uniol.inf.is.odysseus.rcp.exception.ExceptionWindow;
 import de.uniol.inf.is.odysseus.rcp.viewer.editors.StreamEditor;
@@ -132,7 +131,6 @@ public class StreamTableEditor implements IStreamEditorType {
 		refresh();
 	}
 
-
 	protected void refresh() {
 		synchronized (isRefreshing) {
 			if (!isDesync && !isRefreshing && hasTableViewer() && !getTableViewer().getTable().isDisposed()) {
@@ -163,12 +161,12 @@ public class StreamTableEditor implements IStreamEditorType {
 	public void updateTuples(Tuple<?> element) {
 
 		synchronized (filterMonitor) {
-			if( filter != null && filter.isFiltered(element)) {
+			if (filter != null && filter.isFiltered(element)) {
 				return; // discared filtered elements
 			}
 		}
 
-		synchronized( tuples ) {
+		synchronized (tuples) {
 			tuples.add(0, element.clone());
 			if (maxTuplesCount > 0 && tuples.size() > maxTuplesCount) {
 				tuples.remove(tuples.size() - 1);
@@ -178,10 +176,6 @@ public class StreamTableEditor implements IStreamEditorType {
 
 	@Override
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override
@@ -204,7 +198,8 @@ public class StreamTableEditor implements IStreamEditorType {
 		filterButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes, filterExpressionString);
+				FilterWindow window = new FilterWindow(PlatformUI.getWorkbench().getDisplay(), schema, shownAttributes,
+						filterExpressionString);
 				window.show();
 
 				if (!window.isCanceled()) {
@@ -212,7 +207,8 @@ public class StreamTableEditor implements IStreamEditorType {
 					if (!window.getSelectedAttributeIndices().isEmpty()) {
 						createColumns(getTableViewer(), window.getSelectedAttributeIndices());
 						if (getSchema().size() != window.getSelectedAttributeIndices().size()) {
-							toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of " + getSchema().size() + " attributes show.");
+							toolbarLabel.setText(window.getSelectedAttributeIndices().size() + " of "
+									+ getSchema().size() + " attributes show.");
 						} else {
 							toolbarLabel.setText("");
 						}
@@ -222,7 +218,7 @@ public class StreamTableEditor implements IStreamEditorType {
 
 					if (!Strings.isNullOrEmpty(filterExpressionString)) {
 						try {
-							synchronized( filterMonitor) {
+							synchronized (filterMonitor) {
 								filter = new TupleFilter(filterExpressionString, getSchema());
 							}
 
@@ -231,7 +227,7 @@ public class StreamTableEditor implements IStreamEditorType {
 							new ExceptionWindow("Could not apply filter '" + filterExpressionString + "'", e1);
 						}
 					} else {
-						synchronized( filterMonitor ) {
+						synchronized (filterMonitor) {
 							filter = null;
 						}
 					}
@@ -285,40 +281,40 @@ public class StreamTableEditor implements IStreamEditorType {
 
 		});
 
+		final ToolItem exportButton = new ToolItem(toolbar, SWT.PUSH);
+		exportButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("export"));
+		exportButton.setToolTipText("Export");
+		exportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				try {
+					export(getTableViewer());
+				} catch (IOException e) {
+					LOG.error(e.getMessage(), e);
+				}
+			}
+		});
 
-        final ToolItem exportButton = new ToolItem(toolbar, SWT.PUSH);
-        exportButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("export"));
-        exportButton.setToolTipText("Export");
-        exportButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                try {
-                    export(getTableViewer());
-                }
-                catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
-        });
+		ToolItem clearButton = new ToolItem(toolbar, SWT.PUSH);
+		clearButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("clear"));
+		clearButton.setToolTipText("Clear");
+		clearButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (MessageDialog.openConfirm(parent.getShell(), "Clear table data",
+						"Are you sure to clear the table?")) {
+					synchronized (tuples) {
+						tuples.clear();
+					}
 
-        ToolItem clearButton = new ToolItem(toolbar, SWT.PUSH);
-        clearButton.setImage(ViewerStreamTablePlugIn.getImageManager().get("clear"));
-        clearButton.setToolTipText("Clear");
-        clearButton.addSelectionListener(new SelectionAdapter() {
-        	@Override
-        	public void widgetSelected(SelectionEvent e) {
-        		if( MessageDialog.openConfirm(parent.getShell(), "Clear table data", "Are you sure to clear the table?")) {
-        			synchronized( tuples ) {
-        				tuples.clear();
-        			}
-
-        			refresh();
-        		}
-        	}
-        });
+					refresh();
+				}
+			}
+		});
 
 		toolbarLabel = new Label(toolbar.getParent(), SWT.NONE);
-		toolbarLabel.setText("                                                                                                                                                                                     ");
+		toolbarLabel.setText(
+				"                                                                                                                                                                                     ");
 	}
 
 	public final SDFSchema getSchema() {
@@ -364,15 +360,13 @@ public class StreamTableEditor implements IStreamEditorType {
 				try {
 					Object attr = ((Tuple<?>) cell.getElement()).getAttribute(attributeIndex);
 					if (attr != null) {
-                        if (attr instanceof Object[]) {
-                            cell.setText(Arrays.deepToString((Object[]) attr));
-                        }
-                        else if (attr.getClass().isArray()) {
-                            cell.setText(Arrays.toString((double[]) attr));
-                        }
-                        else {
-                            cell.setText(attr.toString());
-                        }
+						if (attr instanceof Object[]) {
+							cell.setText(Arrays.deepToString((Object[]) attr));
+						} else if (attr.getClass().isArray()) {
+							cell.setText(Arrays.toString((double[]) attr));
+						} else {
+							cell.setText(attr.toString());
+						}
 					} else {
 						cell.setText("<null>");
 					}
@@ -463,12 +457,13 @@ public class StreamTableEditor implements IStreamEditorType {
 			if (isShowingMetadata) {
 
 				List<SDFMetaSchema> metaschemaList = getSchema().getMetaschema();
-				if( metaschemaList != null ) {
-					for( int i = 0; i < metaschemaList.size(); i++) {
+				if (metaschemaList != null) {
+					for (int i = 0; i < metaschemaList.size(); i++) {
 						SDFSchema metaschema = metaschemaList.get(i);
-						for (int j = 0; j < metaschema.size(); j++ ) {
+						for (int j = 0; j < metaschema.size(); j++) {
 							SDFAttribute metaAttribute = metaschema.get(j);
-							TableViewerColumn metadataColumn = createMetadataAttributeColumn(tableViewer, metaAttribute, i, j);
+							TableViewerColumn metadataColumn = createMetadataAttributeColumn(tableViewer, metaAttribute,
+									i, j);
 							layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 						}
 					}
@@ -477,7 +472,6 @@ public class StreamTableEditor implements IStreamEditorType {
 					layout.setColumnData(metadataColumn.getColumn(), new ColumnWeightData(weight, 25, true));
 				}
 			}
-
 
 		} finally {
 			getParent().layout();
@@ -522,7 +516,8 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
-	private TableViewerColumn createMetadataAttributeColumn(TableViewer tableViewer, SDFAttribute metadataAttribute, final int metaschemaIndex, final int metaAttributeIndex) {
+	private TableViewerColumn createMetadataAttributeColumn(TableViewer tableViewer, SDFAttribute metadataAttribute,
+			final int metaschemaIndex, final int metaAttributeIndex) {
 		TableViewerColumn col = new TableViewerColumn(tableViewer, SWT.NONE);
 		col.getColumn().setText(metadataAttribute.getAttributeName());
 		col.getColumn().setAlignment(SWT.CENTER);
@@ -532,7 +527,7 @@ public class StreamTableEditor implements IStreamEditorType {
 			public void update(ViewerCell cell) {
 				try {
 					Tuple<?> tuple = (Tuple<?>) cell.getElement();
-					if( tuple.getMetadata() != null ) {
+					if (tuple.getMetadata() != null) {
 						Object metadata = tuple.getMetadata().getValue(metaschemaIndex, metaAttributeIndex);
 						if (metadata != null) {
 							cell.setText(metadata.toString());
@@ -554,7 +549,6 @@ public class StreamTableEditor implements IStreamEditorType {
 		return col;
 	}
 
-
 	private void stopRefreshThread() {
 		if (desyncThread != null) {
 			desyncThread.stopRunning();
@@ -562,44 +556,44 @@ public class StreamTableEditor implements IStreamEditorType {
 		}
 	}
 
-    private void export(TableViewer tableViewer) throws IOException {
-        String CSV_SEPARATOR = ";";
-        Table table = tableViewer.getTable();
-        int columns = table.getColumnCount();
-        TableItem[] items = table.getItems();
-        FileDialog fd = new FileDialog(table.getShell(), SWT.SAVE);
-        fd.setText("Save");
-        fd.setFilterPath(Paths.get(System.getProperty("user.home")).toString());
-        String[] filterExt = { "*.csv", "*.*" };
-        fd.setFilterExtensions(filterExt);
-        String selected = fd.open();
-        File output = Paths.get(selected).toFile();
-        output.createNewFile();
-        try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
-            StringBuilder line = new StringBuilder();
-            for (int i = 0; i < columns; i++) {
-                if (i > 0) {
-                    line.append(CSV_SEPARATOR);
-                }
-                String text = table.getColumns()[i].getText();
-                line.append(text);
-            }
-            out.write(line.toString());
-            out.newLine();
-            for (TableItem item : items) {
-                line = new StringBuilder();
-                for (int i = 0; i < columns; i++) {
-                    if (i > 0) {
-                        line.append(CSV_SEPARATOR);
-                    }
-                    String text = item.getText(i);
-                    line.append(text);
-                }
-                out.write(line.toString());
-                out.newLine();
-            }
-        }
-    }
+	private void export(TableViewer tableViewer) throws IOException {
+		String CSV_SEPARATOR = ";";
+		Table table = tableViewer.getTable();
+		int columns = table.getColumnCount();
+		TableItem[] items = table.getItems();
+		FileDialog fd = new FileDialog(table.getShell(), SWT.SAVE);
+		fd.setText("Save");
+		fd.setFilterPath(Paths.get(System.getProperty("user.home")).toString());
+		String[] filterExt = { "*.csv", "*.*" };
+		fd.setFilterExtensions(filterExt);
+		String selected = fd.open();
+		File output = Paths.get(selected).toFile();
+		output.createNewFile();
+		try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
+			StringBuilder line = new StringBuilder();
+			for (int i = 0; i < columns; i++) {
+				if (i > 0) {
+					line.append(CSV_SEPARATOR);
+				}
+				String text = table.getColumns()[i].getText();
+				line.append(text);
+			}
+			out.write(line.toString());
+			out.newLine();
+			for (TableItem item : items) {
+				line = new StringBuilder();
+				for (int i = 0; i < columns; i++) {
+					if (i > 0) {
+						line.append(CSV_SEPARATOR);
+					}
+					String text = item.getText(i);
+					line.append(text);
+				}
+				out.write(line.toString());
+				out.newLine();
+			}
+		}
+	}
 
 	private static List<Integer> createIdentity(int max) {
 		List<Integer> list = new ArrayList<Integer>();

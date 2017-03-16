@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -42,10 +43,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ITransfer;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		ListenerSink<In> implements ITransfer<In>{
@@ -431,44 +430,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 						} catch (Throwable t) {
 							LOG.error(
 									"Exception during invoking specialized punctuation listener for DefaultStreamConnection for sinkname {}",
-									name, t);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	protected final void notifyListenersSecurityPunctuation(
-			ISecurityPunctuation sp, int port) {
-		LOG.debug("Receiving security punctuation from port {}: {}", port, sp);
-		IPhysicalOperator senderOperator = portOperatorMap.get(port);
-		synchronized (listeners) {
-			for (IStreamElementListener<In> l : listeners) {
-				try {
-					l.securityPunctuationElementReceived(senderOperator, sp,
-							port);
-				} catch (Throwable t) {
-					LOG.error(
-							"Exception during invoking security punctuation listener for DefaultStreamConnection",
-							t);
-				}
-			}
-		}
-
-		String name = getOperatorNameFromPort(port);
-		if (!Strings.isNullOrEmpty(name)) {
-			synchronized (specialListener) {
-				Collection<IStreamElementListener<In>> l = specialListener
-						.get(name);
-				if (l != null) {
-					for (IStreamElementListener<In> ls : l) {
-						try {
-							ls.securityPunctuationElementReceived(
-									senderOperator, sp, port);
-						} catch (Throwable t) {
-							LOG.error(
-									"Exception during invoking specialized security punctuation listener for DefaultStreamConnection for sinkname {}",
 									name, t);
 						}
 					}

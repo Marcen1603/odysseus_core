@@ -50,7 +50,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.IColorSpace;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
@@ -223,14 +222,6 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
      * {@inheritDoc}
      */
     @Override
-    public void securityPunctuationElementReceived(final IPhysicalOperator operator, final ISecurityPunctuation punctuation, final int port) {
-        // Empty method
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void paintControl(final PaintEvent event) {
         this.gc = new GC(this.getCanvas());
         this.canvas.setCurrent();
@@ -255,7 +246,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -264,7 +255,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

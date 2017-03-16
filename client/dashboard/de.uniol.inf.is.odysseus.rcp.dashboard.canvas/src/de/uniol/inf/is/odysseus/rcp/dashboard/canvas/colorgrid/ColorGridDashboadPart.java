@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.AbstractCanvasDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.CIELCH;
 import de.uniol.inf.is.odysseus.rcp.dashboard.canvas.colorspace.RGB;
@@ -157,7 +156,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -200,7 +199,7 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -242,11 +241,6 @@ public class ColorGridDashboadPart extends AbstractCanvasDashboardPart {
 	@Override
 	public void punctuationElementReceived(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

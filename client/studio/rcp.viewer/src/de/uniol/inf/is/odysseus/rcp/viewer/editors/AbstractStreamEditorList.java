@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,6 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorInput;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.IStreamEditorType;
@@ -133,16 +132,6 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	}
 
 	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		synchronized (pendingElements) {
-			pendingElements.add("Security Punctuation: " + sp);
-			if (!isInfinite() && pendingElements.size() > maxElements) {
-				pendingElements.remove(0);
-			}
-		}
-	}
-
-	@Override
 	public void initToolbar(ToolBar toolbar) {
 		final ToolItem showHeartbeatsToolbarItem = new ToolItem(toolbar, SWT.CHECK);
         showHeartbeatsToolbarItem.setImage(OdysseusRCPViewerPlugIn.getImageManager().get("heart"));
@@ -183,7 +172,7 @@ public abstract class AbstractStreamEditorList implements IStreamEditorType {
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
-	
+
 	private static void waiting() {
 		try {
 			Thread.sleep(REFRESH_INTERVAL_MILLIS);
