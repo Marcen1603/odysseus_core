@@ -121,9 +121,9 @@ class SourceStruct
 		
 		override toString() 
 		{
-			return "sourename " + sourcename 
-			+ System.getProperty("line.separator") + " attributes " + attributes.toString
-			+ System.getProperty("line.separator") + " aliases " + aliases.toString
-			+ System.getProperty("line.separator") + " internal " + internal
+			return sourcename 
+//			+ System.getProperty("line.separator") + " attributes " + attributes.toString
+//			+ System.getProperty("line.separator") + " aliases " + aliases.toString
+//			+ System.getProperty("line.separator") + " internal " + internal
 		}
 }

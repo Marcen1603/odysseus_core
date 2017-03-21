@@ -6,6 +6,7 @@ class AttributeStruct
 {
 		public String attributename;
 		public String sourcename;
+		public List<String> prefixes
 		public String datatype;
 		public List<String> aliases;
 		

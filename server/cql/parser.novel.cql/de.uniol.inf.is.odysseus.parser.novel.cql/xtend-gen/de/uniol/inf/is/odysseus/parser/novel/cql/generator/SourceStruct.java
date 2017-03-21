@@ -182,19 +182,6 @@ public class SourceStruct {
   
   @Override
   public String toString() {
-    String _property = System.getProperty("line.separator");
-    String _plus = (("sourename " + this.sourcename) + _property);
-    String _plus_1 = (_plus + " attributes ");
-    String _string = this.attributes.toString();
-    String _plus_2 = (_plus_1 + _string);
-    String _property_1 = System.getProperty("line.separator");
-    String _plus_3 = (_plus_2 + _property_1);
-    String _plus_4 = (_plus_3 + " aliases ");
-    String _string_1 = this.aliases.toString();
-    String _plus_5 = (_plus_4 + _string_1);
-    String _property_2 = System.getProperty("line.separator");
-    String _plus_6 = (_plus_5 + _property_2);
-    String _plus_7 = (_plus_6 + " internal ");
-    return (_plus_7 + Boolean.valueOf(this.internal));
+    return this.sourcename;
   }
 }

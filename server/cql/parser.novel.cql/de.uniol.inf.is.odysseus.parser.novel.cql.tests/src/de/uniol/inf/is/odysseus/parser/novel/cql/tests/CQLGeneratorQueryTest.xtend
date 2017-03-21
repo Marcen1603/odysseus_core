@@ -110,18 +110,81 @@ class CQLGeneratorQueryTest
         (
             "SELECT stream1.* FROM stream1"
             ,
-            "operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)"
+            "operator_1 = MAP({expressions=['attr1', 'attr2']}, stream1)"
         , new CQLDictionaryHelper()) 
     }
 
-    @Test def void SelectAllTest7()
+    @Test def void RenameTest1()
     {
         assertCorrectGenerated
         (
-            "SELECT attr1 AS a1, attr1 AS a2 FROM stream1"
+            "SELECT attr1 AS a1, attr2 AS a2 FROM stream1"
             ,
-            "operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr1']}, stream1)"
+            "
+			 operator_1 = RENAME({aliases=['attr1','a1','attr2','a2'], pairs='true'}, stream1)
+			 operator_2 = MAP({expressions=['a1', 'a2']}, operator_1)"
         , new CQLDictionaryHelper()) 
+    }
+
+    @Test def void RenameTest2()
+    {
+        assertCorrectGenerated//SELF JOIN -> Rename must contain all attributes in one of the sources
+        (
+            "SELECT a.attr1 AS a1, b.attr1 AS b1 FROM stream1 AS a, stream1 AS b"
+            ,
+            "
+			 operator_1 = RENAME({aliases=['attr1','a1'], pairs='true'}, stream1)
+			 operator_2 = RENAME({aliases=['attr1','b1','attr2','stream1.attr2#1'], pairs='true'}, stream1)
+			 operator_3 = MAP({expressions=['a1', 'b1']}, JOIN(operator_1, operator_2))"
+        , new CQLDictionaryHelper()) 
+    }
+
+	@Test def void RenameTest3()
+    {
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 AS a1, attr2 AS b1 FROM stream1 AS a"
+            ,
+            "
+			 operator_1 = RENAME({aliases=['attr1','a1', 'attr2', 'b1'], pairs='true'}, stream1)
+			 operator_2 = MAP({expressions=['a1', 'b1']}, operator_1)"
+        , new CQLDictionaryHelper()) 
+    }
+    
+	@Test def void RenameTest4()
+    {
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 AS a1, stream1.attr2 AS b1 FROM stream1 AS a"
+            ,
+            "
+			 operator_1 = RENAME({aliases=['attr1','a1', 'attr2', 'b1'], pairs='true'}, stream1)
+			 operator_2 = MAP({expressions=['a1', 'b1']}, operator_1)"
+        , new CQLDictionaryHelper()) 
+    }
+
+	@Test def void RenameTest5()
+    {
+    	thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 AS a1, stream1.attr2 AS b1 FROM stream1 AS a, stream1 AS b"
+            ,
+            ""
+        , new CQLDictionaryHelper()) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
+    @Test def void RenameTest6()
+    {
+    	thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 AS a1, attr1 AS b1 FROM stream1 AS a"
+            ,
+            ""
+        , new CQLDictionaryHelper())
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown") 
     }
 
     @Test def void AmbiguouseAttributeTest1()
@@ -163,6 +226,45 @@ class CQLGeneratorQueryTest
         thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
     }
 
+    @Test def void AmbiguouseAttributeTest4()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
+    @Test def void AmbiguouseAttributeTest5()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT attr1 FROM stream1 AS s1, stream1 AS s2"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
+    @Test def void AmbiguouseAttributeTest6()
+    {
+        thrown.expect(IllegalArgumentException)
+        assertCorrectGenerated
+        (
+            "SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
+            ,
+            ""
+        , new CQLDictionaryHelper()
+        ) 
+        thrown.reportMissingExceptionWithMessage("No exception of %s thrown")
+    }
+
 	val aliasTestResult = "
 		operator_1 = SELECT({predicate='stream1.value1 > 2'}, stream1)
 		operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)
@@ -174,9 +276,8 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 AS value1 FROM stream1;"
 			,
-			"renamed_1  = RENAME({aliases=['attr1','value1'],pairs='true'}, stream1)
-			 
-			 operator_2 = MAP({expressions=['stream1.value1']}, renamed_1)"		
+			"operator_1  = RENAME({aliases=['attr1','value1'],pairs='true'}, stream1)
+			 operator_2 = MAP({expressions=['value1']}, operator_1)"		
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -267,7 +368,7 @@ class CQLGeneratorQueryTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2"
+			"SELECT stream1.attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2"
 			,
 			"
 			operator_1 = SELECT({predicate='stream1.attr1>2'},JOIN(stream1,JOIN(stream2,stream3)))
@@ -289,7 +390,7 @@ class CQLGeneratorQueryTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1, attr2, attr3 FROM stream1, stream2, stream3;"
+			"SELECT stream1.attr1, stream1.attr2, attr3 FROM stream1, stream2, stream3;"
 			,
 			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2', 'stream2.attr3']},
 							JOIN(stream1, 
@@ -301,7 +402,7 @@ class CQLGeneratorQueryTest
 	{ 
 		assertCorrectGenerated
 		(
-			"SELECT attr1, AVG(attr1) AS avgAttr1, attr2, attr3 FROM stream1, stream2, stream3;"
+			"SELECT stream1.attr1, AVG(attr1) AS avgAttr1, stream1.attr2, attr3 FROM stream1, stream2, stream3;"
 			,
 			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','avgAttr1','Integer']]},JOIN(stream1,JOIN(stream2,stream3)))
 			 operator_2 = MAP({expressions=['stream1.attr1','avgAttr1','stream1.attr2','stream2.attr3']}, operator_1)"
@@ -324,10 +425,12 @@ class CQLGeneratorQueryTest
     { 
         assertCorrectGenerated
         (
-            "SELECT a.attr1 AS aid FROM stream1 AS a, stream1 AS b WHERE aid=b.attr1;"
+            "SELECT a.attr1 AS aid, b.attr1 AS d, b.attr1 FROM stream1 AS a, stream1 AS b WHERE aid=b.attr1;"
             ,
-            "operator_1 = SELECT({predicate='stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87'},stream1)
-             operator_2 = MAP({expressions=['stream1.attr1','stream1.attr2']},operator_1)"
+            "operator_1 = RENAME({aliases=['attr1','aid'],pairs='true'},stream1)
+			 operator_2 = RENAME({aliases=['attr1','d','attr2','stream1.attr2#1'],pairs='true'},stream1)
+			 operator_3 = SELECT({predicate='aid==stream1.attr1'},JOIN(operator_1,operator_2))
+			 operator_4 = MAP({expressions=['aid','d','b.attr1','b.attr1']},operator_3)"
         , new CQLDictionaryHelper())
     }
 	
@@ -599,60 +702,36 @@ class CQLGeneratorQueryTest
 		, new CQLDictionaryHelper())
 	}
 	
-	@Test def void AggregationTest1()
+	@Test def void AggregationTest1()//TODO Aggregate operator should be like operator_1 = AGGREGATE..
 	{
 		assertCorrectGenerated
 		(
 			"SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;"
 			,
-			"operator_1 = AGGREGATE
-			(
-				{
-					AGGREGATIONS=[
-									['COUNT','stream1.attr1','Counter','Integer']
-								 ],
-					GROUP_BY =['stream1.attr1']
-				}, stream1)"
+			"operator_1 = MAP({expressions=['Counter']},AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']],GROUP_BY=['stream1.attr1']},stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
 	
-	@Test def void AggregationTest2()
+	@Test def void AggregationTest2()//TODO Aggregate operator should be like operator_1 = AGGREGATE
 	{
 		assertCorrectGenerated
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;"
 			,
-			"operator_1 = AGGREGATE
-			(
-				{
-					AGGREGATIONS=[
-									['COUNT','stream1.attr1','Counter','Integer'],
-									['AVG','stream1.attr2','AVG_0','String']
-								 ],
-					GROUP_BY =['stream1.attr1', 'stream1.attr2']
-				}, stream1)"
+			"operator_1=MAP({expressions=['Counter','AVG_0']},AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer'],['AVG','stream1.attr2','AVG_0','String']],GROUP_BY=['stream1.attr1','stream1.attr2']},stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}	
 	
-	@Test def void AggregationTest3()
+	@Test def void AggregationTest3()//TODO Aggregate operator should be like operator_1 = AGGREGATE
 	{
 		assertCorrectGenerated
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] AS s1 , stream2 GROUP BY attr1, attr2;"
 			,
 			"
-			operator_1 = AGGREGATE
-			(
-				{
-					AGGREGATIONS=[
-									['COUNT', 'stream1.attr1', 'Counter', 'Integer'],
-									['AVG', 'stream1.attr2', 'AVG_0', 'String']
-								 ],
-					GROUP_BY =['stream1.attr1', 'stream1.attr2']
-				}, JOIN(TIMEWINDOW({size=[10, 'MINUTES'], advance=[1, 'MINUTES']},stream1), stream2)
-			)"
+			operator_1=MAP({expressions=['Counter','AVG_0']},AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer'],['AVG','stream1.attr2','AVG_0','String']],GROUP_BY=['stream1.attr1','stream1.attr2']},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream1),stream2)))"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -702,15 +781,8 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];"
 			,
 			"
-			operator_1 = AGGREGATE
-			(
-				{
-					AGGREGATIONS=[
-									['COUNT', 'stream1.attr1', 'Counter', 'Integer']
-								 ]
-				}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),stream1))
-
-			operator_2=MAP({expressions=['Counter', 'stream2.attr3']}, operator_1)"
+			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(stream1,TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			operator_2=MAP({expressions=['Counter','stream2.attr3']},operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -722,16 +794,9 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
 			,
 			"
-			operator_1 = AGGREGATE
-			(
-				{
-					AGGREGATIONS=[
-									['COUNT', 'stream1.attr1', 'Counter', 'Integer']
-								 ]
-				}, JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1))
-			)
-			operator_2 = SELECT({predicate='stream2.attr3 > 100'}, operator_1)
-			operator_3 = MAP({expressions=['Counter', 'stream2.attr3']},operator_2)"
+			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			operator_2=SELECT({predicate='stream2.attr3>100'},operator_1)
+			operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -743,11 +808,9 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
 			,
 			"
-			operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},
-							JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2),
-								TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1)))
-			operator_2 = SELECT({predicate='Counter>1000&&stream2.attr3>100'}, operator_1)
-			operator_3 = MAP({expressions=['Counter', 'stream2.attr3']}, operator_2)"
+			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			operator_2=SELECT({predicate='Counter>1000&&stream2.attr3>100'},operator_1)
+			operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -760,8 +823,7 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = MAP({expressions=['stream1.attr1']}, stream1)
-			str1 = operator_1 
-			operator_2 = MAP({expressions=['stream1.attr1']}, str1)"
+			operator_2 = MAP({expressions=['stream1.attr1']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -774,10 +836,8 @@ class CQLGeneratorQueryTest
 			,
 			"
 			operator_1 = MAP({expressions=['stream1.attr1']}, stream1)
-			s1 = operator_1
 			operator_2 = MAP({expressions=['stream2.attr3', 'stream2.attr4']}, stream2)
-			s2 = operator_2
-			operator_3 = MAP({expressions=['stream1.attr1', 'stream2.attr3']}, JOIN(s1, s2))"
+			operator_3 = MAP({expressions=['stream1.attr1', 'stream2.attr3']}, JOIN(operator_1, operator_2))"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -863,7 +923,7 @@ class CQLGeneratorQueryTest
 	}
 	
 	@Test def void SelectExpressionTest2()
-	{
+	{//TODO Missing expression definition in Map operator
 		assertCorrectGenerated
 		(
 			"SELECT attr1 + attr1 AS attr1PlusAttr1 FROM stream1;"
@@ -874,7 +934,7 @@ class CQLGeneratorQueryTest
 	}
 	
 	@Test def void SelectExpressionTest3()
-	{
+	{//TODO Missing expression definition in Map operator
 		assertCorrectGenerated
 		(
 			"SELECT DolToEur(attr1 * attr2) + 10.0 - attr2 AS exp1, DolToEur(attr1) AS exp2 FROM stream1;"
@@ -934,23 +994,21 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1;"
 			,
-			"operator_1 = JOIN(
-							AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1),
-							MAP({expressions=[['DolToEur(stream1.attr1)','expression_0']]},stream1)
-						  )"
+			"operator_1=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0']},AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
 	
-	@Test def void SelectExpressionTest9()
+	@Test def void SelectExpressionTest9()//TODO two rename operators 
 	{
 		assertCorrectGenerated
 		(
 			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 AS a1 FROM stream1;"
 			,
-			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
-			 operator_2 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0','stream1.attr1']}, operator_1)
-			 renamed_3  = RENAME({aliases=['attr1','a1'],pairs='true'}, operator_2)"
+			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
+			 operator_2=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
+             operator_3=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},operator_2)
+			 operator_4=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0','a1']},operator_3)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -1005,44 +1063,6 @@ class CQLGeneratorQueryTest
 //			, new CQLDictionaryHelper()
 //		)
 //	}
-		
-	@Test def void SelfJoinTest1() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2;"
-			,
-			"
-			operator_1=MAP({expressions=['stream1.attr1-1', 'stream1.attr1']},
-						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))"
-		, new CQLDictionaryHelper())
-	}
-	
-	@Test def void SelfJoinTest2() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2, stream1 AS s3;"
-			,
-			"
-			operator_1=MAP({expressions=['stream1.attr1-2','stream1.attr1']},
-						JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),
-							JOIN(RENAME({aliases=['attr1','stream1.attr1-2','attr2','stream1.attr2-2'],pairs='true'},stream1),stream1)))"
-		, new CQLDictionaryHelper())
-	}
-	
-	@Test def void SelfJoinTest3() 
-	{ 
-		assertCorrectGenerated
-		(
-			"SELECT attr1 FROM stream1 AS s1, stream1 AS s2 WHERE s1.attr1 > s2.attr2;"
-			,
-			"
-			operator_1=SELECT({predicate='stream1.attr1>stream1.attr2'},
-				JOIN(RENAME({aliases=['attr1','stream1.attr1-1','attr2','stream1.attr2-1'],pairs='true'},stream1),stream1))
-			operator_2=MAP({expressions=['stream1.attr1-1','stream1.attr1']},operator_1)"
-		, new CQLDictionaryHelper())
-	}
 	
 	@Test def void DistinctTest()
 	{

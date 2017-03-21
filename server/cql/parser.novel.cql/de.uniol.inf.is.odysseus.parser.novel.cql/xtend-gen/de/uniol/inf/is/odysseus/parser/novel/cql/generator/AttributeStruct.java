@@ -8,6 +8,8 @@ public class AttributeStruct {
   
   public String sourcename;
   
+  public List<String> prefixes;
+  
   public String datatype;
   
   public List<String> aliases;
