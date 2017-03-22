@@ -23,6 +23,8 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.logicaloperator.builder.AggregationItemParameter;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -42,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  */
 @LogicalOperator(name = "AGGREGATION", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on inputAttributeIndices e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = {
 		LogicalOperatorCategory.BASE })
-public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
+public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParallelizableOperator {
 
 	private static final long serialVersionUID = -94620121792280046L;
 
@@ -231,5 +233,20 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO {
 		} else {
 			return SDFSchemaFactory.createNewSchema("<tmp>", Tuple.class, outAttribs);
 		}
+	}
+	
+	@Override
+	public OperatorStateType getStateType() {
+		if (this.groupingAttributes.isEmpty()) {
+			return IOperatorState.OperatorStateType.ARBITRARY_STATE;
+		} else {
+			return IOperatorState.OperatorStateType.PARTITIONED_STATE;
+		}
+	}
+
+	@Override
+	public boolean isParallelizable() {
+		//FIXME check predicate
+		return true;
 	}
 }
