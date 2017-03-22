@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -28,13 +30,13 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: StateMap can use history information. To access the last n.th version of an attribute use \"__last_n.\" Mind the two \"_\" at the beginning!", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/StateMap+operator", category = { LogicalOperatorCategory.BASE })
-public class StateMapAO extends MapAO implements IStatefulAO{
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "STATEMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: StateMap can use history information. To access the last n.th version of an attribute use \"__last_n.\" Mind the two \"_\" at the beginning!", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/StateMap+operator", category = {
+		LogicalOperatorCategory.BASE })
+public class StateMapAO extends MapAO implements IStatefulAO, IParallelizableOperator {
 
 	private static final long serialVersionUID = 1695948732660010522L;
 	private boolean allowNull = false;
 	private List<SDFAttribute> groupingAttributes;
-
 
 	public StateMapAO() {
 		super();
@@ -46,24 +48,23 @@ public class StateMapAO extends MapAO implements IStatefulAO{
 		this.groupingAttributes = ao.groupingAttributes;
 	}
 
-	
 	@Override
 	public StateMapAO clone() {
 		return new StateMapAO(this);
 	}
 
 	@Parameter(type = BooleanParameter.class, optional = true)
-	public void setAllowNullInOutput(boolean allowNull){
+	public void setAllowNullInOutput(boolean allowNull) {
 		this.allowNull = allowNull;
 	}
-	
+
 	/**
 	 * @return
 	 */
 	public boolean isAllowNullInOutput() {
 		return allowNull;
 	}
-	
+
 	@Parameter(name = "GROUP_BY", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
 	public void setGroupingAttributes(List<SDFAttribute> attributes) {
 		this.groupingAttributes = attributes;
@@ -72,7 +73,20 @@ public class StateMapAO extends MapAO implements IStatefulAO{
 	public List<SDFAttribute> getGroupingAttributes() {
 		return groupingAttributes;
 	}
-	
-	
+
+	@Override
+	public OperatorStateType getStateType() {
+		if (this.groupingAttributes.isEmpty()) {
+			return IOperatorState.OperatorStateType.ARBITRARY_STATE;
+		} else {
+			return IOperatorState.OperatorStateType.PARTITIONED_STATE;
+		}
+	}
+
+	@Override
+	public boolean isParallelizable() {
+		//FIXME check expressions
+		return true;
+	}
 
 }
