@@ -17,6 +17,7 @@ public class SystemLoadAO extends UnaryLogicalOp {
 	}
 	
 	public SystemLoadAO(SystemLoadAO systemLoadAO) {
+		super(systemLoadAO);
 		this.loadName = systemLoadAO.loadName;
 	}
 
