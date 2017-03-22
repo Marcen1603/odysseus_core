@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.mep.functions.math;
+package de.uniol.inf.is.odysseus.mep.commons.math;
 
 import org.apache.commons.math3.stat.inference.AlternativeHypothesis;
 import org.apache.commons.math3.stat.inference.BinomialTest;
@@ -7,14 +7,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * 
+ *
  * @author Christoph Schröer
  *
  */
 public class BinomialTestFunction extends AbstractFunction<Boolean> {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8451631288538005330L;
 
