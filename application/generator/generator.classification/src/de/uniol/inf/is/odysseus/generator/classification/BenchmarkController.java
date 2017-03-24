@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,6 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.generator.IDataGenerator;
-import de.uniol.inf.is.odysseus.generator.StreamClientHandler;
 import de.uniol.inf.is.odysseus.webservice.client.CreateQueryException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.InvalidUserDataException_Exception;
 import de.uniol.inf.is.odysseus.webservice.client.StringResponse;
@@ -38,7 +37,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 @SuppressWarnings({"unused"})
 public class BenchmarkController {
@@ -107,13 +106,13 @@ public class BenchmarkController {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void close() {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
 		try {
-			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency", Context.empty());
+			server.addQuery2(token, "OdysseusScript", CLOSE_QUERY, Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
@@ -148,7 +147,7 @@ public class BenchmarkController {
 		String query = loadQuery("C:" + File.separator + "Users" + File.separator + "dgeesen" + File.separator + "Dropbox" + File.separator + "Odysseus Projects" + File.separator
 				+ "Mining" + File.separator + "Classification.qry");
 		try {
-			server.addQuery(token, "OdysseusScript", query, "StandardLatency", Context.empty());
+			server.addQuery2(token, "OdysseusScript", query, Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
