@@ -31,7 +31,6 @@ import com.google.common.base.Preconditions;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class DataGridDashboardPart extends AbstractDashboardPart {
@@ -40,35 +39,35 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 	private static final String COLUMN_COUNT_SAVE_KEY = "__columnCount";
 	private static final int DEFAULT_ROW_COUNT = 3;
 	private static final int DEFAULT_COLUMN_COUNT = 3;
-	
+
 	private int rowCount = DEFAULT_ROW_COUNT;
 	private int columnCount = DEFAULT_COLUMN_COUNT;
 	private DataGridModel model;
-	
+
 	private TableViewer tableViewer;
 	private Boolean refreshing = false;
 	private Boolean editing = false;
 	private Composite rootComposite;
-	
+
 	public DataGridDashboardPart() {
 		model = new DataGridModel(this, rowCount, columnCount);
 	}
-	
+
 	@Override
 	public final void createPartControl(Composite parent, ToolBar toolbar) {
 		rootComposite = createRootComposite(parent);
-		
+
 		tableViewer = createTableViewer(rootComposite);
 		configureTableViewer(tableViewer);
 		createProviders(tableViewer);
-		
+
 		setInputAndCreateColumns(tableViewer);
 	}
-	
+
 	public final int getColumCount() {
 		return columnCount;
 	}
-	
+
 	public final int getRowCount() {
 		return rowCount;
 	}
@@ -80,7 +79,7 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		rootComposite.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		return rootComposite;
 	}
-	
+
 	protected TableViewer createTableViewer(Composite composite) {
 		Composite tableComposite = new Composite(composite, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -97,7 +96,7 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		tableViewer.getTable().setLinesVisible(true);
 		tableViewer.getTable().setHeaderVisible(false);
 		tableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		hideSelectionIfNeeded(tableViewer);
 	}
 
@@ -137,18 +136,13 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		// do nothing
 	}
 
-	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		// do nothing
-	}
-	
 	public void refresh() {
 		if (isEditingMode() || tableViewer == null || tableViewer.getTable().isDisposed()) {
 			return;
 		}
 
 		synchronized (refreshing) {
-			
+
 			if (!refreshing) {
 				refreshing = true;
 
@@ -167,10 +161,10 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 					}
 				});
 			}
-			
+
 		}
 	}
-	
+
 	private boolean isEditingMode() {
 		boolean val;
 		synchronized( editing ) {
@@ -184,42 +178,42 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 			editing = edit;
 		}
 	}
-	
+
 	public void setRowAndColumnCounts( int rowCount, int columnCount ) {
 		Preconditions.checkArgument( rowCount > 0, "Row count must be positive");
 		Preconditions.checkArgument( columnCount > 0, "Column count must be positive");
-		
+
 		if( tableViewer != null ) {
 			deleteColumns(tableViewer);
 		}
-		
+
 		this.rowCount = rowCount;
 		this.columnCount = columnCount;
 		this.model = new DataGridModel( this, this.rowCount, this.columnCount, model );
-		
+
 		if( tableViewer != null ) {
 			setInputAndCreateColumns(tableViewer);
-			
+
 			tableViewer.getTable().getParent().layout();
 			tableViewer.refresh();
-			
+
 			fireChangeEvent();
 		}
 	}
-	
+
 	private void setInputAndCreateColumns(TableViewer tableViewer) {
 		tableViewer.setInput(model);
-		
+
 		createColumns(tableViewer);
 		createCellModifier(tableViewer, model);
-		
+
 		tableViewer.setColumnProperties(createColumnPropertiesStringArray(columnCount));
 		tableViewer.setCellEditors(createCellEditorsArray(columnCount, tableViewer));
-		
+
 		tableViewer.getTable().layout();
 		refresh();
 	}
-	
+
 	private void createCellModifier(TableViewer tableViewer, final DataGridModel model) {
 		tableViewer.setCellModifier(new ICellModifier() {
 
@@ -233,38 +227,38 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 				DataRow row = (DataRow)element;
 				int rowIndex = model.getRowIndex(row);
 				int columnIndex = Integer.valueOf(property);
-				
+
 				return model.getText(rowIndex, columnIndex);
 			}
 
 			@Override
 			public void modify(Object element, String property, Object value) {
 				setEditingMode(false);
-				
+
 				TableItem tableItem = (TableItem)element;
 				DataRow row = (DataRow)tableItem.getData();
 				int rowIndex = model.getRowIndex(row);
 				int columnIndex = Integer.valueOf(property);
-				
+
 				String oldText = model.getText(rowIndex, columnIndex);
 				String newText = value.toString();
-				
+
 				if( !newText.equals(oldText)) {
 					model.setText(value.toString(), rowIndex, columnIndex);
 					fireChangeEvent();
 				}
 			}
 		});
-		
+
 	}
 
 	private void createColumns(TableViewer tableViewer) {
 		TableColumnLayout tableColumnLayout = (TableColumnLayout) tableViewer.getTable().getParent().getLayout();
-		
+
 		for( int i = 0; i < columnCount; i++ ) {
 			TableViewerColumn column = new TableViewerColumn(tableViewer, SWT.NONE);
 			tableColumnLayout.setColumnData(column.getColumn(), new ColumnWeightData(5, 25, true));
-			
+
 			createColumnLabelProvider(column, i);
 		}
 	}
@@ -276,14 +270,14 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 				@Override
 				public void activate() {
 					setEditingMode(true);
-					
+
 					super.activate();
 				}
-				
+
 				@Override
 				public void deactivate() {
 					setEditingMode(false);
-					
+
 					super.deactivate();
 				}
 			};
@@ -298,14 +292,14 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		}
 		return texts;
 	}
-	
+
 	private static void deleteColumns(TableViewer tableViewer) {
 		Table table = tableViewer.getTable();
-		
+
 		try {
 			table.setRedraw(false);
 			disposeAllColumns(table);
-			
+
 		} finally {
 			table.setRedraw(true);
 		}
@@ -316,16 +310,16 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 			table.getColumns()[0].dispose();
 		}
 	}
-	
+
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		this.rowCount = tryParseInt(saved.get(ROW_COUNT_SAVE_KEY), DEFAULT_ROW_COUNT);
 		this.columnCount = tryParseInt(saved.get(COLUMN_COUNT_SAVE_KEY), DEFAULT_COLUMN_COUNT);
-		
+
 		model = new DataGridModel( this, rowCount, columnCount);
 		model.onLoad(saved);
 	}
-	
+
 	private static int tryParseInt(String string, int defValue) {
 		try {
 			return Integer.valueOf(string);
@@ -341,18 +335,18 @@ public class DataGridDashboardPart extends AbstractDashboardPart {
 		savedRows.put(ROW_COUNT_SAVE_KEY, String.valueOf(rowCount));
 		return savedRows;
 	}
-	
+
 	@Override
 	public void onStart(Collection<IPhysicalOperator> physicalRoots) throws Exception {
 		super.onStart(physicalRoots);
-		
+
 		model.setSchemaFromOperators(physicalRoots);
 	}
-	
+
 	@Override
 	public void onStop() {
 		super.onStop();
-		
+
 		model.clearSchemaFromOperators();
 	}
 }

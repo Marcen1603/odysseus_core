@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class GreenMatrixDashboardPart extends AbstractDashboardPart implements PaintListener {
@@ -80,7 +79,7 @@ public class GreenMatrixDashboardPart extends AbstractDashboardPart implements P
 			// currentLine has the newest line
 			currentLine = (currentLine + 1) % lines.length;
 			lines[currentLine] = newLine;
-			
+
 			// Idea: Save color for each char
 
 			// Draw all lines
@@ -111,11 +110,6 @@ public class GreenMatrixDashboardPart extends AbstractDashboardPart implements P
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 
-	}
-
-	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
 	}
 
 	@Override

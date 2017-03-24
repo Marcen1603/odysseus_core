@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
@@ -193,7 +192,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	/**
 	 * Updates the interval in the screenManager, e.g. when a connection was
 	 * deleted and the maximal possible interval changed
-	 * 
+	 *
 	 * @param first
 	 *            If this is the first connection to update, it will ignore, if
 	 *            there was an older / earlier date in the settings of the
@@ -230,12 +229,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -327,7 +320,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	/**
 	 * Size of the actual list (not the whole puffer)
-	 * 
+	 *
 	 * @param idx
 	 * @return
 	 */
@@ -339,7 +332,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	/**
 	 * Size of the whole puffer (number of elements)
-	 * 
+	 *
 	 * @return
 	 */
 	public int getPufferSize() {
@@ -347,7 +340,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The maximum size of the puffer
 	 */
 	public int getMaxPufferSize() {
@@ -355,7 +348,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param size
 	 *            The size which the puffer should have max
 	 */
@@ -371,13 +364,13 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 * Sets the timerange the user wants to save E.g. if he wants to save 60
 	 * seconds, the puffer will save all elements with a start-timestamp between
 	 * the newest element and the newest timestamp-60 seconds
-	 * 
+	 *
 	 * The max-puffer-size has a higher priority (if more elements are in the
 	 * timerange the puffer will delete the oldest)
-	 * 
+	 *
 	 * Set to 0, if no time-range should be defined (just the maxPufferSize will
 	 * limit the puffer)
-	 * 
+	 *
 	 * @param seconds
 	 */
 	public void setTimeRange(int seconds) {
@@ -386,7 +379,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Timerange in seconds
 	 */
 	public int getTimeRange() {

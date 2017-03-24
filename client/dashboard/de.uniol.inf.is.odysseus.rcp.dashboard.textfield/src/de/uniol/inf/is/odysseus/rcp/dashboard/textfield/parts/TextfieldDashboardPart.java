@@ -15,15 +15,14 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
  * This is a DashboardPart which shows a specific value from the latest Tuple in
  * a Datastream it can be used in any purpose
- * 
+ *
  * @author MarkMilster
- * 
+ *
  */
 public class TextfieldDashboardPart extends AbstractDashboardPart {
 
@@ -50,7 +49,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The warningIndex is the index of the Attribute which represents the
 	 * boolean flag warning
-	 * 
+	 *
 	 * @param warningIndex
 	 *            the warningIndex to set
 	 */
@@ -61,7 +60,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The errorIndex is the index of the Attribute which represents the boolean
 	 * flag error
-	 * 
+	 *
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -71,7 +70,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The errorIndex is the index of the Attribute which represents the boolean
 	 * flag error
-	 * 
+	 *
 	 * @param errorIndex
 	 *            the errorIndex to set
 	 */
@@ -89,7 +88,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * If true and if there is the warningFlag set in the current tuple, the
 	 * warning will be shown
-	 * 
+	 *
 	 * @return the showWarning
 	 */
 	public boolean isShowWarning() {
@@ -99,7 +98,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * If true and if there is the warningFlag set in the current tuple, the
 	 * warning will be shown
-	 * 
+	 *
 	 * @param showWarning
 	 *            the showWarning to set
 	 */
@@ -111,7 +110,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The index of the attribute which represents the value to show
-	 * 
+	 *
 	 * @return the atributeToShow
 	 */
 	public int getAtributeToShow() {
@@ -120,7 +119,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The index of the attribute which represents the value to show
-	 * 
+	 *
 	 * @param atributeToShow
 	 *            the atributeToShow to set
 	 */
@@ -174,7 +173,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if this Dashboard-Part is showing Heartbeats
 	 */
 	public boolean isShowHeartbeats() {
@@ -182,7 +181,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param showHeartbeats
 	 */
 	public void setShowHeartbeats(boolean showHeartbeats) {
@@ -192,7 +191,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The updateInterval in ms represents the value how often the textfield is
 	 * repaintet
-	 * 
+	 *
 	 * @return the updateInterval
 	 */
 	public long getUpdateInterval() {
@@ -202,7 +201,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The updateInterval in ms represents the value how often the textfield is
 	 * repaintet
-	 * 
+	 *
 	 * @param updateInterval
 	 */
 	public void setUpdateInterval(long updateInterval) {
@@ -256,7 +255,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * This method let the updateThread sleep
-	 * 
+	 *
 	 * @param length
 	 *            Time to sleep
 	 */
@@ -271,14 +270,10 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 	}
 
-	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-	}
-
 	/**
 	 * If true and if there is the errorFlag set in the current tuple, the error
 	 * will be shown
-	 * 
+	 *
 	 * @return the showError
 	 */
 	public boolean isShowError() {
@@ -288,7 +283,7 @@ public class TextfieldDashboardPart extends AbstractDashboardPart {
 	/**
 	 * If true and if there is the errorFlag set to in the current tuple, the
 	 * error will be shown
-	 * 
+	 *
 	 * @param showError
 	 *            the showError to set
 	 */

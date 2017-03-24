@@ -39,7 +39,8 @@ public class MilliSecondStringFunction extends AbstractFunction<Long> {
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return new Long(calendar.get(Calendar.MILLISECOND));
+        long mills = calendar.getTimeInMillis();
+        return mills;
     }
 
     private static DateFormat getDateTimeFormat(String pattern) {

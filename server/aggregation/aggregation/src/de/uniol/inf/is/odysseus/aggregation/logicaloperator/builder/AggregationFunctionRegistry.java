@@ -44,6 +44,7 @@ public class AggregationFunctionRegistry {
 
 	// Must be public for service
 	public AggregationFunctionRegistry() {
+		;
 	}
 
 	public void addFunction(final IAggregationFunctionFactory function) {

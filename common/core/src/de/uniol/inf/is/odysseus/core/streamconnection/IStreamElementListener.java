@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +17,11 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 
 public interface IStreamElementListener<In> {
 
 	public void streamElementReceived(IPhysicalOperator senderOperator, In element, int port );
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port);
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port );
-	
+
 }

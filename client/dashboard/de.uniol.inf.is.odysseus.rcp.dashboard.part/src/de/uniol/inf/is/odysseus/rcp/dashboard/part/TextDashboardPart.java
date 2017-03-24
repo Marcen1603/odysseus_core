@@ -17,7 +17,6 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public class TextDashboardPart extends AbstractDashboardPart {
@@ -79,11 +78,6 @@ public class TextDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		punctuationElementReceived(senderOperator, sp, port);
-	}
-
-	@Override
 	public void streamElementRecieved(IPhysicalOperator senderOperator, IStreamObject<?> element, int port) {
 		synchronized (pendingElements) {
 			pendingElements.add(element != null ? element.toString() : "null");
@@ -93,7 +87,7 @@ public class TextDashboardPart extends AbstractDashboardPart {
 		}
 	}
 
-	
+
 
 	public boolean isShowHeartbeats() {
 		return showHeartbeats;
@@ -122,14 +116,14 @@ public class TextDashboardPart extends AbstractDashboardPart {
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
-	
+
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		showHeartbeats = Boolean.valueOf(saved.get("ShowHeartbeats"));
 		updateInterval = Long.valueOf(saved.get("UpdateInterval"));
 		maxElements = Integer.valueOf(saved.get("MaxElements"));
 	}
-	
+
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> saveMap = Maps.newHashMap();

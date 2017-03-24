@@ -294,7 +294,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		return commands;
 	}
 
-	private void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters,
+	public void executePreTransformationHandlers(ISession user, QueryBuildConfiguration parameters,
 			List<ILogicalQuery> queries, Context context) throws QueryParseException {
 		PreTransformationHandlerParameter preTransformationHandlerParameter = parameters
 				.get(PreTransformationHandlerParameter.class);

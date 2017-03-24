@@ -26,14 +26,13 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
  * This Dashboard-Part shows a List of Color-Values marked with Timestamps
- * 
+ *
  * @author MarkMilster
- * 
+ *
  */
 public class ColorListDashboardPart extends AbstractDashboardPart {
 
@@ -63,7 +62,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * max Elements per Line will be set by the width of this Dashboard-Part
-	 * 
+	 *
 	 * @return the maxElementsLine
 	 */
 	public int getMaxElementsLine() {
@@ -101,7 +100,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The width of the color-fields
-	 * 
+	 *
 	 * @return the colorWidth
 	 */
 	public int getColorWidth() {
@@ -110,7 +109,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The width of the color-fields
-	 * 
+	 *
 	 * @param colorWidth
 	 *            the colorWidth to set
 	 */
@@ -120,7 +119,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The height of the color-fields
-	 * 
+	 *
 	 * @return the colorHeight
 	 */
 	public int getColorHeight() {
@@ -129,7 +128,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The height of the color-fields
-	 * 
+	 *
 	 * @param colorHeight
 	 *            the colorHeight to set
 	 */
@@ -139,7 +138,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The Space between two lines of color-fields
-	 * 
+	 *
 	 * @return the lineSpace
 	 */
 	public int getLineSpace() {
@@ -148,7 +147,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The Space between two lines of color-fields
-	 * 
+	 *
 	 * @param lineSpace
 	 *            the lineSpace to set
 	 */
@@ -165,7 +164,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The distance between two drawn Timestamps, if they are mooving
-	 * 
+	 *
 	 * @return the movingTimestampDiffElements In the number of Color-Fields
 	 */
 	public long getMovingTimestampDiffElements() {
@@ -174,7 +173,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The distance between two drawn Timestamps, if they are mooving
-	 * 
+	 *
 	 * @param movingTimestampDiffElements
 	 *            the movingTimestampDiffElements to set In the number of
 	 *            Color-Fields
@@ -186,7 +185,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The distance between two drawn Timestamps, if they are fixed in the
 	 * position
-	 * 
+	 *
 	 * @return the fixedTimestampDiffMilliseconds In number of milliseconds
 	 */
 	public long getFixedTimestampDiffMilliseconds() {
@@ -196,7 +195,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * The distance between two drawn Timestamps, if they are fixed in the
 	 * position
-	 * 
+	 *
 	 * @param fixedTimestampDiffMilliseconds
 	 *            the fixedTimestampDiffMilliseconds to set In number of
 	 *            milliseconds
@@ -217,7 +216,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true warnings will be marked
-	 * 
+	 *
 	 * @return the showWarnings
 	 */
 	public boolean isShowWarnings() {
@@ -226,7 +225,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true warnings will be marked
-	 * 
+	 *
 	 * @param showWarnings
 	 *            the showWarnings to set
 	 */
@@ -236,7 +235,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true errors will be marked
-	 * 
+	 *
 	 * @return the showErrors
 	 */
 	public boolean isShowErrors() {
@@ -245,7 +244,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true errors will be marked
-	 * 
+	 *
 	 * @param showErrors
 	 *            the showErrors to set
 	 */
@@ -259,7 +258,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the red-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @return the redIndex
 	 */
 	public int getRedIndex() {
@@ -268,7 +267,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the red-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @param redIndex
 	 *            the redIndex to set
 	 */
@@ -278,7 +277,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the green-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @return the greenIndex
 	 */
 	public int getGreenIndex() {
@@ -287,7 +286,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the green-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @param greenIndex
 	 *            the greenIndex to set
 	 */
@@ -297,7 +296,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the blue-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @return the blueIndex
 	 */
 	public int getBlueIndex() {
@@ -306,7 +305,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the blue-value in the tuples of the data-stream
-	 * 
+	 *
 	 * @param blueIndex
 	 *            the blueIndex to set
 	 */
@@ -321,7 +320,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the timestamp in the tuples of the data-stream
-	 * 
+	 *
 	 * @return the timestampIndex
 	 */
 	public int getTimestampIndex() {
@@ -330,7 +329,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the timestamp in the tuples of the data-stream
-	 * 
+	 *
 	 * @param timestampIndex
 	 *            the timestampIndex to set
 	 */
@@ -341,7 +340,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * If true the timestamps will be fixed and will change their value, if a
 	 * new color-block will appear at their position on canvas
-	 * 
+	 *
 	 * @return the fixedTimestamps
 	 */
 	public boolean isFixedTimestamps() {
@@ -351,7 +350,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * If true the timestamps will be fixed and will change their value, if a
 	 * new color-block will appear at their position on canvas
-	 * 
+	 *
 	 * @param fixedTimestamps
 	 *            the fixedTimestamps to set
 	 */
@@ -434,7 +433,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * This method let the updateThread sleep
-	 * 
+	 *
 	 * @param length
 	 *            Time to sleep
 	 */
@@ -545,7 +544,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * Returns the Boolean, which is set at the errorIndex of specified tuple.
 	 * So it will check, if this tuple is a error
-	 * 
+	 *
 	 * @param element
 	 *            the tuple which should be testet
 	 * @return True if this is a Error, false otherwise
@@ -558,7 +557,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * Returns the Boolean, which is set at the warningIndex of specified tuple.
 	 * So it will check, if this tuple is a warning
-	 * 
+	 *
 	 * @param element
 	 *            the tuple which should be testet
 	 * @return True if this is a Error, false otherwise
@@ -571,7 +570,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * Returns the Timestamp, which is set at the timestampIndex of specified
 	 * tuple.
-	 * 
+	 *
 	 * @param element
 	 *            the tuple
 	 * @return the timestamp
@@ -586,7 +585,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	 * Converts a tuple to a swt.Color. The red-value, green-value and
 	 * blue-value has to be set on the position, given by the redIndex,
 	 * greenIndex and blueIndex by the instance of ColorListDashboardPart
-	 * 
+	 *
 	 * @param element
 	 * @return
 	 */
@@ -612,23 +611,17 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true, if you can show an unlimited amount of Color-Values
 	 */
 	private boolean isInfinite() {
 		return maxElements < 0;
 	}
 
-	@Override
-	public void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		punctuationElementReceived(senderOperator, sp, port);
-	}
-
 	/**
 	 * sets the max number of color-values, which will be shown by this
 	 * dashboard-part
-	 * 
+	 *
 	 * @param maxElements
 	 */
 	public void setMaxElements(int maxElements) {
@@ -636,7 +629,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the max number of color-values, which will be shown by this
 	 *         dashboard-part
 	 */
@@ -712,7 +705,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the warning-flag
-	 * 
+	 *
 	 * @return the warningIndex
 	 */
 	public int getWarningIndex() {
@@ -721,7 +714,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the warning-flag
-	 * 
+	 *
 	 * @param warningIndex
 	 *            the warningIndex to set
 	 */
@@ -731,7 +724,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the error-flag
-	 * 
+	 *
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -740,7 +733,7 @@ public class ColorListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the error-flag
-	 * 
+	 *
 	 * @param errorIndex
 	 *            the errorIndex to set
 	 */
