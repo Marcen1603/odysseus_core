@@ -590,10 +590,13 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	// ------------------------------------------------------------------------------------------------
 
 	/**
+	 * Converts a tuple into a keyValue / JSON object
 	 * 
 	 * @param tuple
+	 *            The tuple to convert.
 	 * @param schema
-	 * @return
+	 *            The schema of the tuple
+	 * @return a keyValue object with the content of the tuple
 	 */
 	public static KeyValueObject<IMetaAttribute> fromTuple(Tuple<IMetaAttribute> tuple, SDFSchema schema) {
 		KeyValueObject<IMetaAttribute> keyValueObject = new KeyValueObject<>();
@@ -632,6 +635,60 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 			position++;
 		}
+		return keyValueObject;
+	}
+
+	/**
+	 * Converts a tuple into a keyValue / JSON object matching a given template.
+	 * Attributes which are not used in the template will be ignored.
+	 * 
+	 * @param tuple
+	 *            The tuple to convert.
+	 * @param schema
+	 *            The schema of the tuple
+	 * @param template
+	 *            Template needs to have variables with <> brackets around them.
+	 *            The names of the variables need to match the schema.
+	 * @return a keyValue object with the content of the tuple
+	 */
+	public static KeyValueObject<IMetaAttribute> fromTupleWithTemplate(Tuple<IMetaAttribute> tuple, SDFSchema schema,
+			String template) {
+
+		/*
+		 * Go through all attributes of the tuple and put the content into the
+		 * template
+		 */
+		int position = 0;
+		for (SDFAttribute a : schema) {
+
+			if (a.getDatatype().isTuple()) {
+
+				// Nested structure (tuple in tuple)
+				Tuple<IMetaAttribute> innerTuple = tuple.getAttribute(position);
+				KeyValueObject<IMetaAttribute> innerKeyValueObject = KeyValueObject.fromTuple(innerTuple,
+						a.getDatatype().getSchema());
+				String keyValueString = innerKeyValueObject.toString();
+				template.replaceAll("<" + a.getAttributeName() + ">", keyValueString);
+
+			} else {
+				// Normal (not nested) attribute
+				try {
+					template = template.replaceAll("<" + a.getAttributeName() + ">", "" + tuple.getAttribute(position));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			position++;
+		}
+
+		KeyValueObject<IMetaAttribute> keyValueObject = KeyValueObject.createInstance(template);
+		if (tuple.getMetadata() != null) {
+			// It is possible that tuples do not have meta data (e.g., inner /
+			// nested tuples)
+			keyValueObject.setMetadata(tuple.getMetadata().clone());
+		}
+
 		return keyValueObject;
 	}
 
