@@ -115,7 +115,6 @@ public class ObjectFactory {
     private final static QName _GetQueryState_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryState");
     private final static QName _RemoveStoredProcedure_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "removeStoredProcedure");
     private final static QName _StartExecution_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startExecution");
-    private final static QName _AddQueryResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addQueryResponse");
     private final static QName _Logout_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "logout");
     private final static QName _GetQueryStates_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryStates");
     private final static QName _StartExecutionResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "startExecutionResponse");
@@ -143,7 +142,6 @@ public class ObjectFactory {
     private final static QName _QueryNotExistsException_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "QueryNotExistsException");
     private final static QName _GetInstalledSources_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getInstalledSources");
     private final static QName _GetSourcesResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getSourcesResponse");
-    private final static QName _AddQuery_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "addQuery");
     private final static QName _GetLogicalQueryPlanResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getLogicalQueryPlanResponse");
     private final static QName _GetPlanByQueryIDResponse_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getPlanByQueryIDResponse");
     private final static QName _GetQueryParserSuggestions_QNAME = new QName("http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", "getQueryParserSuggestions");
@@ -192,6 +190,22 @@ public class ObjectFactory {
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link LogicalQueryInfo }
+     * 
+     */
+    public LogicalQueryInfo createLogicalQueryInfo() {
+        return new LogicalQueryInfo();
+    }
+
+    /**
+     * Create an instance of {@link LogicalQueryInfo.UserParameters }
+     * 
+     */
+    public LogicalQueryInfo.UserParameters createLogicalQueryInfoUserParameters() {
+        return new LogicalQueryInfo.UserParameters();
     }
 
     /**
@@ -312,14 +326,6 @@ public class ObjectFactory {
      */
     public Logout createLogout() {
         return new Logout();
-    }
-
-    /**
-     * Create an instance of {@link AddQueryResponse }
-     * 
-     */
-    public AddQueryResponse createAddQueryResponse() {
-        return new AddQueryResponse();
     }
 
     /**
@@ -520,14 +526,6 @@ public class ObjectFactory {
      */
     public GetRegisteredSchedulersResponse createGetRegisteredSchedulersResponse() {
         return new GetRegisteredSchedulersResponse();
-    }
-
-    /**
-     * Create an instance of {@link AddQuery }
-     * 
-     */
-    public AddQuery createAddQuery() {
-        return new AddQuery();
     }
 
     /**
@@ -1491,14 +1489,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LogicalQueryInfo }
-     * 
-     */
-    public LogicalQueryInfo createLogicalQueryInfo() {
-        return new LogicalQueryInfo();
-    }
-
-    /**
      * Create an instance of {@link LogicalOperatorInformationResponse }
      * 
      */
@@ -1720,6 +1710,14 @@ public class ObjectFactory {
      */
     public QueryResponse createQueryResponse() {
         return new QueryResponse();
+    }
+
+    /**
+     * Create an instance of {@link LogicalQueryInfo.UserParameters.Entry }
+     * 
+     */
+    public LogicalQueryInfo.UserParameters.Entry createLogicalQueryInfoUserParametersEntry() {
+        return new LogicalQueryInfo.UserParameters.Entry();
     }
 
     /**
@@ -2486,15 +2484,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AddQueryResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "addQueryResponse")
-    public JAXBElement<AddQueryResponse> createAddQueryResponse(AddQueryResponse value) {
-        return new JAXBElement<AddQueryResponse>(_AddQueryResponse_QNAME, AddQueryResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link Logout }{@code >}}
      * 
      */
@@ -2735,15 +2724,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "getSourcesResponse")
     public JAXBElement<GetSourcesResponse> createGetSourcesResponse(GetSourcesResponse value) {
         return new JAXBElement<GetSourcesResponse>(_GetSourcesResponse_QNAME, GetSourcesResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AddQuery }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://webservice.server.webservice.executor.planmanagement.odysseus.is.inf.uniol.de/", name = "addQuery")
-    public JAXBElement<AddQuery> createAddQuery(AddQuery value) {
-        return new JAXBElement<AddQuery>(_AddQuery_QNAME, AddQuery.class, null, value);
     }
 
     /**
