@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 
 /**
  * @author Dennis Geesen
- * 
+ *
  */
 public class BenchmarkController {
 
@@ -144,13 +144,13 @@ public class BenchmarkController {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void close() {
 		System.out.println("finished - all " + counter + " runs done!");
 		System.out.print("Installing close-query...");
 		try {
-			server.addQuery(token, "OdysseusScript", CLOSE_QUERY, "StandardLatency", Context.empty());
+			server.addQuery2(token, "OdysseusScript", CLOSE_QUERY, Context.empty());
 		} catch (CreateQueryException_Exception
 				| InvalidUserDataException_Exception e) {
 			// TODO Auto-generated catch block
@@ -194,7 +194,7 @@ public class BenchmarkController {
 					+ "optimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
 
 			try {
-				server.addQuery(token, "OdysseusScript", queryOptimized, "StandardLatency", Context.empty());
+				server.addQuery2(token, "OdysseusScript", queryOptimized, Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block
@@ -214,7 +214,7 @@ public class BenchmarkController {
 					+ "fs3 = FILESINK({file='E:/Results/unoptimized - w${transactions} - s${support}/" + prefix
 					+ "unoptimized-S${support}-W${transactions}-SEL${selectivity}.csv', filetype='csv', append='true'}, stats)";
 			try {
-				server.addQuery(token, "OdysseusScript", queryUnoptimized, "StandardLatency", Context.empty());
+				server.addQuery2(token, "OdysseusScript", queryUnoptimized,  Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block
@@ -229,11 +229,11 @@ public class BenchmarkController {
 					+ "fis = FREQUENTITEMSET({algorithm='fpgrowth', support=${support}, transactions=${transactions}}, \n" + " RENAME({ALIASES=['item']}, \n"
 					+ " MAP({EXPRESSIONS=['toLong(item)']}, \n" + "PROJECT({ATTRIBUTES=['item']}, \n" + "WINDOW({size = 50, advance = 1, type = 'time'}, \n"
 					+ "ACCESS({source = 'frequent'}) \n" + ") \n" + ") \n" + ") \n" + ") \n" + ") \n"
-					+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(fis)) \n" 					
+					+ "stats = BENCHMARKRESULT({resultType='Latency', statistics='INCREMENTAL'}, CALCLATENCY(fis)) \n"
 					+ "fs3 = FILESINK({file='E:/Results/normal/" + prefix
 					+ "normal-S${support}-W${transactions}.csv', filetype='csv', append='true'}, stats)";
 			try {
-				server.addQuery(token, "OdysseusScript", queryWithout, "StandardLatency", Context.empty());
+				server.addQuery2(token, "OdysseusScript", queryWithout, Context.empty());
 			} catch (CreateQueryException_Exception
 					| InvalidUserDataException_Exception e) {
 				// TODO Auto-generated catch block
