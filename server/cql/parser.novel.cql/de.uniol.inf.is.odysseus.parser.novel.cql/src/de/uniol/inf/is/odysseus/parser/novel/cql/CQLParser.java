@@ -82,12 +82,12 @@ public class CQLParser implements IQueryParser
 	public synchronized void createDictionary(AttributeDefinition d, ISession user)
 	{
 		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		int size = d.getAttributes().size();
+		int size = d.getArguments().size();
 		List<SDFAttribute> attributes = new ArrayList<>(size);
-		for(int i = 0; i < size ; i++)
+		for(int i = 0; i < size - 1 ; i = i + 2)
 		{
-			String attributename 	  = d.getAttributes().get(i).getName();
-			SDFDatatype attributetype = new SDFDatatype(d.getDatatypes().get(i).getValue());
+			String attributename 	  = d.getArguments().get(i);
+			SDFDatatype attributetype = new SDFDatatype(d.getArguments().get(i + 1));
 			attributes.add(new SDFAttribute(d.getName(), attributename, attributetype));
 		}
 		dic.add(d.getName(), attributes);

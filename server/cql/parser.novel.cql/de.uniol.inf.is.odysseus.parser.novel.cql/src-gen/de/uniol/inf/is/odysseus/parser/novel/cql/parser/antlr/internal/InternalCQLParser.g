@@ -2212,42 +2212,40 @@ ruleAttributeDefinition returns [EObject current=null]
 		}
 		(
 			(
+				lv_arguments_2_0=RULE_ID
 				{
-					newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getAttributesAttributeParserRuleCall_2_0());
+					newLeafNode(lv_arguments_2_0, grammarAccess.getAttributeDefinitionAccess().getArgumentsIDTerminalRuleCall_2_0());
 				}
-				lv_attributes_2_0=ruleAttribute
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
+						$current = createModelElement(grammarAccess.getAttributeDefinitionRule());
 					}
-					add(
+					addWithLastConsumed(
 						$current,
-						"attributes",
-						lv_attributes_2_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
-					afterParserOrEnumRuleCall();
+						"arguments",
+						lv_arguments_2_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
-		)+
+		)
 		(
 			(
+				lv_arguments_3_0=RULE_ID
 				{
-					newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getDatatypesDataTypeParserRuleCall_3_0());
+					newLeafNode(lv_arguments_3_0, grammarAccess.getAttributeDefinitionAccess().getArgumentsIDTerminalRuleCall_3_0());
 				}
-				lv_datatypes_3_0=ruleDataType
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
+						$current = createModelElement(grammarAccess.getAttributeDefinitionRule());
 					}
-					add(
+					addWithLastConsumed(
 						$current,
-						"datatypes",
-						lv_datatypes_3_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
-					afterParserOrEnumRuleCall();
+						"arguments",
+						lv_arguments_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 				}
 			)
-		)+
+		)
 		(
 			otherlv_4=Comma
 			{
@@ -2255,39 +2253,37 @@ ruleAttributeDefinition returns [EObject current=null]
 			}
 			(
 				(
+					lv_arguments_5_0=RULE_ID
 					{
-						newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getAttributesAttributeParserRuleCall_4_1_0());
+						newLeafNode(lv_arguments_5_0, grammarAccess.getAttributeDefinitionAccess().getArgumentsIDTerminalRuleCall_4_1_0());
 					}
-					lv_attributes_5_0=ruleAttribute
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
+							$current = createModelElement(grammarAccess.getAttributeDefinitionRule());
 						}
-						add(
+						addWithLastConsumed(
 							$current,
-							"attributes",
-							lv_attributes_5_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
-						afterParserOrEnumRuleCall();
+							"arguments",
+							lv_arguments_5_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
 			(
 				(
+					lv_arguments_6_0=RULE_ID
 					{
-						newCompositeNode(grammarAccess.getAttributeDefinitionAccess().getDatatypesDataTypeParserRuleCall_4_2_0());
+						newLeafNode(lv_arguments_6_0, grammarAccess.getAttributeDefinitionAccess().getArgumentsIDTerminalRuleCall_4_2_0());
 					}
-					lv_datatypes_6_0=ruleDataType
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getAttributeDefinitionRule());
+							$current = createModelElement(grammarAccess.getAttributeDefinitionRule());
 						}
-						add(
+						addWithLastConsumed(
 							$current,
-							"datatypes",
-							lv_datatypes_6_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
-						afterParserOrEnumRuleCall();
+							"arguments",
+							lv_arguments_6_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
@@ -4095,116 +4091,6 @@ ruleAtomicWithoutAttributeRef returns [EObject current=null]
 						}
 					)
 				)
-			)
-		)
-	)
-;
-
-// Entry rule entryRuleDataType
-entryRuleDataType returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getDataTypeRule()); }
-	iv_ruleDataType=ruleDataType
-	{ $current=$iv_ruleDataType.current; }
-	EOF;
-
-// Rule DataType
-ruleDataType returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			(
-				lv_value_0_1=INTEGER
-				{
-					newLeafNode(lv_value_0_1, grammarAccess.getDataTypeAccess().getValueINTEGERKeyword_0_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_1, null);
-				}
-				    |
-				lv_value_0_2=DOUBLE
-				{
-					newLeafNode(lv_value_0_2, grammarAccess.getDataTypeAccess().getValueDOUBLEKeyword_0_1());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_2, null);
-				}
-				    |
-				lv_value_0_3=LONG
-				{
-					newLeafNode(lv_value_0_3, grammarAccess.getDataTypeAccess().getValueLONGKeyword_0_2());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_3, null);
-				}
-				    |
-				lv_value_0_4=FLOAT
-				{
-					newLeafNode(lv_value_0_4, grammarAccess.getDataTypeAccess().getValueFLOATKeyword_0_3());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_4, null);
-				}
-				    |
-				lv_value_0_5=STRING
-				{
-					newLeafNode(lv_value_0_5, grammarAccess.getDataTypeAccess().getValueSTRINGKeyword_0_4());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_5, null);
-				}
-				    |
-				lv_value_0_6=BOOLEAN
-				{
-					newLeafNode(lv_value_0_6, grammarAccess.getDataTypeAccess().getValueBOOLEANKeyword_0_5());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_6, null);
-				}
-				    |
-				lv_value_0_7=STARTTIMESTAMP
-				{
-					newLeafNode(lv_value_0_7, grammarAccess.getDataTypeAccess().getValueSTARTTIMESTAMPKeyword_0_6());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_7, null);
-				}
-				    |
-				lv_value_0_8=ENDTIMESTAMP
-				{
-					newLeafNode(lv_value_0_8, grammarAccess.getDataTypeAccess().getValueENDTIMESTAMPKeyword_0_7());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDataTypeRule());
-					}
-					setWithLastConsumed($current, "value", lv_value_0_8, null);
-				}
 			)
 		)
 	)

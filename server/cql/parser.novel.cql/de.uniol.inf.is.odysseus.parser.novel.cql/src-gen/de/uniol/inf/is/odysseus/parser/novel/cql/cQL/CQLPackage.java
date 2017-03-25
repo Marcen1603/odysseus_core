@@ -667,22 +667,13 @@ public interface CQLPackage extends EPackage
   int ATTRIBUTE_DEFINITION__NAME = 0;
 
   /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference list.
+   * The feature id for the '<em><b>Arguments</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_DEFINITION__ATTRIBUTES = 1;
-
-  /**
-   * The feature id for the '<em><b>Datatypes</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ATTRIBUTE_DEFINITION__DATATYPES = 2;
+  int ATTRIBUTE_DEFINITION__ARGUMENTS = 1;
 
   /**
    * The number of structural features of the '<em>Attribute Definition</em>' class.
@@ -691,7 +682,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_DEFINITION_FEATURE_COUNT = 3;
+  int ATTRIBUTE_DEFINITION_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl <em>Create Stream1</em>}' class.
@@ -2285,26 +2276,15 @@ public interface CQLPackage extends EPackage
   EAttribute getAttributeDefinition_Name();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getAttributes <em>Attributes</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getArguments <em>Arguments</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Attributes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getAttributes()
+   * @return the meta object for the attribute list '<em>Arguments</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getArguments()
    * @see #getAttributeDefinition()
    * @generated
    */
-  EReference getAttributeDefinition_Attributes();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getDatatypes <em>Datatypes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Datatypes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getDatatypes()
-   * @see #getAttributeDefinition()
-   * @generated
-   */
-  EReference getAttributeDefinition_Datatypes();
+  EAttribute getAttributeDefinition_Arguments();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1 <em>Create Stream1</em>}'.
@@ -3676,20 +3656,12 @@ public interface CQLPackage extends EPackage
     EAttribute ATTRIBUTE_DEFINITION__NAME = eINSTANCE.getAttributeDefinition_Name();
 
     /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Arguments</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ATTRIBUTE_DEFINITION__ATTRIBUTES = eINSTANCE.getAttributeDefinition_Attributes();
-
-    /**
-     * The meta object literal for the '<em><b>Datatypes</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ATTRIBUTE_DEFINITION__DATATYPES = eINSTANCE.getAttributeDefinition_Datatypes();
+    EAttribute ATTRIBUTE_DEFINITION__ARGUMENTS = eINSTANCE.getAttributeDefinition_Arguments();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl <em>Create Stream1</em>}' class.

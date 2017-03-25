@@ -3,26 +3,21 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 
 import java.util.Collection;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,8 +28,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getAttributes <em>Attributes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getDatatypes <em>Datatypes</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl#getArguments <em>Arguments</em>}</li>
  * </ul>
  *
  * @generated
@@ -62,24 +56,14 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' containment reference list.
+   * The cached value of the '{@link #getArguments() <em>Arguments</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAttributes()
+   * @see #getArguments()
    * @generated
    * @ordered
    */
-  protected EList<Attribute> attributes;
-
-  /**
-   * The cached value of the '{@link #getDatatypes() <em>Datatypes</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDatatypes()
-   * @generated
-   * @ordered
-   */
-  protected EList<DataType> datatypes;
+  protected EList<String> arguments;
 
   /**
    * <!-- begin-user-doc -->
@@ -130,45 +114,13 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Attribute> getAttributes()
+  public EList<String> getArguments()
   {
-    if (attributes == null)
+    if (arguments == null)
     {
-      attributes = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES);
+      arguments = new EDataTypeEList<String>(String.class, this, CQLPackage.ATTRIBUTE_DEFINITION__ARGUMENTS);
     }
-    return attributes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<DataType> getDatatypes()
-  {
-    if (datatypes == null)
-    {
-      datatypes = new EObjectContainmentEList<DataType>(DataType.class, this, CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES);
-    }
-    return datatypes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
-  {
-    switch (featureID)
-    {
-      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
-        return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
-      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
-        return ((InternalEList<?>)getDatatypes()).basicRemove(otherEnd, msgs);
-    }
-    return super.eInverseRemove(otherEnd, featureID, msgs);
+    return arguments;
   }
 
   /**
@@ -183,10 +135,8 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
     {
       case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         return getName();
-      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
-        return getAttributes();
-      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
-        return getDatatypes();
+      case CQLPackage.ATTRIBUTE_DEFINITION__ARGUMENTS:
+        return getArguments();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -205,13 +155,9 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
       case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         setName((String)newValue);
         return;
-      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
-        getAttributes().clear();
-        getAttributes().addAll((Collection<? extends Attribute>)newValue);
-        return;
-      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
-        getDatatypes().clear();
-        getDatatypes().addAll((Collection<? extends DataType>)newValue);
+      case CQLPackage.ATTRIBUTE_DEFINITION__ARGUMENTS:
+        getArguments().clear();
+        getArguments().addAll((Collection<? extends String>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -230,11 +176,8 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
       case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
-        getAttributes().clear();
-        return;
-      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
-        getDatatypes().clear();
+      case CQLPackage.ATTRIBUTE_DEFINITION__ARGUMENTS:
+        getArguments().clear();
         return;
     }
     super.eUnset(featureID);
@@ -252,10 +195,8 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
     {
       case CQLPackage.ATTRIBUTE_DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case CQLPackage.ATTRIBUTE_DEFINITION__ATTRIBUTES:
-        return attributes != null && !attributes.isEmpty();
-      case CQLPackage.ATTRIBUTE_DEFINITION__DATATYPES:
-        return datatypes != null && !datatypes.isEmpty();
+      case CQLPackage.ATTRIBUTE_DEFINITION__ARGUMENTS:
+        return arguments != null && !arguments.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -273,6 +214,8 @@ public class AttributeDefinitionImpl extends MinimalEObjectImpl.Container implem
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", arguments: ");
+    result.append(arguments);
     result.append(')');
     return result.toString();
   }

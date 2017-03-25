@@ -72,8 +72,7 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//AttributeDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//AttributeDefinition/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeDefinition/attributes"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeDefinition/datatypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//AttributeDefinition/arguments"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//CreateStream1">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateStream1/keyword"/>

@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
@@ -52,6 +51,10 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
+import de.uniol.inf.is.odysseus.mep.MEP
+import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2
@@ -83,6 +86,8 @@ class CQLGenerator implements IGenerator2
 	var private firstJoinInQuery = true
 	//Provides different names e.g. to identify valid names for aggregations and map functions 
 	var private NameProvider nameProvider
+	
+	var private IExpressionParser expressionParser
 	//
 	var private List<Source> querySources = newArrayList
 	
@@ -570,6 +575,7 @@ class CQLGenerator implements IGenerator2
 		return s
 	}
 		
+	var List<Object> expressionComponents = new ArrayList	
 	def private CharSequence parseSelectExpression(SelectExpression e)
 	{
 		var str = ''
@@ -579,17 +585,35 @@ class CQLGenerator implements IGenerator2
 			switch(component)
 			{
 				Function: str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
-				Attribute: str += getAttributename(component.name)
+				Attribute: str += getAttributename(component.name)	
 				IntConstant: 	str += component.value + ''
 				FloatConstant:  str += component.value + ''
+				BoolConstant: 	str += component.value + ''//TODO Is a bool value feasible?
 				StringConstant: str += '\"' + component.value + '\"'
-				BoolConstant: 	str += component.value + ''
 			}
+			if(!(component instanceof Function))
+				expressionComponents.add(component)	
 			if(i != e.expressions.size - 1)
 				str += e.operators.get(i)
 		}
 		return str
 	}	
+	
+	def CharSequence parseSelectExpressionType(List<Object> components)
+	{
+		var list = newArrayList
+		for(Object comp :components)
+		{
+			if(comp instanceof IntConstant)
+				list.add(SDFDatatype.INTEGER)
+			else if(comp instanceof FloatConstant)
+				list.add(SDFDatatype.FLOAT)
+				
+				
+		}
+		
+		return ''
+	}
 	
 	def private CharSequence parseCreateView(CreateView view)
 	{
@@ -598,14 +622,21 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseCreateStream1(CreateStream1 create)
 	{
-		return registerOperator(buildCreate1("ACCESS", create.pars, create.attributes.attributes, create.attributes.datatypes, create.attributes.name).toString, create.attributes.name)
+		return registerOperator(buildCreate1("ACCESS", create.pars, create.attributes.arguments, create.attributes.name).toString, create.attributes.name)
 	}	
 	
 	def private CharSequence parseCreateStreamFile(CreateStreamFile file)
 	{
+		var attributenames = newArrayList
+		var datatypes = newArrayList
+		for(var i = 0; i < file.attributes.arguments.size - 1; i = i + 2)
+		{
+			attributenames.add(file.attributes.arguments.get(i))
+			datatypes.add(file.attributes.arguments.get(i + 1))
+		}
 		var schema = generateKeyValueString(
-					file.attributes.attributes.map[e|e.name],
-					file.attributes.datatypes.map[e|e.value],
+					attributenames,
+					datatypes,
 					','
 				  )
 		
@@ -615,9 +646,16 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseCreateStreamChannel(CreateStreamChannel channel) 
 	{
+		var attributenames = newArrayList
+		var datatypes = newArrayList
+		for(var i = 0; i < channel.attributes.arguments.size - 1; i = i + 2)
+		{
+			attributenames.add(channel.attributes.arguments.get(i))
+			datatypes.add(channel.attributes.arguments.get(i + 1))
+		}
 		var schema = generateKeyValueString(
-			channel.attributes.attributes.map[e|e.name],
-			channel.attributes.datatypes.map[e|e.value],
+			attributenames,
+			datatypes,
 			','
 		  )
 		
@@ -627,7 +665,7 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseCreateSink(CreateSink1 sink) 
 	{
-		var operator = buildCreate1("SENDER", sink.pars, sink.attributes.attributes, sink.attributes.datatypes, sink.attributes.name).toString
+		var operator = buildCreate1("SENDER", sink.pars, sink.attributes.arguments, sink.attributes.name).toString
 		if(!operator.contains("--INPUT--"))
 			return registerOperator(operator, sink.attributes.name)
 		else 
@@ -676,6 +714,7 @@ class CQLGenerator implements IGenerator2
 	{
 		if(src.time != null)
 		{
+		println("Hes")
 			var var1 = if(src.time.advance_size != 0) src.time.advance_size else 1
 			var var2 = if(src.time.advance_size != 0) src.time.advance_unit else src.time.unit
 			return '''TIMEWINDOW
@@ -727,10 +766,13 @@ class CQLGenerator implements IGenerator2
 		var expressionArgument = ''
 		var List<String> expressionStrings = newArrayList()
 		var List<String> attributeNames = newArrayList()
+		println("buildMapOperator::")
 		for(var i = 0; i < expressions.size; i++)
 		{
 			var expressionName  = ''
 			var expressionString = parseSelectExpression(expressions.get(i)).toString
+			var expressionType = MEP.instance.parse(expressionString).returnType.toString //parseSelectExpressionType(expressionComponents)
+			println("expressiontype:: " + expressionType)
 			if(expressions.get(i).alias ==  null)
 				expressionName = "expression_" + (expressionCounter++)
 			else
@@ -865,15 +907,22 @@ class CQLGenerator implements IGenerator2
 		return '''RENAME({aliases=[«generateListString(paired)»], pairs='true'}, «source»)'''
 	}
 			
-	def private CharSequence buildCreate1(String type, CreateParameters pars, List<Attribute> attrs, List<DataType> dtypes, String name)
+	def private CharSequence buildCreate1(String type, CreateParameters pars, List<String> attrs, String name)
 	{	
 		var wrapper     = pars.wrapper
 		var protocol    = pars.protocol
 		var transport   = pars.transport
 		var dataHandler = pars.datahandler
+		var attributenames = newArrayList
+		var datatypes = newArrayList
+		for(var i = 0; i < attrs.size - 1; i = i + 2)
+		{
+			attributenames.add(attrs.get(i))
+			datatypes.add(attrs.get(i + 1))
+		}
 		var args 		= generateKeyValueString(
-							attrs.map[e|e.name],
-							dtypes.map[e|e.value],
+							attributenames,
+							datatypes,
 							','
 						  )
 		var options 	= generateKeyValueString(
@@ -929,16 +978,6 @@ class CQLGenerator implements IGenerator2
 						options =[«options»]
 					 }
 				   )'''
-	}
-
-/////
-	def private List<String> getAttributeAliasesFromSource(String sourcename)
-	{
-		var source = getSource(sourcename)
-		var aliases = source.aliases
-		
-		
-		return null
 	}
 
 	def private buildJoin(List<Source> sources)
@@ -1054,6 +1093,8 @@ class CQLGenerator implements IGenerator2
 //			registry_RenamedAttributes.put(string1, newAliases)	
 		}
 	
+		println(SDFDatatype.types)
+		
 		//Build rename operator
 		if(!aliases.empty)
 			return registerOperator('''RENAME({aliases=[«generateListString(aliases)»], pairs='true'}, «input»)''')
@@ -1198,14 +1239,12 @@ class CQLGenerator implements IGenerator2
     					}
     					else if(arg.expression != null)
     					{
-    						println("he")
     						if(arg.expression.expressions.size == 1)
     						{
     							var aggregation = arg.expression.expressions.get(0) 
     							var function = aggregation.value
     							if(function instanceof Function)
     							{
-    									println("hu")
     								if(nameProvider.isAggregation(function.name))
     								{
     									if(arg.expression.alias != null)
@@ -1224,7 +1263,6 @@ class CQLGenerator implements IGenerator2
     								}
     								else//TODO same -> refactoring
     								{
-    									println("Bam")
 										if(arg.expression.alias != null)
 										{
 											if(attribute.equals(arg.expression.alias.name))
@@ -1243,7 +1281,6 @@ class CQLGenerator implements IGenerator2
     						}				
     						else//TODO same -> refactoring
     						{
-    							println("hihi")
 								if(arg.expression.alias != null)
 								{
 									if(attribute.equals(arg.expression.alias.name))
@@ -1592,10 +1629,8 @@ class CQLGenerator implements IGenerator2
 					var function = aggregation.value
 					if(function instanceof Function)
 					{
-						if(nameProvider.isMapper(function.name))
+						if(nameProvider.isMapper(function.name, parseSelectExpression(a.expression as SelectExpression).toString))
 							list.add(a.expression)
-							
-//						println(((a.expression.expressions.get(0).value as Function).value as SelectExpressionWithoutAliasDefinition).expressions)
 					}
 				}
 				else
@@ -1774,6 +1809,11 @@ class CQLGenerator implements IGenerator2
 	def void setInnerschema(Collection<SDFSchema> schema)
 	{
 		registerSources(schema, true)
+	}
+	
+	def void setExpressionParser(IExpressionParser parser)
+	{
+		expressionParser = parser
 	}
 	
 	def private CharSequence formatOutputString(String sequence)

@@ -2,11 +2,19 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
-
 Model: statements+=(Statement)*;
 	
 terminal ID: ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;	
 terminal FLOAT:  INT '.' INT;
+//terminal BOOLEAN: ('FALSE'|'TRUE');
+//terminal BIT: ('0'|'1');
+//terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
+
+//terminal VECTOR_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)*']';
+//terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
+//terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+//terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+//terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 
 Statement:	//FIXME DROP has two types: Statement and Command -> causes error in detection commands while parsing!
 	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView) 
@@ -23,12 +31,9 @@ Select:
 	('HAVING' having=ExpressionsModel)?
 ;
 
-
 NestedStatement returns Select: '(' Select ')' ;
 
-Argument:
-	(attribute=Attribute | expression=SelectExpression)
-;
+Argument: (attribute=Attribute | expression=SelectExpression);
 
 Source: 
 	name=SourceName 
@@ -60,6 +65,7 @@ AttributeWithNestedStatement:
 	nested=NestedStatement
 ;  
 
+//TODO Use syntatic predicate to solve ambiguities
 //Defines an expression in the SELECT clause like SELECT attr1 + 10 AS offset FROM ..
 SelectExpression:
 //	expressions+=ExpressionComponent
@@ -166,7 +172,7 @@ CreateParameters:
 //Captures the name of the source / sink and its attributes with data type definitions
 AttributeDefinition:
 	name=ID
-	'('attributes+= Attribute+ datatypes+= DataType+ (',' attributes+=Attribute datatypes+= DataType)*')'
+	'('arguments+=ID arguments+=ID (',' arguments+=ID arguments+=ID)*')'
 ;
 
 //Create stream via the Access Framework
@@ -290,25 +296,38 @@ Atomic returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
 	| {StringConstant} value=STRING 
-	| {BoolConstant} value=('TRUE' | 'FALSE')
+	| {BoolConstant} value=('TRUE'|'FALSE')
 	//TODO A SELECT * query offers no reference for an attribute.
 	//At the moment is no actual referencing possible!
 	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
 ;
 
+//TODO Add matrix and vector notation
 AtomicWithoutAttributeRef returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
 	| {StringConstant} value=STRING 
-	| {BoolConstant} value=('TRUE' | 'FALSE')
+	| {BoolConstant} value=('TRUE'|'FALSE')
 ;
 
 AtomicWithOnlyStringConstant returns Expression:
 	{StringConstant} value= STRING 
 ;
 
+DataType:
+//	value=('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN')
+	//| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
+//	|'Tuple'
+//   value=('Object'|'Tuple'|'NTuple'|'Date'|'Double'|'EndTimestamp'|'EndTimestampString'|'Float'|'Integer'|'UnsignedInt16'|
+//	'Long'|'StartTimestamp'|'StartTimestampString'|'Short'|'Char'|'Byte'|'BitVector'|'ByteBuffer'|'HexString'|'LIST<Object>'|
+//	'LIST<String>'|'LIST<Long>'|'LIST<Integer>'|'LIST<Byte>'|'LIST<Char>'|'LIST<Float>'|'LIST<Double>'|'LIST<Date>'|'LIST<Boolean>'| 
+//	'LIST<Short>'|'LIST<Tuple>'|'LIST<LIST<Object>>'|'String'|'DString'|'Document'|'MV'|'Timestamp'|'Boolean'|'Vector'|'Matrix'| 
+//	'PartialAggregate'|'AvgSumPartialAggregate'|'CountPartialAggregate'|'RelationalElementPartialAggregate'|'ListPartialAggregate')
+	value=ID
+;
 //TODO have to be dynamic -> use scope provider
-DataType: 
-	value=('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN' 
-	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
-);
+//DataType: 
+//	value=ID//('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN' 
+	//| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
+//)
+//;

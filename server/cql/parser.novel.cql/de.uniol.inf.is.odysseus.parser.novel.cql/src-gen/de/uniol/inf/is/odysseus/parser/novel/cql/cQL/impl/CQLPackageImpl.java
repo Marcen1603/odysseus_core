@@ -925,19 +925,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAttributeDefinition_Attributes()
+  public EAttribute getAttributeDefinition_Arguments()
   {
-    return (EReference)attributeDefinitionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getAttributeDefinition_Datatypes()
-  {
-    return (EReference)attributeDefinitionEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)attributeDefinitionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1893,8 +1883,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     attributeDefinitionEClass = createEClass(ATTRIBUTE_DEFINITION);
     createEAttribute(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__NAME);
-    createEReference(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__ATTRIBUTES);
-    createEReference(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__DATATYPES);
+    createEAttribute(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__ARGUMENTS);
 
     createStream1EClass = createEClass(CREATE_STREAM1);
     createEAttribute(createStream1EClass, CREATE_STREAM1__KEYWORD);
@@ -2122,8 +2111,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(attributeDefinitionEClass, AttributeDefinition.class, "AttributeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAttributeDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAttributeDefinition_Attributes(), this.getAttribute(), null, "attributes", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAttributeDefinition_Datatypes(), this.getDataType(), null, "datatypes", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAttributeDefinition_Arguments(), ecorePackage.getEString(), "arguments", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(createStream1EClass, CreateStream1.class, "CreateStream1", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreateStream1_Keyword(), this.getCreateKeyword(), "keyword", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

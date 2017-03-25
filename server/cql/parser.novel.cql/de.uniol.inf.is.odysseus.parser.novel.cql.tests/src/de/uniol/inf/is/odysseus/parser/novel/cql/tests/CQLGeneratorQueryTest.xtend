@@ -454,7 +454,7 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"CREATE STREAM stream1 (attr1 INTEGER) 
+			"CREATE STREAM stream1 (attr1 Integer) 
     		WRAPPER 'GenericPush'
     		PROTOCOL 'CSV'
     		TRANSPORT 'File'
@@ -468,7 +468,7 @@ class CQLGeneratorQueryTest
 				  protocol = 'CSV',
 				  transport = 'File',
 				  dataHandler ='Tuple',
-				  schema = [['attr1', 'INTEGER']],
+				  schema = [['attr1', 'Integer']],
 				  options =[['port', '54321'],['host', 'localhost']]
 				}
 			)"
@@ -501,7 +501,7 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"CREATE STREAM stream1 (attr1 INTEGER) FILE 'this/is/a/filename.file' AS SimpleCSV;"
+			"CREATE STREAM stream1 (attr1 Integer) FILE 'this/is/a/filename.file' AS SimpleCSV;"
 			,
 			"stream1 := ACCESS
 			(
@@ -510,7 +510,7 @@ class CQLGeneratorQueryTest
 				  protocol = 'SimpleCSV',
 				  transport = 'File',
 				  dataHandler ='Tuple',
-				  schema = [['attr1', 'INTEGER']],
+				  schema = [['attr1', 'Integer']],
 				  options =[['filename', 'this/is/a/filename.file'],['delimiter',';'],['textDelimiter',\"'\"]]
 				}
 			)"

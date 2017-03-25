@@ -17,8 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getAttributes <em>Attributes</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getDatatypes <em>Datatypes</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getArguments <em>Arguments</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeDefinition()
@@ -54,35 +53,19 @@ public interface AttributeDefinition extends EObject
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Attributes</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute}.
+   * Returns the value of the '<em><b>Arguments</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Attributes</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Arguments</em>' attribute list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Attributes</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeDefinition_Attributes()
-   * @model containment="true"
+   * @return the value of the '<em>Arguments</em>' attribute list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeDefinition_Arguments()
+   * @model unique="false"
    * @generated
    */
-  EList<Attribute> getAttributes();
-
-  /**
-   * Returns the value of the '<em><b>Datatypes</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Datatypes</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Datatypes</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeDefinition_Datatypes()
-   * @model containment="true"
-   * @generated
-   */
-  EList<DataType> getDatatypes();
+  EList<String> getArguments();
 
 } // AttributeDefinition

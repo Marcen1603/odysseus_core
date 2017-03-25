@@ -68,7 +68,6 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicAccess().getAlternatives_4_1(), "rule__Atomic__Alternatives_4_1");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getAlternatives(), "rule__AtomicWithoutAttributeRef__Alternatives");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAlternatives_3_1_0(), "rule__AtomicWithoutAttributeRef__ValueAlternatives_3_1_0");
-					put(grammarAccess.getDataTypeAccess().getValueAlternatives_0(), "rule__DataType__ValueAlternatives_0");
 					put(grammarAccess.getCreateKeywordAccess().getAlternatives(), "rule__CreateKeyword__Alternatives");
 					put(grammarAccess.getStatementAccess().getGroup(), "rule__Statement__Group__0");
 					put(grammarAccess.getSelectAccess().getGroup(), "rule__Select__Group__0");
@@ -223,10 +222,10 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateParametersAccess().getKeysAssignment_11_1(), "rule__CreateParameters__KeysAssignment_11_1");
 					put(grammarAccess.getCreateParametersAccess().getValuesAssignment_11_2(), "rule__CreateParameters__ValuesAssignment_11_2");
 					put(grammarAccess.getAttributeDefinitionAccess().getNameAssignment_0(), "rule__AttributeDefinition__NameAssignment_0");
-					put(grammarAccess.getAttributeDefinitionAccess().getAttributesAssignment_2(), "rule__AttributeDefinition__AttributesAssignment_2");
-					put(grammarAccess.getAttributeDefinitionAccess().getDatatypesAssignment_3(), "rule__AttributeDefinition__DatatypesAssignment_3");
-					put(grammarAccess.getAttributeDefinitionAccess().getAttributesAssignment_4_1(), "rule__AttributeDefinition__AttributesAssignment_4_1");
-					put(grammarAccess.getAttributeDefinitionAccess().getDatatypesAssignment_4_2(), "rule__AttributeDefinition__DatatypesAssignment_4_2");
+					put(grammarAccess.getAttributeDefinitionAccess().getArgumentsAssignment_2(), "rule__AttributeDefinition__ArgumentsAssignment_2");
+					put(grammarAccess.getAttributeDefinitionAccess().getArgumentsAssignment_3(), "rule__AttributeDefinition__ArgumentsAssignment_3");
+					put(grammarAccess.getAttributeDefinitionAccess().getArgumentsAssignment_4_1(), "rule__AttributeDefinition__ArgumentsAssignment_4_1");
+					put(grammarAccess.getAttributeDefinitionAccess().getArgumentsAssignment_4_2(), "rule__AttributeDefinition__ArgumentsAssignment_4_2");
 					put(grammarAccess.getCreateStream1Access().getKeywordAssignment_0(), "rule__CreateStream1__KeywordAssignment_0");
 					put(grammarAccess.getCreateStream1Access().getAttributesAssignment_2(), "rule__CreateStream1__AttributesAssignment_2");
 					put(grammarAccess.getCreateStream1Access().getParsAssignment_3(), "rule__CreateStream1__ParsAssignment_3");

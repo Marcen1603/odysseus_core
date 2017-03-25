@@ -627,7 +627,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     AttributeDefinition returns AttributeDefinition
 	 *
 	 * Constraint:
-	 *     (name=ID attributes+=Attribute+ datatypes+=DataType+ (attributes+=Attribute datatypes+=DataType)*)
+	 *     (name=ID arguments+=ID arguments+=ID (arguments+=ID arguments+=ID)*)
 	 */
 	protected void sequence_AttributeDefinition(ISerializationContext context, AttributeDefinition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -882,19 +882,16 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     DataType returns DataType
 	 *
 	 * Constraint:
-	 *     (
-	 *         value='INTEGER' | 
-	 *         value='DOUBLE' | 
-	 *         value='LONG' | 
-	 *         value='FLOAT' | 
-	 *         value='STRING' | 
-	 *         value='BOOLEAN' | 
-	 *         value='STARTTIMESTAMP' | 
-	 *         value='ENDTIMESTAMP'
-	 *     )
+	 *     value=ID
 	 */
 	protected void sequence_DataType(ISerializationContext context, DataType semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.DATA_TYPE__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.DATA_TYPE__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getDataTypeAccess().getValueIDTerminalRuleCall_0(), semanticObject.getValue());
+		feeder.finish();
 	}
 	
 	

@@ -11,10 +11,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.lexer;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 }
 
-STARTTIMESTAMP : ('S'|'s')('T'|'t')('A'|'a')('R'|'r')('T'|'t')('T'|'t')('I'|'i')('M'|'m')('E'|'e')('S'|'s')('T'|'t')('A'|'a')('M'|'m')('P'|'p');
-
-ENDTIMESTAMP : ('E'|'e')('N'|'n')('D'|'d')('T'|'t')('I'|'i')('M'|'m')('E'|'e')('S'|'s')('T'|'t')('A'|'a')('M'|'m')('P'|'p');
-
 INTERSECTION : ('I'|'i')('N'|'n')('T'|'t')('E'|'e')('R'|'r')('S'|'s')('E'|'e')('C'|'c')('T'|'t')('I'|'i')('O'|'o')('N'|'n');
 
 DATAHANDLER : ('D'|'d')('A'|'a')('T'|'t')('A'|'a')('H'|'h')('A'|'a')('N'|'n')('D'|'d')('L'|'l')('E'|'e')('R'|'r');
@@ -33,11 +29,7 @@ PROTOCOL : ('P'|'p')('R'|'r')('O'|'o')('T'|'t')('O'|'o')('C'|'c')('O'|'o')('L'|'
 
 ADVANCE : ('A'|'a')('D'|'d')('V'|'v')('A'|'a')('N'|'n')('C'|'c')('E'|'e');
 
-BOOLEAN : ('B'|'b')('O'|'o')('O'|'o')('L'|'l')('E'|'e')('A'|'a')('N'|'n');
-
 CHANNEL : ('C'|'c')('H'|'h')('A'|'a')('N'|'n')('N'|'n')('E'|'e')('L'|'l');
-
-INTEGER : ('I'|'i')('N'|'n')('T'|'t')('E'|'e')('G'|'g')('E'|'e')('R'|'r');
 
 OPTIONS : ('O'|'o')('P'|'p')('T'|'t')('I'|'i')('O'|'o')('N'|'n')('S'|'s');
 
@@ -47,8 +39,6 @@ ATTACH : ('A'|'a')('T'|'t')('T'|'t')('A'|'a')('C'|'c')('H'|'h');
 
 CREATE : ('C'|'c')('R'|'r')('E'|'e')('A'|'a')('T'|'t')('E'|'e');
 
-DOUBLE : ('D'|'d')('O'|'o')('U'|'u')('B'|'b')('L'|'l')('E'|'e');
-
 EXISTS : ('E'|'e')('X'|'x')('I'|'i')('S'|'s')('T'|'t')('S'|'s');
 
 HAVING : ('H'|'h')('A'|'a')('V'|'v')('I'|'i')('N'|'n')('G'|'g');
@@ -57,11 +47,7 @@ SELECT : ('S'|'s')('E'|'e')('L'|'l')('E'|'e')('C'|'c')('T'|'t');
 
 STREAM : ('S'|'s')('T'|'t')('R'|'r')('E'|'e')('A'|'a')('M'|'m');
 
-STRING : ('S'|'s')('T'|'t')('R'|'r')('I'|'i')('N'|'n')('G'|'g');
-
 FALSE : ('F'|'f')('A'|'a')('L'|'l')('S'|'s')('E'|'e');
-
-FLOAT : ('F'|'f')('L'|'l')('O'|'o')('A'|'a')('T'|'t');
 
 GROUP : ('G'|'g')('R'|'r')('O'|'o')('U'|'u')('P'|'p');
 
@@ -76,8 +62,6 @@ DROP : ('D'|'d')('R'|'r')('O'|'o')('P'|'p');
 FILE : ('F'|'f')('I'|'i')('L'|'l')('E'|'e');
 
 FROM : ('F'|'f')('R'|'r')('O'|'o')('M'|'m');
-
-LONG : ('L'|'l')('O'|'o')('N'|'n')('G'|'g');
 
 SINK : ('S'|'s')('I'|'i')('N'|'n')('K'|'k');
 

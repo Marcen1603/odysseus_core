@@ -63,6 +63,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTypeCreateViewParserRuleCall_0_7_0 = (RuleCall)cTypeAssignment_0_7.eContents().get(0);
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
+		////terminal BOOLEAN: ('FALSE'|'TRUE');
+		////terminal BIT: ('0'|'1');
+		////terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
+		////terminal VECTOR_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)*']';
+		////terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
+		////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+		////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+		////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 		//Statement:
 		//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
 		//	type=CreateStreamFile | type=CreateView) ';'?;
@@ -630,6 +638,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cAliasAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cAliasAliasParserRuleCall_1_1_0 = (RuleCall)cAliasAssignment_1_1.eContents().get(0);
 		
+		////TODO Use syntatic predicate to solve ambiguities
 		////Defines an expression in the SELECT clause like SELECT attr1 + 10 AS offset FROM ..
 		//SelectExpression:
 		//	(expressions+=ExpressionComponentFunctionOrConstant (operators+=('+' | '-' | '*' | '/')
@@ -1113,9 +1122,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFunctionParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Action cExpressionComponentValueAction_1 = (Action)cGroup.eContents().get(1);
 		
-		////ExpressionComponentOnlyConstant returns ExpressionComponent:
-		////	value=AtomicWithoutAttributeRef
-		////;
 		//ExpressionComponentOnlyWithFunction ExpressionComponent:
 		//	Function {ExpressionComponent.value=current}
 		@Override public ParserRule getRule() { return rule; }
@@ -1319,25 +1325,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cNameIDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cAttributesAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cAttributesAttributeParserRuleCall_2_0 = (RuleCall)cAttributesAssignment_2.eContents().get(0);
-		private final Assignment cDatatypesAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_3_0 = (RuleCall)cDatatypesAssignment_3.eContents().get(0);
+		private final Assignment cArgumentsAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cArgumentsIDTerminalRuleCall_2_0 = (RuleCall)cArgumentsAssignment_2.eContents().get(0);
+		private final Assignment cArgumentsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cArgumentsIDTerminalRuleCall_3_0 = (RuleCall)cArgumentsAssignment_3.eContents().get(0);
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
 		private final Keyword cCommaKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cAttributesAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final RuleCall cAttributesAttributeParserRuleCall_4_1_0 = (RuleCall)cAttributesAssignment_4_1.eContents().get(0);
-		private final Assignment cDatatypesAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
-		private final RuleCall cDatatypesDataTypeParserRuleCall_4_2_0 = (RuleCall)cDatatypesAssignment_4_2.eContents().get(0);
+		private final Assignment cArgumentsAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cArgumentsIDTerminalRuleCall_4_1_0 = (RuleCall)cArgumentsAssignment_4_1.eContents().get(0);
+		private final Assignment cArgumentsAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
+		private final RuleCall cArgumentsIDTerminalRuleCall_4_2_0 = (RuleCall)cArgumentsAssignment_4_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		////Captures the name of the source / sink and its attributes with data type definitions
 		//AttributeDefinition:
 		//	name=ID
-		//	'(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')';
+		//	'(' arguments+=ID arguments+=ID (',' arguments+=ID arguments+=ID)* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=ID '(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')'
+		//name=ID '(' arguments+=ID arguments+=ID (',' arguments+=ID arguments+=ID)* ')'
 		public Group getGroup() { return cGroup; }
 		
 		//name=ID
@@ -1349,35 +1355,35 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
-		//attributes+=Attribute+
-		public Assignment getAttributesAssignment_2() { return cAttributesAssignment_2; }
+		//arguments+=ID
+		public Assignment getArgumentsAssignment_2() { return cArgumentsAssignment_2; }
 		
-		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_2_0() { return cAttributesAttributeParserRuleCall_2_0; }
+		//ID
+		public RuleCall getArgumentsIDTerminalRuleCall_2_0() { return cArgumentsIDTerminalRuleCall_2_0; }
 		
-		//datatypes+=DataType+
-		public Assignment getDatatypesAssignment_3() { return cDatatypesAssignment_3; }
+		//arguments+=ID
+		public Assignment getArgumentsAssignment_3() { return cArgumentsAssignment_3; }
 		
-		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_3_0() { return cDatatypesDataTypeParserRuleCall_3_0; }
+		//ID
+		public RuleCall getArgumentsIDTerminalRuleCall_3_0() { return cArgumentsIDTerminalRuleCall_3_0; }
 		
-		//(',' attributes+=Attribute datatypes+=DataType)*
+		//(',' arguments+=ID arguments+=ID)*
 		public Group getGroup_4() { return cGroup_4; }
 		
 		//','
 		public Keyword getCommaKeyword_4_0() { return cCommaKeyword_4_0; }
 		
-		//attributes+=Attribute
-		public Assignment getAttributesAssignment_4_1() { return cAttributesAssignment_4_1; }
+		//arguments+=ID
+		public Assignment getArgumentsAssignment_4_1() { return cArgumentsAssignment_4_1; }
 		
-		//Attribute
-		public RuleCall getAttributesAttributeParserRuleCall_4_1_0() { return cAttributesAttributeParserRuleCall_4_1_0; }
+		//ID
+		public RuleCall getArgumentsIDTerminalRuleCall_4_1_0() { return cArgumentsIDTerminalRuleCall_4_1_0; }
 		
-		//datatypes+=DataType
-		public Assignment getDatatypesAssignment_4_2() { return cDatatypesAssignment_4_2; }
+		//arguments+=ID
+		public Assignment getArgumentsAssignment_4_2() { return cArgumentsAssignment_4_2; }
 		
-		//DataType
-		public RuleCall getDatatypesDataTypeParserRuleCall_4_2_0() { return cDatatypesDataTypeParserRuleCall_4_2_0; }
+		//ID
+		public RuleCall getArgumentsIDTerminalRuleCall_4_2_0() { return cArgumentsIDTerminalRuleCall_4_2_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_5() { return cRightParenthesisKeyword_5; }
@@ -2431,6 +2437,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cValueTRUEKeyword_3_1_0_0 = (Keyword)cValueAlternatives_3_1_0.eContents().get(0);
 		private final Keyword cValueFALSEKeyword_3_1_0_1 = (Keyword)cValueAlternatives_3_1_0.eContents().get(1);
 		
+		////TODO Add matrix and vector notation
 		//AtomicWithoutAttributeRef Expression:
 		//	{IntConstant} value=INT
 		//	| {FloatConstant} value=FLOAT
@@ -2522,51 +2529,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	public class DataTypeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
 		private final Assignment cValueAssignment = (Assignment)rule.eContents().get(1);
-		private final Alternatives cValueAlternatives_0 = (Alternatives)cValueAssignment.eContents().get(0);
-		private final Keyword cValueINTEGERKeyword_0_0 = (Keyword)cValueAlternatives_0.eContents().get(0);
-		private final Keyword cValueDOUBLEKeyword_0_1 = (Keyword)cValueAlternatives_0.eContents().get(1);
-		private final Keyword cValueLONGKeyword_0_2 = (Keyword)cValueAlternatives_0.eContents().get(2);
-		private final Keyword cValueFLOATKeyword_0_3 = (Keyword)cValueAlternatives_0.eContents().get(3);
-		private final Keyword cValueSTRINGKeyword_0_4 = (Keyword)cValueAlternatives_0.eContents().get(4);
-		private final Keyword cValueBOOLEANKeyword_0_5 = (Keyword)cValueAlternatives_0.eContents().get(5);
-		private final Keyword cValueSTARTTIMESTAMPKeyword_0_6 = (Keyword)cValueAlternatives_0.eContents().get(6);
-		private final Keyword cValueENDTIMESTAMPKeyword_0_7 = (Keyword)cValueAlternatives_0.eContents().get(7);
+		private final RuleCall cValueIDTerminalRuleCall_0 = (RuleCall)cValueAssignment.eContents().get(0);
 		
-		////TODO have to be dynamic -> use scope provider
 		//DataType:
-		//	value=('INTEGER' | 'DOUBLE' | 'LONG' | 'FLOAT' | 'STRING' | 'BOOLEAN'
-		//	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP');
+		//	value=ID;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//value=('INTEGER' | 'DOUBLE' | 'LONG' | 'FLOAT' | 'STRING' | 'BOOLEAN' | 'STARTTIMESTAMP' | 'ENDTIMESTAMP')
+		////	value=('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN')
+		////| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
+		////	|'Tuple'
+		////   value=('Object'|'Tuple'|'NTuple'|'Date'|'Double'|'EndTimestamp'|'EndTimestampString'|'Float'|'Integer'|'UnsignedInt16'|
+		////	'Long'|'StartTimestamp'|'StartTimestampString'|'Short'|'Char'|'Byte'|'BitVector'|'ByteBuffer'|'HexString'|'LIST<Object>'|
+		////	'LIST<String>'|'LIST<Long>'|'LIST<Integer>'|'LIST<Byte>'|'LIST<Char>'|'LIST<Float>'|'LIST<Double>'|'LIST<Date>'|'LIST<Boolean>'| 
+		////	'LIST<Short>'|'LIST<Tuple>'|'LIST<LIST<Object>>'|'String'|'DString'|'Document'|'MV'|'Timestamp'|'Boolean'|'Vector'|'Matrix'| 
+		////	'PartialAggregate'|'AvgSumPartialAggregate'|'CountPartialAggregate'|'RelationalElementPartialAggregate'|'ListPartialAggregate')
+		//value=ID
 		public Assignment getValueAssignment() { return cValueAssignment; }
 		
-		//('INTEGER' | 'DOUBLE' | 'LONG' | 'FLOAT' | 'STRING' | 'BOOLEAN' | 'STARTTIMESTAMP' | 'ENDTIMESTAMP')
-		public Alternatives getValueAlternatives_0() { return cValueAlternatives_0; }
-		
-		//'INTEGER'
-		public Keyword getValueINTEGERKeyword_0_0() { return cValueINTEGERKeyword_0_0; }
-		
-		//'DOUBLE'
-		public Keyword getValueDOUBLEKeyword_0_1() { return cValueDOUBLEKeyword_0_1; }
-		
-		//'LONG'
-		public Keyword getValueLONGKeyword_0_2() { return cValueLONGKeyword_0_2; }
-		
-		//'FLOAT'
-		public Keyword getValueFLOATKeyword_0_3() { return cValueFLOATKeyword_0_3; }
-		
-		//'STRING'
-		public Keyword getValueSTRINGKeyword_0_4() { return cValueSTRINGKeyword_0_4; }
-		
-		//'BOOLEAN'
-		public Keyword getValueBOOLEANKeyword_0_5() { return cValueBOOLEANKeyword_0_5; }
-		
-		//'STARTTIMESTAMP'
-		public Keyword getValueSTARTTIMESTAMPKeyword_0_6() { return cValueSTARTTIMESTAMPKeyword_0_6; }
-		
-		//'ENDTIMESTAMP'
-		public Keyword getValueENDTIMESTAMPKeyword_0_7() { return cValueENDTIMESTAMPKeyword_0_7; }
+		//ID
+		public RuleCall getValueIDTerminalRuleCall_0() { return cValueIDTerminalRuleCall_0; }
 	}
 	
 	public class CreateKeywordElements extends AbstractEnumRuleElementFinder {
@@ -2760,6 +2741,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return tFLOAT;
 	}
 	
+	////terminal BOOLEAN: ('FALSE'|'TRUE');
+	////terminal BIT: ('0'|'1');
+	////terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
+	////terminal VECTOR_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)*']';
+	////terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
+	////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+	////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
+	////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 	//Statement:
 	//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
 	//	type=CreateStreamFile | type=CreateView) ';'?;
@@ -2868,6 +2857,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeWithNestedStatementAccess().getRule();
 	}
 	
+	////TODO Use syntatic predicate to solve ambiguities
 	////Defines an expression in the SELECT clause like SELECT attr1 + 10 AS offset FROM ..
 	//SelectExpression:
 	//	(expressions+=ExpressionComponentFunctionOrConstant (operators+=('+' | '-' | '*' | '/')
@@ -2964,9 +2954,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getExpressionComponentOnlyWithAttributeAccess().getRule();
 	}
 	
-	////ExpressionComponentOnlyConstant returns ExpressionComponent:
-	////	value=AtomicWithoutAttributeRef
-	////;
 	//ExpressionComponentOnlyWithFunction ExpressionComponent:
 	//	Function {ExpressionComponent.value=current}
 	public ExpressionComponentOnlyWithFunctionElements getExpressionComponentOnlyWithFunctionAccess() {
@@ -3026,7 +3013,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	////Captures the name of the source / sink and its attributes with data type definitions
 	//AttributeDefinition:
 	//	name=ID
-	//	'(' attributes+=Attribute+ datatypes+=DataType+ (',' attributes+=Attribute datatypes+=DataType)* ')';
+	//	'(' arguments+=ID arguments+=ID (',' arguments+=ID arguments+=ID)* ')';
 	public AttributeDefinitionElements getAttributeDefinitionAccess() {
 		return pAttributeDefinition;
 	}
@@ -3274,6 +3261,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAtomicAccess().getRule();
 	}
 	
+	////TODO Add matrix and vector notation
 	//AtomicWithoutAttributeRef Expression:
 	//	{IntConstant} value=INT
 	//	| {FloatConstant} value=FLOAT
@@ -3297,10 +3285,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAtomicWithOnlyStringConstantAccess().getRule();
 	}
 	
-	////TODO have to be dynamic -> use scope provider
 	//DataType:
-	//	value=('INTEGER' | 'DOUBLE' | 'LONG' | 'FLOAT' | 'STRING' | 'BOOLEAN'
-	//	| 'STARTTIMESTAMP' | 'ENDTIMESTAMP');
+	//	value=ID;
 	public DataTypeElements getDataTypeAccess() {
 		return pDataType;
 	}

@@ -18,7 +18,7 @@ public class NameProviderHelper extends NameProvider {
   }
   
   @Override
-  public boolean isMapper(final String name) {
+  public boolean isMapper(final String name, final String function) {
     ArrayList<String> list = CollectionLiterals.<String>newArrayList();
     list.add("DolToEur");
     return list.contains(name);

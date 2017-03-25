@@ -16,7 +16,7 @@ class NameProviderHelper extends NameProvider
 		return list.contains(name)
 	}
 	
-	override isMapper(String name) 
+	override isMapper(String name, String function) 
 	{
 		var list = newArrayList
 		list.add('DolToEur')

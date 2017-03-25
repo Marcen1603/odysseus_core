@@ -15,6 +15,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.tests
 Import-Package: de.uniol.inf.is.odysseus.core.sdf.schema,
+ org.eclipse.equinox.p2.metadata.expression;version="2.0.0",
  org.hamcrest.core,
  org.junit;version="4.5.0",
  org.junit.runner;version="4.5.0",
