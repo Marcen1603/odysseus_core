@@ -25,7 +25,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.wrapper.urg.datatype.UrgScann;
 
@@ -72,7 +71,7 @@ public class UrgScannPart extends AbstractDashboardPart implements
 	public void onStart(Collection<IPhysicalOperator> physicalRoots)
 			throws Exception {
 		super.onStart(physicalRoots);
-		
+
 		for (IPhysicalOperator po : physicalRoots) {
 			SDFSchema schema = po.getOutputSchema();
 			this.urgScannPos = -1;
@@ -161,7 +160,7 @@ public class UrgScannPart extends AbstractDashboardPart implements
 		RGB rgb = UrgScannConfigurer.intToRgb(pointColorInt);
 		pointColor = new Color(parent.getShell().getDisplay(), rgb);
 	}
-	
+
 	public int getPointColor() {
 		return pointColorInt;
 	}
@@ -195,11 +194,6 @@ public class UrgScannPart extends AbstractDashboardPart implements
 
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator, IPunctuation point, int port) {
-	}
-
-	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
 	}
 
 	@Override

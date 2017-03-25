@@ -82,7 +82,7 @@ public class SpatialRangeAO extends BinaryLogicalOp {
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 		// Put out the original tuple with an extra field that contains a list
-		// with the kNN
+		// with the elements in the range
 
 		// Use old schema from the data structure
 		SDFSchema inputSchema = getInputSchema(0);

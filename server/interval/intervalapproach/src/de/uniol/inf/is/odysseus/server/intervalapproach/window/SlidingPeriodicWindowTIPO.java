@@ -92,7 +92,11 @@ public class SlidingPeriodicWindowTIPO<R extends IStreamObject<? extends ITimeIn
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+		// FIXME: Implement me
+		long slide = (punctuation.getTime().getMainPoint() / this.windowSlide)+1;
+		PointInTime p_start = new PointInTime(slide * this.windowSlide - this.windowSize);
+		sendPunctuation(Heartbeat.createNewHeartbeat(p_start));
+//		sendPunctuation(punctuation);
 	}
 
 }

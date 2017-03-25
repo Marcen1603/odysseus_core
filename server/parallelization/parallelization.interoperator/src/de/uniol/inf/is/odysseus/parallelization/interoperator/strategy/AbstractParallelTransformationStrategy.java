@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.parallelization.interoperator.strategy;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -46,12 +48,19 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 	/**
 	 * returns the selected operator type
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
+	@Override
 	public Class<T> getOperatorType() {
 		ParameterizedType parameterizedType = (ParameterizedType) getClass()
 				.getGenericSuperclass();
-		return (Class<T>) parameterizedType.getActualTypeArguments()[0];
+		Type type = parameterizedType.getActualTypeArguments()[0];
+		if(type instanceof Class<?>){
+			return (Class<T>) type;
+		} else if(type instanceof TypeVariable<?>){
+			Class<T> theClass = (Class<T>) ((TypeVariable<?>) type).getBounds()[0];
+			return theClass;
+		}
+		return null;
 	}
 
 	/**

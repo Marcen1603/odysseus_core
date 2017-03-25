@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
+import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
@@ -42,6 +44,8 @@ import de.uniol.inf.is.odysseus.rcp.queries.ParserClientUtil;
 
 public class EvaluationJob extends Job implements IPlanModificationListener {
 
+	InfoService INFO = InfoServiceFactory.getInfoService(EvaluationJob.class);
+	
 	private EvaluationModel model;
 	private Collection<Integer> ids = new ArrayList<>();
 	private static final String PRE_TRANSFORM_TOKEN = "#PRETRANSFORM EvaluationPreTransformation";
@@ -80,10 +84,12 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				String tearDownLines = fileToLines(model.getTearDownQueryFile());
 
 				// save model file for logging purposes
-				String modelFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(), "model.eval");
+				String modelFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(),
+						"model.eval");
 				model.save(new File(modelFileBackup));
 				// and the current query file
-				String queryFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(), model.getQueryFile().getName());
+				String queryFileBackup = FilenameUtils.concat(evaluationRunContext.getResultsPathIdentified(),
+						model.getQueryFile().getName());
 				FileUtils.write(new File(queryFileBackup), queryLines);
 
 				// then, prepare lines for executing
@@ -92,32 +98,35 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				monitor.beginTask("Running evaluations...", totalEvaluations);
 
 				EvaluationRunContainer evaluationRunContainer = new EvaluationRunContainer(evaluationRunContext);
-				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations, evaluationRunContainer, variables, monitor, queryLines, setupLines, tearDownLines, model.isRunSetupTearDownEveryRun());
+				int counter = recursiveFor(new ArrayDeque<Integer>(), ranges, ranges.size(), 0, totalEvaluations,
+						evaluationRunContainer, variables, monitor, queryLines, setupLines, tearDownLines,
+						model.isRunSetupTearDownEveryRun());
 				if (counter < totalEvaluations) {
 					return Status.CANCEL_STATUS;
 				}
 
 				monitor.beginTask("Creating diagrams...", IProgressMonitor.UNKNOWN);
-                if (model.isCreateLatencyPlots()) {
+				if (model.isCreateLatencyPlots()) {
 					monitor.subTask("Creating latency plots...");
 					PlotBuilder.createLatencyPlots(evaluationRunContainer, model, monitor);
 				}
-                if (model.isCreateThroughputPlots()) {
+				if (model.isCreateThroughputPlots()) {
 					monitor.subTask("Creating throughput plots...");
 					PlotBuilder.createThroughputPlots(evaluationRunContainer, model, monitor);
 				}
-                if (model.isCreateCPUPlots()) {
-                    monitor.subTask("Creating CPU plots...");
-                    PlotBuilder.createCPUPlots(evaluationRunContainer, model, monitor);
-                }
-                if (model.isCreateMemoryPlots()) {
-                    monitor.subTask("Creating memory plots...");
-                    PlotBuilder.createMemoryPlots(evaluationRunContainer, model, monitor);
-                }
+				if (model.isCreateCPUPlots()) {
+					monitor.subTask("Creating CPU plots...");
+					PlotBuilder.createCPUPlots(evaluationRunContainer, model, monitor);
+				}
+				if (model.isCreateMemoryPlots()) {
+					monitor.subTask("Creating memory plots...");
+					PlotBuilder.createMemoryPlots(evaluationRunContainer, model, monitor);
+				}
 			}
 		} catch (InterruptedException ex) {
 			return Status.CANCEL_STATUS;
 		} catch (Throwable ex) {
+			INFO.error("Error in Evaluation", ex);
 			ex.printStackTrace();
 			return Status.CANCEL_STATUS;
 		}
@@ -125,37 +134,43 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	}
 
 	private String prepareQueryFileForEvaluation(String lines) {
-		if(!lines.contains(PRE_TRANSFORM_TOKEN)){
-			lines = PRE_TRANSFORM_TOKEN+System.lineSeparator()+lines;
+		if (!lines.contains(PRE_TRANSFORM_TOKEN)) {
+			lines = PRE_TRANSFORM_TOKEN + System.lineSeparator() + lines;
 		}
 
 		return lines;
 	}
 
-	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals, EvaluationRunContainer evaluationRunContainer, List<EvaluationVariable> values, IProgressMonitor monitor, String queryLines, String setupLines, String teardownLine, boolean setupTeardownEveryRun) throws Exception {
+	private int recursiveFor(Deque<Integer> indices, List<Integer> ranges, int n, int counter, int totalEvals,
+			EvaluationRunContainer evaluationRunContainer, List<EvaluationVariable> values, IProgressMonitor monitor,
+			String queryLines, String setupLines, String teardownLine, boolean setupTeardownEveryRun) throws Exception {
 		if (n != 0) {
 			for (int i = 0; i < ranges.get(n - 1); i++) {
 				indices.push(i);
-				counter = recursiveFor(indices, ranges, n - 1, counter, totalEvals, evaluationRunContainer, values, monitor, queryLines, setupLines, teardownLine, setupTeardownEveryRun);
+				counter = recursiveFor(indices, ranges, n - 1, counter, totalEvals, evaluationRunContainer, values,
+						monitor, queryLines, setupLines, teardownLine, setupTeardownEveryRun);
 				indices.pop();
 			}
 		} else {
-			counter = runEvalStep(indices, values, counter, totalEvals, evaluationRunContainer, monitor, queryLines, setupLines, teardownLine, setupTeardownEveryRun);
+			counter = runEvalStep(indices, values, counter, totalEvals, evaluationRunContainer, monitor, queryLines,
+					setupLines, teardownLine, setupTeardownEveryRun);
 		}
 		return counter;
 	}
 
-	private int runEvalStep(Deque<Integer> index, List<EvaluationVariable> values, int counter, int totalEvals, EvaluationRunContainer evaluationRunContainer, IProgressMonitor monitor, String queryLines, String setupQueryLines, String teardownQueryLines, boolean setupTeardownEveryRun) throws Exception {
+	private int runEvalStep(Deque<Integer> index, List<EvaluationVariable> values, int counter, int totalEvals,
+			EvaluationRunContainer evaluationRunContainer, IProgressMonitor monitor, String queryLines,
+			String setupQueryLines, String teardownQueryLines, boolean setupTeardownEveryRun) throws Exception {
 		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		NumberFormat nf = NumberFormat.getInstance();
 
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		IResource qeryFile = model.getQueryFile();
-		Context context = ParserClientUtil.createRCPContext((IFile)qeryFile);
+		Context context = ParserClientUtil.createRCPContext((IFile) qeryFile);
 
 		Map<String, String> currentValues = new TreeMap<>();
 		Integer[] pointers = index.toArray(new Integer[0]);
-		for (int i = 0; i<pointers.length; i++) {
+		for (int i = 0; i < pointers.length; i++) {
 			EvaluationVariable var = values.get(i);
 			String value = var.getValues().get(pointers[i]);
 			currentValues.put(var.getName(), value);
@@ -165,14 +180,16 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 		String prefix = "";
 
-		if (!setupTeardownEveryRun){
+		if (!setupTeardownEveryRun) {
 			runSetup(monitor, setupQueryLines, executor, caller, context, prefix);
 		}
 
 		for (int i = 1; i <= model.getNumberOfRuns(); i++) {
 			counter++;
-			String prefixHeader = "Performing Evaluation number " + i + " / " + model.getNumberOfRuns() + " for total " + counter + "/" + totalEvals + "\n";
+			String prefixHeader = "Performing Evaluation number " + i + " / " + model.getNumberOfRuns() + " for total "
+					+ counter + "/" + totalEvals + "\n";
 			if (monitor.isCanceled()) {
+				runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 				throw new InterruptedException();
 			}
 
@@ -180,7 +197,8 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 			for (Entry<String, String> currentValue : currentValues.entrySet()) {
 				prefix = prefix + " - " + currentValue.getKey() + ": " + currentValue.getValue() + "\n";
-				querytext = querytext.replaceAll(Pattern.quote("${" + currentValue.getKey() + "}"), currentValue.getValue());
+				querytext = querytext.replaceAll(Pattern.quote("${" + currentValue.getKey() + "}"),
+						currentValue.getValue());
 			}
 			monitor.subTask(prefix + "Executing Script \"" + qeryFile.getName() + "\"... ");
 			long timeStarted = System.currentTimeMillis();
@@ -188,24 +206,22 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 			monitor.subTask(prefix + "Adding query...");
 			EvaluationRun evaluationRun = new EvaluationRun(evaluationRunContainer.getContext(), i, currentValues);
 			evaluationRunContainer.getRuns().add(evaluationRun);
-			if (context.containsKey(EvaluationRun.class.getName())){
+			if (context.containsKey(EvaluationRun.class.getName())) {
 				context.remove(EvaluationRun.class.getName());
 			}
 			context.put(EvaluationRun.class.getName(), evaluationRun);
 
-			if (setupTeardownEveryRun){
+			if (setupTeardownEveryRun) {
 				runSetup(monitor, setupQueryLines, executor, caller, context, prefix);
 			}
 
-
-			ids  = executor.addQuery(querytext, "OdysseusScript", caller, context);
+			ids = executor.addQuery(querytext, "OdysseusScript", caller, context);
 			monitor.subTask(prefix + "Running query and waiting for stop...");
 			for (int id : ids) {
 				executor.startQuery(id, caller);
 			}
 
 			this.wait();
-
 
 			monitor.worked(1);
 			System.out.println("Evaluation job takes " + nf.format(System.currentTimeMillis() - timeStarted) + " ms");
@@ -214,20 +230,19 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 				executor.removeQuery(id, caller);
 			}
 
-			if (setupTeardownEveryRun){
+			if (setupTeardownEveryRun) {
 				runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 			}
 
 			monitor.subTask(prefix + "Run done. Starting next...");
 		}
 		prefix = "";
-		if (!setupTeardownEveryRun){
+		if (!setupTeardownEveryRun) {
 			runTearDown(monitor, teardownQueryLines, executor, caller, context, prefix);
 		}
 		return counter;
 
 	}
-
 
 	private void runSetup(IProgressMonitor monitor, String setupQueryLines, IServerExecutor executor, ISession caller,
 			Context context, String prefix) throws InterruptedException {
@@ -243,26 +258,27 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 
 	private void runAndWait(IProgressMonitor monitor, IServerExecutor executor, ISession caller, Context context,
 			String message, String query) throws InterruptedException {
-		ids  = executor.addQuery(query, "OdysseusScript", caller, context);
-		monitor.subTask(message);
-		for (int id : ids) {
-			executor.startQuery(id, caller);
-		}
-		// Simple queries need to time and send to QUERY_STOP
-		Thread.sleep(1000);
-		for (int i:ids){
-			// If one query is still running ... wait
-			if (executor.getQueryState(i, caller) == QueryState.RUNNING){
-				this.wait(1000);
+		if (!com.google.common.base.Strings.isNullOrEmpty(query)) {
+			ids = executor.addQuery(query, "OdysseusScript", caller, context);
+			monitor.subTask(message);
+			for (int id : ids) {
+				executor.startQuery(id, caller);
+			}
+			// Simple queries need to time and send to QUERY_STOP
+			Thread.sleep(1000);
+			for (int i : ids) {
+				// If one query is still running ... wait
+				if (executor.getQueryState(i, caller) == QueryState.RUNNING) {
+					this.wait(1000);
+				}
 			}
 		}
-
 	}
 
 	@Override
 	public void planModificationEvent(AbstractPlanModificationEvent<?> eventArgs) {
 		if (eventArgs.getEventType().equals(PlanModificationEventType.QUERY_STOP)) {
-//			System.out.println("query stopped!");
+			// System.out.println("query stopped!");
 			synchronized (this) {
 				this.notifyAll();
 			}
@@ -273,27 +289,35 @@ public class EvaluationJob extends Job implements IPlanModificationListener {
 	protected void canceling() {
 		IServerExecutor executor = (IServerExecutor) Activator.getExecutor();
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
-		for(Integer id : ids){
+		for (Integer id : ids) {
 			executor.stopQuery(id, caller);
 		}
 	}
 
 	private static String fileToLines(IResource res) throws Exception {
-		if (res == null){
+		if (res == null && !(res instanceof IFile)) {
 			return "";
 		}
+		String lines = "";
 		if (!res.isSynchronized(IResource.DEPTH_ZERO)) {
 			res.refreshLocal(IResource.DEPTH_ZERO, null);
 		}
-		IFile file = (IFile) res;
-		String lines = "";
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()))) {
-            String line = br.readLine();
-            while (line != null) {
-                lines = lines + line + "\n";
-                line = br.readLine();
-            }
-        }
+		if (!(res instanceof IFile)){
+			return "";
+		}
+		try {
+			IFile file = (IFile) res;
+
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getContents()))) {
+				String line = br.readLine();
+				while (line != null) {
+					lines = lines + line + "\n";
+					line = br.readLine();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return lines;
 	}
 

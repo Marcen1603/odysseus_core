@@ -113,4 +113,15 @@ public class ParallelInterOperatorSetting extends
 		operatorIds.addAll(super.getValue().keySet());
 		return operatorIds;
 	}
+	
+	/**
+	 * removes the specific configuration of an operator
+	 * 
+	 * @param operatorId
+	 */
+	public void removeConfigurationForOperator(String operatorId) {
+		if (configurationForOperatorExists(operatorId)) {
+			super.getValue().remove(operatorId.toLowerCase());
+		}
+	}
 }

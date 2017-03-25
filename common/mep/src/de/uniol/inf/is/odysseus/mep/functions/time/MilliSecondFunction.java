@@ -27,21 +27,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  */
 public class MilliSecondFunction extends AbstractUnaryDateFunction<Long> {
 
- 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 3692542445584838749L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3692542445584838749L;
 
-    public MilliSecondFunction() {
-        super("millisecond", SDFDatatype.LONG);
-    }
-    
-    @Override
-    public Long getValue() {
+	public MilliSecondFunction() {
+		super("millisecond", SDFDatatype.LONG);
+	}
+
+	@Override
+	public Long getValue() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime((Date) getInputValue(0));
-        return new Long(calendar.get(Calendar.MILLISECOND));
-    }
+		long mills = calendar.getTimeInMillis();
+		return mills;
+	}
 
 }

@@ -27,15 +27,14 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
  * The WindTurbineDashboardPart is a DashboardPart that can visualize a rotating
  * rotor. Incoming stream elements must contain the current rotational speed.
- * 
+ *
  * @author Dennis Nowak
- * 
+ *
  */
 public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 		PaintListener {
@@ -145,13 +144,6 @@ public class WindTurbineDashboardPart extends AbstractDashboardPart implements
 	@Override
 	public void punctuationElementRecieved(IPhysicalOperator senderOperator,
 			IPunctuation point, int port) {
-		// Do nothing
-
-	}
-
-	@Override
-	public void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 		// Do nothing
 
 	}

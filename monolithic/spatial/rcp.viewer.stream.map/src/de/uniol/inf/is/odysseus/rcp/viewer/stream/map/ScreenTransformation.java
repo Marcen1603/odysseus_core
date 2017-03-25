@@ -47,7 +47,7 @@ public class ScreenTransformation {
 		CoordinateTransform trans = transformerRegistry.get(sourceSrid + " " + destSrid);
 		if (sourceSrid == 0 || destSrid == 0)
 			return new CoordinateTransform() {
-				
+
 				@Override
 				public ProjCoordinate transform(ProjCoordinate src, ProjCoordinate tgt) throws Proj4jException {
 					tgt.x = src.x;
@@ -55,13 +55,13 @@ public class ScreenTransformation {
 					tgt.z = src.z;
 					return tgt;
 				}
-				
+
 				@Override
 				public CoordinateReferenceSystem getTargetCRS() {
 					// TODO Auto-generated method stub
 					return null;
 				}
-				
+
 				@Override
 				public CoordinateReferenceSystem getSourceCRS() {
 					// TODO Auto-generated method stub
@@ -83,8 +83,7 @@ public class ScreenTransformation {
 		return trans;
 	}
 
-	public int[] transformCoord(Coordinate coordinate, int srid) {
-
+	public int[] transformCoord(Coordinate coordinate, int srid, boolean latitudeFirst) {
 		int[] transformedCoordinate = new int[2];
 
 		@SuppressWarnings("unused")
@@ -93,8 +92,17 @@ public class ScreenTransformation {
 		int y = 0;
 		long start = 0;
 		long end = 0;
-		ProjCoordinate src = new ProjCoordinate(coordinate.x, coordinate.y);
-		ProjCoordinate trgt = new ProjCoordinate(coordinate.x, coordinate.y);
+		// latitude = y axis on the earth
+		ProjCoordinate src;
+		ProjCoordinate trgt;
+		if (latitudeFirst) {
+			src = new ProjCoordinate(coordinate.y, coordinate.x);
+			trgt = new ProjCoordinate(coordinate.y, coordinate.x);
+		} else {
+			src = new ProjCoordinate(coordinate.x, coordinate.y);
+			trgt = new ProjCoordinate(coordinate.x, coordinate.y);
+		}
+
 		if (srid != screenManager.getSRID()) {
 			start = System.currentTimeMillis();
 			getCoordinateTransform(srid).transform(src, trgt);
@@ -128,6 +136,10 @@ public class ScreenTransformation {
 		// Math.cos(Math.toRadians(coordinate.y))) / Math.PI) / 2 / ymax));
 
 		return transformedCoordinate;
+	}
+
+	public int[] transformCoord(Coordinate coordinate, int srid) {
+		return transformCoord(coordinate, srid, false);
 	}
 
 	public void setScreenManager(ScreenManager screenManager) {

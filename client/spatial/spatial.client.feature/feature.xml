@@ -6,7 +6,7 @@
       provider-name="University of Oldenburg">
 
    <description>
-      Provides the possibility to process spatial data by adding spatial datatypes like point or line and correspoding functions like &quot;crosses&quot; or &quot;contains&quot;
+      Provides the possibility to process spatial data by adding spatial datatypes like point or line and correspoding functions like &quot;crosses&quot; or &quot;contains&quot;. Also adds the map view.
    </description>
 
    <copyright>
@@ -42,6 +42,13 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="com.vividsolutions.jts"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.rcp.viewer.stream.map"
          download-size="0"
          install-size="0"
          version="0.0.0"

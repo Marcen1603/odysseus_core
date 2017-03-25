@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
@@ -68,18 +67,6 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, final ISecurityPunctuation sp, final int port) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (!chartComposite.isDisposed()) {
-					addSecurityPunctuationToChart();
-				}
-			}
-		});
-	}
-
-	@Override
 	public void streamElementReceived(final IPhysicalOperator senderOperator, final IStreamObject<?> element, final int port) {
 		if (!(element instanceof Tuple)) {
 			LOG.error("Lines DashboardPart only applyable for Tuples!");
@@ -97,9 +84,6 @@ public abstract class AbstractChartDashboardPart extends AbstractDashboardPart {
 	}
 
 	protected void addPunctuationToChart() {
-	}
-
-	protected void addSecurityPunctuationToChart() {
 	}
 
 	protected abstract void addStreamElementToChart(IPhysicalOperator senderOperator, Tuple<?> element, int port);

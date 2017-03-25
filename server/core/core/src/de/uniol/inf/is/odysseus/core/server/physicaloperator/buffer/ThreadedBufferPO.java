@@ -14,9 +14,12 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
@@ -28,11 +31,10 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * 
  * @param <R>
  */
-public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
-		extends AbstractPipe<R, R> implements IPhysicalOperatorKeyValueProvider {
+public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>> extends AbstractPipe<R, R>
+		implements IPhysicalOperatorKeyValueProvider, IStatefulOperator {
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(ThreadedBufferPO.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ThreadedBufferPO.class);
 
 	private long elementsRead;
 	private long puncRead;
@@ -53,6 +55,7 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 
 		private boolean terminate = false;
 		private boolean started = false;
+		private boolean paused = false;
 
 		public Runner(String name) {
 			super(name);
@@ -62,11 +65,35 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 			this.terminate = true;
 		}
 
+		public void pause() {
+			synchronized (runner) {
+				paused = true;
+			}
+		}
+
+		public void unpause() {
+			synchronized (runner) {
+				paused = false;
+				runner.notifyAll();
+			}
+		}
+
+		public boolean isPaused() {
+			return this.paused;
+		}
+
 		@Override
 		public void run() {
 			started = true;
 			while (!terminate) {
 				synchronized (runner) {
+					while (isPaused()) {
+						try {
+							runner.wait(100);
+						} catch (InterruptedException e) {
+							LOG.error("Paused ThreadedBuffer was interupted.", e);
+						}
+					}
 					try {
 						if (inputBuffer.isEmpty()) {
 							runner.wait(100);
@@ -75,10 +102,11 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 							}
 						}
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						LOG.error("Paused ThreadedBuffer was interupted.", e);
 					}
 				}
 				// inputBuffer to outputBuffer
+
 				lockInput.lock();
 				List<IStreamable> tmp = outputBuffer;
 				outputBuffer = inputBuffer;
@@ -87,7 +115,25 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 				lockOutput.lock();
 				Iterator<IStreamable> outIter = outputBuffer.iterator();
 				while (outIter.hasNext() && !terminate) {
+					while (isPaused()) {
+						try {
+							synchronized (runner) {
+								runner.wait(100);
+							}
+						} catch (InterruptedException e) {
+							LOG.error("Paused ThreadedBuffer was interupted.", e);
+						}
+					}
 					transferNext(outIter.next());
+					while (isPaused()) {
+						try {
+							synchronized (runner) {
+								runner.wait(100);
+							}
+						} catch (InterruptedException e) {
+							LOG.error("Paused ThreadedBuffer was interupted.", e);
+						}
+					}
 					outIter.remove();
 				}
 				lockOutput.unlock();
@@ -250,6 +296,14 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		this.drainAtClose = drainAtClose;
 	}
 
+	public void pauseRunner() {
+		runner.pause();
+	}
+
+	public void unpauseRunner() {
+		runner.unpause();
+	}
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof ThreadedBufferPO)) {
@@ -267,6 +321,31 @@ public class ThreadedBufferPO<R extends IStreamObject<? extends IMetaAttribute>>
 		}
 
 		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public PointInTime getLatestEndTimestamp() {
+		PointInTime maxTS = null;
+
+		lockInput.lock();
+		Iterator<IStreamable> iter = inputBuffer.iterator();
+		// FIXME synchronization with runner
+		while (iter.hasNext()) {
+			IStreamable e = iter.next();
+			if (!e.isPunctuation()) {
+				maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+			}
+		}
+		iter = outputBuffer.iterator();
+		while (iter.hasNext()) {
+			IStreamable e = iter.next();
+			if (!e.isPunctuation()) {
+				maxTS = PointInTime.max(maxTS, ((IStreamObject<ITimeInterval>) e).getMetadata().getEnd());
+			}
+		}
+		lockInput.unlock();
+		return maxTS;
 	}
 
 }

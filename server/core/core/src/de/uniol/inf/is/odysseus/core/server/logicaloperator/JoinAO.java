@@ -21,6 +21,8 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.Iterator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
@@ -39,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * 
  */
 @LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Join+operator", category = { LogicalOperatorCategory.BASE })
-public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO {
+public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO, IParallelizableOperator {
 
 	private static final long serialVersionUID = 3710951139395164614L;
 
@@ -119,6 +121,16 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		SDFSchema outputSchema = SDFSchema.join(left, right);
 		setOutputSchema(outputSchema);
 		return outputSchema;
+	}
+	
+	@Override
+	public OperatorStateType getStateType() {
+		return IOperatorState.OperatorStateType.PARTITIONED_STATE;
+	}
+
+	@Override
+	public boolean isParallelizable() {
+		return true;
 	}
 
 }

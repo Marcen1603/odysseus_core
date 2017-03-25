@@ -16,14 +16,14 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSenderAOExistsRule extends AbstractTransformationRule<SenderAO> {
+public class TSenderAOExistsRule extends AbstractTransformationRule<AbstractSenderAO> {
 
 	@Override
 	public int getPriority() {
@@ -31,14 +31,14 @@ public class TSenderAOExistsRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public void execute(SenderAO senderAO, TransformationConfiguration trafo) throws RuleException {		
+	public void execute(AbstractSenderAO senderAO, TransformationConfiguration trafo) throws RuleException {		
 		ISink<?> sinkPO = getDataDictionary().getSinkplan(senderAO.getSinkname());		
 		defaultExecute(senderAO, sinkPO, trafo, true, true);
 		sinkPO.setName(senderAO.getSinkname().getResourceName());
 	}
 
 	@Override
-	public boolean isExecutable(SenderAO operator, TransformationConfiguration transformConfig) {		
+	public boolean isExecutable(AbstractSenderAO operator, TransformationConfiguration transformConfig) {		
 		return getDataDictionary().getSinkplan(operator.getSinkname()) != null;
 	}
 
@@ -53,7 +53,7 @@ public class TSenderAOExistsRule extends AbstractTransformationRule<SenderAO> {
 	}
 	
 	@Override
-	public Class<? super SenderAO> getConditionClass() {	
-		return SenderAO.class;
+	public Class<? super AbstractSenderAO> getConditionClass() {	
+		return AbstractSenderAO.class;
 	}
 }

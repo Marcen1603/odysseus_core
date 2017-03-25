@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.transform;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -8,17 +7,18 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ToTupleAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator.KeyValueToTupleAO;
 import de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator.KeyValueToTuplePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToTupleAO>{
+public class TKeyValueToTupleRule extends AbstractTransformationRule<ToTupleAO>{
 
 	@Override
 	public int getPriority() {
@@ -26,14 +26,14 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 	}
 
 	@Override
-	public void execute(KeyValueToTupleAO operator, TransformationConfiguration config) throws RuleException {
+	public void execute(ToTupleAO operator, TransformationConfiguration config) throws RuleException {
 		ISource<?> inputPO = new KeyValueToTuplePO<IMetaAttribute>(operator);
 		this.processMetaData(operator, config, inputPO);
 		defaultExecute(operator, inputPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(KeyValueToTupleAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(ToTupleAO operator, TransformationConfiguration config) {
 		if ((operator.getInputSchema().getType() == KeyValueObject.class) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
@@ -41,7 +41,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 		return false;
 	}
 
-	private void processMetaData(KeyValueToTupleAO operator, TransformationConfiguration config, ISource<?> inputPO) {
+	private void processMetaData(ToTupleAO operator, TransformationConfiguration config, ISource<?> inputPO) {
 		if (inputPO instanceof IMetadataInitializer) {
 			// New: do no create meta data creation and update, if operator
 			// already read the meta data from the source
@@ -87,7 +87,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 
 	@Override
 	public String getName() {
-		return "KeyValueToTupleAO --> KeyValueToTuplePO";
+		return "ToTupleAO --> KeyValueToTuplePO";
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class TKeyValueToTupleRule extends AbstractTransformationRule<KeyValueToT
 	}
 
 	@Override
-	public Class<? super KeyValueToTupleAO> getConditionClass() {
-		return KeyValueToTupleAO.class;
+	public Class<? super ToTupleAO> getConditionClass() {
+		return ToTupleAO.class;
 	}
 }

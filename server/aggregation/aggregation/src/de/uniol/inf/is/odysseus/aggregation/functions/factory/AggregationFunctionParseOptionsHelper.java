@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.aggregation.functions.factory;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -249,6 +250,64 @@ public class AggregationFunctionParseOptionsHelper {
 			throw new IllegalArgumentException("Could not parse parameter " + key
 					+ ". Value should be of type String but is: " + value.getClass());
 		}
+	}
+
+	/**
+	 * 
+	 * The value should have the following structure:
+	 * 
+	 * <pre>
+	 * [[name1, value1],[name2, value2]]
+	 * </pre>
+	 * 
+	 * the return map is
+	 * 
+	 * <pre>
+	 * name1=>value1 name2=>value2
+	 * </pre>
+	 * 
+	 * key and value are string.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             when value is not of type {@code String}.
+	 * 
+	 * @param parameters
+	 *            the map as string-representation
+	 * @param key
+	 *            key of the parameter in FUNCTION-parameter
+	 * @return
+	 */
+	public static Map<String, String> getFunctionParameterAsMap(final Map<String, Object> parameters,
+			final String key) {
+
+		if (key == null) {
+			return null;
+		}
+
+		final Object value = getFunctionParameter(parameters, key);
+		if (value instanceof String) {
+			String[] mapValues = ((String) value).split("],");
+
+			Map<String, String> functionParameterMap = new HashMap<>();
+
+			for (int indexMapValue = 0; indexMapValue < mapValues.length; indexMapValue++) {
+				String mapValue = mapValues[indexMapValue];
+
+				mapValue = mapValue.replace("[", "");
+				mapValue = mapValue.replace("]", "");
+				mapValue = mapValue.replace("\"", "");
+
+				String[] keyValue = mapValue.split(",");
+				functionParameterMap.put(keyValue[0], keyValue[1]);
+
+			}
+
+			return functionParameterMap;
+
+		}
+
+		throw new IllegalArgumentException("Could not parse parameter " + key
+				+ ". Value should be of type String in structure [[],[]] but is: " + value.getClass());
 	}
 
 	/**

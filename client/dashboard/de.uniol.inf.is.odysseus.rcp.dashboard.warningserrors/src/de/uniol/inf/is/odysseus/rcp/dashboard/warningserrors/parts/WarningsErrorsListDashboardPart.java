@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Entry;
 import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Error;
@@ -33,9 +32,9 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.warningserrors.data.Warning;
  * if there are messages from the same type, but with a differenr priority, the
  * old prioryty will be replaced, because a message can only exist in one
  * priority each time.
- * 
+ *
  * @author MarkMilster
- * 
+ *
  */
 public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
@@ -45,7 +44,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * In the updateInterval the List will be redrawn.
-	 * 
+	 *
 	 * @return the updateInterval
 	 */
 	public long getUpdateInterval() {
@@ -54,7 +53,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * In the updateInterval the List will be redrawn.
-	 * 
+	 *
 	 * @param updateInterval
 	 *            the updateInterval to set
 	 */
@@ -72,7 +71,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true, this List will show the Messages, which represent a warning.
-	 * 
+	 *
 	 * @return the showWarnings
 	 */
 	public boolean isShowWarnings() {
@@ -81,7 +80,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true, this List will show the Messages, which represent a warning.
-	 * 
+	 *
 	 * @param showWarnings
 	 *            the showWarnings to set
 	 */
@@ -91,7 +90,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true, this List will show the Messages, which represent an error.
-	 * 
+	 *
 	 * @return the showErrors
 	 */
 	public boolean isShowErrors() {
@@ -100,7 +99,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * If true, this List will show the Messages, which represent an error.
-	 * 
+	 *
 	 * @param showErrors
 	 *            the showErrors to set
 	 */
@@ -117,7 +116,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the timestamp in the tuples of the data-stream
-	 * 
+	 *
 	 * @return the timestampIndex
 	 */
 	public int getTimestampIndex() {
@@ -126,7 +125,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * Index of the timestamp in the tuples of the data-stream
-	 * 
+	 *
 	 * @param timestampIndex
 	 *            the timestampIndex to set
 	 */
@@ -180,7 +179,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * This method let the updateThread sleep
-	 * 
+	 *
 	 * @param length
 	 *            Time to sleep
 	 */
@@ -265,7 +264,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * This method searches in the stored tuples for a message by the specified
 	 * wka with the specified value_type
-	 * 
+	 *
 	 * @param wka_id
 	 *            The wka_id to search for
 	 * @param type
@@ -288,7 +287,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 	/**
 	 * This method searches in the drawn entrys for a message by the specified
 	 * wka with the specified value_type
-	 * 
+	 *
 	 * @param wka_id
 	 *            The wka_id to search for
 	 * @param type
@@ -313,15 +312,9 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 			IPunctuation point, int port) {
 	}
 
-	@Override
-	public void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		punctuationElementReceived(senderOperator, sp, port);
-	}
-
 	/**
 	 * The max number of messages shown by this list
-	 * 
+	 *
 	 * @param maxElements
 	 */
 	public void setMaxElements(int maxElements) {
@@ -330,7 +323,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The max number of messages shown by this list
-	 * 
+	 *
 	 * @return the max number if messages as int
 	 */
 	public int getMaxElements() {
@@ -368,7 +361,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the wka-ID
-	 * 
+	 *
 	 * @return the wkaIdIndex
 	 */
 	public int getWkaIdIndex() {
@@ -377,7 +370,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the wka-ID
-	 * 
+	 *
 	 * @param wkaIdIndex
 	 *            the wkaIdIndex to set
 	 */
@@ -387,7 +380,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the farm-ID
-	 * 
+	 *
 	 * @return the farmIdIndex
 	 */
 	public int getFarmIdIndex() {
@@ -396,7 +389,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the farm-ID
-	 * 
+	 *
 	 * @param farmIdIndex
 	 *            the farmIdIndex to set
 	 */
@@ -406,7 +399,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the valueType
-	 * 
+	 *
 	 * @return the valueTypeIndex
 	 */
 	public int getValueTypeIndex() {
@@ -415,7 +408,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the valueType
-	 * 
+	 *
 	 * @param valueTypeIndex
 	 *            the valueTypeIndex to set
 	 */
@@ -425,7 +418,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the warningFlag
-	 * 
+	 *
 	 * @return the warningIndex
 	 */
 	public int getWarningIndex() {
@@ -434,7 +427,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the warningFlag
-	 * 
+	 *
 	 * @param warningIndex
 	 *            the warningIndex to set
 	 */
@@ -444,7 +437,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the errorFlag
-	 * 
+	 *
 	 * @return the errorIndex
 	 */
 	public int getErrorIndex() {
@@ -453,7 +446,7 @@ public class WarningsErrorsListDashboardPart extends AbstractDashboardPart {
 
 	/**
 	 * The position on the tuples, which represent the errorFlag
-	 * 
+	 *
 	 * @param errorIndex
 	 *            the errorIndex to set
 	 */

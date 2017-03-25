@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,7 +78,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.CopyAction;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.command.GraphPalette;
@@ -128,7 +127,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(
 	 * java.util.Collection)
@@ -155,7 +154,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#dispose()
 	 */
@@ -202,18 +201,12 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(
-			IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-
-	}
-
-	@Override
 	public void onLoad(Map<String, String> saved) {
 		super.onLoad(saved);
 		setBackgroundFile(saved.get(BACKGROUND_FILE));
 		setBackgroundFileStretch(Boolean.parseBoolean(saved
 				.get(BACKGROUND_FILE_STRETCH)));
-		// Hint: Do not create a new GraphicsLayer because images will not be 
+		// Hint: Do not create a new GraphicsLayer because images will not be
 		// loaded again!
 		if (this.pictogramGroup == null) {
 			this.pictogramGroup = new GraphicsLayer(getBackgroundFile(),
@@ -319,7 +312,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void repaintBackground() {
 		if (this.pictogramGroup != null) {
@@ -425,7 +418,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.gef.commands.CommandStackListener#commandStackChanged(java
 	 * .util.EventObject)
@@ -436,7 +429,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void updateActions() {
 		Iterator<?> iterator = actionRegistry.getActions();
@@ -492,7 +485,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.
 	 * IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
@@ -509,7 +502,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override

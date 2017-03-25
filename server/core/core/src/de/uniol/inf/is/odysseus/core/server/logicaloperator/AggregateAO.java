@@ -26,6 +26,8 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -46,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregat
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
 @LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = { LogicalOperatorCategory.BASE })
-public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
+public class AggregateAO extends UnaryLogicalOp implements IStatefulAO, IParallelizableOperator {
 	private static final long serialVersionUID = 2539966167342852544L;
 
 	final private Map<SDFSchema, Map<AggregateFunction, SDFAttribute>> aggregations;
@@ -355,6 +357,21 @@ public class AggregateAO extends UnaryLogicalOp implements IStatefulAO {
 			addError("Minimum value for buffersize is 1");
 		}
 		
+		return true;
+	}
+	
+	@Override
+	public OperatorStateType getStateType() {
+		if (this.groupingAttributes.isEmpty()) {
+			return IOperatorState.OperatorStateType.ARBITRARY_STATE;
+		} else {
+			return IOperatorState.OperatorStateType.PARTITIONED_STATE;
+		}
+	}
+
+	@Override
+	public boolean isParallelizable() {
+		//FIXME check expressions
 		return true;
 	}
 

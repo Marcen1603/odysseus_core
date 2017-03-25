@@ -5,8 +5,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.IMovingObjectDataStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.SpatialDataStructureProvider;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.ISpatioTemporalDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.SpatioTemporalDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.STDataStructureAO;
 
 /**
@@ -22,11 +22,12 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.STDataStructureAO;
  */
 public class STDataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	private IMovingObjectDataStructure dataStructure;
+	private ISpatioTemporalDataStructure dataStructure;
 
 	public STDataStructurePO(STDataStructureAO ao) {
-		this.dataStructure = SpatialDataStructureProvider.getInstance().getOrCreateDataStructure(
-				ao.getDataStructureName(), ao.getDataStructureType(), ao.getGeometryPosition());
+		int geometryPosition = ao.getInputSchema(0).findAttributeIndex(ao.getGeometryAttribute());
+		this.dataStructure = SpatioTemporalDataStructureProvider.getInstance()
+				.getOrCreateDataStructure(ao.getDataStructureName(), ao.getDataStructureType(), geometryPosition);
 	}
 
 	@Override
