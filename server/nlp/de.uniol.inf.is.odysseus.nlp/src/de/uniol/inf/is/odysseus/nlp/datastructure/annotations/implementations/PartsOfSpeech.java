@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 
 public class PartsOfSpeech extends Annotation {
@@ -18,6 +19,12 @@ public class PartsOfSpeech extends Annotation {
 	@Override
 	public Object toObject() {
 		return tags;
+	}
+	
+
+	@Override
+	public IClone clone(){
+		return new PartsOfSpeech(tags.clone());
 	}
 
 }

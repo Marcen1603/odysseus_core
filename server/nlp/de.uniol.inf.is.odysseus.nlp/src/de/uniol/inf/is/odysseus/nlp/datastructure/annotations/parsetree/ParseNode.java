@@ -1,13 +1,14 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.IKeyValueObject;
 
-public class ParseNode implements IKeyValueObject{
+public class ParseNode implements IKeyValueObject, IClone{
 	
 	protected String tag;
-	private ParseNode[] children;
+	protected ParseNode[] children;
 	protected String text;
 
 	public ParseNode(String tag, String text){
@@ -38,5 +39,13 @@ public class ParseNode implements IKeyValueObject{
 
 	public String getText() {
 		return text;
+	}
+
+	@Override
+	public IClone clone(){
+		ParseNode[] newNodes = new ParseNode[children.length];
+		for(int i = 0; i < children.length; i++)
+			newNodes[i] = (ParseNode) children[i].clone();
+		return new ParseNode(tag, text, newNodes);
 	}
 }

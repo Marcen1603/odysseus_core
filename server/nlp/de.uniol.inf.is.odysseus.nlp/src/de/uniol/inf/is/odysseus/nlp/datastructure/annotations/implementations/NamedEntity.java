@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 
@@ -35,6 +36,16 @@ public class NamedEntity extends Annotation{
 	
 	public String getType(){
 		return type;
+	}
+	
+
+	@Override
+	public IClone clone(){
+		NamedEntity entity = new NamedEntity(type);
+		entity.namedEntities = new HashSet<Span>();
+		for(Span span : namedEntities)
+			entity.namedEntities.add((Span) span.clone());
+		return entity;
 	}
 
 }

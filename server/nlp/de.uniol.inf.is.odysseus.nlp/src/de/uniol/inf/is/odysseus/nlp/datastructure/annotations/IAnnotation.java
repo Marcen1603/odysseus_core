@@ -2,10 +2,12 @@ package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.IClone;
+
 /**
  * Parent-interface for all annotations.
  */
-public interface IAnnotation extends IKeyValueObject {
+public interface IAnnotation extends IKeyValueObject, IClone {
 	/**
 	 * @return identifier of the annotation
 	 */

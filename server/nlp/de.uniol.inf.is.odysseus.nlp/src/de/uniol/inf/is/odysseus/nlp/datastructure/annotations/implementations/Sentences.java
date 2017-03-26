@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Span;
 
@@ -35,4 +36,11 @@ public class Sentences extends Annotation {
 		return sentences;
 	}
 
+	@Override
+	public IClone clone(){
+		Span[] newSpans = new Span[sentences.length];
+		for(int i = 0; i < sentences.length; i++)
+			newSpans[i] = (Span) sentences[i].clone();
+		return new Sentences(newSpans);
+	}
 }

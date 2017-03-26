@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 
 public class Lemmas extends Annotation {
@@ -20,4 +21,8 @@ public class Lemmas extends Annotation {
 		return lemmas;
 	}
 
+	@Override
+	public IClone clone(){
+		return new Lemmas(lemmas.clone());
+	}
 }

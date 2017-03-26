@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
@@ -35,6 +36,13 @@ public class NamedEntities extends Annotation {
     	}
 		return keyvalue;
 	}
-	
+
+	@Override
+	public IClone clone(){
+		Map<String, IAnnotation> annotations = cloneAnnotations();
+		NamedEntities namedentities = new NamedEntities();
+		namedentities.annotations = annotations;
+		return namedentities;
+	}
 
 }

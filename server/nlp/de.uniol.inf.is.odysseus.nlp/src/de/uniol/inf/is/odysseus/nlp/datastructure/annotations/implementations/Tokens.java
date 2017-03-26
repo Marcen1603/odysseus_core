@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;;
 
 /**
@@ -25,4 +26,8 @@ public class Tokens extends Annotation {
 		return tokens;
 	}
 
+	@Override
+	public IClone clone(){
+		return new Tokens(tokens.clone());
+	}
 }

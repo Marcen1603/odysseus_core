@@ -1,11 +1,15 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 
+import java.util.HashSet;
+
+import de.uniol.inf.is.odysseus.core.IClone;
+import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.NamedEntity;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 
 /**
  * Contains the beginning and end index of an integer range. 
  */
-public class Span {
+public class Span implements IClone{
 	int start, end;
 	private String text;
 	
@@ -24,6 +28,17 @@ public class Span {
 		this.start = start;
 		this.end = end;
 		this.text = text;
+	}
+	
+
+	@Override
+	public IClone clone(){
+		try {
+			return new Span(start, end, text);
+		} catch (InvalidSpanException ignored) {
+			//will never be thrown
+			return null;
+		}
 	}
 	
 	public int getStart() {

@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
 
 public class Chunks extends Annotation  {
@@ -16,4 +17,8 @@ public class Chunks extends Annotation  {
 		return chunkTags;
 	}
 
+	@Override
+	public IClone clone(){
+		return new Chunks(chunkTags.clone());
+	}
 }

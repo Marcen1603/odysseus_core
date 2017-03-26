@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.Annotation;
@@ -23,4 +24,12 @@ public class Parsed extends Annotation {
 		return keyvalue;
 	}
 
+	@Override
+	public IClone clone(){
+		ParseTree[] newTrees = new ParseTree[parseTrees.length];
+		for(int i=0; i < parseTrees.length; i++){
+			newTrees[i] = (ParseTree) parseTrees[i].clone();
+		}
+		return new Parsed(newTrees);
+	}
 }

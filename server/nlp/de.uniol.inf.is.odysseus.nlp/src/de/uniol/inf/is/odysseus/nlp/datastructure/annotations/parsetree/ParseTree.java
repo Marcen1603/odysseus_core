@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations.parsetree;
 
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
@@ -16,6 +17,13 @@ public class ParseTree extends ParseNode{
 	}
 
 
+	@Override
+	public IClone clone(){
+		ParseNode[] newNodes = new ParseNode[children.length];
+		for(int i = 0; i < children.length; i++)
+			newNodes[i] = (ParseNode) children[i].clone();
+		return new ParseTree(tag, text, newNodes);
+	}
 	
 	
 }
