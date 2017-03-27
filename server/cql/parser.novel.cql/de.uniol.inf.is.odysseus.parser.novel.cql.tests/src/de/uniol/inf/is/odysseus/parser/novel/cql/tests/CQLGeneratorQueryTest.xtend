@@ -151,6 +151,18 @@ class CQLGeneratorQueryTest
         , new CQLDictionaryHelper()) 
     }
     
+	@Test def void RenameTest7()
+    {
+        assertCorrectGenerated
+        (
+            "SELECT a.attr1 FROM stream1 AS a"
+            ,
+            "
+			 operator_1 = RENAME({aliases=['attr1','a.attr1'], pairs='true'}, stream1)
+			 operator_2 = MAP({expressions=['a.attr1']}, operator_1)"
+        , new CQLDictionaryHelper()) 
+    }
+    
 	@Test def void RenameTest4()
     {
         assertCorrectGenerated
@@ -427,10 +439,23 @@ class CQLGeneratorQueryTest
         (
             "SELECT a.attr1 AS aid, b.attr1 AS d, b.attr1 FROM stream1 AS a, stream1 AS b WHERE aid=b.attr1;"
             ,
-            "operator_1 = RENAME({aliases=['attr1','aid'],pairs='true'},stream1)
-			 operator_2 = RENAME({aliases=['attr1','d','attr2','stream1.attr2#1'],pairs='true'},stream1)
-			 operator_3 = SELECT({predicate='aid==stream1.attr1'},JOIN(operator_1,operator_2))
-			 operator_4 = MAP({expressions=['aid','d','b.attr1','b.attr1']},operator_3)"
+            "operator_1=RENAME({aliases=['attr1','aid'],pairs='true'},stream1)
+ 			 operator_2=RENAME({aliases=['attr1','d','attr2','stream1.attr2#1'],pairs='true'},stream1)
+ 			 operator_3=RENAME({aliases=['attr1','b.attr1','attr2','stream1.attr2#2'],pairs='true'},stream1)
+			 operator_4=SELECT({predicate='aid==b.attr1'},JOIN(operator_1,JOIN(operator_2,operator_3)))
+			 operator_5=MAP({expressions=['aid','d','b.attr1']},operator_4)"
+        , new CQLDictionaryHelper())
+    }
+	
+ 	@Test def void SelectAttr1Test8() 
+    { 
+        assertCorrectGenerated
+        (
+            "SELECT b.attr1 FROM stream1 AS b WHERE b.attr1 < 150.0;"
+            ,
+            "operator_1=RENAME({aliases=['attr1','b.attr1'],pairs='true'},stream1)
+			 operator_2=SELECT({predicate='b.attr1<150.0'},operator_1)
+			 operator_3=MAP({expressions=['b.attr1']},operator_2)"
         , new CQLDictionaryHelper())
     }
 	
@@ -981,9 +1006,10 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT DolToEur(attr1), attr1 FROM stream1;"
-			,
-			"operator_1 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'stream1.attr1']}, stream1)"
+			"SELECT b.attr1, DolToEur(b.attr2) AS euroPrice FROM stream1 [UNBOUNDED] AS b;"
+			,//TODO duplicated operator
+			"operator_1=RENAME({aliases=['attr1','b.attr1','attr2','b.attr2'],pairs='true'},stream1)
+			 operator_2=MAP({expressions=['b.attr1',['DolToEur(b.attr2)','euroPrice']]}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -1006,9 +1032,8 @@ class CQLGeneratorQueryTest
 			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 AS a1 FROM stream1;"
 			,
 			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
-			 operator_2=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
-             operator_3=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},operator_2)
-			 operator_4=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0','a1']},operator_3)"
+			 operator_2=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},operator_1)
+			 operator_3=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0','a1']},operator_2)"//TODO one attribute is too much
 			, new CQLDictionaryHelper()
 		)
 	}
