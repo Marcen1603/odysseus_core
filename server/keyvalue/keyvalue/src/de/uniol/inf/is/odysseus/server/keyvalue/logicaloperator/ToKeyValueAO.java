@@ -21,17 +21,33 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ToKeyValue", doc = "Converts an input object a key-value/JSON object", category = { LogicalOperatorCategory.TRANSFORM })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ToKeyValue", doc = "Converts an input object a key-value/JSON object", category = {
+		LogicalOperatorCategory.TRANSFORM })
 public class ToKeyValueAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 3215936185841514847L;
 
+	private String template;
+
 	public ToKeyValueAO() {
+		this.template = "";
 	}
 
 	public ToKeyValueAO(ToKeyValueAO tupleToKeyValue) {
 		super(tupleToKeyValue);
+		this.template = tupleToKeyValue.getTemplate();
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	@Parameter(type = StringParameter.class, optional = true, doc = "Template for the JSON object. Variables have to be in <brackets> and their names have to match the tuples attribute names.")
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 	@Override
@@ -39,14 +55,12 @@ public class ToKeyValueAO extends UnaryLogicalOp {
 		return new ToKeyValueAO(this);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(
-				getInputSchema(0).getURI(),
-				(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0)
-						.getAttributes(), getInputSchema());
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(0).getURI(),
+				(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0).getAttributes(),
+				getInputSchema());
 
 		setOutputSchema(newOutputSchema);
 		return newOutputSchema;
