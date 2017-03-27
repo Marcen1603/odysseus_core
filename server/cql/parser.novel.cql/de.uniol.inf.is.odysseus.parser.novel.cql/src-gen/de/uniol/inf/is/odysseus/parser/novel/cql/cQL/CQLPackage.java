@@ -980,49 +980,13 @@ public interface CQLPackage extends EPackage
   int COMMAND = 20;
 
   /**
-   * The feature id for the '<em><b>Keyword1</b></em>' attribute.
+   * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int COMMAND__KEYWORD1 = 0;
-
-  /**
-   * The feature id for the '<em><b>Keyword2</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMMAND__KEYWORD2 = 1;
-
-  /**
-   * The feature id for the '<em><b>Value1</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMMAND__VALUE1 = 2;
-
-  /**
-   * The feature id for the '<em><b>Keyword3</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMMAND__KEYWORD3 = 3;
-
-  /**
-   * The feature id for the '<em><b>Value2</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMMAND__VALUE2 = 4;
+  int COMMAND__NAME = 0;
 
   /**
    * The number of structural features of the '<em>Command</em>' class.
@@ -1031,7 +995,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int COMMAND_FEATURE_COUNT = 5;
+  int COMMAND_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.
@@ -1247,6 +1211,208 @@ public interface CQLPackage extends EPackage
   int FUNCTION_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl <em>Drop Command</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropCommand()
+   * @generated
+   */
+  int DROP_COMMAND = 27;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_COMMAND__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Stream</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_COMMAND__STREAM = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Exists</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_COMMAND__EXISTS = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Drop Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl <em>User Command</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserCommand()
+   * @generated
+   */
+  int USER_COMMAND = 28;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_COMMAND__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Subject</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_COMMAND__SUBJECT = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Subject Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_COMMAND__SUBJECT_NAME = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Password</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_COMMAND__PASSWORD = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The number of structural features of the '<em>User Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl <em>Rights Command</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsCommand()
+   * @generated
+   */
+  int RIGHTS_COMMAND = 29;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_COMMAND__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Operations</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_COMMAND__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Operations2</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_COMMAND__OPERATIONS2 = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>User</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_COMMAND__USER = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The number of structural features of the '<em>Rights Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl <em>Rights Role Command</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsRoleCommand()
+   * @generated
+   */
+  int RIGHTS_ROLE_COMMAND = 30;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_ROLE_COMMAND__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Operations</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_ROLE_COMMAND__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>User</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_ROLE_COMMAND__USER = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Rights Role Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_ROLE_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1254,7 +1420,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOr()
    * @generated
    */
-  int OR = 27;
+  int OR = 31;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1291,7 +1457,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAnd()
    * @generated
    */
-  int AND = 28;
+  int AND = 32;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1328,7 +1494,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getEquality()
    * @generated
    */
-  int EQUALITY = 29;
+  int EQUALITY = 33;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1374,7 +1540,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComparision()
    * @generated
    */
-  int COMPARISION = 30;
+  int COMPARISION = 34;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1420,7 +1586,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getPlus()
    * @generated
    */
-  int PLUS = 31;
+  int PLUS = 35;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1457,7 +1623,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMinus()
    * @generated
    */
-  int MINUS = 32;
+  int MINUS = 36;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1494,7 +1660,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMulOrDiv()
    * @generated
    */
-  int MUL_OR_DIV = 33;
+  int MUL_OR_DIV = 37;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1540,7 +1706,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBracket()
    * @generated
    */
-  int BRACKET = 34;
+  int BRACKET = 38;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -1568,7 +1734,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNOT()
    * @generated
    */
-  int NOT = 35;
+  int NOT = 39;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -1596,7 +1762,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
    * @generated
    */
-  int INT_CONSTANT = 36;
+  int INT_CONSTANT = 40;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1624,7 +1790,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
    * @generated
    */
-  int FLOAT_CONSTANT = 37;
+  int FLOAT_CONSTANT = 41;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1652,7 +1818,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
    * @generated
    */
-  int STRING_CONSTANT = 38;
+  int STRING_CONSTANT = 42;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1680,7 +1846,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
    * @generated
    */
-  int BOOL_CONSTANT = 39;
+  int BOOL_CONSTANT = 43;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1708,7 +1874,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeRef()
    * @generated
    */
-  int ATTRIBUTE_REF = 40;
+  int ATTRIBUTE_REF = 44;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1736,7 +1902,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateKeyword()
    * @generated
    */
-  int CREATE_KEYWORD = 41;
+  int CREATE_KEYWORD = 45;
 
 
   /**
@@ -2566,59 +2732,15 @@ public interface CQLPackage extends EPackage
   EClass getCommand();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1 <em>Keyword1</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword1</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1()
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName()
    * @see #getCommand()
    * @generated
    */
-  EAttribute getCommand_Keyword1();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2 <em>Keyword2</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword2</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2()
-   * @see #getCommand()
-   * @generated
-   */
-  EAttribute getCommand_Keyword2();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1 <em>Value1</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value1</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1()
-   * @see #getCommand()
-   * @generated
-   */
-  EAttribute getCommand_Value1();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3 <em>Keyword3</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword3</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3()
-   * @see #getCommand()
-   * @generated
-   */
-  EAttribute getCommand_Keyword3();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2 <em>Value2</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value2</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2()
-   * @see #getCommand()
-   * @generated
-   */
-  EAttribute getCommand_Value2();
+  EAttribute getCommand_Name();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased <em>Window Timebased</em>}'.
@@ -2789,6 +2911,156 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EAttribute getFunction_Name();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand <em>Drop Command</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Drop Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand
+   * @generated
+   */
+  EClass getDropCommand();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getStream <em>Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Stream</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getStream()
+   * @see #getDropCommand()
+   * @generated
+   */
+  EAttribute getDropCommand_Stream();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getExists <em>Exists</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exists</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getExists()
+   * @see #getDropCommand()
+   * @generated
+   */
+  EAttribute getDropCommand_Exists();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand <em>User Command</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>User Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand
+   * @generated
+   */
+  EClass getUserCommand();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubject <em>Subject</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Subject</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubject()
+   * @see #getUserCommand()
+   * @generated
+   */
+  EAttribute getUserCommand_Subject();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubjectName <em>Subject Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Subject Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubjectName()
+   * @see #getUserCommand()
+   * @generated
+   */
+  EAttribute getUserCommand_SubjectName();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getPassword <em>Password</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Password</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getPassword()
+   * @see #getUserCommand()
+   * @generated
+   */
+  EAttribute getUserCommand_Password();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand <em>Rights Command</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Rights Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand
+   * @generated
+   */
+  EClass getRightsCommand();
+
+  /**
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations <em>Operations</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Operations</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations()
+   * @see #getRightsCommand()
+   * @generated
+   */
+  EAttribute getRightsCommand_Operations();
+
+  /**
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations2 <em>Operations2</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Operations2</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations2()
+   * @see #getRightsCommand()
+   * @generated
+   */
+  EAttribute getRightsCommand_Operations2();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getUser <em>User</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>User</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getUser()
+   * @see #getRightsCommand()
+   * @generated
+   */
+  EAttribute getRightsCommand_User();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand <em>Rights Role Command</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Rights Role Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand
+   * @generated
+   */
+  EClass getRightsRoleCommand();
+
+  /**
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getOperations <em>Operations</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Operations</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getOperations()
+   * @see #getRightsRoleCommand()
+   * @generated
+   */
+  EAttribute getRightsRoleCommand_Operations();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getUser <em>User</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>User</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getUser()
+   * @see #getRightsRoleCommand()
+   * @generated
+   */
+  EAttribute getRightsRoleCommand_User();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
@@ -3886,44 +4158,12 @@ public interface CQLPackage extends EPackage
     EClass COMMAND = eINSTANCE.getCommand();
 
     /**
-     * The meta object literal for the '<em><b>Keyword1</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute COMMAND__KEYWORD1 = eINSTANCE.getCommand_Keyword1();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword2</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMMAND__KEYWORD2 = eINSTANCE.getCommand_Keyword2();
-
-    /**
-     * The meta object literal for the '<em><b>Value1</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMMAND__VALUE1 = eINSTANCE.getCommand_Value1();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword3</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMMAND__KEYWORD3 = eINSTANCE.getCommand_Keyword3();
-
-    /**
-     * The meta object literal for the '<em><b>Value2</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMMAND__VALUE2 = eINSTANCE.getCommand_Value2();
+    EAttribute COMMAND__NAME = eINSTANCE.getCommand_Name();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.
@@ -4064,6 +4304,126 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EAttribute FUNCTION__NAME = eINSTANCE.getFunction_Name();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl <em>Drop Command</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropCommand()
+     * @generated
+     */
+    EClass DROP_COMMAND = eINSTANCE.getDropCommand();
+
+    /**
+     * The meta object literal for the '<em><b>Stream</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DROP_COMMAND__STREAM = eINSTANCE.getDropCommand_Stream();
+
+    /**
+     * The meta object literal for the '<em><b>Exists</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DROP_COMMAND__EXISTS = eINSTANCE.getDropCommand_Exists();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl <em>User Command</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserCommand()
+     * @generated
+     */
+    EClass USER_COMMAND = eINSTANCE.getUserCommand();
+
+    /**
+     * The meta object literal for the '<em><b>Subject</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_COMMAND__SUBJECT = eINSTANCE.getUserCommand_Subject();
+
+    /**
+     * The meta object literal for the '<em><b>Subject Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_COMMAND__SUBJECT_NAME = eINSTANCE.getUserCommand_SubjectName();
+
+    /**
+     * The meta object literal for the '<em><b>Password</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_COMMAND__PASSWORD = eINSTANCE.getUserCommand_Password();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl <em>Rights Command</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsCommand()
+     * @generated
+     */
+    EClass RIGHTS_COMMAND = eINSTANCE.getRightsCommand();
+
+    /**
+     * The meta object literal for the '<em><b>Operations</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RIGHTS_COMMAND__OPERATIONS = eINSTANCE.getRightsCommand_Operations();
+
+    /**
+     * The meta object literal for the '<em><b>Operations2</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RIGHTS_COMMAND__OPERATIONS2 = eINSTANCE.getRightsCommand_Operations2();
+
+    /**
+     * The meta object literal for the '<em><b>User</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RIGHTS_COMMAND__USER = eINSTANCE.getRightsCommand_User();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl <em>Rights Role Command</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsRoleCommand()
+     * @generated
+     */
+    EClass RIGHTS_ROLE_COMMAND = eINSTANCE.getRightsRoleCommand();
+
+    /**
+     * The meta object literal for the '<em><b>Operations</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RIGHTS_ROLE_COMMAND__OPERATIONS = eINSTANCE.getRightsRoleCommand_Operations();
+
+    /**
+     * The meta object literal for the '<em><b>User</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RIGHTS_ROLE_COMMAND__USER = eINSTANCE.getRightsRoleCommand_User();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.

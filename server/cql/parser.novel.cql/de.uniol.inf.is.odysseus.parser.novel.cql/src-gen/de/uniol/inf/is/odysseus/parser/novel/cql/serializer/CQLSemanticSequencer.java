@@ -14,7 +14,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatemen
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1;
@@ -23,6 +22,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
@@ -35,6 +35,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition;
@@ -43,6 +45,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased;
 import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
@@ -127,16 +130,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.BRACKET:
 				sequence_Primary(context, (Bracket) semanticObject); 
 				return; 
-			case CQLPackage.COMMAND:
-				if (rule == grammarAccess.getCommandRule()) {
-					sequence_Command(context, (Command) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getDropRule()) {
-					sequence_Drop(context, (Command) semanticObject); 
-					return; 
-				}
-				else break;
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
 				return; 
@@ -160,6 +153,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.DATA_TYPE:
 				sequence_DataType(context, (DataType) semanticObject); 
+				return; 
+			case CQLPackage.DROP_COMMAND:
+				sequence_DropCommand(context, (DropCommand) semanticObject); 
 				return; 
 			case CQLPackage.EQUALITY:
 				sequence_Equalitiy(context, (Equality) semanticObject); 
@@ -262,6 +258,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.PLUS:
 				sequence_PlusOrMinus(context, (Plus) semanticObject); 
 				return; 
+			case CQLPackage.RIGHTS_COMMAND:
+				sequence_RightsCommand(context, (RightsCommand) semanticObject); 
+				return; 
+			case CQLPackage.RIGHTS_ROLE_COMMAND:
+				sequence_RightsRoleCommand(context, (RightsRoleCommand) semanticObject); 
+				return; 
 			case CQLPackage.SELECT:
 				sequence_Select(context, (Select) semanticObject); 
 				return; 
@@ -319,6 +321,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case CQLPackage.USER_COMMAND:
+				sequence_UserCommand(context, (UserCommand) semanticObject); 
+				return; 
 			case CQLPackage.WINDOW_TIMEBASED:
 				sequence_Window_Timebased(context, (Window_Timebased) semanticObject); 
 				return; 
@@ -687,36 +692,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Command returns Command
-	 *
-	 * Constraint:
-	 *     (keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID)
-	 */
-	protected void sequence_Command(ISerializationContext context, Command semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD1) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD1));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD2) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD2));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__VALUE1) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__VALUE1));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD3) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__KEYWORD3));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__VALUE2) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__VALUE2));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getCommandAccess().getKeyword1IDTerminalRuleCall_0_0(), semanticObject.getKeyword1());
-		feeder.accept(grammarAccess.getCommandAccess().getKeyword2IDTerminalRuleCall_1_0(), semanticObject.getKeyword2());
-		feeder.accept(grammarAccess.getCommandAccess().getValue1IDTerminalRuleCall_2_0(), semanticObject.getValue1());
-		feeder.accept(grammarAccess.getCommandAccess().getKeyword3IDTerminalRuleCall_3_0(), semanticObject.getKeyword3());
-		feeder.accept(grammarAccess.getCommandAccess().getValue2IDTerminalRuleCall_4_0(), semanticObject.getValue2());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Expression returns Comparision
 	 *     Or returns Comparision
 	 *     Or.Or_1_0 returns Comparision
@@ -897,12 +872,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Drop returns Command
+	 *     DropCommand returns DropCommand
 	 *
 	 * Constraint:
-	 *     (keyword1='DROP' (keyword2='SINK' | keyword2='STREAM') value1=ID keyword3='IF'?)
+	 *     ((name='SINK' | name='STREAM' | name='VIEW') stream=ID exists='IF'?)
 	 */
-	protected void sequence_Drop(ISerializationContext context, Command semanticObject) {
+	protected void sequence_DropCommand(ISerializationContext context, DropCommand semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1224,6 +1199,33 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     RightsCommand returns RightsCommand
+	 *
+	 * Constraint:
+	 *     (
+	 *         (name='GRANT' operations+=ID operations+=ID* (operations2+=ID operations2+=ID*)? user=ID) | 
+	 *         (name='REVOKE' operations+=ID operations+=ID* (operations2+=ID operations2+=ID*)? user=ID)
+	 *     )
+	 */
+	protected void sequence_RightsCommand(ISerializationContext context, RightsCommand semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     RightsRoleCommand returns RightsRoleCommand
+	 *
+	 * Constraint:
+	 *     ((name='GRANT' operations+=ID operations+=ID* user=ID) | (name='REVOKE' operations+=ID operations+=ID* user=ID))
+	 */
+	protected void sequence_RightsRoleCommand(ISerializationContext context, RightsRoleCommand semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAliasDefinition
 	 *
 	 * Constraint:
@@ -1355,7 +1357,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (
 	 *         type=Select | 
 	 *         type=StreamTo | 
-	 *         type=Drop | 
+	 *         type=DropCommand | 
+	 *         type=UserCommand | 
+	 *         type=RightsCommand | 
+	 *         type=RightsRoleCommand | 
 	 *         type=CreateStream1 | 
 	 *         type=CreateSink1 | 
 	 *         type=CreateStreamChannel | 
@@ -1376,6 +1381,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (name=ID (statement=Select | inputname=ID))
 	 */
 	protected void sequence_StreamTo(ISerializationContext context, StreamTo semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     UserCommand returns UserCommand
+	 *
+	 * Constraint:
+	 *     ((name='CREATE' | name='ALTER' | name='DROP') (subject='USER' | subject='ROLE' | subject='TENANT') subjectName=ID password=STRING?)
+	 */
+	protected void sequence_UserCommand(ISerializationContext context, UserCommand semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

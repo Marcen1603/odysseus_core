@@ -93,6 +93,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.DATA_TYPE: return createDataType();
       case CQLPackage.FUNCTION: return createFunction();
+      case CQLPackage.DROP_COMMAND: return createDropCommand();
+      case CQLPackage.USER_COMMAND: return createUserCommand();
+      case CQLPackage.RIGHTS_COMMAND: return createRightsCommand();
+      case CQLPackage.RIGHTS_ROLE_COMMAND: return createRightsRoleCommand();
       case CQLPackage.OR: return createOr();
       case CQLPackage.AND: return createAnd();
       case CQLPackage.EQUALITY: return createEquality();
@@ -441,6 +445,50 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     FunctionImpl function = new FunctionImpl();
     return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DropCommand createDropCommand()
+  {
+    DropCommandImpl dropCommand = new DropCommandImpl();
+    return dropCommand;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UserCommand createUserCommand()
+  {
+    UserCommandImpl userCommand = new UserCommandImpl();
+    return userCommand;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RightsCommand createRightsCommand()
+  {
+    RightsCommandImpl rightsCommand = new RightsCommandImpl();
+    return rightsCommand;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RightsRoleCommand createRightsRoleCommand()
+  {
+    RightsRoleCommandImpl rightsRoleCommand = new RightsRoleCommandImpl();
+    return rightsRoleCommand;
   }
 
   /**

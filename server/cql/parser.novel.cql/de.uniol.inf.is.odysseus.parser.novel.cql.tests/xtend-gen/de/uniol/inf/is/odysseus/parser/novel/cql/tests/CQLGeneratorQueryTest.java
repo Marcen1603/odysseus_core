@@ -112,7 +112,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT s1.* FROM stream1 AS s1 WHERE attr1 > 2 AND attr2 = \'Test\';", 
-      "operator_1 = SELECT({predicate=\'stream1.attr1>2&&stream1.attr2==\'Test\'\'}, stream1)", _cQLDictionaryHelper);
+      "operator_1 = SELECT({predicate=\'attr1>2&&attr2==\'Test\'\'}, stream1)", _cQLDictionaryHelper);
   }
   
   @Test

@@ -20,14 +20,12 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_Command_SemicolonKeyword_5_q;
-	protected AbstractElementAlias match_Statement_SemicolonKeyword_1_q;
+	protected AbstractElementAlias match_Statement_SemicolonKeyword_2_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
-		match_Command_SemicolonKeyword_5_q = new TokenAlias(false, true, grammarAccess.getCommandAccess().getSemicolonKeyword_5());
-		match_Statement_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_1());
+		match_Statement_SemicolonKeyword_2_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_2());
 	}
 	
 	@Override
@@ -42,25 +40,12 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Command_SemicolonKeyword_5_q.equals(syntax))
-				emit_Command_SemicolonKeyword_5_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Statement_SemicolonKeyword_1_q.equals(syntax))
-				emit_Statement_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			if (match_Statement_SemicolonKeyword_2_q.equals(syntax))
+				emit_Statement_SemicolonKeyword_2_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
 
-	/**
-	 * Ambiguous syntax:
-	 *     ';'?
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     value2=ID (ambiguity) (rule end)
-	 */
-	protected void emit_Command_SemicolonKeyword_5_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
 	/**
 	 * Ambiguous syntax:
 	 *     ';'?
@@ -71,11 +56,14 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     type=CreateStreamChannel (ambiguity) (rule end)
 	 *     type=CreateStreamFile (ambiguity) (rule end)
 	 *     type=CreateView (ambiguity) (rule end)
-	 *     type=Drop (ambiguity) (rule end)
+	 *     type=DropCommand (ambiguity) (rule end)
+	 *     type=RightsCommand (ambiguity) (rule end)
+	 *     type=RightsRoleCommand (ambiguity) (rule end)
 	 *     type=Select (ambiguity) (rule end)
 	 *     type=StreamTo (ambiguity) (rule end)
+	 *     type=UserCommand (ambiguity) (rule end)
 	 */
-	protected void emit_Statement_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Statement_SemicolonKeyword_2_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

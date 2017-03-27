@@ -264,6 +264,38 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.DROP_COMMAND:
+      {
+        DropCommand dropCommand = (DropCommand)theEObject;
+        T result = caseDropCommand(dropCommand);
+        if (result == null) result = caseCommand(dropCommand);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.USER_COMMAND:
+      {
+        UserCommand userCommand = (UserCommand)theEObject;
+        T result = caseUserCommand(userCommand);
+        if (result == null) result = caseCommand(userCommand);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.RIGHTS_COMMAND:
+      {
+        RightsCommand rightsCommand = (RightsCommand)theEObject;
+        T result = caseRightsCommand(rightsCommand);
+        if (result == null) result = caseCommand(rightsCommand);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.RIGHTS_ROLE_COMMAND:
+      {
+        RightsRoleCommand rightsRoleCommand = (RightsRoleCommand)theEObject;
+        T result = caseRightsRoleCommand(rightsRoleCommand);
+        if (result == null) result = caseCommand(rightsRoleCommand);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.OR:
       {
         Or or = (Or)theEObject;
@@ -808,6 +840,70 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Drop Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Drop Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDropCommand(DropCommand object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>User Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>User Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUserCommand(UserCommand object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Rights Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Rights Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRightsCommand(RightsCommand object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Rights Role Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Rights Role Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRightsRoleCommand(RightsRoleCommand object)
   {
     return null;
   }

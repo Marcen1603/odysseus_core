@@ -5,7 +5,9 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory
+import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
@@ -38,10 +40,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator.AttributeParser
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
-import java.util.Collections
 import java.util.List
 import java.util.Map
 import java.util.Map.Entry
@@ -51,10 +53,6 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
-import de.uniol.inf.is.odysseus.mep.MEP
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2

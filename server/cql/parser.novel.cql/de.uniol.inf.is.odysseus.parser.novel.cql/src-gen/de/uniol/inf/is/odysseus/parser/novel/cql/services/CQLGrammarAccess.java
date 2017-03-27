@@ -44,24 +44,31 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	public class StatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cTypeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cTypeSelectParserRuleCall_0_0_0 = (RuleCall)cTypeAssignment_0_0.eContents().get(0);
-		private final Assignment cTypeAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cTypeStreamToParserRuleCall_0_1_0 = (RuleCall)cTypeAssignment_0_1.eContents().get(0);
-		private final Assignment cTypeAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
-		private final RuleCall cTypeDropParserRuleCall_0_2_0 = (RuleCall)cTypeAssignment_0_2.eContents().get(0);
-		private final Assignment cTypeAssignment_0_3 = (Assignment)cAlternatives_0.eContents().get(3);
-		private final RuleCall cTypeCreateStream1ParserRuleCall_0_3_0 = (RuleCall)cTypeAssignment_0_3.eContents().get(0);
-		private final Assignment cTypeAssignment_0_4 = (Assignment)cAlternatives_0.eContents().get(4);
-		private final RuleCall cTypeCreateSink1ParserRuleCall_0_4_0 = (RuleCall)cTypeAssignment_0_4.eContents().get(0);
-		private final Assignment cTypeAssignment_0_5 = (Assignment)cAlternatives_0.eContents().get(5);
-		private final RuleCall cTypeCreateStreamChannelParserRuleCall_0_5_0 = (RuleCall)cTypeAssignment_0_5.eContents().get(0);
-		private final Assignment cTypeAssignment_0_6 = (Assignment)cAlternatives_0.eContents().get(6);
-		private final RuleCall cTypeCreateStreamFileParserRuleCall_0_6_0 = (RuleCall)cTypeAssignment_0_6.eContents().get(0);
-		private final Assignment cTypeAssignment_0_7 = (Assignment)cAlternatives_0.eContents().get(7);
-		private final RuleCall cTypeCreateViewParserRuleCall_0_7_0 = (RuleCall)cTypeAssignment_0_7.eContents().get(0);
-		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Action cStatementAction_0 = (Action)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Assignment cTypeAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cTypeSelectParserRuleCall_1_0_0 = (RuleCall)cTypeAssignment_1_0.eContents().get(0);
+		private final Assignment cTypeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cTypeStreamToParserRuleCall_1_1_0 = (RuleCall)cTypeAssignment_1_1.eContents().get(0);
+		private final Assignment cTypeAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cTypeDropCommandParserRuleCall_1_2_0 = (RuleCall)cTypeAssignment_1_2.eContents().get(0);
+		private final Assignment cTypeAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
+		private final RuleCall cTypeUserCommandParserRuleCall_1_3_0 = (RuleCall)cTypeAssignment_1_3.eContents().get(0);
+		private final Assignment cTypeAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
+		private final RuleCall cTypeRightsCommandParserRuleCall_1_4_0 = (RuleCall)cTypeAssignment_1_4.eContents().get(0);
+		private final Assignment cTypeAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
+		private final RuleCall cTypeRightsRoleCommandParserRuleCall_1_5_0 = (RuleCall)cTypeAssignment_1_5.eContents().get(0);
+		private final Assignment cTypeAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
+		private final RuleCall cTypeCreateStream1ParserRuleCall_1_6_0 = (RuleCall)cTypeAssignment_1_6.eContents().get(0);
+		private final Assignment cTypeAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
+		private final RuleCall cTypeCreateSink1ParserRuleCall_1_7_0 = (RuleCall)cTypeAssignment_1_7.eContents().get(0);
+		private final Assignment cTypeAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
+		private final RuleCall cTypeCreateStreamChannelParserRuleCall_1_8_0 = (RuleCall)cTypeAssignment_1_8.eContents().get(0);
+		private final Assignment cTypeAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
+		private final RuleCall cTypeCreateStreamFileParserRuleCall_1_9_0 = (RuleCall)cTypeAssignment_1_9.eContents().get(0);
+		private final Assignment cTypeAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
+		private final RuleCall cTypeCreateViewParserRuleCall_1_10_0 = (RuleCall)cTypeAssignment_1_10.eContents().get(0);
+		private final Keyword cSemicolonKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		
 		////terminal BOOLEAN: ('FALSE'|'TRUE');
 		////terminal BIT: ('0'|'1');
@@ -72,68 +79,92 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 		////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 		//Statement:
-		//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-		//	type=CreateStreamFile | type=CreateView) ';'?;
+		//	{Statement} (type=Select | type=StreamTo | type=DropCommand
+		//	| type=UserCommand | type=RightsCommand | type=RightsRoleCommand
+		//	| type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel
+		//	| type=CreateStreamFile | type=CreateView) ';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-		//type=CreateStreamFile | type=CreateView) ';'?
+		//{Statement} (type=Select | type=StreamTo | type=DropCommand | type=UserCommand | type=RightsCommand |
+		//type=RightsRoleCommand | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile |
+		//type=CreateView) ';'?
 		public Group getGroup() { return cGroup; }
 		
-		//(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-		//type=CreateStreamFile | type=CreateView)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		//{Statement}
+		public Action getStatementAction_0() { return cStatementAction_0; }
+		
+		//(type=Select | type=StreamTo | type=DropCommand | type=UserCommand | type=RightsCommand | type=RightsRoleCommand |
+		//type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView)
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
 		//type=Select
-		public Assignment getTypeAssignment_0_0() { return cTypeAssignment_0_0; }
+		public Assignment getTypeAssignment_1_0() { return cTypeAssignment_1_0; }
 		
 		//Select
-		public RuleCall getTypeSelectParserRuleCall_0_0_0() { return cTypeSelectParserRuleCall_0_0_0; }
+		public RuleCall getTypeSelectParserRuleCall_1_0_0() { return cTypeSelectParserRuleCall_1_0_0; }
 		
 		//type=StreamTo
-		public Assignment getTypeAssignment_0_1() { return cTypeAssignment_0_1; }
+		public Assignment getTypeAssignment_1_1() { return cTypeAssignment_1_1; }
 		
 		//StreamTo
-		public RuleCall getTypeStreamToParserRuleCall_0_1_0() { return cTypeStreamToParserRuleCall_0_1_0; }
+		public RuleCall getTypeStreamToParserRuleCall_1_1_0() { return cTypeStreamToParserRuleCall_1_1_0; }
 		
-		//type=Drop
-		public Assignment getTypeAssignment_0_2() { return cTypeAssignment_0_2; }
+		//type=DropCommand
+		public Assignment getTypeAssignment_1_2() { return cTypeAssignment_1_2; }
 		
-		//Drop
-		public RuleCall getTypeDropParserRuleCall_0_2_0() { return cTypeDropParserRuleCall_0_2_0; }
+		//DropCommand
+		public RuleCall getTypeDropCommandParserRuleCall_1_2_0() { return cTypeDropCommandParserRuleCall_1_2_0; }
+		
+		//type=UserCommand
+		public Assignment getTypeAssignment_1_3() { return cTypeAssignment_1_3; }
+		
+		//UserCommand
+		public RuleCall getTypeUserCommandParserRuleCall_1_3_0() { return cTypeUserCommandParserRuleCall_1_3_0; }
+		
+		//type=RightsCommand
+		public Assignment getTypeAssignment_1_4() { return cTypeAssignment_1_4; }
+		
+		//RightsCommand
+		public RuleCall getTypeRightsCommandParserRuleCall_1_4_0() { return cTypeRightsCommandParserRuleCall_1_4_0; }
+		
+		//type=RightsRoleCommand
+		public Assignment getTypeAssignment_1_5() { return cTypeAssignment_1_5; }
+		
+		//RightsRoleCommand
+		public RuleCall getTypeRightsRoleCommandParserRuleCall_1_5_0() { return cTypeRightsRoleCommandParserRuleCall_1_5_0; }
 		
 		//type=CreateStream1
-		public Assignment getTypeAssignment_0_3() { return cTypeAssignment_0_3; }
+		public Assignment getTypeAssignment_1_6() { return cTypeAssignment_1_6; }
 		
 		//CreateStream1
-		public RuleCall getTypeCreateStream1ParserRuleCall_0_3_0() { return cTypeCreateStream1ParserRuleCall_0_3_0; }
+		public RuleCall getTypeCreateStream1ParserRuleCall_1_6_0() { return cTypeCreateStream1ParserRuleCall_1_6_0; }
 		
 		//type=CreateSink1
-		public Assignment getTypeAssignment_0_4() { return cTypeAssignment_0_4; }
+		public Assignment getTypeAssignment_1_7() { return cTypeAssignment_1_7; }
 		
 		//CreateSink1
-		public RuleCall getTypeCreateSink1ParserRuleCall_0_4_0() { return cTypeCreateSink1ParserRuleCall_0_4_0; }
+		public RuleCall getTypeCreateSink1ParserRuleCall_1_7_0() { return cTypeCreateSink1ParserRuleCall_1_7_0; }
 		
 		//type=CreateStreamChannel
-		public Assignment getTypeAssignment_0_5() { return cTypeAssignment_0_5; }
+		public Assignment getTypeAssignment_1_8() { return cTypeAssignment_1_8; }
 		
 		//CreateStreamChannel
-		public RuleCall getTypeCreateStreamChannelParserRuleCall_0_5_0() { return cTypeCreateStreamChannelParserRuleCall_0_5_0; }
+		public RuleCall getTypeCreateStreamChannelParserRuleCall_1_8_0() { return cTypeCreateStreamChannelParserRuleCall_1_8_0; }
 		
 		//type=CreateStreamFile
-		public Assignment getTypeAssignment_0_6() { return cTypeAssignment_0_6; }
+		public Assignment getTypeAssignment_1_9() { return cTypeAssignment_1_9; }
 		
 		//CreateStreamFile
-		public RuleCall getTypeCreateStreamFileParserRuleCall_0_6_0() { return cTypeCreateStreamFileParserRuleCall_0_6_0; }
+		public RuleCall getTypeCreateStreamFileParserRuleCall_1_9_0() { return cTypeCreateStreamFileParserRuleCall_1_9_0; }
 		
 		//type=CreateView
-		public Assignment getTypeAssignment_0_7() { return cTypeAssignment_0_7; }
+		public Assignment getTypeAssignment_1_10() { return cTypeAssignment_1_10; }
 		
 		//CreateView
-		public RuleCall getTypeCreateViewParserRuleCall_0_7_0() { return cTypeCreateViewParserRuleCall_0_7_0; }
+		public RuleCall getTypeCreateViewParserRuleCall_1_10_0() { return cTypeCreateViewParserRuleCall_1_10_0; }
 		
 		//';'?
-		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
+		public Keyword getSemicolonKeyword_2() { return cSemicolonKeyword_2; }
 	}
 	public class SelectElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Select");
@@ -1676,124 +1707,480 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class CommandElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Command");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyword1Assignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cKeyword1IDTerminalRuleCall_0_0 = (RuleCall)cKeyword1Assignment_0.eContents().get(0);
-		private final Assignment cKeyword2Assignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cKeyword2IDTerminalRuleCall_1_0 = (RuleCall)cKeyword2Assignment_1.eContents().get(0);
-		private final Assignment cValue1Assignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValue1IDTerminalRuleCall_2_0 = (RuleCall)cValue1Assignment_2.eContents().get(0);
-		private final Assignment cKeyword3Assignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cKeyword3IDTerminalRuleCall_3_0 = (RuleCall)cKeyword3Assignment_3.eContents().get(0);
-		private final Assignment cValue2Assignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cValue2IDTerminalRuleCall_4_0 = (RuleCall)cValue2Assignment_4.eContents().get(0);
-		private final Keyword cSemicolonKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Keyword cSemicolonKeyword = (Keyword)rule.eContents().get(1);
 		
 		////Generic rule for user commands or something like DROP STREAM
 		//Command:
-		//	keyword1=ID
-		//	keyword2=ID
-		//	value1=ID
-		//	keyword3=ID
-		//	value2=ID
 		//	';'?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//keyword1=ID keyword2=ID value1=ID keyword3=ID value2=ID ';'?
-		public Group getGroup() { return cGroup; }
-		
-		//keyword1=ID
-		public Assignment getKeyword1Assignment_0() { return cKeyword1Assignment_0; }
-		
-		//ID
-		public RuleCall getKeyword1IDTerminalRuleCall_0_0() { return cKeyword1IDTerminalRuleCall_0_0; }
-		
-		//keyword2=ID
-		public Assignment getKeyword2Assignment_1() { return cKeyword2Assignment_1; }
-		
-		//ID
-		public RuleCall getKeyword2IDTerminalRuleCall_1_0() { return cKeyword2IDTerminalRuleCall_1_0; }
-		
-		//value1=ID
-		public Assignment getValue1Assignment_2() { return cValue1Assignment_2; }
-		
-		//ID
-		public RuleCall getValue1IDTerminalRuleCall_2_0() { return cValue1IDTerminalRuleCall_2_0; }
-		
-		//keyword3=ID
-		public Assignment getKeyword3Assignment_3() { return cKeyword3Assignment_3; }
-		
-		//ID
-		public RuleCall getKeyword3IDTerminalRuleCall_3_0() { return cKeyword3IDTerminalRuleCall_3_0; }
-		
-		//value2=ID
-		public Assignment getValue2Assignment_4() { return cValue2Assignment_4; }
-		
-		//ID
-		public RuleCall getValue2IDTerminalRuleCall_4_0() { return cValue2IDTerminalRuleCall_4_0; }
-		
 		//';'?
-		public Keyword getSemicolonKeyword_5() { return cSemicolonKeyword_5; }
+		public Keyword getSemicolonKeyword() { return cSemicolonKeyword; }
 	}
-	public class DropElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Drop");
+	public class DropCommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DropCommand");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyword1Assignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Keyword cKeyword1DROPKeyword_0_0 = (Keyword)cKeyword1Assignment_0.eContents().get(0);
-		private final Assignment cKeyword2Assignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cKeyword2Alternatives_1_0 = (Alternatives)cKeyword2Assignment_1.eContents().get(0);
-		private final Keyword cKeyword2SINKKeyword_1_0_0 = (Keyword)cKeyword2Alternatives_1_0.eContents().get(0);
-		private final Keyword cKeyword2STREAMKeyword_1_0_1 = (Keyword)cKeyword2Alternatives_1_0.eContents().get(1);
-		private final Assignment cValue1Assignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValue1IDTerminalRuleCall_2_0 = (RuleCall)cValue1Assignment_2.eContents().get(0);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Assignment cKeyword3Assignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final Keyword cKeyword3IFKeyword_3_0_0 = (Keyword)cKeyword3Assignment_3_0.eContents().get(0);
-		private final Keyword cEXISTSKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
+		private final Action cDropCommandAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cDROPKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cNameAlternatives_2_0 = (Alternatives)cNameAssignment_2.eContents().get(0);
+		private final Keyword cNameSINKKeyword_2_0_0 = (Keyword)cNameAlternatives_2_0.eContents().get(0);
+		private final Keyword cNameSTREAMKeyword_2_0_1 = (Keyword)cNameAlternatives_2_0.eContents().get(1);
+		private final Keyword cNameVIEWKeyword_2_0_2 = (Keyword)cNameAlternatives_2_0.eContents().get(2);
+		private final Assignment cStreamAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cStreamIDTerminalRuleCall_3_0 = (RuleCall)cStreamAssignment_3.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Assignment cExistsAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
+		private final Keyword cExistsIFKeyword_4_0_0 = (Keyword)cExistsAssignment_4_0.eContents().get(0);
+		private final Keyword cEXISTSKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
 		
-		//Drop Command:
-		//	keyword1='DROP'
-		//	keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
+		//DropCommand Command:
+		//	{DropCommand}
+		//	'DROP'
+		//	name=('SINK' | 'STREAM' | 'VIEW') stream=ID (exists='IF' 'EXISTS')?
 		@Override public ParserRule getRule() { return rule; }
 		
-		//keyword1='DROP' keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
+		//{DropCommand} 'DROP' name=('SINK' | 'STREAM' | 'VIEW') stream=ID (exists='IF' 'EXISTS')?
 		public Group getGroup() { return cGroup; }
 		
-		//keyword1='DROP'
-		public Assignment getKeyword1Assignment_0() { return cKeyword1Assignment_0; }
+		//{DropCommand}
+		public Action getDropCommandAction_0() { return cDropCommandAction_0; }
 		
 		//'DROP'
-		public Keyword getKeyword1DROPKeyword_0_0() { return cKeyword1DROPKeyword_0_0; }
+		public Keyword getDROPKeyword_1() { return cDROPKeyword_1; }
 		
-		//keyword2=('SINK' | 'STREAM')
-		public Assignment getKeyword2Assignment_1() { return cKeyword2Assignment_1; }
+		//name=('SINK' | 'STREAM' | 'VIEW')
+		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
 		
-		//('SINK' | 'STREAM')
-		public Alternatives getKeyword2Alternatives_1_0() { return cKeyword2Alternatives_1_0; }
+		//('SINK' | 'STREAM' | 'VIEW')
+		public Alternatives getNameAlternatives_2_0() { return cNameAlternatives_2_0; }
 		
 		//'SINK'
-		public Keyword getKeyword2SINKKeyword_1_0_0() { return cKeyword2SINKKeyword_1_0_0; }
+		public Keyword getNameSINKKeyword_2_0_0() { return cNameSINKKeyword_2_0_0; }
 		
 		//'STREAM'
-		public Keyword getKeyword2STREAMKeyword_1_0_1() { return cKeyword2STREAMKeyword_1_0_1; }
+		public Keyword getNameSTREAMKeyword_2_0_1() { return cNameSTREAMKeyword_2_0_1; }
 		
-		//value1=ID
-		public Assignment getValue1Assignment_2() { return cValue1Assignment_2; }
+		//'VIEW'
+		public Keyword getNameVIEWKeyword_2_0_2() { return cNameVIEWKeyword_2_0_2; }
+		
+		//stream=ID
+		public Assignment getStreamAssignment_3() { return cStreamAssignment_3; }
 		
 		//ID
-		public RuleCall getValue1IDTerminalRuleCall_2_0() { return cValue1IDTerminalRuleCall_2_0; }
+		public RuleCall getStreamIDTerminalRuleCall_3_0() { return cStreamIDTerminalRuleCall_3_0; }
 		
-		//(keyword3='IF' 'EXISTS')?
-		public Group getGroup_3() { return cGroup_3; }
+		//(exists='IF' 'EXISTS')?
+		public Group getGroup_4() { return cGroup_4; }
 		
-		//keyword3='IF'
-		public Assignment getKeyword3Assignment_3_0() { return cKeyword3Assignment_3_0; }
+		//exists='IF'
+		public Assignment getExistsAssignment_4_0() { return cExistsAssignment_4_0; }
 		
 		//'IF'
-		public Keyword getKeyword3IFKeyword_3_0_0() { return cKeyword3IFKeyword_3_0_0; }
+		public Keyword getExistsIFKeyword_4_0_0() { return cExistsIFKeyword_4_0_0; }
 		
 		//'EXISTS'
-		public Keyword getEXISTSKeyword_3_1() { return cEXISTSKeyword_3_1; }
+		public Keyword getEXISTSKeyword_4_1() { return cEXISTSKeyword_4_1; }
+	}
+	public class UserCommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.UserCommand");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cUserCommandAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cNameAlternatives_1_0 = (Alternatives)cNameAssignment_1.eContents().get(0);
+		private final Keyword cNameCREATEKeyword_1_0_0 = (Keyword)cNameAlternatives_1_0.eContents().get(0);
+		private final Keyword cNameALTERKeyword_1_0_1 = (Keyword)cNameAlternatives_1_0.eContents().get(1);
+		private final Keyword cNameDROPKeyword_1_0_2 = (Keyword)cNameAlternatives_1_0.eContents().get(2);
+		private final Assignment cSubjectAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cSubjectAlternatives_2_0 = (Alternatives)cSubjectAssignment_2.eContents().get(0);
+		private final Keyword cSubjectUSERKeyword_2_0_0 = (Keyword)cSubjectAlternatives_2_0.eContents().get(0);
+		private final Keyword cSubjectROLEKeyword_2_0_1 = (Keyword)cSubjectAlternatives_2_0.eContents().get(1);
+		private final Keyword cSubjectTENANTKeyword_2_0_2 = (Keyword)cSubjectAlternatives_2_0.eContents().get(2);
+		private final Assignment cSubjectNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cSubjectNameIDTerminalRuleCall_3_0 = (RuleCall)cSubjectNameAssignment_3.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Keyword cIDENTIFIEDKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Keyword cBYKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
+		private final Assignment cPasswordAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
+		private final RuleCall cPasswordSTRINGTerminalRuleCall_4_2_0 = (RuleCall)cPasswordAssignment_4_2.eContents().get(0);
+		
+		//UserCommand Command:
+		//	{UserCommand} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED'
+		//	'BY' password=STRING)?
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{UserCommand} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED' 'BY'
+		//password=STRING)?
+		public Group getGroup() { return cGroup; }
+		
+		//{UserCommand}
+		public Action getUserCommandAction_0() { return cUserCommandAction_0; }
+		
+		//name=('CREATE' | 'ALTER' | 'DROP')
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+		
+		//('CREATE' | 'ALTER' | 'DROP')
+		public Alternatives getNameAlternatives_1_0() { return cNameAlternatives_1_0; }
+		
+		//'CREATE'
+		public Keyword getNameCREATEKeyword_1_0_0() { return cNameCREATEKeyword_1_0_0; }
+		
+		//'ALTER'
+		public Keyword getNameALTERKeyword_1_0_1() { return cNameALTERKeyword_1_0_1; }
+		
+		//'DROP'
+		public Keyword getNameDROPKeyword_1_0_2() { return cNameDROPKeyword_1_0_2; }
+		
+		//subject=('USER' | 'ROLE' | 'TENANT')
+		public Assignment getSubjectAssignment_2() { return cSubjectAssignment_2; }
+		
+		//('USER' | 'ROLE' | 'TENANT')
+		public Alternatives getSubjectAlternatives_2_0() { return cSubjectAlternatives_2_0; }
+		
+		//'USER'
+		public Keyword getSubjectUSERKeyword_2_0_0() { return cSubjectUSERKeyword_2_0_0; }
+		
+		//'ROLE'
+		public Keyword getSubjectROLEKeyword_2_0_1() { return cSubjectROLEKeyword_2_0_1; }
+		
+		//'TENANT'
+		public Keyword getSubjectTENANTKeyword_2_0_2() { return cSubjectTENANTKeyword_2_0_2; }
+		
+		//subjectName=ID
+		public Assignment getSubjectNameAssignment_3() { return cSubjectNameAssignment_3; }
+		
+		//ID
+		public RuleCall getSubjectNameIDTerminalRuleCall_3_0() { return cSubjectNameIDTerminalRuleCall_3_0; }
+		
+		//('IDENTIFIED' 'BY' password=STRING)?
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//'IDENTIFIED'
+		public Keyword getIDENTIFIEDKeyword_4_0() { return cIDENTIFIEDKeyword_4_0; }
+		
+		//'BY'
+		public Keyword getBYKeyword_4_1() { return cBYKeyword_4_1; }
+		
+		//password=STRING
+		public Assignment getPasswordAssignment_4_2() { return cPasswordAssignment_4_2; }
+		
+		//STRING
+		public RuleCall getPasswordSTRINGTerminalRuleCall_4_2_0() { return cPasswordSTRINGTerminalRuleCall_4_2_0; }
+	}
+	public class RightsCommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.RightsCommand");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Action cRightsCommandAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final Keyword cNameGRANTKeyword_0_1_0 = (Keyword)cNameAssignment_0_1.eContents().get(0);
+		private final Assignment cOperationsAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cOperationsIDTerminalRuleCall_0_2_0 = (RuleCall)cOperationsAssignment_0_2.eContents().get(0);
+		private final Group cGroup_0_3 = (Group)cGroup_0.eContents().get(3);
+		private final Keyword cCommaKeyword_0_3_0 = (Keyword)cGroup_0_3.eContents().get(0);
+		private final Assignment cOperationsAssignment_0_3_1 = (Assignment)cGroup_0_3.eContents().get(1);
+		private final RuleCall cOperationsIDTerminalRuleCall_0_3_1_0 = (RuleCall)cOperationsAssignment_0_3_1.eContents().get(0);
+		private final Group cGroup_0_4 = (Group)cGroup_0.eContents().get(4);
+		private final Keyword cONKeyword_0_4_0 = (Keyword)cGroup_0_4.eContents().get(0);
+		private final Assignment cOperations2Assignment_0_4_1 = (Assignment)cGroup_0_4.eContents().get(1);
+		private final RuleCall cOperations2IDTerminalRuleCall_0_4_1_0 = (RuleCall)cOperations2Assignment_0_4_1.eContents().get(0);
+		private final Group cGroup_0_4_2 = (Group)cGroup_0_4.eContents().get(2);
+		private final Keyword cCommaKeyword_0_4_2_0 = (Keyword)cGroup_0_4_2.eContents().get(0);
+		private final Assignment cOperations2Assignment_0_4_2_1 = (Assignment)cGroup_0_4_2.eContents().get(1);
+		private final RuleCall cOperations2IDTerminalRuleCall_0_4_2_1_0 = (RuleCall)cOperations2Assignment_0_4_2_1.eContents().get(0);
+		private final Keyword cTOKeyword_0_5 = (Keyword)cGroup_0.eContents().get(5);
+		private final Assignment cUserAssignment_0_6 = (Assignment)cGroup_0.eContents().get(6);
+		private final RuleCall cUserIDTerminalRuleCall_0_6_0 = (RuleCall)cUserAssignment_0_6.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Action cRightsCommandAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final Keyword cNameREVOKEKeyword_1_1_0 = (Keyword)cNameAssignment_1_1.eContents().get(0);
+		private final Assignment cOperationsAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
+		private final RuleCall cOperationsIDTerminalRuleCall_1_2_0 = (RuleCall)cOperationsAssignment_1_2.eContents().get(0);
+		private final Group cGroup_1_3 = (Group)cGroup_1.eContents().get(3);
+		private final Keyword cCommaKeyword_1_3_0 = (Keyword)cGroup_1_3.eContents().get(0);
+		private final Assignment cOperationsAssignment_1_3_1 = (Assignment)cGroup_1_3.eContents().get(1);
+		private final RuleCall cOperationsIDTerminalRuleCall_1_3_1_0 = (RuleCall)cOperationsAssignment_1_3_1.eContents().get(0);
+		private final Group cGroup_1_4 = (Group)cGroup_1.eContents().get(4);
+		private final Keyword cONKeyword_1_4_0 = (Keyword)cGroup_1_4.eContents().get(0);
+		private final Assignment cOperations2Assignment_1_4_1 = (Assignment)cGroup_1_4.eContents().get(1);
+		private final RuleCall cOperations2IDTerminalRuleCall_1_4_1_0 = (RuleCall)cOperations2Assignment_1_4_1.eContents().get(0);
+		private final Group cGroup_1_4_2 = (Group)cGroup_1_4.eContents().get(2);
+		private final Keyword cCommaKeyword_1_4_2_0 = (Keyword)cGroup_1_4_2.eContents().get(0);
+		private final Assignment cOperations2Assignment_1_4_2_1 = (Assignment)cGroup_1_4_2.eContents().get(1);
+		private final RuleCall cOperations2IDTerminalRuleCall_1_4_2_1_0 = (RuleCall)cOperations2Assignment_1_4_2_1.eContents().get(0);
+		private final Keyword cFROMKeyword_1_5 = (Keyword)cGroup_1.eContents().get(5);
+		private final Assignment cUserAssignment_1_6 = (Assignment)cGroup_1.eContents().get(6);
+		private final RuleCall cUserIDTerminalRuleCall_1_6_0 = (RuleCall)cUserAssignment_1_6.eContents().get(0);
+		
+		//RightsCommand Command:
+		//	{RightsCommand} name='GRANT'
+		//	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+		//	'TO' user=ID | {RightsCommand} name='REVOKE'
+		//	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+		//	'FROM' user=ID
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{RightsCommand} name='GRANT' operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)? 'TO'
+		//user=ID | {RightsCommand} name='REVOKE' operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (','
+		//operations2+=ID)*)? 'FROM' user=ID
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//{RightsCommand} name='GRANT' operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)? 'TO'
+		//user=ID
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//{RightsCommand}
+		public Action getRightsCommandAction_0_0() { return cRightsCommandAction_0_0; }
+		
+		//name='GRANT'
+		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
+		
+		//'GRANT'
+		public Keyword getNameGRANTKeyword_0_1_0() { return cNameGRANTKeyword_0_1_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_0_2() { return cOperationsAssignment_0_2; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_0_2_0() { return cOperationsIDTerminalRuleCall_0_2_0; }
+		
+		//(',' operations+=ID)*
+		public Group getGroup_0_3() { return cGroup_0_3; }
+		
+		//','
+		public Keyword getCommaKeyword_0_3_0() { return cCommaKeyword_0_3_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_0_3_1() { return cOperationsAssignment_0_3_1; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_0_3_1_0() { return cOperationsIDTerminalRuleCall_0_3_1_0; }
+		
+		//('ON' operations2+=ID (',' operations2+=ID)*)?
+		public Group getGroup_0_4() { return cGroup_0_4; }
+		
+		//'ON'
+		public Keyword getONKeyword_0_4_0() { return cONKeyword_0_4_0; }
+		
+		//operations2+=ID
+		public Assignment getOperations2Assignment_0_4_1() { return cOperations2Assignment_0_4_1; }
+		
+		//ID
+		public RuleCall getOperations2IDTerminalRuleCall_0_4_1_0() { return cOperations2IDTerminalRuleCall_0_4_1_0; }
+		
+		//(',' operations2+=ID)*
+		public Group getGroup_0_4_2() { return cGroup_0_4_2; }
+		
+		//','
+		public Keyword getCommaKeyword_0_4_2_0() { return cCommaKeyword_0_4_2_0; }
+		
+		//operations2+=ID
+		public Assignment getOperations2Assignment_0_4_2_1() { return cOperations2Assignment_0_4_2_1; }
+		
+		//ID
+		public RuleCall getOperations2IDTerminalRuleCall_0_4_2_1_0() { return cOperations2IDTerminalRuleCall_0_4_2_1_0; }
+		
+		//'TO'
+		public Keyword getTOKeyword_0_5() { return cTOKeyword_0_5; }
+		
+		//user=ID
+		public Assignment getUserAssignment_0_6() { return cUserAssignment_0_6; }
+		
+		//ID
+		public RuleCall getUserIDTerminalRuleCall_0_6_0() { return cUserIDTerminalRuleCall_0_6_0; }
+		
+		//{RightsCommand} name='REVOKE' operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)? 'FROM'
+		//user=ID
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//{RightsCommand}
+		public Action getRightsCommandAction_1_0() { return cRightsCommandAction_1_0; }
+		
+		//name='REVOKE'
+		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
+		
+		//'REVOKE'
+		public Keyword getNameREVOKEKeyword_1_1_0() { return cNameREVOKEKeyword_1_1_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_1_2() { return cOperationsAssignment_1_2; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_1_2_0() { return cOperationsIDTerminalRuleCall_1_2_0; }
+		
+		//(',' operations+=ID)*
+		public Group getGroup_1_3() { return cGroup_1_3; }
+		
+		//','
+		public Keyword getCommaKeyword_1_3_0() { return cCommaKeyword_1_3_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_1_3_1() { return cOperationsAssignment_1_3_1; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_1_3_1_0() { return cOperationsIDTerminalRuleCall_1_3_1_0; }
+		
+		//('ON' operations2+=ID (',' operations2+=ID)*)?
+		public Group getGroup_1_4() { return cGroup_1_4; }
+		
+		//'ON'
+		public Keyword getONKeyword_1_4_0() { return cONKeyword_1_4_0; }
+		
+		//operations2+=ID
+		public Assignment getOperations2Assignment_1_4_1() { return cOperations2Assignment_1_4_1; }
+		
+		//ID
+		public RuleCall getOperations2IDTerminalRuleCall_1_4_1_0() { return cOperations2IDTerminalRuleCall_1_4_1_0; }
+		
+		//(',' operations2+=ID)*
+		public Group getGroup_1_4_2() { return cGroup_1_4_2; }
+		
+		//','
+		public Keyword getCommaKeyword_1_4_2_0() { return cCommaKeyword_1_4_2_0; }
+		
+		//operations2+=ID
+		public Assignment getOperations2Assignment_1_4_2_1() { return cOperations2Assignment_1_4_2_1; }
+		
+		//ID
+		public RuleCall getOperations2IDTerminalRuleCall_1_4_2_1_0() { return cOperations2IDTerminalRuleCall_1_4_2_1_0; }
+		
+		//'FROM'
+		public Keyword getFROMKeyword_1_5() { return cFROMKeyword_1_5; }
+		
+		//user=ID
+		public Assignment getUserAssignment_1_6() { return cUserAssignment_1_6; }
+		
+		//ID
+		public RuleCall getUserIDTerminalRuleCall_1_6_0() { return cUserIDTerminalRuleCall_1_6_0; }
+	}
+	public class RightsRoleCommandElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.RightsRoleCommand");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Action cRightsRoleCommandAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final Keyword cNameGRANTKeyword_0_1_0 = (Keyword)cNameAssignment_0_1.eContents().get(0);
+		private final Keyword cROLEKeyword_0_2 = (Keyword)cGroup_0.eContents().get(2);
+		private final Assignment cOperationsAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
+		private final RuleCall cOperationsIDTerminalRuleCall_0_3_0 = (RuleCall)cOperationsAssignment_0_3.eContents().get(0);
+		private final Group cGroup_0_4 = (Group)cGroup_0.eContents().get(4);
+		private final Keyword cCommaKeyword_0_4_0 = (Keyword)cGroup_0_4.eContents().get(0);
+		private final Assignment cOperationsAssignment_0_4_1 = (Assignment)cGroup_0_4.eContents().get(1);
+		private final RuleCall cOperationsIDTerminalRuleCall_0_4_1_0 = (RuleCall)cOperationsAssignment_0_4_1.eContents().get(0);
+		private final Keyword cTOKeyword_0_5 = (Keyword)cGroup_0.eContents().get(5);
+		private final Assignment cUserAssignment_0_6 = (Assignment)cGroup_0.eContents().get(6);
+		private final RuleCall cUserIDTerminalRuleCall_0_6_0 = (RuleCall)cUserAssignment_0_6.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Action cRightsRoleCommandAction_1_0 = (Action)cGroup_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final Keyword cNameREVOKEKeyword_1_1_0 = (Keyword)cNameAssignment_1_1.eContents().get(0);
+		private final Keyword cROLEKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		private final Assignment cOperationsAssignment_1_3 = (Assignment)cGroup_1.eContents().get(3);
+		private final RuleCall cOperationsIDTerminalRuleCall_1_3_0 = (RuleCall)cOperationsAssignment_1_3.eContents().get(0);
+		private final Group cGroup_1_4 = (Group)cGroup_1.eContents().get(4);
+		private final Keyword cCommaKeyword_1_4_0 = (Keyword)cGroup_1_4.eContents().get(0);
+		private final Assignment cOperationsAssignment_1_4_1 = (Assignment)cGroup_1_4.eContents().get(1);
+		private final RuleCall cOperationsIDTerminalRuleCall_1_4_1_0 = (RuleCall)cOperationsAssignment_1_4_1.eContents().get(0);
+		private final Keyword cFROMKeyword_1_5 = (Keyword)cGroup_1.eContents().get(5);
+		private final Assignment cUserAssignment_1_6 = (Assignment)cGroup_1.eContents().get(6);
+		private final RuleCall cUserIDTerminalRuleCall_1_6_0 = (RuleCall)cUserAssignment_1_6.eContents().get(0);
+		
+		//RightsRoleCommand Command:
+		//	{RightsRoleCommand} name='GRANT'
+		//	'ROLE' operations+=ID (',' operations+=ID)*
+		//	'TO' user=ID | {RightsRoleCommand} name='REVOKE'
+		//	'ROLE' operations+=ID (',' operations+=ID)*
+		//	'FROM' user=ID
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{RightsRoleCommand} name='GRANT' 'ROLE' operations+=ID (',' operations+=ID)* 'TO' user=ID | {RightsRoleCommand}
+		//name='REVOKE' 'ROLE' operations+=ID (',' operations+=ID)* 'FROM' user=ID
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//{RightsRoleCommand} name='GRANT' 'ROLE' operations+=ID (',' operations+=ID)* 'TO' user=ID
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//{RightsRoleCommand}
+		public Action getRightsRoleCommandAction_0_0() { return cRightsRoleCommandAction_0_0; }
+		
+		//name='GRANT'
+		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
+		
+		//'GRANT'
+		public Keyword getNameGRANTKeyword_0_1_0() { return cNameGRANTKeyword_0_1_0; }
+		
+		//'ROLE'
+		public Keyword getROLEKeyword_0_2() { return cROLEKeyword_0_2; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_0_3() { return cOperationsAssignment_0_3; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_0_3_0() { return cOperationsIDTerminalRuleCall_0_3_0; }
+		
+		//(',' operations+=ID)*
+		public Group getGroup_0_4() { return cGroup_0_4; }
+		
+		//','
+		public Keyword getCommaKeyword_0_4_0() { return cCommaKeyword_0_4_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_0_4_1() { return cOperationsAssignment_0_4_1; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_0_4_1_0() { return cOperationsIDTerminalRuleCall_0_4_1_0; }
+		
+		//'TO'
+		public Keyword getTOKeyword_0_5() { return cTOKeyword_0_5; }
+		
+		//user=ID
+		public Assignment getUserAssignment_0_6() { return cUserAssignment_0_6; }
+		
+		//ID
+		public RuleCall getUserIDTerminalRuleCall_0_6_0() { return cUserIDTerminalRuleCall_0_6_0; }
+		
+		//{RightsRoleCommand} name='REVOKE' 'ROLE' operations+=ID (',' operations+=ID)* 'FROM' user=ID
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//{RightsRoleCommand}
+		public Action getRightsRoleCommandAction_1_0() { return cRightsRoleCommandAction_1_0; }
+		
+		//name='REVOKE'
+		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
+		
+		//'REVOKE'
+		public Keyword getNameREVOKEKeyword_1_1_0() { return cNameREVOKEKeyword_1_1_0; }
+		
+		//'ROLE'
+		public Keyword getROLEKeyword_1_2() { return cROLEKeyword_1_2; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_1_3() { return cOperationsAssignment_1_3; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_1_3_0() { return cOperationsIDTerminalRuleCall_1_3_0; }
+		
+		//(',' operations+=ID)*
+		public Group getGroup_1_4() { return cGroup_1_4; }
+		
+		//','
+		public Keyword getCommaKeyword_1_4_0() { return cCommaKeyword_1_4_0; }
+		
+		//operations+=ID
+		public Assignment getOperationsAssignment_1_4_1() { return cOperationsAssignment_1_4_1; }
+		
+		//ID
+		public RuleCall getOperationsIDTerminalRuleCall_1_4_1_0() { return cOperationsIDTerminalRuleCall_1_4_1_0; }
+		
+		//'FROM'
+		public Keyword getFROMKeyword_1_5() { return cFROMKeyword_1_5; }
+		
+		//user=ID
+		public Assignment getUserAssignment_1_6() { return cUserAssignment_1_6; }
+		
+		//ID
+		public RuleCall getUserIDTerminalRuleCall_1_6_0() { return cUserIDTerminalRuleCall_1_6_0; }
 	}
 	public class Window_UnboundedElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Window_Unbounded");
@@ -2612,7 +2999,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final CreateViewElements pCreateView;
 	private final StreamToElements pStreamTo;
 	private final CommandElements pCommand;
-	private final DropElements pDrop;
+	private final DropCommandElements pDropCommand;
+	private final UserCommandElements pUserCommand;
+	private final RightsCommandElements pRightsCommand;
+	private final RightsRoleCommandElements pRightsRoleCommand;
 	private final Window_UnboundedElements pWindow_Unbounded;
 	private final Window_TimebasedElements pWindow_Timebased;
 	private final Window_TuplebasedElements pWindow_Tuplebased;
@@ -2673,7 +3063,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pCreateView = new CreateViewElements();
 		this.pStreamTo = new StreamToElements();
 		this.pCommand = new CommandElements();
-		this.pDrop = new DropElements();
+		this.pDropCommand = new DropCommandElements();
+		this.pUserCommand = new UserCommandElements();
+		this.pRightsCommand = new RightsCommandElements();
+		this.pRightsRoleCommand = new RightsRoleCommandElements();
 		this.pWindow_Unbounded = new Window_UnboundedElements();
 		this.pWindow_Timebased = new Window_TimebasedElements();
 		this.pWindow_Tuplebased = new Window_TuplebasedElements();
@@ -2750,8 +3143,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 	////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 	//Statement:
-	//	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel |
-	//	type=CreateStreamFile | type=CreateView) ';'?;
+	//	{Statement} (type=Select | type=StreamTo | type=DropCommand
+	//	| type=UserCommand | type=RightsCommand | type=RightsRoleCommand
+	//	| type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel
+	//	| type=CreateStreamFile | type=CreateView) ';'?;
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -3100,11 +3495,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	////Generic rule for user commands or something like DROP STREAM
 	//Command:
-	//	keyword1=ID
-	//	keyword2=ID
-	//	value1=ID
-	//	keyword3=ID
-	//	value2=ID
 	//	';'?;
 	public CommandElements getCommandAccess() {
 		return pCommand;
@@ -3114,15 +3504,55 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getCommandAccess().getRule();
 	}
 	
-	//Drop Command:
-	//	keyword1='DROP'
-	//	keyword2=('SINK' | 'STREAM') value1=ID (keyword3='IF' 'EXISTS')?
-	public DropElements getDropAccess() {
-		return pDrop;
+	//DropCommand Command:
+	//	{DropCommand}
+	//	'DROP'
+	//	name=('SINK' | 'STREAM' | 'VIEW') stream=ID (exists='IF' 'EXISTS')?
+	public DropCommandElements getDropCommandAccess() {
+		return pDropCommand;
 	}
 	
-	public ParserRule getDropRule() {
-		return getDropAccess().getRule();
+	public ParserRule getDropCommandRule() {
+		return getDropCommandAccess().getRule();
+	}
+	
+	//UserCommand Command:
+	//	{UserCommand} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED'
+	//	'BY' password=STRING)?
+	public UserCommandElements getUserCommandAccess() {
+		return pUserCommand;
+	}
+	
+	public ParserRule getUserCommandRule() {
+		return getUserCommandAccess().getRule();
+	}
+	
+	//RightsCommand Command:
+	//	{RightsCommand} name='GRANT'
+	//	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+	//	'TO' user=ID | {RightsCommand} name='REVOKE'
+	//	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+	//	'FROM' user=ID
+	public RightsCommandElements getRightsCommandAccess() {
+		return pRightsCommand;
+	}
+	
+	public ParserRule getRightsCommandRule() {
+		return getRightsCommandAccess().getRule();
+	}
+	
+	//RightsRoleCommand Command:
+	//	{RightsRoleCommand} name='GRANT'
+	//	'ROLE' operations+=ID (',' operations+=ID)*
+	//	'TO' user=ID | {RightsRoleCommand} name='REVOKE'
+	//	'ROLE' operations+=ID (',' operations+=ID)*
+	//	'FROM' user=ID
+	public RightsRoleCommandElements getRightsRoleCommandAccess() {
+		return pRightsRoleCommand;
+	}
+	
+	public ParserRule getRightsRoleCommandRule() {
+		return getRightsRoleCommandAccess().getRule();
 	}
 	
 	//Window_Unbounded:

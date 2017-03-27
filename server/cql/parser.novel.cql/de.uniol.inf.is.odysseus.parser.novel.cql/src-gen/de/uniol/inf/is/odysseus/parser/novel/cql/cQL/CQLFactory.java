@@ -267,6 +267,42 @@ public interface CQLFactory extends EFactory
   Function createFunction();
 
   /**
+   * Returns a new object of class '<em>Drop Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Drop Command</em>'.
+   * @generated
+   */
+  DropCommand createDropCommand();
+
+  /**
+   * Returns a new object of class '<em>User Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>User Command</em>'.
+   * @generated
+   */
+  UserCommand createUserCommand();
+
+  /**
+   * Returns a new object of class '<em>Rights Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Rights Command</em>'.
+   * @generated
+   */
+  RightsCommand createRightsCommand();
+
+  /**
+   * Returns a new object of class '<em>Rights Role Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Rights Role Command</em>'.
+   * @generated
+   */
+  RightsRoleCommand createRightsRoleCommand();
+
+  /**
    * Returns a new object of class '<em>Or</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

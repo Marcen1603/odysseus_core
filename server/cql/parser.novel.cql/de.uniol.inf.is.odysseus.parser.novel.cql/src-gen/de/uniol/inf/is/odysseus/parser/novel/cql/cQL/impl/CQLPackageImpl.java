@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
@@ -36,6 +37,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition;
@@ -44,6 +47,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased;
 
@@ -251,6 +255,34 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass functionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass dropCommandEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass userCommandEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass rightsCommandEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass rightsRoleCommandEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1195,49 +1227,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCommand_Keyword1()
+  public EAttribute getCommand_Name()
   {
     return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Keyword2()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Value1()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Keyword3()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Value2()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1398,6 +1390,146 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EAttribute getFunction_Name()
   {
     return (EAttribute)functionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getDropCommand()
+  {
+    return dropCommandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDropCommand_Stream()
+  {
+    return (EAttribute)dropCommandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDropCommand_Exists()
+  {
+    return (EAttribute)dropCommandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getUserCommand()
+  {
+    return userCommandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getUserCommand_Subject()
+  {
+    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getUserCommand_SubjectName()
+  {
+    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getUserCommand_Password()
+  {
+    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRightsCommand()
+  {
+    return rightsCommandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsCommand_Operations()
+  {
+    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsCommand_Operations2()
+  {
+    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsCommand_User()
+  {
+    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRightsRoleCommand()
+  {
+    return rightsRoleCommandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsRoleCommand_Operations()
+  {
+    return (EAttribute)rightsRoleCommandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsRoleCommand_User()
+  {
+    return (EAttribute)rightsRoleCommandEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1917,11 +2049,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(streamToEClass, STREAM_TO__INPUTNAME);
 
     commandEClass = createEClass(COMMAND);
-    createEAttribute(commandEClass, COMMAND__KEYWORD1);
-    createEAttribute(commandEClass, COMMAND__KEYWORD2);
-    createEAttribute(commandEClass, COMMAND__VALUE1);
-    createEAttribute(commandEClass, COMMAND__KEYWORD3);
-    createEAttribute(commandEClass, COMMAND__VALUE2);
+    createEAttribute(commandEClass, COMMAND__NAME);
 
     window_TimebasedEClass = createEClass(WINDOW_TIMEBASED);
     createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__SIZE);
@@ -1944,6 +2072,24 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     functionEClass = createEClass(FUNCTION);
     createEAttribute(functionEClass, FUNCTION__NAME);
+
+    dropCommandEClass = createEClass(DROP_COMMAND);
+    createEAttribute(dropCommandEClass, DROP_COMMAND__STREAM);
+    createEAttribute(dropCommandEClass, DROP_COMMAND__EXISTS);
+
+    userCommandEClass = createEClass(USER_COMMAND);
+    createEAttribute(userCommandEClass, USER_COMMAND__SUBJECT);
+    createEAttribute(userCommandEClass, USER_COMMAND__SUBJECT_NAME);
+    createEAttribute(userCommandEClass, USER_COMMAND__PASSWORD);
+
+    rightsCommandEClass = createEClass(RIGHTS_COMMAND);
+    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__OPERATIONS);
+    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__OPERATIONS2);
+    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__USER);
+
+    rightsRoleCommandEClass = createEClass(RIGHTS_ROLE_COMMAND);
+    createEAttribute(rightsRoleCommandEClass, RIGHTS_ROLE_COMMAND__OPERATIONS);
+    createEAttribute(rightsRoleCommandEClass, RIGHTS_ROLE_COMMAND__USER);
 
     orEClass = createEClass(OR);
     createEReference(orEClass, OR__LEFT);
@@ -2032,6 +2178,10 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     // Add supertypes to classes
     selectExpressionWithoutAliasDefinitionEClass.getESuperTypes().add(this.getSelectExpression());
     functionEClass.getESuperTypes().add(this.getExpressionComponent());
+    dropCommandEClass.getESuperTypes().add(this.getCommand());
+    userCommandEClass.getESuperTypes().add(this.getCommand());
+    rightsCommandEClass.getESuperTypes().add(this.getCommand());
+    rightsRoleCommandEClass.getESuperTypes().add(this.getCommand());
     orEClass.getESuperTypes().add(this.getExpression());
     andEClass.getESuperTypes().add(this.getExpression());
     equalityEClass.getESuperTypes().add(this.getExpression());
@@ -2145,11 +2295,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getStreamTo_Inputname(), ecorePackage.getEString(), "inputname", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCommand_Keyword1(), ecorePackage.getEString(), "keyword1", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCommand_Keyword2(), ecorePackage.getEString(), "keyword2", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCommand_Value1(), ecorePackage.getEString(), "value1", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCommand_Keyword3(), ecorePackage.getEString(), "keyword3", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCommand_Value2(), ecorePackage.getEString(), "value2", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(window_TimebasedEClass, Window_Timebased.class, "Window_Timebased", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getWindow_Timebased_Size(), ecorePackage.getEInt(), "size", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2172,6 +2318,24 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(dropCommandEClass, DropCommand.class, "DropCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDropCommand_Stream(), ecorePackage.getEString(), "stream", null, 0, 1, DropCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDropCommand_Exists(), ecorePackage.getEString(), "exists", null, 0, 1, DropCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(userCommandEClass, UserCommand.class, "UserCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUserCommand_Subject(), ecorePackage.getEString(), "subject", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUserCommand_SubjectName(), ecorePackage.getEString(), "subjectName", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUserCommand_Password(), ecorePackage.getEString(), "password", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(rightsCommandEClass, RightsCommand.class, "RightsCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRightsCommand_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRightsCommand_Operations2(), ecorePackage.getEString(), "operations2", null, 0, -1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRightsCommand_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(rightsRoleCommandEClass, RightsRoleCommand.class, "RightsRoleCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRightsRoleCommand_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsRoleCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRightsRoleCommand_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsRoleCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(orEClass, Or.class, "Or", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOr_Left(), this.getExpression(), null, "left", null, 0, 1, Or.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

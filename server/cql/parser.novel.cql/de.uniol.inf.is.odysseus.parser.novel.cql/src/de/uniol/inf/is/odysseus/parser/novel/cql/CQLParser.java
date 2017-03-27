@@ -38,12 +38,26 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropSinkCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropStreamCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.DropViewCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.ChangeUserPasswordCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateTenantCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.CreateUserCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropRoleCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.DropUserCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantPermissionCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.GrantRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.RevokePermissionCommand;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user.RevokeRoleCommand;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
+import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
@@ -146,68 +160,124 @@ public class CQLParser implements IQueryParser
 	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
 	{
-		
- 		List<EObject> stuff = EcoreUtil2.eAllContentsAsList(model.eResource()).stream().filter(e -> {
- 			if(e instanceof StatementImpl)
- 				return true;
- 			if(e instanceof CommandImpl)
- 				return true;
- 			return false;
- 		}).collect(Collectors.toList());
- 		
-// 		System.out.println("EObjects:: " + stuff);
- 		
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
 		generator.setNameProvider(new NameProvider());
 		generator.setOuterschema(outerschema);
 		generator.setInnerschema(innerschema);
-		List<IExecutorCommand> list = new ArrayList<>();
-		for(EObject obj : stuff)
+		List<IExecutorCommand> executorCommands = new ArrayList<>();
+		for(EObject statement : EcoreUtil2.eAllOfType(model, StatementImpl.class))
 		{
-			List<IExecutorCommand> l = new ArrayList<>();
-			if(obj instanceof CommandImpl)
+			EObject type = ((StatementImpl) statement).getType();
+			if(type instanceof CommandImpl)
 			{
-				CommandImpl cmd = (CommandImpl) obj;
-				IExecutorCommand exCmd = null; 
-				switch(cmd.getKeyword1().toUpperCase())
-				{
-				case("DROP"):
-					boolean ifExists = cmd.getKeyword3() != null ? true : false;
-					switch(cmd.getKeyword2().toUpperCase())
-					{
-					case("STREAM"):
-						exCmd = new DropStreamCommand(cmd.getValue1(), ifExists, user);
-						CQLDictionaryProvider.getDictionary(user).remove(cmd.getValue1());
-					break;
-					case("SINK"):
-//						DropUserCommand
-//						GrantPermissionCommand
-//						CreateUserCommand
-						exCmd = new DropSinkCommand(cmd.getValue1(), ifExists, user);
-					break;
-					}
-				break;
-				}
-				
-			list.add(exCmd);
+				executorCommands.add(translateCommand((CommandImpl) type, user));
 			}
 			else
 			{
-				generator.doGenerate(obj.eResource(), fsa, null);
+				generator.doGenerate(statement.eResource(), fsa, null);
 				for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
-				{
-					if(e.getValue().toString() != "")//FIXME Currently a hack to prevent this: empty string is a result from a DROP Command that is wrongly interpreted as a Statement
-					{
-//						System.out.println("PQL:: "+ e.getValue().toString());
-						l.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
-					}
-				}
-				list.addAll(l);
+					executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
 			}
 		}
-		
 		generator.clear();
-		return list;
+		
+		return executorCommands;
+	}
+	
+	private IExecutorCommand translateCommand(CommandImpl command, ISession user)
+	{
+		IExecutorCommand executorCommand = null;
+		if(command instanceof DropCommand)
+		{
+			System.out.println("is drop command");
+			DropCommand cast = ((DropCommand) command);
+			boolean exists = cast.getExists() != null ? true : false;
+			switch(cast.getName().toUpperCase())
+			{
+			case("STREAM"):
+				executorCommand = new DropStreamCommand(cast.getStream(), exists, user);
+				CQLDictionaryProvider.getDictionary(user).remove(cast.getStream());//FIXME Not sure, if this methods works properly
+				break;
+			case("SINK"):
+				executorCommand = new DropSinkCommand(cast.getStream(), exists, user);
+				break;
+			case("VIEW"):
+				executorCommand = new DropViewCommand(cast.getStream(), exists, user);
+				break;
+			}
+		}
+		else if(command instanceof UserCommand)
+		{
+			System.out.println("is user command");
+			UserCommand cast = ((UserCommand) command);
+			switch(cast.getName().toUpperCase())
+			{
+			case("CREATE"):
+				if(cast.getSubject().toUpperCase().equals("ROLE"))
+					executorCommand = new CreateRoleCommand(cast.getSubjectName(), user);
+				else if(cast.getSubject().toUpperCase().equals("USER"))
+					executorCommand = new CreateUserCommand(cast.getSubjectName(), cast.getPassword(), user);
+				else if(cast.getSubject().toUpperCase().equals("TENANT"))
+					executorCommand = new CreateTenantCommand(cast.getSubjectName(), user);
+				break;
+			case("DROP"):
+				if(cast.getSubject().toUpperCase().equals("ROLE"))
+					executorCommand = new DropRoleCommand(cast.getSubjectName(), user);
+				else if(cast.getSubject().toUpperCase().equals("USER"))
+					executorCommand = new DropUserCommand(cast.getSubjectName(), user);
+				break;
+			case("ALTER"):
+				executorCommand = new ChangeUserPasswordCommand(cast.getSubjectName(), cast.getPassword(), user);
+				break;
+			}
+		}
+		else if(command instanceof RightsCommand)
+		{
+			System.out.println("is rights command");
+			boolean isGrant;
+			RightsCommand cast = ((RightsCommand) command);
+			if((isGrant = cast.getName().toUpperCase().equals("GRANT")) 
+				|| cast.getName().toUpperCase().equals("REVOKE"))
+			{
+				List<IPermission> operations = new ArrayList<IPermission>();
+				for (String r : cast.getOperations()) 
+				{
+					IPermission action = PermissionFactory.valueOf(r.toUpperCase());
+					if (action != null) 
+						operations.add(action);
+					else 
+						throw new QueryParseException("Right " + r + " not defined.");
+				}
+				List<String> objects = cast.getOperations2() == null ? new ArrayList<String>() : cast.getOperations2();
+				if(isGrant)
+					executorCommand = new GrantPermissionCommand(cast.getUser(), operations, objects, user);
+				else
+				{
+					executorCommand = new RevokePermissionCommand(cast.getUser(), operations, objects, user);
+					System.out.println("executorCommand:: " + executorCommand);
+				}
+			}
+		}
+		else if(command instanceof RightsRoleCommand)
+		{
+			System.out.println("is rights role command");
+			RightsRoleCommand cast = ((RightsRoleCommand) command);
+			if(cast.getName().toUpperCase().equals("GRANT"))
+				executorCommand = new GrantRoleCommand(cast.getUser(), cast.getOperations(), user);
+			else
+			{
+				executorCommand = new RevokeRoleCommand(cast.getUser(), cast.getOperations(), user);
+				System.out.println("executorCommand:: " + executorCommand);
+			}
+		}
+		else
+		{
+			System.out.println("no corresponding class found:: "  + command.toString());
+		}
+		
+		if(executorCommand == null)
+			throw new QueryParseException("Command could no be translated: " + command.toString());
+		return executorCommand;
 	}
 	
 	@Override

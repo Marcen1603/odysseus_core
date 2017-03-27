@@ -211,6 +211,26 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createFunctionAdapter();
       }
       @Override
+      public Adapter caseDropCommand(DropCommand object)
+      {
+        return createDropCommandAdapter();
+      }
+      @Override
+      public Adapter caseUserCommand(UserCommand object)
+      {
+        return createUserCommandAdapter();
+      }
+      @Override
+      public Adapter caseRightsCommand(RightsCommand object)
+      {
+        return createRightsCommandAdapter();
+      }
+      @Override
+      public Adapter caseRightsRoleCommand(RightsRoleCommand object)
+      {
+        return createRightsRoleCommandAdapter();
+      }
+      @Override
       public Adapter caseOr(Or object)
       {
         return createOrAdapter();
@@ -703,6 +723,66 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand <em>Drop Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand
+   * @generated
+   */
+  public Adapter createDropCommandAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand <em>User Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand
+   * @generated
+   */
+  public Adapter createUserCommandAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand <em>Rights Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand
+   * @generated
+   */
+  public Adapter createRightsCommandAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand <em>Rights Role Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand
+   * @generated
+   */
+  public Adapter createRightsRoleCommandAdapter()
   {
     return null;
   }

@@ -106,11 +106,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/inputname"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Command">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword1"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword2"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/value1"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/keyword3"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/value2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Window_Timebased">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Window_Timebased/size"/>
@@ -132,6 +128,24 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Function">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Function/name"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//DropCommand">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropCommand/stream"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropCommand/exists"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//UserCommand">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserCommand/subject"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserCommand/subjectName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserCommand/password"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//RightsCommand">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsCommand/operations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsCommand/operations2"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsCommand/user"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//RightsRoleCommand">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsRoleCommand/operations"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsRoleCommand/user"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Or">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Or/left"/>

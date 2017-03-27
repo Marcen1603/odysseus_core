@@ -14,11 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1 <em>Keyword1</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2 <em>Keyword2</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1 <em>Value1</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3 <em>Keyword3</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2 <em>Value2</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName <em>Name</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand()
@@ -28,133 +24,29 @@ import org.eclipse.emf.ecore.EObject;
 public interface Command extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Keyword1</b></em>' attribute.
+   * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Keyword1</em>' attribute isn't clear,
+   * If the meaning of the '<em>Name</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Keyword1</em>' attribute.
-   * @see #setKeyword1(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Keyword1()
+   * @return the value of the '<em>Name</em>' attribute.
+   * @see #setName(String)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Name()
    * @model
    * @generated
    */
-  String getKeyword1();
+  String getName();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword1 <em>Keyword1</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Keyword1</em>' attribute.
-   * @see #getKeyword1()
+   * @param value the new value of the '<em>Name</em>' attribute.
+   * @see #getName()
    * @generated
    */
-  void setKeyword1(String value);
-
-  /**
-   * Returns the value of the '<em><b>Keyword2</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Keyword2</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Keyword2</em>' attribute.
-   * @see #setKeyword2(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Keyword2()
-   * @model
-   * @generated
-   */
-  String getKeyword2();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword2 <em>Keyword2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Keyword2</em>' attribute.
-   * @see #getKeyword2()
-   * @generated
-   */
-  void setKeyword2(String value);
-
-  /**
-   * Returns the value of the '<em><b>Value1</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Value1</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value1</em>' attribute.
-   * @see #setValue1(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Value1()
-   * @model
-   * @generated
-   */
-  String getValue1();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue1 <em>Value1</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value1</em>' attribute.
-   * @see #getValue1()
-   * @generated
-   */
-  void setValue1(String value);
-
-  /**
-   * Returns the value of the '<em><b>Keyword3</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Keyword3</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Keyword3</em>' attribute.
-   * @see #setKeyword3(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Keyword3()
-   * @model
-   * @generated
-   */
-  String getKeyword3();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getKeyword3 <em>Keyword3</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Keyword3</em>' attribute.
-   * @see #getKeyword3()
-   * @generated
-   */
-  void setKeyword3(String value);
-
-  /**
-   * Returns the value of the '<em><b>Value2</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Value2</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value2</em>' attribute.
-   * @see #setValue2(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCommand_Value2()
-   * @model
-   * @generated
-   */
-  String getValue2();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getValue2 <em>Value2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value2</em>' attribute.
-   * @see #getValue2()
-   * @generated
-   */
-  void setValue2(String value);
+  void setName(String value);
 
 } // Command

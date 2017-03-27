@@ -17,7 +17,12 @@ terminal FLOAT:  INT '.' INT;
 //terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 
 Statement:	//FIXME DROP has two types: Statement and Command -> causes error in detection commands while parsing!
-	(type=Select | type=StreamTo | type=Drop | type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel | type=CreateStreamFile | type=CreateView) 
+	{Statement}
+	(type=Select | type=StreamTo | type=DropCommand 
+		| type=UserCommand | type=RightsCommand | type=RightsRoleCommand 
+		| type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel 
+		| type=CreateStreamFile | type=CreateView
+	) 
 	(';')?
 ;
  
@@ -213,20 +218,43 @@ StreamTo: 'STREAM' 'TO' name=ID (statement=Select|inputname=ID);
 
 //Generic rule for user commands or something like DROP STREAM
 Command:
-	keyword1 = ID
-	keyword2 = ID
-	value1   = ID
-	keyword3 = ID
-	value2   = ID
 	(';')?
 ;
 
-Drop returns Command:
-	keyword1='DROP'
-	keyword2=('SINK'|'STREAM')
-	value1=ID
-	(keyword3='IF' 'EXISTS')?
+DropCommand returns Command:
+	{DropCommand}
+	'DROP'
+	name=('SINK'|'STREAM'|'VIEW')
+	stream=ID
+	(exists='IF' 'EXISTS')?
 ;
+
+UserCommand returns Command:
+	{UserCommand}
+	name=('CREATE'|'ALTER'|'DROP')
+	subject=('USER'|'ROLE'|'TENANT')
+	subjectName=ID
+	('IDENTIFIED' 'BY' password=STRING)?
+;
+
+RightsCommand returns Command:
+	({RightsCommand} name='GRANT' 
+	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+	'TO' user=ID)
+	|({RightsCommand} name='REVOKE' 
+	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?	
+	'FROM' user=ID)
+;
+
+RightsRoleCommand returns Command:
+	({RightsRoleCommand} name='GRANT' 
+	'ROLE' operations+=ID (',' operations+=ID)*
+	'TO' user=ID)
+	|({RightsRoleCommand} name='REVOKE' 
+	'ROLE' operations+=ID (',' operations+=ID)*	
+	'FROM' user=ID)
+;
+
 
 Window_Unbounded:  
 	'UNBOUNDED'

@@ -21,11 +21,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword1 <em>Keyword1</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword2 <em>Keyword2</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getValue1 <em>Value1</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getKeyword3 <em>Keyword3</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getValue2 <em>Value2</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getName <em>Name</em>}</li>
  * </ul>
  *
  * @generated
@@ -33,104 +29,24 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 public class CommandImpl extends MinimalEObjectImpl.Container implements Command
 {
   /**
-   * The default value of the '{@link #getKeyword1() <em>Keyword1</em>}' attribute.
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeyword1()
+   * @see #getName()
    * @generated
    * @ordered
    */
-  protected static final String KEYWORD1_EDEFAULT = null;
+  protected static final String NAME_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getKeyword1() <em>Keyword1</em>}' attribute.
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getKeyword1()
+   * @see #getName()
    * @generated
    * @ordered
    */
-  protected String keyword1 = KEYWORD1_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getKeyword2() <em>Keyword2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getKeyword2()
-   * @generated
-   * @ordered
-   */
-  protected static final String KEYWORD2_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getKeyword2() <em>Keyword2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getKeyword2()
-   * @generated
-   * @ordered
-   */
-  protected String keyword2 = KEYWORD2_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getValue1() <em>Value1</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue1()
-   * @generated
-   * @ordered
-   */
-  protected static final String VALUE1_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getValue1() <em>Value1</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue1()
-   * @generated
-   * @ordered
-   */
-  protected String value1 = VALUE1_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getKeyword3() <em>Keyword3</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getKeyword3()
-   * @generated
-   * @ordered
-   */
-  protected static final String KEYWORD3_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getKeyword3() <em>Keyword3</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getKeyword3()
-   * @generated
-   * @ordered
-   */
-  protected String keyword3 = KEYWORD3_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getValue2() <em>Value2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue2()
-   * @generated
-   * @ordered
-   */
-  protected static final String VALUE2_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getValue2() <em>Value2</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue2()
-   * @generated
-   * @ordered
-   */
-  protected String value2 = VALUE2_EDEFAULT;
+  protected String name = NAME_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -158,9 +74,9 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getKeyword1()
+  public String getName()
   {
-    return keyword1;
+    return name;
   }
 
   /**
@@ -168,104 +84,12 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setKeyword1(String newKeyword1)
+  public void setName(String newName)
   {
-    String oldKeyword1 = keyword1;
-    keyword1 = newKeyword1;
+    String oldName = name;
+    name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__KEYWORD1, oldKeyword1, keyword1));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getKeyword2()
-  {
-    return keyword2;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setKeyword2(String newKeyword2)
-  {
-    String oldKeyword2 = keyword2;
-    keyword2 = newKeyword2;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__KEYWORD2, oldKeyword2, keyword2));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getValue1()
-  {
-    return value1;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setValue1(String newValue1)
-  {
-    String oldValue1 = value1;
-    value1 = newValue1;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__VALUE1, oldValue1, value1));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getKeyword3()
-  {
-    return keyword3;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setKeyword3(String newKeyword3)
-  {
-    String oldKeyword3 = keyword3;
-    keyword3 = newKeyword3;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__KEYWORD3, oldKeyword3, keyword3));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getValue2()
-  {
-    return value2;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setValue2(String newValue2)
-  {
-    String oldValue2 = value2;
-    value2 = newValue2;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__VALUE2, oldValue2, value2));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__NAME, oldName, name));
   }
 
   /**
@@ -278,16 +102,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
   {
     switch (featureID)
     {
-      case CQLPackage.COMMAND__KEYWORD1:
-        return getKeyword1();
-      case CQLPackage.COMMAND__KEYWORD2:
-        return getKeyword2();
-      case CQLPackage.COMMAND__VALUE1:
-        return getValue1();
-      case CQLPackage.COMMAND__KEYWORD3:
-        return getKeyword3();
-      case CQLPackage.COMMAND__VALUE2:
-        return getValue2();
+      case CQLPackage.COMMAND__NAME:
+        return getName();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -302,20 +118,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
   {
     switch (featureID)
     {
-      case CQLPackage.COMMAND__KEYWORD1:
-        setKeyword1((String)newValue);
-        return;
-      case CQLPackage.COMMAND__KEYWORD2:
-        setKeyword2((String)newValue);
-        return;
-      case CQLPackage.COMMAND__VALUE1:
-        setValue1((String)newValue);
-        return;
-      case CQLPackage.COMMAND__KEYWORD3:
-        setKeyword3((String)newValue);
-        return;
-      case CQLPackage.COMMAND__VALUE2:
-        setValue2((String)newValue);
+      case CQLPackage.COMMAND__NAME:
+        setName((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -331,20 +135,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
   {
     switch (featureID)
     {
-      case CQLPackage.COMMAND__KEYWORD1:
-        setKeyword1(KEYWORD1_EDEFAULT);
-        return;
-      case CQLPackage.COMMAND__KEYWORD2:
-        setKeyword2(KEYWORD2_EDEFAULT);
-        return;
-      case CQLPackage.COMMAND__VALUE1:
-        setValue1(VALUE1_EDEFAULT);
-        return;
-      case CQLPackage.COMMAND__KEYWORD3:
-        setKeyword3(KEYWORD3_EDEFAULT);
-        return;
-      case CQLPackage.COMMAND__VALUE2:
-        setValue2(VALUE2_EDEFAULT);
+      case CQLPackage.COMMAND__NAME:
+        setName(NAME_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -360,16 +152,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
   {
     switch (featureID)
     {
-      case CQLPackage.COMMAND__KEYWORD1:
-        return KEYWORD1_EDEFAULT == null ? keyword1 != null : !KEYWORD1_EDEFAULT.equals(keyword1);
-      case CQLPackage.COMMAND__KEYWORD2:
-        return KEYWORD2_EDEFAULT == null ? keyword2 != null : !KEYWORD2_EDEFAULT.equals(keyword2);
-      case CQLPackage.COMMAND__VALUE1:
-        return VALUE1_EDEFAULT == null ? value1 != null : !VALUE1_EDEFAULT.equals(value1);
-      case CQLPackage.COMMAND__KEYWORD3:
-        return KEYWORD3_EDEFAULT == null ? keyword3 != null : !KEYWORD3_EDEFAULT.equals(keyword3);
-      case CQLPackage.COMMAND__VALUE2:
-        return VALUE2_EDEFAULT == null ? value2 != null : !VALUE2_EDEFAULT.equals(value2);
+      case CQLPackage.COMMAND__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
   }
@@ -385,16 +169,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (keyword1: ");
-    result.append(keyword1);
-    result.append(", keyword2: ");
-    result.append(keyword2);
-    result.append(", value1: ");
-    result.append(value1);
-    result.append(", keyword3: ");
-    result.append(keyword3);
-    result.append(", value2: ");
-    result.append(value2);
+    result.append(" (name: ");
+    result.append(name);
     result.append(')');
     return result.toString();
   }
