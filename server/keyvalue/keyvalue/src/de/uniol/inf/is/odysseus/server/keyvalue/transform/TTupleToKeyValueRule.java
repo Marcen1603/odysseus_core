@@ -15,7 +15,7 @@ public class TTupleToKeyValueRule extends AbstractTransformationRule<ToKeyValueA
 
 	@Override
 	public void execute(ToKeyValueAO ao, TransformationConfiguration config) throws RuleException {
-		TupleToKeyValuePO<IMetaAttribute> po = new TupleToKeyValuePO<IMetaAttribute>();
+		TupleToKeyValuePO<IMetaAttribute> po = new TupleToKeyValuePO<IMetaAttribute>(ao);
 		defaultExecute(ao, po, config, true, false);
 	}
 

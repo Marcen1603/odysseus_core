@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-//import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -43,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 /**
  * This class is used to represent objects as key value pairs (similar to JSON)
  *
- * @author Marco Grawunder
+ * @author Marco Grawunder, Tobias Brandt
  *
  * @param <T>
  */
@@ -53,8 +52,6 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final private static long serialVersionUID = -94667746890198612L;
 	final static private ObjectMapper mapper = new ObjectMapper();
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
-
-	// final static private XmlMapper xmlMapper = new XmlMapper();
 
 	final static private JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
@@ -82,31 +79,10 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(InputStream input) {
 		throw new RuntimeException("XML currently not supported!");
-		// JsonNode node = null;
-		// try {
-		// //node = xmlMapper.readValue(input, JsonNode.class);
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		// ret.setNode(node);
-		//
-		// return ret;
 	}
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(String input) {
 		throw new RuntimeException("XML currently not supported!");
-		// JsonNode node = null;
-		// try {
-		// node = xmlMapper.readValue(input, JsonNode.class);
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		// ret.setNode(node);
-		// return ret;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -334,7 +310,6 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 			if (i == subkeys.length - 1) {
 				if (father.isArray()) {
-					// throw new RuntimeException("Implement me!!");
 					((ArrayNode) father).add(mapper.convertValue(value, JsonNode.class));
 				} else {
 					int start = subkeys[i].indexOf("[") + 1;
@@ -355,7 +330,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 							// FIXME: Currently a hack
 							try {
 								JsonNode node = jsonMapper.reader().readTree(value.toString());
-								((ObjectNode) father).set(subkeys[i],node);
+								((ObjectNode) father).set(subkeys[i], node);
 							} catch (JsonProcessingException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -614,23 +589,107 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	// static helper
 	// ------------------------------------------------------------------------------------------------
 
+	/**
+	 * Converts a tuple into a keyValue / JSON object
+	 * 
+	 * @param tuple
+	 *            The tuple to convert.
+	 * @param schema
+	 *            The schema of the tuple
+	 * @return a keyValue object with the content of the tuple
+	 */
 	public static KeyValueObject<IMetaAttribute> fromTuple(Tuple<IMetaAttribute> tuple, SDFSchema schema) {
-		KeyValueObject<IMetaAttribute> ret = new KeyValueObject<>();
-		ret.setMetadata(tuple.getMetadata().clone());
-		int pos = 0;
+		KeyValueObject<IMetaAttribute> keyValueObject = new KeyValueObject<>();
+
+		if (tuple.getMetadata() != null) {
+			// It is possible that tuples do not have meta data (e.g., inner /
+			// nested tuples)
+			keyValueObject.setMetadata(tuple.getMetadata().clone());
+		}
+
+		/*
+		 * Go through all attributes of the tuple and put the content into the
+		 * KeyValueObject
+		 */
+		int position = 0;
 		for (SDFAttribute a : schema) {
 
-			// TODO: nested structure
 			if (a.getDatatype().isTuple()) {
-				throw new RuntimeException("Nesting currently not supported!");
+
+				// Nested structure (tuple in tuple)
+				Tuple<IMetaAttribute> innerTuple = tuple.getAttribute(position);
+				KeyValueObject<IMetaAttribute> innerKeyValueObject = KeyValueObject.fromTuple(innerTuple,
+						a.getDatatype().getSchema());
+
+				// Add the nested object to the parent
+				keyValueObject.setAttribute(a.getAttributeName(), innerKeyValueObject);
+
+			} else {
+				// Normal (not nested) attribute
+				try {
+					keyValueObject.setAttribute(a.getAttributeName(), tuple.getAttribute(position));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-			try {
-				ret.setAttribute(a.getAttributeName(), tuple.getAttribute(pos++));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
+			position++;
 		}
-		return ret;
+		return keyValueObject;
+	}
+
+	/**
+	 * Converts a tuple into a keyValue / JSON object matching a given template.
+	 * Attributes which are not used in the template will be ignored.
+	 * 
+	 * @param tuple
+	 *            The tuple to convert.
+	 * @param schema
+	 *            The schema of the tuple
+	 * @param template
+	 *            Template needs to have variables with <> brackets around them.
+	 *            The names of the variables need to match the schema.
+	 * @return a keyValue object with the content of the tuple
+	 */
+	public static KeyValueObject<IMetaAttribute> fromTupleWithTemplate(Tuple<IMetaAttribute> tuple, SDFSchema schema,
+			String template) {
+
+		/*
+		 * Go through all attributes of the tuple and put the content into the
+		 * template
+		 */
+		int position = 0;
+		for (SDFAttribute a : schema) {
+
+			if (a.getDatatype().isTuple()) {
+
+				// Nested structure (tuple in tuple)
+				Tuple<IMetaAttribute> innerTuple = tuple.getAttribute(position);
+				KeyValueObject<IMetaAttribute> innerKeyValueObject = KeyValueObject.fromTuple(innerTuple,
+						a.getDatatype().getSchema());
+				String keyValueString = innerKeyValueObject.toString();
+				template.replaceAll("<" + a.getAttributeName() + ">", keyValueString);
+
+			} else {
+				// Normal (not nested) attribute
+				try {
+					template = template.replaceAll("<" + a.getAttributeName() + ">", "" + tuple.getAttribute(position));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			position++;
+		}
+
+		KeyValueObject<IMetaAttribute> keyValueObject = KeyValueObject.createInstance(template);
+		if (tuple.getMetadata() != null) {
+			// It is possible that tuples do not have meta data (e.g., inner /
+			// nested tuples)
+			keyValueObject.setMetadata(tuple.getMetadata().clone());
+		}
+
+		return keyValueObject;
 	}
 
 	static private void parse(JsonNode rootNode, Map<String, Object> map, String path) {
