@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
@@ -32,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.keyvalue.datahandler.KeyValueObjectDataHandler;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 
 /**
@@ -42,7 +45,7 @@ import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
  *
  */
 public class SocketService extends Observable {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(SocketService.class);
 
 	// QueryId, OutputOperator, OperatorOutputPort
@@ -451,7 +454,6 @@ public class SocketService extends Observable {
 		// Data output
 		SDFSchema outputSchema = operator.getOutputSchema();
 		List<SDFAttribute> attibuteList = outputSchema.getAttributes();
-		// List<SDFMetaSchema> metaschema = outputSchema.getMetaschema();
 
 		ArrayList<AttributeInformation> attributeInformationList = new ArrayList<AttributeInformation>();
 		for (SDFAttribute sdfAttribute : attibuteList) {
@@ -562,12 +564,16 @@ public class SocketService extends Observable {
 			int rootOutputPort, String token, boolean withMetaData) {
 
 		if (root.getOutputSchema(rootOutputPort) != null) {
-			
-//			if (root.getOutputSchema(rootOutputPort).getType().equals(KeyValueObject.class)) {
-//				
-//			}
-			
-			NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler(root.getOutputSchema(rootOutputPort));
+
+			IStreamObjectDataHandler handler = null;
+
+			if (root.getOutputSchema(rootOutputPort).getType().equals(KeyValueObject.class)) {
+				// KeyValueObject
+				handler = new KeyValueObjectDataHandler();
+			} else {
+				// Normal tuple
+				handler = new NullAwareTupleDataHandler(root.getOutputSchema(rootOutputPort));
+			}
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
@@ -587,9 +593,11 @@ public class SocketService extends Observable {
 				// These are the inputs of the given operator
 				Collection<ISubscription> sources = rootAsSink.getSubscribedToSource();
 
-				// For every such operator, connect our new sink (the socket
-				// operator) to it so that the socket operator receives all the
-				// data the original operator receives
+				/*
+				 * For every such operator, connect our new sink (the socket
+				 * operator) to it so that the socket operator receives all the
+				 * data the original operator receives
+				 */
 				for (ISubscription source : sources) {
 					Object target = source.getTarget();
 					if (target instanceof ISource) {
@@ -601,9 +609,11 @@ public class SocketService extends Observable {
 
 			} else {
 
-				// The physical operator we want to subscribe to is itself a
-				// source, hence we can directly subscribe to this operator ->
-				// only one connection needed
+				/*
+				 * The physical operator we want to subscribe to is itself a
+				 * source, hence we can directly subscribe to this operator ->
+				 * only one connection needed
+				 */
 				final ISource<?> rootAsSource = (ISource<?>) root;
 				rootAsSource.subscribeSink((ISink) sink, 0, rootOutputPort, root.getOutputSchema(rootOutputPort), true,
 						0);
@@ -617,7 +627,7 @@ public class SocketService extends Observable {
 			return sink;
 		}
 
-		LOG.warn("The operator " + root.getName() + " has to output schema. Won't be used for a socket sink.");
+		LOG.warn("The operator " + root.getName() + " has no output schema. Won't be used for a socket sink.");
 		return null;
 	}
 

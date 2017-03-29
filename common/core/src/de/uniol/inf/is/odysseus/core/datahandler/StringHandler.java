@@ -79,7 +79,6 @@ public class StringHandler extends AbstractDataHandler<String> {
 	public String readData(ByteBuffer b) {
 		int size = b.getInt();
 		if (size >= 0) {
-			// System.out.println("size "+size);
 			int limit = b.limit();
 			b.limit(b.position() + size);
 			try {
@@ -117,8 +116,6 @@ public class StringHandler extends AbstractDataHandler<String> {
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		String s = (String) data;
-		// System.out.println("write String Data "+s+" "+s.length());
-		// buffer.putInt(s.length());
 		try {
 			if (data != null) {
 				ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(s));
