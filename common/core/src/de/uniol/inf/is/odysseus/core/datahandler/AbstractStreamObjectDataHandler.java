@@ -180,7 +180,7 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	}
 
 	/**
-	 * Default implemtation of CVS, BSON, JSON
+	 * Default implementation of CVS, BSON, JSON
 	 */
 
 //	@Override
