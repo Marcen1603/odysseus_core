@@ -562,6 +562,11 @@ public class SocketService extends Observable {
 			int rootOutputPort, String token, boolean withMetaData) {
 
 		if (root.getOutputSchema(rootOutputPort) != null) {
+			
+//			if (root.getOutputSchema(rootOutputPort).getType().equals(KeyValueObject.class)) {
+//				
+//			}
+			
 			NullAwareTupleDataHandler handler = new NullAwareTupleDataHandler(root.getOutputSchema(rootOutputPort));
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
