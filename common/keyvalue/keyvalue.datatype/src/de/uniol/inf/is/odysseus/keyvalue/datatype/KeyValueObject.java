@@ -591,7 +591,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 * @param tuple
 	 *            The tuple to convert.
 	 * @param schema
-	 *            The schema of the tuple
+	 *            The schema of the incoming tuple
 	 * @return a keyValue object with the content of the tuple
 	 */
 	public static KeyValueObject<IMetaAttribute> fromTuple(Tuple<IMetaAttribute> tuple, SDFSchema schema) {
