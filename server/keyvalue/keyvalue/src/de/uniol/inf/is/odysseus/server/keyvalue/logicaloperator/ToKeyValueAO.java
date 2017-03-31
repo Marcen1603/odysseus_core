@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
@@ -26,6 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "ToKeyValue", doc = "Converts an input object a key-value/JSON object", category = {
 		LogicalOperatorCategory.TRANSFORM })
@@ -57,16 +59,14 @@ public class ToKeyValueAO extends UnaryLogicalOp {
 		return new ToKeyValueAO(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		/*
-		 * We should not simply copy the old schema. KeyValueObjects do not have
-		 * a schema. Only a metaschema.
-		 */
+		// We need to remove the attribute list. KeyValueObjects do not have an
+		// attribute list.
 		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
-		SDFSchema emptySchema = SDFSchemaFactory.createNewTupleSchema("empty schema for keyValue", emptyAttributes);
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewWithMetaSchema(emptySchema,
-				getInputSchema().getMetaschema());
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
+				(Class<? extends IStreamObject<?>>) KeyValueObject.class, emptyAttributes, getInputSchema());
 
 		setOutputSchema(newOutputSchema);
 		return newOutputSchema;
