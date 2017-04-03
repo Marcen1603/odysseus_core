@@ -183,16 +183,6 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 	 * Default implementation of CVS, BSON, JSON
 	 */
 
-//	@Override
-//	public byte[] writeBSONData(Object data) {
-//		throw new UnsupportedOperationException();
-//	}
-//
-//	@Override
-//	public void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
-//		throw new UnsupportedOperationException();
-//	}
-
 	@Override
 	public void writeCSVData(StringBuilder string, Object data, WriteOptions options) {
 		List<String> values = new ArrayList<>();
@@ -205,16 +195,6 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 				string.append(options.getDelimiter());
 			}
 		}
-
-//		StringBuilder test2 = new StringBuilder();
-//		if (data instanceof ICSVToString) {
-//			test2.append(((ICSVToString) data).csvToString(options));
-//		} else {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		System.err.println("JUST FOR DEBUG");
-
 	}
 
 }
