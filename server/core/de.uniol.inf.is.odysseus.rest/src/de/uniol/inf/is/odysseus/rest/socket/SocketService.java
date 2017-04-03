@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.NullAwareTupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.objecthandler.ByteBufferHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -33,8 +33,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.keyvalue.datahandler.KeyValueObjectDataHandler;
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 
 /**
@@ -565,15 +563,11 @@ public class SocketService extends Observable {
 
 		if (root.getOutputSchema(rootOutputPort) != null) {
 
-			IStreamObjectDataHandler handler = null;
-
-			if (root.getOutputSchema(rootOutputPort).getType().equals(KeyValueObject.class)) {
-				// KeyValueObject
-				handler = new KeyValueObjectDataHandler();
-			} else {
-				// Normal tuple
-				handler = new NullAwareTupleDataHandler(root.getOutputSchema(rootOutputPort));
-			}
+			// Get the right data handler. For example, we need different for
+			// Tuples and KeyValueObjects
+			IStreamObjectDataHandler handler = DataHandlerRegistry.getStreamObjectDataHandler(
+					root.getOutputSchema(rootOutputPort).getType().getSimpleName(),
+					root.getOutputSchema(rootOutputPort));
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
 					handler);
