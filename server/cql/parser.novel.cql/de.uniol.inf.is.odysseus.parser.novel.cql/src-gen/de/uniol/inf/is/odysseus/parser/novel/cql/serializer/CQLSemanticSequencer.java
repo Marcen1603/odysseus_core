@@ -842,7 +842,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     CreateDataBaseGenericConnection returns CreateDataBaseConnectionGeneric
 	 *
 	 * Constraint:
-	 *     (name=ID driver=ID source=ID server=ID? (user=ID password=ID)?)
+	 *     (name=ID driver=ID source=ID (host=ID port=INT)? (user=ID password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?)
 	 */
 	protected void sequence_CreateDataBaseGenericConnection(ISerializationContext context, CreateDataBaseConnectionGeneric semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -854,19 +854,10 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     CreateDataBaseJDBCConnection returns CreateDataBaseConnectionJDBC
 	 *
 	 * Constraint:
-	 *     (name=ID server=ID)
+	 *     (name=ID server=ID (user=ID password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?)
 	 */
 	protected void sequence_CreateDataBaseJDBCConnection(ISerializationContext context, CreateDataBaseConnectionJDBC semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__NAME));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getNameIDTerminalRuleCall_4_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getServerIDTerminalRuleCall_6_0(), semanticObject.getServer());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

@@ -251,6 +251,12 @@ CreateDataBaseJDBCConnection returns Command:
 	name=ID
 	'JDBC'
 	server=ID
+	('WITH' 
+	 'USER'
+	 user=ID
+	 'PASSWORD'
+	 password=ID
+	 (lazy='NO_LAZY_CONNECTION_CHECK')?)?
 ;
 
 CreateDataBaseGenericConnection returns Command:
@@ -264,12 +270,15 @@ CreateDataBaseGenericConnection returns Command:
 	'TO'
 	source=ID
 	('AT'
-	server=ID)?
+	host=ID
+	':'
+	port=INT)?
 	('WITH' 
 	 'USER'
 	 user=ID
 	 'PASSWORD'
-	 password=ID)?
+	 password=ID
+	 (lazy='NO_LAZY_CONNECTION_CHECK')?)?
 ;
 
 DropDatabaseConnection returns Command:

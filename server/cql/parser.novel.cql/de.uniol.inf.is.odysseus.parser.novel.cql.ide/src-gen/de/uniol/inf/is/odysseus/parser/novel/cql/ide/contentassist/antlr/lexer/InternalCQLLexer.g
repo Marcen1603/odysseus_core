@@ -11,6 +11,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.lexer;
 import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 }
 
+NO_LAZY_CONNECTION_CHECK : ('N'|'n')('O'|'o')'_'('L'|'l')('A'|'a')('Z'|'z')('Y'|'y')'_'('C'|'c')('O'|'o')('N'|'n')('N'|'n')('E'|'e')('C'|'c')('T'|'t')('I'|'i')('O'|'o')('N'|'n')'_'('C'|'c')('H'|'h')('E'|'e')('C'|'c')('K'|'k');
+
 INTERSECTION : ('I'|'i')('N'|'n')('T'|'t')('E'|'e')('R'|'r')('S'|'s')('E'|'e')('C'|'c')('T'|'t')('I'|'i')('O'|'o')('N'|'n');
 
 DATAHANDLER : ('D'|'d')('A'|'a')('T'|'t')('A'|'a')('H'|'h')('A'|'a')('N'|'n')('D'|'d')('L'|'l')('E'|'e')('R'|'r');

@@ -22,9 +22,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getDriver <em>Driver</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getSource <em>Source</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getServer <em>Server</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getHost <em>Host</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getPort <em>Port</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getUser <em>User</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getPassword <em>Password</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getLazy <em>Lazy</em>}</li>
  * </ul>
  *
  * @generated
@@ -72,24 +74,44 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   protected String source = SOURCE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getServer() <em>Server</em>}' attribute.
+   * The default value of the '{@link #getHost() <em>Host</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getServer()
+   * @see #getHost()
    * @generated
    * @ordered
    */
-  protected static final String SERVER_EDEFAULT = null;
+  protected static final String HOST_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getServer() <em>Server</em>}' attribute.
+   * The cached value of the '{@link #getHost() <em>Host</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getServer()
+   * @see #getHost()
    * @generated
    * @ordered
    */
-  protected String server = SERVER_EDEFAULT;
+  protected String host = HOST_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getPort() <em>Port</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPort()
+   * @generated
+   * @ordered
+   */
+  protected static final int PORT_EDEFAULT = 0;
+
+  /**
+   * The cached value of the '{@link #getPort() <em>Port</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getPort()
+   * @generated
+   * @ordered
+   */
+  protected int port = PORT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getUser() <em>User</em>}' attribute.
@@ -130,6 +152,26 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
    * @ordered
    */
   protected String password = PASSWORD_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLazy() <em>Lazy</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLazy()
+   * @generated
+   * @ordered
+   */
+  protected static final String LAZY_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLazy() <em>Lazy</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLazy()
+   * @generated
+   * @ordered
+   */
+  protected String lazy = LAZY_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -203,9 +245,9 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getServer()
+  public String getHost()
   {
-    return server;
+    return host;
   }
 
   /**
@@ -213,12 +255,35 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setServer(String newServer)
+  public void setHost(String newHost)
   {
-    String oldServer = server;
-    server = newServer;
+    String oldHost = host;
+    host = newHost;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER, oldServer, server));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__HOST, oldHost, host));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public int getPort()
+  {
+    return port;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPort(int newPort)
+  {
+    int oldPort = port;
+    port = newPort;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PORT, oldPort, port));
   }
 
   /**
@@ -272,6 +337,29 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getLazy()
+  {
+    return lazy;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLazy(String newLazy)
+  {
+    String oldLazy = lazy;
+    lazy = newLazy;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY, oldLazy, lazy));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -281,12 +369,16 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
         return getDriver();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
         return getSource();
-      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER:
-        return getServer();
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__HOST:
+        return getHost();
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PORT:
+        return getPort();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__USER:
         return getUser();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD:
         return getPassword();
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY:
+        return getLazy();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -307,14 +399,20 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
         setSource((String)newValue);
         return;
-      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER:
-        setServer((String)newValue);
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__HOST:
+        setHost((String)newValue);
+        return;
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PORT:
+        setPort((Integer)newValue);
         return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__USER:
         setUser((String)newValue);
         return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD:
         setPassword((String)newValue);
+        return;
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY:
+        setLazy((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -336,14 +434,20 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
         setSource(SOURCE_EDEFAULT);
         return;
-      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER:
-        setServer(SERVER_EDEFAULT);
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__HOST:
+        setHost(HOST_EDEFAULT);
+        return;
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PORT:
+        setPort(PORT_EDEFAULT);
         return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__USER:
         setUser(USER_EDEFAULT);
         return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD:
         setPassword(PASSWORD_EDEFAULT);
+        return;
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY:
+        setLazy(LAZY_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -363,12 +467,16 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
         return DRIVER_EDEFAULT == null ? driver != null : !DRIVER_EDEFAULT.equals(driver);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
         return SOURCE_EDEFAULT == null ? source != null : !SOURCE_EDEFAULT.equals(source);
-      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER:
-        return SERVER_EDEFAULT == null ? server != null : !SERVER_EDEFAULT.equals(server);
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__HOST:
+        return HOST_EDEFAULT == null ? host != null : !HOST_EDEFAULT.equals(host);
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PORT:
+        return port != PORT_EDEFAULT;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__USER:
         return USER_EDEFAULT == null ? user != null : !USER_EDEFAULT.equals(user);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD:
         return PASSWORD_EDEFAULT == null ? password != null : !PASSWORD_EDEFAULT.equals(password);
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY:
+        return LAZY_EDEFAULT == null ? lazy != null : !LAZY_EDEFAULT.equals(lazy);
     }
     return super.eIsSet(featureID);
   }
@@ -388,12 +496,16 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
     result.append(driver);
     result.append(", source: ");
     result.append(source);
-    result.append(", server: ");
-    result.append(server);
+    result.append(", host: ");
+    result.append(host);
+    result.append(", port: ");
+    result.append(port);
     result.append(", user: ");
     result.append(user);
     result.append(", password: ");
     result.append(password);
+    result.append(", lazy: ");
+    result.append(lazy);
     result.append(')');
     return result.toString();
   }

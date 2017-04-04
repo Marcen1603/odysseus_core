@@ -1526,6 +1526,36 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getCreateDataBaseConnectionJDBC_User()
+  {
+    return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionJDBC_Password()
+  {
+    return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionJDBC_Lazy()
+  {
+    return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getCreateDataBaseConnectionGeneric()
   {
     return createDataBaseConnectionGenericEClass;
@@ -1556,7 +1586,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Server()
+  public EAttribute getCreateDataBaseConnectionGeneric_Host()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(2);
   }
@@ -1566,7 +1596,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_User()
+  public EAttribute getCreateDataBaseConnectionGeneric_Port()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(3);
   }
@@ -1576,9 +1606,29 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Password()
+  public EAttribute getCreateDataBaseConnectionGeneric_User()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionGeneric_Password()
+  {
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionGeneric_Lazy()
+  {
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2372,13 +2422,18 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     createDataBaseConnectionJDBCEClass = createEClass(CREATE_DATA_BASE_CONNECTION_JDBC);
     createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__SERVER);
+    createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__USER);
+    createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__PASSWORD);
+    createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__LAZY);
 
     createDataBaseConnectionGenericEClass = createEClass(CREATE_DATA_BASE_CONNECTION_GENERIC);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE);
-    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__HOST);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__PORT);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__USER);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY);
 
     dropDatabaseConnectionEClass = createEClass(DROP_DATABASE_CONNECTION);
 
@@ -2656,13 +2711,18 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(createDataBaseConnectionJDBCEClass, CreateDataBaseConnectionJDBC.class, "CreateDataBaseConnectionJDBC", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreateDataBaseConnectionJDBC_Server(), ecorePackage.getEString(), "server", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionJDBC_User(), ecorePackage.getEString(), "user", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionJDBC_Password(), ecorePackage.getEString(), "password", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionJDBC_Lazy(), ecorePackage.getEString(), "lazy", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(createDataBaseConnectionGenericEClass, CreateDataBaseConnectionGeneric.class, "CreateDataBaseConnectionGeneric", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreateDataBaseConnectionGeneric_Driver(), ecorePackage.getEString(), "driver", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_Source(), ecorePackage.getEString(), "source", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateDataBaseConnectionGeneric_Server(), ecorePackage.getEString(), "server", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Host(), ecorePackage.getEString(), "host", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Port(), ecorePackage.getEInt(), "port", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_User(), ecorePackage.getEString(), "user", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_Password(), ecorePackage.getEString(), "password", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Lazy(), ecorePackage.getEString(), "lazy", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dropDatabaseConnectionEClass, DropDatabaseConnection.class, "DropDatabaseConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

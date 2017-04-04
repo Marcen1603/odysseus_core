@@ -134,13 +134,18 @@
     <genClasses ecoreClass="CQL.ecore#//ExpressionComponentAsAttribute"/>
     <genClasses ecoreClass="CQL.ecore#//CreateDataBaseConnectionJDBC">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/server"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/user"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/password"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/lazy"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//CreateDataBaseConnectionGeneric">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/driver"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/source"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/server"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/host"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/port"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/user"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/password"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/lazy"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//DropDatabaseConnection"/>
     <genClasses ecoreClass="CQL.ecore#//DropStream">

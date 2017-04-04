@@ -2,11 +2,13 @@ package de.uniol.inf.is.odysseus.parser.novel.cql;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,14 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
@@ -59,7 +68,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.NameProvider;
 
@@ -133,32 +141,15 @@ public class CQLParser implements IQueryParser
 						// There are no pql operators for {@link CommandImpl}, instead get the
 						// corresponding executor command like {@link CreateStreamCommand} for
 						// the given command.
-						executorCommands.add(getExecutorCommand((Command) component, user));
+						IExecutorCommand command = getExecutorCommand((Command) component, user);
+						if(command != null)
+							executorCommands.add(command);
 					}
 					else
 					{
 						throw new QueryParseException("Given querie contains unknown component: " + component.toString());
 					}
 				}
-			
-//				for(EObject statement : EcoreUtil2.eAllOfType(model, StatementImpl.class))
-//				{
-//					EObject type = ((StatementImpl) statement);
-//					if(type instanceof CommandImpl)
-//					{
-//						// There are no pql operators for {@link CommandImpl}, instead get the
-//						// corresponding executor command like {@link CreateStreamCommand} for
-//						// the given command.
-//						executorCommands.add(getExecutorCommand((CommandImpl) type, user));
-//					}
-//					else
-//					{
-//						// Generate a pql operator plan from the given model and create a new {@ IExecutorCommand}
-//						generator.doGenerate(statement.eResource(), fsa, null);
-//						for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
-//							executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
-//					}
-//				}
 			}
 			else
 			{
@@ -198,6 +189,7 @@ public class CQLParser implements IQueryParser
 
 	private IExecutorCommand getExecutorCommand(Command command, ISession user)
 	{
+		boolean databaseCommand = false;
 		IExecutorCommand executorCommand = null;
 		EObject commandType = command.getType();
 		if(commandType instanceof DropStream)
@@ -273,10 +265,85 @@ public class CQLParser implements IQueryParser
 			else
 				executorCommand = new RevokeRoleCommand(cast.getUser(), cast.getOperations(), user);
 		}
+		else if(commandType instanceof CreateDataBaseConnectionGeneric)
+		{
+			databaseCommand = true;
+			CreateDataBaseConnectionGeneric cast = ((CreateDataBaseConnectionGeneric) commandType);
+			createDatabaseConnection(cast.getName(), cast.getDriver(), cast.getSource(), cast.getHost(), cast.getPort(), cast.getUser(), cast.getPassword(), cast.getLazy());
+		}
+		else if(commandType instanceof CreateDataBaseConnectionJDBC)
+		{
+			databaseCommand = true;
+			CreateDataBaseConnectionJDBC cast = ((CreateDataBaseConnectionJDBC) commandType);
+			createDatabaseConnection(cast.getName(), null, null, cast.getServer(), -1, cast.getUser(), cast.getPassword(), cast.getLazy());
+		}
+		else if(commandType instanceof DropDatabaseConnection)
+		{
+			databaseCommand = true;
+			DatabaseConnectionDictionary.removeConnection(((DropDatabaseConnection) commandType).getName());
+		}
 		
-		if(executorCommand == null)
-			throw new QueryParseException("Command could no be translated: " + command.toString());
+		if(!databaseCommand && executorCommand == null)
+			throw new QueryParseException("Command could no be translated: " + commandType.toString());
 		return executorCommand;
+	}
+	 
+	private void createDatabaseConnection(String connectionName, String dbms, String dbname, String host, int port, String user, String pass, String lazy)
+	{
+		if (DatabaseConnectionDictionary.isConnectionExisting(connectionName))
+			throw new QueryParseException("Connection with name \"" + connectionName + "\" already exists!");
+		if(user == null)
+		{
+			user = "root";
+			pass = "";
+		}
+		try 
+		{
+			if(dbms != null && dbname != null)
+			{
+	
+				IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(dbms);
+				if (factory == null) 
+				{
+					String currentInstalled = "";
+					String sep = "";
+					for (String n : DatabaseConnectionDictionary.getConnectionFactoryNames()) 
+					{
+						currentInstalled = currentInstalled + sep + n;
+						sep = ", ";
+					}
+					throw new QueryParseException("DBMS \"" + dbms + "\" not supported! Currently available: " + currentInstalled);
+				}
+				IDatabaseConnection con = factory.createConnection(host, port, dbname, user, pass);
+				DatabaseConnectionDictionary.addConnection(connectionName, con);
+			}
+			else//otherwise, we have a JDBC based connection
+			{
+				Properties props = new Properties();
+				props.setProperty("user", user);
+				props.setProperty("password", pass);
+				IDatabaseConnection connection = new DatabaseConnection(host, props);
+				DatabaseConnectionDictionary.addConnection(connectionName, connection);
+			}
+		}
+		catch (Exception e) 
+		{
+			throw new QueryParseException("Error creating connection", e);
+		}		
+		
+		// is check option used?
+		if (lazy != null)
+		{
+			IDatabaseConnection con = DatabaseConnectionDictionary.getDatabaseConnection(connectionName);
+			try 
+			{
+				con.checkProperties();
+			} 
+			catch (SQLException e) 
+			{
+				throw new QueryParseException("Check for database connection failed: " + e.getMessage(), e);
+			}
+		}
 	}
 	
 	private synchronized CQLDictionary createDictionary(List<SchemaDefinition> schemata, ISession user)

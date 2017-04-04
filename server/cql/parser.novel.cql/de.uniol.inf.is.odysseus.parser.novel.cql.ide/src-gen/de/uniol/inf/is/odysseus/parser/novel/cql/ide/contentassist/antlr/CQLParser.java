@@ -113,6 +113,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateDatabaseSinkAccess().getGroup_6(), "rule__CreateDatabaseSink__Group_6__0");
 					put(grammarAccess.getCreateViewAccess().getGroup(), "rule__CreateView__Group__0");
 					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getGroup(), "rule__CreateDataBaseJDBCConnection__Group__0");
+					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getGroup_7(), "rule__CreateDataBaseJDBCConnection__Group_7__0");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getGroup(), "rule__CreateDataBaseGenericConnection__Group__0");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getGroup_9(), "rule__CreateDataBaseGenericConnection__Group_9__0");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getGroup_10(), "rule__CreateDataBaseGenericConnection__Group_10__0");
@@ -246,12 +247,17 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateViewAccess().getSelectAssignment_2(), "rule__CreateView__SelectAssignment_2");
 					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getNameAssignment_4(), "rule__CreateDataBaseJDBCConnection__NameAssignment_4");
 					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getServerAssignment_6(), "rule__CreateDataBaseJDBCConnection__ServerAssignment_6");
+					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserAssignment_7_2(), "rule__CreateDataBaseJDBCConnection__UserAssignment_7_2");
+					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordAssignment_7_4(), "rule__CreateDataBaseJDBCConnection__PasswordAssignment_7_4");
+					put(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyAssignment_7_5(), "rule__CreateDataBaseJDBCConnection__LazyAssignment_7_5");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getNameAssignment_4(), "rule__CreateDataBaseGenericConnection__NameAssignment_4");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getDriverAssignment_6(), "rule__CreateDataBaseGenericConnection__DriverAssignment_6");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getSourceAssignment_8(), "rule__CreateDataBaseGenericConnection__SourceAssignment_8");
-					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerAssignment_9_1(), "rule__CreateDataBaseGenericConnection__ServerAssignment_9_1");
+					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostAssignment_9_1(), "rule__CreateDataBaseGenericConnection__HostAssignment_9_1");
+					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortAssignment_9_3(), "rule__CreateDataBaseGenericConnection__PortAssignment_9_3");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getUserAssignment_10_2(), "rule__CreateDataBaseGenericConnection__UserAssignment_10_2");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordAssignment_10_4(), "rule__CreateDataBaseGenericConnection__PasswordAssignment_10_4");
+					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyAssignment_10_5(), "rule__CreateDataBaseGenericConnection__LazyAssignment_10_5");
 					put(grammarAccess.getDropDatabaseConnectionAccess().getNameAssignment_4(), "rule__DropDatabaseConnection__NameAssignment_4");
 					put(grammarAccess.getStreamToAccess().getNameAssignment_3(), "rule__StreamTo__NameAssignment_3");
 					put(grammarAccess.getStreamToAccess().getStatementAssignment_4_0(), "rule__StreamTo__StatementAssignment_4_0");

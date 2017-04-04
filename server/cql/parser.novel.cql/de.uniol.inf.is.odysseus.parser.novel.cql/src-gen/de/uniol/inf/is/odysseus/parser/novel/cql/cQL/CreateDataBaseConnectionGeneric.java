@@ -15,9 +15,11 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getDriver <em>Driver</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getSource <em>Source</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer <em>Server</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getHost <em>Host</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPort <em>Port</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getUser <em>User</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPassword <em>Password</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getLazy <em>Lazy</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDataBaseConnectionGeneric()
@@ -79,30 +81,56 @@ public interface CreateDataBaseConnectionGeneric extends Command
   void setSource(String value);
 
   /**
-   * Returns the value of the '<em><b>Server</b></em>' attribute.
+   * Returns the value of the '<em><b>Host</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Server</em>' attribute isn't clear,
+   * If the meaning of the '<em>Host</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Server</em>' attribute.
-   * @see #setServer(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDataBaseConnectionGeneric_Server()
+   * @return the value of the '<em>Host</em>' attribute.
+   * @see #setHost(String)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDataBaseConnectionGeneric_Host()
    * @model
    * @generated
    */
-  String getServer();
+  String getHost();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer <em>Server</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getHost <em>Host</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Server</em>' attribute.
-   * @see #getServer()
+   * @param value the new value of the '<em>Host</em>' attribute.
+   * @see #getHost()
    * @generated
    */
-  void setServer(String value);
+  void setHost(String value);
+
+  /**
+   * Returns the value of the '<em><b>Port</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Port</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Port</em>' attribute.
+   * @see #setPort(int)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDataBaseConnectionGeneric_Port()
+   * @model
+   * @generated
+   */
+  int getPort();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPort <em>Port</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Port</em>' attribute.
+   * @see #getPort()
+   * @generated
+   */
+  void setPort(int value);
 
   /**
    * Returns the value of the '<em><b>User</b></em>' attribute.
@@ -155,5 +183,31 @@ public interface CreateDataBaseConnectionGeneric extends Command
    * @generated
    */
   void setPassword(String value);
+
+  /**
+   * Returns the value of the '<em><b>Lazy</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Lazy</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Lazy</em>' attribute.
+   * @see #setLazy(String)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDataBaseConnectionGeneric_Lazy()
+   * @model
+   * @generated
+   */
+  String getLazy();
+
+  /**
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getLazy <em>Lazy</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Lazy</em>' attribute.
+   * @see #getLazy()
+   * @generated
+   */
+  void setLazy(String value);
 
 } // CreateDataBaseConnectionGeneric

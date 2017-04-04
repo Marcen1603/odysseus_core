@@ -3025,6 +3025,70 @@ ruleCreateDataBaseJDBCConnection returns [EObject current=null]
 				}
 			)
 		)
+		(
+			otherlv_7=WITH
+			{
+				newLeafNode(otherlv_7, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getWITHKeyword_7_0());
+			}
+			otherlv_8=USER
+			{
+				newLeafNode(otherlv_8, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUSERKeyword_7_1());
+			}
+			(
+				(
+					lv_user_9_0=RULE_ID
+					{
+						newLeafNode(lv_user_9_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserIDTerminalRuleCall_7_2_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getCreateDataBaseJDBCConnectionRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"user",
+							lv_user_9_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+					}
+				)
+			)
+			otherlv_10=PASSWORD
+			{
+				newLeafNode(otherlv_10, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPASSWORDKeyword_7_3());
+			}
+			(
+				(
+					lv_password_11_0=RULE_ID
+					{
+						newLeafNode(lv_password_11_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordIDTerminalRuleCall_7_4_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getCreateDataBaseJDBCConnectionRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"password",
+							lv_password_11_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+					}
+				)
+			)
+			(
+				(
+					lv_lazy_12_0=NO_LAZY_CONNECTION_CHECK
+					{
+						newLeafNode(lv_lazy_12_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getCreateDataBaseJDBCConnectionRule());
+						}
+						setWithLastConsumed($current, "lazy", lv_lazy_12_0, "NO_LAZY_CONNECTION_CHECK");
+					}
+				)
+			)?
+		)?
 	)
 ;
 
@@ -3132,9 +3196,9 @@ ruleCreateDataBaseGenericConnection returns [EObject current=null]
 			}
 			(
 				(
-					lv_server_10_0=RULE_ID
+					lv_host_10_0=RULE_ID
 					{
-						newLeafNode(lv_server_10_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerIDTerminalRuleCall_9_1_0());
+						newLeafNode(lv_host_10_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostIDTerminalRuleCall_9_1_0());
 					}
 					{
 						if ($current==null) {
@@ -3142,27 +3206,49 @@ ruleCreateDataBaseGenericConnection returns [EObject current=null]
 						}
 						setWithLastConsumed(
 							$current,
-							"server",
-							lv_server_10_0,
+							"host",
+							lv_host_10_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+					}
+				)
+			)
+			otherlv_11=Colon
+			{
+				newLeafNode(otherlv_11, grammarAccess.getCreateDataBaseGenericConnectionAccess().getColonKeyword_9_2());
+			}
+			(
+				(
+					lv_port_12_0=RULE_INT
+					{
+						newLeafNode(lv_port_12_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortINTTerminalRuleCall_9_3_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getCreateDataBaseGenericConnectionRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"port",
+							lv_port_12_0,
+							"org.eclipse.xtext.common.Terminals.INT");
 					}
 				)
 			)
 		)?
 		(
-			otherlv_11=WITH
+			otherlv_13=WITH
 			{
-				newLeafNode(otherlv_11, grammarAccess.getCreateDataBaseGenericConnectionAccess().getWITHKeyword_10_0());
+				newLeafNode(otherlv_13, grammarAccess.getCreateDataBaseGenericConnectionAccess().getWITHKeyword_10_0());
 			}
-			otherlv_12=USER
+			otherlv_14=USER
 			{
-				newLeafNode(otherlv_12, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUSERKeyword_10_1());
+				newLeafNode(otherlv_14, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUSERKeyword_10_1());
 			}
 			(
 				(
-					lv_user_13_0=RULE_ID
+					lv_user_15_0=RULE_ID
 					{
-						newLeafNode(lv_user_13_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUserIDTerminalRuleCall_10_2_0());
+						newLeafNode(lv_user_15_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUserIDTerminalRuleCall_10_2_0());
 					}
 					{
 						if ($current==null) {
@@ -3171,20 +3257,20 @@ ruleCreateDataBaseGenericConnection returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"user",
-							lv_user_13_0,
+							lv_user_15_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
-			otherlv_14=PASSWORD
+			otherlv_16=PASSWORD
 			{
-				newLeafNode(otherlv_14, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPASSWORDKeyword_10_3());
+				newLeafNode(otherlv_16, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPASSWORDKeyword_10_3());
 			}
 			(
 				(
-					lv_password_15_0=RULE_ID
+					lv_password_17_0=RULE_ID
 					{
-						newLeafNode(lv_password_15_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordIDTerminalRuleCall_10_4_0());
+						newLeafNode(lv_password_17_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordIDTerminalRuleCall_10_4_0());
 					}
 					{
 						if ($current==null) {
@@ -3193,11 +3279,25 @@ ruleCreateDataBaseGenericConnection returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"password",
-							lv_password_15_0,
+							lv_password_17_0,
 							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
 					}
 				)
 			)
+			(
+				(
+					lv_lazy_18_0=NO_LAZY_CONNECTION_CHECK
+					{
+						newLeafNode(lv_lazy_18_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getCreateDataBaseGenericConnectionRule());
+						}
+						setWithLastConsumed($current, "lazy", lv_lazy_18_0, "NO_LAZY_CONNECTION_CHECK");
+					}
+				)
+			)?
 		)?
 	)
 ;

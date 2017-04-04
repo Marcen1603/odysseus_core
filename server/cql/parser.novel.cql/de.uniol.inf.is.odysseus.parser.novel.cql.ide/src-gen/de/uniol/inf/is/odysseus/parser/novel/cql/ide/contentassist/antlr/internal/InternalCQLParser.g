@@ -106,6 +106,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("IDENTIFIED", "'IDENTIFIED'");
 		tokenNameToValue.put("DATAHANDLER", "'DATAHANDLER'");
 		tokenNameToValue.put("INTERSECTION", "'INTERSECTION'");
+		tokenNameToValue.put("NO_LAZY_CONNECTION_CHECK", "'NO_LAZY_CONNECTION_CHECK'");
 	}
 
 	public void setGrammarAccess(CQLGrammarAccess grammarAccess) {
@@ -6500,6 +6501,7 @@ rule__CreateDataBaseJDBCConnection__Group__6
 	}
 :
 	rule__CreateDataBaseJDBCConnection__Group__6__Impl
+	rule__CreateDataBaseJDBCConnection__Group__7
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -6514,6 +6516,194 @@ rule__CreateDataBaseJDBCConnection__Group__6__Impl
 	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getServerAssignment_6()); }
 	(rule__CreateDataBaseJDBCConnection__ServerAssignment_6)
 	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getServerAssignment_6()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group__7
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group__7__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group__7__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getGroup_7()); }
+	(rule__CreateDataBaseJDBCConnection__Group_7__0)?
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getGroup_7()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__CreateDataBaseJDBCConnection__Group_7__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__0__Impl
+	rule__CreateDataBaseJDBCConnection__Group_7__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getWITHKeyword_7_0()); }
+	WITH
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getWITHKeyword_7_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__1__Impl
+	rule__CreateDataBaseJDBCConnection__Group_7__2
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUSERKeyword_7_1()); }
+	USER
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUSERKeyword_7_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__2__Impl
+	rule__CreateDataBaseJDBCConnection__Group_7__3
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserAssignment_7_2()); }
+	(rule__CreateDataBaseJDBCConnection__UserAssignment_7_2)
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserAssignment_7_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__3__Impl
+	rule__CreateDataBaseJDBCConnection__Group_7__4
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPASSWORDKeyword_7_3()); }
+	PASSWORD
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPASSWORDKeyword_7_3()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__4__Impl
+	rule__CreateDataBaseJDBCConnection__Group_7__5
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__4__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordAssignment_7_4()); }
+	(rule__CreateDataBaseJDBCConnection__PasswordAssignment_7_4)
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordAssignment_7_4()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseJDBCConnection__Group_7__5__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__Group_7__5__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyAssignment_7_5()); }
+	(rule__CreateDataBaseJDBCConnection__LazyAssignment_7_5)?
+	{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyAssignment_7_5()); }
 )
 ;
 finally {
@@ -6851,6 +7041,7 @@ rule__CreateDataBaseGenericConnection__Group_9__1
 	}
 :
 	rule__CreateDataBaseGenericConnection__Group_9__1__Impl
+	rule__CreateDataBaseGenericConnection__Group_9__2
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -6862,9 +7053,62 @@ rule__CreateDataBaseGenericConnection__Group_9__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerAssignment_9_1()); }
-	(rule__CreateDataBaseGenericConnection__ServerAssignment_9_1)
-	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerAssignment_9_1()); }
+	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostAssignment_9_1()); }
+	(rule__CreateDataBaseGenericConnection__HostAssignment_9_1)
+	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostAssignment_9_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_9__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseGenericConnection__Group_9__2__Impl
+	rule__CreateDataBaseGenericConnection__Group_9__3
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_9__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getColonKeyword_9_2()); }
+	Colon
+	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getColonKeyword_9_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_9__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseGenericConnection__Group_9__3__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_9__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortAssignment_9_3()); }
+	(rule__CreateDataBaseGenericConnection__PortAssignment_9_3)
+	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortAssignment_9_3()); }
 )
 ;
 finally {
@@ -6986,6 +7230,7 @@ rule__CreateDataBaseGenericConnection__Group_10__4
 	}
 :
 	rule__CreateDataBaseGenericConnection__Group_10__4__Impl
+	rule__CreateDataBaseGenericConnection__Group_10__5
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -7000,6 +7245,32 @@ rule__CreateDataBaseGenericConnection__Group_10__4__Impl
 	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordAssignment_10_4()); }
 	(rule__CreateDataBaseGenericConnection__PasswordAssignment_10_4)
 	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordAssignment_10_4()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_10__5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__CreateDataBaseGenericConnection__Group_10__5__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__Group_10__5__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyAssignment_10_5()); }
+	(rule__CreateDataBaseGenericConnection__LazyAssignment_10_5)?
+	{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyAssignment_10_5()); }
 )
 ;
 finally {
@@ -12348,6 +12619,55 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__CreateDataBaseJDBCConnection__UserAssignment_7_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserIDTerminalRuleCall_7_2_0()); }
+		RULE_ID
+		{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserIDTerminalRuleCall_7_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__PasswordAssignment_7_4
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordIDTerminalRuleCall_7_4_0()); }
+		RULE_ID
+		{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordIDTerminalRuleCall_7_4_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseJDBCConnection__LazyAssignment_7_5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0()); }
+		(
+			{ before(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0()); }
+			NO_LAZY_CONNECTION_CHECK
+			{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0()); }
+		)
+		{ after(grammarAccess.getCreateDataBaseJDBCConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__CreateDataBaseGenericConnection__NameAssignment_4
 	@init {
 		int stackSize = keepStackSize();
@@ -12393,15 +12713,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__CreateDataBaseGenericConnection__ServerAssignment_9_1
+rule__CreateDataBaseGenericConnection__HostAssignment_9_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerIDTerminalRuleCall_9_1_0()); }
+		{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostIDTerminalRuleCall_9_1_0()); }
 		RULE_ID
-		{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getServerIDTerminalRuleCall_9_1_0()); }
+		{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostIDTerminalRuleCall_9_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__PortAssignment_9_3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortINTTerminalRuleCall_9_3_0()); }
+		RULE_INT
+		{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortINTTerminalRuleCall_9_3_0()); }
 	)
 ;
 finally {
@@ -12432,6 +12767,25 @@ rule__CreateDataBaseGenericConnection__PasswordAssignment_10_4
 		{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordIDTerminalRuleCall_10_4_0()); }
 		RULE_ID
 		{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordIDTerminalRuleCall_10_4_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__CreateDataBaseGenericConnection__LazyAssignment_10_5
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0()); }
+		(
+			{ before(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0()); }
+			NO_LAZY_CONNECTION_CHECK
+			{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0()); }
+		)
+		{ after(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0()); }
 	)
 ;
 finally {

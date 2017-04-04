@@ -1695,6 +1695,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cJDBCKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		private final Assignment cServerAssignment_6 = (Assignment)cGroup.eContents().get(6);
 		private final RuleCall cServerIDTerminalRuleCall_6_0 = (RuleCall)cServerAssignment_6.eContents().get(0);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cWITHKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final Keyword cUSERKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
+		private final Assignment cUserAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
+		private final RuleCall cUserIDTerminalRuleCall_7_2_0 = (RuleCall)cUserAssignment_7_2.eContents().get(0);
+		private final Keyword cPASSWORDKeyword_7_3 = (Keyword)cGroup_7.eContents().get(3);
+		private final Assignment cPasswordAssignment_7_4 = (Assignment)cGroup_7.eContents().get(4);
+		private final RuleCall cPasswordIDTerminalRuleCall_7_4_0 = (RuleCall)cPasswordAssignment_7_4.eContents().get(0);
+		private final Assignment cLazyAssignment_7_5 = (Assignment)cGroup_7.eContents().get(5);
+		private final Keyword cLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0 = (Keyword)cLazyAssignment_7_5.eContents().get(0);
 		
 		//CreateDataBaseJDBCConnection Command:
 		//	{CreateDataBaseConnectionJDBC}
@@ -1703,10 +1713,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	'CONNECTION'
 		//	name=ID
 		//	'JDBC'
-		//	server=ID
+		//	server=ID ('WITH'
+		//	'USER'
+		//	user=ID
+		//	'PASSWORD'
+		//	password=ID
+		//	lazy='NO_LAZY_CONNECTION_CHECK'?)?
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{CreateDataBaseConnectionJDBC} 'CREATE' 'DATABASE' 'CONNECTION' name=ID 'JDBC' server=ID
+		//{CreateDataBaseConnectionJDBC} 'CREATE' 'DATABASE' 'CONNECTION' name=ID 'JDBC' server=ID ('WITH' 'USER' user=ID
+		//'PASSWORD' password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?
 		public Group getGroup() { return cGroup; }
 		
 		//{CreateDataBaseConnectionJDBC}
@@ -1735,6 +1751,36 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ID
 		public RuleCall getServerIDTerminalRuleCall_6_0() { return cServerIDTerminalRuleCall_6_0; }
+		
+		//('WITH' 'USER' user=ID 'PASSWORD' password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//'WITH'
+		public Keyword getWITHKeyword_7_0() { return cWITHKeyword_7_0; }
+		
+		//'USER'
+		public Keyword getUSERKeyword_7_1() { return cUSERKeyword_7_1; }
+		
+		//user=ID
+		public Assignment getUserAssignment_7_2() { return cUserAssignment_7_2; }
+		
+		//ID
+		public RuleCall getUserIDTerminalRuleCall_7_2_0() { return cUserIDTerminalRuleCall_7_2_0; }
+		
+		//'PASSWORD'
+		public Keyword getPASSWORDKeyword_7_3() { return cPASSWORDKeyword_7_3; }
+		
+		//password=ID
+		public Assignment getPasswordAssignment_7_4() { return cPasswordAssignment_7_4; }
+		
+		//ID
+		public RuleCall getPasswordIDTerminalRuleCall_7_4_0() { return cPasswordIDTerminalRuleCall_7_4_0; }
+		
+		//lazy='NO_LAZY_CONNECTION_CHECK'?
+		public Assignment getLazyAssignment_7_5() { return cLazyAssignment_7_5; }
+		
+		//'NO_LAZY_CONNECTION_CHECK'
+		public Keyword getLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0() { return cLazyNO_LAZY_CONNECTION_CHECKKeyword_7_5_0; }
 	}
 	public class CreateDataBaseGenericConnectionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateDataBaseGenericConnection");
@@ -1753,8 +1799,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSourceIDTerminalRuleCall_8_0 = (RuleCall)cSourceAssignment_8.eContents().get(0);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
 		private final Keyword cATKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
-		private final Assignment cServerAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
-		private final RuleCall cServerIDTerminalRuleCall_9_1_0 = (RuleCall)cServerAssignment_9_1.eContents().get(0);
+		private final Assignment cHostAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
+		private final RuleCall cHostIDTerminalRuleCall_9_1_0 = (RuleCall)cHostAssignment_9_1.eContents().get(0);
+		private final Keyword cColonKeyword_9_2 = (Keyword)cGroup_9.eContents().get(2);
+		private final Assignment cPortAssignment_9_3 = (Assignment)cGroup_9.eContents().get(3);
+		private final RuleCall cPortINTTerminalRuleCall_9_3_0 = (RuleCall)cPortAssignment_9_3.eContents().get(0);
 		private final Group cGroup_10 = (Group)cGroup.eContents().get(10);
 		private final Keyword cWITHKeyword_10_0 = (Keyword)cGroup_10.eContents().get(0);
 		private final Keyword cUSERKeyword_10_1 = (Keyword)cGroup_10.eContents().get(1);
@@ -1763,6 +1812,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cPASSWORDKeyword_10_3 = (Keyword)cGroup_10.eContents().get(3);
 		private final Assignment cPasswordAssignment_10_4 = (Assignment)cGroup_10.eContents().get(4);
 		private final RuleCall cPasswordIDTerminalRuleCall_10_4_0 = (RuleCall)cPasswordAssignment_10_4.eContents().get(0);
+		private final Assignment cLazyAssignment_10_5 = (Assignment)cGroup_10.eContents().get(5);
+		private final Keyword cLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0 = (Keyword)cLazyAssignment_10_5.eContents().get(0);
 		
 		//CreateDataBaseGenericConnection Command:
 		//	{CreateDataBaseConnectionGeneric}
@@ -1774,15 +1825,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	driver=ID
 		//	'TO'
 		//	source=ID ('AT'
-		//	server=ID)? ('WITH'
+		//	host=ID
+		//	':'
+		//	port=INT)? ('WITH'
 		//	'USER'
 		//	user=ID
 		//	'PASSWORD'
-		//	password=ID)?
+		//	password=ID
+		//	lazy='NO_LAZY_CONNECTION_CHECK'?)?
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{CreateDataBaseConnectionGeneric} 'CREATE' 'DATABASE' 'CONNECTION' name=ID 'AS' driver=ID 'TO' source=ID ('AT'
-		//server=ID)? ('WITH' 'USER' user=ID 'PASSWORD' password=ID)?
+		//{CreateDataBaseConnectionGeneric} 'CREATE' 'DATABASE' 'CONNECTION' name=ID 'AS' driver=ID 'TO' source=ID ('AT' host=ID
+		//':' port=INT)? ('WITH' 'USER' user=ID 'PASSWORD' password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?
 		public Group getGroup() { return cGroup; }
 		
 		//{CreateDataBaseConnectionGeneric}
@@ -1821,19 +1875,28 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getSourceIDTerminalRuleCall_8_0() { return cSourceIDTerminalRuleCall_8_0; }
 		
-		//('AT' server=ID)?
+		//('AT' host=ID ':' port=INT)?
 		public Group getGroup_9() { return cGroup_9; }
 		
 		//'AT'
 		public Keyword getATKeyword_9_0() { return cATKeyword_9_0; }
 		
-		//server=ID
-		public Assignment getServerAssignment_9_1() { return cServerAssignment_9_1; }
+		//host=ID
+		public Assignment getHostAssignment_9_1() { return cHostAssignment_9_1; }
 		
 		//ID
-		public RuleCall getServerIDTerminalRuleCall_9_1_0() { return cServerIDTerminalRuleCall_9_1_0; }
+		public RuleCall getHostIDTerminalRuleCall_9_1_0() { return cHostIDTerminalRuleCall_9_1_0; }
 		
-		//('WITH' 'USER' user=ID 'PASSWORD' password=ID)?
+		//':'
+		public Keyword getColonKeyword_9_2() { return cColonKeyword_9_2; }
+		
+		//port=INT
+		public Assignment getPortAssignment_9_3() { return cPortAssignment_9_3; }
+		
+		//INT
+		public RuleCall getPortINTTerminalRuleCall_9_3_0() { return cPortINTTerminalRuleCall_9_3_0; }
+		
+		//('WITH' 'USER' user=ID 'PASSWORD' password=ID lazy='NO_LAZY_CONNECTION_CHECK'?)?
 		public Group getGroup_10() { return cGroup_10; }
 		
 		//'WITH'
@@ -1856,6 +1919,12 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ID
 		public RuleCall getPasswordIDTerminalRuleCall_10_4_0() { return cPasswordIDTerminalRuleCall_10_4_0; }
+		
+		//lazy='NO_LAZY_CONNECTION_CHECK'?
+		public Assignment getLazyAssignment_10_5() { return cLazyAssignment_10_5; }
+		
+		//'NO_LAZY_CONNECTION_CHECK'
+		public Keyword getLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0() { return cLazyNO_LAZY_CONNECTION_CHECKKeyword_10_5_0; }
 	}
 	public class DropDatabaseConnectionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DropDatabaseConnection");
@@ -3879,7 +3948,12 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	'CONNECTION'
 	//	name=ID
 	//	'JDBC'
-	//	server=ID
+	//	server=ID ('WITH'
+	//	'USER'
+	//	user=ID
+	//	'PASSWORD'
+	//	password=ID
+	//	lazy='NO_LAZY_CONNECTION_CHECK'?)?
 	public CreateDataBaseJDBCConnectionElements getCreateDataBaseJDBCConnectionAccess() {
 		return pCreateDataBaseJDBCConnection;
 	}
@@ -3898,11 +3972,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	driver=ID
 	//	'TO'
 	//	source=ID ('AT'
-	//	server=ID)? ('WITH'
+	//	host=ID
+	//	':'
+	//	port=INT)? ('WITH'
 	//	'USER'
 	//	user=ID
 	//	'PASSWORD'
-	//	password=ID)?
+	//	password=ID
+	//	lazy='NO_LAZY_CONNECTION_CHECK'?)?
 	public CreateDataBaseGenericConnectionElements getCreateDataBaseGenericConnectionAccess() {
 		return pCreateDataBaseGenericConnection;
 	}

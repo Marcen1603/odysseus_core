@@ -1324,13 +1324,40 @@ public interface CQLPackage extends EPackage
   int CREATE_DATA_BASE_CONNECTION_JDBC__SERVER = COMMAND_FEATURE_COUNT + 0;
 
   /**
+   * The feature id for the '<em><b>User</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_JDBC__USER = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Password</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_JDBC__PASSWORD = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Lazy</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_JDBC__LAZY = COMMAND_FEATURE_COUNT + 3;
+
+  /**
    * The number of structural features of the '<em>Create Data Base Connection JDBC</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CREATE_DATA_BASE_CONNECTION_JDBC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 1;
+  int CREATE_DATA_BASE_CONNECTION_JDBC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 4;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl <em>Create Data Base Connection Generic</em>}' class.
@@ -1379,13 +1406,22 @@ public interface CQLPackage extends EPackage
   int CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE = COMMAND_FEATURE_COUNT + 1;
 
   /**
-   * The feature id for the '<em><b>Server</b></em>' attribute.
+   * The feature id for the '<em><b>Host</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER = COMMAND_FEATURE_COUNT + 2;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__HOST = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Port</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__PORT = COMMAND_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>User</b></em>' attribute.
@@ -1394,7 +1430,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_DATA_BASE_CONNECTION_GENERIC__USER = COMMAND_FEATURE_COUNT + 3;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__USER = COMMAND_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Password</b></em>' attribute.
@@ -1403,7 +1439,16 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD = COMMAND_FEATURE_COUNT + 4;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD = COMMAND_FEATURE_COUNT + 5;
+
+  /**
+   * The feature id for the '<em><b>Lazy</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY = COMMAND_FEATURE_COUNT + 6;
 
   /**
    * The number of structural features of the '<em>Create Data Base Connection Generic</em>' class.
@@ -1412,7 +1457,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_DATA_BASE_CONNECTION_GENERIC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 5;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 7;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl <em>Drop Database Connection</em>}' class.
@@ -3349,6 +3394,39 @@ public interface CQLPackage extends EPackage
   EAttribute getCreateDataBaseConnectionJDBC_Server();
 
   /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getUser <em>User</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>User</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getUser()
+   * @see #getCreateDataBaseConnectionJDBC()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionJDBC_User();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getPassword <em>Password</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Password</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getPassword()
+   * @see #getCreateDataBaseConnectionJDBC()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionJDBC_Password();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getLazy <em>Lazy</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Lazy</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getLazy()
+   * @see #getCreateDataBaseConnectionJDBC()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionJDBC_Lazy();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric <em>Create Data Base Connection Generic</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3381,15 +3459,26 @@ public interface CQLPackage extends EPackage
   EAttribute getCreateDataBaseConnectionGeneric_Source();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer <em>Server</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getHost <em>Host</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Server</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer()
+   * @return the meta object for the attribute '<em>Host</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getHost()
    * @see #getCreateDataBaseConnectionGeneric()
    * @generated
    */
-  EAttribute getCreateDataBaseConnectionGeneric_Server();
+  EAttribute getCreateDataBaseConnectionGeneric_Host();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPort <em>Port</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Port</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPort()
+   * @see #getCreateDataBaseConnectionGeneric()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionGeneric_Port();
 
   /**
    * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getUser <em>User</em>}'.
@@ -3412,6 +3501,17 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EAttribute getCreateDataBaseConnectionGeneric_Password();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getLazy <em>Lazy</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Lazy</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getLazy()
+   * @see #getCreateDataBaseConnectionGeneric()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionGeneric_Lazy();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection <em>Drop Database Connection</em>}'.
@@ -4966,6 +5066,30 @@ public interface CQLPackage extends EPackage
     EAttribute CREATE_DATA_BASE_CONNECTION_JDBC__SERVER = eINSTANCE.getCreateDataBaseConnectionJDBC_Server();
 
     /**
+     * The meta object literal for the '<em><b>User</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_JDBC__USER = eINSTANCE.getCreateDataBaseConnectionJDBC_User();
+
+    /**
+     * The meta object literal for the '<em><b>Password</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_JDBC__PASSWORD = eINSTANCE.getCreateDataBaseConnectionJDBC_Password();
+
+    /**
+     * The meta object literal for the '<em><b>Lazy</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_JDBC__LAZY = eINSTANCE.getCreateDataBaseConnectionJDBC_Lazy();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl <em>Create Data Base Connection Generic</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4992,12 +5116,20 @@ public interface CQLPackage extends EPackage
     EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE = eINSTANCE.getCreateDataBaseConnectionGeneric_Source();
 
     /**
-     * The meta object literal for the '<em><b>Server</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Host</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER = eINSTANCE.getCreateDataBaseConnectionGeneric_Server();
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__HOST = eINSTANCE.getCreateDataBaseConnectionGeneric_Host();
+
+    /**
+     * The meta object literal for the '<em><b>Port</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__PORT = eINSTANCE.getCreateDataBaseConnectionGeneric_Port();
 
     /**
      * The meta object literal for the '<em><b>User</b></em>' attribute feature.
@@ -5014,6 +5146,14 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD = eINSTANCE.getCreateDataBaseConnectionGeneric_Password();
+
+    /**
+     * The meta object literal for the '<em><b>Lazy</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY = eINSTANCE.getCreateDataBaseConnectionGeneric_Lazy();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl <em>Drop Database Connection</em>}' class.
