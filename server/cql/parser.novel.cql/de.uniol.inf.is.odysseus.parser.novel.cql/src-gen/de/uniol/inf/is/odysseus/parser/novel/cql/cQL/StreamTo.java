@@ -60,12 +60,12 @@ public interface StreamTo extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Statement</em>' containment reference.
-   * @see #setStatement(Select)
+   * @see #setStatement(InnerSelect2)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getStreamTo_Statement()
    * @model containment="true"
    * @generated
    */
-  Select getStatement();
+  InnerSelect2 getStatement();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo#getStatement <em>Statement</em>}' containment reference.
@@ -75,7 +75,7 @@ public interface StreamTo extends EObject
    * @see #getStatement()
    * @generated
    */
-  void setStatement(Select value);
+  void setStatement(InnerSelect2 value);
 
   /**
    * Returns the value of the '<em><b>Inputname</b></em>' attribute.

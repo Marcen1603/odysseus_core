@@ -7,7 +7,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.ExpressionsTypeProviderHelper;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider;
-import java.util.List;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
@@ -174,10 +173,7 @@ public class ExpressionsTypeProviderTest {
   public void assertType(final CharSequence input, final ExpressionsType type) {
     try {
       Model model = this._parseHelper.parse(("SELECT * FROM stream1 WHERE " + input));
-      List<Expression> _eAllOfType = EcoreUtil2.<Expression>eAllOfType(model, Expression.class);
-      Expression _get = _eAllOfType.get(0);
-      ExpressionsType _typeFor = this._expressionsTypeProviderHelper.typeFor(_get);
-      Assert.assertSame(type, _typeFor);
+      Assert.assertSame(type, this._expressionsTypeProviderHelper.typeFor(EcoreUtil2.<Expression>eAllOfType(model, Expression.class).get(0)));
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

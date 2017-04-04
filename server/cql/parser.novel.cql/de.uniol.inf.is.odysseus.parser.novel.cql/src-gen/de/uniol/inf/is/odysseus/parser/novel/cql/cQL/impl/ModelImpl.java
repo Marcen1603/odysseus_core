@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 
 import java.util.Collection;
 
@@ -14,6 +13,7 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ModelImpl#getStatements <em>Statements</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ModelImpl#getComponents <em>Components</em>}</li>
  * </ul>
  *
  * @generated
@@ -37,14 +37,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
 public class ModelImpl extends MinimalEObjectImpl.Container implements Model
 {
   /**
-   * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
+   * The cached value of the '{@link #getComponents() <em>Components</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getStatements()
+   * @see #getComponents()
    * @generated
    * @ordered
    */
-  protected EList<Statement> statements;
+  protected EList<EObject> components;
 
   /**
    * <!-- begin-user-doc -->
@@ -72,13 +72,13 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Statement> getStatements()
+  public EList<EObject> getComponents()
   {
-    if (statements == null)
+    if (components == null)
     {
-      statements = new EObjectContainmentEList<Statement>(Statement.class, this, CQLPackage.MODEL__STATEMENTS);
+      components = new EObjectContainmentEList<EObject>(EObject.class, this, CQLPackage.MODEL__COMPONENTS);
     }
-    return statements;
+    return components;
   }
 
   /**
@@ -91,8 +91,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CQLPackage.MODEL__STATEMENTS:
-        return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
+      case CQLPackage.MODEL__COMPONENTS:
+        return ((InternalEList<?>)getComponents()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -107,8 +107,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CQLPackage.MODEL__STATEMENTS:
-        return getStatements();
+      case CQLPackage.MODEL__COMPONENTS:
+        return getComponents();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -124,9 +124,9 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CQLPackage.MODEL__STATEMENTS:
-        getStatements().clear();
-        getStatements().addAll((Collection<? extends Statement>)newValue);
+      case CQLPackage.MODEL__COMPONENTS:
+        getComponents().clear();
+        getComponents().addAll((Collection<? extends EObject>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -142,8 +142,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CQLPackage.MODEL__STATEMENTS:
-        getStatements().clear();
+      case CQLPackage.MODEL__COMPONENTS:
+        getComponents().clear();
         return;
     }
     super.eUnset(featureID);
@@ -159,8 +159,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
   {
     switch (featureID)
     {
-      case CQLPackage.MODEL__STATEMENTS:
-        return statements != null && !statements.isEmpty();
+      case CQLPackage.MODEL__COMPONENTS:
+        return components != null && !components.isEmpty();
     }
     return super.eIsSet(featureID);
   }

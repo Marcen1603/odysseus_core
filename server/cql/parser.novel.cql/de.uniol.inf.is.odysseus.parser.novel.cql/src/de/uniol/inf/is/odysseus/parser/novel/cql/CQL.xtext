@@ -2,11 +2,13 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
-Model: statements+=(Statement)*;
+Model: 
+	((components+=(Statement|Command)) (';')?)*
+;
 	
 terminal ID: ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;	
 terminal FLOAT:  INT '.' INT;
-//terminal BOOLEAN: ('FALSE'|'TRUE');
+BOOLEAN: ('FALSE'|'TRUE');
 //terminal BIT: ('0'|'1');
 //terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
 
@@ -16,101 +18,124 @@ terminal FLOAT:  INT '.' INT;
 //terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 //terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 
-Statement:	//FIXME DROP has two types: Statement and Command -> causes error in detection commands while parsing!
-	{Statement}
-	(type=Select | type=StreamTo | type=DropCommand 
-		| type=UserCommand | type=RightsCommand | type=RightsRoleCommand 
-		| type=CreateStream1 | type=CreateSink1 | type=CreateStreamChannel 
-		| type=CreateStreamFile | type=CreateView
-	) 
-	(';')?
+Statement:
+	type=(Select
+	| Create
+	| StreamTo)
 ;
  
+Command :
+	type=(DropStream
+	| UserManagement
+	| RightsManagement
+	| RoleManagement
+	| CreateDataBaseGenericConnection
+	| CreateDataBaseJDBCConnection
+	| DropDatabaseConnection)
+; 
+ 
 Select:
-	name='SELECT'
+	{Select}
+	'SELECT'
 	(distinct='DISTINCT')?
-	( '*' |  (arguments+=Argument+  ( ',' arguments+=Argument) *))
+	( '*' |  (arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
 	('FROM' sources+=Source+ (',' sources+=Source)*)
 	('WHERE' predicates=ExpressionsModel)?
-	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)? //TODO ordering+=Attribute+ ('ASC' | 'DESC')?)?)
+	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
 	('HAVING' having=ExpressionsModel)?
 ;
 
-NestedStatement returns Select: '(' Select ')' ;
-
-Argument: (attribute=Attribute | expression=SelectExpression);
-
-Source: 
-	name=SourceName 
-	('[' (unbounded=Window_Unbounded|time=Window_Timebased|tuple=Window_Tuplebased) ']')? ('AS' alias=Alias)?
-	|
-	(nested=NestedStatement 'AS' alias=Alias)
+InnerSelect:
+	'(' select=Select ')'
 ;
 
-SourceName:
+InnerSelect2:
+	select=Select
+;
+
+SelectArgument: (attribute=Attribute | expression=SelectExpression);
+
+Source: 
+	(SimpleSource | NestedSource)
+;
+
+SimpleSource returns Source:
+	{SimpleSource}
+	name=QualifiedSourcename (window=WindowOperator)? ('AS' alias=Alias)?
+;
+
+NestedSource returns Source:
+	{NestedSource}
+	statement=InnerSelect 'AS' alias=Alias
+;
+
+QualifiedSourcename:
 	ID
 ;
 
 Attribute: 
-	name=AttributeName
+	name=QualifiedAttributename
 	('AS' alias=Alias)?
 ;
  
 AttributeWithoutAliasDefinition returns Attribute: 
-	name=AttributeName
+	name=QualifiedAttributename
 ; 
 
-AttributeName:
-	(ID | SourceName '.' ID | SourceName '.' '*')
+QualifiedAttributename:
+	(ID 
+		| QualifiedSourcename '.' ID 
+		| QualifiedSourcename '.' '*'
+	)
 ;
 
 AttributeWithNestedStatement:
 	value=AttributeWithoutAliasDefinition
 	'IN'
-	nested=NestedStatement
+	nested=InnerSelect
 ;  
 
-//TODO Use syntatic predicate to solve ambiguities
-//Defines an expression in the SELECT clause like SELECT attr1 + 10 AS offset FROM ..
+//QuantificationPredicate:
+//	ExistPredicate
+//;
+//
+//ExistPredicate returns QuantificationPredicate:
+//	{ExistPredicate}
+//	'EXISTS' statement=NestedStatement	
+//;
+//
+//AnyPredicate returns QuantificationPredicate:
+//	{ExistPredicate}
+//	'ANY' statement=NestedStatement	
+//;
+
+//Operators for predicates and expressions
+AndOperator: 'AND' ;
+OrOperator: 'OR';
+EQUALITIY_OPERATOR: ('=' | '!=') ;
+COMPARE_OPERATOR: ('>=' | '<=' | '<' | '>') ;
+ARITHMETIC_OPERATOR:
+	ADD_OPERATOR
+	| MINUS_OPERATOR 
+	| MUL_OR_DIV_OPERATOR 
+	| EXPONENT_OPERATOR; 
+EXPONENT_OPERATOR: '^' ;
+MUL_OR_DIV_OPERATOR: ('*' | '/') ;
+ADD_OPERATOR: '+' ;
+MINUS_OPERATOR: '-' ;
+
 SelectExpression:
-//	expressions+=ExpressionComponent
-//	operators+=('+'|'-'|'*'|'/') 
-//	expressions+=ExpressionComponent
-	(
-		(expressions+=(ExpressionComponentFunctionOrConstant)
-		  (operators+=('+'|'-'|'*'|'/') 
-			expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlyWithFunction)
-		  )*
-		)
-		| (expressions+=(ExpressionComponentOnlyWithAttribute)
-			(operators+=('+'|'-'|'*'|'/') 
-			  expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlyWithFunction)
-			)+
-		  )
-  	)
-	('AS' alias=Alias)?
+	((expressions+=ExpressionComponent
+	(operators+=ARITHMETIC_OPERATOR
+	expressions+=(ExpressionComponent|ExpressionComponentAsAttribute))*)
+	|(expressions+=ExpressionComponentAsAttribute
+		(operators+=ARITHMETIC_OPERATOR
+		expressions+=(ExpressionComponent|ExpressionComponentAsAttribute))+))
+	('AS' alias=Alias)?//TODO Add SelectExpression without an alias
 ;
 
-SelectExpressionWithoutAliasDefinition returns SelectExpression:
-	SelectExpressionWithOnlyAttributeOrConstant(
-		(expressions+=(ExpressionComponentFunctionOrConstant)
-			(operators+=('+'|'-'|'*'|'/') 
-				expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlyWithFunction)
-				)*
-		)
-		| (expressions+=(ExpressionComponentOnlyWithAttribute)
-			(operators+=('+'|'-'|'*'|'/') 
-				 expressions+=(ExpressionComponentConstantOrAttribute | ExpressionComponentOnlyWithFunction)
-				 )+
-		)
-	)
-;
-
-SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAliasDefinition:
-		expressions+=ExpressionComponentConstantOrAttribute 
-		(operators+=('+'|'-'|'*'|'/') 
-			expressions+=(ExpressionComponentConstantOrAttribute)
-		)*	
+SelectExpressionOnlyWithAttribute returns SelectExpression:
+	expressions+=ExpressionComponentAsAttribute
 ;
 
 //Is either a map function or an aggregation function. This depends 
@@ -121,34 +146,20 @@ SelectExpressionWithOnlyAttributeOrConstant returns SelectExpressionWithoutAlias
 Function returns ExpressionComponent:
 	{Function}
 	name=ID
-	'('(value=SelectExpressionWithoutAliasDefinition)')'
+	'('
+	value=(SelectExpression|SelectExpressionOnlyWithAttribute)
+	')'
 ;
 
 //Determines the structure of a component of a select expression
 ExpressionComponent:
-	 (ExpressionComponentConstantOrAttribute(
-	 	{ExpressionComponent.value=current}
-	 ))
-	 | (ExpressionComponentFunctionOrConstant(
-	 	{ExpressionComponent.value=current}
-	 ))
+	value=(Function
+		| AtomicWithoutAttributeRef)
 ;
 
-ExpressionComponentConstantOrAttribute returns ExpressionComponent:
-	(value = AtomicWithoutAttributeRef) | (value=AttributeWithoutAliasDefinition)
-;
-
-ExpressionComponentFunctionOrConstant returns ExpressionComponent:
-	Function({ExpressionComponent.value=current})
-	| value = AtomicWithoutAttributeRef
-;
-
-ExpressionComponentOnlyWithAttribute returns ExpressionComponent:
+ExpressionComponentAsAttribute returns ExpressionComponent:
+	{ExpressionComponentAsAttribute}
 	value=AttributeWithoutAliasDefinition
-;
-
-ExpressionComponentOnlyWithFunction returns ExpressionComponent:
-	Function({ExpressionComponent.value=current})
 ;
 
 SetOperator:
@@ -161,12 +172,7 @@ Alias:
 	name=ID
 ;  
 
-enum CreateKeyword:
-	CREATE | ATTACH
-;
-
-//Holds all parameters for a source / sink that conforms the Access Framework
-CreateParameters:
+AccessFramework:
 	'WRAPPER' wrapper=STRING
 	'PROTOCOL' protocol=STRING
 	'TRANSPORT' transport=STRING
@@ -174,99 +180,170 @@ CreateParameters:
 	'OPTIONS' '('(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?')'
 ;
 
-//Captures the name of the source / sink and its attributes with data type definitions
-AttributeDefinition:
+SchemaDefinition:
 	name=ID
-	'('arguments+=ID arguments+=ID (',' arguments+=ID arguments+=ID)*')'
+	'('
+	arguments+=ID arguments+=ID
+	(',' arguments+=ID arguments+=ID)*
+	')'
 ;
 
-//Create stream via the Access Framework
-CreateStream1:
-	keyword=CreateKeyword
-	'STREAM'
-	attributes=AttributeDefinition
-	pars=CreateParameters
+Create:
+	{Create}
+	('CREATE'|'ATTACH')
+	type=('STREAM'|'SINK'|'VIEW')
+	create=(CreateAccessFramework
+			|CreateChannelFrameworkViaPort
+			|CreateChannelFormatViaFile
+			|CreateDatabaseStream
+			|CreateDatabaseSink
+			|CreateView)
+	
 ;
 
-//Create stream via the Access Framework
-CreateSink1:
-	keyword=CreateKeyword
-	'SINK'
-	attributes=AttributeDefinition
-	pars=CreateParameters
+CreateAccessFramework:
+	attributes=SchemaDefinition
+	pars=AccessFramework
 ;
 
-//Create stream via Channel Format
-CreateStreamChannel:
-	keyword=CreateKeyword
-	'STREAM'
-	attributes=AttributeDefinition 
- 	'CHANNEL' host=ID ':' port=INT
+CreateChannelFrameworkViaPort:
+	attributes=SchemaDefinition
+	'CHANNEL' host=ID ':' port=INT
 ;
 
-//Create stream via Channel Format for file access
-CreateStreamFile:
-	keyword=CreateKeyword
-	'STREAM'
-	attributes=AttributeDefinition
+CreateChannelFormatViaFile:
+	attributes=SchemaDefinition
  	'FILE' filename=STRING 'AS' type=ID
 ;
 
-CreateView: 'VIEW' name=ID 'FROM' select=NestedStatement;
-
-StreamTo: 'STREAM' 'TO' name=ID (statement=Select|inputname=ID);
-
-//Generic rule for user commands or something like DROP STREAM
-Command:
-	(';')?
+CreateDatabaseStream:
+	attributes=SchemaDefinition
+	'DATABASE'
+	database=ID
+	'TABLE'
+	table=ID
+	('EACH'
+	 size=INT
+	 unit=ID)?
 ;
 
-DropCommand returns Command:
-	{DropCommand}
+CreateDatabaseSink:
+	name=ID
+	'AS'
+	'DATABASE'
+	database=ID
+	'TABLE'
+	table=ID
+	('AND' option=('DROP'|'TRUNCATE'))?
+;
+
+CreateView:  
+	name=ID 
+	'FROM' 
+	select=InnerSelect
+;
+
+CreateDataBaseJDBCConnection returns Command:
+	{CreateDataBaseConnectionJDBC}
+	'CREATE'
+	'DATABASE'
+	'CONNECTION'
+	name=ID
+	'JDBC'
+	server=ID
+;
+
+CreateDataBaseGenericConnection returns Command:
+	{CreateDataBaseConnectionGeneric}
+	'CREATE'
+	'DATABASE'
+	'CONNECTION'
+	name=ID
+	'AS'
+	driver=ID
+	'TO'
+	source=ID
+	('AT'
+	server=ID)?
+	('WITH' 
+	 'USER'
+	 user=ID
+	 'PASSWORD'
+	 password=ID)?
+;
+
+DropDatabaseConnection returns Command:
+	{DropDatabaseConnection}
+	'DROP'
+	'DATABASE'
+	'CONNECTION'
+	name=ID
+;
+
+StreamTo: 
+	{StreamTo}
+	'STREAM' 
+	'TO' 
+	name=ID 
+	(statement=InnerSelect2|inputname=ID)
+;
+
+DropStream returns Command:
+	{DropStream}
 	'DROP'
 	name=('SINK'|'STREAM'|'VIEW')
 	stream=ID
 	(exists='IF' 'EXISTS')?
 ;
 
-UserCommand returns Command:
-	{UserCommand}
+UserManagement returns Command:
+	{UserManagement}
 	name=('CREATE'|'ALTER'|'DROP')
 	subject=('USER'|'ROLE'|'TENANT')
 	subjectName=ID
 	('IDENTIFIED' 'BY' password=STRING)?
 ;
 
-RightsCommand returns Command:
-	({RightsCommand} name='GRANT' 
+RightsManagement returns Command:
+	({RightsManagement} name='GRANT' 
 	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
 	'TO' user=ID)
-	|({RightsCommand} name='REVOKE' 
+	|({RightsManagement} name='REVOKE' 
 	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?	
 	'FROM' user=ID)
 ;
 
-RightsRoleCommand returns Command:
-	({RightsRoleCommand} name='GRANT' 
+RoleManagement returns Command:
+	({RoleManagement} name='GRANT' 
 	'ROLE' operations+=ID (',' operations+=ID)*
 	'TO' user=ID)
-	|({RightsRoleCommand} name='REVOKE' 
+	|({RoleManagement} name='REVOKE' 
 	'ROLE' operations+=ID (',' operations+=ID)*	
 	'FROM' user=ID)
 ;
 
+WindowOperator:
+	'['
+	(UnboundedWindow
+	| TimebasedWindow
+	| TuplebasedWindow)
+	']'
+;
 
-Window_Unbounded:  
+UnboundedWindow returns WindowOperator:  
+	{UndboundedWindow}
 	'UNBOUNDED'
 ;
 
-Window_Timebased: 
+TimebasedWindow returns WindowOperator:
+	{TimebasedWindow} 
 	'SIZE' size=INT unit=ID
 	('ADVANCE' advance_size=INT advance_unit=ID)?
 	'TIME'
 ;
 
-Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
+TuplebasedWindow returns WindowOperator:
+	{TuplebasedWindow}
 	'SIZE' size=INT
 	('ADVANCE' advance_size=INT)?
 	'TUPLE'
@@ -276,26 +353,26 @@ Window_Tuplebased://TODO PARTITION BY only if a GROUP BY clause exists
 // Expression DSL ///////////////////////////////////////////////////////
 ExpressionsModel: {ExpressionsModel} elements+=Expression;
 
-Expression: Or;
+Expression: OrPredicate;
 
-Or returns Expression:
-	And ({Or.left=current} 'OR' right=And)*
+OrPredicate returns Expression:
+	AndPredicate ({OrPredicate.left=current} OrOperator right=AndPredicate)*
 ;
 
-And returns Expression:
-	Equalitiy ({And.left=current} 'AND' right=Equalitiy)*
+AndPredicate returns Expression:
+	Equalitiy ({AndPredicate.left=current} AndOperator right=Equalitiy)*
 ;
 
 Equalitiy returns Expression:
 	Comparison (
-		{Equality.left=current} op=('=' | '!=')
+		{Equality.left=current} op=EQUALITIY_OPERATOR
 		right=Comparison	
 	)*
 ;
 
 Comparison returns Expression:
 	PlusOrMinus (
-		{Comparision.left=current} op=('>=' | '<=' | '<' | '>')
+		{Comparision.left=current} op=COMPARE_OPERATOR
 		right=PlusOrMinus
 	)*
 ;
@@ -309,7 +386,7 @@ PlusOrMinus returns Expression:
 
 MulOrDiv returns Expression:
 	Primary (
-		{MulOrDiv.left=current} op=('*' | '/')
+		{MulOrDiv.left=current} op=('/'|'*')
 		right=Primary
 	)*
 ;
@@ -324,7 +401,7 @@ Atomic returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
 	| {StringConstant} value=STRING 
-	| {BoolConstant} value=('TRUE'|'FALSE')
+	| {BoolConstant} value=BOOLEAN
 	//TODO A SELECT * query offers no reference for an attribute.
 	//At the moment is no actual referencing possible!
 	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
@@ -335,7 +412,7 @@ AtomicWithoutAttributeRef returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 
 	| {StringConstant} value=STRING 
-	| {BoolConstant} value=('TRUE'|'FALSE')
+	| {BoolConstant} value=BOOLEAN
 ;
 
 AtomicWithOnlyStringConstant returns Expression:

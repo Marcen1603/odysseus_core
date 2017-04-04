@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
@@ -15,12 +15,11 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import com.google.inject.Inject
 import java.util.Collection
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
 
 class ExpressionsTypeProvider 
 {
@@ -41,8 +40,8 @@ class ExpressionsTypeProvider
 			Comparision,
 			Equality,
 			BoolConstant,
-			And,
-			Or : boolType
+			AndPredicate,
+			OrPredicate : boolType
 		}
 	}
 	

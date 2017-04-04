@@ -17,6 +17,7 @@ import static extension org.junit.Assert.*
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper
 import org.junit.rules.ExpectedException
 import org.junit.Rule
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
@@ -25,6 +26,7 @@ class CQLGeneratorQueryTest
 
 	@Inject extension CQLGenerator
 	@Inject extension ParseHelper<Model>
+	@Inject extension ValidationTestHelper
 	
 	@Rule public ExpectedException thrown = ExpectedException.none()
 	
@@ -33,9 +35,10 @@ class CQLGeneratorQueryTest
 		
 //		s.parse.assertNoErrors//TODO Validator not working because no CQLDictionary can be found
 		var model = s.parse 
+//		validate(model)
 		val fsa = new InMemoryFileSystemAccess()
 		if(dictionary != null)
-		innerschema = dictionary.schema as Set<SDFSchema>
+		CQLSchemata = dictionary.schema as Set<SDFSchema>
 		nameProvider = new NameProviderHelper()
 //		outerschema = dictionary.schema as Set<SDFSchema>
         doGenerate(model.eResource(), fsa, null)
@@ -468,8 +471,7 @@ class CQLGeneratorQueryTest
 			)"
 			,
 			"
-			operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)
-			view_2 := operator_1
+			view1 := MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)
 			"
 			, new CQLDictionaryHelper	
 		)
@@ -831,6 +833,20 @@ class CQLGeneratorQueryTest
 		assertCorrectGenerated
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
+			,
+			"
+			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			operator_2=SELECT({predicate='Counter>1000&&stream2.attr3>100'},operator_1)
+			operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void AggregationTest9()
+	{
+		assertCorrectGenerated//TODO build map operator in aggregation operator 
+		(
+			"SELECT COUNT(attr1 + 20) AS Counter FROM stream1;"
 			,
 			"
 			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))

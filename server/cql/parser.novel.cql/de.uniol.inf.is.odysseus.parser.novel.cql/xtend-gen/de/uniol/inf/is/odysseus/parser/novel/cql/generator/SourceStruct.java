@@ -24,15 +24,12 @@ public class SourceStruct {
       for (final AttributeStruct struct : this.attributes) {
         for (int i = 1; (i < list.size()); i++) {
           if (((i % 2) == 1)) {
-            String _get = list.get(i);
-            String[] _split = _get.split("\\.");
-            String name = _split[1];
+            String name = list.get(i).split("\\.")[1];
             AttributeStruct newStruct = new AttributeStruct();
             newStruct.attributename = name;
             newStruct.datatype = struct.datatype;
             newStruct.sourcename = struct.sourcename;
-            ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
-            newStruct.aliases = _newArrayList;
+            newStruct.aliases = CollectionLiterals.<String>newArrayList();
             newStructs.add(newStruct);
           }
         }
@@ -48,8 +45,7 @@ public class SourceStruct {
       boolean b = true;
       Iterator<AttributeStruct> iter = this.attributes.iterator();
       while ((b && iter.hasNext())) {
-        AttributeStruct _next = iter.next();
-        boolean _equals = _next.equals(attribute);
+        boolean _equals = iter.next().equals(attribute);
         if (_equals) {
           iter.remove();
           b = false;
@@ -64,34 +60,28 @@ public class SourceStruct {
     boolean _contains = name.contains(".");
     if (_contains) {
       String[] split = name.split("\\.");
-      String _get = split[0];
-      boolean _equals = _get.equals(this.sourcename);
+      boolean _equals = split[0].equals(this.sourcename);
       if (_equals) {
         for (final AttributeStruct attribute : this.attributes) {
-          Object _get_1 = split[1];
-          boolean _equals_1 = attribute.attributename.equals(_get_1);
+          boolean _equals_1 = attribute.attributename.equals(split[1]);
           if (_equals_1) {
             return attribute;
           } else {
-            Object _get_2 = split[1];
-            boolean _contains_1 = attribute.aliases.contains(_get_2);
+            boolean _contains_1 = attribute.aliases.contains(split[1]);
             if (_contains_1) {
               return attribute;
             }
           }
         }
       } else {
-        Object _get_3 = split[0];
-        boolean _contains_2 = this.aliases.contains(_get_3);
+        boolean _contains_2 = this.aliases.contains(split[0]);
         if (_contains_2) {
           for (final AttributeStruct attribute2 : this.attributes) {
-            Object _get_4 = split[1];
-            boolean _equals_2 = attribute2.attributename.equals(_get_4);
+            boolean _equals_2 = attribute2.attributename.equals(split[1]);
             if (_equals_2) {
               return attribute2;
             } else {
-              Object _get_5 = split[1];
-              boolean _contains_3 = attribute2.aliases.contains(_get_5);
+              boolean _contains_3 = attribute2.aliases.contains(split[1]);
               if (_contains_3) {
                 return attribute2;
               }
@@ -117,9 +107,7 @@ public class SourceStruct {
   public List<AttributeStruct> findByType(final String datatype) {
     ArrayList<AttributeStruct> list = CollectionLiterals.<AttributeStruct>newArrayList();
     for (final AttributeStruct attribute : this.attributes) {
-      String _lowerCase = attribute.datatype.toLowerCase();
-      String _lowerCase_1 = datatype.toLowerCase();
-      boolean _equals = _lowerCase.equals(_lowerCase_1);
+      boolean _equals = attribute.datatype.toLowerCase().equals(datatype.toLowerCase());
       if (_equals) {
         list.add(attribute);
       }

@@ -3,11 +3,10 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
@@ -16,44 +15,54 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -86,6 +95,13 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass commandEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass selectEClass = null;
 
   /**
@@ -93,7 +109,21 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass argumentEClass = null;
+  private EClass innerSelectEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass innerSelect2EClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass selectArgumentEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -128,13 +158,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass selectExpressionWithoutAliasDefinitionEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass expressionComponentEClass = null;
 
   /**
@@ -156,42 +179,56 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createParametersEClass = null;
+  private EClass accessFrameworkEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass attributeDefinitionEClass = null;
+  private EClass schemaDefinitionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createStream1EClass = null;
+  private EClass createEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createSink1EClass = null;
+  private EClass createAccessFrameworkEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createStreamChannelEClass = null;
+  private EClass createChannelFrameworkViaPortEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass createStreamFileEClass = null;
+  private EClass createChannelFormatViaFileEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass createDatabaseStreamEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass createDatabaseSinkEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -212,21 +249,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass commandEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass window_TimebasedEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass window_TuplebasedEClass = null;
+  private EClass windowOperatorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -254,6 +277,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass simpleSourceEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass nestedSourceEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass functionEClass = null;
 
   /**
@@ -261,42 +298,91 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass dropCommandEClass = null;
+  private EClass expressionComponentAsAttributeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass userCommandEClass = null;
+  private EClass createDataBaseConnectionJDBCEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass rightsCommandEClass = null;
+  private EClass createDataBaseConnectionGenericEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass rightsRoleCommandEClass = null;
+  private EClass dropDatabaseConnectionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass orEClass = null;
+  private EClass dropStreamEClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass andEClass = null;
+  private EClass userManagementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass rightsManagementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass roleManagementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass undboundedWindowEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass timebasedWindowEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass tuplebasedWindowEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass orPredicateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass andPredicateEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -383,13 +469,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   private EClass attributeRefEClass = null;
 
   /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EEnum createKeywordEEnum = null;
-
-  /**
    * Creates an instance of the model <b>Package</b>, registered with
    * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
    * package URI value.
@@ -467,7 +546,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getModel_Statements()
+  public EReference getModel_Components()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(0);
   }
@@ -497,6 +576,36 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getCommand()
+  {
+    return commandEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCommand_Type()
+  {
+    return (EReference)commandEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCommand_Name()
+  {
+    return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getSelect()
   {
     return selectEClass;
@@ -507,7 +616,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSelect_Name()
+  public EAttribute getSelect_Distinct()
   {
     return (EAttribute)selectEClass.getEStructuralFeatures().get(0);
   }
@@ -517,19 +626,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSelect_Distinct()
-  {
-    return (EAttribute)selectEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getSelect_Arguments()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(2);
+    return (EReference)selectEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -539,7 +638,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    */
   public EReference getSelect_Sources()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(3);
+    return (EReference)selectEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -549,7 +648,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    */
   public EReference getSelect_Predicates()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(4);
+    return (EReference)selectEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -559,7 +658,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    */
   public EReference getSelect_Order()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(5);
+    return (EReference)selectEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -569,7 +668,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    */
   public EReference getSelect_Having()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(6);
+    return (EReference)selectEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -577,9 +676,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getArgument()
+  public EClass getInnerSelect()
   {
-    return argumentEClass;
+    return innerSelectEClass;
   }
 
   /**
@@ -587,9 +686,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getArgument_Attribute()
+  public EReference getInnerSelect_Select()
   {
-    return (EReference)argumentEClass.getEStructuralFeatures().get(0);
+    return (EReference)innerSelectEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -597,9 +696,49 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getArgument_Expression()
+  public EClass getInnerSelect2()
   {
-    return (EReference)argumentEClass.getEStructuralFeatures().get(1);
+    return innerSelect2EClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getInnerSelect2_Select()
+  {
+    return (EReference)innerSelect2EClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getSelectArgument()
+  {
+    return selectArgumentEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSelectArgument_Attribute()
+  {
+    return (EReference)selectArgumentEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSelectArgument_Expression()
+  {
+    return (EReference)selectArgumentEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -617,59 +756,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSource_Name()
-  {
-    return (EAttribute)sourceEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getSource_Unbounded()
-  {
-    return (EAttribute)sourceEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getSource_Time()
-  {
-    return (EReference)sourceEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getSource_Tuple()
-  {
-    return (EReference)sourceEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getSource_Alias()
   {
-    return (EReference)sourceEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getSource_Nested()
-  {
-    return (EReference)sourceEClass.getEStructuralFeatures().get(5);
+    return (EReference)sourceEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -777,16 +866,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getSelectExpressionWithoutAliasDefinition()
-  {
-    return selectExpressionWithoutAliasDefinitionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getExpressionComponent()
   {
     return expressionComponentEClass;
@@ -867,9 +946,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreateParameters()
+  public EClass getAccessFramework()
   {
-    return createParametersEClass;
+    return accessFrameworkEClass;
   }
 
   /**
@@ -877,9 +956,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Wrapper()
+  public EAttribute getAccessFramework_Wrapper()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -887,9 +966,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Protocol()
+  public EAttribute getAccessFramework_Protocol()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -897,9 +976,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Transport()
+  public EAttribute getAccessFramework_Transport()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -907,9 +986,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Datahandler()
+  public EAttribute getAccessFramework_Datahandler()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -917,9 +996,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Keys()
+  public EAttribute getAccessFramework_Keys()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -927,9 +1006,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateParameters_Values()
+  public EAttribute getAccessFramework_Values()
   {
-    return (EAttribute)createParametersEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)accessFrameworkEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -937,9 +1016,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAttributeDefinition()
+  public EClass getSchemaDefinition()
   {
-    return attributeDefinitionEClass;
+    return schemaDefinitionEClass;
   }
 
   /**
@@ -947,9 +1026,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAttributeDefinition_Name()
+  public EAttribute getSchemaDefinition_Name()
   {
-    return (EAttribute)attributeDefinitionEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)schemaDefinitionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -957,9 +1036,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getAttributeDefinition_Arguments()
+  public EAttribute getSchemaDefinition_Arguments()
   {
-    return (EAttribute)attributeDefinitionEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)schemaDefinitionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -967,9 +1046,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreateStream1()
+  public EClass getCreate()
   {
-    return createStream1EClass;
+    return createEClass;
   }
 
   /**
@@ -977,9 +1056,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStream1_Keyword()
+  public EAttribute getCreate_Type()
   {
-    return (EAttribute)createStream1EClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -987,9 +1066,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateStream1_Attributes()
+  public EReference getCreate_Create()
   {
-    return (EReference)createStream1EClass.getEStructuralFeatures().get(1);
+    return (EReference)createEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -997,9 +1076,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateStream1_Pars()
+  public EClass getCreateAccessFramework()
   {
-    return (EReference)createStream1EClass.getEStructuralFeatures().get(2);
+    return createAccessFrameworkEClass;
   }
 
   /**
@@ -1007,9 +1086,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreateSink1()
+  public EReference getCreateAccessFramework_Attributes()
   {
-    return createSink1EClass;
+    return (EReference)createAccessFrameworkEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1017,9 +1096,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateSink1_Keyword()
+  public EReference getCreateAccessFramework_Pars()
   {
-    return (EAttribute)createSink1EClass.getEStructuralFeatures().get(0);
+    return (EReference)createAccessFrameworkEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1027,9 +1106,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateSink1_Attributes()
+  public EClass getCreateChannelFrameworkViaPort()
   {
-    return (EReference)createSink1EClass.getEStructuralFeatures().get(1);
+    return createChannelFrameworkViaPortEClass;
   }
 
   /**
@@ -1037,9 +1116,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateSink1_Pars()
+  public EReference getCreateChannelFrameworkViaPort_Attributes()
   {
-    return (EReference)createSink1EClass.getEStructuralFeatures().get(2);
+    return (EReference)createChannelFrameworkViaPortEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1047,9 +1126,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreateStreamChannel()
+  public EAttribute getCreateChannelFrameworkViaPort_Host()
   {
-    return createStreamChannelEClass;
+    return (EAttribute)createChannelFrameworkViaPortEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1057,9 +1136,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamChannel_Keyword()
+  public EAttribute getCreateChannelFrameworkViaPort_Port()
   {
-    return (EAttribute)createStreamChannelEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createChannelFrameworkViaPortEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1067,9 +1146,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateStreamChannel_Attributes()
+  public EClass getCreateChannelFormatViaFile()
   {
-    return (EReference)createStreamChannelEClass.getEStructuralFeatures().get(1);
+    return createChannelFormatViaFileEClass;
   }
 
   /**
@@ -1077,9 +1156,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamChannel_Host()
+  public EReference getCreateChannelFormatViaFile_Attributes()
   {
-    return (EAttribute)createStreamChannelEClass.getEStructuralFeatures().get(2);
+    return (EReference)createChannelFormatViaFileEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1087,9 +1166,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamChannel_Port()
+  public EAttribute getCreateChannelFormatViaFile_Filename()
   {
-    return (EAttribute)createStreamChannelEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)createChannelFormatViaFileEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1097,9 +1176,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCreateStreamFile()
+  public EAttribute getCreateChannelFormatViaFile_Type()
   {
-    return createStreamFileEClass;
+    return (EAttribute)createChannelFormatViaFileEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1107,9 +1186,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamFile_Keyword()
+  public EClass getCreateDatabaseStream()
   {
-    return (EAttribute)createStreamFileEClass.getEStructuralFeatures().get(0);
+    return createDatabaseStreamEClass;
   }
 
   /**
@@ -1117,9 +1196,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getCreateStreamFile_Attributes()
+  public EReference getCreateDatabaseStream_Attributes()
   {
-    return (EReference)createStreamFileEClass.getEStructuralFeatures().get(1);
+    return (EReference)createDatabaseStreamEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1127,9 +1206,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamFile_Filename()
+  public EAttribute getCreateDatabaseStream_Database()
   {
-    return (EAttribute)createStreamFileEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)createDatabaseStreamEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1137,9 +1216,79 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateStreamFile_Type()
+  public EAttribute getCreateDatabaseStream_Table()
   {
-    return (EAttribute)createStreamFileEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)createDatabaseStreamEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseStream_Size()
+  {
+    return (EAttribute)createDatabaseStreamEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseStream_Unit()
+  {
+    return (EAttribute)createDatabaseStreamEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getCreateDatabaseSink()
+  {
+    return createDatabaseSinkEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseSink_Name()
+  {
+    return (EAttribute)createDatabaseSinkEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseSink_Database()
+  {
+    return (EAttribute)createDatabaseSinkEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseSink_Table()
+  {
+    return (EAttribute)createDatabaseSinkEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDatabaseSink_Option()
+  {
+    return (EAttribute)createDatabaseSinkEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1217,109 +1366,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getCommand()
+  public EClass getWindowOperator()
   {
-    return commandEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Name()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getWindow_Timebased()
-  {
-    return window_TimebasedEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Timebased_Size()
-  {
-    return (EAttribute)window_TimebasedEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Timebased_Unit()
-  {
-    return (EAttribute)window_TimebasedEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Timebased_Advance_size()
-  {
-    return (EAttribute)window_TimebasedEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Timebased_Advance_unit()
-  {
-    return (EAttribute)window_TimebasedEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getWindow_Tuplebased()
-  {
-    return window_TuplebasedEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Tuplebased_Size()
-  {
-    return (EAttribute)window_TuplebasedEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getWindow_Tuplebased_Advance_size()
-  {
-    return (EAttribute)window_TuplebasedEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getWindow_Tuplebased_Partition_attribute()
-  {
-    return (EReference)window_TuplebasedEClass.getEStructuralFeatures().get(2);
+    return windowOperatorEClass;
   }
 
   /**
@@ -1377,6 +1426,56 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getSimpleSource()
+  {
+    return simpleSourceEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSimpleSource_Name()
+  {
+    return (EAttribute)simpleSourceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSimpleSource_Window()
+  {
+    return (EReference)simpleSourceEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getNestedSource()
+  {
+    return nestedSourceEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getNestedSource_Statement()
+  {
+    return (EReference)nestedSourceEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getFunction()
   {
     return functionEClass;
@@ -1397,9 +1496,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getDropCommand()
+  public EClass getExpressionComponentAsAttribute()
   {
-    return dropCommandEClass;
+    return expressionComponentAsAttributeEClass;
   }
 
   /**
@@ -1407,9 +1506,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDropCommand_Stream()
+  public EClass getCreateDataBaseConnectionJDBC()
   {
-    return (EAttribute)dropCommandEClass.getEStructuralFeatures().get(0);
+    return createDataBaseConnectionJDBCEClass;
   }
 
   /**
@@ -1417,9 +1516,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDropCommand_Exists()
+  public EAttribute getCreateDataBaseConnectionJDBC_Server()
   {
-    return (EAttribute)dropCommandEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1427,9 +1526,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getUserCommand()
+  public EClass getCreateDataBaseConnectionGeneric()
   {
-    return userCommandEClass;
+    return createDataBaseConnectionGenericEClass;
   }
 
   /**
@@ -1437,9 +1536,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserCommand_Subject()
+  public EAttribute getCreateDataBaseConnectionGeneric_Driver()
   {
-    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1447,9 +1546,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserCommand_SubjectName()
+  public EAttribute getCreateDataBaseConnectionGeneric_Source()
   {
-    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1457,9 +1556,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserCommand_Password()
+  public EAttribute getCreateDataBaseConnectionGeneric_Server()
   {
-    return (EAttribute)userCommandEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1467,9 +1566,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getRightsCommand()
+  public EAttribute getCreateDataBaseConnectionGeneric_User()
   {
-    return rightsCommandEClass;
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1477,9 +1576,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsCommand_Operations()
+  public EAttribute getCreateDataBaseConnectionGeneric_Password()
   {
-    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1487,9 +1586,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsCommand_Operations2()
+  public EClass getDropDatabaseConnection()
   {
-    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(1);
+    return dropDatabaseConnectionEClass;
   }
 
   /**
@@ -1497,9 +1596,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsCommand_User()
+  public EClass getDropStream()
   {
-    return (EAttribute)rightsCommandEClass.getEStructuralFeatures().get(2);
+    return dropStreamEClass;
   }
 
   /**
@@ -1507,9 +1606,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getRightsRoleCommand()
+  public EAttribute getDropStream_Stream()
   {
-    return rightsRoleCommandEClass;
+    return (EAttribute)dropStreamEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1517,9 +1616,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsRoleCommand_Operations()
+  public EAttribute getDropStream_Exists()
   {
-    return (EAttribute)rightsRoleCommandEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)dropStreamEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1527,9 +1626,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsRoleCommand_User()
+  public EClass getUserManagement()
   {
-    return (EAttribute)rightsRoleCommandEClass.getEStructuralFeatures().get(1);
+    return userManagementEClass;
   }
 
   /**
@@ -1537,9 +1636,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getOr()
+  public EAttribute getUserManagement_Subject()
   {
-    return orEClass;
+    return (EAttribute)userManagementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1547,9 +1646,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getOr_Left()
+  public EAttribute getUserManagement_SubjectName()
   {
-    return (EReference)orEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)userManagementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1557,9 +1656,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getOr_Right()
+  public EAttribute getUserManagement_Password()
   {
-    return (EReference)orEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)userManagementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1567,9 +1666,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAnd()
+  public EClass getRightsManagement()
   {
-    return andEClass;
+    return rightsManagementEClass;
   }
 
   /**
@@ -1577,9 +1676,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAnd_Left()
+  public EAttribute getRightsManagement_Operations()
   {
-    return (EReference)andEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1587,9 +1686,209 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAnd_Right()
+  public EAttribute getRightsManagement_Operations2()
   {
-    return (EReference)andEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsManagement_User()
+  {
+    return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRoleManagement()
+  {
+    return roleManagementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRoleManagement_Operations()
+  {
+    return (EAttribute)roleManagementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRoleManagement_User()
+  {
+    return (EAttribute)roleManagementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getUndboundedWindow()
+  {
+    return undboundedWindowEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTimebasedWindow()
+  {
+    return timebasedWindowEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTimebasedWindow_Size()
+  {
+    return (EAttribute)timebasedWindowEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTimebasedWindow_Unit()
+  {
+    return (EAttribute)timebasedWindowEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTimebasedWindow_Advance_size()
+  {
+    return (EAttribute)timebasedWindowEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTimebasedWindow_Advance_unit()
+  {
+    return (EAttribute)timebasedWindowEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getTuplebasedWindow()
+  {
+    return tuplebasedWindowEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTuplebasedWindow_Size()
+  {
+    return (EAttribute)tuplebasedWindowEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTuplebasedWindow_Advance_size()
+  {
+    return (EAttribute)tuplebasedWindowEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getTuplebasedWindow_Partition_attribute()
+  {
+    return (EReference)tuplebasedWindowEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getOrPredicate()
+  {
+    return orPredicateEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getOrPredicate_Left()
+  {
+    return (EReference)orPredicateEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getOrPredicate_Right()
+  {
+    return (EReference)orPredicateEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getAndPredicate()
+  {
+    return andPredicateEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getAndPredicate_Left()
+  {
+    return (EReference)andPredicateEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getAndPredicate_Right()
+  {
+    return (EReference)andPredicateEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1917,16 +2216,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnum getCreateKeyword()
-  {
-    return createKeywordEEnum;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public CQLFactory getCQLFactory()
   {
     return (CQLFactory)getEFactoryInstance();
@@ -1953,13 +2242,16 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     // Create classes and their features
     modelEClass = createEClass(MODEL);
-    createEReference(modelEClass, MODEL__STATEMENTS);
+    createEReference(modelEClass, MODEL__COMPONENTS);
 
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__TYPE);
 
+    commandEClass = createEClass(COMMAND);
+    createEReference(commandEClass, COMMAND__TYPE);
+    createEAttribute(commandEClass, COMMAND__NAME);
+
     selectEClass = createEClass(SELECT);
-    createEAttribute(selectEClass, SELECT__NAME);
     createEAttribute(selectEClass, SELECT__DISTINCT);
     createEReference(selectEClass, SELECT__ARGUMENTS);
     createEReference(selectEClass, SELECT__SOURCES);
@@ -1967,17 +2259,18 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEReference(selectEClass, SELECT__ORDER);
     createEReference(selectEClass, SELECT__HAVING);
 
-    argumentEClass = createEClass(ARGUMENT);
-    createEReference(argumentEClass, ARGUMENT__ATTRIBUTE);
-    createEReference(argumentEClass, ARGUMENT__EXPRESSION);
+    innerSelectEClass = createEClass(INNER_SELECT);
+    createEReference(innerSelectEClass, INNER_SELECT__SELECT);
+
+    innerSelect2EClass = createEClass(INNER_SELECT2);
+    createEReference(innerSelect2EClass, INNER_SELECT2__SELECT);
+
+    selectArgumentEClass = createEClass(SELECT_ARGUMENT);
+    createEReference(selectArgumentEClass, SELECT_ARGUMENT__ATTRIBUTE);
+    createEReference(selectArgumentEClass, SELECT_ARGUMENT__EXPRESSION);
 
     sourceEClass = createEClass(SOURCE);
-    createEAttribute(sourceEClass, SOURCE__NAME);
-    createEAttribute(sourceEClass, SOURCE__UNBOUNDED);
-    createEReference(sourceEClass, SOURCE__TIME);
-    createEReference(sourceEClass, SOURCE__TUPLE);
     createEReference(sourceEClass, SOURCE__ALIAS);
-    createEReference(sourceEClass, SOURCE__NESTED);
 
     attributeEClass = createEClass(ATTRIBUTE);
     createEAttribute(attributeEClass, ATTRIBUTE__NAME);
@@ -1992,8 +2285,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(selectExpressionEClass, SELECT_EXPRESSION__OPERATORS);
     createEReference(selectExpressionEClass, SELECT_EXPRESSION__ALIAS);
 
-    selectExpressionWithoutAliasDefinitionEClass = createEClass(SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION);
-
     expressionComponentEClass = createEClass(EXPRESSION_COMPONENT);
     createEReference(expressionComponentEClass, EXPRESSION_COMPONENT__VALUE);
 
@@ -2005,39 +2296,48 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     aliasEClass = createEClass(ALIAS);
     createEAttribute(aliasEClass, ALIAS__NAME);
 
-    createParametersEClass = createEClass(CREATE_PARAMETERS);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__WRAPPER);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__PROTOCOL);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__TRANSPORT);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__DATAHANDLER);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__KEYS);
-    createEAttribute(createParametersEClass, CREATE_PARAMETERS__VALUES);
+    accessFrameworkEClass = createEClass(ACCESS_FRAMEWORK);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__WRAPPER);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__PROTOCOL);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__TRANSPORT);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__DATAHANDLER);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__KEYS);
+    createEAttribute(accessFrameworkEClass, ACCESS_FRAMEWORK__VALUES);
 
-    attributeDefinitionEClass = createEClass(ATTRIBUTE_DEFINITION);
-    createEAttribute(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__NAME);
-    createEAttribute(attributeDefinitionEClass, ATTRIBUTE_DEFINITION__ARGUMENTS);
+    schemaDefinitionEClass = createEClass(SCHEMA_DEFINITION);
+    createEAttribute(schemaDefinitionEClass, SCHEMA_DEFINITION__NAME);
+    createEAttribute(schemaDefinitionEClass, SCHEMA_DEFINITION__ARGUMENTS);
 
-    createStream1EClass = createEClass(CREATE_STREAM1);
-    createEAttribute(createStream1EClass, CREATE_STREAM1__KEYWORD);
-    createEReference(createStream1EClass, CREATE_STREAM1__ATTRIBUTES);
-    createEReference(createStream1EClass, CREATE_STREAM1__PARS);
+    createEClass = createEClass(CREATE);
+    createEAttribute(createEClass, CREATE__TYPE);
+    createEReference(createEClass, CREATE__CREATE);
 
-    createSink1EClass = createEClass(CREATE_SINK1);
-    createEAttribute(createSink1EClass, CREATE_SINK1__KEYWORD);
-    createEReference(createSink1EClass, CREATE_SINK1__ATTRIBUTES);
-    createEReference(createSink1EClass, CREATE_SINK1__PARS);
+    createAccessFrameworkEClass = createEClass(CREATE_ACCESS_FRAMEWORK);
+    createEReference(createAccessFrameworkEClass, CREATE_ACCESS_FRAMEWORK__ATTRIBUTES);
+    createEReference(createAccessFrameworkEClass, CREATE_ACCESS_FRAMEWORK__PARS);
 
-    createStreamChannelEClass = createEClass(CREATE_STREAM_CHANNEL);
-    createEAttribute(createStreamChannelEClass, CREATE_STREAM_CHANNEL__KEYWORD);
-    createEReference(createStreamChannelEClass, CREATE_STREAM_CHANNEL__ATTRIBUTES);
-    createEAttribute(createStreamChannelEClass, CREATE_STREAM_CHANNEL__HOST);
-    createEAttribute(createStreamChannelEClass, CREATE_STREAM_CHANNEL__PORT);
+    createChannelFrameworkViaPortEClass = createEClass(CREATE_CHANNEL_FRAMEWORK_VIA_PORT);
+    createEReference(createChannelFrameworkViaPortEClass, CREATE_CHANNEL_FRAMEWORK_VIA_PORT__ATTRIBUTES);
+    createEAttribute(createChannelFrameworkViaPortEClass, CREATE_CHANNEL_FRAMEWORK_VIA_PORT__HOST);
+    createEAttribute(createChannelFrameworkViaPortEClass, CREATE_CHANNEL_FRAMEWORK_VIA_PORT__PORT);
 
-    createStreamFileEClass = createEClass(CREATE_STREAM_FILE);
-    createEAttribute(createStreamFileEClass, CREATE_STREAM_FILE__KEYWORD);
-    createEReference(createStreamFileEClass, CREATE_STREAM_FILE__ATTRIBUTES);
-    createEAttribute(createStreamFileEClass, CREATE_STREAM_FILE__FILENAME);
-    createEAttribute(createStreamFileEClass, CREATE_STREAM_FILE__TYPE);
+    createChannelFormatViaFileEClass = createEClass(CREATE_CHANNEL_FORMAT_VIA_FILE);
+    createEReference(createChannelFormatViaFileEClass, CREATE_CHANNEL_FORMAT_VIA_FILE__ATTRIBUTES);
+    createEAttribute(createChannelFormatViaFileEClass, CREATE_CHANNEL_FORMAT_VIA_FILE__FILENAME);
+    createEAttribute(createChannelFormatViaFileEClass, CREATE_CHANNEL_FORMAT_VIA_FILE__TYPE);
+
+    createDatabaseStreamEClass = createEClass(CREATE_DATABASE_STREAM);
+    createEReference(createDatabaseStreamEClass, CREATE_DATABASE_STREAM__ATTRIBUTES);
+    createEAttribute(createDatabaseStreamEClass, CREATE_DATABASE_STREAM__DATABASE);
+    createEAttribute(createDatabaseStreamEClass, CREATE_DATABASE_STREAM__TABLE);
+    createEAttribute(createDatabaseStreamEClass, CREATE_DATABASE_STREAM__SIZE);
+    createEAttribute(createDatabaseStreamEClass, CREATE_DATABASE_STREAM__UNIT);
+
+    createDatabaseSinkEClass = createEClass(CREATE_DATABASE_SINK);
+    createEAttribute(createDatabaseSinkEClass, CREATE_DATABASE_SINK__NAME);
+    createEAttribute(createDatabaseSinkEClass, CREATE_DATABASE_SINK__DATABASE);
+    createEAttribute(createDatabaseSinkEClass, CREATE_DATABASE_SINK__TABLE);
+    createEAttribute(createDatabaseSinkEClass, CREATE_DATABASE_SINK__OPTION);
 
     createViewEClass = createEClass(CREATE_VIEW);
     createEAttribute(createViewEClass, CREATE_VIEW__NAME);
@@ -2048,19 +2348,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEReference(streamToEClass, STREAM_TO__STATEMENT);
     createEAttribute(streamToEClass, STREAM_TO__INPUTNAME);
 
-    commandEClass = createEClass(COMMAND);
-    createEAttribute(commandEClass, COMMAND__NAME);
-
-    window_TimebasedEClass = createEClass(WINDOW_TIMEBASED);
-    createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__SIZE);
-    createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__UNIT);
-    createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__ADVANCE_SIZE);
-    createEAttribute(window_TimebasedEClass, WINDOW_TIMEBASED__ADVANCE_UNIT);
-
-    window_TuplebasedEClass = createEClass(WINDOW_TUPLEBASED);
-    createEAttribute(window_TuplebasedEClass, WINDOW_TUPLEBASED__SIZE);
-    createEAttribute(window_TuplebasedEClass, WINDOW_TUPLEBASED__ADVANCE_SIZE);
-    createEReference(window_TuplebasedEClass, WINDOW_TUPLEBASED__PARTITION_ATTRIBUTE);
+    windowOperatorEClass = createEClass(WINDOW_OPERATOR);
 
     expressionsModelEClass = createEClass(EXPRESSIONS_MODEL);
     createEReference(expressionsModelEClass, EXPRESSIONS_MODEL__ELEMENTS);
@@ -2070,34 +2358,68 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     dataTypeEClass = createEClass(DATA_TYPE);
     createEAttribute(dataTypeEClass, DATA_TYPE__VALUE);
 
+    simpleSourceEClass = createEClass(SIMPLE_SOURCE);
+    createEAttribute(simpleSourceEClass, SIMPLE_SOURCE__NAME);
+    createEReference(simpleSourceEClass, SIMPLE_SOURCE__WINDOW);
+
+    nestedSourceEClass = createEClass(NESTED_SOURCE);
+    createEReference(nestedSourceEClass, NESTED_SOURCE__STATEMENT);
+
     functionEClass = createEClass(FUNCTION);
     createEAttribute(functionEClass, FUNCTION__NAME);
 
-    dropCommandEClass = createEClass(DROP_COMMAND);
-    createEAttribute(dropCommandEClass, DROP_COMMAND__STREAM);
-    createEAttribute(dropCommandEClass, DROP_COMMAND__EXISTS);
+    expressionComponentAsAttributeEClass = createEClass(EXPRESSION_COMPONENT_AS_ATTRIBUTE);
 
-    userCommandEClass = createEClass(USER_COMMAND);
-    createEAttribute(userCommandEClass, USER_COMMAND__SUBJECT);
-    createEAttribute(userCommandEClass, USER_COMMAND__SUBJECT_NAME);
-    createEAttribute(userCommandEClass, USER_COMMAND__PASSWORD);
+    createDataBaseConnectionJDBCEClass = createEClass(CREATE_DATA_BASE_CONNECTION_JDBC);
+    createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__SERVER);
 
-    rightsCommandEClass = createEClass(RIGHTS_COMMAND);
-    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__OPERATIONS);
-    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__OPERATIONS2);
-    createEAttribute(rightsCommandEClass, RIGHTS_COMMAND__USER);
+    createDataBaseConnectionGenericEClass = createEClass(CREATE_DATA_BASE_CONNECTION_GENERIC);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__USER);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD);
 
-    rightsRoleCommandEClass = createEClass(RIGHTS_ROLE_COMMAND);
-    createEAttribute(rightsRoleCommandEClass, RIGHTS_ROLE_COMMAND__OPERATIONS);
-    createEAttribute(rightsRoleCommandEClass, RIGHTS_ROLE_COMMAND__USER);
+    dropDatabaseConnectionEClass = createEClass(DROP_DATABASE_CONNECTION);
 
-    orEClass = createEClass(OR);
-    createEReference(orEClass, OR__LEFT);
-    createEReference(orEClass, OR__RIGHT);
+    dropStreamEClass = createEClass(DROP_STREAM);
+    createEAttribute(dropStreamEClass, DROP_STREAM__STREAM);
+    createEAttribute(dropStreamEClass, DROP_STREAM__EXISTS);
 
-    andEClass = createEClass(AND);
-    createEReference(andEClass, AND__LEFT);
-    createEReference(andEClass, AND__RIGHT);
+    userManagementEClass = createEClass(USER_MANAGEMENT);
+    createEAttribute(userManagementEClass, USER_MANAGEMENT__SUBJECT);
+    createEAttribute(userManagementEClass, USER_MANAGEMENT__SUBJECT_NAME);
+    createEAttribute(userManagementEClass, USER_MANAGEMENT__PASSWORD);
+
+    rightsManagementEClass = createEClass(RIGHTS_MANAGEMENT);
+    createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__OPERATIONS);
+    createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__OPERATIONS2);
+    createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__USER);
+
+    roleManagementEClass = createEClass(ROLE_MANAGEMENT);
+    createEAttribute(roleManagementEClass, ROLE_MANAGEMENT__OPERATIONS);
+    createEAttribute(roleManagementEClass, ROLE_MANAGEMENT__USER);
+
+    undboundedWindowEClass = createEClass(UNDBOUNDED_WINDOW);
+
+    timebasedWindowEClass = createEClass(TIMEBASED_WINDOW);
+    createEAttribute(timebasedWindowEClass, TIMEBASED_WINDOW__SIZE);
+    createEAttribute(timebasedWindowEClass, TIMEBASED_WINDOW__UNIT);
+    createEAttribute(timebasedWindowEClass, TIMEBASED_WINDOW__ADVANCE_SIZE);
+    createEAttribute(timebasedWindowEClass, TIMEBASED_WINDOW__ADVANCE_UNIT);
+
+    tuplebasedWindowEClass = createEClass(TUPLEBASED_WINDOW);
+    createEAttribute(tuplebasedWindowEClass, TUPLEBASED_WINDOW__SIZE);
+    createEAttribute(tuplebasedWindowEClass, TUPLEBASED_WINDOW__ADVANCE_SIZE);
+    createEReference(tuplebasedWindowEClass, TUPLEBASED_WINDOW__PARTITION_ATTRIBUTE);
+
+    orPredicateEClass = createEClass(OR_PREDICATE);
+    createEReference(orPredicateEClass, OR_PREDICATE__LEFT);
+    createEReference(orPredicateEClass, OR_PREDICATE__RIGHT);
+
+    andPredicateEClass = createEClass(AND_PREDICATE);
+    createEReference(andPredicateEClass, AND_PREDICATE__LEFT);
+    createEReference(andPredicateEClass, AND_PREDICATE__RIGHT);
 
     equalityEClass = createEClass(EQUALITY);
     createEReference(equalityEClass, EQUALITY__LEFT);
@@ -2142,9 +2464,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     attributeRefEClass = createEClass(ATTRIBUTE_REF);
     createEReference(attributeRefEClass, ATTRIBUTE_REF__VALUE);
-
-    // Create enums
-    createKeywordEEnum = createEEnum(CREATE_KEYWORD);
   }
 
   /**
@@ -2176,14 +2495,22 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    selectExpressionWithoutAliasDefinitionEClass.getESuperTypes().add(this.getSelectExpression());
+    simpleSourceEClass.getESuperTypes().add(this.getSource());
+    nestedSourceEClass.getESuperTypes().add(this.getSource());
     functionEClass.getESuperTypes().add(this.getExpressionComponent());
-    dropCommandEClass.getESuperTypes().add(this.getCommand());
-    userCommandEClass.getESuperTypes().add(this.getCommand());
-    rightsCommandEClass.getESuperTypes().add(this.getCommand());
-    rightsRoleCommandEClass.getESuperTypes().add(this.getCommand());
-    orEClass.getESuperTypes().add(this.getExpression());
-    andEClass.getESuperTypes().add(this.getExpression());
+    expressionComponentAsAttributeEClass.getESuperTypes().add(this.getExpressionComponent());
+    createDataBaseConnectionJDBCEClass.getESuperTypes().add(this.getCommand());
+    createDataBaseConnectionGenericEClass.getESuperTypes().add(this.getCommand());
+    dropDatabaseConnectionEClass.getESuperTypes().add(this.getCommand());
+    dropStreamEClass.getESuperTypes().add(this.getCommand());
+    userManagementEClass.getESuperTypes().add(this.getCommand());
+    rightsManagementEClass.getESuperTypes().add(this.getCommand());
+    roleManagementEClass.getESuperTypes().add(this.getCommand());
+    undboundedWindowEClass.getESuperTypes().add(this.getWindowOperator());
+    timebasedWindowEClass.getESuperTypes().add(this.getWindowOperator());
+    tuplebasedWindowEClass.getESuperTypes().add(this.getWindowOperator());
+    orPredicateEClass.getESuperTypes().add(this.getExpression());
+    andPredicateEClass.getESuperTypes().add(this.getExpression());
     equalityEClass.getESuperTypes().add(this.getExpression());
     comparisionEClass.getESuperTypes().add(this.getExpression());
     plusEClass.getESuperTypes().add(this.getExpression());
@@ -2199,31 +2526,35 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getModel_Statements(), this.getStatement(), null, "statements", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getModel_Components(), ecorePackage.getEObject(), null, "components", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Type(), ecorePackage.getEObject(), null, "type", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCommand_Type(), this.getCommand(), null, "type", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(selectEClass, Select.class, "Select", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getSelect_Name(), ecorePackage.getEString(), "name", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSelect_Distinct(), ecorePackage.getEString(), "distinct", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Arguments(), this.getArgument(), null, "arguments", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSelect_Arguments(), this.getSelectArgument(), null, "arguments", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Sources(), this.getSource(), null, "sources", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Predicates(), this.getExpressionsModel(), null, "predicates", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Order(), this.getAttribute(), null, "order", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelect_Having(), this.getExpressionsModel(), null, "having", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(argumentEClass, Argument.class, "Argument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getArgument_Attribute(), this.getAttribute(), null, "attribute", null, 0, 1, Argument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getArgument_Expression(), this.getSelectExpression(), null, "expression", null, 0, 1, Argument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(innerSelectEClass, InnerSelect.class, "InnerSelect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getInnerSelect_Select(), this.getSelect(), null, "select", null, 0, 1, InnerSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(innerSelect2EClass, InnerSelect2.class, "InnerSelect2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getInnerSelect2_Select(), this.getSelect(), null, "select", null, 0, 1, InnerSelect2.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(selectArgumentEClass, SelectArgument.class, "SelectArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getSelectArgument_Attribute(), this.getAttribute(), null, "attribute", null, 0, 1, SelectArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSelectArgument_Expression(), this.getSelectExpression(), null, "expression", null, 0, 1, SelectArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(sourceEClass, Source.class, "Source", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getSource_Name(), ecorePackage.getEString(), "name", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getSource_Unbounded(), ecorePackage.getEString(), "unbounded", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSource_Time(), this.getWindow_Timebased(), null, "time", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSource_Tuple(), this.getWindow_Tuplebased(), null, "tuple", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSource_Alias(), this.getAlias(), null, "alias", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSource_Nested(), this.getSelect(), null, "nested", null, 0, 1, Source.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2231,14 +2562,12 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(attributeWithNestedStatementEClass, AttributeWithNestedStatement.class, "AttributeWithNestedStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAttributeWithNestedStatement_Value(), this.getAttribute(), null, "value", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAttributeWithNestedStatement_Nested(), this.getSelect(), null, "nested", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAttributeWithNestedStatement_Nested(), this.getInnerSelect(), null, "nested", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(selectExpressionEClass, SelectExpression.class, "SelectExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectExpression_Expressions(), this.getExpressionComponent(), null, "expressions", null, 0, -1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSelectExpression_Operators(), ecorePackage.getEString(), "operators", null, 0, -1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSelectExpression_Alias(), this.getAlias(), null, "alias", null, 0, 1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(selectExpressionWithoutAliasDefinitionEClass, SelectExpressionWithoutAliasDefinition.class, "SelectExpressionWithoutAliasDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(expressionComponentEClass, ExpressionComponent.class, "ExpressionComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExpressionComponent_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ExpressionComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2251,62 +2580,59 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(aliasEClass, Alias.class, "Alias", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAlias_Name(), ecorePackage.getEString(), "name", null, 0, 1, Alias.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createParametersEClass, CreateParameters.class, "CreateParameters", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreateParameters_Wrapper(), ecorePackage.getEString(), "wrapper", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateParameters_Protocol(), ecorePackage.getEString(), "protocol", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateParameters_Transport(), ecorePackage.getEString(), "transport", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateParameters_Datahandler(), ecorePackage.getEString(), "datahandler", null, 0, 1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateParameters_Keys(), ecorePackage.getEString(), "keys", null, 0, -1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateParameters_Values(), ecorePackage.getEString(), "values", null, 0, -1, CreateParameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(accessFrameworkEClass, AccessFramework.class, "AccessFramework", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAccessFramework_Wrapper(), ecorePackage.getEString(), "wrapper", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccessFramework_Protocol(), ecorePackage.getEString(), "protocol", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccessFramework_Transport(), ecorePackage.getEString(), "transport", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccessFramework_Datahandler(), ecorePackage.getEString(), "datahandler", null, 0, 1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccessFramework_Keys(), ecorePackage.getEString(), "keys", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccessFramework_Values(), ecorePackage.getEString(), "values", null, 0, -1, AccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(attributeDefinitionEClass, AttributeDefinition.class, "AttributeDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getAttributeDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getAttributeDefinition_Arguments(), ecorePackage.getEString(), "arguments", null, 0, -1, AttributeDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(schemaDefinitionEClass, SchemaDefinition.class, "SchemaDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getSchemaDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, SchemaDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSchemaDefinition_Arguments(), ecorePackage.getEString(), "arguments", null, 0, -1, SchemaDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createStream1EClass, CreateStream1.class, "CreateStream1", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreateStream1_Keyword(), this.getCreateKeyword(), "keyword", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateStream1_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateStream1_Pars(), this.getCreateParameters(), null, "pars", null, 0, 1, CreateStream1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createEClass, Create.class, "Create", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreate_Type(), ecorePackage.getEString(), "type", null, 0, 1, Create.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreate_Create(), ecorePackage.getEObject(), null, "create", null, 0, 1, Create.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createSink1EClass, CreateSink1.class, "CreateSink1", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreateSink1_Keyword(), this.getCreateKeyword(), "keyword", null, 0, 1, CreateSink1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateSink1_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateSink1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateSink1_Pars(), this.getCreateParameters(), null, "pars", null, 0, 1, CreateSink1.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createAccessFrameworkEClass, CreateAccessFramework.class, "CreateAccessFramework", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateAccessFramework_Attributes(), this.getSchemaDefinition(), null, "attributes", null, 0, 1, CreateAccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateAccessFramework_Pars(), this.getAccessFramework(), null, "pars", null, 0, 1, CreateAccessFramework.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createStreamChannelEClass, CreateStreamChannel.class, "CreateStreamChannel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreateStreamChannel_Keyword(), this.getCreateKeyword(), "keyword", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateStreamChannel_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateStreamChannel_Host(), ecorePackage.getEString(), "host", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateStreamChannel_Port(), ecorePackage.getEInt(), "port", null, 0, 1, CreateStreamChannel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createChannelFrameworkViaPortEClass, CreateChannelFrameworkViaPort.class, "CreateChannelFrameworkViaPort", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateChannelFrameworkViaPort_Attributes(), this.getSchemaDefinition(), null, "attributes", null, 0, 1, CreateChannelFrameworkViaPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateChannelFrameworkViaPort_Host(), ecorePackage.getEString(), "host", null, 0, 1, CreateChannelFrameworkViaPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateChannelFrameworkViaPort_Port(), ecorePackage.getEInt(), "port", null, 0, 1, CreateChannelFrameworkViaPort.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(createStreamFileEClass, CreateStreamFile.class, "CreateStreamFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCreateStreamFile_Keyword(), this.getCreateKeyword(), "keyword", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateStreamFile_Attributes(), this.getAttributeDefinition(), null, "attributes", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateStreamFile_Filename(), ecorePackage.getEString(), "filename", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateStreamFile_Type(), ecorePackage.getEString(), "type", null, 0, 1, CreateStreamFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createChannelFormatViaFileEClass, CreateChannelFormatViaFile.class, "CreateChannelFormatViaFile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateChannelFormatViaFile_Attributes(), this.getSchemaDefinition(), null, "attributes", null, 0, 1, CreateChannelFormatViaFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateChannelFormatViaFile_Filename(), ecorePackage.getEString(), "filename", null, 0, 1, CreateChannelFormatViaFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateChannelFormatViaFile_Type(), ecorePackage.getEString(), "type", null, 0, 1, CreateChannelFormatViaFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(createDatabaseStreamEClass, CreateDatabaseStream.class, "CreateDatabaseStream", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateDatabaseStream_Attributes(), this.getSchemaDefinition(), null, "attributes", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseStream_Database(), ecorePackage.getEString(), "database", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseStream_Table(), ecorePackage.getEString(), "table", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseStream_Size(), ecorePackage.getEInt(), "size", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseStream_Unit(), ecorePackage.getEString(), "unit", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(createDatabaseSinkEClass, CreateDatabaseSink.class, "CreateDatabaseSink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateDatabaseSink_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateDatabaseSink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseSink_Database(), ecorePackage.getEString(), "database", null, 0, 1, CreateDatabaseSink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseSink_Table(), ecorePackage.getEString(), "table", null, 0, 1, CreateDatabaseSink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseSink_Option(), ecorePackage.getEString(), "option", null, 0, 1, CreateDatabaseSink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(createViewEClass, CreateView.class, "CreateView", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreateView_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getCreateView_Select(), this.getSelect(), null, "select", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateView_Select(), this.getInnerSelect(), null, "select", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(streamToEClass, StreamTo.class, "StreamTo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStreamTo_Name(), ecorePackage.getEString(), "name", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getStreamTo_Statement(), this.getSelect(), null, "statement", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStreamTo_Statement(), this.getInnerSelect2(), null, "statement", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStreamTo_Inputname(), ecorePackage.getEString(), "inputname", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(window_TimebasedEClass, Window_Timebased.class, "Window_Timebased", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getWindow_Timebased_Size(), ecorePackage.getEInt(), "size", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getWindow_Timebased_Unit(), ecorePackage.getEString(), "unit", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getWindow_Timebased_Advance_size(), ecorePackage.getEInt(), "advance_size", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getWindow_Timebased_Advance_unit(), ecorePackage.getEString(), "advance_unit", null, 0, 1, Window_Timebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(window_TuplebasedEClass, Window_Tuplebased.class, "Window_Tuplebased", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getWindow_Tuplebased_Size(), ecorePackage.getEInt(), "size", null, 0, 1, Window_Tuplebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getWindow_Tuplebased_Advance_size(), ecorePackage.getEInt(), "advance_size", null, 0, 1, Window_Tuplebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getWindow_Tuplebased_Partition_attribute(), this.getAttribute(), null, "partition_attribute", null, 0, 1, Window_Tuplebased.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(windowOperatorEClass, WindowOperator.class, "WindowOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(expressionsModelEClass, ExpressionsModel.class, "ExpressionsModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExpressionsModel_Elements(), this.getExpression(), null, "elements", null, 0, -1, ExpressionsModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2316,34 +2642,68 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(dataTypeEClass, DataType.class, "DataType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getDataType_Value(), ecorePackage.getEString(), "value", null, 0, 1, DataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(simpleSourceEClass, SimpleSource.class, "SimpleSource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getSimpleSource_Name(), ecorePackage.getEString(), "name", null, 0, 1, SimpleSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSource_Window(), this.getWindowOperator(), null, "window", null, 0, 1, SimpleSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(nestedSourceEClass, NestedSource.class, "NestedSource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getNestedSource_Statement(), this.getInnerSelect(), null, "statement", null, 0, 1, NestedSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(dropCommandEClass, DropCommand.class, "DropCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDropCommand_Stream(), ecorePackage.getEString(), "stream", null, 0, 1, DropCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDropCommand_Exists(), ecorePackage.getEString(), "exists", null, 0, 1, DropCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(expressionComponentAsAttributeEClass, ExpressionComponentAsAttribute.class, "ExpressionComponentAsAttribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(userCommandEClass, UserCommand.class, "UserCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getUserCommand_Subject(), ecorePackage.getEString(), "subject", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getUserCommand_SubjectName(), ecorePackage.getEString(), "subjectName", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getUserCommand_Password(), ecorePackage.getEString(), "password", null, 0, 1, UserCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createDataBaseConnectionJDBCEClass, CreateDataBaseConnectionJDBC.class, "CreateDataBaseConnectionJDBC", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateDataBaseConnectionJDBC_Server(), ecorePackage.getEString(), "server", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(rightsCommandEClass, RightsCommand.class, "RightsCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getRightsCommand_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRightsCommand_Operations2(), ecorePackage.getEString(), "operations2", null, 0, -1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRightsCommand_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(createDataBaseConnectionGenericEClass, CreateDataBaseConnectionGeneric.class, "CreateDataBaseConnectionGeneric", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Driver(), ecorePackage.getEString(), "driver", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Source(), ecorePackage.getEString(), "source", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Server(), ecorePackage.getEString(), "server", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_User(), ecorePackage.getEString(), "user", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Password(), ecorePackage.getEString(), "password", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(rightsRoleCommandEClass, RightsRoleCommand.class, "RightsRoleCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getRightsRoleCommand_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsRoleCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRightsRoleCommand_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsRoleCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(dropDatabaseConnectionEClass, DropDatabaseConnection.class, "DropDatabaseConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(orEClass, Or.class, "Or", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getOr_Left(), this.getExpression(), null, "left", null, 0, 1, Or.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getOr_Right(), this.getExpression(), null, "right", null, 0, 1, Or.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(dropStreamEClass, DropStream.class, "DropStream", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDropStream_Stream(), ecorePackage.getEString(), "stream", null, 0, 1, DropStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDropStream_Exists(), ecorePackage.getEString(), "exists", null, 0, 1, DropStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(andEClass, And.class, "And", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getAnd_Left(), this.getExpression(), null, "left", null, 0, 1, And.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAnd_Right(), this.getExpression(), null, "right", null, 0, 1, And.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(userManagementEClass, UserManagement.class, "UserManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUserManagement_Subject(), ecorePackage.getEString(), "subject", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUserManagement_SubjectName(), ecorePackage.getEString(), "subjectName", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUserManagement_Password(), ecorePackage.getEString(), "password", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(rightsManagementEClass, RightsManagement.class, "RightsManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRightsManagement_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRightsManagement_Operations2(), ecorePackage.getEString(), "operations2", null, 0, -1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRightsManagement_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(roleManagementEClass, RoleManagement.class, "RoleManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRoleManagement_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RoleManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRoleManagement_User(), ecorePackage.getEString(), "user", null, 0, 1, RoleManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(undboundedWindowEClass, UndboundedWindow.class, "UndboundedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(timebasedWindowEClass, TimebasedWindow.class, "TimebasedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTimebasedWindow_Size(), ecorePackage.getEInt(), "size", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTimebasedWindow_Unit(), ecorePackage.getEString(), "unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTimebasedWindow_Advance_size(), ecorePackage.getEInt(), "advance_size", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTimebasedWindow_Advance_unit(), ecorePackage.getEString(), "advance_unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(tuplebasedWindowEClass, TuplebasedWindow.class, "TuplebasedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getTuplebasedWindow_Size(), ecorePackage.getEInt(), "size", null, 0, 1, TuplebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTuplebasedWindow_Advance_size(), ecorePackage.getEInt(), "advance_size", null, 0, 1, TuplebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTuplebasedWindow_Partition_attribute(), this.getAttribute(), null, "partition_attribute", null, 0, 1, TuplebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(orPredicateEClass, OrPredicate.class, "OrPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getOrPredicate_Left(), this.getExpression(), null, "left", null, 0, 1, OrPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getOrPredicate_Right(), this.getExpression(), null, "right", null, 0, 1, OrPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(andPredicateEClass, AndPredicate.class, "AndPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getAndPredicate_Left(), this.getExpression(), null, "left", null, 0, 1, AndPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAndPredicate_Right(), this.getExpression(), null, "right", null, 0, 1, AndPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(equalityEClass, Equality.class, "Equality", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getEquality_Left(), this.getExpression(), null, "left", null, 0, 1, Equality.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2388,11 +2748,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(attributeRefEClass, AttributeRef.class, "AttributeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAttributeRef_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, AttributeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    // Initialize enums and add enum literals
-    initEEnum(createKeywordEEnum, CreateKeyword.class, "CreateKeyword");
-    addEEnumLiteral(createKeywordEEnum, CreateKeyword.CREATE);
-    addEEnumLiteral(createKeywordEEnum, CreateKeyword.ATTACH);
 
     // Create resource
     createResource(eNS_URI);

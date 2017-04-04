@@ -86,14 +86,29 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createStatementAdapter();
       }
       @Override
+      public Adapter caseCommand(Command object)
+      {
+        return createCommandAdapter();
+      }
+      @Override
       public Adapter caseSelect(Select object)
       {
         return createSelectAdapter();
       }
       @Override
-      public Adapter caseArgument(Argument object)
+      public Adapter caseInnerSelect(InnerSelect object)
       {
-        return createArgumentAdapter();
+        return createInnerSelectAdapter();
+      }
+      @Override
+      public Adapter caseInnerSelect2(InnerSelect2 object)
+      {
+        return createInnerSelect2Adapter();
+      }
+      @Override
+      public Adapter caseSelectArgument(SelectArgument object)
+      {
+        return createSelectArgumentAdapter();
       }
       @Override
       public Adapter caseSource(Source object)
@@ -116,11 +131,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createSelectExpressionAdapter();
       }
       @Override
-      public Adapter caseSelectExpressionWithoutAliasDefinition(SelectExpressionWithoutAliasDefinition object)
-      {
-        return createSelectExpressionWithoutAliasDefinitionAdapter();
-      }
-      @Override
       public Adapter caseExpressionComponent(ExpressionComponent object)
       {
         return createExpressionComponentAdapter();
@@ -136,34 +146,44 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAliasAdapter();
       }
       @Override
-      public Adapter caseCreateParameters(CreateParameters object)
+      public Adapter caseAccessFramework(AccessFramework object)
       {
-        return createCreateParametersAdapter();
+        return createAccessFrameworkAdapter();
       }
       @Override
-      public Adapter caseAttributeDefinition(AttributeDefinition object)
+      public Adapter caseSchemaDefinition(SchemaDefinition object)
       {
-        return createAttributeDefinitionAdapter();
+        return createSchemaDefinitionAdapter();
       }
       @Override
-      public Adapter caseCreateStream1(CreateStream1 object)
+      public Adapter caseCreate(Create object)
       {
-        return createCreateStream1Adapter();
+        return createCreateAdapter();
       }
       @Override
-      public Adapter caseCreateSink1(CreateSink1 object)
+      public Adapter caseCreateAccessFramework(CreateAccessFramework object)
       {
-        return createCreateSink1Adapter();
+        return createCreateAccessFrameworkAdapter();
       }
       @Override
-      public Adapter caseCreateStreamChannel(CreateStreamChannel object)
+      public Adapter caseCreateChannelFrameworkViaPort(CreateChannelFrameworkViaPort object)
       {
-        return createCreateStreamChannelAdapter();
+        return createCreateChannelFrameworkViaPortAdapter();
       }
       @Override
-      public Adapter caseCreateStreamFile(CreateStreamFile object)
+      public Adapter caseCreateChannelFormatViaFile(CreateChannelFormatViaFile object)
       {
-        return createCreateStreamFileAdapter();
+        return createCreateChannelFormatViaFileAdapter();
+      }
+      @Override
+      public Adapter caseCreateDatabaseStream(CreateDatabaseStream object)
+      {
+        return createCreateDatabaseStreamAdapter();
+      }
+      @Override
+      public Adapter caseCreateDatabaseSink(CreateDatabaseSink object)
+      {
+        return createCreateDatabaseSinkAdapter();
       }
       @Override
       public Adapter caseCreateView(CreateView object)
@@ -176,19 +196,9 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createStreamToAdapter();
       }
       @Override
-      public Adapter caseCommand(Command object)
+      public Adapter caseWindowOperator(WindowOperator object)
       {
-        return createCommandAdapter();
-      }
-      @Override
-      public Adapter caseWindow_Timebased(Window_Timebased object)
-      {
-        return createWindow_TimebasedAdapter();
-      }
-      @Override
-      public Adapter caseWindow_Tuplebased(Window_Tuplebased object)
-      {
-        return createWindow_TuplebasedAdapter();
+        return createWindowOperatorAdapter();
       }
       @Override
       public Adapter caseExpressionsModel(ExpressionsModel object)
@@ -206,39 +216,84 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createDataTypeAdapter();
       }
       @Override
+      public Adapter caseSimpleSource(SimpleSource object)
+      {
+        return createSimpleSourceAdapter();
+      }
+      @Override
+      public Adapter caseNestedSource(NestedSource object)
+      {
+        return createNestedSourceAdapter();
+      }
+      @Override
       public Adapter caseFunction(Function object)
       {
         return createFunctionAdapter();
       }
       @Override
-      public Adapter caseDropCommand(DropCommand object)
+      public Adapter caseExpressionComponentAsAttribute(ExpressionComponentAsAttribute object)
       {
-        return createDropCommandAdapter();
+        return createExpressionComponentAsAttributeAdapter();
       }
       @Override
-      public Adapter caseUserCommand(UserCommand object)
+      public Adapter caseCreateDataBaseConnectionJDBC(CreateDataBaseConnectionJDBC object)
       {
-        return createUserCommandAdapter();
+        return createCreateDataBaseConnectionJDBCAdapter();
       }
       @Override
-      public Adapter caseRightsCommand(RightsCommand object)
+      public Adapter caseCreateDataBaseConnectionGeneric(CreateDataBaseConnectionGeneric object)
       {
-        return createRightsCommandAdapter();
+        return createCreateDataBaseConnectionGenericAdapter();
       }
       @Override
-      public Adapter caseRightsRoleCommand(RightsRoleCommand object)
+      public Adapter caseDropDatabaseConnection(DropDatabaseConnection object)
       {
-        return createRightsRoleCommandAdapter();
+        return createDropDatabaseConnectionAdapter();
       }
       @Override
-      public Adapter caseOr(Or object)
+      public Adapter caseDropStream(DropStream object)
       {
-        return createOrAdapter();
+        return createDropStreamAdapter();
       }
       @Override
-      public Adapter caseAnd(And object)
+      public Adapter caseUserManagement(UserManagement object)
       {
-        return createAndAdapter();
+        return createUserManagementAdapter();
+      }
+      @Override
+      public Adapter caseRightsManagement(RightsManagement object)
+      {
+        return createRightsManagementAdapter();
+      }
+      @Override
+      public Adapter caseRoleManagement(RoleManagement object)
+      {
+        return createRoleManagementAdapter();
+      }
+      @Override
+      public Adapter caseUndboundedWindow(UndboundedWindow object)
+      {
+        return createUndboundedWindowAdapter();
+      }
+      @Override
+      public Adapter caseTimebasedWindow(TimebasedWindow object)
+      {
+        return createTimebasedWindowAdapter();
+      }
+      @Override
+      public Adapter caseTuplebasedWindow(TuplebasedWindow object)
+      {
+        return createTuplebasedWindowAdapter();
+      }
+      @Override
+      public Adapter caseOrPredicate(OrPredicate object)
+      {
+        return createOrPredicateAdapter();
+      }
+      @Override
+      public Adapter caseAndPredicate(AndPredicate object)
+      {
+        return createAndPredicateAdapter();
       }
       @Override
       public Adapter caseEquality(Equality object)
@@ -353,6 +408,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
+   * @generated
+   */
+  public Adapter createCommandAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select <em>Select</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -368,16 +438,46 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument <em>Argument</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect <em>Inner Select</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect
    * @generated
    */
-  public Adapter createArgumentAdapter()
+  public Adapter createInnerSelectAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2 <em>Inner Select2</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2
+   * @generated
+   */
+  public Adapter createInnerSelect2Adapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument <em>Select Argument</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument
+   * @generated
+   */
+  public Adapter createSelectArgumentAdapter()
   {
     return null;
   }
@@ -443,21 +543,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition <em>Select Expression Without Alias Definition</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition
-   * @generated
-   */
-  public Adapter createSelectExpressionWithoutAliasDefinitionAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent <em>Expression Component</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -503,91 +588,121 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters <em>Create Parameters</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework <em>Access Framework</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
    * @generated
    */
-  public Adapter createCreateParametersAdapter()
+  public Adapter createAccessFrameworkAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition <em>Attribute Definition</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition <em>Schema Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition
    * @generated
    */
-  public Adapter createAttributeDefinitionAdapter()
+  public Adapter createSchemaDefinitionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1 <em>Create Stream1</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create <em>Create</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
    * @generated
    */
-  public Adapter createCreateStream1Adapter()
+  public Adapter createCreateAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1 <em>Create Sink1</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework <em>Create Access Framework</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework
    * @generated
    */
-  public Adapter createCreateSink1Adapter()
+  public Adapter createCreateAccessFrameworkAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel <em>Create Stream Channel</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort <em>Create Channel Framework Via Port</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort
    * @generated
    */
-  public Adapter createCreateStreamChannelAdapter()
+  public Adapter createCreateChannelFrameworkViaPortAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile <em>Create Stream File</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile <em>Create Channel Format Via File</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile
    * @generated
    */
-  public Adapter createCreateStreamFileAdapter()
+  public Adapter createCreateChannelFormatViaFileAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream <em>Create Database Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream
+   * @generated
+   */
+  public Adapter createCreateDatabaseStreamAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink <em>Create Database Sink</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink
+   * @generated
+   */
+  public Adapter createCreateDatabaseSinkAdapter()
   {
     return null;
   }
@@ -623,46 +738,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator <em>Window Operator</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator
    * @generated
    */
-  public Adapter createCommandAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased <em>Window Timebased</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased
-   * @generated
-   */
-  public Adapter createWindow_TimebasedAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased <em>Window Tuplebased</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased
-   * @generated
-   */
-  public Adapter createWindow_TuplebasedAdapter()
+  public Adapter createWindowOperatorAdapter()
   {
     return null;
   }
@@ -713,6 +798,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource <em>Simple Source</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource
+   * @generated
+   */
+  public Adapter createSimpleSourceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource <em>Nested Source</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource
+   * @generated
+   */
+  public Adapter createNestedSourceAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -728,91 +843,196 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand <em>Drop Command</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute <em>Expression Component As Attribute</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute
    * @generated
    */
-  public Adapter createDropCommandAdapter()
+  public Adapter createExpressionComponentAsAttributeAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand <em>User Command</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC <em>Create Data Base Connection JDBC</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC
    * @generated
    */
-  public Adapter createUserCommandAdapter()
+  public Adapter createCreateDataBaseConnectionJDBCAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand <em>Rights Command</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric <em>Create Data Base Connection Generic</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric
    * @generated
    */
-  public Adapter createRightsCommandAdapter()
+  public Adapter createCreateDataBaseConnectionGenericAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand <em>Rights Role Command</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection <em>Drop Database Connection</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection
    * @generated
    */
-  public Adapter createRightsRoleCommandAdapter()
+  public Adapter createDropDatabaseConnectionAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream <em>Drop Stream</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream
    * @generated
    */
-  public Adapter createOrAdapter()
+  public Adapter createDropStreamAdapter()
   {
     return null;
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And <em>And</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement <em>User Management</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement
    * @generated
    */
-  public Adapter createAndAdapter()
+  public Adapter createUserManagementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement <em>Rights Management</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement
+   * @generated
+   */
+  public Adapter createRightsManagementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement <em>Role Management</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement
+   * @generated
+   */
+  public Adapter createRoleManagementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow <em>Undbounded Window</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow
+   * @generated
+   */
+  public Adapter createUndboundedWindowAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow <em>Timebased Window</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow
+   * @generated
+   */
+  public Adapter createTimebasedWindowAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow <em>Tuplebased Window</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow
+   * @generated
+   */
+  public Adapter createTuplebasedWindowAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate <em>Or Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
+   * @generated
+   */
+  public Adapter createOrPredicateAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate <em>And Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
+   * @generated
+   */
+  public Adapter createAndPredicateAdapter()
   {
     return null;
   }

@@ -59,12 +59,12 @@ public interface CreateView extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Select</em>' containment reference.
-   * @see #setSelect(Select)
+   * @see #setSelect(InnerSelect)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateView_Select()
    * @model containment="true"
    * @generated
    */
-  Select getSelect();
+  InnerSelect getSelect();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView#getSelect <em>Select</em>}' containment reference.
@@ -74,6 +74,6 @@ public interface CreateView extends EObject
    * @see #getSelect()
    * @generated
    */
-  void setSelect(Select value);
+  void setSelect(InnerSelect value);
 
 } // CreateView

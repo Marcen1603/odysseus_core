@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,17 +10,17 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
-import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
+import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Injector;
 
@@ -52,30 +51,22 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.user
 import de.uniol.inf.is.odysseus.core.server.usermanagement.PermissionFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.NameProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.validation.CQLExpressionsValidator;
 
 public class CQLParser implements IQueryParser 
 {
 	
-
-	@Inject
-	private ParseHelper<Model> parseHelper;
-	
-	@Inject 
-	private IResourceValidator resourceValidator;
-	
-	private CQLExpressionsValidator validator;
-	
+	private List<IExecutorCommand> executorCommands;
 	private Injector injector;
 	private CQLGenerator generator;
 	private XtextResourceSet resourceSet;
@@ -86,111 +77,132 @@ public class CQLParser implements IQueryParser
 	{
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
 		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
-		validator = injector.getInstance(CQLExpressionsValidator.class);
 		generator = injector.getInstance(CQLGenerator.class);
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
+		executorCommands = new ArrayList<>();
 	}
-	
-	public synchronized void createDictionary(AttributeDefinition d, ISession user)
-	{
-		CQLDictionary dic = CQLDictionaryProvider.getDictionary(user);
-		int size = d.getArguments().size();
-		List<SDFAttribute> attributes = new ArrayList<>(size);
-		for(int i = 0; i < size - 1 ; i = i + 2)
-		{
-			String attributename 	  = d.getArguments().get(i);
-			SDFDatatype attributetype = new SDFDatatype(d.getArguments().get(i + 1));
-			attributes.add(new SDFAttribute(d.getName(), attributename, attributetype));
-		}
-		dic.add(d.getName(), attributes);
-	}
-	
-	public synchronized List<IExecutorCommand> translate(String query, ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
-	{
-		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
-		{
-			resource.load(in, resourceSet.getLoadOptions());
-		} 
-		catch (IOException e) 
-		{ 
-			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
-		}
-		
-		model = (Model) resource.getContents().get(0);
-		for(AttributeDefinition d : EcoreUtil2.eAllOfType(model, AttributeDefinition.class))
-		{
-				createDictionary(d, user);
-		}
-		
-		//Get schemata from PQl queries
-//		Set<SDFSchema> outerschema = executor.getExecutionPlan(user)
-//										  .getQueries(user)
-//										  .stream()
-//										  .map(e -> e.getLogicalQuery().getLogicalPlan())
-//										  .map(e -> e.getOutputSchema())
-//										  .collect(Collectors.toSet());
-		
-		Set<SDFSchema> outerschema = executor.getDataDictionary(user)
-				.getStreamsAndViews(user)
-				.stream()
-				.map(e -> e.getValue().getOutputSchema())
-				.collect(Collectors.toSet());
-		
-		Set<SDFSchema> innerschema = (Set<SDFSchema>) CQLDictionaryProvider.getDictionary(user).getSchema();
-//		System.out.println("outerschema:: "+outerschema.toString());
-//		System.out.println("innerschema:: "+innerschema);
-		return generate(query.toString(), model, outerschema, innerschema, user, dd, context, metaAttribute, executor);
-	}
-	
-	private List<IExecutorCommand> commands = new ArrayList<>();
 	
 	@Override
 	public synchronized List<IExecutorCommand> parse(String query, ISession user, IDataDictionary dd, Context context,
 			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException 
 	{
-		commands = translate(query, user, dd, context, metaAttribute, executor);
-		resource.unload();
-		
-		return commands;
-	}
-	
-	public synchronized List<IExecutorCommand> generate(String str, Model model, Set<SDFSchema> outerschema, Set<SDFSchema> innerschema, ISession user, IDataDictionary dd, Context context,
-			IMetaAttribute metaAttribute, IServerExecutor executor) throws QueryParseException
-	{
-		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-		generator.setNameProvider(new NameProvider());
-		generator.setOuterschema(outerschema);
-		generator.setInnerschema(innerschema);
-		List<IExecutorCommand> executorCommands = new ArrayList<>();
-		for(EObject statement : EcoreUtil2.eAllOfType(model, StatementImpl.class))
+		// Create model from query string
+		try(InputStream in = new ByteArrayInputStream(query.getBytes())) 
 		{
-			EObject type = ((StatementImpl) statement).getType();
-			if(type instanceof CommandImpl)
+			resource.load(in, resourceSet.getLoadOptions());
+			model = (Model) resource.getContents().get(0);
+		} 
+		catch (Exception e) 
+		{ 
+			generator.clear();
+			resource.unload();
+			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
+		}
+		// Register schemata from cql create stream/sink queries
+		CQLDictionary dictionary = createDictionary(EcoreUtil2.eAllOfType(model, SchemaDefinition.class), user);
+		Set<SDFSchema> cqlschemata = dictionary.getSchema();
+		// Get schemata from other parsers and query languages
+		Set<SDFSchema> otherschemata = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
+				.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
+		// Set schemata to the generator
+		generator.setOtherSchemata(otherschemata);
+		generator.setCQLSchemata(cqlschemata);
+		generator.setNameProvider(new NameProvider());
+		executorCommands.clear();
+		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+		try
+		{
+			// Validate model
+			List<Issue> issues = injector.getInstance(IResourceValidator.class).validate(resource, CheckMode.NORMAL_ONLY, CancelIndicator.NullImpl);
+			if(issues.isEmpty())
 			{
-				executorCommands.add(translateCommand((CommandImpl) type, user));
+				// Translate query to executor commands
+				for(EObject component : model.getComponents())
+				{
+					if(component instanceof Statement)
+					{
+						// Generate a pql operator plan from the given model and create a new {@ IExecutorCommand}
+						generator.doGenerate(component.eResource(), fsa, null);
+						for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
+							executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
+					}
+					else if(component instanceof Command)
+					{
+						// There are no pql operators for {@link CommandImpl}, instead get the
+						// corresponding executor command like {@link CreateStreamCommand} for
+						// the given command.
+						executorCommands.add(getExecutorCommand((Command) component, user));
+					}
+					else
+					{
+						throw new QueryParseException("Given querie contains unknown component: " + component.toString());
+					}
+				}
+			
+//				for(EObject statement : EcoreUtil2.eAllOfType(model, StatementImpl.class))
+//				{
+//					EObject type = ((StatementImpl) statement);
+//					if(type instanceof CommandImpl)
+//					{
+//						// There are no pql operators for {@link CommandImpl}, instead get the
+//						// corresponding executor command like {@link CreateStreamCommand} for
+//						// the given command.
+//						executorCommands.add(getExecutorCommand((CommandImpl) type, user));
+//					}
+//					else
+//					{
+//						// Generate a pql operator plan from the given model and create a new {@ IExecutorCommand}
+//						generator.doGenerate(statement.eResource(), fsa, null);
+//						for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
+//							executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
+//					}
+//				}
 			}
 			else
 			{
-				generator.doGenerate(statement.eResource(), fsa, null);
-				for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
-					executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
+				StringBuilder builder = new StringBuilder();
+				builder.append("Model is not valid: The following issues were reported" + System.getProperty("line.separator"));
+				int counter = 0;
+				for(Issue issue : issues)
+				{
+					builder.append(counter++ + " ");
+					builder.append(issue.getSeverity());
+					builder.append(" - ");
+					builder.append(issue.getMessage());
+					builder.append(System.getProperty("line.separator"));
+				}
+				throw new QueryParseException(builder.toString());
 			}
 		}
-		generator.clear();
+		catch(Exception e)
+		{
+			CQLDictionaryProvider.removeDictionary(user);
+			executorCommands.clear();
+			throw e;
+		}
+		finally
+		{
+			if(fsa != null)
+			{
+				for(String filename : fsa.getTextFiles().keySet())
+					fsa.deleteFile(filename);
+			}
+			generator.clear();
+			resource.unload();
+		}
 		
 		return executorCommands;
 	}
-	
-	private IExecutorCommand translateCommand(CommandImpl command, ISession user)
+
+	private IExecutorCommand getExecutorCommand(Command command, ISession user)
 	{
 		IExecutorCommand executorCommand = null;
-		if(command instanceof DropCommand)
+		EObject commandType = command.getType();
+		if(commandType instanceof DropStream)
 		{
-			System.out.println("is drop command");
-			DropCommand cast = ((DropCommand) command);
+			DropStream cast = ((DropStream) commandType);
 			boolean exists = cast.getExists() != null ? true : false;
 			switch(cast.getName().toUpperCase())
 			{
@@ -206,10 +218,9 @@ public class CQLParser implements IQueryParser
 				break;
 			}
 		}
-		else if(command instanceof UserCommand)
+		else if(commandType instanceof UserManagement)
 		{
-			System.out.println("is user command");
-			UserCommand cast = ((UserCommand) command);
+			UserManagement cast = ((UserManagement) commandType);
 			switch(cast.getName().toUpperCase())
 			{
 			case("CREATE"):
@@ -231,11 +242,10 @@ public class CQLParser implements IQueryParser
 				break;
 			}
 		}
-		else if(command instanceof RightsCommand)
+		else if(commandType instanceof RightsManagement)
 		{
-			System.out.println("is rights command");
 			boolean isGrant;
-			RightsCommand cast = ((RightsCommand) command);
+			RightsManagement cast = ((RightsManagement) commandType);
 			if((isGrant = cast.getName().toUpperCase().equals("GRANT")) 
 				|| cast.getName().toUpperCase().equals("REVOKE"))
 			{
@@ -252,27 +262,16 @@ public class CQLParser implements IQueryParser
 				if(isGrant)
 					executorCommand = new GrantPermissionCommand(cast.getUser(), operations, objects, user);
 				else
-				{
 					executorCommand = new RevokePermissionCommand(cast.getUser(), operations, objects, user);
-					System.out.println("executorCommand:: " + executorCommand);
-				}
 			}
 		}
-		else if(command instanceof RightsRoleCommand)
+		else if(commandType instanceof RoleManagement)
 		{
-			System.out.println("is rights role command");
-			RightsRoleCommand cast = ((RightsRoleCommand) command);
+			RoleManagement cast = ((RoleManagement) commandType);
 			if(cast.getName().toUpperCase().equals("GRANT"))
 				executorCommand = new GrantRoleCommand(cast.getUser(), cast.getOperations(), user);
 			else
-			{
 				executorCommand = new RevokeRoleCommand(cast.getUser(), cast.getOperations(), user);
-				System.out.println("executorCommand:: " + executorCommand);
-			}
-		}
-		else
-		{
-			System.out.println("no corresponding class found:: "  + command.toString());
 		}
 		
 		if(executorCommand == null)
@@ -280,6 +279,24 @@ public class CQLParser implements IQueryParser
 		return executorCommand;
 	}
 	
+	private synchronized CQLDictionary createDictionary(List<SchemaDefinition> schemata, ISession user)
+	{
+		CQLDictionary dictionary = CQLDictionaryProvider.getDictionary(user);
+		for(SchemaDefinition schema : schemata)
+		{
+			int size = schema.getArguments().size();
+			List<SDFAttribute> attributes = new ArrayList<>(size);
+			for(int i = 0; i < size - 1 ; i = i + 2)
+			{
+				String attributename 	  = schema.getArguments().get(i);
+				SDFDatatype attributetype = new SDFDatatype(schema.getArguments().get(i + 1));
+				attributes.add(new SDFAttribute(schema.getName(), attributename, attributetype));
+			}
+			dictionary.add(schema.getName(), attributes);
+		}
+		return dictionary;
+	}
+
 	@Override
 	public Map<String, List<String>> getTokens(ISession user) { return new HashMap<>(); }
 

@@ -15,6 +15,8 @@ INTERSECTION : ('I'|'i')('N'|'n')('T'|'t')('E'|'e')('R'|'r')('S'|'s')('E'|'e')('
 
 DATAHANDLER : ('D'|'d')('A'|'a')('T'|'t')('A'|'a')('H'|'h')('A'|'a')('N'|'n')('D'|'d')('L'|'l')('E'|'e')('R'|'r');
 
+CONNECTION : ('C'|'c')('O'|'o')('N'|'n')('N'|'n')('E'|'e')('C'|'c')('T'|'t')('I'|'i')('O'|'o')('N'|'n');
+
 DIFFERENCE : ('D'|'d')('I'|'i')('F'|'f')('F'|'f')('E'|'e')('R'|'r')('E'|'e')('N'|'n')('C'|'c')('E'|'e');
 
 IDENTIFIED : ('I'|'i')('D'|'d')('E'|'e')('N'|'n')('T'|'t')('I'|'i')('F'|'f')('I'|'i')('E'|'e')('D'|'d');
@@ -25,9 +27,15 @@ TRANSPORT : ('T'|'t')('R'|'r')('A'|'a')('N'|'n')('S'|'s')('P'|'p')('O'|'o')('R'|
 
 UNBOUNDED : ('U'|'u')('N'|'n')('B'|'b')('O'|'o')('U'|'u')('N'|'n')('D'|'d')('E'|'e')('D'|'d');
 
+DATABASE : ('D'|'d')('A'|'a')('T'|'t')('A'|'a')('B'|'b')('A'|'a')('S'|'s')('E'|'e');
+
 DISTINCT : ('D'|'d')('I'|'i')('S'|'s')('T'|'t')('I'|'i')('N'|'n')('C'|'c')('T'|'t');
 
+PASSWORD : ('P'|'p')('A'|'a')('S'|'s')('S'|'s')('W'|'w')('O'|'o')('R'|'r')('D'|'d');
+
 PROTOCOL : ('P'|'p')('R'|'r')('O'|'o')('T'|'t')('O'|'o')('C'|'c')('O'|'o')('L'|'l');
+
+TRUNCATE : ('T'|'t')('R'|'r')('U'|'u')('N'|'n')('C'|'c')('A'|'a')('T'|'t')('E'|'e');
 
 ADVANCE : ('A'|'a')('D'|'d')('V'|'v')('A'|'a')('N'|'n')('C'|'c')('E'|'e');
 
@@ -61,6 +69,8 @@ GRANT : ('G'|'g')('R'|'r')('A'|'a')('N'|'n')('T'|'t');
 
 GROUP : ('G'|'g')('R'|'r')('O'|'o')('U'|'u')('P'|'p');
 
+TABLE : ('T'|'t')('A'|'a')('B'|'b')('L'|'l')('E'|'e');
+
 TUPLE : ('T'|'t')('U'|'u')('P'|'p')('L'|'l')('E'|'e');
 
 UNION : ('U'|'u')('N'|'n')('I'|'i')('O'|'o')('N'|'n');
@@ -69,9 +79,13 @@ WHERE : ('W'|'w')('H'|'h')('E'|'e')('R'|'r')('E'|'e');
 
 DROP : ('D'|'d')('R'|'r')('O'|'o')('P'|'p');
 
+EACH : ('E'|'e')('A'|'a')('C'|'c')('H'|'h');
+
 FILE : ('F'|'f')('I'|'i')('L'|'l')('E'|'e');
 
 FROM : ('F'|'f')('R'|'r')('O'|'o')('M'|'m');
+
+JDBC : ('J'|'j')('D'|'d')('B'|'b')('C'|'c');
 
 ROLE : ('R'|'r')('O'|'o')('L'|'l')('E'|'e');
 
@@ -87,6 +101,8 @@ USER : ('U'|'u')('S'|'s')('E'|'e')('R'|'r');
 
 VIEW : ('V'|'v')('I'|'i')('E'|'e')('W'|'w');
 
+WITH : ('W'|'w')('I'|'i')('T'|'t')('H'|'h');
+
 AND : ('A'|'a')('N'|'n')('D'|'d');
 
 NOT : ('N'|'n')('O'|'o')('T'|'t');
@@ -98,6 +114,8 @@ LessThanSignEqualsSign : '<''=';
 GreaterThanSignEqualsSign : '>''=';
 
 AS : ('A'|'a')('S'|'s');
+
+AT : ('A'|'a')('T'|'t');
 
 BY : ('B'|'b')('Y'|'y');
 
@@ -140,6 +158,8 @@ GreaterThanSign : '>';
 LeftSquareBracket : '[';
 
 RightSquareBracket : ']';
+
+CircumflexAccent : '^';
 
 // Rules duplicated to allow inter-rule references
 

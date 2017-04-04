@@ -11,6 +11,7 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
+import org.eclipse.xtext.serializer.analysis.GrammarAlias.AlternativeAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -20,19 +21,42 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected CQLGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_Statement_SemicolonKeyword_2_q;
+	protected AbstractElementAlias match_Create_ATTACHKeyword_1_1_or_CREATEKeyword_1_0;
+	protected AbstractElementAlias match_Model_SemicolonKeyword_1_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (CQLGrammarAccess) access;
-		match_Statement_SemicolonKeyword_2_q = new TokenAlias(false, true, grammarAccess.getStatementAccess().getSemicolonKeyword_2());
+		match_Create_ATTACHKeyword_1_1_or_CREATEKeyword_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getCreateAccess().getATTACHKeyword_1_1()), new TokenAlias(false, false, grammarAccess.getCreateAccess().getCREATEKeyword_1_0()));
+		match_Model_SemicolonKeyword_1_q = new TokenAlias(false, true, grammarAccess.getModelAccess().getSemicolonKeyword_1());
 	}
 	
 	@Override
 	protected String getUnassignedRuleCallToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (ruleCall.getRule() == grammarAccess.getAndOperatorRule())
+			return getAndOperatorToken(semanticObject, ruleCall, node);
+		else if (ruleCall.getRule() == grammarAccess.getOrOperatorRule())
+			return getOrOperatorToken(semanticObject, ruleCall, node);
 		return "";
 	}
 	
+	/**
+	 * AndOperator: 'AND' ;
+	 */
+	protected String getAndOperatorToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (node != null)
+			return getTokenText(node);
+		return "AND";
+	}
+	
+	/**
+	 * OrOperator: 'OR';
+	 */
+	protected String getOrOperatorToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (node != null)
+			return getTokenText(node);
+		return "OR";
+	}
 	
 	@Override
 	protected void emitUnassignedTokens(EObject semanticObject, ISynTransition transition, INode fromNode, INode toNode) {
@@ -40,30 +64,40 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Statement_SemicolonKeyword_2_q.equals(syntax))
-				emit_Statement_SemicolonKeyword_2_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			if (match_Create_ATTACHKeyword_1_1_or_CREATEKeyword_1_0.equals(syntax))
+				emit_Create_ATTACHKeyword_1_1_or_CREATEKeyword_1_0(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Model_SemicolonKeyword_1_q.equals(syntax))
+				emit_Model_SemicolonKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
 
 	/**
 	 * Ambiguous syntax:
+	 *     'CREATE' | 'ATTACH'
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     (rule start) (ambiguity) type='SINK'
+	 *     (rule start) (ambiguity) type='STREAM'
+	 *     (rule start) (ambiguity) type='VIEW'
+	 */
+	protected void emit_Create_ATTACHKeyword_1_1_or_CREATEKeyword_1_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     ';'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     type=CreateSink1 (ambiguity) (rule end)
-	 *     type=CreateStream1 (ambiguity) (rule end)
-	 *     type=CreateStreamChannel (ambiguity) (rule end)
-	 *     type=CreateStreamFile (ambiguity) (rule end)
-	 *     type=CreateView (ambiguity) (rule end)
-	 *     type=DropCommand (ambiguity) (rule end)
-	 *     type=RightsCommand (ambiguity) (rule end)
-	 *     type=RightsRoleCommand (ambiguity) (rule end)
-	 *     type=Select (ambiguity) (rule end)
-	 *     type=StreamTo (ambiguity) (rule end)
-	 *     type=UserCommand (ambiguity) (rule end)
+	 *     components+=Command (ambiguity) (rule end)
+	 *     components+=Command (ambiguity) components+=Command
+	 *     components+=Command (ambiguity) components+=Statement
+	 *     components+=Statement (ambiguity) (rule end)
+	 *     components+=Statement (ambiguity) components+=Command
+	 *     components+=Statement (ambiguity) components+=Statement
 	 */
-	protected void emit_Statement_SemicolonKeyword_2_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Model_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

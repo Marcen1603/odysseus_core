@@ -59,12 +59,12 @@ public interface AttributeWithNestedStatement extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Nested</em>' containment reference.
-   * @see #setNested(Select)
+   * @see #setNested(InnerSelect)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getAttributeWithNestedStatement_Nested()
    * @model containment="true"
    * @generated
    */
-  Select getNested();
+  InnerSelect getNested();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement#getNested <em>Nested</em>}' containment reference.
@@ -74,6 +74,6 @@ public interface AttributeWithNestedStatement extends EObject
    * @see #getNested()
    * @generated
    */
-  void setNested(Select value);
+  void setNested(InnerSelect value);
 
 } // AttributeWithNestedStatement

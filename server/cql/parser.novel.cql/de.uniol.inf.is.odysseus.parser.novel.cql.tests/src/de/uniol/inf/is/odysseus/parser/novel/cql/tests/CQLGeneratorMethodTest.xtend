@@ -68,8 +68,8 @@ class CQLGeneratorMethodTest
 		aggregationAliases    = #["avgAttr1", "sumAttr5", "countAa1", "maxB2", "minAttr2", "minB2"]
 		
 		//Add the definitions from above as schema to the generator
-		innerschema = new CQLDictionaryHelper(source, attributes).schema
-		innerschema = new CQLDictionaryHelper(source2, attributes2).schema
+		CQLSchemata = new CQLDictionaryHelper(source, attributes).schema
+		CQLSchemata = new CQLDictionaryHelper(source2, attributes2).schema
 		
 		var attributesWithAlias =  ''
 		//Construct attribute arguments

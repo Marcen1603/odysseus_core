@@ -6,7 +6,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -51,7 +51,7 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
    * @generated
    * @ordered
    */
-  protected Select nested;
+  protected InnerSelect nested;
 
   /**
    * <!-- begin-user-doc -->
@@ -127,7 +127,7 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getNested()
+  public InnerSelect getNested()
   {
     return nested;
   }
@@ -137,9 +137,9 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetNested(Select newNested, NotificationChain msgs)
+  public NotificationChain basicSetNested(InnerSelect newNested, NotificationChain msgs)
   {
-    Select oldNested = nested;
+    InnerSelect oldNested = nested;
     nested = newNested;
     if (eNotificationRequired())
     {
@@ -154,7 +154,7 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setNested(Select newNested)
+  public void setNested(InnerSelect newNested)
   {
     if (newNested != nested)
     {
@@ -220,7 +220,7 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
         setValue((Attribute)newValue);
         return;
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED:
-        setNested((Select)newValue);
+        setNested((InnerSelect)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -240,7 +240,7 @@ public class AttributeWithNestedStatementImpl extends MinimalEObjectImpl.Contain
         setValue((Attribute)null);
         return;
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED:
-        setNested((Select)null);
+        setNested((InnerSelect)null);
         return;
     }
     super.eUnset(featureID);

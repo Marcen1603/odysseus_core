@@ -74,13 +74,11 @@ public class CQLDictionary
 		return attributes;
 	}
 
-	public Collection<SDFSchema> getSchema()
+	public Set<SDFSchema> getSchema()
 	{
 		Set<SDFSchema> set = new HashSet<>();
 		for(Entry<String, Collection<SDFAttribute>> s : attributes.entrySet())
-		{
 			set.add(SDFSchemaFactory.createNewTupleSchema(s.getKey(), s.getValue()));
-		}
 		return set;
 	}
 	

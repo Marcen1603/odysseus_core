@@ -87,6 +87,13 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.COMMAND:
+      {
+        Command command = (Command)theEObject;
+        T result = caseCommand(command);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.SELECT:
       {
         Select select = (Select)theEObject;
@@ -94,10 +101,24 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.ARGUMENT:
+      case CQLPackage.INNER_SELECT:
       {
-        Argument argument = (Argument)theEObject;
-        T result = caseArgument(argument);
+        InnerSelect innerSelect = (InnerSelect)theEObject;
+        T result = caseInnerSelect(innerSelect);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.INNER_SELECT2:
+      {
+        InnerSelect2 innerSelect2 = (InnerSelect2)theEObject;
+        T result = caseInnerSelect2(innerSelect2);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.SELECT_ARGUMENT:
+      {
+        SelectArgument selectArgument = (SelectArgument)theEObject;
+        T result = caseSelectArgument(selectArgument);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -129,14 +150,6 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION:
-      {
-        SelectExpressionWithoutAliasDefinition selectExpressionWithoutAliasDefinition = (SelectExpressionWithoutAliasDefinition)theEObject;
-        T result = caseSelectExpressionWithoutAliasDefinition(selectExpressionWithoutAliasDefinition);
-        if (result == null) result = caseSelectExpression(selectExpressionWithoutAliasDefinition);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.EXPRESSION_COMPONENT:
       {
         ExpressionComponent expressionComponent = (ExpressionComponent)theEObject;
@@ -158,45 +171,59 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE_PARAMETERS:
+      case CQLPackage.ACCESS_FRAMEWORK:
       {
-        CreateParameters createParameters = (CreateParameters)theEObject;
-        T result = caseCreateParameters(createParameters);
+        AccessFramework accessFramework = (AccessFramework)theEObject;
+        T result = caseAccessFramework(accessFramework);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.ATTRIBUTE_DEFINITION:
+      case CQLPackage.SCHEMA_DEFINITION:
       {
-        AttributeDefinition attributeDefinition = (AttributeDefinition)theEObject;
-        T result = caseAttributeDefinition(attributeDefinition);
+        SchemaDefinition schemaDefinition = (SchemaDefinition)theEObject;
+        T result = caseSchemaDefinition(schemaDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE_STREAM1:
+      case CQLPackage.CREATE:
       {
-        CreateStream1 createStream1 = (CreateStream1)theEObject;
-        T result = caseCreateStream1(createStream1);
+        Create create = (Create)theEObject;
+        T result = caseCreate(create);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE_SINK1:
+      case CQLPackage.CREATE_ACCESS_FRAMEWORK:
       {
-        CreateSink1 createSink1 = (CreateSink1)theEObject;
-        T result = caseCreateSink1(createSink1);
+        CreateAccessFramework createAccessFramework = (CreateAccessFramework)theEObject;
+        T result = caseCreateAccessFramework(createAccessFramework);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE_STREAM_CHANNEL:
+      case CQLPackage.CREATE_CHANNEL_FRAMEWORK_VIA_PORT:
       {
-        CreateStreamChannel createStreamChannel = (CreateStreamChannel)theEObject;
-        T result = caseCreateStreamChannel(createStreamChannel);
+        CreateChannelFrameworkViaPort createChannelFrameworkViaPort = (CreateChannelFrameworkViaPort)theEObject;
+        T result = caseCreateChannelFrameworkViaPort(createChannelFrameworkViaPort);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.CREATE_STREAM_FILE:
+      case CQLPackage.CREATE_CHANNEL_FORMAT_VIA_FILE:
       {
-        CreateStreamFile createStreamFile = (CreateStreamFile)theEObject;
-        T result = caseCreateStreamFile(createStreamFile);
+        CreateChannelFormatViaFile createChannelFormatViaFile = (CreateChannelFormatViaFile)theEObject;
+        T result = caseCreateChannelFormatViaFile(createChannelFormatViaFile);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CREATE_DATABASE_STREAM:
+      {
+        CreateDatabaseStream createDatabaseStream = (CreateDatabaseStream)theEObject;
+        T result = caseCreateDatabaseStream(createDatabaseStream);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CREATE_DATABASE_SINK:
+      {
+        CreateDatabaseSink createDatabaseSink = (CreateDatabaseSink)theEObject;
+        T result = caseCreateDatabaseSink(createDatabaseSink);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -214,24 +241,10 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.COMMAND:
+      case CQLPackage.WINDOW_OPERATOR:
       {
-        Command command = (Command)theEObject;
-        T result = caseCommand(command);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.WINDOW_TIMEBASED:
-      {
-        Window_Timebased window_Timebased = (Window_Timebased)theEObject;
-        T result = caseWindow_Timebased(window_Timebased);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.WINDOW_TUPLEBASED:
-      {
-        Window_Tuplebased window_Tuplebased = (Window_Tuplebased)theEObject;
-        T result = caseWindow_Tuplebased(window_Tuplebased);
+        WindowOperator windowOperator = (WindowOperator)theEObject;
+        T result = caseWindowOperator(windowOperator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -256,6 +269,22 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.SIMPLE_SOURCE:
+      {
+        SimpleSource simpleSource = (SimpleSource)theEObject;
+        T result = caseSimpleSource(simpleSource);
+        if (result == null) result = caseSource(simpleSource);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.NESTED_SOURCE:
+      {
+        NestedSource nestedSource = (NestedSource)theEObject;
+        T result = caseNestedSource(nestedSource);
+        if (result == null) result = caseSource(nestedSource);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.FUNCTION:
       {
         Function function = (Function)theEObject;
@@ -264,51 +293,107 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.DROP_COMMAND:
+      case CQLPackage.EXPRESSION_COMPONENT_AS_ATTRIBUTE:
       {
-        DropCommand dropCommand = (DropCommand)theEObject;
-        T result = caseDropCommand(dropCommand);
-        if (result == null) result = caseCommand(dropCommand);
+        ExpressionComponentAsAttribute expressionComponentAsAttribute = (ExpressionComponentAsAttribute)theEObject;
+        T result = caseExpressionComponentAsAttribute(expressionComponentAsAttribute);
+        if (result == null) result = caseExpressionComponent(expressionComponentAsAttribute);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.USER_COMMAND:
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC:
       {
-        UserCommand userCommand = (UserCommand)theEObject;
-        T result = caseUserCommand(userCommand);
-        if (result == null) result = caseCommand(userCommand);
+        CreateDataBaseConnectionJDBC createDataBaseConnectionJDBC = (CreateDataBaseConnectionJDBC)theEObject;
+        T result = caseCreateDataBaseConnectionJDBC(createDataBaseConnectionJDBC);
+        if (result == null) result = caseCommand(createDataBaseConnectionJDBC);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.RIGHTS_COMMAND:
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC:
       {
-        RightsCommand rightsCommand = (RightsCommand)theEObject;
-        T result = caseRightsCommand(rightsCommand);
-        if (result == null) result = caseCommand(rightsCommand);
+        CreateDataBaseConnectionGeneric createDataBaseConnectionGeneric = (CreateDataBaseConnectionGeneric)theEObject;
+        T result = caseCreateDataBaseConnectionGeneric(createDataBaseConnectionGeneric);
+        if (result == null) result = caseCommand(createDataBaseConnectionGeneric);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.RIGHTS_ROLE_COMMAND:
+      case CQLPackage.DROP_DATABASE_CONNECTION:
       {
-        RightsRoleCommand rightsRoleCommand = (RightsRoleCommand)theEObject;
-        T result = caseRightsRoleCommand(rightsRoleCommand);
-        if (result == null) result = caseCommand(rightsRoleCommand);
+        DropDatabaseConnection dropDatabaseConnection = (DropDatabaseConnection)theEObject;
+        T result = caseDropDatabaseConnection(dropDatabaseConnection);
+        if (result == null) result = caseCommand(dropDatabaseConnection);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.OR:
+      case CQLPackage.DROP_STREAM:
       {
-        Or or = (Or)theEObject;
-        T result = caseOr(or);
-        if (result == null) result = caseExpression(or);
+        DropStream dropStream = (DropStream)theEObject;
+        T result = caseDropStream(dropStream);
+        if (result == null) result = caseCommand(dropStream);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.AND:
+      case CQLPackage.USER_MANAGEMENT:
       {
-        And and = (And)theEObject;
-        T result = caseAnd(and);
-        if (result == null) result = caseExpression(and);
+        UserManagement userManagement = (UserManagement)theEObject;
+        T result = caseUserManagement(userManagement);
+        if (result == null) result = caseCommand(userManagement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.RIGHTS_MANAGEMENT:
+      {
+        RightsManagement rightsManagement = (RightsManagement)theEObject;
+        T result = caseRightsManagement(rightsManagement);
+        if (result == null) result = caseCommand(rightsManagement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.ROLE_MANAGEMENT:
+      {
+        RoleManagement roleManagement = (RoleManagement)theEObject;
+        T result = caseRoleManagement(roleManagement);
+        if (result == null) result = caseCommand(roleManagement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.UNDBOUNDED_WINDOW:
+      {
+        UndboundedWindow undboundedWindow = (UndboundedWindow)theEObject;
+        T result = caseUndboundedWindow(undboundedWindow);
+        if (result == null) result = caseWindowOperator(undboundedWindow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.TIMEBASED_WINDOW:
+      {
+        TimebasedWindow timebasedWindow = (TimebasedWindow)theEObject;
+        T result = caseTimebasedWindow(timebasedWindow);
+        if (result == null) result = caseWindowOperator(timebasedWindow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.TUPLEBASED_WINDOW:
+      {
+        TuplebasedWindow tuplebasedWindow = (TuplebasedWindow)theEObject;
+        T result = caseTuplebasedWindow(tuplebasedWindow);
+        if (result == null) result = caseWindowOperator(tuplebasedWindow);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.OR_PREDICATE:
+      {
+        OrPredicate orPredicate = (OrPredicate)theEObject;
+        T result = caseOrPredicate(orPredicate);
+        if (result == null) result = caseExpression(orPredicate);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.AND_PREDICATE:
+      {
+        AndPredicate andPredicate = (AndPredicate)theEObject;
+        T result = caseAndPredicate(andPredicate);
+        if (result == null) result = caseExpression(andPredicate);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -445,6 +530,22 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Command</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Command</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCommand(Command object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Select</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -461,17 +562,49 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Argument</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Inner Select</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Argument</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Inner Select</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseArgument(Argument object)
+  public T caseInnerSelect(InnerSelect object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Inner Select2</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Inner Select2</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseInnerSelect2(InnerSelect2 object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Select Argument</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Select Argument</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseSelectArgument(SelectArgument object)
   {
     return null;
   }
@@ -541,22 +674,6 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Select Expression Without Alias Definition</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Select Expression Without Alias Definition</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseSelectExpressionWithoutAliasDefinition(SelectExpressionWithoutAliasDefinition object)
-  {
-    return null;
-  }
-
-  /**
    * Returns the result of interpreting the object as an instance of '<em>Expression Component</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -605,97 +722,129 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create Parameters</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Access Framework</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create Parameters</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Access Framework</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreateParameters(CreateParameters object)
+  public T caseAccessFramework(AccessFramework object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Attribute Definition</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Schema Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Attribute Definition</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Schema Definition</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseAttributeDefinition(AttributeDefinition object)
+  public T caseSchemaDefinition(SchemaDefinition object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create Stream1</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create Stream1</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreateStream1(CreateStream1 object)
+  public T caseCreate(Create object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create Sink1</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Access Framework</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create Sink1</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Access Framework</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreateSink1(CreateSink1 object)
+  public T caseCreateAccessFramework(CreateAccessFramework object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create Stream Channel</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Channel Framework Via Port</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create Stream Channel</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Channel Framework Via Port</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreateStreamChannel(CreateStreamChannel object)
+  public T caseCreateChannelFrameworkViaPort(CreateChannelFrameworkViaPort object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Create Stream File</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Channel Format Via File</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Create Stream File</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Channel Format Via File</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCreateStreamFile(CreateStreamFile object)
+  public T caseCreateChannelFormatViaFile(CreateChannelFormatViaFile object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Create Database Stream</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Create Database Stream</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCreateDatabaseStream(CreateDatabaseStream object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Create Database Sink</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Create Database Sink</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCreateDatabaseSink(CreateDatabaseSink object)
   {
     return null;
   }
@@ -733,49 +882,17 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Command</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Window Operator</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Command</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Window Operator</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseCommand(Command object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Window Timebased</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Window Timebased</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseWindow_Timebased(Window_Timebased object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Window Tuplebased</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Window Tuplebased</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseWindow_Tuplebased(Window_Tuplebased object)
+  public T caseWindowOperator(WindowOperator object)
   {
     return null;
   }
@@ -829,6 +946,38 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Simple Source</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Simple Source</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseSimpleSource(SimpleSource object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Nested Source</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Nested Source</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseNestedSource(NestedSource object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Function</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -845,97 +994,209 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Drop Command</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Expression Component As Attribute</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Drop Command</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Expression Component As Attribute</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseDropCommand(DropCommand object)
+  public T caseExpressionComponentAsAttribute(ExpressionComponentAsAttribute object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>User Command</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Data Base Connection JDBC</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>User Command</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Data Base Connection JDBC</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseUserCommand(UserCommand object)
+  public T caseCreateDataBaseConnectionJDBC(CreateDataBaseConnectionJDBC object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Rights Command</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Create Data Base Connection Generic</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Rights Command</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Create Data Base Connection Generic</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseRightsCommand(RightsCommand object)
+  public T caseCreateDataBaseConnectionGeneric(CreateDataBaseConnectionGeneric object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Rights Role Command</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Drop Database Connection</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Rights Role Command</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Drop Database Connection</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseRightsRoleCommand(RightsRoleCommand object)
+  public T caseDropDatabaseConnection(DropDatabaseConnection object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Or</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Drop Stream</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Or</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Drop Stream</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseOr(Or object)
+  public T caseDropStream(DropStream object)
   {
     return null;
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>And</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>User Management</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>And</em>'.
+   * @return the result of interpreting the object as an instance of '<em>User Management</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseAnd(And object)
+  public T caseUserManagement(UserManagement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Rights Management</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Rights Management</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRightsManagement(RightsManagement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Role Management</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Role Management</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRoleManagement(RoleManagement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Undbounded Window</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Undbounded Window</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseUndboundedWindow(UndboundedWindow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Timebased Window</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Timebased Window</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTimebasedWindow(TimebasedWindow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Tuplebased Window</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Tuplebased Window</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseTuplebasedWindow(TuplebasedWindow object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Or Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Or Predicate</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseOrPredicate(OrPredicate object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>And Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>And Predicate</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAndPredicate(AndPredicate object)
   {
     return null;
   }

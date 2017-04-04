@@ -42,6 +42,15 @@ public interface CQLFactory extends EFactory
   Statement createStatement();
 
   /**
+   * Returns a new object of class '<em>Command</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Command</em>'.
+   * @generated
+   */
+  Command createCommand();
+
+  /**
    * Returns a new object of class '<em>Select</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -51,13 +60,31 @@ public interface CQLFactory extends EFactory
   Select createSelect();
 
   /**
-   * Returns a new object of class '<em>Argument</em>'.
+   * Returns a new object of class '<em>Inner Select</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Argument</em>'.
+   * @return a new object of class '<em>Inner Select</em>'.
    * @generated
    */
-  Argument createArgument();
+  InnerSelect createInnerSelect();
+
+  /**
+   * Returns a new object of class '<em>Inner Select2</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Inner Select2</em>'.
+   * @generated
+   */
+  InnerSelect2 createInnerSelect2();
+
+  /**
+   * Returns a new object of class '<em>Select Argument</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Select Argument</em>'.
+   * @generated
+   */
+  SelectArgument createSelectArgument();
 
   /**
    * Returns a new object of class '<em>Source</em>'.
@@ -96,15 +123,6 @@ public interface CQLFactory extends EFactory
   SelectExpression createSelectExpression();
 
   /**
-   * Returns a new object of class '<em>Select Expression Without Alias Definition</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Select Expression Without Alias Definition</em>'.
-   * @generated
-   */
-  SelectExpressionWithoutAliasDefinition createSelectExpressionWithoutAliasDefinition();
-
-  /**
    * Returns a new object of class '<em>Expression Component</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -132,58 +150,76 @@ public interface CQLFactory extends EFactory
   Alias createAlias();
 
   /**
-   * Returns a new object of class '<em>Create Parameters</em>'.
+   * Returns a new object of class '<em>Access Framework</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Parameters</em>'.
+   * @return a new object of class '<em>Access Framework</em>'.
    * @generated
    */
-  CreateParameters createCreateParameters();
+  AccessFramework createAccessFramework();
 
   /**
-   * Returns a new object of class '<em>Attribute Definition</em>'.
+   * Returns a new object of class '<em>Schema Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Attribute Definition</em>'.
+   * @return a new object of class '<em>Schema Definition</em>'.
    * @generated
    */
-  AttributeDefinition createAttributeDefinition();
+  SchemaDefinition createSchemaDefinition();
 
   /**
-   * Returns a new object of class '<em>Create Stream1</em>'.
+   * Returns a new object of class '<em>Create</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Stream1</em>'.
+   * @return a new object of class '<em>Create</em>'.
    * @generated
    */
-  CreateStream1 createCreateStream1();
+  Create createCreate();
 
   /**
-   * Returns a new object of class '<em>Create Sink1</em>'.
+   * Returns a new object of class '<em>Create Access Framework</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Sink1</em>'.
+   * @return a new object of class '<em>Create Access Framework</em>'.
    * @generated
    */
-  CreateSink1 createCreateSink1();
+  CreateAccessFramework createCreateAccessFramework();
 
   /**
-   * Returns a new object of class '<em>Create Stream Channel</em>'.
+   * Returns a new object of class '<em>Create Channel Framework Via Port</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Stream Channel</em>'.
+   * @return a new object of class '<em>Create Channel Framework Via Port</em>'.
    * @generated
    */
-  CreateStreamChannel createCreateStreamChannel();
+  CreateChannelFrameworkViaPort createCreateChannelFrameworkViaPort();
 
   /**
-   * Returns a new object of class '<em>Create Stream File</em>'.
+   * Returns a new object of class '<em>Create Channel Format Via File</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Create Stream File</em>'.
+   * @return a new object of class '<em>Create Channel Format Via File</em>'.
    * @generated
    */
-  CreateStreamFile createCreateStreamFile();
+  CreateChannelFormatViaFile createCreateChannelFormatViaFile();
+
+  /**
+   * Returns a new object of class '<em>Create Database Stream</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Create Database Stream</em>'.
+   * @generated
+   */
+  CreateDatabaseStream createCreateDatabaseStream();
+
+  /**
+   * Returns a new object of class '<em>Create Database Sink</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Create Database Sink</em>'.
+   * @generated
+   */
+  CreateDatabaseSink createCreateDatabaseSink();
 
   /**
    * Returns a new object of class '<em>Create View</em>'.
@@ -204,31 +240,13 @@ public interface CQLFactory extends EFactory
   StreamTo createStreamTo();
 
   /**
-   * Returns a new object of class '<em>Command</em>'.
+   * Returns a new object of class '<em>Window Operator</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Command</em>'.
+   * @return a new object of class '<em>Window Operator</em>'.
    * @generated
    */
-  Command createCommand();
-
-  /**
-   * Returns a new object of class '<em>Window Timebased</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Window Timebased</em>'.
-   * @generated
-   */
-  Window_Timebased createWindow_Timebased();
-
-  /**
-   * Returns a new object of class '<em>Window Tuplebased</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Window Tuplebased</em>'.
-   * @generated
-   */
-  Window_Tuplebased createWindow_Tuplebased();
+  WindowOperator createWindowOperator();
 
   /**
    * Returns a new object of class '<em>Expressions Model</em>'.
@@ -258,6 +276,24 @@ public interface CQLFactory extends EFactory
   DataType createDataType();
 
   /**
+   * Returns a new object of class '<em>Simple Source</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Simple Source</em>'.
+   * @generated
+   */
+  SimpleSource createSimpleSource();
+
+  /**
+   * Returns a new object of class '<em>Nested Source</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Nested Source</em>'.
+   * @generated
+   */
+  NestedSource createNestedSource();
+
+  /**
    * Returns a new object of class '<em>Function</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -267,58 +303,121 @@ public interface CQLFactory extends EFactory
   Function createFunction();
 
   /**
-   * Returns a new object of class '<em>Drop Command</em>'.
+   * Returns a new object of class '<em>Expression Component As Attribute</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Drop Command</em>'.
+   * @return a new object of class '<em>Expression Component As Attribute</em>'.
    * @generated
    */
-  DropCommand createDropCommand();
+  ExpressionComponentAsAttribute createExpressionComponentAsAttribute();
 
   /**
-   * Returns a new object of class '<em>User Command</em>'.
+   * Returns a new object of class '<em>Create Data Base Connection JDBC</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>User Command</em>'.
+   * @return a new object of class '<em>Create Data Base Connection JDBC</em>'.
    * @generated
    */
-  UserCommand createUserCommand();
+  CreateDataBaseConnectionJDBC createCreateDataBaseConnectionJDBC();
 
   /**
-   * Returns a new object of class '<em>Rights Command</em>'.
+   * Returns a new object of class '<em>Create Data Base Connection Generic</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rights Command</em>'.
+   * @return a new object of class '<em>Create Data Base Connection Generic</em>'.
    * @generated
    */
-  RightsCommand createRightsCommand();
+  CreateDataBaseConnectionGeneric createCreateDataBaseConnectionGeneric();
 
   /**
-   * Returns a new object of class '<em>Rights Role Command</em>'.
+   * Returns a new object of class '<em>Drop Database Connection</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Rights Role Command</em>'.
+   * @return a new object of class '<em>Drop Database Connection</em>'.
    * @generated
    */
-  RightsRoleCommand createRightsRoleCommand();
+  DropDatabaseConnection createDropDatabaseConnection();
 
   /**
-   * Returns a new object of class '<em>Or</em>'.
+   * Returns a new object of class '<em>Drop Stream</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Or</em>'.
+   * @return a new object of class '<em>Drop Stream</em>'.
    * @generated
    */
-  Or createOr();
+  DropStream createDropStream();
 
   /**
-   * Returns a new object of class '<em>And</em>'.
+   * Returns a new object of class '<em>User Management</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>And</em>'.
+   * @return a new object of class '<em>User Management</em>'.
    * @generated
    */
-  And createAnd();
+  UserManagement createUserManagement();
+
+  /**
+   * Returns a new object of class '<em>Rights Management</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Rights Management</em>'.
+   * @generated
+   */
+  RightsManagement createRightsManagement();
+
+  /**
+   * Returns a new object of class '<em>Role Management</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Role Management</em>'.
+   * @generated
+   */
+  RoleManagement createRoleManagement();
+
+  /**
+   * Returns a new object of class '<em>Undbounded Window</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Undbounded Window</em>'.
+   * @generated
+   */
+  UndboundedWindow createUndboundedWindow();
+
+  /**
+   * Returns a new object of class '<em>Timebased Window</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Timebased Window</em>'.
+   * @generated
+   */
+  TimebasedWindow createTimebasedWindow();
+
+  /**
+   * Returns a new object of class '<em>Tuplebased Window</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Tuplebased Window</em>'.
+   * @generated
+   */
+  TuplebasedWindow createTuplebasedWindow();
+
+  /**
+   * Returns a new object of class '<em>Or Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Or Predicate</em>'.
+   * @generated
+   */
+  OrPredicate createOrPredicate();
+
+  /**
+   * Returns a new object of class '<em>And Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>And Predicate</em>'.
+   * @generated
+   */
+  AndPredicate createAndPredicate();
 
   /**
    * Returns a new object of class '<em>Equality</em>'.

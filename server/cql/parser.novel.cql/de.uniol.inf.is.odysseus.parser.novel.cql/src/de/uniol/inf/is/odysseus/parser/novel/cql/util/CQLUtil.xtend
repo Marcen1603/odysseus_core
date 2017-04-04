@@ -4,6 +4,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import java.util.List
 import java.util.Collection
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource
 
 class CQLUtil 
 {
@@ -12,11 +13,11 @@ class CQLUtil
 	{
 		switch obj1
 		{
-			Source:
+			SimpleSource:
 			{
-				if(!(obj2 instanceof Source))
+				if(!(obj2 instanceof SimpleSource))
 					return false
-				if(obj1.name != (obj2 as Source).name)
+				if(obj1.name != (obj2 as SimpleSource).name)
 					return false
 //				if(obj1.name != (obj2 as Source).name)
 //					return false	

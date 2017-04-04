@@ -6,7 +6,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.*;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -68,37 +67,48 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
     {
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
+      case CQLPackage.COMMAND: return createCommand();
       case CQLPackage.SELECT: return createSelect();
-      case CQLPackage.ARGUMENT: return createArgument();
+      case CQLPackage.INNER_SELECT: return createInnerSelect();
+      case CQLPackage.INNER_SELECT2: return createInnerSelect2();
+      case CQLPackage.SELECT_ARGUMENT: return createSelectArgument();
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
-      case CQLPackage.SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION: return createSelectExpressionWithoutAliasDefinition();
       case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
       case CQLPackage.SET_OPERATOR: return createSetOperator();
       case CQLPackage.ALIAS: return createAlias();
-      case CQLPackage.CREATE_PARAMETERS: return createCreateParameters();
-      case CQLPackage.ATTRIBUTE_DEFINITION: return createAttributeDefinition();
-      case CQLPackage.CREATE_STREAM1: return createCreateStream1();
-      case CQLPackage.CREATE_SINK1: return createCreateSink1();
-      case CQLPackage.CREATE_STREAM_CHANNEL: return createCreateStreamChannel();
-      case CQLPackage.CREATE_STREAM_FILE: return createCreateStreamFile();
+      case CQLPackage.ACCESS_FRAMEWORK: return createAccessFramework();
+      case CQLPackage.SCHEMA_DEFINITION: return createSchemaDefinition();
+      case CQLPackage.CREATE: return createCreate();
+      case CQLPackage.CREATE_ACCESS_FRAMEWORK: return createCreateAccessFramework();
+      case CQLPackage.CREATE_CHANNEL_FRAMEWORK_VIA_PORT: return createCreateChannelFrameworkViaPort();
+      case CQLPackage.CREATE_CHANNEL_FORMAT_VIA_FILE: return createCreateChannelFormatViaFile();
+      case CQLPackage.CREATE_DATABASE_STREAM: return createCreateDatabaseStream();
+      case CQLPackage.CREATE_DATABASE_SINK: return createCreateDatabaseSink();
       case CQLPackage.CREATE_VIEW: return createCreateView();
       case CQLPackage.STREAM_TO: return createStreamTo();
-      case CQLPackage.COMMAND: return createCommand();
-      case CQLPackage.WINDOW_TIMEBASED: return createWindow_Timebased();
-      case CQLPackage.WINDOW_TUPLEBASED: return createWindow_Tuplebased();
+      case CQLPackage.WINDOW_OPERATOR: return createWindowOperator();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CQLPackage.EXPRESSION: return createExpression();
       case CQLPackage.DATA_TYPE: return createDataType();
+      case CQLPackage.SIMPLE_SOURCE: return createSimpleSource();
+      case CQLPackage.NESTED_SOURCE: return createNestedSource();
       case CQLPackage.FUNCTION: return createFunction();
-      case CQLPackage.DROP_COMMAND: return createDropCommand();
-      case CQLPackage.USER_COMMAND: return createUserCommand();
-      case CQLPackage.RIGHTS_COMMAND: return createRightsCommand();
-      case CQLPackage.RIGHTS_ROLE_COMMAND: return createRightsRoleCommand();
-      case CQLPackage.OR: return createOr();
-      case CQLPackage.AND: return createAnd();
+      case CQLPackage.EXPRESSION_COMPONENT_AS_ATTRIBUTE: return createExpressionComponentAsAttribute();
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC: return createCreateDataBaseConnectionJDBC();
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC: return createCreateDataBaseConnectionGeneric();
+      case CQLPackage.DROP_DATABASE_CONNECTION: return createDropDatabaseConnection();
+      case CQLPackage.DROP_STREAM: return createDropStream();
+      case CQLPackage.USER_MANAGEMENT: return createUserManagement();
+      case CQLPackage.RIGHTS_MANAGEMENT: return createRightsManagement();
+      case CQLPackage.ROLE_MANAGEMENT: return createRoleManagement();
+      case CQLPackage.UNDBOUNDED_WINDOW: return createUndboundedWindow();
+      case CQLPackage.TIMEBASED_WINDOW: return createTimebasedWindow();
+      case CQLPackage.TUPLEBASED_WINDOW: return createTuplebasedWindow();
+      case CQLPackage.OR_PREDICATE: return createOrPredicate();
+      case CQLPackage.AND_PREDICATE: return createAndPredicate();
       case CQLPackage.EQUALITY: return createEquality();
       case CQLPackage.COMPARISION: return createComparision();
       case CQLPackage.PLUS: return createPlus();
@@ -113,40 +123,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
-    }
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Object createFromString(EDataType eDataType, String initialValue)
-  {
-    switch (eDataType.getClassifierID())
-    {
-      case CQLPackage.CREATE_KEYWORD:
-        return createCreateKeywordFromString(eDataType, initialValue);
-      default:
-        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
-    }
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String convertToString(EDataType eDataType, Object instanceValue)
-  {
-    switch (eDataType.getClassifierID())
-    {
-      case CQLPackage.CREATE_KEYWORD:
-        return convertCreateKeywordToString(eDataType, instanceValue);
-      default:
-        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -177,6 +153,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public Command createCommand()
+  {
+    CommandImpl command = new CommandImpl();
+    return command;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Select createSelect()
   {
     SelectImpl select = new SelectImpl();
@@ -188,10 +175,32 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Argument createArgument()
+  public InnerSelect createInnerSelect()
   {
-    ArgumentImpl argument = new ArgumentImpl();
-    return argument;
+    InnerSelectImpl innerSelect = new InnerSelectImpl();
+    return innerSelect;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public InnerSelect2 createInnerSelect2()
+  {
+    InnerSelect2Impl innerSelect2 = new InnerSelect2Impl();
+    return innerSelect2;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SelectArgument createSelectArgument()
+  {
+    SelectArgumentImpl selectArgument = new SelectArgumentImpl();
+    return selectArgument;
   }
 
   /**
@@ -243,17 +252,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public SelectExpressionWithoutAliasDefinition createSelectExpressionWithoutAliasDefinition()
-  {
-    SelectExpressionWithoutAliasDefinitionImpl selectExpressionWithoutAliasDefinition = new SelectExpressionWithoutAliasDefinitionImpl();
-    return selectExpressionWithoutAliasDefinition;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public ExpressionComponent createExpressionComponent()
   {
     ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
@@ -287,10 +285,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public CreateParameters createCreateParameters()
+  public AccessFramework createAccessFramework()
   {
-    CreateParametersImpl createParameters = new CreateParametersImpl();
-    return createParameters;
+    AccessFrameworkImpl accessFramework = new AccessFrameworkImpl();
+    return accessFramework;
   }
 
   /**
@@ -298,10 +296,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AttributeDefinition createAttributeDefinition()
+  public SchemaDefinition createSchemaDefinition()
   {
-    AttributeDefinitionImpl attributeDefinition = new AttributeDefinitionImpl();
-    return attributeDefinition;
+    SchemaDefinitionImpl schemaDefinition = new SchemaDefinitionImpl();
+    return schemaDefinition;
   }
 
   /**
@@ -309,10 +307,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public CreateStream1 createCreateStream1()
+  public Create createCreate()
   {
-    CreateStream1Impl createStream1 = new CreateStream1Impl();
-    return createStream1;
+    CreateImpl create = new CreateImpl();
+    return create;
   }
 
   /**
@@ -320,10 +318,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public CreateSink1 createCreateSink1()
+  public CreateAccessFramework createCreateAccessFramework()
   {
-    CreateSink1Impl createSink1 = new CreateSink1Impl();
-    return createSink1;
+    CreateAccessFrameworkImpl createAccessFramework = new CreateAccessFrameworkImpl();
+    return createAccessFramework;
   }
 
   /**
@@ -331,10 +329,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public CreateStreamChannel createCreateStreamChannel()
+  public CreateChannelFrameworkViaPort createCreateChannelFrameworkViaPort()
   {
-    CreateStreamChannelImpl createStreamChannel = new CreateStreamChannelImpl();
-    return createStreamChannel;
+    CreateChannelFrameworkViaPortImpl createChannelFrameworkViaPort = new CreateChannelFrameworkViaPortImpl();
+    return createChannelFrameworkViaPort;
   }
 
   /**
@@ -342,10 +340,32 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public CreateStreamFile createCreateStreamFile()
+  public CreateChannelFormatViaFile createCreateChannelFormatViaFile()
   {
-    CreateStreamFileImpl createStreamFile = new CreateStreamFileImpl();
-    return createStreamFile;
+    CreateChannelFormatViaFileImpl createChannelFormatViaFile = new CreateChannelFormatViaFileImpl();
+    return createChannelFormatViaFile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateDatabaseStream createCreateDatabaseStream()
+  {
+    CreateDatabaseStreamImpl createDatabaseStream = new CreateDatabaseStreamImpl();
+    return createDatabaseStream;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateDatabaseSink createCreateDatabaseSink()
+  {
+    CreateDatabaseSinkImpl createDatabaseSink = new CreateDatabaseSinkImpl();
+    return createDatabaseSink;
   }
 
   /**
@@ -375,32 +395,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Command createCommand()
+  public WindowOperator createWindowOperator()
   {
-    CommandImpl command = new CommandImpl();
-    return command;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Window_Timebased createWindow_Timebased()
-  {
-    Window_TimebasedImpl window_Timebased = new Window_TimebasedImpl();
-    return window_Timebased;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Window_Tuplebased createWindow_Tuplebased()
-  {
-    Window_TuplebasedImpl window_Tuplebased = new Window_TuplebasedImpl();
-    return window_Tuplebased;
+    WindowOperatorImpl windowOperator = new WindowOperatorImpl();
+    return windowOperator;
   }
 
   /**
@@ -441,6 +439,28 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public SimpleSource createSimpleSource()
+  {
+    SimpleSourceImpl simpleSource = new SimpleSourceImpl();
+    return simpleSource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NestedSource createNestedSource()
+  {
+    NestedSourceImpl nestedSource = new NestedSourceImpl();
+    return nestedSource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Function createFunction()
   {
     FunctionImpl function = new FunctionImpl();
@@ -452,10 +472,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public DropCommand createDropCommand()
+  public ExpressionComponentAsAttribute createExpressionComponentAsAttribute()
   {
-    DropCommandImpl dropCommand = new DropCommandImpl();
-    return dropCommand;
+    ExpressionComponentAsAttributeImpl expressionComponentAsAttribute = new ExpressionComponentAsAttributeImpl();
+    return expressionComponentAsAttribute;
   }
 
   /**
@@ -463,10 +483,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public UserCommand createUserCommand()
+  public CreateDataBaseConnectionJDBC createCreateDataBaseConnectionJDBC()
   {
-    UserCommandImpl userCommand = new UserCommandImpl();
-    return userCommand;
+    CreateDataBaseConnectionJDBCImpl createDataBaseConnectionJDBC = new CreateDataBaseConnectionJDBCImpl();
+    return createDataBaseConnectionJDBC;
   }
 
   /**
@@ -474,10 +494,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public RightsCommand createRightsCommand()
+  public CreateDataBaseConnectionGeneric createCreateDataBaseConnectionGeneric()
   {
-    RightsCommandImpl rightsCommand = new RightsCommandImpl();
-    return rightsCommand;
+    CreateDataBaseConnectionGenericImpl createDataBaseConnectionGeneric = new CreateDataBaseConnectionGenericImpl();
+    return createDataBaseConnectionGeneric;
   }
 
   /**
@@ -485,10 +505,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public RightsRoleCommand createRightsRoleCommand()
+  public DropDatabaseConnection createDropDatabaseConnection()
   {
-    RightsRoleCommandImpl rightsRoleCommand = new RightsRoleCommandImpl();
-    return rightsRoleCommand;
+    DropDatabaseConnectionImpl dropDatabaseConnection = new DropDatabaseConnectionImpl();
+    return dropDatabaseConnection;
   }
 
   /**
@@ -496,10 +516,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Or createOr()
+  public DropStream createDropStream()
   {
-    OrImpl or = new OrImpl();
-    return or;
+    DropStreamImpl dropStream = new DropStreamImpl();
+    return dropStream;
   }
 
   /**
@@ -507,10 +527,87 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public And createAnd()
+  public UserManagement createUserManagement()
   {
-    AndImpl and = new AndImpl();
-    return and;
+    UserManagementImpl userManagement = new UserManagementImpl();
+    return userManagement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RightsManagement createRightsManagement()
+  {
+    RightsManagementImpl rightsManagement = new RightsManagementImpl();
+    return rightsManagement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RoleManagement createRoleManagement()
+  {
+    RoleManagementImpl roleManagement = new RoleManagementImpl();
+    return roleManagement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UndboundedWindow createUndboundedWindow()
+  {
+    UndboundedWindowImpl undboundedWindow = new UndboundedWindowImpl();
+    return undboundedWindow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TimebasedWindow createTimebasedWindow()
+  {
+    TimebasedWindowImpl timebasedWindow = new TimebasedWindowImpl();
+    return timebasedWindow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TuplebasedWindow createTuplebasedWindow()
+  {
+    TuplebasedWindowImpl tuplebasedWindow = new TuplebasedWindowImpl();
+    return tuplebasedWindow;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public OrPredicate createOrPredicate()
+  {
+    OrPredicateImpl orPredicate = new OrPredicateImpl();
+    return orPredicate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public AndPredicate createAndPredicate()
+  {
+    AndPredicateImpl andPredicate = new AndPredicateImpl();
+    return andPredicate;
   }
 
   /**
@@ -643,28 +740,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     AttributeRefImpl attributeRef = new AttributeRefImpl();
     return attributeRef;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public CreateKeyword createCreateKeywordFromString(EDataType eDataType, String initialValue)
-  {
-    CreateKeyword result = CreateKeyword.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-    return result;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String convertCreateKeywordToString(EDataType eDataType, Object instanceValue)
-  {
-    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

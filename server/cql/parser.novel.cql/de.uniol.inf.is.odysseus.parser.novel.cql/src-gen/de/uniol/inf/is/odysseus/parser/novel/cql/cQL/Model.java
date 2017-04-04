@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getStatements <em>Statements</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getComponents <em>Components</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getModel()
@@ -26,19 +26,19 @@ import org.eclipse.emf.ecore.EObject;
 public interface Model extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Statements</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement}.
+   * Returns the value of the '<em><b>Components</b></em>' containment reference list.
+   * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Statements</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Components</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Statements</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getModel_Statements()
+   * @return the value of the '<em>Components</em>' containment reference list.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getModel_Components()
    * @model containment="true"
    * @generated
    */
-  EList<Statement> getStatements();
+  EList<EObject> getComponents();
 
 } // Model

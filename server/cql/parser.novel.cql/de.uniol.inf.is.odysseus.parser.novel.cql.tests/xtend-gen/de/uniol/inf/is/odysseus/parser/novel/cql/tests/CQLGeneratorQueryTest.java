@@ -8,14 +8,13 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Assert;
@@ -36,6 +35,10 @@ public class CQLGeneratorQueryTest {
   @Extension
   private ParseHelper<Model> _parseHelper;
   
+  @Inject
+  @Extension
+  private ValidationTestHelper _validationTestHelper;
+  
   @Rule
   public ExpectedException thrown = ExpectedException.none();
   
@@ -45,34 +48,28 @@ public class CQLGeneratorQueryTest {
       final InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
       boolean _notEquals = (!Objects.equal(dictionary, null));
       if (_notEquals) {
-        Collection<SDFSchema> _schema = dictionary.getSchema();
-        this._cQLGenerator.setInnerschema(((Set<SDFSchema>) _schema));
+        Set<SDFSchema> _schema = dictionary.getSchema();
+        this._cQLGenerator.setCQLSchemata(((Set<SDFSchema>) _schema));
       }
       NameProviderHelper _nameProviderHelper = new NameProviderHelper();
       this._cQLGenerator.setNameProvider(_nameProviderHelper);
-      Resource _eResource = model.eResource();
-      this._cQLGenerator.doGenerate(_eResource, fsa, null);
+      this._cQLGenerator.doGenerate(model.eResource(), fsa, null);
       this._cQLGenerator.clear();
       String query = "";
-      Map<String, CharSequence> _textFiles = fsa.getTextFiles();
-      Set<Map.Entry<String, CharSequence>> _entrySet = _textFiles.entrySet();
+      Set<Map.Entry<String, CharSequence>> _entrySet = fsa.getTextFiles().entrySet();
       for (final Map.Entry<String, CharSequence> e : _entrySet) {
         String _query = query;
         CharSequence _value = e.getValue();
         query = (_query + _value);
       }
-      String _format = this.format(t);
-      String _format_1 = this.format(query);
-      Assert.assertEquals(_format, _format_1);
+      Assert.assertEquals(this.format(t), this.format(query));
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
   }
   
   public String format(final String s) {
-    String _replaceAll = s.replaceAll("\\s*[\\r\\n]+\\s*", "");
-    String _trim = _replaceAll.trim();
-    return _trim.replace(" ", "");
+    return s.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ", "");
   }
   
   @Test
@@ -322,7 +319,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "CREATE VIEW view1 FROM (\n\t\t\t\tSELECT * FROM stream1\n\t\t\t)", 
-      "\n\t\t\toperator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)\n\t\t\tview_2 := operator_1\n\t\t\t", _cQLDictionaryHelper);
+      "\n\t\t\tview1 := MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)\n\t\t\t", _cQLDictionaryHelper);
   }
   
   @Test
@@ -519,6 +516,14 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;", 
+      "\n\t\t\toperator_1=AGGREGATE({AGGREGATIONS=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\n\t\t\toperator_2=SELECT({predicate=\'Counter>1000&&stream2.attr3>100\'},operator_1)\n\t\t\toperator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void AggregationTest9() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT COUNT(attr1 + 20) AS Counter FROM stream1;", 
       "\n\t\t\toperator_1=AGGREGATE({AGGREGATIONS=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\n\t\t\toperator_2=SELECT({predicate=\'Counter>1000&&stream2.attr3>100\'},operator_1)\n\t\t\toperator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
   }
   

@@ -3,11 +3,11 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 
 import java.util.Collection;
@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getDistinct <em>Distinct</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getSources <em>Sources</em>}</li>
@@ -47,26 +46,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class SelectImpl extends MinimalEObjectImpl.Container implements Select
 {
-  /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected static final String NAME_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected String name = NAME_EDEFAULT;
-
   /**
    * The default value of the '{@link #getDistinct() <em>Distinct</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -95,7 +74,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * @generated
    * @ordered
    */
-  protected EList<Argument> arguments;
+  protected EList<SelectArgument> arguments;
 
   /**
    * The cached value of the '{@link #getSources() <em>Sources</em>}' containment reference list.
@@ -163,29 +142,6 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName()
-  {
-    return name;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setName(String newName)
-  {
-    String oldName = name;
-    name = newName;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__NAME, oldName, name));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public String getDistinct()
   {
     return distinct;
@@ -209,11 +165,11 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Argument> getArguments()
+  public EList<SelectArgument> getArguments()
   {
     if (arguments == null)
     {
-      arguments = new EObjectContainmentEList<Argument>(Argument.class, this, CQLPackage.SELECT__ARGUMENTS);
+      arguments = new EObjectContainmentEList<SelectArgument>(SelectArgument.class, this, CQLPackage.SELECT__ARGUMENTS);
     }
     return arguments;
   }
@@ -376,8 +332,6 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__NAME:
-        return getName();
       case CQLPackage.SELECT__DISTINCT:
         return getDistinct();
       case CQLPackage.SELECT__ARGUMENTS:
@@ -405,15 +359,12 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__NAME:
-        setName((String)newValue);
-        return;
       case CQLPackage.SELECT__DISTINCT:
         setDistinct((String)newValue);
         return;
       case CQLPackage.SELECT__ARGUMENTS:
         getArguments().clear();
-        getArguments().addAll((Collection<? extends Argument>)newValue);
+        getArguments().addAll((Collection<? extends SelectArgument>)newValue);
         return;
       case CQLPackage.SELECT__SOURCES:
         getSources().clear();
@@ -443,9 +394,6 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__NAME:
-        setName(NAME_EDEFAULT);
-        return;
       case CQLPackage.SELECT__DISTINCT:
         setDistinct(DISTINCT_EDEFAULT);
         return;
@@ -478,8 +426,6 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.SELECT__DISTINCT:
         return DISTINCT_EDEFAULT == null ? distinct != null : !DISTINCT_EDEFAULT.equals(distinct);
       case CQLPackage.SELECT__ARGUMENTS:
@@ -507,9 +453,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
-    result.append(", distinct: ");
+    result.append(" (distinct: ");
     result.append(distinct);
     result.append(')');
     return result.toString();

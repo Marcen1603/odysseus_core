@@ -14,12 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getUnbounded <em>Unbounded</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTime <em>Time</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTuple <em>Tuple</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getAlias <em>Alias</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}</li>
  * </ul>
  *
  * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource()
@@ -28,110 +23,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Source extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Name</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
-   * @see #setName(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Name()
-   * @model
-   * @generated
-   */
-  String getName();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
-   * @see #getName()
-   * @generated
-   */
-  void setName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Unbounded</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Unbounded</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Unbounded</em>' attribute.
-   * @see #setUnbounded(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Unbounded()
-   * @model
-   * @generated
-   */
-  String getUnbounded();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getUnbounded <em>Unbounded</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Unbounded</em>' attribute.
-   * @see #getUnbounded()
-   * @generated
-   */
-  void setUnbounded(String value);
-
-  /**
-   * Returns the value of the '<em><b>Time</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Time</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Time</em>' containment reference.
-   * @see #setTime(Window_Timebased)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Time()
-   * @model containment="true"
-   * @generated
-   */
-  Window_Timebased getTime();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTime <em>Time</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Time</em>' containment reference.
-   * @see #getTime()
-   * @generated
-   */
-  void setTime(Window_Timebased value);
-
-  /**
-   * Returns the value of the '<em><b>Tuple</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Tuple</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Tuple</em>' containment reference.
-   * @see #setTuple(Window_Tuplebased)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Tuple()
-   * @model containment="true"
-   * @generated
-   */
-  Window_Tuplebased getTuple();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTuple <em>Tuple</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Tuple</em>' containment reference.
-   * @see #getTuple()
-   * @generated
-   */
-  void setTuple(Window_Tuplebased value);
-
   /**
    * Returns the value of the '<em><b>Alias</b></em>' containment reference.
    * <!-- begin-user-doc -->
@@ -157,31 +48,5 @@ public interface Source extends EObject
    * @generated
    */
   void setAlias(Alias value);
-
-  /**
-   * Returns the value of the '<em><b>Nested</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Nested</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Nested</em>' containment reference.
-   * @see #setNested(Select)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSource_Nested()
-   * @model containment="true"
-   * @generated
-   */
-  Select getNested();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Nested</em>' containment reference.
-   * @see #getNested()
-   * @generated
-   */
-  void setNested(Select value);
 
 } // Source

@@ -25,8 +25,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
  org.eclipse.xtext.builder,
- de.uniol.inf.is.odysseus.parser.novel.cql.ide,
- de.uniol.inf.is.odysseus.rcp.base
+ de.uniol.inf.is.odysseus.rcp.base,
+ de.uniol.inf.is.odysseus.parser.novel.cql.ide
 Import-Package: de.uniol.inf.is.odysseus.parser.novel.cql.ide.contentassist.antlr.lexer,
  de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer,
  org.apache.log4j

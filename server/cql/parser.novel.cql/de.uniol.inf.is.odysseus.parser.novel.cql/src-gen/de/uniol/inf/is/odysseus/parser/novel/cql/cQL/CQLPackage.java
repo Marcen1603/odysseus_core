@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -69,13 +68,13 @@ public interface CQLPackage extends EPackage
   int MODEL = 0;
 
   /**
-   * The feature id for the '<em><b>Statements</b></em>' containment reference list.
+   * The feature id for the '<em><b>Components</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL__STATEMENTS = 0;
+  int MODEL__COMPONENTS = 0;
 
   /**
    * The number of structural features of the '<em>Model</em>' class.
@@ -115,14 +114,23 @@ public interface CQLPackage extends EPackage
   int STATEMENT_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl <em>Select</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
    * @generated
    */
-  int SELECT = 2;
+  int COMMAND = 2;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND__TYPE = 0;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -131,7 +139,26 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__NAME = 0;
+  int COMMAND__NAME = 1;
+
+  /**
+   * The number of structural features of the '<em>Command</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMMAND_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl <em>Select</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelect()
+   * @generated
+   */
+  int SELECT = 3;
 
   /**
    * The feature id for the '<em><b>Distinct</b></em>' attribute.
@@ -140,7 +167,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__DISTINCT = 1;
+  int SELECT__DISTINCT = 0;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
@@ -149,7 +176,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__ARGUMENTS = 2;
+  int SELECT__ARGUMENTS = 1;
 
   /**
    * The feature id for the '<em><b>Sources</b></em>' containment reference list.
@@ -158,7 +185,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__SOURCES = 3;
+  int SELECT__SOURCES = 2;
 
   /**
    * The feature id for the '<em><b>Predicates</b></em>' containment reference.
@@ -167,7 +194,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__PREDICATES = 4;
+  int SELECT__PREDICATES = 3;
 
   /**
    * The feature id for the '<em><b>Order</b></em>' containment reference list.
@@ -176,7 +203,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__ORDER = 5;
+  int SELECT__ORDER = 4;
 
   /**
    * The feature id for the '<em><b>Having</b></em>' containment reference.
@@ -185,7 +212,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__HAVING = 6;
+  int SELECT__HAVING = 5;
 
   /**
    * The number of structural features of the '<em>Select</em>' class.
@@ -194,17 +221,73 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT_FEATURE_COUNT = 7;
+  int SELECT_FEATURE_COUNT = 6;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl <em>Argument</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl <em>Inner Select</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getArgument()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect()
    * @generated
    */
-  int ARGUMENT = 3;
+  int INNER_SELECT = 4;
+
+  /**
+   * The feature id for the '<em><b>Select</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INNER_SELECT__SELECT = 0;
+
+  /**
+   * The number of structural features of the '<em>Inner Select</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INNER_SELECT_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelect2Impl <em>Inner Select2</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelect2Impl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect2()
+   * @generated
+   */
+  int INNER_SELECT2 = 5;
+
+  /**
+   * The feature id for the '<em><b>Select</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INNER_SELECT2__SELECT = 0;
+
+  /**
+   * The number of structural features of the '<em>Inner Select2</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int INNER_SELECT2_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectArgumentImpl <em>Select Argument</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectArgumentImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectArgument()
+   * @generated
+   */
+  int SELECT_ARGUMENT = 6;
 
   /**
    * The feature id for the '<em><b>Attribute</b></em>' containment reference.
@@ -213,7 +296,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ARGUMENT__ATTRIBUTE = 0;
+  int SELECT_ARGUMENT__ATTRIBUTE = 0;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -222,16 +305,16 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ARGUMENT__EXPRESSION = 1;
+  int SELECT_ARGUMENT__EXPRESSION = 1;
 
   /**
-   * The number of structural features of the '<em>Argument</em>' class.
+   * The number of structural features of the '<em>Select Argument</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ARGUMENT_FEATURE_COUNT = 2;
+  int SELECT_ARGUMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl <em>Source</em>}' class.
@@ -241,43 +324,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSource()
    * @generated
    */
-  int SOURCE = 4;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Unbounded</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__UNBOUNDED = 1;
-
-  /**
-   * The feature id for the '<em><b>Time</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__TIME = 2;
-
-  /**
-   * The feature id for the '<em><b>Tuple</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__TUPLE = 3;
+  int SOURCE = 7;
 
   /**
    * The feature id for the '<em><b>Alias</b></em>' containment reference.
@@ -286,16 +333,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SOURCE__ALIAS = 4;
-
-  /**
-   * The feature id for the '<em><b>Nested</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SOURCE__NESTED = 5;
+  int SOURCE__ALIAS = 0;
 
   /**
    * The number of structural features of the '<em>Source</em>' class.
@@ -304,7 +342,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SOURCE_FEATURE_COUNT = 6;
+  int SOURCE_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl <em>Attribute</em>}' class.
@@ -314,7 +352,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttribute()
    * @generated
    */
-  int ATTRIBUTE = 5;
+  int ATTRIBUTE = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -351,7 +389,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeWithNestedStatement()
    * @generated
    */
-  int ATTRIBUTE_WITH_NESTED_STATEMENT = 6;
+  int ATTRIBUTE_WITH_NESTED_STATEMENT = 9;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -388,7 +426,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpression()
    * @generated
    */
-  int SELECT_EXPRESSION = 7;
+  int SELECT_EXPRESSION = 10;
 
   /**
    * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
@@ -427,52 +465,6 @@ public interface CQLPackage extends EPackage
   int SELECT_EXPRESSION_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl <em>Select Expression Without Alias Definition</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpressionWithoutAliasDefinition()
-   * @generated
-   */
-  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION = 8;
-
-  /**
-   * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__EXPRESSIONS = SELECT_EXPRESSION__EXPRESSIONS;
-
-  /**
-   * The feature id for the '<em><b>Operators</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__OPERATORS = SELECT_EXPRESSION__OPERATORS;
-
-  /**
-   * The feature id for the '<em><b>Alias</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION__ALIAS = SELECT_EXPRESSION__ALIAS;
-
-  /**
-   * The number of structural features of the '<em>Select Expression Without Alias Definition</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION_FEATURE_COUNT = SELECT_EXPRESSION_FEATURE_COUNT + 0;
-
-  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -480,7 +472,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponent()
    * @generated
    */
-  int EXPRESSION_COMPONENT = 9;
+  int EXPRESSION_COMPONENT = 11;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -508,7 +500,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSetOperator()
    * @generated
    */
-  int SET_OPERATOR = 10;
+  int SET_OPERATOR = 12;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -554,7 +546,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAlias()
    * @generated
    */
-  int ALIAS = 11;
+  int ALIAS = 13;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -575,14 +567,14 @@ public interface CQLPackage extends EPackage
   int ALIAS_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl <em>Create Parameters</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl <em>Access Framework</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAccessFramework()
    * @generated
    */
-  int CREATE_PARAMETERS = 12;
+  int ACCESS_FRAMEWORK = 14;
 
   /**
    * The feature id for the '<em><b>Wrapper</b></em>' attribute.
@@ -591,7 +583,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__WRAPPER = 0;
+  int ACCESS_FRAMEWORK__WRAPPER = 0;
 
   /**
    * The feature id for the '<em><b>Protocol</b></em>' attribute.
@@ -600,7 +592,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__PROTOCOL = 1;
+  int ACCESS_FRAMEWORK__PROTOCOL = 1;
 
   /**
    * The feature id for the '<em><b>Transport</b></em>' attribute.
@@ -609,7 +601,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__TRANSPORT = 2;
+  int ACCESS_FRAMEWORK__TRANSPORT = 2;
 
   /**
    * The feature id for the '<em><b>Datahandler</b></em>' attribute.
@@ -618,7 +610,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__DATAHANDLER = 3;
+  int ACCESS_FRAMEWORK__DATAHANDLER = 3;
 
   /**
    * The feature id for the '<em><b>Keys</b></em>' attribute list.
@@ -627,7 +619,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__KEYS = 4;
+  int ACCESS_FRAMEWORK__KEYS = 4;
 
   /**
    * The feature id for the '<em><b>Values</b></em>' attribute list.
@@ -636,26 +628,26 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS__VALUES = 5;
+  int ACCESS_FRAMEWORK__VALUES = 5;
 
   /**
-   * The number of structural features of the '<em>Create Parameters</em>' class.
+   * The number of structural features of the '<em>Access Framework</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CREATE_PARAMETERS_FEATURE_COUNT = 6;
+  int ACCESS_FRAMEWORK_FEATURE_COUNT = 6;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl <em>Attribute Definition</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SchemaDefinitionImpl <em>Schema Definition</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeDefinition()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SchemaDefinitionImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSchemaDefinition()
    * @generated
    */
-  int ATTRIBUTE_DEFINITION = 13;
+  int SCHEMA_DEFINITION = 15;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -664,7 +656,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_DEFINITION__NAME = 0;
+  int SCHEMA_DEFINITION__NAME = 0;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' attribute list.
@@ -673,200 +665,26 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_DEFINITION__ARGUMENTS = 1;
+  int SCHEMA_DEFINITION__ARGUMENTS = 1;
 
   /**
-   * The number of structural features of the '<em>Attribute Definition</em>' class.
+   * The number of structural features of the '<em>Schema Definition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ATTRIBUTE_DEFINITION_FEATURE_COUNT = 2;
+  int SCHEMA_DEFINITION_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl <em>Create Stream1</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateImpl <em>Create</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStream1()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreate()
    * @generated
    */
-  int CREATE_STREAM1 = 14;
-
-  /**
-   * The feature id for the '<em><b>Keyword</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM1__KEYWORD = 0;
-
-  /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM1__ATTRIBUTES = 1;
-
-  /**
-   * The feature id for the '<em><b>Pars</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM1__PARS = 2;
-
-  /**
-   * The number of structural features of the '<em>Create Stream1</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM1_FEATURE_COUNT = 3;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateSink1Impl <em>Create Sink1</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateSink1Impl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateSink1()
-   * @generated
-   */
-  int CREATE_SINK1 = 15;
-
-  /**
-   * The feature id for the '<em><b>Keyword</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_SINK1__KEYWORD = 0;
-
-  /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_SINK1__ATTRIBUTES = 1;
-
-  /**
-   * The feature id for the '<em><b>Pars</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_SINK1__PARS = 2;
-
-  /**
-   * The number of structural features of the '<em>Create Sink1</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_SINK1_FEATURE_COUNT = 3;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamChannelImpl <em>Create Stream Channel</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamChannelImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamChannel()
-   * @generated
-   */
-  int CREATE_STREAM_CHANNEL = 16;
-
-  /**
-   * The feature id for the '<em><b>Keyword</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_CHANNEL__KEYWORD = 0;
-
-  /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_CHANNEL__ATTRIBUTES = 1;
-
-  /**
-   * The feature id for the '<em><b>Host</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_CHANNEL__HOST = 2;
-
-  /**
-   * The feature id for the '<em><b>Port</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_CHANNEL__PORT = 3;
-
-  /**
-   * The number of structural features of the '<em>Create Stream Channel</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_CHANNEL_FEATURE_COUNT = 4;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl <em>Create Stream File</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamFile()
-   * @generated
-   */
-  int CREATE_STREAM_FILE = 17;
-
-  /**
-   * The feature id for the '<em><b>Keyword</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_FILE__KEYWORD = 0;
-
-  /**
-   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_FILE__ATTRIBUTES = 1;
-
-  /**
-   * The feature id for the '<em><b>Filename</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CREATE_STREAM_FILE__FILENAME = 2;
+  int CREATE = 16;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -875,16 +693,273 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CREATE_STREAM_FILE__TYPE = 3;
+  int CREATE__TYPE = 0;
 
   /**
-   * The number of structural features of the '<em>Create Stream File</em>' class.
+   * The feature id for the '<em><b>Create</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CREATE_STREAM_FILE_FEATURE_COUNT = 4;
+  int CREATE__CREATE = 1;
+
+  /**
+   * The number of structural features of the '<em>Create</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateAccessFrameworkImpl <em>Create Access Framework</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateAccessFrameworkImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateAccessFramework()
+   * @generated
+   */
+  int CREATE_ACCESS_FRAMEWORK = 17;
+
+  /**
+   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_ACCESS_FRAMEWORK__ATTRIBUTES = 0;
+
+  /**
+   * The feature id for the '<em><b>Pars</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_ACCESS_FRAMEWORK__PARS = 1;
+
+  /**
+   * The number of structural features of the '<em>Create Access Framework</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_ACCESS_FRAMEWORK_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFrameworkViaPortImpl <em>Create Channel Framework Via Port</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFrameworkViaPortImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateChannelFrameworkViaPort()
+   * @generated
+   */
+  int CREATE_CHANNEL_FRAMEWORK_VIA_PORT = 18;
+
+  /**
+   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FRAMEWORK_VIA_PORT__ATTRIBUTES = 0;
+
+  /**
+   * The feature id for the '<em><b>Host</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FRAMEWORK_VIA_PORT__HOST = 1;
+
+  /**
+   * The feature id for the '<em><b>Port</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FRAMEWORK_VIA_PORT__PORT = 2;
+
+  /**
+   * The number of structural features of the '<em>Create Channel Framework Via Port</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FRAMEWORK_VIA_PORT_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFormatViaFileImpl <em>Create Channel Format Via File</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFormatViaFileImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateChannelFormatViaFile()
+   * @generated
+   */
+  int CREATE_CHANNEL_FORMAT_VIA_FILE = 19;
+
+  /**
+   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FORMAT_VIA_FILE__ATTRIBUTES = 0;
+
+  /**
+   * The feature id for the '<em><b>Filename</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FORMAT_VIA_FILE__FILENAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FORMAT_VIA_FILE__TYPE = 2;
+
+  /**
+   * The number of structural features of the '<em>Create Channel Format Via File</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_CHANNEL_FORMAT_VIA_FILE_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseStreamImpl <em>Create Database Stream</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseStreamImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDatabaseStream()
+   * @generated
+   */
+  int CREATE_DATABASE_STREAM = 20;
+
+  /**
+   * The feature id for the '<em><b>Attributes</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM__ATTRIBUTES = 0;
+
+  /**
+   * The feature id for the '<em><b>Database</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM__DATABASE = 1;
+
+  /**
+   * The feature id for the '<em><b>Table</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM__TABLE = 2;
+
+  /**
+   * The feature id for the '<em><b>Size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM__SIZE = 3;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM__UNIT = 4;
+
+  /**
+   * The number of structural features of the '<em>Create Database Stream</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_STREAM_FEATURE_COUNT = 5;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseSinkImpl <em>Create Database Sink</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseSinkImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDatabaseSink()
+   * @generated
+   */
+  int CREATE_DATABASE_SINK = 21;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_SINK__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Database</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_SINK__DATABASE = 1;
+
+  /**
+   * The feature id for the '<em><b>Table</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_SINK__TABLE = 2;
+
+  /**
+   * The feature id for the '<em><b>Option</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_SINK__OPTION = 3;
+
+  /**
+   * The number of structural features of the '<em>Create Database Sink</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATABASE_SINK_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateViewImpl <em>Create View</em>}' class.
@@ -894,7 +969,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateView()
    * @generated
    */
-  int CREATE_VIEW = 18;
+  int CREATE_VIEW = 22;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -931,7 +1006,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStreamTo()
    * @generated
    */
-  int STREAM_TO = 19;
+  int STREAM_TO = 23;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -970,133 +1045,23 @@ public interface CQLPackage extends EPackage
   int STREAM_TO_FEATURE_COUNT = 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.WindowOperatorImpl <em>Window Operator</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.WindowOperatorImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindowOperator()
    * @generated
    */
-  int COMMAND = 20;
+  int WINDOW_OPERATOR = 24;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * The number of structural features of the '<em>Window Operator</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int COMMAND__NAME = 0;
-
-  /**
-   * The number of structural features of the '<em>Command</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int COMMAND_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Timebased()
-   * @generated
-   */
-  int WINDOW_TIMEBASED = 21;
-
-  /**
-   * The feature id for the '<em><b>Size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TIMEBASED__SIZE = 0;
-
-  /**
-   * The feature id for the '<em><b>Unit</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TIMEBASED__UNIT = 1;
-
-  /**
-   * The feature id for the '<em><b>Advance size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TIMEBASED__ADVANCE_SIZE = 2;
-
-  /**
-   * The feature id for the '<em><b>Advance unit</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TIMEBASED__ADVANCE_UNIT = 3;
-
-  /**
-   * The number of structural features of the '<em>Window Timebased</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TIMEBASED_FEATURE_COUNT = 4;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl <em>Window Tuplebased</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Tuplebased()
-   * @generated
-   */
-  int WINDOW_TUPLEBASED = 22;
-
-  /**
-   * The feature id for the '<em><b>Size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TUPLEBASED__SIZE = 0;
-
-  /**
-   * The feature id for the '<em><b>Advance size</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TUPLEBASED__ADVANCE_SIZE = 1;
-
-  /**
-   * The feature id for the '<em><b>Partition attribute</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TUPLEBASED__PARTITION_ATTRIBUTE = 2;
-
-  /**
-   * The number of structural features of the '<em>Window Tuplebased</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int WINDOW_TUPLEBASED_FEATURE_COUNT = 3;
+  int WINDOW_OPERATOR_FEATURE_COUNT = 0;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionsModelImpl <em>Expressions Model</em>}' class.
@@ -1106,7 +1071,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionsModel()
    * @generated
    */
-  int EXPRESSIONS_MODEL = 23;
+  int EXPRESSIONS_MODEL = 25;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -1134,7 +1099,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpression()
    * @generated
    */
-  int EXPRESSION = 24;
+  int EXPRESSION = 26;
 
   /**
    * The number of structural features of the '<em>Expression</em>' class.
@@ -1153,7 +1118,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 25;
+  int DATA_TYPE = 27;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1174,6 +1139,89 @@ public interface CQLPackage extends EPackage
   int DATA_TYPE_FEATURE_COUNT = 1;
 
   /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSourceImpl <em>Simple Source</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSourceImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSimpleSource()
+   * @generated
+   */
+  int SIMPLE_SOURCE = 28;
+
+  /**
+   * The feature id for the '<em><b>Alias</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SIMPLE_SOURCE__ALIAS = SOURCE__ALIAS;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SIMPLE_SOURCE__NAME = SOURCE_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Window</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SIMPLE_SOURCE__WINDOW = SOURCE_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Simple Source</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SIMPLE_SOURCE_FEATURE_COUNT = SOURCE_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.NestedSourceImpl <em>Nested Source</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.NestedSourceImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNestedSource()
+   * @generated
+   */
+  int NESTED_SOURCE = 29;
+
+  /**
+   * The feature id for the '<em><b>Alias</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NESTED_SOURCE__ALIAS = SOURCE__ALIAS;
+
+  /**
+   * The feature id for the '<em><b>Statement</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NESTED_SOURCE__STATEMENT = SOURCE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Nested Source</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NESTED_SOURCE_FEATURE_COUNT = SOURCE_FEATURE_COUNT + 1;
+
+  /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl <em>Function</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1181,7 +1229,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 26;
+  int FUNCTION = 30;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1211,14 +1259,51 @@ public interface CQLPackage extends EPackage
   int FUNCTION_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl <em>Drop Command</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentAsAttributeImpl <em>Expression Component As Attribute</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentAsAttributeImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponentAsAttribute()
    * @generated
    */
-  int DROP_COMMAND = 27;
+  int EXPRESSION_COMPONENT_AS_ATTRIBUTE = 31;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_COMPONENT_AS_ATTRIBUTE__VALUE = EXPRESSION_COMPONENT__VALUE;
+
+  /**
+   * The number of structural features of the '<em>Expression Component As Attribute</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_COMPONENT_AS_ATTRIBUTE_FEATURE_COUNT = EXPRESSION_COMPONENT_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl <em>Create Data Base Connection JDBC</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDataBaseConnectionJDBC()
+   * @generated
+   */
+  int CREATE_DATA_BASE_CONNECTION_JDBC = 32;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_JDBC__TYPE = COMMAND__TYPE;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1227,44 +1312,44 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DROP_COMMAND__NAME = COMMAND__NAME;
+  int CREATE_DATA_BASE_CONNECTION_JDBC__NAME = COMMAND__NAME;
 
   /**
-   * The feature id for the '<em><b>Stream</b></em>' attribute.
+   * The feature id for the '<em><b>Server</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DROP_COMMAND__STREAM = COMMAND_FEATURE_COUNT + 0;
+  int CREATE_DATA_BASE_CONNECTION_JDBC__SERVER = COMMAND_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Exists</b></em>' attribute.
+   * The number of structural features of the '<em>Create Data Base Connection JDBC</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DROP_COMMAND__EXISTS = COMMAND_FEATURE_COUNT + 1;
+  int CREATE_DATA_BASE_CONNECTION_JDBC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Drop Command</em>' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl <em>Create Data Base Connection Generic</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDataBaseConnectionGeneric()
+   * @generated
+   */
+  int CREATE_DATA_BASE_CONNECTION_GENERIC = 33;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DROP_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl <em>User Command</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserCommand()
-   * @generated
-   */
-  int USER_COMMAND = 28;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__TYPE = COMMAND__TYPE;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1273,25 +1358,43 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int USER_COMMAND__NAME = COMMAND__NAME;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__NAME = COMMAND__NAME;
 
   /**
-   * The feature id for the '<em><b>Subject</b></em>' attribute.
+   * The feature id for the '<em><b>Driver</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int USER_COMMAND__SUBJECT = COMMAND_FEATURE_COUNT + 0;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER = COMMAND_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Subject Name</b></em>' attribute.
+   * The feature id for the '<em><b>Source</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int USER_COMMAND__SUBJECT_NAME = COMMAND_FEATURE_COUNT + 1;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Server</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>User</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__USER = COMMAND_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Password</b></em>' attribute.
@@ -1300,26 +1403,35 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int USER_COMMAND__PASSWORD = COMMAND_FEATURE_COUNT + 2;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD = COMMAND_FEATURE_COUNT + 4;
 
   /**
-   * The number of structural features of the '<em>User Command</em>' class.
+   * The number of structural features of the '<em>Create Data Base Connection Generic</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int USER_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
+  int CREATE_DATA_BASE_CONNECTION_GENERIC_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 5;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl <em>Rights Command</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl <em>Drop Database Connection</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropDatabaseConnection()
    * @generated
    */
-  int RIGHTS_COMMAND = 29;
+  int DROP_DATABASE_CONNECTION = 34;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_DATABASE_CONNECTION__TYPE = COMMAND__TYPE;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1328,7 +1440,163 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_COMMAND__NAME = COMMAND__NAME;
+  int DROP_DATABASE_CONNECTION__NAME = COMMAND__NAME;
+
+  /**
+   * The number of structural features of the '<em>Drop Database Connection</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_DATABASE_CONNECTION_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropStreamImpl <em>Drop Stream</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropStreamImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropStream()
+   * @generated
+   */
+  int DROP_STREAM = 35;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_STREAM__TYPE = COMMAND__TYPE;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_STREAM__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Stream</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_STREAM__STREAM = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Exists</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_STREAM__EXISTS = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>Drop Stream</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DROP_STREAM_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl <em>User Management</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserManagement()
+   * @generated
+   */
+  int USER_MANAGEMENT = 36;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT__TYPE = COMMAND__TYPE;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT__NAME = COMMAND__NAME;
+
+  /**
+   * The feature id for the '<em><b>Subject</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT__SUBJECT = COMMAND_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Subject Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT__SUBJECT_NAME = COMMAND_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Password</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT__PASSWORD = COMMAND_FEATURE_COUNT + 2;
+
+  /**
+   * The number of structural features of the '<em>User Management</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int USER_MANAGEMENT_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl <em>Rights Management</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsManagement()
+   * @generated
+   */
+  int RIGHTS_MANAGEMENT = 37;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_MANAGEMENT__TYPE = COMMAND__TYPE;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RIGHTS_MANAGEMENT__NAME = COMMAND__NAME;
 
   /**
    * The feature id for the '<em><b>Operations</b></em>' attribute list.
@@ -1337,7 +1605,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_COMMAND__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
+  int RIGHTS_MANAGEMENT__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Operations2</b></em>' attribute list.
@@ -1346,7 +1614,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_COMMAND__OPERATIONS2 = COMMAND_FEATURE_COUNT + 1;
+  int RIGHTS_MANAGEMENT__OPERATIONS2 = COMMAND_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>User</b></em>' attribute.
@@ -1355,26 +1623,35 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_COMMAND__USER = COMMAND_FEATURE_COUNT + 2;
+  int RIGHTS_MANAGEMENT__USER = COMMAND_FEATURE_COUNT + 2;
 
   /**
-   * The number of structural features of the '<em>Rights Command</em>' class.
+   * The number of structural features of the '<em>Rights Management</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RIGHTS_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
+  int RIGHTS_MANAGEMENT_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 3;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl <em>Rights Role Command</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl <em>Role Management</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsRoleCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRoleManagement()
    * @generated
    */
-  int RIGHTS_ROLE_COMMAND = 30;
+  int ROLE_MANAGEMENT = 38;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ROLE_MANAGEMENT__TYPE = COMMAND__TYPE;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1383,7 +1660,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_ROLE_COMMAND__NAME = COMMAND__NAME;
+  int ROLE_MANAGEMENT__NAME = COMMAND__NAME;
 
   /**
    * The feature id for the '<em><b>Operations</b></em>' attribute list.
@@ -1392,7 +1669,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_ROLE_COMMAND__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
+  int ROLE_MANAGEMENT__OPERATIONS = COMMAND_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>User</b></em>' attribute.
@@ -1401,26 +1678,146 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RIGHTS_ROLE_COMMAND__USER = COMMAND_FEATURE_COUNT + 1;
+  int ROLE_MANAGEMENT__USER = COMMAND_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Rights Role Command</em>' class.
+   * The number of structural features of the '<em>Role Management</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RIGHTS_ROLE_COMMAND_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
+  int ROLE_MANAGEMENT_FEATURE_COUNT = COMMAND_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UndboundedWindowImpl <em>Undbounded Window</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOr()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UndboundedWindowImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUndboundedWindow()
    * @generated
    */
-  int OR = 31;
+  int UNDBOUNDED_WINDOW = 39;
+
+  /**
+   * The number of structural features of the '<em>Undbounded Window</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNDBOUNDED_WINDOW_FEATURE_COUNT = WINDOW_OPERATOR_FEATURE_COUNT + 0;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TimebasedWindowImpl <em>Timebased Window</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TimebasedWindowImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTimebasedWindow()
+   * @generated
+   */
+  int TIMEBASED_WINDOW = 40;
+
+  /**
+   * The feature id for the '<em><b>Size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIMEBASED_WINDOW__SIZE = WINDOW_OPERATOR_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIMEBASED_WINDOW__UNIT = WINDOW_OPERATOR_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Advance size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIMEBASED_WINDOW__ADVANCE_SIZE = WINDOW_OPERATOR_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Advance unit</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIMEBASED_WINDOW__ADVANCE_UNIT = WINDOW_OPERATOR_FEATURE_COUNT + 3;
+
+  /**
+   * The number of structural features of the '<em>Timebased Window</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TIMEBASED_WINDOW_FEATURE_COUNT = WINDOW_OPERATOR_FEATURE_COUNT + 4;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TuplebasedWindowImpl <em>Tuplebased Window</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TuplebasedWindowImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTuplebasedWindow()
+   * @generated
+   */
+  int TUPLEBASED_WINDOW = 41;
+
+  /**
+   * The feature id for the '<em><b>Size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TUPLEBASED_WINDOW__SIZE = WINDOW_OPERATOR_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Advance size</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TUPLEBASED_WINDOW__ADVANCE_SIZE = WINDOW_OPERATOR_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Partition attribute</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TUPLEBASED_WINDOW__PARTITION_ATTRIBUTE = WINDOW_OPERATOR_FEATURE_COUNT + 2;
+
+  /**
+   * The number of structural features of the '<em>Tuplebased Window</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TUPLEBASED_WINDOW_FEATURE_COUNT = WINDOW_OPERATOR_FEATURE_COUNT + 3;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrPredicateImpl <em>Or Predicate</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrPredicateImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOrPredicate()
+   * @generated
+   */
+  int OR_PREDICATE = 42;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1429,7 +1826,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OR__LEFT = EXPRESSION_FEATURE_COUNT + 0;
+  int OR_PREDICATE__LEFT = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Right</b></em>' containment reference.
@@ -1438,26 +1835,26 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OR__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
+  int OR_PREDICATE__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>Or</em>' class.
+   * The number of structural features of the '<em>Or Predicate</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OR_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
+  int OR_PREDICATE_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndImpl <em>And</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndPredicateImpl <em>And Predicate</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAnd()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndPredicateImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAndPredicate()
    * @generated
    */
-  int AND = 32;
+  int AND_PREDICATE = 43;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1466,7 +1863,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int AND__LEFT = EXPRESSION_FEATURE_COUNT + 0;
+  int AND_PREDICATE__LEFT = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Right</b></em>' containment reference.
@@ -1475,16 +1872,16 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int AND__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
+  int AND_PREDICATE__RIGHT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
-   * The number of structural features of the '<em>And</em>' class.
+   * The number of structural features of the '<em>And Predicate</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int AND_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
+  int AND_PREDICATE_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.EqualityImpl <em>Equality</em>}' class.
@@ -1494,7 +1891,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getEquality()
    * @generated
    */
-  int EQUALITY = 33;
+  int EQUALITY = 44;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1540,7 +1937,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComparision()
    * @generated
    */
-  int COMPARISION = 34;
+  int COMPARISION = 45;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1586,7 +1983,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getPlus()
    * @generated
    */
-  int PLUS = 35;
+  int PLUS = 46;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1623,7 +2020,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMinus()
    * @generated
    */
-  int MINUS = 36;
+  int MINUS = 47;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1660,7 +2057,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getMulOrDiv()
    * @generated
    */
-  int MUL_OR_DIV = 37;
+  int MUL_OR_DIV = 48;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -1706,7 +2103,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBracket()
    * @generated
    */
-  int BRACKET = 38;
+  int BRACKET = 49;
 
   /**
    * The feature id for the '<em><b>Inner</b></em>' containment reference.
@@ -1734,7 +2131,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNOT()
    * @generated
    */
-  int NOT = 39;
+  int NOT = 50;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -1762,7 +2159,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getIntConstant()
    * @generated
    */
-  int INT_CONSTANT = 40;
+  int INT_CONSTANT = 51;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1790,7 +2187,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getFloatConstant()
    * @generated
    */
-  int FLOAT_CONSTANT = 41;
+  int FLOAT_CONSTANT = 52;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1818,7 +2215,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStringConstant()
    * @generated
    */
-  int STRING_CONSTANT = 42;
+  int STRING_CONSTANT = 53;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1846,7 +2243,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getBoolConstant()
    * @generated
    */
-  int BOOL_CONSTANT = 43;
+  int BOOL_CONSTANT = 54;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -1874,7 +2271,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeRef()
    * @generated
    */
-  int ATTRIBUTE_REF = 44;
+  int ATTRIBUTE_REF = 55;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1894,16 +2291,6 @@ public interface CQLPackage extends EPackage
    */
   int ATTRIBUTE_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword <em>Create Keyword</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateKeyword()
-   * @generated
-   */
-  int CREATE_KEYWORD = 45;
-
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model <em>Model</em>}'.
@@ -1916,15 +2303,15 @@ public interface CQLPackage extends EPackage
   EClass getModel();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getStatements <em>Statements</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getComponents <em>Components</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Statements</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getStatements()
+   * @return the meta object for the containment reference list '<em>Components</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model#getComponents()
    * @see #getModel()
    * @generated
    */
-  EReference getModel_Statements();
+  EReference getModel_Components();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement <em>Statement</em>}'.
@@ -1948,6 +2335,38 @@ public interface CQLPackage extends EPackage
   EReference getStatement_Type();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Command</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
+   * @generated
+   */
+  EClass getCommand();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Type</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getType()
+   * @see #getCommand()
+   * @generated
+   */
+  EReference getCommand_Type();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName()
+   * @see #getCommand()
+   * @generated
+   */
+  EAttribute getCommand_Name();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select <em>Select</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1956,17 +2375,6 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EClass getSelect();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getName()
-   * @see #getSelect()
-   * @generated
-   */
-  EAttribute getSelect_Name();
 
   /**
    * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}'.
@@ -2035,36 +2443,78 @@ public interface CQLPackage extends EPackage
   EReference getSelect_Having();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument <em>Argument</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect <em>Inner Select</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Argument</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument
+   * @return the meta object for class '<em>Inner Select</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect
    * @generated
    */
-  EClass getArgument();
+  EClass getInnerSelect();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAttribute <em>Attribute</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect#getSelect <em>Select</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Select</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect#getSelect()
+   * @see #getInnerSelect()
+   * @generated
+   */
+  EReference getInnerSelect_Select();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2 <em>Inner Select2</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Inner Select2</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2
+   * @generated
+   */
+  EClass getInnerSelect2();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2#getSelect <em>Select</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Select</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2#getSelect()
+   * @see #getInnerSelect2()
+   * @generated
+   */
+  EReference getInnerSelect2_Select();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument <em>Select Argument</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Select Argument</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument
+   * @generated
+   */
+  EClass getSelectArgument();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument#getAttribute <em>Attribute</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Attribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getAttribute()
-   * @see #getArgument()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument#getAttribute()
+   * @see #getSelectArgument()
    * @generated
    */
-  EReference getArgument_Attribute();
+  EReference getSelectArgument_Attribute();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getExpression <em>Expression</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument#getExpression <em>Expression</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Expression</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument#getExpression()
-   * @see #getArgument()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument#getExpression()
+   * @see #getSelectArgument()
    * @generated
    */
-  EReference getArgument_Expression();
+  EReference getSelectArgument_Expression();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source <em>Source</em>}'.
@@ -2077,50 +2527,6 @@ public interface CQLPackage extends EPackage
   EClass getSource();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getName()
-   * @see #getSource()
-   * @generated
-   */
-  EAttribute getSource_Name();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getUnbounded <em>Unbounded</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Unbounded</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getUnbounded()
-   * @see #getSource()
-   * @generated
-   */
-  EAttribute getSource_Unbounded();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTime <em>Time</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Time</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTime()
-   * @see #getSource()
-   * @generated
-   */
-  EReference getSource_Time();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTuple <em>Tuple</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Tuple</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getTuple()
-   * @see #getSource()
-   * @generated
-   */
-  EReference getSource_Tuple();
-
-  /**
    * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getAlias <em>Alias</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2130,17 +2536,6 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EReference getSource_Alias();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested <em>Nested</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Nested</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source#getNested()
-   * @see #getSource()
-   * @generated
-   */
-  EReference getSource_Nested();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute <em>Attribute</em>}'.
@@ -2250,16 +2645,6 @@ public interface CQLPackage extends EPackage
   EReference getSelectExpression_Alias();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition <em>Select Expression Without Alias Definition</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Select Expression Without Alias Definition</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpressionWithoutAliasDefinition
-   * @generated
-   */
-  EClass getSelectExpressionWithoutAliasDefinition();
-
-  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent <em>Expression Component</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2345,306 +2730,381 @@ public interface CQLPackage extends EPackage
   EAttribute getAlias_Name();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters <em>Create Parameters</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework <em>Access Framework</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Create Parameters</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters
+   * @return the meta object for class '<em>Access Framework</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
    * @generated
    */
-  EClass getCreateParameters();
+  EClass getAccessFramework();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getWrapper <em>Wrapper</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getWrapper <em>Wrapper</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Wrapper</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getWrapper()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getWrapper()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Wrapper();
+  EAttribute getAccessFramework_Wrapper();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getProtocol <em>Protocol</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getProtocol <em>Protocol</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Protocol</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getProtocol()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getProtocol()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Protocol();
+  EAttribute getAccessFramework_Protocol();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getTransport <em>Transport</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getTransport <em>Transport</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Transport</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getTransport()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getTransport()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Transport();
+  EAttribute getAccessFramework_Transport();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getDatahandler <em>Datahandler</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getDatahandler <em>Datahandler</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Datahandler</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getDatahandler()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getDatahandler()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Datahandler();
+  EAttribute getAccessFramework_Datahandler();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getKeys <em>Keys</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getKeys <em>Keys</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Keys</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getKeys()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getKeys()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Keys();
+  EAttribute getAccessFramework_Keys();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getValues <em>Values</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getValues <em>Values</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Values</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateParameters#getValues()
-   * @see #getCreateParameters()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework#getValues()
+   * @see #getAccessFramework()
    * @generated
    */
-  EAttribute getCreateParameters_Values();
+  EAttribute getAccessFramework_Values();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition <em>Attribute Definition</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition <em>Schema Definition</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Attribute Definition</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition
+   * @return the meta object for class '<em>Schema Definition</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition
    * @generated
    */
-  EClass getAttributeDefinition();
+  EClass getSchemaDefinition();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getName <em>Name</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getName()
-   * @see #getAttributeDefinition()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition#getName()
+   * @see #getSchemaDefinition()
    * @generated
    */
-  EAttribute getAttributeDefinition_Name();
+  EAttribute getSchemaDefinition_Name();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getArguments <em>Arguments</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition#getArguments <em>Arguments</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Arguments</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeDefinition#getArguments()
-   * @see #getAttributeDefinition()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition#getArguments()
+   * @see #getSchemaDefinition()
    * @generated
    */
-  EAttribute getAttributeDefinition_Arguments();
+  EAttribute getSchemaDefinition_Arguments();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1 <em>Create Stream1</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create <em>Create</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Create Stream1</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1
+   * @return the meta object for class '<em>Create</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
    * @generated
    */
-  EClass getCreateStream1();
+  EClass getCreate();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getKeyword <em>Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getKeyword()
-   * @see #getCreateStream1()
-   * @generated
-   */
-  EAttribute getCreateStream1_Keyword();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getAttributes <em>Attributes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attributes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getAttributes()
-   * @see #getCreateStream1()
-   * @generated
-   */
-  EReference getCreateStream1_Attributes();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getPars <em>Pars</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Pars</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStream1#getPars()
-   * @see #getCreateStream1()
-   * @generated
-   */
-  EReference getCreateStream1_Pars();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1 <em>Create Sink1</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Create Sink1</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1
-   * @generated
-   */
-  EClass getCreateSink1();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getKeyword <em>Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getKeyword()
-   * @see #getCreateSink1()
-   * @generated
-   */
-  EAttribute getCreateSink1_Keyword();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getAttributes <em>Attributes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attributes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getAttributes()
-   * @see #getCreateSink1()
-   * @generated
-   */
-  EReference getCreateSink1_Attributes();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getPars <em>Pars</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Pars</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateSink1#getPars()
-   * @see #getCreateSink1()
-   * @generated
-   */
-  EReference getCreateSink1_Pars();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel <em>Create Stream Channel</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Create Stream Channel</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel
-   * @generated
-   */
-  EClass getCreateStreamChannel();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getKeyword <em>Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getKeyword()
-   * @see #getCreateStreamChannel()
-   * @generated
-   */
-  EAttribute getCreateStreamChannel_Keyword();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getAttributes <em>Attributes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attributes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getAttributes()
-   * @see #getCreateStreamChannel()
-   * @generated
-   */
-  EReference getCreateStreamChannel_Attributes();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getHost <em>Host</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Host</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getHost()
-   * @see #getCreateStreamChannel()
-   * @generated
-   */
-  EAttribute getCreateStreamChannel_Host();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getPort <em>Port</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Port</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamChannel#getPort()
-   * @see #getCreateStreamChannel()
-   * @generated
-   */
-  EAttribute getCreateStreamChannel_Port();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile <em>Create Stream File</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Create Stream File</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile
-   * @generated
-   */
-  EClass getCreateStreamFile();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getKeyword <em>Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Keyword</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getKeyword()
-   * @see #getCreateStreamFile()
-   * @generated
-   */
-  EAttribute getCreateStreamFile_Keyword();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getAttributes <em>Attributes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Attributes</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getAttributes()
-   * @see #getCreateStreamFile()
-   * @generated
-   */
-  EReference getCreateStreamFile_Attributes();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getFilename <em>Filename</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Filename</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getFilename()
-   * @see #getCreateStreamFile()
-   * @generated
-   */
-  EAttribute getCreateStreamFile_Filename();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getType <em>Type</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create#getType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Type</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateStreamFile#getType()
-   * @see #getCreateStreamFile()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create#getType()
+   * @see #getCreate()
    * @generated
    */
-  EAttribute getCreateStreamFile_Type();
+  EAttribute getCreate_Type();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create#getCreate <em>Create</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Create</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create#getCreate()
+   * @see #getCreate()
+   * @generated
+   */
+  EReference getCreate_Create();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework <em>Create Access Framework</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Create Access Framework</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework
+   * @generated
+   */
+  EClass getCreateAccessFramework();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework#getAttributes <em>Attributes</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Attributes</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework#getAttributes()
+   * @see #getCreateAccessFramework()
+   * @generated
+   */
+  EReference getCreateAccessFramework_Attributes();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework#getPars <em>Pars</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Pars</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework#getPars()
+   * @see #getCreateAccessFramework()
+   * @generated
+   */
+  EReference getCreateAccessFramework_Pars();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort <em>Create Channel Framework Via Port</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Create Channel Framework Via Port</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort
+   * @generated
+   */
+  EClass getCreateChannelFrameworkViaPort();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getAttributes <em>Attributes</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Attributes</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getAttributes()
+   * @see #getCreateChannelFrameworkViaPort()
+   * @generated
+   */
+  EReference getCreateChannelFrameworkViaPort_Attributes();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getHost <em>Host</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Host</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getHost()
+   * @see #getCreateChannelFrameworkViaPort()
+   * @generated
+   */
+  EAttribute getCreateChannelFrameworkViaPort_Host();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getPort <em>Port</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Port</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort#getPort()
+   * @see #getCreateChannelFrameworkViaPort()
+   * @generated
+   */
+  EAttribute getCreateChannelFrameworkViaPort_Port();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile <em>Create Channel Format Via File</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Create Channel Format Via File</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile
+   * @generated
+   */
+  EClass getCreateChannelFormatViaFile();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getAttributes <em>Attributes</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Attributes</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getAttributes()
+   * @see #getCreateChannelFormatViaFile()
+   * @generated
+   */
+  EReference getCreateChannelFormatViaFile_Attributes();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getFilename <em>Filename</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Filename</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getFilename()
+   * @see #getCreateChannelFormatViaFile()
+   * @generated
+   */
+  EAttribute getCreateChannelFormatViaFile_Filename();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile#getType()
+   * @see #getCreateChannelFormatViaFile()
+   * @generated
+   */
+  EAttribute getCreateChannelFormatViaFile_Type();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream <em>Create Database Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Create Database Stream</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream
+   * @generated
+   */
+  EClass getCreateDatabaseStream();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getAttributes <em>Attributes</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Attributes</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getAttributes()
+   * @see #getCreateDatabaseStream()
+   * @generated
+   */
+  EReference getCreateDatabaseStream_Attributes();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getDatabase <em>Database</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Database</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getDatabase()
+   * @see #getCreateDatabaseStream()
+   * @generated
+   */
+  EAttribute getCreateDatabaseStream_Database();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Table</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getTable()
+   * @see #getCreateDatabaseStream()
+   * @generated
+   */
+  EAttribute getCreateDatabaseStream_Table();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getSize <em>Size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Size</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getSize()
+   * @see #getCreateDatabaseStream()
+   * @generated
+   */
+  EAttribute getCreateDatabaseStream_Size();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Unit</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getUnit()
+   * @see #getCreateDatabaseStream()
+   * @generated
+   */
+  EAttribute getCreateDatabaseStream_Unit();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink <em>Create Database Sink</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Create Database Sink</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink
+   * @generated
+   */
+  EClass getCreateDatabaseSink();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getName()
+   * @see #getCreateDatabaseSink()
+   * @generated
+   */
+  EAttribute getCreateDatabaseSink_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getDatabase <em>Database</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Database</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getDatabase()
+   * @see #getCreateDatabaseSink()
+   * @generated
+   */
+  EAttribute getCreateDatabaseSink_Database();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getTable <em>Table</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Table</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getTable()
+   * @see #getCreateDatabaseSink()
+   * @generated
+   */
+  EAttribute getCreateDatabaseSink_Table();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getOption <em>Option</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Option</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink#getOption()
+   * @see #getCreateDatabaseSink()
+   * @generated
+   */
+  EAttribute getCreateDatabaseSink_Option();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView <em>Create View</em>}'.
@@ -2722,122 +3182,14 @@ public interface CQLPackage extends EPackage
   EAttribute getStreamTo_Inputname();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator <em>Window Operator</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Command</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command
+   * @return the meta object for class '<em>Window Operator</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator
    * @generated
    */
-  EClass getCommand();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command#getName()
-   * @see #getCommand()
-   * @generated
-   */
-  EAttribute getCommand_Name();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased <em>Window Timebased</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Window Timebased</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased
-   * @generated
-   */
-  EClass getWindow_Timebased();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getSize <em>Size</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Size</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getSize()
-   * @see #getWindow_Timebased()
-   * @generated
-   */
-  EAttribute getWindow_Timebased_Size();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getUnit <em>Unit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Unit</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getUnit()
-   * @see #getWindow_Timebased()
-   * @generated
-   */
-  EAttribute getWindow_Timebased_Unit();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getAdvance_size <em>Advance size</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Advance size</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getAdvance_size()
-   * @see #getWindow_Timebased()
-   * @generated
-   */
-  EAttribute getWindow_Timebased_Advance_size();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getAdvance_unit <em>Advance unit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Advance unit</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Timebased#getAdvance_unit()
-   * @see #getWindow_Timebased()
-   * @generated
-   */
-  EAttribute getWindow_Timebased_Advance_unit();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased <em>Window Tuplebased</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Window Tuplebased</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased
-   * @generated
-   */
-  EClass getWindow_Tuplebased();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getSize <em>Size</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Size</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getSize()
-   * @see #getWindow_Tuplebased()
-   * @generated
-   */
-  EAttribute getWindow_Tuplebased_Size();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getAdvance_size <em>Advance size</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Advance size</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getAdvance_size()
-   * @see #getWindow_Tuplebased()
-   * @generated
-   */
-  EAttribute getWindow_Tuplebased_Advance_size();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getPartition_attribute <em>Partition attribute</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Partition attribute</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Window_Tuplebased#getPartition_attribute()
-   * @see #getWindow_Tuplebased()
-   * @generated
-   */
-  EReference getWindow_Tuplebased_Partition_attribute();
+  EClass getWindowOperator();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel <em>Expressions Model</em>}'.
@@ -2892,6 +3244,59 @@ public interface CQLPackage extends EPackage
   EAttribute getDataType_Value();
 
   /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource <em>Simple Source</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Simple Source</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource
+   * @generated
+   */
+  EClass getSimpleSource();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource#getName()
+   * @see #getSimpleSource()
+   * @generated
+   */
+  EAttribute getSimpleSource_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource#getWindow <em>Window</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Window</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource#getWindow()
+   * @see #getSimpleSource()
+   * @generated
+   */
+  EReference getSimpleSource_Window();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource <em>Nested Source</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Nested Source</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource
+   * @generated
+   */
+  EClass getNestedSource();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource#getStatement <em>Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Statement</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource#getStatement()
+   * @see #getNestedSource()
+   * @generated
+   */
+  EReference getNestedSource_Statement();
+
+  /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function <em>Function</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2913,218 +3318,431 @@ public interface CQLPackage extends EPackage
   EAttribute getFunction_Name();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand <em>Drop Command</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute <em>Expression Component As Attribute</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Drop Command</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand
+   * @return the meta object for class '<em>Expression Component As Attribute</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute
    * @generated
    */
-  EClass getDropCommand();
+  EClass getExpressionComponentAsAttribute();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getStream <em>Stream</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC <em>Create Data Base Connection JDBC</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Stream</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getStream()
-   * @see #getDropCommand()
+   * @return the meta object for class '<em>Create Data Base Connection JDBC</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC
    * @generated
    */
-  EAttribute getDropCommand_Stream();
+  EClass getCreateDataBaseConnectionJDBC();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getExists <em>Exists</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getServer <em>Server</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Exists</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropCommand#getExists()
-   * @see #getDropCommand()
+   * @return the meta object for the attribute '<em>Server</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC#getServer()
+   * @see #getCreateDataBaseConnectionJDBC()
    * @generated
    */
-  EAttribute getDropCommand_Exists();
+  EAttribute getCreateDataBaseConnectionJDBC_Server();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand <em>User Command</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric <em>Create Data Base Connection Generic</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>User Command</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand
+   * @return the meta object for class '<em>Create Data Base Connection Generic</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric
    * @generated
    */
-  EClass getUserCommand();
+  EClass getCreateDataBaseConnectionGeneric();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubject <em>Subject</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getDriver <em>Driver</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Subject</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubject()
-   * @see #getUserCommand()
+   * @return the meta object for the attribute '<em>Driver</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getDriver()
+   * @see #getCreateDataBaseConnectionGeneric()
    * @generated
    */
-  EAttribute getUserCommand_Subject();
+  EAttribute getCreateDataBaseConnectionGeneric_Driver();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubjectName <em>Subject Name</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getSource <em>Source</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Subject Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getSubjectName()
-   * @see #getUserCommand()
+   * @return the meta object for the attribute '<em>Source</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getSource()
+   * @see #getCreateDataBaseConnectionGeneric()
    * @generated
    */
-  EAttribute getUserCommand_SubjectName();
+  EAttribute getCreateDataBaseConnectionGeneric_Source();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getPassword <em>Password</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer <em>Server</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Server</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getServer()
+   * @see #getCreateDataBaseConnectionGeneric()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionGeneric_Server();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getUser <em>User</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>User</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getUser()
+   * @see #getCreateDataBaseConnectionGeneric()
+   * @generated
+   */
+  EAttribute getCreateDataBaseConnectionGeneric_User();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPassword <em>Password</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Password</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserCommand#getPassword()
-   * @see #getUserCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric#getPassword()
+   * @see #getCreateDataBaseConnectionGeneric()
    * @generated
    */
-  EAttribute getUserCommand_Password();
+  EAttribute getCreateDataBaseConnectionGeneric_Password();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand <em>Rights Command</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection <em>Drop Database Connection</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Rights Command</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand
+   * @return the meta object for class '<em>Drop Database Connection</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection
    * @generated
    */
-  EClass getRightsCommand();
+  EClass getDropDatabaseConnection();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations <em>Operations</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream <em>Drop Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Drop Stream</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream
+   * @generated
+   */
+  EClass getDropStream();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream#getStream <em>Stream</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Stream</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream#getStream()
+   * @see #getDropStream()
+   * @generated
+   */
+  EAttribute getDropStream_Stream();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream#getExists <em>Exists</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exists</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream#getExists()
+   * @see #getDropStream()
+   * @generated
+   */
+  EAttribute getDropStream_Exists();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement <em>User Management</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>User Management</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement
+   * @generated
+   */
+  EClass getUserManagement();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getSubject <em>Subject</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Subject</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getSubject()
+   * @see #getUserManagement()
+   * @generated
+   */
+  EAttribute getUserManagement_Subject();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getSubjectName <em>Subject Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Subject Name</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getSubjectName()
+   * @see #getUserManagement()
+   * @generated
+   */
+  EAttribute getUserManagement_SubjectName();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getPassword <em>Password</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Password</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement#getPassword()
+   * @see #getUserManagement()
+   * @generated
+   */
+  EAttribute getUserManagement_Password();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement <em>Rights Management</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Rights Management</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement
+   * @generated
+   */
+  EClass getRightsManagement();
+
+  /**
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getOperations <em>Operations</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Operations</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations()
-   * @see #getRightsCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getOperations()
+   * @see #getRightsManagement()
    * @generated
    */
-  EAttribute getRightsCommand_Operations();
+  EAttribute getRightsManagement_Operations();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations2 <em>Operations2</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getOperations2 <em>Operations2</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Operations2</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getOperations2()
-   * @see #getRightsCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getOperations2()
+   * @see #getRightsManagement()
    * @generated
    */
-  EAttribute getRightsCommand_Operations2();
+  EAttribute getRightsManagement_Operations2();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getUser <em>User</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getUser <em>User</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>User</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsCommand#getUser()
-   * @see #getRightsCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement#getUser()
+   * @see #getRightsManagement()
    * @generated
    */
-  EAttribute getRightsCommand_User();
+  EAttribute getRightsManagement_User();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand <em>Rights Role Command</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement <em>Role Management</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Rights Role Command</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand
+   * @return the meta object for class '<em>Role Management</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement
    * @generated
    */
-  EClass getRightsRoleCommand();
+  EClass getRoleManagement();
 
   /**
-   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getOperations <em>Operations</em>}'.
+   * Returns the meta object for the attribute list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement#getOperations <em>Operations</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute list '<em>Operations</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getOperations()
-   * @see #getRightsRoleCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement#getOperations()
+   * @see #getRoleManagement()
    * @generated
    */
-  EAttribute getRightsRoleCommand_Operations();
+  EAttribute getRoleManagement_Operations();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getUser <em>User</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement#getUser <em>User</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>User</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsRoleCommand#getUser()
-   * @see #getRightsRoleCommand()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement#getUser()
+   * @see #getRoleManagement()
    * @generated
    */
-  EAttribute getRightsRoleCommand_User();
+  EAttribute getRoleManagement_User();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or <em>Or</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow <em>Undbounded Window</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Or</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or
+   * @return the meta object for class '<em>Undbounded Window</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow
    * @generated
    */
-  EClass getOr();
+  EClass getUndboundedWindow();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or#getLeft <em>Left</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow <em>Timebased Window</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Timebased Window</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow
+   * @generated
+   */
+  EClass getTimebasedWindow();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getSize <em>Size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Size</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getSize()
+   * @see #getTimebasedWindow()
+   * @generated
+   */
+  EAttribute getTimebasedWindow_Size();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Unit</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getUnit()
+   * @see #getTimebasedWindow()
+   * @generated
+   */
+  EAttribute getTimebasedWindow_Unit();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getAdvance_size <em>Advance size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Advance size</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getAdvance_size()
+   * @see #getTimebasedWindow()
+   * @generated
+   */
+  EAttribute getTimebasedWindow_Advance_size();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getAdvance_unit <em>Advance unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Advance unit</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow#getAdvance_unit()
+   * @see #getTimebasedWindow()
+   * @generated
+   */
+  EAttribute getTimebasedWindow_Advance_unit();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow <em>Tuplebased Window</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Tuplebased Window</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow
+   * @generated
+   */
+  EClass getTuplebasedWindow();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getSize <em>Size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Size</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getSize()
+   * @see #getTuplebasedWindow()
+   * @generated
+   */
+  EAttribute getTuplebasedWindow_Size();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getAdvance_size <em>Advance size</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Advance size</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getAdvance_size()
+   * @see #getTuplebasedWindow()
+   * @generated
+   */
+  EAttribute getTuplebasedWindow_Advance_size();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getPartition_attribute <em>Partition attribute</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Partition attribute</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow#getPartition_attribute()
+   * @see #getTuplebasedWindow()
+   * @generated
+   */
+  EReference getTuplebasedWindow_Partition_attribute();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate <em>Or Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Or Predicate</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
+   * @generated
+   */
+  EClass getOrPredicate();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate#getLeft <em>Left</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Left</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or#getLeft()
-   * @see #getOr()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate#getLeft()
+   * @see #getOrPredicate()
    * @generated
    */
-  EReference getOr_Left();
+  EReference getOrPredicate_Left();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or#getRight <em>Right</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate#getRight <em>Right</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Right</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Or#getRight()
-   * @see #getOr()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate#getRight()
+   * @see #getOrPredicate()
    * @generated
    */
-  EReference getOr_Right();
+  EReference getOrPredicate_Right();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And <em>And</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate <em>And Predicate</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>And</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And
+   * @return the meta object for class '<em>And Predicate</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
    * @generated
    */
-  EClass getAnd();
+  EClass getAndPredicate();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And#getLeft <em>Left</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate#getLeft <em>Left</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Left</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And#getLeft()
-   * @see #getAnd()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate#getLeft()
+   * @see #getAndPredicate()
    * @generated
    */
-  EReference getAnd_Left();
+  EReference getAndPredicate_Left();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And#getRight <em>Right</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate#getRight <em>Right</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Right</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.And#getRight()
-   * @see #getAnd()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate#getRight()
+   * @see #getAndPredicate()
    * @generated
    */
-  EReference getAnd_Right();
+  EReference getAndPredicate_Right();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality <em>Equality</em>}'.
@@ -3467,16 +4085,6 @@ public interface CQLPackage extends EPackage
   EReference getAttributeRef_Value();
 
   /**
-   * Returns the meta object for enum '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword <em>Create Keyword</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Create Keyword</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword
-   * @generated
-   */
-  EEnum getCreateKeyword();
-
-  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3510,12 +4118,12 @@ public interface CQLPackage extends EPackage
     EClass MODEL = eINSTANCE.getModel();
 
     /**
-     * The meta object literal for the '<em><b>Statements</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Components</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference MODEL__STATEMENTS = eINSTANCE.getModel_Statements();
+    EReference MODEL__COMPONENTS = eINSTANCE.getModel_Components();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl <em>Statement</em>}' class.
@@ -3536,6 +4144,32 @@ public interface CQLPackage extends EPackage
     EReference STATEMENT__TYPE = eINSTANCE.getStatement_Type();
 
     /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
+     * @generated
+     */
+    EClass COMMAND = eINSTANCE.getCommand();
+
+    /**
+     * The meta object literal for the '<em><b>Type</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference COMMAND__TYPE = eINSTANCE.getCommand_Type();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMMAND__NAME = eINSTANCE.getCommand_Name();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl <em>Select</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3544,14 +4178,6 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EClass SELECT = eINSTANCE.getSelect();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SELECT__NAME = eINSTANCE.getSelect_Name();
 
     /**
      * The meta object literal for the '<em><b>Distinct</b></em>' attribute feature.
@@ -3602,14 +4228,50 @@ public interface CQLPackage extends EPackage
     EReference SELECT__HAVING = eINSTANCE.getSelect_Having();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl <em>Argument</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl <em>Inner Select</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ArgumentImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getArgument()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect()
      * @generated
      */
-    EClass ARGUMENT = eINSTANCE.getArgument();
+    EClass INNER_SELECT = eINSTANCE.getInnerSelect();
+
+    /**
+     * The meta object literal for the '<em><b>Select</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference INNER_SELECT__SELECT = eINSTANCE.getInnerSelect_Select();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelect2Impl <em>Inner Select2</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelect2Impl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect2()
+     * @generated
+     */
+    EClass INNER_SELECT2 = eINSTANCE.getInnerSelect2();
+
+    /**
+     * The meta object literal for the '<em><b>Select</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference INNER_SELECT2__SELECT = eINSTANCE.getInnerSelect2_Select();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectArgumentImpl <em>Select Argument</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectArgumentImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectArgument()
+     * @generated
+     */
+    EClass SELECT_ARGUMENT = eINSTANCE.getSelectArgument();
 
     /**
      * The meta object literal for the '<em><b>Attribute</b></em>' containment reference feature.
@@ -3617,7 +4279,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ARGUMENT__ATTRIBUTE = eINSTANCE.getArgument_Attribute();
+    EReference SELECT_ARGUMENT__ATTRIBUTE = eINSTANCE.getSelectArgument_Attribute();
 
     /**
      * The meta object literal for the '<em><b>Expression</b></em>' containment reference feature.
@@ -3625,7 +4287,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ARGUMENT__EXPRESSION = eINSTANCE.getArgument_Expression();
+    EReference SELECT_ARGUMENT__EXPRESSION = eINSTANCE.getSelectArgument_Expression();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SourceImpl <em>Source</em>}' class.
@@ -3638,52 +4300,12 @@ public interface CQLPackage extends EPackage
     EClass SOURCE = eINSTANCE.getSource();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SOURCE__NAME = eINSTANCE.getSource_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Unbounded</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SOURCE__UNBOUNDED = eINSTANCE.getSource_Unbounded();
-
-    /**
-     * The meta object literal for the '<em><b>Time</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SOURCE__TIME = eINSTANCE.getSource_Time();
-
-    /**
-     * The meta object literal for the '<em><b>Tuple</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SOURCE__TUPLE = eINSTANCE.getSource_Tuple();
-
-    /**
      * The meta object literal for the '<em><b>Alias</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference SOURCE__ALIAS = eINSTANCE.getSource_Alias();
-
-    /**
-     * The meta object literal for the '<em><b>Nested</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SOURCE__NESTED = eINSTANCE.getSource_Nested();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeImpl <em>Attribute</em>}' class.
@@ -3772,16 +4394,6 @@ public interface CQLPackage extends EPackage
     EReference SELECT_EXPRESSION__ALIAS = eINSTANCE.getSelectExpression_Alias();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl <em>Select Expression Without Alias Definition</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectExpressionWithoutAliasDefinitionImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpressionWithoutAliasDefinition()
-     * @generated
-     */
-    EClass SELECT_EXPRESSION_WITHOUT_ALIAS_DEFINITION = eINSTANCE.getSelectExpressionWithoutAliasDefinition();
-
-    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentImpl <em>Expression Component</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3852,14 +4464,14 @@ public interface CQLPackage extends EPackage
     EAttribute ALIAS__NAME = eINSTANCE.getAlias_Name();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl <em>Create Parameters</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl <em>Access Framework</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateParametersImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateParameters()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AccessFrameworkImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAccessFramework()
      * @generated
      */
-    EClass CREATE_PARAMETERS = eINSTANCE.getCreateParameters();
+    EClass ACCESS_FRAMEWORK = eINSTANCE.getAccessFramework();
 
     /**
      * The meta object literal for the '<em><b>Wrapper</b></em>' attribute feature.
@@ -3867,7 +4479,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__WRAPPER = eINSTANCE.getCreateParameters_Wrapper();
+    EAttribute ACCESS_FRAMEWORK__WRAPPER = eINSTANCE.getAccessFramework_Wrapper();
 
     /**
      * The meta object literal for the '<em><b>Protocol</b></em>' attribute feature.
@@ -3875,7 +4487,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__PROTOCOL = eINSTANCE.getCreateParameters_Protocol();
+    EAttribute ACCESS_FRAMEWORK__PROTOCOL = eINSTANCE.getAccessFramework_Protocol();
 
     /**
      * The meta object literal for the '<em><b>Transport</b></em>' attribute feature.
@@ -3883,7 +4495,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__TRANSPORT = eINSTANCE.getCreateParameters_Transport();
+    EAttribute ACCESS_FRAMEWORK__TRANSPORT = eINSTANCE.getAccessFramework_Transport();
 
     /**
      * The meta object literal for the '<em><b>Datahandler</b></em>' attribute feature.
@@ -3891,7 +4503,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__DATAHANDLER = eINSTANCE.getCreateParameters_Datahandler();
+    EAttribute ACCESS_FRAMEWORK__DATAHANDLER = eINSTANCE.getAccessFramework_Datahandler();
 
     /**
      * The meta object literal for the '<em><b>Keys</b></em>' attribute list feature.
@@ -3899,7 +4511,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__KEYS = eINSTANCE.getCreateParameters_Keys();
+    EAttribute ACCESS_FRAMEWORK__KEYS = eINSTANCE.getAccessFramework_Keys();
 
     /**
      * The meta object literal for the '<em><b>Values</b></em>' attribute list feature.
@@ -3907,17 +4519,17 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_PARAMETERS__VALUES = eINSTANCE.getCreateParameters_Values();
+    EAttribute ACCESS_FRAMEWORK__VALUES = eINSTANCE.getAccessFramework_Values();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl <em>Attribute Definition</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SchemaDefinitionImpl <em>Schema Definition</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AttributeDefinitionImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeDefinition()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SchemaDefinitionImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSchemaDefinition()
      * @generated
      */
-    EClass ATTRIBUTE_DEFINITION = eINSTANCE.getAttributeDefinition();
+    EClass SCHEMA_DEFINITION = eINSTANCE.getSchemaDefinition();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -3925,7 +4537,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ATTRIBUTE_DEFINITION__NAME = eINSTANCE.getAttributeDefinition_Name();
+    EAttribute SCHEMA_DEFINITION__NAME = eINSTANCE.getSchemaDefinition_Name();
 
     /**
      * The meta object literal for the '<em><b>Arguments</b></em>' attribute list feature.
@@ -3933,151 +4545,17 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ATTRIBUTE_DEFINITION__ARGUMENTS = eINSTANCE.getAttributeDefinition_Arguments();
+    EAttribute SCHEMA_DEFINITION__ARGUMENTS = eINSTANCE.getSchemaDefinition_Arguments();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl <em>Create Stream1</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateImpl <em>Create</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStream1Impl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStream1()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreate()
      * @generated
      */
-    EClass CREATE_STREAM1 = eINSTANCE.getCreateStream1();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM1__KEYWORD = eINSTANCE.getCreateStream1_Keyword();
-
-    /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_STREAM1__ATTRIBUTES = eINSTANCE.getCreateStream1_Attributes();
-
-    /**
-     * The meta object literal for the '<em><b>Pars</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_STREAM1__PARS = eINSTANCE.getCreateStream1_Pars();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateSink1Impl <em>Create Sink1</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateSink1Impl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateSink1()
-     * @generated
-     */
-    EClass CREATE_SINK1 = eINSTANCE.getCreateSink1();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_SINK1__KEYWORD = eINSTANCE.getCreateSink1_Keyword();
-
-    /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_SINK1__ATTRIBUTES = eINSTANCE.getCreateSink1_Attributes();
-
-    /**
-     * The meta object literal for the '<em><b>Pars</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_SINK1__PARS = eINSTANCE.getCreateSink1_Pars();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamChannelImpl <em>Create Stream Channel</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamChannelImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamChannel()
-     * @generated
-     */
-    EClass CREATE_STREAM_CHANNEL = eINSTANCE.getCreateStreamChannel();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM_CHANNEL__KEYWORD = eINSTANCE.getCreateStreamChannel_Keyword();
-
-    /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_STREAM_CHANNEL__ATTRIBUTES = eINSTANCE.getCreateStreamChannel_Attributes();
-
-    /**
-     * The meta object literal for the '<em><b>Host</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM_CHANNEL__HOST = eINSTANCE.getCreateStreamChannel_Host();
-
-    /**
-     * The meta object literal for the '<em><b>Port</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM_CHANNEL__PORT = eINSTANCE.getCreateStreamChannel_Port();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl <em>Create Stream File</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateStreamFileImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateStreamFile()
-     * @generated
-     */
-    EClass CREATE_STREAM_FILE = eINSTANCE.getCreateStreamFile();
-
-    /**
-     * The meta object literal for the '<em><b>Keyword</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM_FILE__KEYWORD = eINSTANCE.getCreateStreamFile_Keyword();
-
-    /**
-     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CREATE_STREAM_FILE__ATTRIBUTES = eINSTANCE.getCreateStreamFile_Attributes();
-
-    /**
-     * The meta object literal for the '<em><b>Filename</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CREATE_STREAM_FILE__FILENAME = eINSTANCE.getCreateStreamFile_Filename();
+    EClass CREATE = eINSTANCE.getCreate();
 
     /**
      * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
@@ -4085,7 +4563,201 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CREATE_STREAM_FILE__TYPE = eINSTANCE.getCreateStreamFile_Type();
+    EAttribute CREATE__TYPE = eINSTANCE.getCreate_Type();
+
+    /**
+     * The meta object literal for the '<em><b>Create</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE__CREATE = eINSTANCE.getCreate_Create();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateAccessFrameworkImpl <em>Create Access Framework</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateAccessFrameworkImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateAccessFramework()
+     * @generated
+     */
+    EClass CREATE_ACCESS_FRAMEWORK = eINSTANCE.getCreateAccessFramework();
+
+    /**
+     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE_ACCESS_FRAMEWORK__ATTRIBUTES = eINSTANCE.getCreateAccessFramework_Attributes();
+
+    /**
+     * The meta object literal for the '<em><b>Pars</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE_ACCESS_FRAMEWORK__PARS = eINSTANCE.getCreateAccessFramework_Pars();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFrameworkViaPortImpl <em>Create Channel Framework Via Port</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFrameworkViaPortImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateChannelFrameworkViaPort()
+     * @generated
+     */
+    EClass CREATE_CHANNEL_FRAMEWORK_VIA_PORT = eINSTANCE.getCreateChannelFrameworkViaPort();
+
+    /**
+     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE_CHANNEL_FRAMEWORK_VIA_PORT__ATTRIBUTES = eINSTANCE.getCreateChannelFrameworkViaPort_Attributes();
+
+    /**
+     * The meta object literal for the '<em><b>Host</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_CHANNEL_FRAMEWORK_VIA_PORT__HOST = eINSTANCE.getCreateChannelFrameworkViaPort_Host();
+
+    /**
+     * The meta object literal for the '<em><b>Port</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_CHANNEL_FRAMEWORK_VIA_PORT__PORT = eINSTANCE.getCreateChannelFrameworkViaPort_Port();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFormatViaFileImpl <em>Create Channel Format Via File</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateChannelFormatViaFileImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateChannelFormatViaFile()
+     * @generated
+     */
+    EClass CREATE_CHANNEL_FORMAT_VIA_FILE = eINSTANCE.getCreateChannelFormatViaFile();
+
+    /**
+     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE_CHANNEL_FORMAT_VIA_FILE__ATTRIBUTES = eINSTANCE.getCreateChannelFormatViaFile_Attributes();
+
+    /**
+     * The meta object literal for the '<em><b>Filename</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_CHANNEL_FORMAT_VIA_FILE__FILENAME = eINSTANCE.getCreateChannelFormatViaFile_Filename();
+
+    /**
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_CHANNEL_FORMAT_VIA_FILE__TYPE = eINSTANCE.getCreateChannelFormatViaFile_Type();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseStreamImpl <em>Create Database Stream</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseStreamImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDatabaseStream()
+     * @generated
+     */
+    EClass CREATE_DATABASE_STREAM = eINSTANCE.getCreateDatabaseStream();
+
+    /**
+     * The meta object literal for the '<em><b>Attributes</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CREATE_DATABASE_STREAM__ATTRIBUTES = eINSTANCE.getCreateDatabaseStream_Attributes();
+
+    /**
+     * The meta object literal for the '<em><b>Database</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_STREAM__DATABASE = eINSTANCE.getCreateDatabaseStream_Database();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_STREAM__TABLE = eINSTANCE.getCreateDatabaseStream_Table();
+
+    /**
+     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_STREAM__SIZE = eINSTANCE.getCreateDatabaseStream_Size();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_STREAM__UNIT = eINSTANCE.getCreateDatabaseStream_Unit();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseSinkImpl <em>Create Database Sink</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDatabaseSinkImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDatabaseSink()
+     * @generated
+     */
+    EClass CREATE_DATABASE_SINK = eINSTANCE.getCreateDatabaseSink();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_SINK__NAME = eINSTANCE.getCreateDatabaseSink_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Database</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_SINK__DATABASE = eINSTANCE.getCreateDatabaseSink_Database();
+
+    /**
+     * The meta object literal for the '<em><b>Table</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_SINK__TABLE = eINSTANCE.getCreateDatabaseSink_Table();
+
+    /**
+     * The meta object literal for the '<em><b>Option</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATABASE_SINK__OPTION = eINSTANCE.getCreateDatabaseSink_Option();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateViewImpl <em>Create View</em>}' class.
@@ -4148,98 +4820,14 @@ public interface CQLPackage extends EPackage
     EAttribute STREAM_TO__INPUTNAME = eINSTANCE.getStreamTo_Inputname();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.WindowOperatorImpl <em>Window Operator</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCommand()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.WindowOperatorImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindowOperator()
      * @generated
      */
-    EClass COMMAND = eINSTANCE.getCommand();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute COMMAND__NAME = eINSTANCE.getCommand_Name();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl <em>Window Timebased</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TimebasedImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Timebased()
-     * @generated
-     */
-    EClass WINDOW_TIMEBASED = eINSTANCE.getWindow_Timebased();
-
-    /**
-     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TIMEBASED__SIZE = eINSTANCE.getWindow_Timebased_Size();
-
-    /**
-     * The meta object literal for the '<em><b>Unit</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TIMEBASED__UNIT = eINSTANCE.getWindow_Timebased_Unit();
-
-    /**
-     * The meta object literal for the '<em><b>Advance size</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TIMEBASED__ADVANCE_SIZE = eINSTANCE.getWindow_Timebased_Advance_size();
-
-    /**
-     * The meta object literal for the '<em><b>Advance unit</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TIMEBASED__ADVANCE_UNIT = eINSTANCE.getWindow_Timebased_Advance_unit();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl <em>Window Tuplebased</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.Window_TuplebasedImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getWindow_Tuplebased()
-     * @generated
-     */
-    EClass WINDOW_TUPLEBASED = eINSTANCE.getWindow_Tuplebased();
-
-    /**
-     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TUPLEBASED__SIZE = eINSTANCE.getWindow_Tuplebased_Size();
-
-    /**
-     * The meta object literal for the '<em><b>Advance size</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute WINDOW_TUPLEBASED__ADVANCE_SIZE = eINSTANCE.getWindow_Tuplebased_Advance_size();
-
-    /**
-     * The meta object literal for the '<em><b>Partition attribute</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference WINDOW_TUPLEBASED__PARTITION_ATTRIBUTE = eINSTANCE.getWindow_Tuplebased_Partition_attribute();
+    EClass WINDOW_OPERATOR = eINSTANCE.getWindowOperator();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionsModelImpl <em>Expressions Model</em>}' class.
@@ -4288,6 +4876,50 @@ public interface CQLPackage extends EPackage
     EAttribute DATA_TYPE__VALUE = eINSTANCE.getDataType_Value();
 
     /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSourceImpl <em>Simple Source</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSourceImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSimpleSource()
+     * @generated
+     */
+    EClass SIMPLE_SOURCE = eINSTANCE.getSimpleSource();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SIMPLE_SOURCE__NAME = eINSTANCE.getSimpleSource_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Window</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SIMPLE_SOURCE__WINDOW = eINSTANCE.getSimpleSource_Window();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.NestedSourceImpl <em>Nested Source</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.NestedSourceImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getNestedSource()
+     * @generated
+     */
+    EClass NESTED_SOURCE = eINSTANCE.getNestedSource();
+
+    /**
+     * The meta object literal for the '<em><b>Statement</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference NESTED_SOURCE__STATEMENT = eINSTANCE.getNestedSource_Statement();
+
+    /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.FunctionImpl <em>Function</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -4306,56 +4938,74 @@ public interface CQLPackage extends EPackage
     EAttribute FUNCTION__NAME = eINSTANCE.getFunction_Name();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl <em>Drop Command</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentAsAttributeImpl <em>Expression Component As Attribute</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropCommandImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropCommand()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ExpressionComponentAsAttributeImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponentAsAttribute()
      * @generated
      */
-    EClass DROP_COMMAND = eINSTANCE.getDropCommand();
+    EClass EXPRESSION_COMPONENT_AS_ATTRIBUTE = eINSTANCE.getExpressionComponentAsAttribute();
 
     /**
-     * The meta object literal for the '<em><b>Stream</b></em>' attribute feature.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl <em>Create Data Base Connection JDBC</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDataBaseConnectionJDBC()
      * @generated
      */
-    EAttribute DROP_COMMAND__STREAM = eINSTANCE.getDropCommand_Stream();
+    EClass CREATE_DATA_BASE_CONNECTION_JDBC = eINSTANCE.getCreateDataBaseConnectionJDBC();
 
     /**
-     * The meta object literal for the '<em><b>Exists</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Server</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute DROP_COMMAND__EXISTS = eINSTANCE.getDropCommand_Exists();
+    EAttribute CREATE_DATA_BASE_CONNECTION_JDBC__SERVER = eINSTANCE.getCreateDataBaseConnectionJDBC_Server();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl <em>User Command</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl <em>Create Data Base Connection Generic</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserCommandImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserCommand()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateDataBaseConnectionGeneric()
      * @generated
      */
-    EClass USER_COMMAND = eINSTANCE.getUserCommand();
+    EClass CREATE_DATA_BASE_CONNECTION_GENERIC = eINSTANCE.getCreateDataBaseConnectionGeneric();
 
     /**
-     * The meta object literal for the '<em><b>Subject</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Driver</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute USER_COMMAND__SUBJECT = eINSTANCE.getUserCommand_Subject();
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER = eINSTANCE.getCreateDataBaseConnectionGeneric_Driver();
 
     /**
-     * The meta object literal for the '<em><b>Subject Name</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute USER_COMMAND__SUBJECT_NAME = eINSTANCE.getUserCommand_SubjectName();
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE = eINSTANCE.getCreateDataBaseConnectionGeneric_Source();
+
+    /**
+     * The meta object literal for the '<em><b>Server</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__SERVER = eINSTANCE.getCreateDataBaseConnectionGeneric_Server();
+
+    /**
+     * The meta object literal for the '<em><b>User</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__USER = eINSTANCE.getCreateDataBaseConnectionGeneric_User();
 
     /**
      * The meta object literal for the '<em><b>Password</b></em>' attribute feature.
@@ -4363,17 +5013,87 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute USER_COMMAND__PASSWORD = eINSTANCE.getUserCommand_Password();
+    EAttribute CREATE_DATA_BASE_CONNECTION_GENERIC__PASSWORD = eINSTANCE.getCreateDataBaseConnectionGeneric_Password();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl <em>Rights Command</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl <em>Drop Database Connection</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsCommandImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsCommand()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropDatabaseConnectionImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropDatabaseConnection()
      * @generated
      */
-    EClass RIGHTS_COMMAND = eINSTANCE.getRightsCommand();
+    EClass DROP_DATABASE_CONNECTION = eINSTANCE.getDropDatabaseConnection();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropStreamImpl <em>Drop Stream</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DropStreamImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getDropStream()
+     * @generated
+     */
+    EClass DROP_STREAM = eINSTANCE.getDropStream();
+
+    /**
+     * The meta object literal for the '<em><b>Stream</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DROP_STREAM__STREAM = eINSTANCE.getDropStream_Stream();
+
+    /**
+     * The meta object literal for the '<em><b>Exists</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DROP_STREAM__EXISTS = eINSTANCE.getDropStream_Exists();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl <em>User Management</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUserManagement()
+     * @generated
+     */
+    EClass USER_MANAGEMENT = eINSTANCE.getUserManagement();
+
+    /**
+     * The meta object literal for the '<em><b>Subject</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_MANAGEMENT__SUBJECT = eINSTANCE.getUserManagement_Subject();
+
+    /**
+     * The meta object literal for the '<em><b>Subject Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_MANAGEMENT__SUBJECT_NAME = eINSTANCE.getUserManagement_SubjectName();
+
+    /**
+     * The meta object literal for the '<em><b>Password</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute USER_MANAGEMENT__PASSWORD = eINSTANCE.getUserManagement_Password();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl <em>Rights Management</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsManagement()
+     * @generated
+     */
+    EClass RIGHTS_MANAGEMENT = eINSTANCE.getRightsManagement();
 
     /**
      * The meta object literal for the '<em><b>Operations</b></em>' attribute list feature.
@@ -4381,7 +5101,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RIGHTS_COMMAND__OPERATIONS = eINSTANCE.getRightsCommand_Operations();
+    EAttribute RIGHTS_MANAGEMENT__OPERATIONS = eINSTANCE.getRightsManagement_Operations();
 
     /**
      * The meta object literal for the '<em><b>Operations2</b></em>' attribute list feature.
@@ -4389,7 +5109,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RIGHTS_COMMAND__OPERATIONS2 = eINSTANCE.getRightsCommand_Operations2();
+    EAttribute RIGHTS_MANAGEMENT__OPERATIONS2 = eINSTANCE.getRightsManagement_Operations2();
 
     /**
      * The meta object literal for the '<em><b>User</b></em>' attribute feature.
@@ -4397,17 +5117,17 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RIGHTS_COMMAND__USER = eINSTANCE.getRightsCommand_User();
+    EAttribute RIGHTS_MANAGEMENT__USER = eINSTANCE.getRightsManagement_User();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl <em>Rights Role Command</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl <em>Role Management</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsRoleCommandImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRightsRoleCommand()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getRoleManagement()
      * @generated
      */
-    EClass RIGHTS_ROLE_COMMAND = eINSTANCE.getRightsRoleCommand();
+    EClass ROLE_MANAGEMENT = eINSTANCE.getRoleManagement();
 
     /**
      * The meta object literal for the '<em><b>Operations</b></em>' attribute list feature.
@@ -4415,7 +5135,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RIGHTS_ROLE_COMMAND__OPERATIONS = eINSTANCE.getRightsRoleCommand_Operations();
+    EAttribute ROLE_MANAGEMENT__OPERATIONS = eINSTANCE.getRoleManagement_Operations();
 
     /**
      * The meta object literal for the '<em><b>User</b></em>' attribute feature.
@@ -4423,17 +5143,103 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute RIGHTS_ROLE_COMMAND__USER = eINSTANCE.getRightsRoleCommand_User();
+    EAttribute ROLE_MANAGEMENT__USER = eINSTANCE.getRoleManagement_User();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl <em>Or</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UndboundedWindowImpl <em>Undbounded Window</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOr()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UndboundedWindowImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getUndboundedWindow()
      * @generated
      */
-    EClass OR = eINSTANCE.getOr();
+    EClass UNDBOUNDED_WINDOW = eINSTANCE.getUndboundedWindow();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TimebasedWindowImpl <em>Timebased Window</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TimebasedWindowImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTimebasedWindow()
+     * @generated
+     */
+    EClass TIMEBASED_WINDOW = eINSTANCE.getTimebasedWindow();
+
+    /**
+     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIMEBASED_WINDOW__SIZE = eINSTANCE.getTimebasedWindow_Size();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIMEBASED_WINDOW__UNIT = eINSTANCE.getTimebasedWindow_Unit();
+
+    /**
+     * The meta object literal for the '<em><b>Advance size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIMEBASED_WINDOW__ADVANCE_SIZE = eINSTANCE.getTimebasedWindow_Advance_size();
+
+    /**
+     * The meta object literal for the '<em><b>Advance unit</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TIMEBASED_WINDOW__ADVANCE_UNIT = eINSTANCE.getTimebasedWindow_Advance_unit();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TuplebasedWindowImpl <em>Tuplebased Window</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.TuplebasedWindowImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTuplebasedWindow()
+     * @generated
+     */
+    EClass TUPLEBASED_WINDOW = eINSTANCE.getTuplebasedWindow();
+
+    /**
+     * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TUPLEBASED_WINDOW__SIZE = eINSTANCE.getTuplebasedWindow_Size();
+
+    /**
+     * The meta object literal for the '<em><b>Advance size</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TUPLEBASED_WINDOW__ADVANCE_SIZE = eINSTANCE.getTuplebasedWindow_Advance_size();
+
+    /**
+     * The meta object literal for the '<em><b>Partition attribute</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TUPLEBASED_WINDOW__PARTITION_ATTRIBUTE = eINSTANCE.getTuplebasedWindow_Partition_attribute();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrPredicateImpl <em>Or Predicate</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.OrPredicateImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getOrPredicate()
+     * @generated
+     */
+    EClass OR_PREDICATE = eINSTANCE.getOrPredicate();
 
     /**
      * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
@@ -4441,7 +5247,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference OR__LEFT = eINSTANCE.getOr_Left();
+    EReference OR_PREDICATE__LEFT = eINSTANCE.getOrPredicate_Left();
 
     /**
      * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
@@ -4449,17 +5255,17 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference OR__RIGHT = eINSTANCE.getOr_Right();
+    EReference OR_PREDICATE__RIGHT = eINSTANCE.getOrPredicate_Right();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndImpl <em>And</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndPredicateImpl <em>And Predicate</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAnd()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AndPredicateImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAndPredicate()
      * @generated
      */
-    EClass AND = eINSTANCE.getAnd();
+    EClass AND_PREDICATE = eINSTANCE.getAndPredicate();
 
     /**
      * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
@@ -4467,7 +5273,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference AND__LEFT = eINSTANCE.getAnd_Left();
+    EReference AND_PREDICATE__LEFT = eINSTANCE.getAndPredicate_Left();
 
     /**
      * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
@@ -4475,7 +5281,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference AND__RIGHT = eINSTANCE.getAnd_Right();
+    EReference AND_PREDICATE__RIGHT = eINSTANCE.getAndPredicate_Right();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.EqualityImpl <em>Equality</em>}' class.
@@ -4756,16 +5562,6 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EReference ATTRIBUTE_REF__VALUE = eINSTANCE.getAttributeRef_Value();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword <em>Create Keyword</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateKeyword
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getCreateKeyword()
-     * @generated
-     */
-    EEnum CREATE_KEYWORD = eINSTANCE.getCreateKeyword();
 
   }
 

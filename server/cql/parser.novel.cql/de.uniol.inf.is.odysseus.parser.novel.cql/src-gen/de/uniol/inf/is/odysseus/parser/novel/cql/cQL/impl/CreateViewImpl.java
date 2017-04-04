@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -60,7 +60,7 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
    * @generated
    * @ordered
    */
-  protected Select select;
+  protected InnerSelect select;
 
   /**
    * <!-- begin-user-doc -->
@@ -111,7 +111,7 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getSelect()
+  public InnerSelect getSelect()
   {
     return select;
   }
@@ -121,9 +121,9 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetSelect(Select newSelect, NotificationChain msgs)
+  public NotificationChain basicSetSelect(InnerSelect newSelect, NotificationChain msgs)
   {
-    Select oldSelect = select;
+    InnerSelect oldSelect = select;
     select = newSelect;
     if (eNotificationRequired())
     {
@@ -138,7 +138,7 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSelect(Select newSelect)
+  public void setSelect(InnerSelect newSelect)
   {
     if (newSelect != select)
     {
@@ -202,7 +202,7 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
         setName((String)newValue);
         return;
       case CQLPackage.CREATE_VIEW__SELECT:
-        setSelect((Select)newValue);
+        setSelect((InnerSelect)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -222,7 +222,7 @@ public class CreateViewImpl extends MinimalEObjectImpl.Container implements Crea
         setName(NAME_EDEFAULT);
         return;
       case CQLPackage.CREATE_VIEW__SELECT:
-        setSelect((Select)null);
+        setSelect((InnerSelect)null);
         return;
     }
     super.eUnset(featureID);

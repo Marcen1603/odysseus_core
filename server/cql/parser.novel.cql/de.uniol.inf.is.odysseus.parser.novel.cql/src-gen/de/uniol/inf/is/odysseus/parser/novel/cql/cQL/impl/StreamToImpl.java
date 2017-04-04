@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -61,7 +61,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * @generated
    * @ordered
    */
-  protected Select statement;
+  protected InnerSelect2 statement;
 
   /**
    * The default value of the '{@link #getInputname() <em>Inputname</em>}' attribute.
@@ -132,7 +132,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getStatement()
+  public InnerSelect2 getStatement()
   {
     return statement;
   }
@@ -142,9 +142,9 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetStatement(Select newStatement, NotificationChain msgs)
+  public NotificationChain basicSetStatement(InnerSelect2 newStatement, NotificationChain msgs)
   {
-    Select oldStatement = statement;
+    InnerSelect2 oldStatement = statement;
     statement = newStatement;
     if (eNotificationRequired())
     {
@@ -159,7 +159,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStatement(Select newStatement)
+  public void setStatement(InnerSelect2 newStatement)
   {
     if (newStatement != statement)
     {
@@ -248,7 +248,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
         setName((String)newValue);
         return;
       case CQLPackage.STREAM_TO__STATEMENT:
-        setStatement((Select)newValue);
+        setStatement((InnerSelect2)newValue);
         return;
       case CQLPackage.STREAM_TO__INPUTNAME:
         setInputname((String)newValue);
@@ -271,7 +271,7 @@ public class StreamToImpl extends MinimalEObjectImpl.Container implements Stream
         setName(NAME_EDEFAULT);
         return;
       case CQLPackage.STREAM_TO__STATEMENT:
-        setStatement((Select)null);
+        setStatement((InnerSelect2)null);
         return;
       case CQLPackage.STREAM_TO__INPUTNAME:
         setInputname(INPUTNAME_EDEFAULT);

@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getArguments <em>Arguments</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources <em>Sources</em>}</li>
@@ -31,32 +30,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Select extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Name</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
-   * @see #setName(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Name()
-   * @model
-   * @generated
-   */
-  String getName();
-
-  /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
-   * @see #getName()
-   * @generated
-   */
-  void setName(String value);
-
   /**
    * Returns the value of the '<em><b>Distinct</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -85,7 +58,7 @@ public interface Select extends EObject
 
   /**
    * Returns the value of the '<em><b>Arguments</b></em>' containment reference list.
-   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Argument}.
+   * The list contents are of type {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Arguments</em>' containment reference list isn't clear,
@@ -97,7 +70,7 @@ public interface Select extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<Argument> getArguments();
+  EList<SelectArgument> getArguments();
 
   /**
    * Returns the value of the '<em><b>Sources</b></em>' containment reference list.
