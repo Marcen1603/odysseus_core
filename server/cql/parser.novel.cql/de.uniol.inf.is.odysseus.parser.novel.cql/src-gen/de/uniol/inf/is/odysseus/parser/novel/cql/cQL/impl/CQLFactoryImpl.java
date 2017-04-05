@@ -88,6 +88,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.CREATE_DATABASE_STREAM: return createCreateDatabaseStream();
       case CQLPackage.CREATE_DATABASE_SINK: return createCreateDatabaseSink();
       case CQLPackage.CREATE_VIEW: return createCreateView();
+      case CQLPackage.CONTEXT_STORE_TYPE: return createContextStoreType();
       case CQLPackage.STREAM_TO: return createStreamTo();
       case CQLPackage.WINDOW_OPERATOR: return createWindowOperator();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
@@ -100,6 +101,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC: return createCreateDataBaseConnectionJDBC();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC: return createCreateDataBaseConnectionGeneric();
       case CQLPackage.DROP_DATABASE_CONNECTION: return createDropDatabaseConnection();
+      case CQLPackage.CREATE_CONTEXT_STORE: return createCreateContextStore();
+      case CQLPackage.DROP_CONTEXT_STORE: return createDropContextStore();
       case CQLPackage.DROP_STREAM: return createDropStream();
       case CQLPackage.USER_MANAGEMENT: return createUserManagement();
       case CQLPackage.RIGHTS_MANAGEMENT: return createRightsManagement();
@@ -384,6 +387,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public ContextStoreType createContextStoreType()
+  {
+    ContextStoreTypeImpl contextStoreType = new ContextStoreTypeImpl();
+    return contextStoreType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public StreamTo createStreamTo()
   {
     StreamToImpl streamTo = new StreamToImpl();
@@ -509,6 +523,28 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     DropDatabaseConnectionImpl dropDatabaseConnection = new DropDatabaseConnectionImpl();
     return dropDatabaseConnection;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CreateContextStore createCreateContextStore()
+  {
+    CreateContextStoreImpl createContextStore = new CreateContextStoreImpl();
+    return createContextStore;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DropContextStore createDropContextStore()
+  {
+    DropContextStoreImpl dropContextStore = new DropContextStoreImpl();
+    return dropContextStore;
   }
 
   /**

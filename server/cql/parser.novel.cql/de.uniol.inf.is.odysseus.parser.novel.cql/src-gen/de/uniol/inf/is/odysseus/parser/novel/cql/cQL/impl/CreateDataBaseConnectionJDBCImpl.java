@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl#getServer <em>Server</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl#getUser <em>User</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionJDBCImpl#getPassword <em>Password</em>}</li>
@@ -30,6 +31,26 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements CreateDataBaseConnectionJDBC
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The default value of the '{@link #getServer() <em>Server</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -136,6 +157,29 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getServer()
   {
     return server;
@@ -233,6 +277,8 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__NAME:
+        return getName();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER:
         return getServer();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__USER:
@@ -255,6 +301,9 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__NAME:
+        setName((String)newValue);
+        return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER:
         setServer((String)newValue);
         return;
@@ -281,6 +330,9 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER:
         setServer(SERVER_EDEFAULT);
         return;
@@ -307,6 +359,8 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__SERVER:
         return SERVER_EDEFAULT == null ? server != null : !SERVER_EDEFAULT.equals(server);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC__USER:
@@ -330,7 +384,9 @@ public class CreateDataBaseConnectionJDBCImpl extends CommandImpl implements Cre
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (server: ");
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", server: ");
     result.append(server);
     result.append(", user: ");
     result.append(user);

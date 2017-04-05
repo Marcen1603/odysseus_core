@@ -234,6 +234,13 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.CONTEXT_STORE_TYPE:
+      {
+        ContextStoreType contextStoreType = (ContextStoreType)theEObject;
+        T result = caseContextStoreType(contextStoreType);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.STREAM_TO:
       {
         StreamTo streamTo = (StreamTo)theEObject;
@@ -322,6 +329,22 @@ public class CQLSwitch<T> extends Switch<T>
         DropDatabaseConnection dropDatabaseConnection = (DropDatabaseConnection)theEObject;
         T result = caseDropDatabaseConnection(dropDatabaseConnection);
         if (result == null) result = caseCommand(dropDatabaseConnection);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.CREATE_CONTEXT_STORE:
+      {
+        CreateContextStore createContextStore = (CreateContextStore)theEObject;
+        T result = caseCreateContextStore(createContextStore);
+        if (result == null) result = caseCommand(createContextStore);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.DROP_CONTEXT_STORE:
+      {
+        DropContextStore dropContextStore = (DropContextStore)theEObject;
+        T result = caseDropContextStore(dropContextStore);
+        if (result == null) result = caseCommand(dropContextStore);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -866,6 +889,22 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Context Store Type</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Context Store Type</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseContextStoreType(ContextStoreType object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Stream To</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1053,6 +1092,38 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseDropDatabaseConnection(DropDatabaseConnection object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Create Context Store</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Create Context Store</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseCreateContextStore(CreateContextStore object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Drop Context Store</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Drop Context Store</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDropContextStore(DropContextStore object)
   {
     return null;
   }

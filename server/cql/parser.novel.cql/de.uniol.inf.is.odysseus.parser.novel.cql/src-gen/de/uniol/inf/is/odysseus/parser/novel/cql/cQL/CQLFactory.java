@@ -231,6 +231,15 @@ public interface CQLFactory extends EFactory
   CreateView createCreateView();
 
   /**
+   * Returns a new object of class '<em>Context Store Type</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Context Store Type</em>'.
+   * @generated
+   */
+  ContextStoreType createContextStoreType();
+
+  /**
    * Returns a new object of class '<em>Stream To</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -337,6 +346,24 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   DropDatabaseConnection createDropDatabaseConnection();
+
+  /**
+   * Returns a new object of class '<em>Create Context Store</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Create Context Store</em>'.
+   * @generated
+   */
+  CreateContextStore createCreateContextStore();
+
+  /**
+   * Returns a new object of class '<em>Drop Context Store</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Drop Context Store</em>'.
+   * @generated
+   */
+  DropContextStore createDropContextStore();
 
   /**
    * Returns a new object of class '<em>Drop Stream</em>'.

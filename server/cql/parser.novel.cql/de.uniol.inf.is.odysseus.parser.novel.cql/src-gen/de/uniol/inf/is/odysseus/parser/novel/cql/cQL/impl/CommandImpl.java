@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * </p>
  * <ul>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getType <em>Type</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl#getName <em>Name</em>}</li>
  * </ul>
  *
  * @generated
@@ -40,26 +39,6 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
    * @ordered
    */
   protected Command type;
-
-  /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected static final String NAME_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected String name = NAME_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -135,29 +114,6 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName()
-  {
-    return name;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setName(String newName)
-  {
-    String oldName = name;
-    name = newName;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMMAND__NAME, oldName, name));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -181,8 +137,6 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
     {
       case CQLPackage.COMMAND__TYPE:
         return getType();
-      case CQLPackage.COMMAND__NAME:
-        return getName();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -199,9 +153,6 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
     {
       case CQLPackage.COMMAND__TYPE:
         setType((Command)newValue);
-        return;
-      case CQLPackage.COMMAND__NAME:
-        setName((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -220,9 +171,6 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
       case CQLPackage.COMMAND__TYPE:
         setType((Command)null);
         return;
-      case CQLPackage.COMMAND__NAME:
-        setName(NAME_EDEFAULT);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -239,27 +187,8 @@ public class CommandImpl extends MinimalEObjectImpl.Container implements Command
     {
       case CQLPackage.COMMAND__TYPE:
         return type != null;
-      case CQLPackage.COMMAND__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
-    result.append(')');
-    return result.toString();
   }
 
 } //CommandImpl

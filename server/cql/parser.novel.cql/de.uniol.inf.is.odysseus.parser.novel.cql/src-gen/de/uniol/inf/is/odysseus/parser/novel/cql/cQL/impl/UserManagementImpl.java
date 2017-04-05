@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl#getSubject <em>Subject</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl#getSubjectName <em>Subject Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.UserManagementImpl#getPassword <em>Password</em>}</li>
@@ -29,6 +30,26 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class UserManagementImpl extends CommandImpl implements UserManagement
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The default value of the '{@link #getSubject() <em>Subject</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -115,6 +136,29 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.USER_MANAGEMENT__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getSubject()
   {
     return subject;
@@ -189,6 +233,8 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
   {
     switch (featureID)
     {
+      case CQLPackage.USER_MANAGEMENT__NAME:
+        return getName();
       case CQLPackage.USER_MANAGEMENT__SUBJECT:
         return getSubject();
       case CQLPackage.USER_MANAGEMENT__SUBJECT_NAME:
@@ -209,6 +255,9 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
   {
     switch (featureID)
     {
+      case CQLPackage.USER_MANAGEMENT__NAME:
+        setName((String)newValue);
+        return;
       case CQLPackage.USER_MANAGEMENT__SUBJECT:
         setSubject((String)newValue);
         return;
@@ -232,6 +281,9 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
   {
     switch (featureID)
     {
+      case CQLPackage.USER_MANAGEMENT__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case CQLPackage.USER_MANAGEMENT__SUBJECT:
         setSubject(SUBJECT_EDEFAULT);
         return;
@@ -255,6 +307,8 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
   {
     switch (featureID)
     {
+      case CQLPackage.USER_MANAGEMENT__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.USER_MANAGEMENT__SUBJECT:
         return SUBJECT_EDEFAULT == null ? subject != null : !SUBJECT_EDEFAULT.equals(subject);
       case CQLPackage.USER_MANAGEMENT__SUBJECT_NAME:
@@ -276,7 +330,9 @@ public class UserManagementImpl extends CommandImpl implements UserManagement
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (subject: ");
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", subject: ");
     result.append(subject);
     result.append(", subjectName: ");
     result.append(subjectName);

@@ -120,6 +120,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTypeCreateDataBaseGenericConnectionParserRuleCall_0_4 = (RuleCall)cTypeAlternatives_0.eContents().get(4);
 		private final RuleCall cTypeCreateDataBaseJDBCConnectionParserRuleCall_0_5 = (RuleCall)cTypeAlternatives_0.eContents().get(5);
 		private final RuleCall cTypeDropDatabaseConnectionParserRuleCall_0_6 = (RuleCall)cTypeAlternatives_0.eContents().get(6);
+		private final RuleCall cTypeCreateContextStoreParserRuleCall_0_7 = (RuleCall)cTypeAlternatives_0.eContents().get(7);
+		private final RuleCall cTypeDropContextStoreParserRuleCall_0_8 = (RuleCall)cTypeAlternatives_0.eContents().get(8);
 		
 		//Command:
 		//	type=(DropStream
@@ -128,15 +130,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	| RoleManagement
 		//	| CreateDataBaseGenericConnection
 		//	| CreateDataBaseJDBCConnection
-		//	| DropDatabaseConnection);
+		//	| DropDatabaseConnection
+		//	| CreateContextStore
+		//	| DropContextStore);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//type=(DropStream | UserManagement | RightsManagement | RoleManagement | CreateDataBaseGenericConnection |
-		//CreateDataBaseJDBCConnection | DropDatabaseConnection)
+		//CreateDataBaseJDBCConnection | DropDatabaseConnection | CreateContextStore | DropContextStore)
 		public Assignment getTypeAssignment() { return cTypeAssignment; }
 		
 		//(DropStream | UserManagement | RightsManagement | RoleManagement | CreateDataBaseGenericConnection |
-		//CreateDataBaseJDBCConnection | DropDatabaseConnection)
+		//CreateDataBaseJDBCConnection | DropDatabaseConnection | CreateContextStore | DropContextStore)
 		public Alternatives getTypeAlternatives_0() { return cTypeAlternatives_0; }
 		
 		//DropStream
@@ -159,6 +163,12 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//DropDatabaseConnection
 		public RuleCall getTypeDropDatabaseConnectionParserRuleCall_0_6() { return cTypeDropDatabaseConnectionParserRuleCall_0_6; }
+		
+		//CreateContextStore
+		public RuleCall getTypeCreateContextStoreParserRuleCall_0_7() { return cTypeCreateContextStoreParserRuleCall_0_7; }
+		
+		//DropContextStore
+		public RuleCall getTypeDropContextStoreParserRuleCall_0_8() { return cTypeDropContextStoreParserRuleCall_0_8; }
 	}
 	public class SelectElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Select");
@@ -1965,6 +1975,176 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getNameIDTerminalRuleCall_4_0() { return cNameIDTerminalRuleCall_4_0; }
 	}
+	public class ContextStoreTypeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ContextStoreType");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cTypeAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final Keyword cTypeSINGLEKeyword_0_0 = (Keyword)cTypeAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Assignment cTypeAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final Keyword cTypeMULTIKeyword_1_0_0 = (Keyword)cTypeAssignment_1_0.eContents().get(0);
+		private final Assignment cSizeAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cSizeINTTerminalRuleCall_1_1_0 = (RuleCall)cSizeAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_2 = (Group)cGroup_1.eContents().get(2);
+		private final Keyword cPARTITIONKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
+		private final Keyword cBYKeyword_1_2_1 = (Keyword)cGroup_1_2.eContents().get(1);
+		private final Assignment cPartitionAssignment_1_2_2 = (Assignment)cGroup_1_2.eContents().get(2);
+		private final RuleCall cPartitionINTTerminalRuleCall_1_2_2_0 = (RuleCall)cPartitionAssignment_1_2_2.eContents().get(0);
+		
+		//ContextStoreType:
+		//	type='SINGLE' | type='MULTI'
+		//	size=INT ('PARTITION'
+		//	'BY'
+		//	partition=INT)?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//type='SINGLE' | type='MULTI' size=INT ('PARTITION' 'BY' partition=INT)?
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//type='SINGLE'
+		public Assignment getTypeAssignment_0() { return cTypeAssignment_0; }
+		
+		//'SINGLE'
+		public Keyword getTypeSINGLEKeyword_0_0() { return cTypeSINGLEKeyword_0_0; }
+		
+		//type='MULTI' size=INT ('PARTITION' 'BY' partition=INT)?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//type='MULTI'
+		public Assignment getTypeAssignment_1_0() { return cTypeAssignment_1_0; }
+		
+		//'MULTI'
+		public Keyword getTypeMULTIKeyword_1_0_0() { return cTypeMULTIKeyword_1_0_0; }
+		
+		//size=INT
+		public Assignment getSizeAssignment_1_1() { return cSizeAssignment_1_1; }
+		
+		//INT
+		public RuleCall getSizeINTTerminalRuleCall_1_1_0() { return cSizeINTTerminalRuleCall_1_1_0; }
+		
+		//('PARTITION' 'BY' partition=INT)?
+		public Group getGroup_1_2() { return cGroup_1_2; }
+		
+		//'PARTITION'
+		public Keyword getPARTITIONKeyword_1_2_0() { return cPARTITIONKeyword_1_2_0; }
+		
+		//'BY'
+		public Keyword getBYKeyword_1_2_1() { return cBYKeyword_1_2_1; }
+		
+		//partition=INT
+		public Assignment getPartitionAssignment_1_2_2() { return cPartitionAssignment_1_2_2; }
+		
+		//INT
+		public RuleCall getPartitionINTTerminalRuleCall_1_2_2_0() { return cPartitionINTTerminalRuleCall_1_2_2_0; }
+	}
+	public class CreateContextStoreElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateContextStore");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cCreateContextStoreAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cCREATEKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Keyword cCONTEXTKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cSTOREKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cAttributesAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cAttributesSchemaDefinitionParserRuleCall_4_0 = (RuleCall)cAttributesAssignment_4.eContents().get(0);
+		private final Keyword cASKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cContextTypeAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cContextTypeContextStoreTypeParserRuleCall_6_0 = (RuleCall)cContextTypeAssignment_6.eContents().get(0);
+		
+		//CreateContextStore Command:
+		//	{CreateContextStore}
+		//	'CREATE'
+		//	'CONTEXT'
+		//	'STORE'
+		//	attributes=SchemaDefinition
+		//	'AS'
+		//	contextType=ContextStoreType
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{CreateContextStore} 'CREATE' 'CONTEXT' 'STORE' attributes=SchemaDefinition 'AS' contextType=ContextStoreType
+		public Group getGroup() { return cGroup; }
+		
+		//{CreateContextStore}
+		public Action getCreateContextStoreAction_0() { return cCreateContextStoreAction_0; }
+		
+		//'CREATE'
+		public Keyword getCREATEKeyword_1() { return cCREATEKeyword_1; }
+		
+		//'CONTEXT'
+		public Keyword getCONTEXTKeyword_2() { return cCONTEXTKeyword_2; }
+		
+		//'STORE'
+		public Keyword getSTOREKeyword_3() { return cSTOREKeyword_3; }
+		
+		//attributes=SchemaDefinition
+		public Assignment getAttributesAssignment_4() { return cAttributesAssignment_4; }
+		
+		//SchemaDefinition
+		public RuleCall getAttributesSchemaDefinitionParserRuleCall_4_0() { return cAttributesSchemaDefinitionParserRuleCall_4_0; }
+		
+		//'AS'
+		public Keyword getASKeyword_5() { return cASKeyword_5; }
+		
+		//contextType=ContextStoreType
+		public Assignment getContextTypeAssignment_6() { return cContextTypeAssignment_6; }
+		
+		//ContextStoreType
+		public RuleCall getContextTypeContextStoreTypeParserRuleCall_6_0() { return cContextTypeContextStoreTypeParserRuleCall_6_0; }
+	}
+	public class DropContextStoreElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DropContextStore");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cDropContextStoreAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cDROPKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Keyword cCONTEXTKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Keyword cSTOREKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cNameAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cNameIDTerminalRuleCall_4_0 = (RuleCall)cNameAssignment_4.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cIFKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cExistsAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final Keyword cExistsEXISTSKeyword_5_1_0 = (Keyword)cExistsAssignment_5_1.eContents().get(0);
+		
+		//DropContextStore Command:
+		//	{DropContextStore}
+		//	'DROP'
+		//	'CONTEXT'
+		//	'STORE'
+		//	name=ID ('IF' exists='EXISTS')?
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{DropContextStore} 'DROP' 'CONTEXT' 'STORE' name=ID ('IF' exists='EXISTS')?
+		public Group getGroup() { return cGroup; }
+		
+		//{DropContextStore}
+		public Action getDropContextStoreAction_0() { return cDropContextStoreAction_0; }
+		
+		//'DROP'
+		public Keyword getDROPKeyword_1() { return cDROPKeyword_1; }
+		
+		//'CONTEXT'
+		public Keyword getCONTEXTKeyword_2() { return cCONTEXTKeyword_2; }
+		
+		//'STORE'
+		public Keyword getSTOREKeyword_3() { return cSTOREKeyword_3; }
+		
+		//name=ID
+		public Assignment getNameAssignment_4() { return cNameAssignment_4; }
+		
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_4_0() { return cNameIDTerminalRuleCall_4_0; }
+		
+		//('IF' exists='EXISTS')?
+		public Group getGroup_5() { return cGroup_5; }
+		
+		//'IF'
+		public Keyword getIFKeyword_5_0() { return cIFKeyword_5_0; }
+		
+		//exists='EXISTS'
+		public Assignment getExistsAssignment_5_1() { return cExistsAssignment_5_1; }
+		
+		//'EXISTS'
+		public Keyword getExistsEXISTSKeyword_5_1_0() { return cExistsEXISTSKeyword_5_1_0; }
+	}
 	public class StreamToElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.StreamTo");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -3307,6 +3487,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final CreateDataBaseJDBCConnectionElements pCreateDataBaseJDBCConnection;
 	private final CreateDataBaseGenericConnectionElements pCreateDataBaseGenericConnection;
 	private final DropDatabaseConnectionElements pDropDatabaseConnection;
+	private final ContextStoreTypeElements pContextStoreType;
+	private final CreateContextStoreElements pCreateContextStore;
+	private final DropContextStoreElements pDropContextStore;
 	private final StreamToElements pStreamTo;
 	private final DropStreamElements pDropStream;
 	private final UserManagementElements pUserManagement;
@@ -3385,6 +3568,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pCreateDataBaseJDBCConnection = new CreateDataBaseJDBCConnectionElements();
 		this.pCreateDataBaseGenericConnection = new CreateDataBaseGenericConnectionElements();
 		this.pDropDatabaseConnection = new DropDatabaseConnectionElements();
+		this.pContextStoreType = new ContextStoreTypeElements();
+		this.pCreateContextStore = new CreateContextStoreElements();
+		this.pDropContextStore = new DropContextStoreElements();
 		this.pStreamTo = new StreamToElements();
 		this.pDropStream = new DropStreamElements();
 		this.pUserManagement = new UserManagementElements();
@@ -3494,7 +3680,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	| RoleManagement
 	//	| CreateDataBaseGenericConnection
 	//	| CreateDataBaseJDBCConnection
-	//	| DropDatabaseConnection);
+	//	| DropDatabaseConnection
+	//	| CreateContextStore
+	//	| DropContextStore);
 	public CommandElements getCommandAccess() {
 		return pCommand;
 	}
@@ -4000,6 +4188,49 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getDropDatabaseConnectionRule() {
 		return getDropDatabaseConnectionAccess().getRule();
+	}
+	
+	//ContextStoreType:
+	//	type='SINGLE' | type='MULTI'
+	//	size=INT ('PARTITION'
+	//	'BY'
+	//	partition=INT)?;
+	public ContextStoreTypeElements getContextStoreTypeAccess() {
+		return pContextStoreType;
+	}
+	
+	public ParserRule getContextStoreTypeRule() {
+		return getContextStoreTypeAccess().getRule();
+	}
+	
+	//CreateContextStore Command:
+	//	{CreateContextStore}
+	//	'CREATE'
+	//	'CONTEXT'
+	//	'STORE'
+	//	attributes=SchemaDefinition
+	//	'AS'
+	//	contextType=ContextStoreType
+	public CreateContextStoreElements getCreateContextStoreAccess() {
+		return pCreateContextStore;
+	}
+	
+	public ParserRule getCreateContextStoreRule() {
+		return getCreateContextStoreAccess().getRule();
+	}
+	
+	//DropContextStore Command:
+	//	{DropContextStore}
+	//	'DROP'
+	//	'CONTEXT'
+	//	'STORE'
+	//	name=ID ('IF' exists='EXISTS')?
+	public DropContextStoreElements getDropContextStoreAccess() {
+		return pDropContextStore;
+	}
+	
+	public ParserRule getDropContextStoreRule() {
+		return getDropContextStoreAccess().getRule();
 	}
 	
 	//StreamTo:

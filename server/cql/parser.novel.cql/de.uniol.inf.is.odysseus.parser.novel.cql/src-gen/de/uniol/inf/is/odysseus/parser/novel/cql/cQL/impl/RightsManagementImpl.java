@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl#getOperations <em>Operations</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl#getOperations2 <em>Operations2</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RightsManagementImpl#getUser <em>User</em>}</li>
@@ -35,6 +36,26 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  */
 public class RightsManagementImpl extends CommandImpl implements RightsManagement
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getOperations() <em>Operations</em>}' attribute list.
    * <!-- begin-user-doc -->
@@ -101,6 +122,29 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.RIGHTS_MANAGEMENT__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<String> getOperations()
   {
     if (operations == null)
@@ -157,6 +201,8 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
   {
     switch (featureID)
     {
+      case CQLPackage.RIGHTS_MANAGEMENT__NAME:
+        return getName();
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS:
         return getOperations();
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS2:
@@ -178,6 +224,9 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
   {
     switch (featureID)
     {
+      case CQLPackage.RIGHTS_MANAGEMENT__NAME:
+        setName((String)newValue);
+        return;
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS:
         getOperations().clear();
         getOperations().addAll((Collection<? extends String>)newValue);
@@ -203,6 +252,9 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
   {
     switch (featureID)
     {
+      case CQLPackage.RIGHTS_MANAGEMENT__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS:
         getOperations().clear();
         return;
@@ -226,6 +278,8 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
   {
     switch (featureID)
     {
+      case CQLPackage.RIGHTS_MANAGEMENT__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS:
         return operations != null && !operations.isEmpty();
       case CQLPackage.RIGHTS_MANAGEMENT__OPERATIONS2:
@@ -247,7 +301,9 @@ public class RightsManagementImpl extends CommandImpl implements RightsManagemen
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (operations: ");
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", operations: ");
     result.append(operations);
     result.append(", operations2: ");
     result.append(operations2);

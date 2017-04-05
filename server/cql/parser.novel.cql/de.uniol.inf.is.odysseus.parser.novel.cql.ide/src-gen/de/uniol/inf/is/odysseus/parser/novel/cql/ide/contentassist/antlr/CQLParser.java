@@ -57,6 +57,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateAccess().getTypeAlternatives_2_0(), "rule__Create__TypeAlternatives_2_0");
 					put(grammarAccess.getCreateAccess().getCreateAlternatives_3_0(), "rule__Create__CreateAlternatives_3_0");
 					put(grammarAccess.getCreateDatabaseSinkAccess().getOptionAlternatives_6_1_0(), "rule__CreateDatabaseSink__OptionAlternatives_6_1_0");
+					put(grammarAccess.getContextStoreTypeAccess().getAlternatives(), "rule__ContextStoreType__Alternatives");
 					put(grammarAccess.getStreamToAccess().getAlternatives_4(), "rule__StreamTo__Alternatives_4");
 					put(grammarAccess.getDropStreamAccess().getNameAlternatives_2_0(), "rule__DropStream__NameAlternatives_2_0");
 					put(grammarAccess.getUserManagementAccess().getNameAlternatives_1_0(), "rule__UserManagement__NameAlternatives_1_0");
@@ -118,6 +119,11 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getGroup_9(), "rule__CreateDataBaseGenericConnection__Group_9__0");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getGroup_10(), "rule__CreateDataBaseGenericConnection__Group_10__0");
 					put(grammarAccess.getDropDatabaseConnectionAccess().getGroup(), "rule__DropDatabaseConnection__Group__0");
+					put(grammarAccess.getContextStoreTypeAccess().getGroup_1(), "rule__ContextStoreType__Group_1__0");
+					put(grammarAccess.getContextStoreTypeAccess().getGroup_1_2(), "rule__ContextStoreType__Group_1_2__0");
+					put(grammarAccess.getCreateContextStoreAccess().getGroup(), "rule__CreateContextStore__Group__0");
+					put(grammarAccess.getDropContextStoreAccess().getGroup(), "rule__DropContextStore__Group__0");
+					put(grammarAccess.getDropContextStoreAccess().getGroup_5(), "rule__DropContextStore__Group_5__0");
 					put(grammarAccess.getStreamToAccess().getGroup(), "rule__StreamTo__Group__0");
 					put(grammarAccess.getDropStreamAccess().getGroup(), "rule__DropStream__Group__0");
 					put(grammarAccess.getDropStreamAccess().getGroup_4(), "rule__DropStream__Group_4__0");
@@ -259,6 +265,14 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordAssignment_10_4(), "rule__CreateDataBaseGenericConnection__PasswordAssignment_10_4");
 					put(grammarAccess.getCreateDataBaseGenericConnectionAccess().getLazyAssignment_10_5(), "rule__CreateDataBaseGenericConnection__LazyAssignment_10_5");
 					put(grammarAccess.getDropDatabaseConnectionAccess().getNameAssignment_4(), "rule__DropDatabaseConnection__NameAssignment_4");
+					put(grammarAccess.getContextStoreTypeAccess().getTypeAssignment_0(), "rule__ContextStoreType__TypeAssignment_0");
+					put(grammarAccess.getContextStoreTypeAccess().getTypeAssignment_1_0(), "rule__ContextStoreType__TypeAssignment_1_0");
+					put(grammarAccess.getContextStoreTypeAccess().getSizeAssignment_1_1(), "rule__ContextStoreType__SizeAssignment_1_1");
+					put(grammarAccess.getContextStoreTypeAccess().getPartitionAssignment_1_2_2(), "rule__ContextStoreType__PartitionAssignment_1_2_2");
+					put(grammarAccess.getCreateContextStoreAccess().getAttributesAssignment_4(), "rule__CreateContextStore__AttributesAssignment_4");
+					put(grammarAccess.getCreateContextStoreAccess().getContextTypeAssignment_6(), "rule__CreateContextStore__ContextTypeAssignment_6");
+					put(grammarAccess.getDropContextStoreAccess().getNameAssignment_4(), "rule__DropContextStore__NameAssignment_4");
+					put(grammarAccess.getDropContextStoreAccess().getExistsAssignment_5_1(), "rule__DropContextStore__ExistsAssignment_5_1");
 					put(grammarAccess.getStreamToAccess().getNameAssignment_3(), "rule__StreamTo__NameAssignment_3");
 					put(grammarAccess.getStreamToAccess().getStatementAssignment_4_0(), "rule__StreamTo__StatementAssignment_4_0");
 					put(grammarAccess.getStreamToAccess().getInputnameAssignment_4_1(), "rule__StreamTo__InputnameAssignment_4_1");

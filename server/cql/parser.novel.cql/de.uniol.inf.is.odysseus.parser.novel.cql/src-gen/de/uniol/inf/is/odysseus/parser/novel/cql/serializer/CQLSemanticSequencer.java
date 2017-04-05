@@ -15,16 +15,19 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
@@ -143,6 +146,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
 				return; 
+			case CQLPackage.CONTEXT_STORE_TYPE:
+				sequence_ContextStoreType(context, (ContextStoreType) semanticObject); 
+				return; 
 			case CQLPackage.CREATE:
 				sequence_Create(context, (Create) semanticObject); 
 				return; 
@@ -154,6 +160,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.CREATE_CHANNEL_FRAMEWORK_VIA_PORT:
 				sequence_CreateChannelFrameworkViaPort(context, (CreateChannelFrameworkViaPort) semanticObject); 
+				return; 
+			case CQLPackage.CREATE_CONTEXT_STORE:
+				sequence_CreateContextStore(context, (CreateContextStore) semanticObject); 
 				return; 
 			case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC:
 				sequence_CreateDataBaseGenericConnection(context, (CreateDataBaseConnectionGeneric) semanticObject); 
@@ -172,6 +181,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.DATA_TYPE:
 				sequence_DataType(context, (DataType) semanticObject); 
+				return; 
+			case CQLPackage.DROP_CONTEXT_STORE:
+				sequence_DropContextStore(context, (DropContextStore) semanticObject); 
 				return; 
 			case CQLPackage.DROP_DATABASE_CONNECTION:
 				sequence_DropDatabaseConnection(context, (DropDatabaseConnection) semanticObject); 
@@ -728,7 +740,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         type=RoleManagement | 
 	 *         type=CreateDataBaseGenericConnection | 
 	 *         type=CreateDataBaseJDBCConnection | 
-	 *         type=DropDatabaseConnection
+	 *         type=DropDatabaseConnection | 
+	 *         type=CreateContextStore | 
+	 *         type=DropContextStore
 	 *     )
 	 */
 	protected void sequence_Command(ISerializationContext context, Command semanticObject) {
@@ -765,6 +779,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getComparisonAccess().getOpCOMPARE_OPERATORParserRuleCall_1_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getComparisonAccess().getRightPlusOrMinusParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ContextStoreType returns ContextStoreType
+	 *
+	 * Constraint:
+	 *     (type='SINGLE' | (type='MULTI' size=INT partition=INT?))
+	 */
+	protected void sequence_ContextStoreType(ISerializationContext context, ContextStoreType semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -833,6 +859,27 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getCreateChannelFrameworkViaPortAccess().getAttributesSchemaDefinitionParserRuleCall_0_0(), semanticObject.getAttributes());
 		feeder.accept(grammarAccess.getCreateChannelFrameworkViaPortAccess().getHostIDTerminalRuleCall_2_0(), semanticObject.getHost());
 		feeder.accept(grammarAccess.getCreateChannelFrameworkViaPortAccess().getPortINTTerminalRuleCall_4_0(), semanticObject.getPort());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     CreateContextStore returns CreateContextStore
+	 *
+	 * Constraint:
+	 *     (attributes=SchemaDefinition contextType=ContextStoreType)
+	 */
+	protected void sequence_CreateContextStore(ISerializationContext context, CreateContextStore semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_CONTEXT_STORE__ATTRIBUTES) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_CONTEXT_STORE__ATTRIBUTES));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.CREATE_CONTEXT_STORE__CONTEXT_TYPE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.CREATE_CONTEXT_STORE__CONTEXT_TYPE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getCreateContextStoreAccess().getAttributesSchemaDefinitionParserRuleCall_4_0(), semanticObject.getAttributes());
+		feeder.accept(grammarAccess.getCreateContextStoreAccess().getContextTypeContextStoreTypeParserRuleCall_6_0(), semanticObject.getContextType());
 		feeder.finish();
 	}
 	
@@ -948,6 +995,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     DropContextStore returns DropContextStore
+	 *
+	 * Constraint:
+	 *     (name=ID exists='EXISTS'?)
+	 */
+	protected void sequence_DropContextStore(ISerializationContext context, DropContextStore semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     DropDatabaseConnection returns DropDatabaseConnection
 	 *
 	 * Constraint:
@@ -955,8 +1014,8 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 */
 	protected void sequence_DropDatabaseConnection(ISerializationContext context, DropDatabaseConnection semanticObject) {
 		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMMAND__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMMAND__NAME));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.DROP_DATABASE_CONNECTION__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.DROP_DATABASE_CONNECTION__NAME));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getDropDatabaseConnectionAccess().getNameIDTerminalRuleCall_4_0(), semanticObject.getName());

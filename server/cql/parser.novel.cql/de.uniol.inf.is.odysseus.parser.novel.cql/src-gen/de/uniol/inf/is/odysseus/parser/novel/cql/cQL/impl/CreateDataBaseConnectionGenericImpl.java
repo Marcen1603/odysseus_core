@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getDriver <em>Driver</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getSource <em>Source</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CreateDataBaseConnectionGenericImpl#getHost <em>Host</em>}</li>
@@ -33,6 +34,26 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements CreateDataBaseConnectionGeneric
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The default value of the '{@link #getDriver() <em>Driver</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -192,6 +213,29 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   protected EClass eStaticClass()
   {
     return CQLPackage.Literals.CREATE_DATA_BASE_CONNECTION_GENERIC;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__NAME, oldName, name));
   }
 
   /**
@@ -365,6 +409,8 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__NAME:
+        return getName();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER:
         return getDriver();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
@@ -393,6 +439,9 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__NAME:
+        setName((String)newValue);
+        return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER:
         setDriver((String)newValue);
         return;
@@ -428,6 +477,9 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER:
         setDriver(DRIVER_EDEFAULT);
         return;
@@ -463,6 +515,8 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
   {
     switch (featureID)
     {
+      case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER:
         return DRIVER_EDEFAULT == null ? driver != null : !DRIVER_EDEFAULT.equals(driver);
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE:
@@ -492,7 +546,9 @@ public class CreateDataBaseConnectionGenericImpl extends CommandImpl implements 
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (driver: ");
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", driver: ");
     result.append(driver);
     result.append(", source: ");
     result.append(source);

@@ -14,7 +14,6 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Command">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Command/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Command/name"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Select">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select/distinct"/>
@@ -108,6 +107,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateView/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//CreateView/select"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//ContextStoreType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ContextStoreType/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ContextStoreType/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ContextStoreType/partition"/>
+    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//StreamTo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//StreamTo/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//StreamTo/statement"/>
@@ -133,12 +137,14 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//ExpressionComponentAsAttribute"/>
     <genClasses ecoreClass="CQL.ecore#//CreateDataBaseConnectionJDBC">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/server"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/user"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/password"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/lazy"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//CreateDataBaseConnectionGeneric">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/driver"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/source"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/host"/>
@@ -147,22 +153,36 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/password"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionGeneric/lazy"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//DropDatabaseConnection"/>
+    <genClasses ecoreClass="CQL.ecore#//DropDatabaseConnection">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropDatabaseConnection/name"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//CreateContextStore">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//CreateContextStore/attributes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//CreateContextStore/contextType"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//DropContextStore">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropContextStore/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropContextStore/exists"/>
+    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//DropStream">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropStream/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropStream/stream"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DropStream/exists"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//UserManagement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserManagement/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserManagement/subject"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserManagement/subjectName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//UserManagement/password"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//RightsManagement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsManagement/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsManagement/operations"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsManagement/operations2"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RightsManagement/user"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//RoleManagement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RoleManagement/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RoleManagement/operations"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//RoleManagement/user"/>
     </genClasses>

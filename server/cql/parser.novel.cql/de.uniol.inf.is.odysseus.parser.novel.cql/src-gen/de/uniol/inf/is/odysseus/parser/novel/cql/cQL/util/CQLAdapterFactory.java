@@ -191,6 +191,11 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createCreateViewAdapter();
       }
       @Override
+      public Adapter caseContextStoreType(ContextStoreType object)
+      {
+        return createContextStoreTypeAdapter();
+      }
+      @Override
       public Adapter caseStreamTo(StreamTo object)
       {
         return createStreamToAdapter();
@@ -249,6 +254,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseDropDatabaseConnection(DropDatabaseConnection object)
       {
         return createDropDatabaseConnectionAdapter();
+      }
+      @Override
+      public Adapter caseCreateContextStore(CreateContextStore object)
+      {
+        return createCreateContextStoreAdapter();
+      }
+      @Override
+      public Adapter caseDropContextStore(DropContextStore object)
+      {
+        return createDropContextStoreAdapter();
       }
       @Override
       public Adapter caseDropStream(DropStream object)
@@ -723,6 +738,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType <em>Context Store Type</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType
+   * @generated
+   */
+  public Adapter createContextStoreTypeAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo <em>Stream To</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -898,6 +928,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createDropDatabaseConnectionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore <em>Create Context Store</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore
+   * @generated
+   */
+  public Adapter createCreateContextStoreAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore <em>Drop Context Store</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore
+   * @generated
+   */
+  public Adapter createDropContextStoreAdapter()
   {
     return null;
   }

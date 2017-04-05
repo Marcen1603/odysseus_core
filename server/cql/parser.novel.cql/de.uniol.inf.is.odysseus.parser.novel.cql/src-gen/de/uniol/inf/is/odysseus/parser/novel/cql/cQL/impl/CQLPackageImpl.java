@@ -15,16 +15,19 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
@@ -242,6 +245,13 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass contextStoreTypeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass streamToEClass = null;
 
   /**
@@ -320,6 +330,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass dropDatabaseConnectionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass createContextStoreEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass dropContextStoreEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -589,16 +613,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EReference getCommand_Type()
   {
     return (EReference)commandEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getCommand_Name()
-  {
-    return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1326,6 +1340,46 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getContextStoreType()
+  {
+    return contextStoreTypeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getContextStoreType_Type()
+  {
+    return (EAttribute)contextStoreTypeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getContextStoreType_Size()
+  {
+    return (EAttribute)contextStoreTypeEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getContextStoreType_Partition()
+  {
+    return (EAttribute)contextStoreTypeEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getStreamTo()
   {
     return streamToEClass;
@@ -1516,7 +1570,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionJDBC_Server()
+  public EAttribute getCreateDataBaseConnectionJDBC_Name()
   {
     return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(0);
   }
@@ -1526,7 +1580,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionJDBC_User()
+  public EAttribute getCreateDataBaseConnectionJDBC_Server()
   {
     return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(1);
   }
@@ -1536,7 +1590,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionJDBC_Password()
+  public EAttribute getCreateDataBaseConnectionJDBC_User()
   {
     return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(2);
   }
@@ -1546,9 +1600,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionJDBC_Lazy()
+  public EAttribute getCreateDataBaseConnectionJDBC_Password()
   {
     return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionJDBC_Lazy()
+  {
+    return (EAttribute)createDataBaseConnectionJDBCEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1566,7 +1630,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Driver()
+  public EAttribute getCreateDataBaseConnectionGeneric_Name()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(0);
   }
@@ -1576,7 +1640,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Source()
+  public EAttribute getCreateDataBaseConnectionGeneric_Driver()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(1);
   }
@@ -1586,7 +1650,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Host()
+  public EAttribute getCreateDataBaseConnectionGeneric_Source()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(2);
   }
@@ -1596,7 +1660,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Port()
+  public EAttribute getCreateDataBaseConnectionGeneric_Host()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(3);
   }
@@ -1606,7 +1670,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_User()
+  public EAttribute getCreateDataBaseConnectionGeneric_Port()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(4);
   }
@@ -1616,7 +1680,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Password()
+  public EAttribute getCreateDataBaseConnectionGeneric_User()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(5);
   }
@@ -1626,9 +1690,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCreateDataBaseConnectionGeneric_Lazy()
+  public EAttribute getCreateDataBaseConnectionGeneric_Password()
   {
     return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getCreateDataBaseConnectionGeneric_Lazy()
+  {
+    return (EAttribute)createDataBaseConnectionGenericEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1646,6 +1720,76 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getDropDatabaseConnection_Name()
+  {
+    return (EAttribute)dropDatabaseConnectionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getCreateContextStore()
+  {
+    return createContextStoreEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCreateContextStore_Attributes()
+  {
+    return (EReference)createContextStoreEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCreateContextStore_ContextType()
+  {
+    return (EReference)createContextStoreEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getDropContextStore()
+  {
+    return dropContextStoreEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDropContextStore_Name()
+  {
+    return (EAttribute)dropContextStoreEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDropContextStore_Exists()
+  {
+    return (EAttribute)dropContextStoreEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getDropStream()
   {
     return dropStreamEClass;
@@ -1656,7 +1800,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDropStream_Stream()
+  public EAttribute getDropStream_Name()
   {
     return (EAttribute)dropStreamEClass.getEStructuralFeatures().get(0);
   }
@@ -1666,9 +1810,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDropStream_Exists()
+  public EAttribute getDropStream_Stream()
   {
     return (EAttribute)dropStreamEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDropStream_Exists()
+  {
+    return (EAttribute)dropStreamEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1686,7 +1840,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserManagement_Subject()
+  public EAttribute getUserManagement_Name()
   {
     return (EAttribute)userManagementEClass.getEStructuralFeatures().get(0);
   }
@@ -1696,7 +1850,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserManagement_SubjectName()
+  public EAttribute getUserManagement_Subject()
   {
     return (EAttribute)userManagementEClass.getEStructuralFeatures().get(1);
   }
@@ -1706,9 +1860,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getUserManagement_Password()
+  public EAttribute getUserManagement_SubjectName()
   {
     return (EAttribute)userManagementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getUserManagement_Password()
+  {
+    return (EAttribute)userManagementEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1726,7 +1890,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsManagement_Operations()
+  public EAttribute getRightsManagement_Name()
   {
     return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(0);
   }
@@ -1736,7 +1900,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsManagement_Operations2()
+  public EAttribute getRightsManagement_Operations()
   {
     return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(1);
   }
@@ -1746,9 +1910,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRightsManagement_User()
+  public EAttribute getRightsManagement_Operations2()
   {
     return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRightsManagement_User()
+  {
+    return (EAttribute)rightsManagementEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1766,7 +1940,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRoleManagement_Operations()
+  public EAttribute getRoleManagement_Name()
   {
     return (EAttribute)roleManagementEClass.getEStructuralFeatures().get(0);
   }
@@ -1776,9 +1950,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRoleManagement_User()
+  public EAttribute getRoleManagement_Operations()
   {
     return (EAttribute)roleManagementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRoleManagement_User()
+  {
+    return (EAttribute)roleManagementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -2299,7 +2483,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     commandEClass = createEClass(COMMAND);
     createEReference(commandEClass, COMMAND__TYPE);
-    createEAttribute(commandEClass, COMMAND__NAME);
 
     selectEClass = createEClass(SELECT);
     createEAttribute(selectEClass, SELECT__DISTINCT);
@@ -2393,6 +2576,11 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(createViewEClass, CREATE_VIEW__NAME);
     createEReference(createViewEClass, CREATE_VIEW__SELECT);
 
+    contextStoreTypeEClass = createEClass(CONTEXT_STORE_TYPE);
+    createEAttribute(contextStoreTypeEClass, CONTEXT_STORE_TYPE__TYPE);
+    createEAttribute(contextStoreTypeEClass, CONTEXT_STORE_TYPE__SIZE);
+    createEAttribute(contextStoreTypeEClass, CONTEXT_STORE_TYPE__PARTITION);
+
     streamToEClass = createEClass(STREAM_TO);
     createEAttribute(streamToEClass, STREAM_TO__NAME);
     createEReference(streamToEClass, STREAM_TO__STATEMENT);
@@ -2421,12 +2609,14 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     expressionComponentAsAttributeEClass = createEClass(EXPRESSION_COMPONENT_AS_ATTRIBUTE);
 
     createDataBaseConnectionJDBCEClass = createEClass(CREATE_DATA_BASE_CONNECTION_JDBC);
+    createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__NAME);
     createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__SERVER);
     createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__USER);
     createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__PASSWORD);
     createEAttribute(createDataBaseConnectionJDBCEClass, CREATE_DATA_BASE_CONNECTION_JDBC__LAZY);
 
     createDataBaseConnectionGenericEClass = createEClass(CREATE_DATA_BASE_CONNECTION_GENERIC);
+    createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__NAME);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__DRIVER);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__SOURCE);
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__HOST);
@@ -2436,22 +2626,35 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(createDataBaseConnectionGenericEClass, CREATE_DATA_BASE_CONNECTION_GENERIC__LAZY);
 
     dropDatabaseConnectionEClass = createEClass(DROP_DATABASE_CONNECTION);
+    createEAttribute(dropDatabaseConnectionEClass, DROP_DATABASE_CONNECTION__NAME);
+
+    createContextStoreEClass = createEClass(CREATE_CONTEXT_STORE);
+    createEReference(createContextStoreEClass, CREATE_CONTEXT_STORE__ATTRIBUTES);
+    createEReference(createContextStoreEClass, CREATE_CONTEXT_STORE__CONTEXT_TYPE);
+
+    dropContextStoreEClass = createEClass(DROP_CONTEXT_STORE);
+    createEAttribute(dropContextStoreEClass, DROP_CONTEXT_STORE__NAME);
+    createEAttribute(dropContextStoreEClass, DROP_CONTEXT_STORE__EXISTS);
 
     dropStreamEClass = createEClass(DROP_STREAM);
+    createEAttribute(dropStreamEClass, DROP_STREAM__NAME);
     createEAttribute(dropStreamEClass, DROP_STREAM__STREAM);
     createEAttribute(dropStreamEClass, DROP_STREAM__EXISTS);
 
     userManagementEClass = createEClass(USER_MANAGEMENT);
+    createEAttribute(userManagementEClass, USER_MANAGEMENT__NAME);
     createEAttribute(userManagementEClass, USER_MANAGEMENT__SUBJECT);
     createEAttribute(userManagementEClass, USER_MANAGEMENT__SUBJECT_NAME);
     createEAttribute(userManagementEClass, USER_MANAGEMENT__PASSWORD);
 
     rightsManagementEClass = createEClass(RIGHTS_MANAGEMENT);
+    createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__NAME);
     createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__OPERATIONS);
     createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__OPERATIONS2);
     createEAttribute(rightsManagementEClass, RIGHTS_MANAGEMENT__USER);
 
     roleManagementEClass = createEClass(ROLE_MANAGEMENT);
+    createEAttribute(roleManagementEClass, ROLE_MANAGEMENT__NAME);
     createEAttribute(roleManagementEClass, ROLE_MANAGEMENT__OPERATIONS);
     createEAttribute(roleManagementEClass, ROLE_MANAGEMENT__USER);
 
@@ -2557,6 +2760,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createDataBaseConnectionJDBCEClass.getESuperTypes().add(this.getCommand());
     createDataBaseConnectionGenericEClass.getESuperTypes().add(this.getCommand());
     dropDatabaseConnectionEClass.getESuperTypes().add(this.getCommand());
+    createContextStoreEClass.getESuperTypes().add(this.getCommand());
+    dropContextStoreEClass.getESuperTypes().add(this.getCommand());
     dropStreamEClass.getESuperTypes().add(this.getCommand());
     userManagementEClass.getESuperTypes().add(this.getCommand());
     rightsManagementEClass.getESuperTypes().add(this.getCommand());
@@ -2588,7 +2793,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCommand_Type(), this.getCommand(), null, "type", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(selectEClass, Select.class, "Select", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getSelect_Distinct(), ecorePackage.getEString(), "distinct", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2682,6 +2886,11 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getCreateView_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getCreateView_Select(), this.getInnerSelect(), null, "select", null, 0, 1, CreateView.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(contextStoreTypeEClass, ContextStoreType.class, "ContextStoreType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getContextStoreType_Type(), ecorePackage.getEString(), "type", null, 0, 1, ContextStoreType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getContextStoreType_Size(), ecorePackage.getEInt(), "size", null, 0, 1, ContextStoreType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getContextStoreType_Partition(), ecorePackage.getEInt(), "partition", null, 0, 1, ContextStoreType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(streamToEClass, StreamTo.class, "StreamTo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStreamTo_Name(), ecorePackage.getEString(), "name", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStreamTo_Statement(), this.getInnerSelect2(), null, "statement", null, 0, 1, StreamTo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2710,12 +2919,14 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(expressionComponentAsAttributeEClass, ExpressionComponentAsAttribute.class, "ExpressionComponentAsAttribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(createDataBaseConnectionJDBCEClass, CreateDataBaseConnectionJDBC.class, "CreateDataBaseConnectionJDBC", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateDataBaseConnectionJDBC_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionJDBC_Server(), ecorePackage.getEString(), "server", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionJDBC_User(), ecorePackage.getEString(), "user", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionJDBC_Password(), ecorePackage.getEString(), "password", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionJDBC_Lazy(), ecorePackage.getEString(), "lazy", null, 0, 1, CreateDataBaseConnectionJDBC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(createDataBaseConnectionGenericEClass, CreateDataBaseConnectionGeneric.class, "CreateDataBaseConnectionGeneric", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCreateDataBaseConnectionGeneric_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_Driver(), ecorePackage.getEString(), "driver", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_Source(), ecorePackage.getEString(), "source", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDataBaseConnectionGeneric_Host(), ecorePackage.getEString(), "host", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2725,22 +2936,35 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getCreateDataBaseConnectionGeneric_Lazy(), ecorePackage.getEString(), "lazy", null, 0, 1, CreateDataBaseConnectionGeneric.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dropDatabaseConnectionEClass, DropDatabaseConnection.class, "DropDatabaseConnection", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDropDatabaseConnection_Name(), ecorePackage.getEString(), "name", null, 0, 1, DropDatabaseConnection.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(createContextStoreEClass, CreateContextStore.class, "CreateContextStore", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getCreateContextStore_Attributes(), this.getSchemaDefinition(), null, "attributes", null, 0, 1, CreateContextStore.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCreateContextStore_ContextType(), this.getContextStoreType(), null, "contextType", null, 0, 1, CreateContextStore.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(dropContextStoreEClass, DropContextStore.class, "DropContextStore", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDropContextStore_Name(), ecorePackage.getEString(), "name", null, 0, 1, DropContextStore.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDropContextStore_Exists(), ecorePackage.getEString(), "exists", null, 0, 1, DropContextStore.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dropStreamEClass, DropStream.class, "DropStream", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDropStream_Name(), ecorePackage.getEString(), "name", null, 0, 1, DropStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDropStream_Stream(), ecorePackage.getEString(), "stream", null, 0, 1, DropStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDropStream_Exists(), ecorePackage.getEString(), "exists", null, 0, 1, DropStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(userManagementEClass, UserManagement.class, "UserManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUserManagement_Name(), ecorePackage.getEString(), "name", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getUserManagement_Subject(), ecorePackage.getEString(), "subject", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getUserManagement_SubjectName(), ecorePackage.getEString(), "subjectName", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getUserManagement_Password(), ecorePackage.getEString(), "password", null, 0, 1, UserManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(rightsManagementEClass, RightsManagement.class, "RightsManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRightsManagement_Name(), ecorePackage.getEString(), "name", null, 0, 1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRightsManagement_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRightsManagement_Operations2(), ecorePackage.getEString(), "operations2", null, 0, -1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRightsManagement_User(), ecorePackage.getEString(), "user", null, 0, 1, RightsManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(roleManagementEClass, RoleManagement.class, "RoleManagement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRoleManagement_Name(), ecorePackage.getEString(), "name", null, 0, 1, RoleManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRoleManagement_Operations(), ecorePackage.getEString(), "operations", null, 0, -1, RoleManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRoleManagement_User(), ecorePackage.getEString(), "user", null, 0, 1, RoleManagement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

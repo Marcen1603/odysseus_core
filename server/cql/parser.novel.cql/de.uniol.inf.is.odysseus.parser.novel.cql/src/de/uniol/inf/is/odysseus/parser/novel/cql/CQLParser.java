@@ -26,11 +26,20 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Injector;
 
+import de.uniol.inf.is.odysseus.context.ContextManagementException;
+import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
+import de.uniol.inf.is.odysseus.context.store.IContextStore;
+import de.uniol.inf.is.odysseus.context.store.types.MultiElementStore;
+import de.uniol.inf.is.odysseus.context.store.types.PartitionedMultiElementStore;
+import de.uniol.inf.is.odysseus.context.store.types.SingleElementStore;
 import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -57,9 +66,13 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
+import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
@@ -70,6 +83,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.NameProvider;
+import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 public class CQLParser implements IQueryParser 
 {
@@ -141,7 +156,7 @@ public class CQLParser implements IQueryParser
 						// There are no pql operators for {@link CommandImpl}, instead get the
 						// corresponding executor command like {@link CreateStreamCommand} for
 						// the given command.
-						IExecutorCommand command = getExecutorCommand((Command) component, user);
+						IExecutorCommand command = getExecutorCommand((Command) component, user, dd, metaAttribute, executorCommands);
 						if(command != null)
 							executorCommands.add(command);
 					}
@@ -187,9 +202,9 @@ public class CQLParser implements IQueryParser
 		return executorCommands;
 	}
 
-	private IExecutorCommand getExecutorCommand(Command command, ISession user)
+	private IExecutorCommand getExecutorCommand(Command command, ISession user,IDataDictionary dictionary, IMetaAttribute metaattribute, List<IExecutorCommand> commands)
 	{
-		boolean databaseCommand = false;
+		boolean noExecutorCommand = false;
 		IExecutorCommand executorCommand = null;
 		EObject commandType = command.getType();
 		if(commandType instanceof DropStream)
@@ -267,27 +282,110 @@ public class CQLParser implements IQueryParser
 		}
 		else if(commandType instanceof CreateDataBaseConnectionGeneric)
 		{
-			databaseCommand = true;
+			noExecutorCommand = true;
 			CreateDataBaseConnectionGeneric cast = ((CreateDataBaseConnectionGeneric) commandType);
 			createDatabaseConnection(cast.getName(), cast.getDriver(), cast.getSource(), cast.getHost(), cast.getPort(), cast.getUser(), cast.getPassword(), cast.getLazy());
 		}
 		else if(commandType instanceof CreateDataBaseConnectionJDBC)
 		{
-			databaseCommand = true;
+			noExecutorCommand = true;
 			CreateDataBaseConnectionJDBC cast = ((CreateDataBaseConnectionJDBC) commandType);
 			createDatabaseConnection(cast.getName(), null, null, cast.getServer(), -1, cast.getUser(), cast.getPassword(), cast.getLazy());
 		}
 		else if(commandType instanceof DropDatabaseConnection)
 		{
-			databaseCommand = true;
+			noExecutorCommand = true;
 			DatabaseConnectionDictionary.removeConnection(((DropDatabaseConnection) commandType).getName());
 		}
+		else if(commandType instanceof CreateContextStore)
+		{
+			noExecutorCommand = true;
+			CreateContextStore cast = ((CreateContextStore) commandType);
+			createContextStore(cast.getAttributes().getName(), cast.getContextType(), cast.getAttributes(), user, dictionary, metaattribute, commands);
+		}
+		else if(commandType instanceof DropContextStore)
+		{
+			noExecutorCommand = true;
+			DropContextStore cast = ((DropContextStore) commandType);
+			String name = cast.getName();
+			if(ContextStoreManager.storeExists(name))
+				ContextStoreManager.removeStore(name);
+			else if(cast.getExists() != null)
+					throw new QueryParseException("There is no store named \""+name+"\"");
+		}
 		
-		if(!databaseCommand && executorCommand == null)
+		if(!noExecutorCommand && executorCommand == null)
 			throw new QueryParseException("Command could no be translated: " + commandType.toString());
 		return executorCommand;
 	}
-	 
+	 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void createContextStore(String name, ContextStoreType contextType, SchemaDefinition definitions, ISession session, 
+			IDataDictionary datadictionary, IMetaAttribute metaAttribute , List<IExecutorCommand> commands)
+	{
+		
+		String schemaName = "ContextStore:" + name;
+		List<SDFAttribute> attributes = new ArrayList<>();
+		for(int i = 0; i < definitions.getArguments().size() - 1; i = i + 2)
+		{
+			SDFAttribute newAttribute = new SDFAttribute(schemaName, definitions.getArguments().get(i), new SDFDatatype(definitions.getArguments().get(i + 1)));
+			attributes.add(newAttribute);
+		}
+		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema(schemaName, attributes);
+		
+		
+		ITimeIntervalSweepArea sa;
+		try 
+		{
+			sa = (ITimeIntervalSweepArea) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+		} 
+		catch (InstantiationException | IllegalAccessException e1) 
+		{
+			throw new QueryParseException(e1);
+		}
+		
+		int size = -1;
+		int partitionedBy = -1;
+		switch(contextType.getType().toUpperCase())
+		{
+		case("SINGLE"):
+			size = 1;
+		break;
+		case("MULTI"):
+			size = contextType.getSize();
+			partitionedBy = contextType.getPartition();
+		break;
+		default:
+			throw new QueryParseException("Type for context store does not exist!");
+		}
+		
+        IContextStore<Tuple<? extends ITimeInterval>> store;
+        if (size == 1) 
+        {
+            store = new SingleElementStore<Tuple<? extends ITimeInterval>>(name, schema);
+        }
+        else 
+        {
+        	if(partitionedBy < 0)
+        		store = new MultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size, sa);
+        	else
+        	{
+        		if(partitionedBy >= schema.size())
+        			throw new QueryParseException("Partition key index is not compatiple with the schema!");
+        		store = new PartitionedMultiElementStore<Tuple<? extends ITimeInterval>>(name, schema, size, partitionedBy);
+        	}
+        }
+
+		try 
+		{
+			ContextStoreManager.addStore(name, store);
+		} 
+		catch (ContextManagementException e) 
+		{
+			throw new QueryParseException(e);
+		}
+	}
+	
 	private void createDatabaseConnection(String connectionName, String dbms, String dbname, String host, int port, String user, String pass, String lazy)
 	{
 		if (DatabaseConnectionDictionary.isConnectionExisting(connectionName))

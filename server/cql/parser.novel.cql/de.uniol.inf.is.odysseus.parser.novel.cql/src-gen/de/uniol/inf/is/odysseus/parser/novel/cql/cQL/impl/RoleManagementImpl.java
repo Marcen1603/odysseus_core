@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl#getOperations <em>Operations</em>}</li>
  *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.RoleManagementImpl#getUser <em>User</em>}</li>
  * </ul>
@@ -34,6 +35,26 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
  */
 public class RoleManagementImpl extends CommandImpl implements RoleManagement
 {
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getOperations() <em>Operations</em>}' attribute list.
    * <!-- begin-user-doc -->
@@ -90,6 +111,29 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.ROLE_MANAGEMENT__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<String> getOperations()
   {
     if (operations == null)
@@ -132,6 +176,8 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
   {
     switch (featureID)
     {
+      case CQLPackage.ROLE_MANAGEMENT__NAME:
+        return getName();
       case CQLPackage.ROLE_MANAGEMENT__OPERATIONS:
         return getOperations();
       case CQLPackage.ROLE_MANAGEMENT__USER:
@@ -151,6 +197,9 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
   {
     switch (featureID)
     {
+      case CQLPackage.ROLE_MANAGEMENT__NAME:
+        setName((String)newValue);
+        return;
       case CQLPackage.ROLE_MANAGEMENT__OPERATIONS:
         getOperations().clear();
         getOperations().addAll((Collection<? extends String>)newValue);
@@ -172,6 +221,9 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
   {
     switch (featureID)
     {
+      case CQLPackage.ROLE_MANAGEMENT__NAME:
+        setName(NAME_EDEFAULT);
+        return;
       case CQLPackage.ROLE_MANAGEMENT__OPERATIONS:
         getOperations().clear();
         return;
@@ -192,6 +244,8 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
   {
     switch (featureID)
     {
+      case CQLPackage.ROLE_MANAGEMENT__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case CQLPackage.ROLE_MANAGEMENT__OPERATIONS:
         return operations != null && !operations.isEmpty();
       case CQLPackage.ROLE_MANAGEMENT__USER:
@@ -211,7 +265,9 @@ public class RoleManagementImpl extends CommandImpl implements RoleManagement
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (operations: ");
+    result.append(" (name: ");
+    result.append(name);
+    result.append(", operations: ");
     result.append(operations);
     result.append(", user: ");
     result.append(user);
