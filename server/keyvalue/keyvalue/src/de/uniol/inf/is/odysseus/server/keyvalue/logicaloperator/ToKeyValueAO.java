@@ -15,8 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -58,9 +62,11 @@ public class ToKeyValueAO extends UnaryLogicalOp {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(0).getURI(),
-				(Class<? extends IStreamObject<?>>) KeyValueObject.class, getInputSchema(0).getAttributes(),
-				getInputSchema());
+		// We need to remove the attribute list. KeyValueObjects do not have an
+		// attribute list.
+		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
+				(Class<? extends IStreamObject<?>>) KeyValueObject.class, emptyAttributes, getInputSchema());
 
 		setOutputSchema(newOutputSchema);
 		return newOutputSchema;

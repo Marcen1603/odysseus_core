@@ -58,7 +58,12 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 	@Override
 	protected void process_next(Tuple<M> input, int port) {
 
-		KeyValueObject<M> output = convertToKeyValue(input, getOutputSchema());
+		/*
+		 * We need to use the input schema, not the output schema. As we as a
+		 * keyValue do not have any output schema (except meta schema), we would
+		 * not be able to use the input attributes.
+		 */
+		KeyValueObject<M> output = convertToKeyValue(input, getInputSchema(port));
 		if (output != null) {
 			output.setMetadata((M) input.getMetadata().clone());
 			transfer(output);

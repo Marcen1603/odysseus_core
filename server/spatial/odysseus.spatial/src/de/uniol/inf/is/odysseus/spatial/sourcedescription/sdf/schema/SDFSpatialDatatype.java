@@ -22,9 +22,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 public class SDFSpatialDatatype extends SDFDatatype {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6644927317015629981L;
 
 	public SDFSpatialDatatype(String URI) {
