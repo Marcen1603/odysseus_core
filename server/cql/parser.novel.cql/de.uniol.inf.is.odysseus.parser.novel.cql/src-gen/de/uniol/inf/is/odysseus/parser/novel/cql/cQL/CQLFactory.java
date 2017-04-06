@@ -132,6 +132,15 @@ public interface CQLFactory extends EFactory
   ExpressionComponent createExpressionComponent();
 
   /**
+   * Returns a new object of class '<em>Starthing</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Starthing</em>'.
+   * @generated
+   */
+  Starthing createStarthing();
+
+  /**
    * Returns a new object of class '<em>Set Operator</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -310,6 +319,24 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Function createFunction();
+
+  /**
+   * Returns a new object of class '<em>Star Expression</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Star Expression</em>'.
+   * @generated
+   */
+  StarExpression createStarExpression();
+
+  /**
+   * Returns a new object of class '<em>Star</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Star</em>'.
+   * @generated
+   */
+  Star createStar();
 
   /**
    * Returns a new object of class '<em>Expression Component As Attribute</em>'.

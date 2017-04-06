@@ -21,8 +21,6 @@ CONNECTION : ('C'|'c')('O'|'o')('N'|'n')('N'|'n')('E'|'e')('C'|'c')('T'|'t')('I'
 
 DIFFERENCE : ('D'|'d')('I'|'i')('F'|'f')('F'|'f')('E'|'e')('R'|'r')('E'|'e')('N'|'n')('C'|'c')('E'|'e');
 
-IDENTIFIED : ('I'|'i')('D'|'d')('E'|'e')('N'|'n')('T'|'t')('I'|'i')('F'|'f')('I'|'i')('E'|'e')('D'|'d');
-
 PARTITION : ('P'|'p')('A'|'a')('R'|'r')('T'|'t')('I'|'i')('T'|'t')('I'|'i')('O'|'o')('N'|'n');
 
 TRANSPORT : ('T'|'t')('R'|'r')('A'|'a')('N'|'n')('S'|'s')('P'|'p')('O'|'o')('R'|'r')('T'|'t');
@@ -56,6 +54,8 @@ CREATE : ('C'|'c')('R'|'r')('E'|'e')('A'|'a')('T'|'t')('E'|'e');
 EXISTS : ('E'|'e')('X'|'x')('I'|'i')('S'|'s')('T'|'t')('S'|'s');
 
 HAVING : ('H'|'h')('A'|'a')('V'|'v')('I'|'i')('N'|'n')('G'|'g');
+
+IDFIED : ('I'|'i')('D'|'d')('F'|'f')('I'|'i')('E'|'e')('D'|'d');
 
 REVOKE : ('R'|'r')('E'|'e')('V'|'v')('O'|'o')('K'|'k')('E'|'e');
 
@@ -173,7 +173,11 @@ CircumflexAccent : '^';
 
 // Rules duplicated to allow inter-rule references
 
-RULE_ID : ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;
+RULE_ID : RULE_LETTER (RULE_LETTER|RULE_SPECIAL_CHARS|RULE_INT)*;
+
+fragment RULE_LETTER : ('a'..'z'|'A'..'Z');
+
+fragment RULE_SPECIAL_CHARS : (':'|'_'|'{'|'}');
 
 RULE_FLOAT : RULE_INT '.' RULE_INT;
 

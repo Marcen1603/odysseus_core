@@ -1,11 +1,11 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.AttributeStruct;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class SourceStruct {
@@ -59,6 +59,7 @@ public class SourceStruct {
   public AttributeStruct findbyName(final String name) {
     boolean _contains = name.contains(".");
     if (_contains) {
+      InputOutput.<String>println(("findbyName::" + name));
       String[] split = name.split("\\.");
       boolean _equals = split[0].equals(this.sourcename);
       if (_equals) {
@@ -144,8 +145,8 @@ public class SourceStruct {
   public boolean containsAttribute(final String attributename) {
     boolean _xifexpression = false;
     AttributeStruct _findbyName = this.findbyName(attributename);
-    boolean _notEquals = (!Objects.equal(_findbyName, null));
-    if (_notEquals) {
+    boolean _tripleNotEquals = (_findbyName != null);
+    if (_tripleNotEquals) {
       _xifexpression = true;
     } else {
       _xifexpression = false;

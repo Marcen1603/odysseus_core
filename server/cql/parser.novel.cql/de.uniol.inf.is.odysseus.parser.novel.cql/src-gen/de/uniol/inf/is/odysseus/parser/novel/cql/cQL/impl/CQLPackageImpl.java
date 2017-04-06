@@ -55,6 +55,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
@@ -162,6 +165,13 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass expressionComponentEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass starthingEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -302,6 +312,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass functionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass starExpressionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass starEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -893,6 +917,16 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EReference getExpressionComponent_Value()
   {
     return (EReference)expressionComponentEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getStarthing()
+  {
+    return starthingEClass;
   }
 
   /**
@@ -1543,6 +1577,26 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EAttribute getFunction_Name()
   {
     return (EAttribute)functionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getStarExpression()
+  {
+    return starExpressionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getStar()
+  {
+    return starEClass;
   }
 
   /**
@@ -2521,6 +2575,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     expressionComponentEClass = createEClass(EXPRESSION_COMPONENT);
     createEReference(expressionComponentEClass, EXPRESSION_COMPONENT__VALUE);
 
+    starthingEClass = createEClass(STARTHING);
+
     setOperatorEClass = createEClass(SET_OPERATOR);
     createEReference(setOperatorEClass, SET_OPERATOR__LEFT);
     createEAttribute(setOperatorEClass, SET_OPERATOR__NAME);
@@ -2605,6 +2661,10 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     functionEClass = createEClass(FUNCTION);
     createEAttribute(functionEClass, FUNCTION__NAME);
+
+    starExpressionEClass = createEClass(STAR_EXPRESSION);
+
+    starEClass = createEClass(STAR);
 
     expressionComponentAsAttributeEClass = createEClass(EXPRESSION_COMPONENT_AS_ATTRIBUTE);
 
@@ -2756,6 +2816,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     simpleSourceEClass.getESuperTypes().add(this.getSource());
     nestedSourceEClass.getESuperTypes().add(this.getSource());
     functionEClass.getESuperTypes().add(this.getExpressionComponent());
+    starExpressionEClass.getESuperTypes().add(this.getSelectExpression());
+    starEClass.getESuperTypes().add(this.getExpressionComponent());
     expressionComponentAsAttributeEClass.getESuperTypes().add(this.getExpressionComponent());
     createDataBaseConnectionJDBCEClass.getESuperTypes().add(this.getCommand());
     createDataBaseConnectionGenericEClass.getESuperTypes().add(this.getCommand());
@@ -2830,6 +2892,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(expressionComponentEClass, ExpressionComponent.class, "ExpressionComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExpressionComponent_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ExpressionComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(starthingEClass, Starthing.class, "Starthing", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(setOperatorEClass, SetOperator.class, "SetOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSetOperator_Left(), this.getSelect(), null, "left", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2915,6 +2979,10 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(starExpressionEClass, StarExpression.class, "StarExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(starEClass, Star.class, "Star", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(expressionComponentAsAttributeEClass, ExpressionComponentAsAttribute.class, "ExpressionComponentAsAttribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

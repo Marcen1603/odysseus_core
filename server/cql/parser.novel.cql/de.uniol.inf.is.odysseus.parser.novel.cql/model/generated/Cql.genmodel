@@ -52,6 +52,7 @@
     <genClasses ecoreClass="CQL.ecore#//ExpressionComponent">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionComponent/value"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Starthing"/>
     <genClasses ecoreClass="CQL.ecore#//SetOperator">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SetOperator/left"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SetOperator/name"/>
@@ -135,6 +136,8 @@
     <genClasses ecoreClass="CQL.ecore#//Function">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Function/name"/>
     </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//StarExpression"/>
+    <genClasses ecoreClass="CQL.ecore#//Star"/>
     <genClasses ecoreClass="CQL.ecore#//ExpressionComponentAsAttribute"/>
     <genClasses ecoreClass="CQL.ecore#//CreateDataBaseConnectionJDBC">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//CreateDataBaseConnectionJDBC/name"/>

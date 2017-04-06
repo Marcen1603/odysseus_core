@@ -68,6 +68,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Starthing"/>
   <eClassifiers xsi:type="ecore:EClass" name="SetOperator">
     <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="#//Select"
         containment="true"/>
@@ -167,6 +168,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//ExpressionComponent">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StarExpression" eSuperTypes="#//SelectExpression"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Star" eSuperTypes="#//ExpressionComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="ExpressionComponentAsAttribute" eSuperTypes="#//ExpressionComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="CreateDataBaseConnectionJDBC" eSuperTypes="#//Command">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

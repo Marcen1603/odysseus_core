@@ -136,6 +136,11 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createExpressionComponentAdapter();
       }
       @Override
+      public Adapter caseStarthing(Starthing object)
+      {
+        return createStarthingAdapter();
+      }
+      @Override
       public Adapter caseSetOperator(SetOperator object)
       {
         return createSetOperatorAdapter();
@@ -234,6 +239,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseFunction(Function object)
       {
         return createFunctionAdapter();
+      }
+      @Override
+      public Adapter caseStarExpression(StarExpression object)
+      {
+        return createStarExpressionAdapter();
+      }
+      @Override
+      public Adapter caseStar(Star object)
+      {
+        return createStarAdapter();
       }
       @Override
       public Adapter caseExpressionComponentAsAttribute(ExpressionComponentAsAttribute object)
@@ -573,6 +588,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing <em>Starthing</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing
+   * @generated
+   */
+  public Adapter createStarthingAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator <em>Set Operator</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -868,6 +898,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression <em>Star Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression
+   * @generated
+   */
+  public Adapter createStarExpressionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star <em>Star</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star
+   * @generated
+   */
+  public Adapter createStarAdapter()
   {
     return null;
   }

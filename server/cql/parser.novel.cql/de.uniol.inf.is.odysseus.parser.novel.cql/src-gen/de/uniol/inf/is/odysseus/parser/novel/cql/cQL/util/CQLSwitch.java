@@ -157,6 +157,13 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.STARTHING:
+      {
+        Starthing starthing = (Starthing)theEObject;
+        T result = caseStarthing(starthing);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.SET_OPERATOR:
       {
         SetOperator setOperator = (SetOperator)theEObject;
@@ -297,6 +304,22 @@ public class CQLSwitch<T> extends Switch<T>
         Function function = (Function)theEObject;
         T result = caseFunction(function);
         if (result == null) result = caseExpressionComponent(function);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.STAR_EXPRESSION:
+      {
+        StarExpression starExpression = (StarExpression)theEObject;
+        T result = caseStarExpression(starExpression);
+        if (result == null) result = caseSelectExpression(starExpression);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.STAR:
+      {
+        Star star = (Star)theEObject;
+        T result = caseStar(star);
+        if (result == null) result = caseExpressionComponent(star);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -713,6 +736,22 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Starthing</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Starthing</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStarthing(Starthing object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Set Operator</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1028,6 +1067,38 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseFunction(Function object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Star Expression</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Star Expression</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStarExpression(StarExpression object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Star</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Star</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStar(Star object)
   {
     return null;
   }

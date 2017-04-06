@@ -73,13 +73,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'TRUE'
 		public Keyword getTRUEKeyword_1() { return cTRUEKeyword_1; }
 	}
-	public class StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
-		private final Assignment cTypeAssignment = (Assignment)rule.eContents().get(1);
-		private final Alternatives cTypeAlternatives_0 = (Alternatives)cTypeAssignment.eContents().get(0);
-		private final RuleCall cTypeSelectParserRuleCall_0_0 = (RuleCall)cTypeAlternatives_0.eContents().get(0);
-		private final RuleCall cTypeCreateParserRuleCall_0_1 = (RuleCall)cTypeAlternatives_0.eContents().get(1);
-		private final RuleCall cTypeStreamToParserRuleCall_0_2 = (RuleCall)cTypeAlternatives_0.eContents().get(2);
+	public class QualifiedAttributenameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributename");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final RuleCall cQualifiedSourcenameParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_1_2 = (RuleCall)cGroup_1.eContents().get(2);
+		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
+		private final RuleCall cQualifiedSourcenameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
+		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
+		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
 		////terminal BIT: ('0'|'1');
 		////terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
@@ -88,6 +93,91 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 		////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 		////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
+		//QualifiedAttributename:
+		//	ID
+		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//QualifiedSourcename '.' ID
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//QualifiedSourcename
+		public RuleCall getQualifiedSourcenameParserRuleCall_1_0() { return cQualifiedSourcenameParserRuleCall_1_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_1_2() { return cIDTerminalRuleCall_1_2; }
+		
+		//QualifiedSourcename '.' '*'
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//QualifiedSourcename
+		public RuleCall getQualifiedSourcenameParserRuleCall_2_0() { return cQualifiedSourcenameParserRuleCall_2_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_2_1() { return cFullStopKeyword_2_1; }
+		
+		//'*'
+		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
+	}
+	public class QualifiedAttributenameWithoutSpecialCharsElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributenameWithoutSpecialChars");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final RuleCall cQualifiedSourcenameParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_1_2 = (RuleCall)cGroup_1.eContents().get(2);
+		
+		//QualifiedAttributenameWithoutSpecialChars:
+		//	ID | QualifiedSourcename '.' ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID | QualifiedSourcename '.' ID
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		
+		//QualifiedSourcename '.' ID
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//QualifiedSourcename
+		public RuleCall getQualifiedSourcenameParserRuleCall_1_0() { return cQualifiedSourcenameParserRuleCall_1_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_1_2() { return cIDTerminalRuleCall_1_2; }
+	}
+	public class QualifiedSourcenameElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedSourcename");
+		private final RuleCall cIDTerminalRuleCall = (RuleCall)rule.eContents().get(1);
+		
+		//QualifiedSourcename:
+		//	ID;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall() { return cIDTerminalRuleCall; }
+	}
+	public class StatementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
+		private final Assignment cTypeAssignment = (Assignment)rule.eContents().get(1);
+		private final Alternatives cTypeAlternatives_0 = (Alternatives)cTypeAssignment.eContents().get(0);
+		private final RuleCall cTypeSelectParserRuleCall_0_0 = (RuleCall)cTypeAlternatives_0.eContents().get(0);
+		private final RuleCall cTypeCreateParserRuleCall_0_1 = (RuleCall)cTypeAlternatives_0.eContents().get(1);
+		private final RuleCall cTypeStreamToParserRuleCall_0_2 = (RuleCall)cTypeAlternatives_0.eContents().get(2);
+		
 		//Statement:
 		//	type=(Select
 		//	| Create
@@ -509,17 +599,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Alias
 		public RuleCall getAliasAliasParserRuleCall_3_0() { return cAliasAliasParserRuleCall_3_0; }
 	}
-	public class QualifiedSourcenameElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedSourcename");
-		private final RuleCall cIDTerminalRuleCall = (RuleCall)rule.eContents().get(1);
-		
-		//QualifiedSourcename:
-		//	ID;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//ID
-		public RuleCall getIDTerminalRuleCall() { return cIDTerminalRuleCall; }
-	}
 	public class AttributeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Attribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -570,54 +649,20 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//QualifiedAttributename
 		public RuleCall getNameQualifiedAttributenameParserRuleCall_0() { return cNameQualifiedAttributenameParserRuleCall_0; }
 	}
-	public class QualifiedAttributenameElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributename");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final RuleCall cQualifiedSourcenameParserRuleCall_1_0 = (RuleCall)cGroup_1.eContents().get(0);
-		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final RuleCall cIDTerminalRuleCall_1_2 = (RuleCall)cGroup_1.eContents().get(2);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final RuleCall cQualifiedSourcenameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
-		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
-		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
+	public class AttributeForSelectExpressionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeForSelectExpression");
+		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
-		//QualifiedAttributename:
-		//	ID
-		//	| QualifiedSourcename '.' ID
-		//	| QualifiedSourcename '.' '*';
+		//AttributeForSelectExpression Attribute:
+		//	name=QualifiedAttributenameWithoutSpecialChars
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*'
-		public Alternatives getAlternatives() { return cAlternatives; }
+		//name=QualifiedAttributenameWithoutSpecialChars
+		public Assignment getNameAssignment() { return cNameAssignment; }
 		
-		//ID
-		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
-		
-		//QualifiedSourcename '.' ID
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//QualifiedSourcename
-		public RuleCall getQualifiedSourcenameParserRuleCall_1_0() { return cQualifiedSourcenameParserRuleCall_1_0; }
-		
-		//'.'
-		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
-		
-		//ID
-		public RuleCall getIDTerminalRuleCall_1_2() { return cIDTerminalRuleCall_1_2; }
-		
-		//QualifiedSourcename '.' '*'
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//QualifiedSourcename
-		public RuleCall getQualifiedSourcenameParserRuleCall_2_0() { return cQualifiedSourcenameParserRuleCall_2_0; }
-		
-		//'.'
-		public Keyword getFullStopKeyword_2_1() { return cFullStopKeyword_2_1; }
-		
-		//'*'
-		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
+		//QualifiedAttributenameWithoutSpecialChars
+		public RuleCall getNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0() { return cNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0; }
 	}
 	public class AttributeWithNestedStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
@@ -778,21 +823,21 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	public class MUL_OR_DIV_OPERATORElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MUL_OR_DIV_OPERATOR");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cAsteriskKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cSolidusKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cSolidusKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cAsteriskKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//MUL_OR_DIV_OPERATOR:
-		//	'*' | '/';
+		//	'/' | '*';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'*' | '/'
+		//'/' | '*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//'*'
-		public Keyword getAsteriskKeyword_0() { return cAsteriskKeyword_0; }
-		
 		//'/'
-		public Keyword getSolidusKeyword_1() { return cSolidusKeyword_1; }
+		public Keyword getSolidusKeyword_0() { return cSolidusKeyword_0; }
+		
+		//'*'
+		public Keyword getAsteriskKeyword_1() { return cAsteriskKeyword_1; }
 	}
 	public class ADD_OPERATORElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ADD_OPERATOR");
@@ -847,20 +892,20 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//SelectExpression:
 		//	(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR
-		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute
-		//	(operators+=ARITHMETIC_OPERATOR
-		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))+) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
+		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))*
+		//	| expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
+		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent |
 		//ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
-		//expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))+) ('AS' alias=Alias)?
+		//expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))) ('AS' alias=Alias)?
 		public Group getGroup() { return cGroup; }
 		
 		//(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent |
 		//ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
-		//expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))+)
+		//expressions+=(ExpressionComponent | ExpressionComponentAsAttribute)))
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent |
@@ -895,7 +940,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getExpressionsExpressionComponentAsAttributeParserRuleCall_0_0_1_1_0_1() { return cExpressionsExpressionComponentAsAttributeParserRuleCall_0_0_1_1_0_1; }
 		
 		//expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent |
-		//ExpressionComponentAsAttribute))+
+		//ExpressionComponentAsAttribute))
 		public Group getGroup_0_1() { return cGroup_0_1; }
 		
 		//expressions+=ExpressionComponentAsAttribute
@@ -904,7 +949,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ExpressionComponentAsAttribute
 		public RuleCall getExpressionsExpressionComponentAsAttributeParserRuleCall_0_1_0_0() { return cExpressionsExpressionComponentAsAttributeParserRuleCall_0_1_0_0; }
 		
-		//(operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))+
+		//(operators+=ARITHMETIC_OPERATOR expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))
 		public Group getGroup_0_1_1() { return cGroup_0_1_1; }
 		
 		//operators+=ARITHMETIC_OPERATOR
@@ -963,6 +1008,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cValueAlternatives_3_0 = (Alternatives)cValueAssignment_3.eContents().get(0);
 		private final RuleCall cValueSelectExpressionParserRuleCall_3_0_0 = (RuleCall)cValueAlternatives_3_0.eContents().get(0);
 		private final RuleCall cValueSelectExpressionOnlyWithAttributeParserRuleCall_3_0_1 = (RuleCall)cValueAlternatives_3_0.eContents().get(1);
+		private final RuleCall cValueStarExpressionParserRuleCall_3_0_2 = (RuleCall)cValueAlternatives_3_0.eContents().get(2);
 		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		////Is either a map function or an aggregation function. This depends 
@@ -973,11 +1019,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//Function ExpressionComponent:
 		//	{Function} name=ID
 		//	'('
-		//	value=(SelectExpression | SelectExpressionOnlyWithAttribute)
+		//	value=(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression)
 		//	')'
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Function} name=ID '(' value=(SelectExpression | SelectExpressionOnlyWithAttribute) ')'
+		//{Function} name=ID '(' value=(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression) ')'
 		public Group getGroup() { return cGroup; }
 		
 		//{Function}
@@ -992,10 +1038,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 		
-		//value=(SelectExpression | SelectExpressionOnlyWithAttribute)
+		//value=(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression)
 		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
 		
-		//(SelectExpression | SelectExpressionOnlyWithAttribute)
+		//(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression)
 		public Alternatives getValueAlternatives_3_0() { return cValueAlternatives_3_0; }
 		
 		//SelectExpression
@@ -1003,6 +1049,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//SelectExpressionOnlyWithAttribute
 		public RuleCall getValueSelectExpressionOnlyWithAttributeParserRuleCall_3_0_1() { return cValueSelectExpressionOnlyWithAttributeParserRuleCall_3_0_1; }
+		
+		//StarExpression
+		public RuleCall getValueStarExpressionParserRuleCall_3_0_2() { return cValueStarExpressionParserRuleCall_3_0_2; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
@@ -1016,8 +1065,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		////Determines the structure of a component of a select expression
 		//ExpressionComponent:
-		//	value=(Function
-		//	| AtomicWithoutAttributeRef);
+		//	value=(Function | AtomicWithoutAttributeRef);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//value=(Function | AtomicWithoutAttributeRef)
@@ -1032,28 +1080,94 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//AtomicWithoutAttributeRef
 		public RuleCall getValueAtomicWithoutAttributeRefParserRuleCall_0_1() { return cValueAtomicWithoutAttributeRefParserRuleCall_0_1; }
 	}
+	public class StarExpressionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.StarExpression");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cStarExpressionAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cExpressionsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cExpressionsStarParserRuleCall_1_0 = (RuleCall)cExpressionsAssignment_1.eContents().get(0);
+		
+		//StarExpression SelectExpression:
+		//	{StarExpression} expressions+=Star
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{StarExpression} expressions+=Star
+		public Group getGroup() { return cGroup; }
+		
+		//{StarExpression}
+		public Action getStarExpressionAction_0() { return cStarExpressionAction_0; }
+		
+		//expressions+=Star
+		public Assignment getExpressionsAssignment_1() { return cExpressionsAssignment_1; }
+		
+		//Star
+		public RuleCall getExpressionsStarParserRuleCall_1_0() { return cExpressionsStarParserRuleCall_1_0; }
+	}
+	public class StarElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Star");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cStarAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cValueStarthingParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		
+		//Star ExpressionComponent:
+		//	{Star} value=Starthing
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{Star} value=Starthing
+		public Group getGroup() { return cGroup; }
+		
+		//{Star}
+		public Action getStarAction_0() { return cStarAction_0; }
+		
+		//value=Starthing
+		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		
+		//Starthing
+		public RuleCall getValueStarthingParserRuleCall_1_0() { return cValueStarthingParserRuleCall_1_0; }
+	}
+	public class StarthingElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Starthing");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cStarthingAction_0 = (Action)cGroup.eContents().get(0);
+		private final Keyword cAsteriskKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		
+		//Starthing:
+		//	{Starthing}
+		//	'*';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{Starthing} '*'
+		public Group getGroup() { return cGroup; }
+		
+		//{Starthing}
+		public Action getStarthingAction_0() { return cStarthingAction_0; }
+		
+		//'*'
+		public Keyword getAsteriskKeyword_1() { return cAsteriskKeyword_1; }
+	}
 	public class ExpressionComponentAsAttributeElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExpressionComponentAsAttribute");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Action cExpressionComponentAsAttributeAction_0 = (Action)cGroup.eContents().get(0);
 		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		private final RuleCall cValueAttributeForSelectExpressionParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
 		
 		//ExpressionComponentAsAttribute ExpressionComponent:
-		//	{ExpressionComponentAsAttribute} value=AttributeWithoutAliasDefinition
+		//	{ExpressionComponentAsAttribute} value=AttributeForSelectExpression
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{ExpressionComponentAsAttribute} value=AttributeWithoutAliasDefinition
+		//{ExpressionComponentAsAttribute} value=AttributeForSelectExpression
 		public Group getGroup() { return cGroup; }
 		
 		//{ExpressionComponentAsAttribute}
 		public Action getExpressionComponentAsAttributeAction_0() { return cExpressionComponentAsAttributeAction_0; }
 		
-		//value=AttributeWithoutAliasDefinition
+		//value=AttributeForSelectExpression
 		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
 		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_1_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_1_0; }
+		//AttributeForSelectExpression
+		public RuleCall getValueAttributeForSelectExpressionParserRuleCall_1_0() { return cValueAttributeForSelectExpressionParserRuleCall_1_0; }
 	}
 	public class SetOperatorElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SetOperator");
@@ -2281,18 +2395,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cSubjectNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cSubjectNameIDTerminalRuleCall_3_0 = (RuleCall)cSubjectNameAssignment_3.eContents().get(0);
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cIDENTIFIEDKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Keyword cIDFIEDKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
 		private final Keyword cBYKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
 		private final Assignment cPasswordAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
 		private final RuleCall cPasswordSTRINGTerminalRuleCall_4_2_0 = (RuleCall)cPasswordAssignment_4_2.eContents().get(0);
 		
 		//UserManagement Command:
-		//	{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED'
-		//	'BY' password=STRING)?
+		//	{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDFIED' 'BY'
+		//	password=STRING)?
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED'
-		//'BY' password=STRING)?
+		//{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDFIED' 'BY'
+		//password=STRING)?
 		public Group getGroup() { return cGroup; }
 		
 		//{UserManagement}
@@ -2334,11 +2448,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getSubjectNameIDTerminalRuleCall_3_0() { return cSubjectNameIDTerminalRuleCall_3_0; }
 		
-		//('IDENTIFIED' 'BY' password=STRING)?
+		//('IDFIED' 'BY' password=STRING)?
 		public Group getGroup_4() { return cGroup_4; }
 		
-		//'IDENTIFIED'
-		public Keyword getIDENTIFIEDKeyword_4_0() { return cIDENTIFIEDKeyword_4_0; }
+		//'IDFIED'
+		public Keyword getIDFIEDKeyword_4_0() { return cIDFIEDKeyword_4_0; }
 		
 		//'BY'
 		public Keyword getBYKeyword_4_1() { return cBYKeyword_4_1; }
@@ -3443,8 +3557,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	private final ModelElements pModel;
 	private final TerminalRule tID;
+	private final TerminalRule tLETTER;
+	private final TerminalRule tSPECIAL_CHARS;
 	private final TerminalRule tFLOAT;
 	private final BOOLEANElements pBOOLEAN;
+	private final QualifiedAttributenameElements pQualifiedAttributename;
+	private final QualifiedAttributenameWithoutSpecialCharsElements pQualifiedAttributenameWithoutSpecialChars;
+	private final QualifiedSourcenameElements pQualifiedSourcename;
 	private final StatementElements pStatement;
 	private final CommandElements pCommand;
 	private final SelectElements pSelect;
@@ -3454,10 +3573,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final SourceElements pSource;
 	private final SimpleSourceElements pSimpleSource;
 	private final NestedSourceElements pNestedSource;
-	private final QualifiedSourcenameElements pQualifiedSourcename;
 	private final AttributeElements pAttribute;
 	private final AttributeWithoutAliasDefinitionElements pAttributeWithoutAliasDefinition;
-	private final QualifiedAttributenameElements pQualifiedAttributename;
+	private final AttributeForSelectExpressionElements pAttributeForSelectExpression;
 	private final AttributeWithNestedStatementElements pAttributeWithNestedStatement;
 	private final AndOperatorElements pAndOperator;
 	private final OrOperatorElements pOrOperator;
@@ -3472,6 +3590,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final SelectExpressionOnlyWithAttributeElements pSelectExpressionOnlyWithAttribute;
 	private final FunctionElements pFunction;
 	private final ExpressionComponentElements pExpressionComponent;
+	private final StarExpressionElements pStarExpression;
+	private final StarElements pStar;
+	private final StarthingElements pStarthing;
 	private final ExpressionComponentAsAttributeElements pExpressionComponentAsAttribute;
 	private final SetOperatorElements pSetOperator;
 	private final AliasElements pAlias;
@@ -3524,8 +3645,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.gaTerminals = gaTerminals;
 		this.pModel = new ModelElements();
 		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+		this.tLETTER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.LETTER");
+		this.tSPECIAL_CHARS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SPECIAL_CHARS");
 		this.tFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT");
 		this.pBOOLEAN = new BOOLEANElements();
+		this.pQualifiedAttributename = new QualifiedAttributenameElements();
+		this.pQualifiedAttributenameWithoutSpecialChars = new QualifiedAttributenameWithoutSpecialCharsElements();
+		this.pQualifiedSourcename = new QualifiedSourcenameElements();
 		this.pStatement = new StatementElements();
 		this.pCommand = new CommandElements();
 		this.pSelect = new SelectElements();
@@ -3535,10 +3661,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pSource = new SourceElements();
 		this.pSimpleSource = new SimpleSourceElements();
 		this.pNestedSource = new NestedSourceElements();
-		this.pQualifiedSourcename = new QualifiedSourcenameElements();
 		this.pAttribute = new AttributeElements();
 		this.pAttributeWithoutAliasDefinition = new AttributeWithoutAliasDefinitionElements();
-		this.pQualifiedAttributename = new QualifiedAttributenameElements();
+		this.pAttributeForSelectExpression = new AttributeForSelectExpressionElements();
 		this.pAttributeWithNestedStatement = new AttributeWithNestedStatementElements();
 		this.pAndOperator = new AndOperatorElements();
 		this.pOrOperator = new OrOperatorElements();
@@ -3553,6 +3678,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pSelectExpressionOnlyWithAttribute = new SelectExpressionOnlyWithAttributeElements();
 		this.pFunction = new FunctionElements();
 		this.pExpressionComponent = new ExpressionComponentElements();
+		this.pStarExpression = new StarExpressionElements();
+		this.pStar = new StarElements();
+		this.pStarthing = new StarthingElements();
 		this.pExpressionComponentAsAttribute = new ExpressionComponentAsAttributeElements();
 		this.pSetOperator = new SetOperatorElements();
 		this.pAlias = new AliasElements();
@@ -3633,9 +3761,21 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ID:
-	//	('a'..'z' | 'A'..'Z' | '_' | ':' | '$' | '{' | '}') ('a'..'z' | 'A'..'Z' | '_' | ':' | '$' | '{' | '}' | '0'..'9')*;
+	//	LETTER (LETTER | SPECIAL_CHARS | INT)*;
 	public TerminalRule getIDRule() {
 		return tID;
+	}
+	
+	//terminal LETTER:
+	//	'a'..'z' | 'A'..'Z';
+	public TerminalRule getLETTERRule() {
+		return tLETTER;
+	}
+	
+	//terminal SPECIAL_CHARS:
+	//	':' | '_' | '{' | '}';
+	public TerminalRule getSPECIAL_CHARSRule() {
+		return tSPECIAL_CHARS;
 	}
 	
 	//terminal FLOAT:
@@ -3661,6 +3801,37 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 	////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 	////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
+	//QualifiedAttributename:
+	//	ID
+	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+	public QualifiedAttributenameElements getQualifiedAttributenameAccess() {
+		return pQualifiedAttributename;
+	}
+	
+	public ParserRule getQualifiedAttributenameRule() {
+		return getQualifiedAttributenameAccess().getRule();
+	}
+	
+	//QualifiedAttributenameWithoutSpecialChars:
+	//	ID | QualifiedSourcename '.' ID;
+	public QualifiedAttributenameWithoutSpecialCharsElements getQualifiedAttributenameWithoutSpecialCharsAccess() {
+		return pQualifiedAttributenameWithoutSpecialChars;
+	}
+	
+	public ParserRule getQualifiedAttributenameWithoutSpecialCharsRule() {
+		return getQualifiedAttributenameWithoutSpecialCharsAccess().getRule();
+	}
+	
+	//QualifiedSourcename:
+	//	ID;
+	public QualifiedSourcenameElements getQualifiedSourcenameAccess() {
+		return pQualifiedSourcename;
+	}
+	
+	public ParserRule getQualifiedSourcenameRule() {
+		return getQualifiedSourcenameAccess().getRule();
+	}
+	
 	//Statement:
 	//	type=(Select
 	//	| Create
@@ -3765,16 +3936,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getNestedSourceAccess().getRule();
 	}
 	
-	//QualifiedSourcename:
-	//	ID;
-	public QualifiedSourcenameElements getQualifiedSourcenameAccess() {
-		return pQualifiedSourcename;
-	}
-	
-	public ParserRule getQualifiedSourcenameRule() {
-		return getQualifiedSourcenameAccess().getRule();
-	}
-	
 	//Attribute:
 	//	name=QualifiedAttributename ('AS' alias=Alias)?;
 	public AttributeElements getAttributeAccess() {
@@ -3795,16 +3956,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeWithoutAliasDefinitionAccess().getRule();
 	}
 	
-	//QualifiedAttributename:
-	//	ID
-	//	| QualifiedSourcename '.' ID
-	//	| QualifiedSourcename '.' '*';
-	public QualifiedAttributenameElements getQualifiedAttributenameAccess() {
-		return pQualifiedAttributename;
+	//AttributeForSelectExpression Attribute:
+	//	name=QualifiedAttributenameWithoutSpecialChars
+	public AttributeForSelectExpressionElements getAttributeForSelectExpressionAccess() {
+		return pAttributeForSelectExpression;
 	}
 	
-	public ParserRule getQualifiedAttributenameRule() {
-		return getQualifiedAttributenameAccess().getRule();
+	public ParserRule getAttributeForSelectExpressionRule() {
+		return getAttributeForSelectExpressionAccess().getRule();
 	}
 	
 	//AttributeWithNestedStatement:
@@ -3897,7 +4056,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MUL_OR_DIV_OPERATOR:
-	//	'*' | '/';
+	//	'/' | '*';
 	public MUL_OR_DIV_OPERATORElements getMUL_OR_DIV_OPERATORAccess() {
 		return pMUL_OR_DIV_OPERATOR;
 	}
@@ -3928,9 +4087,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//SelectExpression:
 	//	(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR
-	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute
-	//	(operators+=ARITHMETIC_OPERATOR
-	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))+) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
+	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))*
+	//	| expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
+	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
 	//;
 	public SelectExpressionElements getSelectExpressionAccess() {
 		return pSelectExpression;
@@ -3958,7 +4117,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//Function ExpressionComponent:
 	//	{Function} name=ID
 	//	'('
-	//	value=(SelectExpression | SelectExpressionOnlyWithAttribute)
+	//	value=(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression)
 	//	')'
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
@@ -3970,8 +4129,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	////Determines the structure of a component of a select expression
 	//ExpressionComponent:
-	//	value=(Function
-	//	| AtomicWithoutAttributeRef);
+	//	value=(Function | AtomicWithoutAttributeRef);
 	public ExpressionComponentElements getExpressionComponentAccess() {
 		return pExpressionComponent;
 	}
@@ -3980,8 +4138,39 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getExpressionComponentAccess().getRule();
 	}
 	
+	//StarExpression SelectExpression:
+	//	{StarExpression} expressions+=Star
+	public StarExpressionElements getStarExpressionAccess() {
+		return pStarExpression;
+	}
+	
+	public ParserRule getStarExpressionRule() {
+		return getStarExpressionAccess().getRule();
+	}
+	
+	//Star ExpressionComponent:
+	//	{Star} value=Starthing
+	public StarElements getStarAccess() {
+		return pStar;
+	}
+	
+	public ParserRule getStarRule() {
+		return getStarAccess().getRule();
+	}
+	
+	//Starthing:
+	//	{Starthing}
+	//	'*';
+	public StarthingElements getStarthingAccess() {
+		return pStarthing;
+	}
+	
+	public ParserRule getStarthingRule() {
+		return getStarthingAccess().getRule();
+	}
+	
 	//ExpressionComponentAsAttribute ExpressionComponent:
-	//	{ExpressionComponentAsAttribute} value=AttributeWithoutAliasDefinition
+	//	{ExpressionComponentAsAttribute} value=AttributeForSelectExpression
 	public ExpressionComponentAsAttributeElements getExpressionComponentAsAttributeAccess() {
 		return pExpressionComponentAsAttribute;
 	}
@@ -4259,8 +4448,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//UserManagement Command:
-	//	{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDENTIFIED'
-	//	'BY' password=STRING)?
+	//	{UserManagement} name=('CREATE' | 'ALTER' | 'DROP') subject=('USER' | 'ROLE' | 'TENANT') subjectName=ID ('IDFIED' 'BY'
+	//	password=STRING)?
 	public UserManagementElements getUserManagementAccess() {
 		return pUserManagement;
 	}

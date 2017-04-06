@@ -844,7 +844,7 @@ class CQLGeneratorQueryTest
 	
 	@Test def void AggregationTest9()
 	{
-		assertCorrectGenerated//TODO build map operator in aggregation operator 
+		assertCorrectGenerated 
 		(
 			"SELECT COUNT(attr1 + 20) AS Counter FROM stream1;"
 			,
@@ -852,6 +852,17 @@ class CQLGeneratorQueryTest
 			operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
 			operator_2=SELECT({predicate='Counter>1000&&stream2.attr3>100'},operator_1)
 			operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void AggregationTest10()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT COUNT(*) AS count FROM stream1;"
+			,
+			"operator_1 = MAP({expressions=['count']}, AGGREGATE({AGGREGATIONS=[['COUNT','*','count']]},stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}

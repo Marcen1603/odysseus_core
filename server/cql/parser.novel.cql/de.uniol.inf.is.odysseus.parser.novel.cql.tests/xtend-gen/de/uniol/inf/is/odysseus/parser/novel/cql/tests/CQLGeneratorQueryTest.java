@@ -528,6 +528,14 @@ public class CQLGeneratorQueryTest {
   }
   
   @Test
+  public void AggregationTest10() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT COUNT(*) AS count FROM stream1;", 
+      "operator_1 = MAP({expressions=[\'count\']}, AGGREGATE({AGGREGATIONS=[[\'COUNT\',\'*\',\'count\']]},stream1))", _cQLDictionaryHelper);
+  }
+  
+  @Test
   public void NestedStatementTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(

@@ -37,12 +37,13 @@ public class CQLParser extends AbstractContentAssistParser {
 				{
 					put(grammarAccess.getModelAccess().getComponentsAlternatives_0_0(), "rule__Model__ComponentsAlternatives_0_0");
 					put(grammarAccess.getBOOLEANAccess().getAlternatives(), "rule__BOOLEAN__Alternatives");
+					put(grammarAccess.getQualifiedAttributenameAccess().getAlternatives(), "rule__QualifiedAttributename__Alternatives");
+					put(grammarAccess.getQualifiedAttributenameWithoutSpecialCharsAccess().getAlternatives(), "rule__QualifiedAttributenameWithoutSpecialChars__Alternatives");
 					put(grammarAccess.getStatementAccess().getTypeAlternatives_0(), "rule__Statement__TypeAlternatives_0");
 					put(grammarAccess.getCommandAccess().getTypeAlternatives_0(), "rule__Command__TypeAlternatives_0");
 					put(grammarAccess.getSelectAccess().getAlternatives_3(), "rule__Select__Alternatives_3");
 					put(grammarAccess.getSelectArgumentAccess().getAlternatives(), "rule__SelectArgument__Alternatives");
 					put(grammarAccess.getSourceAccess().getAlternatives(), "rule__Source__Alternatives");
-					put(grammarAccess.getQualifiedAttributenameAccess().getAlternatives(), "rule__QualifiedAttributename__Alternatives");
 					put(grammarAccess.getEQUALITIY_OPERATORAccess().getAlternatives(), "rule__EQUALITIY_OPERATOR__Alternatives");
 					put(grammarAccess.getCOMPARE_OPERATORAccess().getAlternatives(), "rule__COMPARE_OPERATOR__Alternatives");
 					put(grammarAccess.getARITHMETIC_OPERATORAccess().getAlternatives(), "rule__ARITHMETIC_OPERATOR__Alternatives");
@@ -72,6 +73,9 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicAccess().getAlternatives_4_1(), "rule__Atomic__Alternatives_4_1");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getAlternatives(), "rule__AtomicWithoutAttributeRef__Alternatives");
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
+					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_1(), "rule__QualifiedAttributename__Group_1__0");
+					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_2(), "rule__QualifiedAttributename__Group_2__0");
+					put(grammarAccess.getQualifiedAttributenameWithoutSpecialCharsAccess().getGroup_1(), "rule__QualifiedAttributenameWithoutSpecialChars__Group_1__0");
 					put(grammarAccess.getSelectAccess().getGroup(), "rule__Select__Group__0");
 					put(grammarAccess.getSelectAccess().getGroup_3_1(), "rule__Select__Group_3_1__0");
 					put(grammarAccess.getSelectAccess().getGroup_3_1_1(), "rule__Select__Group_3_1_1__0");
@@ -87,8 +91,6 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNestedSourceAccess().getGroup(), "rule__NestedSource__Group__0");
 					put(grammarAccess.getAttributeAccess().getGroup(), "rule__Attribute__Group__0");
 					put(grammarAccess.getAttributeAccess().getGroup_1(), "rule__Attribute__Group_1__0");
-					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_1(), "rule__QualifiedAttributename__Group_1__0");
-					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_2(), "rule__QualifiedAttributename__Group_2__0");
 					put(grammarAccess.getAttributeWithNestedStatementAccess().getGroup(), "rule__AttributeWithNestedStatement__Group__0");
 					put(grammarAccess.getSelectExpressionAccess().getGroup(), "rule__SelectExpression__Group__0");
 					put(grammarAccess.getSelectExpressionAccess().getGroup_0_0(), "rule__SelectExpression__Group_0_0__0");
@@ -97,6 +99,9 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSelectExpressionAccess().getGroup_0_1_1(), "rule__SelectExpression__Group_0_1_1__0");
 					put(grammarAccess.getSelectExpressionAccess().getGroup_1(), "rule__SelectExpression__Group_1__0");
 					put(grammarAccess.getFunctionAccess().getGroup(), "rule__Function__Group__0");
+					put(grammarAccess.getStarExpressionAccess().getGroup(), "rule__StarExpression__Group__0");
+					put(grammarAccess.getStarAccess().getGroup(), "rule__Star__Group__0");
+					put(grammarAccess.getStarthingAccess().getGroup(), "rule__Starthing__Group__0");
 					put(grammarAccess.getExpressionComponentAsAttributeAccess().getGroup(), "rule__ExpressionComponentAsAttribute__Group__0");
 					put(grammarAccess.getSetOperatorAccess().getGroup(), "rule__SetOperator__Group__0");
 					put(grammarAccess.getAccessFrameworkAccess().getGroup(), "rule__AccessFramework__Group__0");
@@ -199,6 +204,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAttributeAccess().getNameAssignment_0(), "rule__Attribute__NameAssignment_0");
 					put(grammarAccess.getAttributeAccess().getAliasAssignment_1_1(), "rule__Attribute__AliasAssignment_1_1");
 					put(grammarAccess.getAttributeWithoutAliasDefinitionAccess().getNameAssignment(), "rule__AttributeWithoutAliasDefinition__NameAssignment");
+					put(grammarAccess.getAttributeForSelectExpressionAccess().getNameAssignment(), "rule__AttributeForSelectExpression__NameAssignment");
 					put(grammarAccess.getAttributeWithNestedStatementAccess().getValueAssignment_0(), "rule__AttributeWithNestedStatement__ValueAssignment_0");
 					put(grammarAccess.getAttributeWithNestedStatementAccess().getNestedAssignment_2(), "rule__AttributeWithNestedStatement__NestedAssignment_2");
 					put(grammarAccess.getSelectExpressionAccess().getExpressionsAssignment_0_0_0(), "rule__SelectExpression__ExpressionsAssignment_0_0_0");
@@ -212,6 +218,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getFunctionAccess().getNameAssignment_1(), "rule__Function__NameAssignment_1");
 					put(grammarAccess.getFunctionAccess().getValueAssignment_3(), "rule__Function__ValueAssignment_3");
 					put(grammarAccess.getExpressionComponentAccess().getValueAssignment(), "rule__ExpressionComponent__ValueAssignment");
+					put(grammarAccess.getStarExpressionAccess().getExpressionsAssignment_1(), "rule__StarExpression__ExpressionsAssignment_1");
+					put(grammarAccess.getStarAccess().getValueAssignment_1(), "rule__Star__ValueAssignment_1");
 					put(grammarAccess.getExpressionComponentAsAttributeAccess().getValueAssignment_1(), "rule__ExpressionComponentAsAttribute__ValueAssignment_1");
 					put(grammarAccess.getSetOperatorAccess().getLeftAssignment_0(), "rule__SetOperator__LeftAssignment_0");
 					put(grammarAccess.getSetOperatorAccess().getNameAssignment_1(), "rule__SetOperator__NameAssignment_1");

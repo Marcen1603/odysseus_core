@@ -6,7 +6,9 @@ Model:
 	((components+=(Statement|Command)) (';')?)*
 ;
 	
-terminal ID: ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}') ('a'..'z'|'A'..'Z'|'_'|':'|'$'|'{'|'}'|'0'..'9')*;	
+terminal ID: (LETTER) (LETTER|SPECIAL_CHARS|INT)*;	
+terminal LETTER: ('a'..'z'|'A'..'Z') ;	
+terminal SPECIAL_CHARS: (':'|'_'|'{'|'}') ;
 terminal FLOAT:  INT '.' INT;
 BOOLEAN: ('FALSE'|'TRUE');
 //terminal BIT: ('0'|'1');
@@ -17,6 +19,21 @@ BOOLEAN: ('FALSE'|'TRUE');
 //terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 //terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
 //terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
+
+QualifiedAttributename:
+	(ID
+		| (QualifiedSourcename '.' ID) 
+		| (QualifiedSourcename '.' '*')
+	)
+;
+
+QualifiedAttributenameWithoutSpecialChars:
+	(ID| (QualifiedSourcename '.' ID))
+;
+
+QualifiedSourcename:
+	ID
+;
 
 Statement:
 	type=(Select
@@ -40,7 +57,7 @@ Select:
 	{Select}
 	'SELECT'
 	(distinct='DISTINCT')?
-	( '*' |  (arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
+	('*'|(arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
 	('FROM' sources+=Source+ (',' sources+=Source)*)
 	('WHERE' predicates=ExpressionsModel)?
 	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
@@ -71,10 +88,6 @@ NestedSource returns Source:
 	statement=InnerSelect 'AS' alias=Alias
 ;
 
-QualifiedSourcename:
-	ID
-;
-
 Attribute: 
 	name=QualifiedAttributename
 	('AS' alias=Alias)?
@@ -84,11 +97,8 @@ AttributeWithoutAliasDefinition returns Attribute:
 	name=QualifiedAttributename
 ; 
 
-QualifiedAttributename:
-	(ID 
-		| QualifiedSourcename '.' ID 
-		| QualifiedSourcename '.' '*'
-	)
+AttributeForSelectExpression returns Attribute:
+	(name=QualifiedAttributenameWithoutSpecialChars)
 ;
 
 AttributeWithNestedStatement:
@@ -122,17 +132,23 @@ ARITHMETIC_OPERATOR:
 	| MUL_OR_DIV_OPERATOR 
 	| EXPONENT_OPERATOR; 
 EXPONENT_OPERATOR: '^' ;
-MUL_OR_DIV_OPERATOR: ('*' | '/') ;
+MUL_OR_DIV_OPERATOR: ('/'|'*') ;
 ADD_OPERATOR: '+' ;
 MINUS_OPERATOR: '-' ;
 
 SelectExpression:
-	((expressions+=ExpressionComponent
-	(operators+=ARITHMETIC_OPERATOR
-	expressions+=(ExpressionComponent|ExpressionComponentAsAttribute))*)
-	|(expressions+=ExpressionComponentAsAttribute
-		(operators+=ARITHMETIC_OPERATOR
-		expressions+=(ExpressionComponent|ExpressionComponentAsAttribute))+))
+	(
+		(expressions+=ExpressionComponent
+			(operators+=ARITHMETIC_OPERATOR
+			expressions+=(ExpressionComponent|ExpressionComponentAsAttribute)
+			)*
+		)
+		|(expressions+=ExpressionComponentAsAttribute
+			(operators+=ARITHMETIC_OPERATOR
+			expressions+=(ExpressionComponent|ExpressionComponentAsAttribute)
+			)
+		)
+	)
 	('AS' alias=Alias)?//TODO Add SelectExpression without an alias
 ;
 
@@ -149,19 +165,35 @@ Function returns ExpressionComponent:
 	{Function}
 	name=ID
 	'('
-	value=(SelectExpression|SelectExpressionOnlyWithAttribute)
+	value=(SelectExpression|SelectExpressionOnlyWithAttribute|StarExpression)
 	')'
 ;
 
+
 //Determines the structure of a component of a select expression
 ExpressionComponent:
-	value=(Function
-		| AtomicWithoutAttributeRef)
+	value=(Function | AtomicWithoutAttributeRef)
+;
+
+StarExpression returns SelectExpression:
+	{StarExpression}
+	expressions+=Star
+;
+
+
+Star returns ExpressionComponent:
+	{Star}
+	value=Starthing
+;
+
+Starthing:
+	{Starthing}
+	'*'
 ;
 
 ExpressionComponentAsAttribute returns ExpressionComponent:
 	{ExpressionComponentAsAttribute}
-	value=AttributeWithoutAliasDefinition
+	value=AttributeForSelectExpression
 ;
 
 SetOperator:
@@ -341,7 +373,7 @@ UserManagement returns Command:
 	name=('CREATE'|'ALTER'|'DROP')
 	subject=('USER'|'ROLE'|'TENANT')
 	subjectName=ID
-	('IDENTIFIED' 'BY' password=STRING)?
+	('IDFIED' 'BY' password=STRING)?
 ;
 
 RightsManagement returns Command:
@@ -472,7 +504,7 @@ DataType:
 ;
 //TODO have to be dynamic -> use scope provider
 //DataType: 
-//	value=ID//('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN' 
+//	value=IDFIER//('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN' 
 	//| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
 //)
 //;

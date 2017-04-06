@@ -21,14 +21,15 @@ class NameProvider
 		{
 			try
 			{
-				println("FUNCTIONSTORES:: " + FunctionStore.instance.getFunctions(name))
 				var datatype = MEP.instance.parse(function).returnType
-				println("TYPE:: " + datatype )
 				for(IFunction<?> f : FunctionStore.instance.getFunctions(name))
 					if(f.returnType.equals(datatype))
 						return true
 			} 
-			catch(IllegalArgumentException e) { return false }
+			catch(Exception e) 
+			{
+				return false
+			}
 		}
 		return false	
 	}

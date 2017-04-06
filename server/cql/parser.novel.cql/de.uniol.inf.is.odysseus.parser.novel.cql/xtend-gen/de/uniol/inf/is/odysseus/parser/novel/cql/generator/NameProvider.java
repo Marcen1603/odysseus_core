@@ -23,21 +23,17 @@ public class NameProvider {
     boolean _containsSymbol = FunctionStore.getInstance().containsSymbol(name);
     if (_containsSymbol) {
       try {
-        List<IFunction<?>> _functions = FunctionStore.getInstance().getFunctions(name);
-        String _plus = ("FUNCTIONSTORES:: " + _functions);
-        InputOutput.<String>println(_plus);
         SDFDatatype datatype = MEP.getInstance().parse(function).getReturnType();
-        InputOutput.<String>println(("TYPE:: " + datatype));
-        List<IFunction<?>> _functions_1 = FunctionStore.getInstance().getFunctions(name);
-        for (final IFunction<?> f : _functions_1) {
+        List<IFunction<?>> _functions = FunctionStore.getInstance().getFunctions(name);
+        for (final IFunction<?> f : _functions) {
           boolean _equals = f.getReturnType().equals(datatype);
           if (_equals) {
             return true;
           }
         }
       } catch (final Throwable _t) {
-        if (_t instanceof IllegalArgumentException) {
-          final IllegalArgumentException e = (IllegalArgumentException)_t;
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
           return false;
         } else {
           throw Exceptions.sneakyThrow(_t);

@@ -49,6 +49,7 @@ class SourceStruct
 		{
 			if(name.contains("."))
 			{
+				println("findbyName::"+name)
 				var split = name.split("\\.")
 				if(split.get(0).equals(this.sourcename))
 				{
@@ -102,7 +103,7 @@ class SourceStruct
 		
 		def boolean containsAttribute(String attributename)
 		{
-			return if(findbyName(attributename) != null) true else false
+			return if(findbyName(attributename) !== null) true else false
 		}
 		
 		override equals(Object obj) 

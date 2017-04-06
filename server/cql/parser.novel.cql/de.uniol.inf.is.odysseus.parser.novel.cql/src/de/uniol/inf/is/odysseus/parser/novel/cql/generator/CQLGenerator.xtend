@@ -58,6 +58,8 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2
@@ -159,8 +161,6 @@ class CQLGenerator implements IGenerator2
 
 	def parseCreate(Create statement) 
 	{
-		println("CREATE="+statement)
-		
 		if(statement.create instanceof CreateView)
 			parseCreateView(statement.create as CreateView)
 		else if(statement.create instanceof CreateAccessFramework)
@@ -889,23 +889,28 @@ class CQLGenerator implements IGenerator2
 		
 		for(var i = 0; i < aggAttr.length; i++)
 		{
-			
 			var aggregation = aggAttr.get(i).expressions.get(0).value as Function
-			
-			args.add(aggregation.name)
-			
 			var attributename = ''
 			var datatype = ''
 			var components = (aggregation.value as SelectExpression).expressions
+			println(aggregation.value as SelectExpression)
+			println("COMPONENTS=="+components.size)
 			if(components.size == 1)
 			{
+				println("COMPONENT SIZE==1")
 				var comp = components.get(0).value
 				switch(comp)
 				{
 					Attribute:
 					{
+						println("HEY")
 						attributename = getAttributename(comp.name)
 						datatype = getDataTypeFrom(attributename)
+					}
+					Starthing:
+					{
+						println("HO")
+						attributename = '*'
 					}
 				}
 			}
@@ -917,17 +922,17 @@ class CQLGenerator implements IGenerator2
 				datatype = 'DOUBLE'
 			}
 			
+			args.add(aggregation.name)
 			args.add(attributename)
-			
 			var alias = ''
 			if(aggAttr.get(i).alias != null)
 				alias = aggAttr.get(i).alias.name
 			else
 				alias = aggregation.name + '_' + (aggregationCounter++)
-				
 			args.add(alias)
 			aliases.add(alias)
-			if(attributename != '') args.add(datatype)//If no data type is given, it will be double
+
+			if(datatype != '') args.add(datatype)
 			registry_Aggregations.add(alias)
 			args.add(',')
 			argsstr += generateKeyValueString(args)

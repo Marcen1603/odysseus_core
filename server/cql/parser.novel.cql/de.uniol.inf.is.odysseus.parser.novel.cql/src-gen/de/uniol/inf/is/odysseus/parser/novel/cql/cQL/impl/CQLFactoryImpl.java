@@ -77,6 +77,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
+      case CQLPackage.STARTHING: return createStarthing();
       case CQLPackage.SET_OPERATOR: return createSetOperator();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.ACCESS_FRAMEWORK: return createAccessFramework();
@@ -97,6 +98,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.SIMPLE_SOURCE: return createSimpleSource();
       case CQLPackage.NESTED_SOURCE: return createNestedSource();
       case CQLPackage.FUNCTION: return createFunction();
+      case CQLPackage.STAR_EXPRESSION: return createStarExpression();
+      case CQLPackage.STAR: return createStar();
       case CQLPackage.EXPRESSION_COMPONENT_AS_ATTRIBUTE: return createExpressionComponentAsAttribute();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_JDBC: return createCreateDataBaseConnectionJDBC();
       case CQLPackage.CREATE_DATA_BASE_CONNECTION_GENERIC: return createCreateDataBaseConnectionGeneric();
@@ -259,6 +262,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     ExpressionComponentImpl expressionComponent = new ExpressionComponentImpl();
     return expressionComponent;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Starthing createStarthing()
+  {
+    StarthingImpl starthing = new StarthingImpl();
+    return starthing;
   }
 
   /**
@@ -479,6 +493,28 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     FunctionImpl function = new FunctionImpl();
     return function;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StarExpression createStarExpression()
+  {
+    StarExpressionImpl starExpression = new StarExpressionImpl();
+    return starExpression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Star createStar()
+  {
+    StarImpl star = new StarImpl();
+    return star;
   }
 
   /**
