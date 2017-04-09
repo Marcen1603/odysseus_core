@@ -4,12 +4,12 @@ public class ResultElement {
 
 	private TrajectoryElement trajectoryElement;
 	// Distance to query object
-	private double meters;
+	private double distanceInMeters;
 
 	
 	public ResultElement(TrajectoryElement trajectoryElement, double meters) {
 		this.trajectoryElement = trajectoryElement;
-		this.meters = meters;
+		this.distanceInMeters = meters;
 	}
 
 	public TrajectoryElement getTrajectoryElement() {
@@ -21,11 +21,11 @@ public class ResultElement {
 	}
 
 	public double getMeters() {
-		return meters;
+		return distanceInMeters;
 	}
 
 	public void setMeters(double meters) {
-		this.meters = meters;
+		this.distanceInMeters = meters;
 	}
 
 }
