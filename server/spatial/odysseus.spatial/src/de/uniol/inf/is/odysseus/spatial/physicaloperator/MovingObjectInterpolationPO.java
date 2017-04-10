@@ -33,18 +33,26 @@ public class MovingObjectInterpolationPO<T extends Tuple<? extends ITimeInterval
 		this.idIndex = 8;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 		double latitude = object.getAttribute(this.latitudeIndex);
 		double longitude = object.getAttribute(this.longitudeIndex);
 		double courseOverGround = object.getAttribute(this.courseOverGroundIndex);
 		double speedOverGround = object.getAttribute(this.speedOverGroundIndex);
-		String id = object.getAttribute(this.idIndex);
+		String id = object.getAttribute(this.idIndex).toString();
 
 		LocationMeasurement locationMeasurement = new LocationMeasurement(latitude, longitude, courseOverGround,
 				speedOverGround, object.getMetadata().getStart(), id);
 
 		this.movingObjectInterpolator.addLocation(locationMeasurement);
+
+		// Interpolate for all objects until this time
+		Map<String, LocationMeasurement> allLocations = this.movingObjectInterpolator
+				.calcAllLocations(object.getMetadata().getStart());
+		for (LocationMeasurement interpolatedLocationMeasurement : allLocations.values()) {
+			this.transfer((T) createTuple(interpolatedLocationMeasurement));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -52,15 +60,17 @@ public class MovingObjectInterpolationPO<T extends Tuple<? extends ITimeInterval
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Here we have to calculate and output the new location of every
 		// moving object
-		Map<String, LocationMeasurement> allLocations = this.movingObjectInterpolator.calcAllLocations(punctuation.getTime());
+		Map<String, LocationMeasurement> allLocations = this.movingObjectInterpolator
+				.calcAllLocations(punctuation.getTime());
 		for (LocationMeasurement interpolatedLocationMeasurement : allLocations.values()) {
-			this.transfer((T) createTuple(interpolatedLocationMeasurement));			
+			this.transfer((T) createTuple(interpolatedLocationMeasurement));
 		}
 	}
-	
+
 	private Tuple<ITimeInterval> createTuple(LocationMeasurement interpolatedLocationMeasurement) {
 		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(5, false);
-		tupleWithInterpolatedLocation.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime()));
+		tupleWithInterpolatedLocation
+				.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime()));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, interpolatedLocationMeasurement.getLatitude());
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getLongitude());
