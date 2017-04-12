@@ -15,13 +15,18 @@
     <genClasses ecoreClass="CQL.ecore#//Command">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Command/type"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Select">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Select/distinct"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/arguments"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/sources"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/predicates"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/order"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Select/having"/>
+    <genClasses ecoreClass="CQL.ecore#//SimpleSelect">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SimpleSelect/distinct"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSelect/arguments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSelect/sources"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSelect/predicates"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSelect/order"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSelect/having"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//ComplexSelect">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ComplexSelect/left"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//ComplexSelect/operation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ComplexSelect/right"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//InnerSelect">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//InnerSelect/select"/>
@@ -53,11 +58,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionComponent/value"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Starthing"/>
-    <genClasses ecoreClass="CQL.ecore#//SetOperator">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SetOperator/left"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SetOperator/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SetOperator/right"/>
-    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Alias">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Alias/name"/>
     </genClasses>

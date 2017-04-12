@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework;
@@ -49,10 +50,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star;
@@ -109,7 +109,14 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass selectEClass = null;
+  private EClass simpleSelectEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass complexSelectEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -173,13 +180,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass starthingEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass setOperatorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -652,9 +652,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getSelect()
+  public EClass getSimpleSelect()
   {
-    return selectEClass;
+    return simpleSelectEClass;
   }
 
   /**
@@ -662,9 +662,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getSelect_Distinct()
+  public EAttribute getSimpleSelect_Distinct()
   {
-    return (EAttribute)selectEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)simpleSelectEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -672,9 +672,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Arguments()
+  public EReference getSimpleSelect_Arguments()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(1);
+    return (EReference)simpleSelectEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -682,9 +682,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Sources()
+  public EReference getSimpleSelect_Sources()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(2);
+    return (EReference)simpleSelectEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -692,9 +692,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Predicates()
+  public EReference getSimpleSelect_Predicates()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(3);
+    return (EReference)simpleSelectEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -702,9 +702,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Order()
+  public EReference getSimpleSelect_Order()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(4);
+    return (EReference)simpleSelectEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -712,9 +712,49 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSelect_Having()
+  public EReference getSimpleSelect_Having()
   {
-    return (EReference)selectEClass.getEStructuralFeatures().get(5);
+    return (EReference)simpleSelectEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getComplexSelect()
+  {
+    return complexSelectEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComplexSelect_Left()
+  {
+    return (EReference)complexSelectEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getComplexSelect_Operation()
+  {
+    return (EAttribute)complexSelectEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComplexSelect_Right()
+  {
+    return (EReference)complexSelectEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -935,46 +975,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EClass getStarthing()
   {
     return starthingEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getSetOperator()
-  {
-    return setOperatorEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getSetOperator_Left()
-  {
-    return (EReference)setOperatorEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getSetOperator_Name()
-  {
-    return (EAttribute)setOperatorEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getSetOperator_Right()
-  {
-    return (EReference)setOperatorEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -2566,13 +2566,18 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     commandEClass = createEClass(COMMAND);
     createEReference(commandEClass, COMMAND__TYPE);
 
-    selectEClass = createEClass(SELECT);
-    createEAttribute(selectEClass, SELECT__DISTINCT);
-    createEReference(selectEClass, SELECT__ARGUMENTS);
-    createEReference(selectEClass, SELECT__SOURCES);
-    createEReference(selectEClass, SELECT__PREDICATES);
-    createEReference(selectEClass, SELECT__ORDER);
-    createEReference(selectEClass, SELECT__HAVING);
+    simpleSelectEClass = createEClass(SIMPLE_SELECT);
+    createEAttribute(simpleSelectEClass, SIMPLE_SELECT__DISTINCT);
+    createEReference(simpleSelectEClass, SIMPLE_SELECT__ARGUMENTS);
+    createEReference(simpleSelectEClass, SIMPLE_SELECT__SOURCES);
+    createEReference(simpleSelectEClass, SIMPLE_SELECT__PREDICATES);
+    createEReference(simpleSelectEClass, SIMPLE_SELECT__ORDER);
+    createEReference(simpleSelectEClass, SIMPLE_SELECT__HAVING);
+
+    complexSelectEClass = createEClass(COMPLEX_SELECT);
+    createEReference(complexSelectEClass, COMPLEX_SELECT__LEFT);
+    createEAttribute(complexSelectEClass, COMPLEX_SELECT__OPERATION);
+    createEReference(complexSelectEClass, COMPLEX_SELECT__RIGHT);
 
     innerSelectEClass = createEClass(INNER_SELECT);
     createEReference(innerSelectEClass, INNER_SELECT__SELECT);
@@ -2604,11 +2609,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEReference(expressionComponentEClass, EXPRESSION_COMPONENT__VALUE);
 
     starthingEClass = createEClass(STARTHING);
-
-    setOperatorEClass = createEClass(SET_OPERATOR);
-    createEReference(setOperatorEClass, SET_OPERATOR__LEFT);
-    createEAttribute(setOperatorEClass, SET_OPERATOR__NAME);
-    createEReference(setOperatorEClass, SET_OPERATOR__RIGHT);
 
     aliasEClass = createEClass(ALIAS);
     createEAttribute(aliasEClass, ALIAS__NAME);
@@ -2889,19 +2889,24 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCommand_Type(), this.getCommand(), null, "type", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(selectEClass, Select.class, "Select", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getSelect_Distinct(), ecorePackage.getEString(), "distinct", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Arguments(), this.getSelectArgument(), null, "arguments", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Sources(), this.getSource(), null, "sources", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Predicates(), this.getExpressionsModel(), null, "predicates", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Order(), this.getAttribute(), null, "order", null, 0, -1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSelect_Having(), this.getExpressionsModel(), null, "having", null, 0, 1, Select.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(simpleSelectEClass, SimpleSelect.class, "SimpleSelect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getSimpleSelect_Distinct(), ecorePackage.getEString(), "distinct", null, 0, 1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSelect_Arguments(), this.getSelectArgument(), null, "arguments", null, 0, -1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSelect_Sources(), this.getSource(), null, "sources", null, 0, -1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSelect_Predicates(), this.getExpressionsModel(), null, "predicates", null, 0, 1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSelect_Order(), this.getAttribute(), null, "order", null, 0, -1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSimpleSelect_Having(), this.getExpressionsModel(), null, "having", null, 0, 1, SimpleSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(complexSelectEClass, ComplexSelect.class, "ComplexSelect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getComplexSelect_Left(), this.getSimpleSelect(), null, "left", null, 0, 1, ComplexSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getComplexSelect_Operation(), ecorePackage.getEString(), "operation", null, 0, 1, ComplexSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getComplexSelect_Right(), this.getSimpleSelect(), null, "right", null, 0, 1, ComplexSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(innerSelectEClass, InnerSelect.class, "InnerSelect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getInnerSelect_Select(), this.getSelect(), null, "select", null, 0, 1, InnerSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getInnerSelect_Select(), this.getSimpleSelect(), null, "select", null, 0, 1, InnerSelect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(innerSelect2EClass, InnerSelect2.class, "InnerSelect2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getInnerSelect2_Select(), this.getSelect(), null, "select", null, 0, 1, InnerSelect2.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getInnerSelect2_Select(), this.getSimpleSelect(), null, "select", null, 0, 1, InnerSelect2.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(selectArgumentEClass, SelectArgument.class, "SelectArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectArgument_Attribute(), this.getAttribute(), null, "attribute", null, 0, 1, SelectArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2927,11 +2932,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEReference(getExpressionComponent_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ExpressionComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(starthingEClass, Starthing.class, "Starthing", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(setOperatorEClass, SetOperator.class, "SetOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getSetOperator_Left(), this.getSelect(), null, "left", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getSetOperator_Name(), ecorePackage.getEString(), "name", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSetOperator_Right(), this.getSelect(), null, "right", null, 0, 1, SetOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(aliasEClass, Alias.class, "Alias", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAlias_Name(), ecorePackage.getEString(), "name", null, 0, 1, Alias.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

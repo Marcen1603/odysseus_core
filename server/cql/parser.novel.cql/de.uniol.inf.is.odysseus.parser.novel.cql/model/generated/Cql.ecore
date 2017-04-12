@@ -14,7 +14,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//Command"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Select">
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleSelect">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="distinct" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
         eType="#//SelectArgument" containment="true"/>
@@ -27,12 +27,19 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="having" eType="#//ExpressionsModel"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexSelect">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="#//SimpleSelect"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="#//SimpleSelect"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InnerSelect">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="select" eType="#//Select"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="select" eType="#//SimpleSelect"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InnerSelect2">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="select" eType="#//Select"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="select" eType="#//SimpleSelect"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SelectArgument">
@@ -69,13 +76,6 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Starthing"/>
-  <eClassifiers xsi:type="ecore:EClass" name="SetOperator">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="left" eType="#//Select"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="right" eType="#//Select"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Alias">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

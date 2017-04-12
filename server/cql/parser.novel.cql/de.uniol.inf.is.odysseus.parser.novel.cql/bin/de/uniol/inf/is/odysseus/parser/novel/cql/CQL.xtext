@@ -38,13 +38,17 @@ QualifiedSourcename:
 ;
 
 Statement:
-	type=(Select
-	| Create
-	| StreamTo)
+	type=(
+//	Select
+	Create
+	| StreamTo
+	| ComplexSelect
+	)
 ;
  
 Command :
-	type=(DropStream
+	type=(
+	DropStream
 	| UserManagement
 	| RightsManagement
 	| RoleManagement
@@ -52,26 +56,35 @@ Command :
 	| CreateDataBaseJDBCConnection
 	| DropDatabaseConnection
 	| CreateContextStore
-	| DropContextStore)
+	| DropContextStore
+	)
 ; 
  
-Select:
-	{Select}
-	'SELECT'
-	(distinct='DISTINCT')?
-	('*'|(arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
-	('FROM' sources+=Source+ (',' sources+=Source)*)
-	('WHERE' predicates=ExpressionsModel)?
-	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-	('HAVING' having=ExpressionsModel)?
+SimpleSelect:
+	{SimpleSelect}
+	(
+		'SELECT'
+		(distinct='DISTINCT')?
+		('*'|(arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
+		('FROM' sources+=Source+ (',' sources+=Source)*)
+		('WHERE' predicates=ExpressionsModel)?
+		('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
+		('HAVING' having=ExpressionsModel)?
+	)
+;
+
+ComplexSelect:
+	{ComplexSelect}
+	left=SimpleSelect
+	(operation=('UNION'|'DIFFERENCE'|'INTERSECTION') right=SimpleSelect)?
 ;
 
 InnerSelect:
-	'(' select=Select ')'
+	'(' select=SimpleSelect ')'
 ;
 
 InnerSelect2:
-	select=Select
+	select=SimpleSelect
 ;
 
 SelectArgument: (attribute=Attribute | expression=SelectExpression);
@@ -127,7 +140,7 @@ AttributeWithNestedStatement:
 //TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
 //Operators for predicates and expressions
 AndOperator: 'AND' ;
-OrOperator: 'OR';
+OrOperator: 'OR' ;
 EQUALITIY_OPERATOR: ('=' | '!=') ;
 COMPARE_OPERATOR: ('>=' | '<=' | '<' | '>') ;
 ARITHMETIC_OPERATOR:
@@ -199,12 +212,6 @@ Starthing:
 ExpressionComponentAsAttribute returns ExpressionComponent:
 	{ExpressionComponentAsAttribute}
 	value=AttributeForSelectExpression
-;
-
-SetOperator:
-	left=Select
-	name=('UNION'|'DIFFERENCE'|'INTERSECTION')
-	right=Select
 ;
 
 Alias:
@@ -380,7 +387,7 @@ UserManagement returns Command:
 	name=('CREATE'|'ALTER'|'DROP')
 	subject=('USER'|'ROLE'|'TENANT')
 	subjectName=ID
-	('IDFIED' 'BY' password=STRING)?
+	('IDENTIFIED' 'BY' password=STRING)?
 ;
 
 RightsManagement returns Command:

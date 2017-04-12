@@ -91,9 +91,14 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createCommandAdapter();
       }
       @Override
-      public Adapter caseSelect(Select object)
+      public Adapter caseSimpleSelect(SimpleSelect object)
       {
-        return createSelectAdapter();
+        return createSimpleSelectAdapter();
+      }
+      @Override
+      public Adapter caseComplexSelect(ComplexSelect object)
+      {
+        return createComplexSelectAdapter();
       }
       @Override
       public Adapter caseInnerSelect(InnerSelect object)
@@ -139,11 +144,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseStarthing(Starthing object)
       {
         return createStarthingAdapter();
-      }
-      @Override
-      public Adapter caseSetOperator(SetOperator object)
-      {
-        return createSetOperatorAdapter();
       }
       @Override
       public Adapter caseAlias(Alias object)
@@ -458,16 +458,31 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select <em>Select</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect <em>Simple Select</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect
    * @generated
    */
-  public Adapter createSelectAdapter()
+  public Adapter createSimpleSelectAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect <em>Complex Select</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect
+   * @generated
+   */
+  public Adapter createComplexSelectAdapter()
   {
     return null;
   }
@@ -603,21 +618,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createStarthingAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator <em>Set Operator</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator
-   * @generated
-   */
-  public Adapter createSetOperatorAdapter()
   {
     return null;
   }

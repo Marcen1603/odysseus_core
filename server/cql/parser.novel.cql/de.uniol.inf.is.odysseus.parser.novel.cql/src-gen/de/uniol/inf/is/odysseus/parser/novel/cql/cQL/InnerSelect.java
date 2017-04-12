@@ -32,12 +32,12 @@ public interface InnerSelect extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Select</em>' containment reference.
-   * @see #setSelect(Select)
+   * @see #setSelect(SimpleSelect)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getInnerSelect_Select()
    * @model containment="true"
    * @generated
    */
-  Select getSelect();
+  SimpleSelect getSelect();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect#getSelect <em>Select</em>}' containment reference.
@@ -47,6 +47,6 @@ public interface InnerSelect extends EObject
    * @see #getSelect()
    * @generated
    */
-  void setSelect(Select value);
+  void setSelect(SimpleSelect value);
 
 } // InnerSelect

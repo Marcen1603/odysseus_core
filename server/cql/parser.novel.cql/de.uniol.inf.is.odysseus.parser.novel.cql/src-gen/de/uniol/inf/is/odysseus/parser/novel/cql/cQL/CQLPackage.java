@@ -142,14 +142,14 @@ public interface CQLPackage extends EPackage
   int COMMAND_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl <em>Select</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl <em>Simple Select</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSimpleSelect()
    * @generated
    */
-  int SELECT = 3;
+  int SIMPLE_SELECT = 3;
 
   /**
    * The feature id for the '<em><b>Distinct</b></em>' attribute.
@@ -158,7 +158,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__DISTINCT = 0;
+  int SIMPLE_SELECT__DISTINCT = 0;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
@@ -167,7 +167,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__ARGUMENTS = 1;
+  int SIMPLE_SELECT__ARGUMENTS = 1;
 
   /**
    * The feature id for the '<em><b>Sources</b></em>' containment reference list.
@@ -176,7 +176,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__SOURCES = 2;
+  int SIMPLE_SELECT__SOURCES = 2;
 
   /**
    * The feature id for the '<em><b>Predicates</b></em>' containment reference.
@@ -185,7 +185,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__PREDICATES = 3;
+  int SIMPLE_SELECT__PREDICATES = 3;
 
   /**
    * The feature id for the '<em><b>Order</b></em>' containment reference list.
@@ -194,7 +194,7 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__ORDER = 4;
+  int SIMPLE_SELECT__ORDER = 4;
 
   /**
    * The feature id for the '<em><b>Having</b></em>' containment reference.
@@ -203,16 +203,62 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SELECT__HAVING = 5;
+  int SIMPLE_SELECT__HAVING = 5;
 
   /**
-   * The number of structural features of the '<em>Select</em>' class.
+   * The number of structural features of the '<em>Simple Select</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SELECT_FEATURE_COUNT = 6;
+  int SIMPLE_SELECT_FEATURE_COUNT = 6;
+
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl <em>Complex Select</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComplexSelect()
+   * @generated
+   */
+  int COMPLEX_SELECT = 4;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPLEX_SELECT__LEFT = 0;
+
+  /**
+   * The feature id for the '<em><b>Operation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPLEX_SELECT__OPERATION = 1;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPLEX_SELECT__RIGHT = 2;
+
+  /**
+   * The number of structural features of the '<em>Complex Select</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPLEX_SELECT_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl <em>Inner Select</em>}' class.
@@ -222,7 +268,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect()
    * @generated
    */
-  int INNER_SELECT = 4;
+  int INNER_SELECT = 5;
 
   /**
    * The feature id for the '<em><b>Select</b></em>' containment reference.
@@ -250,7 +296,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getInnerSelect2()
    * @generated
    */
-  int INNER_SELECT2 = 5;
+  int INNER_SELECT2 = 6;
 
   /**
    * The feature id for the '<em><b>Select</b></em>' containment reference.
@@ -278,7 +324,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectArgument()
    * @generated
    */
-  int SELECT_ARGUMENT = 6;
+  int SELECT_ARGUMENT = 7;
 
   /**
    * The feature id for the '<em><b>Attribute</b></em>' containment reference.
@@ -315,7 +361,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSource()
    * @generated
    */
-  int SOURCE = 7;
+  int SOURCE = 8;
 
   /**
    * The feature id for the '<em><b>Alias</b></em>' containment reference.
@@ -343,7 +389,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttribute()
    * @generated
    */
-  int ATTRIBUTE = 8;
+  int ATTRIBUTE = 9;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -380,7 +426,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getAttributeWithNestedStatement()
    * @generated
    */
-  int ATTRIBUTE_WITH_NESTED_STATEMENT = 9;
+  int ATTRIBUTE_WITH_NESTED_STATEMENT = 10;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -417,7 +463,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelectExpression()
    * @generated
    */
-  int SELECT_EXPRESSION = 10;
+  int SELECT_EXPRESSION = 11;
 
   /**
    * The feature id for the '<em><b>Expressions</b></em>' containment reference list.
@@ -463,7 +509,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getExpressionComponent()
    * @generated
    */
-  int EXPRESSION_COMPONENT = 11;
+  int EXPRESSION_COMPONENT = 12;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -491,7 +537,7 @@ public interface CQLPackage extends EPackage
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStarthing()
    * @generated
    */
-  int STARTHING = 12;
+  int STARTHING = 13;
 
   /**
    * The number of structural features of the '<em>Starthing</em>' class.
@@ -501,52 +547,6 @@ public interface CQLPackage extends EPackage
    * @ordered
    */
   int STARTHING_FEATURE_COUNT = 0;
-
-  /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl <em>Set Operator</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSetOperator()
-   * @generated
-   */
-  int SET_OPERATOR = 13;
-
-  /**
-   * The feature id for the '<em><b>Left</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SET_OPERATOR__LEFT = 0;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SET_OPERATOR__NAME = 1;
-
-  /**
-   * The feature id for the '<em><b>Right</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SET_OPERATOR__RIGHT = 2;
-
-  /**
-   * The number of structural features of the '<em>Set Operator</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SET_OPERATOR_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AliasImpl <em>Alias</em>}' class.
@@ -2651,80 +2651,123 @@ public interface CQLPackage extends EPackage
   EReference getCommand_Type();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select <em>Select</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect <em>Simple Select</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Select</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select
+   * @return the meta object for class '<em>Simple Select</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect
    * @generated
    */
-  EClass getSelect();
+  EClass getSimpleSelect();
 
   /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}'.
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getDistinct <em>Distinct</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Distinct</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getDistinct()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EAttribute getSelect_Distinct();
+  EAttribute getSimpleSelect_Distinct();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getArguments <em>Arguments</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getArguments <em>Arguments</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Arguments</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getArguments()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getArguments()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EReference getSelect_Arguments();
+  EReference getSimpleSelect_Arguments();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources <em>Sources</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getSources <em>Sources</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Sources</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getSources()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EReference getSelect_Sources();
+  EReference getSimpleSelect_Sources();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates <em>Predicates</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getPredicates <em>Predicates</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Predicates</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getPredicates()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EReference getSelect_Predicates();
+  EReference getSimpleSelect_Predicates();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getOrder <em>Order</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getOrder <em>Order</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Order</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getOrder()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getOrder()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EReference getSelect_Order();
+  EReference getSimpleSelect_Order();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getHaving <em>Having</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getHaving <em>Having</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Having</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getHaving()
-   * @see #getSelect()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getHaving()
+   * @see #getSimpleSelect()
    * @generated
    */
-  EReference getSelect_Having();
+  EReference getSimpleSelect_Having();
+
+  /**
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect <em>Complex Select</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Complex Select</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect
+   * @generated
+   */
+  EClass getComplexSelect();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getLeft <em>Left</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Left</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getLeft()
+   * @see #getComplexSelect()
+   * @generated
+   */
+  EReference getComplexSelect_Left();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getOperation <em>Operation</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Operation</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getOperation()
+   * @see #getComplexSelect()
+   * @generated
+   */
+  EAttribute getComplexSelect_Operation();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getRight <em>Right</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Right</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect#getRight()
+   * @see #getComplexSelect()
+   * @generated
+   */
+  EReference getComplexSelect_Right();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect <em>Inner Select</em>}'.
@@ -2958,49 +3001,6 @@ public interface CQLPackage extends EPackage
    * @generated
    */
   EClass getStarthing();
-
-  /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator <em>Set Operator</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Set Operator</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator
-   * @generated
-   */
-  EClass getSetOperator();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getLeft <em>Left</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Left</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getLeft()
-   * @see #getSetOperator()
-   * @generated
-   */
-  EReference getSetOperator_Left();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getName()
-   * @see #getSetOperator()
-   * @generated
-   */
-  EAttribute getSetOperator_Name();
-
-  /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getRight <em>Right</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Right</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator#getRight()
-   * @see #getSetOperator()
-   * @generated
-   */
-  EReference getSetOperator_Right();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias <em>Alias</em>}'.
@@ -4736,14 +4736,14 @@ public interface CQLPackage extends EPackage
     EReference COMMAND__TYPE = eINSTANCE.getCommand_Type();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl <em>Select</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl <em>Simple Select</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSelect()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSimpleSelect()
      * @generated
      */
-    EClass SELECT = eINSTANCE.getSelect();
+    EClass SIMPLE_SELECT = eINSTANCE.getSimpleSelect();
 
     /**
      * The meta object literal for the '<em><b>Distinct</b></em>' attribute feature.
@@ -4751,7 +4751,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute SELECT__DISTINCT = eINSTANCE.getSelect_Distinct();
+    EAttribute SIMPLE_SELECT__DISTINCT = eINSTANCE.getSimpleSelect_Distinct();
 
     /**
      * The meta object literal for the '<em><b>Arguments</b></em>' containment reference list feature.
@@ -4759,7 +4759,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT__ARGUMENTS = eINSTANCE.getSelect_Arguments();
+    EReference SIMPLE_SELECT__ARGUMENTS = eINSTANCE.getSimpleSelect_Arguments();
 
     /**
      * The meta object literal for the '<em><b>Sources</b></em>' containment reference list feature.
@@ -4767,7 +4767,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT__SOURCES = eINSTANCE.getSelect_Sources();
+    EReference SIMPLE_SELECT__SOURCES = eINSTANCE.getSimpleSelect_Sources();
 
     /**
      * The meta object literal for the '<em><b>Predicates</b></em>' containment reference feature.
@@ -4775,7 +4775,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT__PREDICATES = eINSTANCE.getSelect_Predicates();
+    EReference SIMPLE_SELECT__PREDICATES = eINSTANCE.getSimpleSelect_Predicates();
 
     /**
      * The meta object literal for the '<em><b>Order</b></em>' containment reference list feature.
@@ -4783,7 +4783,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT__ORDER = eINSTANCE.getSelect_Order();
+    EReference SIMPLE_SELECT__ORDER = eINSTANCE.getSimpleSelect_Order();
 
     /**
      * The meta object literal for the '<em><b>Having</b></em>' containment reference feature.
@@ -4791,7 +4791,41 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SELECT__HAVING = eINSTANCE.getSelect_Having();
+    EReference SIMPLE_SELECT__HAVING = eINSTANCE.getSimpleSelect_Having();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl <em>Complex Select</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getComplexSelect()
+     * @generated
+     */
+    EClass COMPLEX_SELECT = eINSTANCE.getComplexSelect();
+
+    /**
+     * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference COMPLEX_SELECT__LEFT = eINSTANCE.getComplexSelect_Left();
+
+    /**
+     * The meta object literal for the '<em><b>Operation</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMPLEX_SELECT__OPERATION = eINSTANCE.getComplexSelect_Operation();
+
+    /**
+     * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference COMPLEX_SELECT__RIGHT = eINSTANCE.getComplexSelect_Right();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.InnerSelectImpl <em>Inner Select</em>}' class.
@@ -4986,40 +5020,6 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EClass STARTHING = eINSTANCE.getStarthing();
-
-    /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl <em>Set Operator</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getSetOperator()
-     * @generated
-     */
-    EClass SET_OPERATOR = eINSTANCE.getSetOperator();
-
-    /**
-     * The meta object literal for the '<em><b>Left</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SET_OPERATOR__LEFT = eINSTANCE.getSetOperator_Left();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute SET_OPERATOR__NAME = eINSTANCE.getSetOperator_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Right</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SET_OPERATOR__RIGHT = eINSTANCE.getSetOperator_Right();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.AliasImpl <em>Alias</em>}' class.

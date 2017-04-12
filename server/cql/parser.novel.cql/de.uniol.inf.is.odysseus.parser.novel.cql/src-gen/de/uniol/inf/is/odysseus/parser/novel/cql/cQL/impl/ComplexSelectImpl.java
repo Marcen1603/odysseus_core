@@ -4,8 +4,8 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -18,20 +18,20 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Set Operator</b></em>'.
+ * An implementation of the model object '<em><b>Complex Select</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl#getLeft <em>Left</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SetOperatorImpl#getRight <em>Right</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl#getLeft <em>Left</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl#getOperation <em>Operation</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.ComplexSelectImpl#getRight <em>Right</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class SetOperatorImpl extends MinimalEObjectImpl.Container implements SetOperator
+public class ComplexSelectImpl extends MinimalEObjectImpl.Container implements ComplexSelect
 {
   /**
    * The cached value of the '{@link #getLeft() <em>Left</em>}' containment reference.
@@ -41,27 +41,27 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * @generated
    * @ordered
    */
-  protected Select left;
+  protected SimpleSelect left;
 
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * The default value of the '{@link #getOperation() <em>Operation</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getName()
+   * @see #getOperation()
    * @generated
    * @ordered
    */
-  protected static final String NAME_EDEFAULT = null;
+  protected static final String OPERATION_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * The cached value of the '{@link #getOperation() <em>Operation</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getName()
+   * @see #getOperation()
    * @generated
    * @ordered
    */
-  protected String name = NAME_EDEFAULT;
+  protected String operation = OPERATION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getRight() <em>Right</em>}' containment reference.
@@ -71,14 +71,14 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * @generated
    * @ordered
    */
-  protected Select right;
+  protected SimpleSelect right;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected SetOperatorImpl()
+  protected ComplexSelectImpl()
   {
     super();
   }
@@ -91,7 +91,7 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.SET_OPERATOR;
+    return CQLPackage.Literals.COMPLEX_SELECT;
   }
 
   /**
@@ -99,7 +99,7 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getLeft()
+  public SimpleSelect getLeft()
   {
     return left;
   }
@@ -109,13 +109,13 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetLeft(Select newLeft, NotificationChain msgs)
+  public NotificationChain basicSetLeft(SimpleSelect newLeft, NotificationChain msgs)
   {
-    Select oldLeft = left;
+    SimpleSelect oldLeft = left;
     left = newLeft;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SET_OPERATOR__LEFT, oldLeft, newLeft);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.COMPLEX_SELECT__LEFT, oldLeft, newLeft);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -126,20 +126,20 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setLeft(Select newLeft)
+  public void setLeft(SimpleSelect newLeft)
   {
     if (newLeft != left)
     {
       NotificationChain msgs = null;
       if (left != null)
-        msgs = ((InternalEObject)left).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SET_OPERATOR__LEFT, null, msgs);
+        msgs = ((InternalEObject)left).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.COMPLEX_SELECT__LEFT, null, msgs);
       if (newLeft != null)
-        msgs = ((InternalEObject)newLeft).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SET_OPERATOR__LEFT, null, msgs);
+        msgs = ((InternalEObject)newLeft).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.COMPLEX_SELECT__LEFT, null, msgs);
       msgs = basicSetLeft(newLeft, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SET_OPERATOR__LEFT, newLeft, newLeft));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMPLEX_SELECT__LEFT, newLeft, newLeft));
   }
 
   /**
@@ -147,9 +147,9 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName()
+  public String getOperation()
   {
-    return name;
+    return operation;
   }
 
   /**
@@ -157,12 +157,12 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setName(String newName)
+  public void setOperation(String newOperation)
   {
-    String oldName = name;
-    name = newName;
+    String oldOperation = operation;
+    operation = newOperation;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SET_OPERATOR__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMPLEX_SELECT__OPERATION, oldOperation, operation));
   }
 
   /**
@@ -170,7 +170,7 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getRight()
+  public SimpleSelect getRight()
   {
     return right;
   }
@@ -180,13 +180,13 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetRight(Select newRight, NotificationChain msgs)
+  public NotificationChain basicSetRight(SimpleSelect newRight, NotificationChain msgs)
   {
-    Select oldRight = right;
+    SimpleSelect oldRight = right;
     right = newRight;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SET_OPERATOR__RIGHT, oldRight, newRight);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.COMPLEX_SELECT__RIGHT, oldRight, newRight);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -197,20 +197,20 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setRight(Select newRight)
+  public void setRight(SimpleSelect newRight)
   {
     if (newRight != right)
     {
       NotificationChain msgs = null;
       if (right != null)
-        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SET_OPERATOR__RIGHT, null, msgs);
+        msgs = ((InternalEObject)right).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.COMPLEX_SELECT__RIGHT, null, msgs);
       if (newRight != null)
-        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SET_OPERATOR__RIGHT, null, msgs);
+        msgs = ((InternalEObject)newRight).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.COMPLEX_SELECT__RIGHT, null, msgs);
       msgs = basicSetRight(newRight, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SET_OPERATOR__RIGHT, newRight, newRight));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.COMPLEX_SELECT__RIGHT, newRight, newRight));
   }
 
   /**
@@ -223,9 +223,9 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   {
     switch (featureID)
     {
-      case CQLPackage.SET_OPERATOR__LEFT:
+      case CQLPackage.COMPLEX_SELECT__LEFT:
         return basicSetLeft(null, msgs);
-      case CQLPackage.SET_OPERATOR__RIGHT:
+      case CQLPackage.COMPLEX_SELECT__RIGHT:
         return basicSetRight(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -241,11 +241,11 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   {
     switch (featureID)
     {
-      case CQLPackage.SET_OPERATOR__LEFT:
+      case CQLPackage.COMPLEX_SELECT__LEFT:
         return getLeft();
-      case CQLPackage.SET_OPERATOR__NAME:
-        return getName();
-      case CQLPackage.SET_OPERATOR__RIGHT:
+      case CQLPackage.COMPLEX_SELECT__OPERATION:
+        return getOperation();
+      case CQLPackage.COMPLEX_SELECT__RIGHT:
         return getRight();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -261,14 +261,14 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   {
     switch (featureID)
     {
-      case CQLPackage.SET_OPERATOR__LEFT:
-        setLeft((Select)newValue);
+      case CQLPackage.COMPLEX_SELECT__LEFT:
+        setLeft((SimpleSelect)newValue);
         return;
-      case CQLPackage.SET_OPERATOR__NAME:
-        setName((String)newValue);
+      case CQLPackage.COMPLEX_SELECT__OPERATION:
+        setOperation((String)newValue);
         return;
-      case CQLPackage.SET_OPERATOR__RIGHT:
-        setRight((Select)newValue);
+      case CQLPackage.COMPLEX_SELECT__RIGHT:
+        setRight((SimpleSelect)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -284,14 +284,14 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   {
     switch (featureID)
     {
-      case CQLPackage.SET_OPERATOR__LEFT:
-        setLeft((Select)null);
+      case CQLPackage.COMPLEX_SELECT__LEFT:
+        setLeft((SimpleSelect)null);
         return;
-      case CQLPackage.SET_OPERATOR__NAME:
-        setName(NAME_EDEFAULT);
+      case CQLPackage.COMPLEX_SELECT__OPERATION:
+        setOperation(OPERATION_EDEFAULT);
         return;
-      case CQLPackage.SET_OPERATOR__RIGHT:
-        setRight((Select)null);
+      case CQLPackage.COMPLEX_SELECT__RIGHT:
+        setRight((SimpleSelect)null);
         return;
     }
     super.eUnset(featureID);
@@ -307,11 +307,11 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
   {
     switch (featureID)
     {
-      case CQLPackage.SET_OPERATOR__LEFT:
+      case CQLPackage.COMPLEX_SELECT__LEFT:
         return left != null;
-      case CQLPackage.SET_OPERATOR__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case CQLPackage.SET_OPERATOR__RIGHT:
+      case CQLPackage.COMPLEX_SELECT__OPERATION:
+        return OPERATION_EDEFAULT == null ? operation != null : !OPERATION_EDEFAULT.equals(operation);
+      case CQLPackage.COMPLEX_SELECT__RIGHT:
         return right != null;
     }
     return super.eIsSet(featureID);
@@ -328,10 +328,10 @@ public class SetOperatorImpl extends MinimalEObjectImpl.Container implements Set
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
+    result.append(" (operation: ");
+    result.append(operation);
     result.append(')');
     return result.toString();
   }
 
-} //SetOperatorImpl
+} //ComplexSelectImpl

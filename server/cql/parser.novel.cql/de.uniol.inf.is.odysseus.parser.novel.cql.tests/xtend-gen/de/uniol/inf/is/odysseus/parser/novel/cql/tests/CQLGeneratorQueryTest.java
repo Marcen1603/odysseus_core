@@ -709,4 +709,12 @@ public class CQLGeneratorQueryTest {
       "SELECT attr1 AS a1, Max([1.0,2.0,3.0;3.0,4.0,6.0]) + 7.5 * a1 AS maxElement FROM stream1;", 
       "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'a1\',[\'Max([1.0,2.0,3.0;3.0,4.0,6.0])+7.5*a1\',\'maxElement\']]},operator_1)", _cQLDictionaryHelper);
   }
+  
+  @Test
+  public void SetOperatorTest1() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT attr1 FROM stream1\n\t\t\tUNION\n\t\t\tSELECT attr3 FROM stream2", 
+      "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'stream2.attr3\']},stream2)\n\t\t\t operator_3=UNION(operator_1,operator_2)", _cQLDictionaryHelper);
+  }
 }

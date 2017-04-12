@@ -94,10 +94,17 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.SELECT:
+      case CQLPackage.SIMPLE_SELECT:
       {
-        Select select = (Select)theEObject;
-        T result = caseSelect(select);
+        SimpleSelect simpleSelect = (SimpleSelect)theEObject;
+        T result = caseSimpleSelect(simpleSelect);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.COMPLEX_SELECT:
+      {
+        ComplexSelect complexSelect = (ComplexSelect)theEObject;
+        T result = caseComplexSelect(complexSelect);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -161,13 +168,6 @@ public class CQLSwitch<T> extends Switch<T>
       {
         Starthing starthing = (Starthing)theEObject;
         T result = caseStarthing(starthing);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case CQLPackage.SET_OPERATOR:
-      {
-        SetOperator setOperator = (SetOperator)theEObject;
-        T result = caseSetOperator(setOperator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -601,17 +601,33 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Select</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Simple Select</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Select</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Simple Select</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseSelect(Select object)
+  public T caseSimpleSelect(SimpleSelect object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Complex Select</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Complex Select</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseComplexSelect(ComplexSelect object)
   {
     return null;
   }
@@ -756,22 +772,6 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseStarthing(Starthing object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Set Operator</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Set Operator</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseSetOperator(SetOperator object)
   {
     return null;
   }

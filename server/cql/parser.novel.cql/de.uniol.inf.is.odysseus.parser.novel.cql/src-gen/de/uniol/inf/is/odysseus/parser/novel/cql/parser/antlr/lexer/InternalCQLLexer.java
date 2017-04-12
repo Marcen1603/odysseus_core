@@ -12,38 +12,37 @@ import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class InternalCQLLexer extends Lexer {
-    public static final int CREATE=23;
-    public static final int CONTEXT=19;
+    public static final int CREATE=24;
+    public static final int CONTEXT=20;
     public static final int LessThanSign=78;
     public static final int TABLE=38;
     public static final int RULE_BIT=89;
     public static final int LeftParenthesis=68;
     public static final int RULE_VECTOR_FLOAT=91;
-    public static final int PARTITION=9;
+    public static final int PARTITION=10;
     public static final int IF=63;
     public static final int EACH=43;
     public static final int GreaterThanSign=80;
     public static final int RULE_ID=87;
     public static final int IN=64;
-    public static final int DISTINCT=13;
+    public static final int DISTINCT=14;
     public static final int SIZE=49;
     public static final int RULE_SPECIAL_CHARS=85;
-    public static final int PROTOCOL=15;
-    public static final int OPTIONS=20;
+    public static final int PROTOCOL=16;
+    public static final int OPTIONS=21;
     public static final int WHERE=41;
     public static final int GreaterThanSignEqualsSign=59;
     public static final int AS=60;
     public static final int AT=61;
-    public static final int DATABASE=12;
-    public static final int CHANNEL=18;
+    public static final int DATABASE=13;
+    public static final int CHANNEL=19;
     public static final int PlusSign=71;
     public static final int RULE_INT=86;
     public static final int RULE_ML_COMMENT=94;
     public static final int LeftSquareBracket=81;
-    public static final int ADVANCE=17;
+    public static final int ADVANCE=18;
     public static final int ALTER=32;
     public static final int RULE_BYTE=90;
-    public static final int IDFIED=26;
     public static final int ROLE=47;
     public static final int GROUP=35;
     public static final int Comma=72;
@@ -67,26 +66,26 @@ public class InternalCQLLexer extends Lexer {
     public static final int TO=67;
     public static final int MULTI=36;
     public static final int UNION=40;
-    public static final int TRUNCATE=16;
+    public static final int TRUNCATE=17;
     public static final int SINGLE=29;
     public static final int FROM=45;
     public static final int VIEW=53;
-    public static final int UNBOUNDED=11;
-    public static final int WRAPPER=21;
+    public static final int UNBOUNDED=12;
+    public static final int WRAPPER=22;
     public static final int RightSquareBracket=82;
     public static final int RightParenthesis=69;
     public static final int TRUE=51;
     public static final int NOT=56;
     public static final int INTERSECTION=5;
-    public static final int PASSWORD=14;
+    public static final int PASSWORD=15;
     public static final int SINK=48;
     public static final int AND=55;
-    public static final int HAVING=25;
+    public static final int HAVING=26;
     public static final int RULE_STRING=93;
     public static final int DROP=42;
     public static final int RULE_SL_COMMENT=95;
     public static final int EqualsSign=79;
-    public static final int TRANSPORT=10;
+    public static final int TRANSPORT=11;
     public static final int DIFFERENCE=8;
     public static final int JDBC=46;
     public static final int Colon=76;
@@ -94,9 +93,10 @@ public class InternalCQLLexer extends Lexer {
     public static final int Asterisk=70;
     public static final int ON=65;
     public static final int OR=66;
-    public static final int EXISTS=24;
+    public static final int EXISTS=25;
     public static final int RULE_WS=96;
     public static final int STREAM=30;
+    public static final int IDENTIFIED=9;
     public static final int TIME=50;
     public static final int RULE_ANY_OTHER=97;
     public static final int USER=52;
@@ -104,7 +104,7 @@ public class InternalCQLLexer extends Lexer {
     public static final int WITH=54;
     public static final int CircumflexAccent=83;
     public static final int GRANT=34;
-    public static final int ATTACH=22;
+    public static final int ATTACH=23;
     public static final int FALSE=33;
     public static final int RULE_MATRIX_FLOAT=92;
 
@@ -795,13 +795,122 @@ public class InternalCQLLexer extends Lexer {
     }
     // $ANTLR end "DIFFERENCE"
 
+    // $ANTLR start "IDENTIFIED"
+    public final void mIDENTIFIED() throws RecognitionException {
+        try {
+            int _type = IDENTIFIED;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalCQLLexer.g:24:12: ( ( 'I' | 'i' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'F' | 'f' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'D' | 'd' ) )
+            // InternalCQLLexer.g:24:14: ( 'I' | 'i' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'F' | 'f' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'D' | 'd' )
+            {
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='N'||input.LA(1)=='n' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='F'||input.LA(1)=='f' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
+                input.consume();
+
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;}
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "IDENTIFIED"
+
     // $ANTLR start "PARTITION"
     public final void mPARTITION() throws RecognitionException {
         try {
             int _type = PARTITION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:24:11: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) )
-            // InternalCQLLexer.g:24:13: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' )
+            // InternalCQLLexer.g:26:11: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) )
+            // InternalCQLLexer.g:26:13: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'R' | 'r' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' )
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
@@ -900,8 +1009,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = TRANSPORT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:26:11: ( ( 'T' | 't' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'P' | 'p' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'T' | 't' ) )
-            // InternalCQLLexer.g:26:13: ( 'T' | 't' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'P' | 'p' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'T' | 't' )
+            // InternalCQLLexer.g:28:11: ( ( 'T' | 't' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'P' | 'p' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'T' | 't' ) )
+            // InternalCQLLexer.g:28:13: ( 'T' | 't' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'S' | 's' ) ( 'P' | 'p' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'T' | 't' )
             {
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
@@ -1000,8 +1109,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = UNBOUNDED;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:28:11: ( ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'B' | 'b' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'D' | 'd' ) )
-            // InternalCQLLexer.g:28:13: ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'B' | 'b' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'D' | 'd' )
+            // InternalCQLLexer.g:30:11: ( ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'B' | 'b' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'D' | 'd' ) )
+            // InternalCQLLexer.g:30:13: ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'B' | 'b' ) ( 'O' | 'o' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'D' | 'd' ) ( 'E' | 'e' ) ( 'D' | 'd' )
             {
             if ( input.LA(1)=='U'||input.LA(1)=='u' ) {
                 input.consume();
@@ -1100,8 +1209,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = DATABASE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:30:10: ( ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'B' | 'b' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'E' | 'e' ) )
-            // InternalCQLLexer.g:30:12: ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'B' | 'b' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'E' | 'e' )
+            // InternalCQLLexer.g:32:10: ( ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'B' | 'b' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'E' | 'e' ) )
+            // InternalCQLLexer.g:32:12: ( 'D' | 'd' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'B' | 'b' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'E' | 'e' )
             {
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
@@ -1191,8 +1300,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = DISTINCT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:32:10: ( ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'T' | 't' ) )
-            // InternalCQLLexer.g:32:12: ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'T' | 't' )
+            // InternalCQLLexer.g:34:10: ( ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'T' | 't' ) )
+            // InternalCQLLexer.g:34:12: ( 'D' | 'd' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'T' | 't' )
             {
             if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
                 input.consume();
@@ -1282,8 +1391,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = PASSWORD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:34:10: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'S' | 's' ) ( 'W' | 'w' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'D' | 'd' ) )
-            // InternalCQLLexer.g:34:12: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'S' | 's' ) ( 'W' | 'w' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'D' | 'd' )
+            // InternalCQLLexer.g:36:10: ( ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'S' | 's' ) ( 'W' | 'w' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'D' | 'd' ) )
+            // InternalCQLLexer.g:36:12: ( 'P' | 'p' ) ( 'A' | 'a' ) ( 'S' | 's' ) ( 'S' | 's' ) ( 'W' | 'w' ) ( 'O' | 'o' ) ( 'R' | 'r' ) ( 'D' | 'd' )
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
@@ -1373,8 +1482,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = PROTOCOL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:36:10: ( ( 'P' | 'p' ) ( 'R' | 'r' ) ( 'O' | 'o' ) ( 'T' | 't' ) ( 'O' | 'o' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'L' | 'l' ) )
-            // InternalCQLLexer.g:36:12: ( 'P' | 'p' ) ( 'R' | 'r' ) ( 'O' | 'o' ) ( 'T' | 't' ) ( 'O' | 'o' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'L' | 'l' )
+            // InternalCQLLexer.g:38:10: ( ( 'P' | 'p' ) ( 'R' | 'r' ) ( 'O' | 'o' ) ( 'T' | 't' ) ( 'O' | 'o' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'L' | 'l' ) )
+            // InternalCQLLexer.g:38:12: ( 'P' | 'p' ) ( 'R' | 'r' ) ( 'O' | 'o' ) ( 'T' | 't' ) ( 'O' | 'o' ) ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'L' | 'l' )
             {
             if ( input.LA(1)=='P'||input.LA(1)=='p' ) {
                 input.consume();
@@ -1464,8 +1573,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = TRUNCATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:38:10: ( ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) )
-            // InternalCQLLexer.g:38:12: ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' )
+            // InternalCQLLexer.g:40:10: ( ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) )
+            // InternalCQLLexer.g:40:12: ( 'T' | 't' ) ( 'R' | 'r' ) ( 'U' | 'u' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' )
             {
             if ( input.LA(1)=='T'||input.LA(1)=='t' ) {
                 input.consume();
@@ -1555,8 +1664,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = ADVANCE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:40:9: ( ( 'A' | 'a' ) ( 'D' | 'd' ) ( 'V' | 'v' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'E' | 'e' ) )
-            // InternalCQLLexer.g:40:11: ( 'A' | 'a' ) ( 'D' | 'd' ) ( 'V' | 'v' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'E' | 'e' )
+            // InternalCQLLexer.g:42:9: ( ( 'A' | 'a' ) ( 'D' | 'd' ) ( 'V' | 'v' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'E' | 'e' ) )
+            // InternalCQLLexer.g:42:11: ( 'A' | 'a' ) ( 'D' | 'd' ) ( 'V' | 'v' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'C' | 'c' ) ( 'E' | 'e' )
             {
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
@@ -1637,8 +1746,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = CHANNEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:42:9: ( ( 'C' | 'c' ) ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'L' | 'l' ) )
-            // InternalCQLLexer.g:42:11: ( 'C' | 'c' ) ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'L' | 'l' )
+            // InternalCQLLexer.g:44:9: ( ( 'C' | 'c' ) ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'L' | 'l' ) )
+            // InternalCQLLexer.g:44:11: ( 'C' | 'c' ) ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'N' | 'n' ) ( 'N' | 'n' ) ( 'E' | 'e' ) ( 'L' | 'l' )
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
@@ -1719,8 +1828,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = CONTEXT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:44:9: ( ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' ) )
-            // InternalCQLLexer.g:44:11: ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' )
+            // InternalCQLLexer.g:46:9: ( ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' ) )
+            // InternalCQLLexer.g:46:11: ( 'C' | 'c' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'T' | 't' ) ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'T' | 't' )
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
@@ -1801,8 +1910,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = OPTIONS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:46:9: ( ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' ) )
-            // InternalCQLLexer.g:46:11: ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' )
+            // InternalCQLLexer.g:48:9: ( ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' ) )
+            // InternalCQLLexer.g:48:11: ( 'O' | 'o' ) ( 'P' | 'p' ) ( 'T' | 't' ) ( 'I' | 'i' ) ( 'O' | 'o' ) ( 'N' | 'n' ) ( 'S' | 's' )
             {
             if ( input.LA(1)=='O'||input.LA(1)=='o' ) {
                 input.consume();
@@ -1883,8 +1992,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = WRAPPER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:48:9: ( ( 'W' | 'w' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'P' | 'p' ) ( 'P' | 'p' ) ( 'E' | 'e' ) ( 'R' | 'r' ) )
-            // InternalCQLLexer.g:48:11: ( 'W' | 'w' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'P' | 'p' ) ( 'P' | 'p' ) ( 'E' | 'e' ) ( 'R' | 'r' )
+            // InternalCQLLexer.g:50:9: ( ( 'W' | 'w' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'P' | 'p' ) ( 'P' | 'p' ) ( 'E' | 'e' ) ( 'R' | 'r' ) )
+            // InternalCQLLexer.g:50:11: ( 'W' | 'w' ) ( 'R' | 'r' ) ( 'A' | 'a' ) ( 'P' | 'p' ) ( 'P' | 'p' ) ( 'E' | 'e' ) ( 'R' | 'r' )
             {
             if ( input.LA(1)=='W'||input.LA(1)=='w' ) {
                 input.consume();
@@ -1965,8 +2074,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = ATTACH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:50:8: ( ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'C' | 'c' ) ( 'H' | 'h' ) )
-            // InternalCQLLexer.g:50:10: ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'C' | 'c' ) ( 'H' | 'h' )
+            // InternalCQLLexer.g:52:8: ( ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'C' | 'c' ) ( 'H' | 'h' ) )
+            // InternalCQLLexer.g:52:10: ( 'A' | 'a' ) ( 'T' | 't' ) ( 'T' | 't' ) ( 'A' | 'a' ) ( 'C' | 'c' ) ( 'H' | 'h' )
             {
             if ( input.LA(1)=='A'||input.LA(1)=='a' ) {
                 input.consume();
@@ -2038,8 +2147,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = CREATE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:52:8: ( ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) )
-            // InternalCQLLexer.g:52:10: ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' )
+            // InternalCQLLexer.g:54:8: ( ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' ) )
+            // InternalCQLLexer.g:54:10: ( 'C' | 'c' ) ( 'R' | 'r' ) ( 'E' | 'e' ) ( 'A' | 'a' ) ( 'T' | 't' ) ( 'E' | 'e' )
             {
             if ( input.LA(1)=='C'||input.LA(1)=='c' ) {
                 input.consume();
@@ -2111,8 +2220,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = EXISTS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:54:8: ( ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' ) )
-            // InternalCQLLexer.g:54:10: ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' )
+            // InternalCQLLexer.g:56:8: ( ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' ) )
+            // InternalCQLLexer.g:56:10: ( 'E' | 'e' ) ( 'X' | 'x' ) ( 'I' | 'i' ) ( 'S' | 's' ) ( 'T' | 't' ) ( 'S' | 's' )
             {
             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                 input.consume();
@@ -2184,8 +2293,8 @@ public class InternalCQLLexer extends Lexer {
         try {
             int _type = HAVING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:56:8: ( ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' ) )
-            // InternalCQLLexer.g:56:10: ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' )
+            // InternalCQLLexer.g:58:8: ( ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' ) )
+            // InternalCQLLexer.g:58:10: ( 'H' | 'h' ) ( 'A' | 'a' ) ( 'V' | 'v' ) ( 'I' | 'i' ) ( 'N' | 'n' ) ( 'G' | 'g' )
             {
             if ( input.LA(1)=='H'||input.LA(1)=='h' ) {
                 input.consume();
@@ -2251,79 +2360,6 @@ public class InternalCQLLexer extends Lexer {
         }
     }
     // $ANTLR end "HAVING"
-
-    // $ANTLR start "IDFIED"
-    public final void mIDFIED() throws RecognitionException {
-        try {
-            int _type = IDFIED;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalCQLLexer.g:58:8: ( ( 'I' | 'i' ) ( 'D' | 'd' ) ( 'F' | 'f' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'D' | 'd' ) )
-            // InternalCQLLexer.g:58:10: ( 'I' | 'i' ) ( 'D' | 'd' ) ( 'F' | 'f' ) ( 'I' | 'i' ) ( 'E' | 'e' ) ( 'D' | 'd' )
-            {
-            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-            if ( input.LA(1)=='F'||input.LA(1)=='f' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-            if ( input.LA(1)=='I'||input.LA(1)=='i' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-            if ( input.LA(1)=='D'||input.LA(1)=='d' ) {
-                input.consume();
-
-            }
-            else {
-                MismatchedSetException mse = new MismatchedSetException(null,input);
-                recover(mse);
-                throw mse;}
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "IDFIED"
 
     // $ANTLR start "REVOKE"
     public final void mREVOKE() throws RecognitionException {
@@ -5726,7 +5762,7 @@ public class InternalCQLLexer extends Lexer {
     // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // InternalCQLLexer.g:1:8: ( NO_LAZY_CONNECTION_CHECK | INTERSECTION | DATAHANDLER | CONNECTION | DIFFERENCE | PARTITION | TRANSPORT | UNBOUNDED | DATABASE | DISTINCT | PASSWORD | PROTOCOL | TRUNCATE | ADVANCE | CHANNEL | CONTEXT | OPTIONS | WRAPPER | ATTACH | CREATE | EXISTS | HAVING | IDFIED | REVOKE | SELECT | SINGLE | STREAM | TENANT | ALTER | FALSE | GRANT | GROUP | MULTI | STORE | TABLE | TUPLE | UNION | WHERE | DROP | EACH | FILE | FROM | JDBC | ROLE | SINK | SIZE | TIME | TRUE | USER | VIEW | WITH | AND | NOT | ExclamationMarkEqualsSign | LessThanSignEqualsSign | GreaterThanSignEqualsSign | AS | AT | BY | IF | IN | ON | OR | TO | LeftParenthesis | RightParenthesis | Asterisk | PlusSign | Comma | HyphenMinus | FullStop | Solidus | Colon | Semicolon | LessThanSign | EqualsSign | GreaterThanSign | LeftSquareBracket | RightSquareBracket | CircumflexAccent | RULE_ID | RULE_FLOAT | RULE_BYTE | RULE_VECTOR_FLOAT | RULE_MATRIX_FLOAT | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        // InternalCQLLexer.g:1:8: ( NO_LAZY_CONNECTION_CHECK | INTERSECTION | DATAHANDLER | CONNECTION | DIFFERENCE | IDENTIFIED | PARTITION | TRANSPORT | UNBOUNDED | DATABASE | DISTINCT | PASSWORD | PROTOCOL | TRUNCATE | ADVANCE | CHANNEL | CONTEXT | OPTIONS | WRAPPER | ATTACH | CREATE | EXISTS | HAVING | REVOKE | SELECT | SINGLE | STREAM | TENANT | ALTER | FALSE | GRANT | GROUP | MULTI | STORE | TABLE | TUPLE | UNION | WHERE | DROP | EACH | FILE | FROM | JDBC | ROLE | SINK | SIZE | TIME | TRUE | USER | VIEW | WITH | AND | NOT | ExclamationMarkEqualsSign | LessThanSignEqualsSign | GreaterThanSignEqualsSign | AS | AT | BY | IF | IN | ON | OR | TO | LeftParenthesis | RightParenthesis | Asterisk | PlusSign | Comma | HyphenMinus | FullStop | Solidus | Colon | Semicolon | LessThanSign | EqualsSign | GreaterThanSign | LeftSquareBracket | RightSquareBracket | CircumflexAccent | RULE_ID | RULE_FLOAT | RULE_BYTE | RULE_VECTOR_FLOAT | RULE_MATRIX_FLOAT | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
         int alt18=91;
         alt18 = dfa18.predict(input);
         switch (alt18) {
@@ -5766,602 +5802,602 @@ public class InternalCQLLexer extends Lexer {
                 }
                 break;
             case 6 :
-                // InternalCQLLexer.g:1:82: PARTITION
+                // InternalCQLLexer.g:1:82: IDENTIFIED
+                {
+                mIDENTIFIED(); 
+
+                }
+                break;
+            case 7 :
+                // InternalCQLLexer.g:1:93: PARTITION
                 {
                 mPARTITION(); 
 
                 }
                 break;
-            case 7 :
-                // InternalCQLLexer.g:1:92: TRANSPORT
+            case 8 :
+                // InternalCQLLexer.g:1:103: TRANSPORT
                 {
                 mTRANSPORT(); 
 
                 }
                 break;
-            case 8 :
-                // InternalCQLLexer.g:1:102: UNBOUNDED
+            case 9 :
+                // InternalCQLLexer.g:1:113: UNBOUNDED
                 {
                 mUNBOUNDED(); 
 
                 }
                 break;
-            case 9 :
-                // InternalCQLLexer.g:1:112: DATABASE
+            case 10 :
+                // InternalCQLLexer.g:1:123: DATABASE
                 {
                 mDATABASE(); 
 
                 }
                 break;
-            case 10 :
-                // InternalCQLLexer.g:1:121: DISTINCT
+            case 11 :
+                // InternalCQLLexer.g:1:132: DISTINCT
                 {
                 mDISTINCT(); 
 
                 }
                 break;
-            case 11 :
-                // InternalCQLLexer.g:1:130: PASSWORD
+            case 12 :
+                // InternalCQLLexer.g:1:141: PASSWORD
                 {
                 mPASSWORD(); 
 
                 }
                 break;
-            case 12 :
-                // InternalCQLLexer.g:1:139: PROTOCOL
+            case 13 :
+                // InternalCQLLexer.g:1:150: PROTOCOL
                 {
                 mPROTOCOL(); 
 
                 }
                 break;
-            case 13 :
-                // InternalCQLLexer.g:1:148: TRUNCATE
+            case 14 :
+                // InternalCQLLexer.g:1:159: TRUNCATE
                 {
                 mTRUNCATE(); 
 
                 }
                 break;
-            case 14 :
-                // InternalCQLLexer.g:1:157: ADVANCE
+            case 15 :
+                // InternalCQLLexer.g:1:168: ADVANCE
                 {
                 mADVANCE(); 
 
                 }
                 break;
-            case 15 :
-                // InternalCQLLexer.g:1:165: CHANNEL
+            case 16 :
+                // InternalCQLLexer.g:1:176: CHANNEL
                 {
                 mCHANNEL(); 
 
                 }
                 break;
-            case 16 :
-                // InternalCQLLexer.g:1:173: CONTEXT
+            case 17 :
+                // InternalCQLLexer.g:1:184: CONTEXT
                 {
                 mCONTEXT(); 
 
                 }
                 break;
-            case 17 :
-                // InternalCQLLexer.g:1:181: OPTIONS
+            case 18 :
+                // InternalCQLLexer.g:1:192: OPTIONS
                 {
                 mOPTIONS(); 
 
                 }
                 break;
-            case 18 :
-                // InternalCQLLexer.g:1:189: WRAPPER
+            case 19 :
+                // InternalCQLLexer.g:1:200: WRAPPER
                 {
                 mWRAPPER(); 
 
                 }
                 break;
-            case 19 :
-                // InternalCQLLexer.g:1:197: ATTACH
+            case 20 :
+                // InternalCQLLexer.g:1:208: ATTACH
                 {
                 mATTACH(); 
 
                 }
                 break;
-            case 20 :
-                // InternalCQLLexer.g:1:204: CREATE
+            case 21 :
+                // InternalCQLLexer.g:1:215: CREATE
                 {
                 mCREATE(); 
 
                 }
                 break;
-            case 21 :
-                // InternalCQLLexer.g:1:211: EXISTS
+            case 22 :
+                // InternalCQLLexer.g:1:222: EXISTS
                 {
                 mEXISTS(); 
 
                 }
                 break;
-            case 22 :
-                // InternalCQLLexer.g:1:218: HAVING
+            case 23 :
+                // InternalCQLLexer.g:1:229: HAVING
                 {
                 mHAVING(); 
 
                 }
                 break;
-            case 23 :
-                // InternalCQLLexer.g:1:225: IDFIED
-                {
-                mIDFIED(); 
-
-                }
-                break;
             case 24 :
-                // InternalCQLLexer.g:1:232: REVOKE
+                // InternalCQLLexer.g:1:236: REVOKE
                 {
                 mREVOKE(); 
 
                 }
                 break;
             case 25 :
-                // InternalCQLLexer.g:1:239: SELECT
+                // InternalCQLLexer.g:1:243: SELECT
                 {
                 mSELECT(); 
 
                 }
                 break;
             case 26 :
-                // InternalCQLLexer.g:1:246: SINGLE
+                // InternalCQLLexer.g:1:250: SINGLE
                 {
                 mSINGLE(); 
 
                 }
                 break;
             case 27 :
-                // InternalCQLLexer.g:1:253: STREAM
+                // InternalCQLLexer.g:1:257: STREAM
                 {
                 mSTREAM(); 
 
                 }
                 break;
             case 28 :
-                // InternalCQLLexer.g:1:260: TENANT
+                // InternalCQLLexer.g:1:264: TENANT
                 {
                 mTENANT(); 
 
                 }
                 break;
             case 29 :
-                // InternalCQLLexer.g:1:267: ALTER
+                // InternalCQLLexer.g:1:271: ALTER
                 {
                 mALTER(); 
 
                 }
                 break;
             case 30 :
-                // InternalCQLLexer.g:1:273: FALSE
+                // InternalCQLLexer.g:1:277: FALSE
                 {
                 mFALSE(); 
 
                 }
                 break;
             case 31 :
-                // InternalCQLLexer.g:1:279: GRANT
+                // InternalCQLLexer.g:1:283: GRANT
                 {
                 mGRANT(); 
 
                 }
                 break;
             case 32 :
-                // InternalCQLLexer.g:1:285: GROUP
+                // InternalCQLLexer.g:1:289: GROUP
                 {
                 mGROUP(); 
 
                 }
                 break;
             case 33 :
-                // InternalCQLLexer.g:1:291: MULTI
+                // InternalCQLLexer.g:1:295: MULTI
                 {
                 mMULTI(); 
 
                 }
                 break;
             case 34 :
-                // InternalCQLLexer.g:1:297: STORE
+                // InternalCQLLexer.g:1:301: STORE
                 {
                 mSTORE(); 
 
                 }
                 break;
             case 35 :
-                // InternalCQLLexer.g:1:303: TABLE
+                // InternalCQLLexer.g:1:307: TABLE
                 {
                 mTABLE(); 
 
                 }
                 break;
             case 36 :
-                // InternalCQLLexer.g:1:309: TUPLE
+                // InternalCQLLexer.g:1:313: TUPLE
                 {
                 mTUPLE(); 
 
                 }
                 break;
             case 37 :
-                // InternalCQLLexer.g:1:315: UNION
+                // InternalCQLLexer.g:1:319: UNION
                 {
                 mUNION(); 
 
                 }
                 break;
             case 38 :
-                // InternalCQLLexer.g:1:321: WHERE
+                // InternalCQLLexer.g:1:325: WHERE
                 {
                 mWHERE(); 
 
                 }
                 break;
             case 39 :
-                // InternalCQLLexer.g:1:327: DROP
+                // InternalCQLLexer.g:1:331: DROP
                 {
                 mDROP(); 
 
                 }
                 break;
             case 40 :
-                // InternalCQLLexer.g:1:332: EACH
+                // InternalCQLLexer.g:1:336: EACH
                 {
                 mEACH(); 
 
                 }
                 break;
             case 41 :
-                // InternalCQLLexer.g:1:337: FILE
+                // InternalCQLLexer.g:1:341: FILE
                 {
                 mFILE(); 
 
                 }
                 break;
             case 42 :
-                // InternalCQLLexer.g:1:342: FROM
+                // InternalCQLLexer.g:1:346: FROM
                 {
                 mFROM(); 
 
                 }
                 break;
             case 43 :
-                // InternalCQLLexer.g:1:347: JDBC
+                // InternalCQLLexer.g:1:351: JDBC
                 {
                 mJDBC(); 
 
                 }
                 break;
             case 44 :
-                // InternalCQLLexer.g:1:352: ROLE
+                // InternalCQLLexer.g:1:356: ROLE
                 {
                 mROLE(); 
 
                 }
                 break;
             case 45 :
-                // InternalCQLLexer.g:1:357: SINK
+                // InternalCQLLexer.g:1:361: SINK
                 {
                 mSINK(); 
 
                 }
                 break;
             case 46 :
-                // InternalCQLLexer.g:1:362: SIZE
+                // InternalCQLLexer.g:1:366: SIZE
                 {
                 mSIZE(); 
 
                 }
                 break;
             case 47 :
-                // InternalCQLLexer.g:1:367: TIME
+                // InternalCQLLexer.g:1:371: TIME
                 {
                 mTIME(); 
 
                 }
                 break;
             case 48 :
-                // InternalCQLLexer.g:1:372: TRUE
+                // InternalCQLLexer.g:1:376: TRUE
                 {
                 mTRUE(); 
 
                 }
                 break;
             case 49 :
-                // InternalCQLLexer.g:1:377: USER
+                // InternalCQLLexer.g:1:381: USER
                 {
                 mUSER(); 
 
                 }
                 break;
             case 50 :
-                // InternalCQLLexer.g:1:382: VIEW
+                // InternalCQLLexer.g:1:386: VIEW
                 {
                 mVIEW(); 
 
                 }
                 break;
             case 51 :
-                // InternalCQLLexer.g:1:387: WITH
+                // InternalCQLLexer.g:1:391: WITH
                 {
                 mWITH(); 
 
                 }
                 break;
             case 52 :
-                // InternalCQLLexer.g:1:392: AND
+                // InternalCQLLexer.g:1:396: AND
                 {
                 mAND(); 
 
                 }
                 break;
             case 53 :
-                // InternalCQLLexer.g:1:396: NOT
+                // InternalCQLLexer.g:1:400: NOT
                 {
                 mNOT(); 
 
                 }
                 break;
             case 54 :
-                // InternalCQLLexer.g:1:400: ExclamationMarkEqualsSign
+                // InternalCQLLexer.g:1:404: ExclamationMarkEqualsSign
                 {
                 mExclamationMarkEqualsSign(); 
 
                 }
                 break;
             case 55 :
-                // InternalCQLLexer.g:1:426: LessThanSignEqualsSign
+                // InternalCQLLexer.g:1:430: LessThanSignEqualsSign
                 {
                 mLessThanSignEqualsSign(); 
 
                 }
                 break;
             case 56 :
-                // InternalCQLLexer.g:1:449: GreaterThanSignEqualsSign
+                // InternalCQLLexer.g:1:453: GreaterThanSignEqualsSign
                 {
                 mGreaterThanSignEqualsSign(); 
 
                 }
                 break;
             case 57 :
-                // InternalCQLLexer.g:1:475: AS
+                // InternalCQLLexer.g:1:479: AS
                 {
                 mAS(); 
 
                 }
                 break;
             case 58 :
-                // InternalCQLLexer.g:1:478: AT
+                // InternalCQLLexer.g:1:482: AT
                 {
                 mAT(); 
 
                 }
                 break;
             case 59 :
-                // InternalCQLLexer.g:1:481: BY
+                // InternalCQLLexer.g:1:485: BY
                 {
                 mBY(); 
 
                 }
                 break;
             case 60 :
-                // InternalCQLLexer.g:1:484: IF
+                // InternalCQLLexer.g:1:488: IF
                 {
                 mIF(); 
 
                 }
                 break;
             case 61 :
-                // InternalCQLLexer.g:1:487: IN
+                // InternalCQLLexer.g:1:491: IN
                 {
                 mIN(); 
 
                 }
                 break;
             case 62 :
-                // InternalCQLLexer.g:1:490: ON
+                // InternalCQLLexer.g:1:494: ON
                 {
                 mON(); 
 
                 }
                 break;
             case 63 :
-                // InternalCQLLexer.g:1:493: OR
+                // InternalCQLLexer.g:1:497: OR
                 {
                 mOR(); 
 
                 }
                 break;
             case 64 :
-                // InternalCQLLexer.g:1:496: TO
+                // InternalCQLLexer.g:1:500: TO
                 {
                 mTO(); 
 
                 }
                 break;
             case 65 :
-                // InternalCQLLexer.g:1:499: LeftParenthesis
+                // InternalCQLLexer.g:1:503: LeftParenthesis
                 {
                 mLeftParenthesis(); 
 
                 }
                 break;
             case 66 :
-                // InternalCQLLexer.g:1:515: RightParenthesis
+                // InternalCQLLexer.g:1:519: RightParenthesis
                 {
                 mRightParenthesis(); 
 
                 }
                 break;
             case 67 :
-                // InternalCQLLexer.g:1:532: Asterisk
+                // InternalCQLLexer.g:1:536: Asterisk
                 {
                 mAsterisk(); 
 
                 }
                 break;
             case 68 :
-                // InternalCQLLexer.g:1:541: PlusSign
+                // InternalCQLLexer.g:1:545: PlusSign
                 {
                 mPlusSign(); 
 
                 }
                 break;
             case 69 :
-                // InternalCQLLexer.g:1:550: Comma
+                // InternalCQLLexer.g:1:554: Comma
                 {
                 mComma(); 
 
                 }
                 break;
             case 70 :
-                // InternalCQLLexer.g:1:556: HyphenMinus
+                // InternalCQLLexer.g:1:560: HyphenMinus
                 {
                 mHyphenMinus(); 
 
                 }
                 break;
             case 71 :
-                // InternalCQLLexer.g:1:568: FullStop
+                // InternalCQLLexer.g:1:572: FullStop
                 {
                 mFullStop(); 
 
                 }
                 break;
             case 72 :
-                // InternalCQLLexer.g:1:577: Solidus
+                // InternalCQLLexer.g:1:581: Solidus
                 {
                 mSolidus(); 
 
                 }
                 break;
             case 73 :
-                // InternalCQLLexer.g:1:585: Colon
+                // InternalCQLLexer.g:1:589: Colon
                 {
                 mColon(); 
 
                 }
                 break;
             case 74 :
-                // InternalCQLLexer.g:1:591: Semicolon
+                // InternalCQLLexer.g:1:595: Semicolon
                 {
                 mSemicolon(); 
 
                 }
                 break;
             case 75 :
-                // InternalCQLLexer.g:1:601: LessThanSign
+                // InternalCQLLexer.g:1:605: LessThanSign
                 {
                 mLessThanSign(); 
 
                 }
                 break;
             case 76 :
-                // InternalCQLLexer.g:1:614: EqualsSign
+                // InternalCQLLexer.g:1:618: EqualsSign
                 {
                 mEqualsSign(); 
 
                 }
                 break;
             case 77 :
-                // InternalCQLLexer.g:1:625: GreaterThanSign
+                // InternalCQLLexer.g:1:629: GreaterThanSign
                 {
                 mGreaterThanSign(); 
 
                 }
                 break;
             case 78 :
-                // InternalCQLLexer.g:1:641: LeftSquareBracket
+                // InternalCQLLexer.g:1:645: LeftSquareBracket
                 {
                 mLeftSquareBracket(); 
 
                 }
                 break;
             case 79 :
-                // InternalCQLLexer.g:1:659: RightSquareBracket
+                // InternalCQLLexer.g:1:663: RightSquareBracket
                 {
                 mRightSquareBracket(); 
 
                 }
                 break;
             case 80 :
-                // InternalCQLLexer.g:1:678: CircumflexAccent
+                // InternalCQLLexer.g:1:682: CircumflexAccent
                 {
                 mCircumflexAccent(); 
 
                 }
                 break;
             case 81 :
-                // InternalCQLLexer.g:1:695: RULE_ID
+                // InternalCQLLexer.g:1:699: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
             case 82 :
-                // InternalCQLLexer.g:1:703: RULE_FLOAT
+                // InternalCQLLexer.g:1:707: RULE_FLOAT
                 {
                 mRULE_FLOAT(); 
 
                 }
                 break;
             case 83 :
-                // InternalCQLLexer.g:1:714: RULE_BYTE
+                // InternalCQLLexer.g:1:718: RULE_BYTE
                 {
                 mRULE_BYTE(); 
 
                 }
                 break;
             case 84 :
-                // InternalCQLLexer.g:1:724: RULE_VECTOR_FLOAT
+                // InternalCQLLexer.g:1:728: RULE_VECTOR_FLOAT
                 {
                 mRULE_VECTOR_FLOAT(); 
 
                 }
                 break;
             case 85 :
-                // InternalCQLLexer.g:1:742: RULE_MATRIX_FLOAT
+                // InternalCQLLexer.g:1:746: RULE_MATRIX_FLOAT
                 {
                 mRULE_MATRIX_FLOAT(); 
 
                 }
                 break;
             case 86 :
-                // InternalCQLLexer.g:1:760: RULE_INT
+                // InternalCQLLexer.g:1:764: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
             case 87 :
-                // InternalCQLLexer.g:1:769: RULE_STRING
+                // InternalCQLLexer.g:1:773: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
             case 88 :
-                // InternalCQLLexer.g:1:781: RULE_ML_COMMENT
+                // InternalCQLLexer.g:1:785: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
             case 89 :
-                // InternalCQLLexer.g:1:797: RULE_SL_COMMENT
+                // InternalCQLLexer.g:1:801: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
             case 90 :
-                // InternalCQLLexer.g:1:813: RULE_WS
+                // InternalCQLLexer.g:1:817: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
             case 91 :
-                // InternalCQLLexer.g:1:821: RULE_ANY_OTHER
+                // InternalCQLLexer.g:1:825: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -6375,17 +6411,17 @@ public class InternalCQLLexer extends Lexer {
 
     protected DFA18 dfa18 = new DFA18(this);
     static final String DFA18_eotS =
-        "\1\uffff\23\56\1\54\1\136\1\140\1\56\7\uffff\1\153\3\uffff\1\157\3\uffff\2\163\2\54\2\uffff\1\56\1\uffff\1\174\1\56\1\176\15\56\1\u008f\3\56\1\u0095\2\56\1\u0098\1\56\1\u009a\1\u009b\22\56\5\uffff\1\u00b1\23\uffff\2\163\2\uffff\1\56\1\u00b5\1\56\1\uffff\1\56\1\uffff\20\56\1\uffff\5\56\1\uffff\1\56\1\u00d0\1\uffff\1\56\2\uffff\25\56\2\uffff\1\163\1\56\1\uffff\5\56\1\u00f1\11\56\1\u00fb\3\56\1\u00ff\2\56\1\u0102\3\56\1\uffff\3\56\1\u0109\1\56\1\u010b\2\56\1\u010e\2\56\1\u0111\1\u0112\3\56\1\u0116\1\u0117\3\56\1\u011b\1\u011c\1\uffff\1\163\7\56\1\uffff\11\56\1\uffff\1\56\1\u0133\1\u0134\1\uffff\1\56\1\u0136\1\uffff\2\56\1\u0139\2\56\1\u013c\1\uffff\1\56\1\uffff\2\56\1\uffff\2\56\2\uffff\1\56\1\u0143\1\u0144\2\uffff\1\u0145\1\u0146\1\u0147\6\uffff\1\163\2\56\1\u014d\7\56\1\u0155\5\56\1\u015b\2\uffff\1\56\1\uffff\1\56\1\u015e\1\uffff\2\56\1\uffff\1\u0161\1\u0162\1\u0163\1\u0164\1\u0165\1\u0166\7\uffff\1\163\2\56\1\uffff\5\56\1\u0170\1\u0171\1\uffff\5\56\1\uffff\1\56\1\u0178\1\uffff\1\u0179\1\u017a\7\uffff\1\163\3\56\1\u0180\1\56\1\u0182\1\56\2\uffff\1\56\1\u0185\1\u0186\1\56\1\u0188\1\56\4\uffff\1\u018a\3\56\1\uffff\1\56\1\uffff\1\56\1\u0190\2\uffff\1\u0191\1\uffff\1\u0192\1\uffff\3\56\1\u0196\1\u0197\3\uffff\2\56\1\u019a\2\uffff\1\56\1\u019c\1\uffff\1\56\1\uffff\12\56\1\u01a8\1\uffff";
+        "\1\uffff\23\56\1\54\1\136\1\140\1\56\7\uffff\1\153\3\uffff\1\157\3\uffff\2\163\2\54\2\uffff\1\56\1\uffff\1\174\1\56\1\176\15\56\1\u008f\3\56\1\u0095\2\56\1\u0098\1\56\1\u009a\1\u009b\22\56\5\uffff\1\u00b1\23\uffff\2\163\2\uffff\1\56\1\u00b5\1\56\1\uffff\1\56\1\uffff\20\56\1\uffff\5\56\1\uffff\1\56\1\u00d0\1\uffff\1\56\2\uffff\25\56\2\uffff\1\163\1\56\1\uffff\5\56\1\u00f1\11\56\1\u00fb\3\56\1\u00ff\2\56\1\u0102\3\56\1\uffff\3\56\1\u0109\1\56\1\u010b\2\56\1\u010e\2\56\1\u0111\1\u0112\3\56\1\u0116\1\u0117\3\56\1\u011b\1\u011c\1\uffff\1\163\7\56\1\uffff\11\56\1\uffff\1\56\1\u0133\1\u0134\1\uffff\1\56\1\u0136\1\uffff\2\56\1\u0139\2\56\1\u013c\1\uffff\1\56\1\uffff\2\56\1\uffff\2\56\2\uffff\1\56\1\u0143\1\u0144\2\uffff\1\u0145\1\u0146\1\u0147\6\uffff\1\163\12\56\1\u0155\5\56\1\u015b\2\uffff\1\56\1\uffff\1\56\1\u015e\1\uffff\2\56\1\uffff\1\u0161\1\u0162\1\u0163\1\u0164\1\u0165\1\u0166\7\uffff\1\163\10\56\1\u0171\1\u0172\1\uffff\5\56\1\uffff\1\56\1\u0179\1\uffff\1\u017a\1\u017b\7\uffff\1\163\4\56\1\u0182\1\56\1\u0184\1\56\2\uffff\1\56\1\u0187\1\u0188\1\56\1\u018a\1\56\4\uffff\1\u018c\4\56\1\uffff\1\56\1\uffff\1\56\1\u0193\2\uffff\1\u0194\1\uffff\1\u0195\1\uffff\2\56\1\u0198\1\56\1\u019a\1\u019b\3\uffff\2\56\1\uffff\1\u019e\2\uffff\1\56\1\u01a0\1\uffff\1\56\1\uffff\12\56\1\u01ac\1\uffff";
     static final String DFA18_eofS =
-        "\u01a9\uffff";
+        "\u01ad\uffff";
     static final String DFA18_minS =
-        "\1\0\1\117\1\104\1\101\1\110\2\101\1\116\1\104\1\116\1\110\2\101\2\105\1\101\1\122\1\125\1\104\1\111\3\75\1\131\7\uffff\1\52\3\uffff\1\60\3\uffff\2\56\2\0\2\uffff\1\124\1\uffff\1\60\1\106\1\60\1\124\1\106\1\117\1\116\1\101\1\105\1\122\1\117\1\101\1\116\1\102\1\120\1\115\1\60\1\102\1\105\1\126\1\60\1\124\1\104\1\60\1\124\2\60\1\101\1\105\1\124\1\111\1\103\2\126\2\114\1\116\1\117\2\114\1\117\1\101\1\114\1\102\1\105\5\uffff\1\60\16\uffff\1\56\4\uffff\2\56\2\uffff\1\114\1\60\1\105\1\uffff\1\111\1\uffff\1\101\1\106\1\124\1\120\2\116\1\101\1\124\1\123\1\124\1\116\1\105\1\101\2\114\1\105\1\uffff\2\117\1\122\2\101\1\uffff\1\105\1\60\1\uffff\1\111\2\uffff\1\120\1\122\1\110\1\123\1\110\1\111\1\117\2\105\1\107\2\105\1\122\1\123\1\105\1\115\1\116\1\125\1\124\1\103\1\127\1\uffff\1\60\1\56\1\101\1\uffff\1\122\1\105\1\102\1\105\1\111\1\60\2\105\1\116\1\124\1\111\1\127\1\117\1\123\1\103\1\60\1\116\2\105\1\60\1\125\1\116\1\60\1\116\1\103\1\122\1\uffff\1\117\1\120\1\105\1\60\1\124\1\60\1\116\1\113\1\60\1\103\1\114\2\60\1\101\2\105\2\60\1\124\1\120\1\111\2\60\1\54\1\56\1\132\1\123\1\104\2\101\1\122\1\116\1\uffff\1\103\1\130\2\105\1\124\1\117\1\103\1\120\1\101\1\uffff\1\124\2\60\1\uffff\1\116\1\60\1\uffff\1\103\1\110\1\60\1\116\1\105\1\60\1\uffff\1\123\1\uffff\1\107\1\105\1\uffff\1\124\1\105\2\uffff\1\115\2\60\2\uffff\3\60\2\uffff\1\60\1\uffff\1\54\1\uffff\1\56\1\131\1\105\1\60\1\116\1\123\1\105\1\103\2\124\1\114\1\60\1\111\1\122\2\117\1\124\1\60\2\uffff\1\104\1\uffff\1\105\1\60\1\uffff\1\123\1\122\1\uffff\6\60\5\uffff\1\56\1\uffff\1\56\1\137\1\103\1\uffff\1\104\1\105\1\116\1\124\1\111\2\60\1\uffff\1\117\1\104\1\114\1\122\1\105\1\uffff\1\105\1\60\1\uffff\2\60\6\uffff\1\60\1\56\1\103\1\124\1\114\1\60\1\103\1\60\1\117\2\uffff\1\116\2\60\1\124\1\60\1\104\3\uffff\1\54\1\56\1\117\1\111\1\105\1\uffff\1\105\1\uffff\1\116\1\60\2\uffff\1\60\1\uffff\1\60\1\uffff\1\116\1\117\1\122\2\60\3\uffff\2\116\1\60\2\uffff\1\105\1\60\1\uffff\1\103\1\uffff\1\124\1\111\1\117\1\116\1\137\1\103\1\110\1\105\1\103\1\113\1\60\1\uffff";
+        "\1\0\1\117\1\104\1\101\1\110\2\101\1\116\1\104\1\116\1\110\2\101\2\105\1\101\1\122\1\125\1\104\1\111\3\75\1\131\7\uffff\1\52\3\uffff\1\60\3\uffff\2\56\2\0\2\uffff\1\124\1\uffff\1\60\1\105\1\60\1\124\1\106\1\117\1\116\1\101\1\105\1\122\1\117\1\101\1\116\1\102\1\120\1\115\1\60\1\102\1\105\1\126\1\60\1\124\1\104\1\60\1\124\2\60\1\101\1\105\1\124\1\111\1\103\2\126\2\114\1\116\1\117\2\114\1\117\1\101\1\114\1\102\1\105\5\uffff\1\60\16\uffff\1\56\4\uffff\2\56\2\uffff\1\114\1\60\1\105\1\uffff\1\116\1\uffff\1\101\1\106\1\124\1\120\2\116\1\101\1\124\1\123\1\124\1\116\1\105\1\101\2\114\1\105\1\uffff\2\117\1\122\2\101\1\uffff\1\105\1\60\1\uffff\1\111\2\uffff\1\120\1\122\1\110\1\123\1\110\1\111\1\117\2\105\1\107\2\105\1\122\1\123\1\105\1\115\1\116\1\125\1\124\1\103\1\127\1\uffff\1\60\1\56\1\101\1\uffff\1\122\1\124\1\102\1\105\1\111\1\60\2\105\1\116\1\124\1\111\1\127\1\117\1\123\1\103\1\60\1\116\2\105\1\60\1\125\1\116\1\60\1\116\1\103\1\122\1\uffff\1\117\1\120\1\105\1\60\1\124\1\60\1\116\1\113\1\60\1\103\1\114\2\60\1\101\2\105\2\60\1\124\1\120\1\111\2\60\1\54\1\56\1\132\1\123\1\111\2\101\1\122\1\116\1\uffff\1\103\1\130\2\105\1\124\1\117\1\103\1\120\1\101\1\uffff\1\124\2\60\1\uffff\1\116\1\60\1\uffff\1\103\1\110\1\60\1\116\1\105\1\60\1\uffff\1\123\1\uffff\1\107\1\105\1\uffff\1\124\1\105\2\uffff\1\115\2\60\2\uffff\3\60\2\uffff\1\60\1\uffff\1\54\1\uffff\1\56\1\131\1\105\1\106\1\116\1\123\1\105\1\103\2\124\1\114\1\60\1\111\1\122\2\117\1\124\1\60\2\uffff\1\104\1\uffff\1\105\1\60\1\uffff\1\123\1\122\1\uffff\6\60\5\uffff\1\56\1\uffff\1\56\1\137\1\103\1\111\1\104\1\105\1\116\1\124\1\111\2\60\1\uffff\1\117\1\104\1\114\1\122\1\105\1\uffff\1\105\1\60\1\uffff\2\60\6\uffff\1\60\1\56\1\103\1\124\1\105\1\114\1\60\1\103\1\60\1\117\2\uffff\1\116\2\60\1\124\1\60\1\104\3\uffff\1\54\1\56\1\117\1\111\1\104\1\105\1\uffff\1\105\1\uffff\1\116\1\60\2\uffff\1\60\1\uffff\1\60\1\uffff\1\116\1\117\1\60\1\122\2\60\3\uffff\2\116\1\uffff\1\60\2\uffff\1\105\1\60\1\uffff\1\103\1\uffff\1\124\1\111\1\117\1\116\1\137\1\103\1\110\1\105\1\103\1\113\1\60\1\uffff";
     static final String DFA18_maxS =
-        "\1\uffff\1\157\1\156\3\162\1\165\1\163\1\164\2\162\1\170\1\141\1\157\1\164\2\162\1\165\1\144\1\151\3\75\1\171\7\uffff\1\57\3\uffff\1\71\3\uffff\2\71\2\uffff\2\uffff\1\164\1\uffff\1\175\1\146\1\175\1\164\1\163\1\157\1\156\1\141\1\145\1\163\1\157\1\165\1\156\1\142\1\160\1\155\1\175\1\151\1\145\1\166\1\175\1\164\1\144\1\175\1\164\2\175\1\141\1\145\1\164\1\151\1\143\2\166\2\154\1\172\1\162\2\154\2\157\1\154\1\142\1\145\5\uffff\1\175\16\uffff\1\71\4\uffff\2\71\2\uffff\1\154\1\175\1\145\1\uffff\1\151\1\uffff\1\141\1\146\1\164\1\160\1\164\1\156\1\141\1\164\1\163\1\164\2\156\1\141\2\154\1\145\1\uffff\2\157\1\162\2\141\1\uffff\1\145\1\175\1\uffff\1\151\2\uffff\1\160\1\162\1\150\1\163\1\150\1\151\1\157\2\145\1\153\2\145\1\162\1\163\1\145\1\155\1\156\1\165\1\164\1\143\1\167\1\uffff\2\71\1\141\1\uffff\1\162\1\145\1\150\1\145\1\151\1\175\2\145\1\156\1\164\1\151\1\167\1\157\1\163\1\143\1\175\1\156\2\145\1\175\1\165\1\156\1\175\1\156\1\143\1\162\1\uffff\1\157\1\160\1\145\1\175\1\164\1\175\1\156\1\153\1\175\1\143\1\154\2\175\1\141\2\145\2\175\1\164\1\160\1\151\2\175\1\135\1\71\1\172\1\163\1\144\2\141\1\162\1\156\1\uffff\1\143\1\170\2\145\1\164\1\157\1\143\1\160\1\141\1\uffff\1\164\2\175\1\uffff\1\156\1\175\1\uffff\1\143\1\150\1\175\1\156\1\145\1\175\1\uffff\1\163\1\uffff\1\147\1\145\1\uffff\1\164\1\145\2\uffff\1\155\2\175\2\uffff\3\175\2\uffff\1\71\1\uffff\1\135\1\uffff\1\71\1\171\1\145\1\175\1\156\1\163\1\145\1\143\2\164\1\154\1\175\1\151\1\162\2\157\1\164\1\175\2\uffff\1\144\1\uffff\1\145\1\175\1\uffff\1\163\1\162\1\uffff\6\175\5\uffff\1\71\1\uffff\1\71\1\137\1\143\1\uffff\1\144\1\145\1\156\1\164\1\151\2\175\1\uffff\1\157\1\144\1\154\1\162\1\145\1\uffff\1\145\1\175\1\uffff\2\175\6\uffff\2\71\1\143\1\164\1\154\1\175\1\143\1\175\1\157\2\uffff\1\156\2\175\1\164\1\175\1\144\3\uffff\1\135\1\71\1\157\1\151\1\145\1\uffff\1\145\1\uffff\1\156\1\175\2\uffff\1\175\1\uffff\1\175\1\uffff\1\156\1\157\1\162\2\175\3\uffff\2\156\1\175\2\uffff\1\145\1\175\1\uffff\1\143\1\uffff\1\164\1\151\1\157\1\156\1\137\1\143\1\150\1\145\1\143\1\153\1\175\1\uffff";
+        "\1\uffff\1\157\1\156\3\162\1\165\1\163\1\164\2\162\1\170\1\141\1\157\1\164\2\162\1\165\1\144\1\151\3\75\1\171\7\uffff\1\57\3\uffff\1\71\3\uffff\2\71\2\uffff\2\uffff\1\164\1\uffff\1\175\1\145\1\175\1\164\1\163\1\157\1\156\1\141\1\145\1\163\1\157\1\165\1\156\1\142\1\160\1\155\1\175\1\151\1\145\1\166\1\175\1\164\1\144\1\175\1\164\2\175\1\141\1\145\1\164\1\151\1\143\2\166\2\154\1\172\1\162\2\154\2\157\1\154\1\142\1\145\5\uffff\1\175\16\uffff\1\71\4\uffff\2\71\2\uffff\1\154\1\175\1\145\1\uffff\1\156\1\uffff\1\141\1\146\1\164\1\160\1\164\1\156\1\141\1\164\1\163\1\164\2\156\1\141\2\154\1\145\1\uffff\2\157\1\162\2\141\1\uffff\1\145\1\175\1\uffff\1\151\2\uffff\1\160\1\162\1\150\1\163\1\150\1\151\1\157\2\145\1\153\2\145\1\162\1\163\1\145\1\155\1\156\1\165\1\164\1\143\1\167\1\uffff\2\71\1\141\1\uffff\1\162\1\164\1\150\1\145\1\151\1\175\2\145\1\156\1\164\1\151\1\167\1\157\1\163\1\143\1\175\1\156\2\145\1\175\1\165\1\156\1\175\1\156\1\143\1\162\1\uffff\1\157\1\160\1\145\1\175\1\164\1\175\1\156\1\153\1\175\1\143\1\154\2\175\1\141\2\145\2\175\1\164\1\160\1\151\2\175\1\135\1\71\1\172\1\163\1\151\2\141\1\162\1\156\1\uffff\1\143\1\170\2\145\1\164\1\157\1\143\1\160\1\141\1\uffff\1\164\2\175\1\uffff\1\156\1\175\1\uffff\1\143\1\150\1\175\1\156\1\145\1\175\1\uffff\1\163\1\uffff\1\147\1\145\1\uffff\1\164\1\145\2\uffff\1\155\2\175\2\uffff\3\175\2\uffff\1\71\1\uffff\1\135\1\uffff\1\71\1\171\1\145\1\146\1\156\1\163\1\145\1\143\2\164\1\154\1\175\1\151\1\162\2\157\1\164\1\175\2\uffff\1\144\1\uffff\1\145\1\175\1\uffff\1\163\1\162\1\uffff\6\175\5\uffff\1\71\1\uffff\1\71\1\137\1\143\1\151\1\144\1\145\1\156\1\164\1\151\2\175\1\uffff\1\157\1\144\1\154\1\162\1\145\1\uffff\1\145\1\175\1\uffff\2\175\6\uffff\2\71\1\143\1\164\1\145\1\154\1\175\1\143\1\175\1\157\2\uffff\1\156\2\175\1\164\1\175\1\144\3\uffff\1\135\1\71\1\157\1\151\1\144\1\145\1\uffff\1\145\1\uffff\1\156\1\175\2\uffff\1\175\1\uffff\1\175\1\uffff\1\156\1\157\1\175\1\162\2\175\3\uffff\2\156\1\uffff\1\175\2\uffff\1\145\1\175\1\uffff\1\143\1\uffff\1\164\1\151\1\157\1\156\1\137\1\143\1\150\1\145\1\143\1\153\1\175\1\uffff";
     static final String DFA18_acceptS =
-        "\30\uffff\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\uffff\1\111\1\112\1\114\1\uffff\1\117\1\120\1\121\4\uffff\1\132\1\133\1\uffff\1\121\55\uffff\1\66\1\67\1\113\1\70\1\115\1\uffff\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\130\1\131\1\110\1\111\1\112\1\114\1\116\1\uffff\1\117\1\120\1\126\1\122\2\uffff\1\127\1\132\3\uffff\1\75\1\uffff\1\74\20\uffff\1\100\5\uffff\1\72\2\uffff\1\71\1\uffff\1\76\1\77\25\uffff\1\73\3\uffff\1\65\32\uffff\1\64\40\uffff\1\47\11\uffff\1\60\3\uffff\1\57\2\uffff\1\61\6\uffff\1\63\1\uffff\1\50\2\uffff\1\54\2\uffff\1\55\1\56\3\uffff\1\51\1\52\3\uffff\1\53\1\62\1\uffff\1\124\1\uffff\1\125\22\uffff\1\43\1\44\1\uffff\1\45\2\uffff\1\35\2\uffff\1\46\6\uffff\1\42\1\36\1\37\1\40\1\41\1\uffff\1\124\3\uffff\1\27\7\uffff\1\24\5\uffff\1\34\2\uffff\1\23\2\uffff\1\25\1\26\1\30\1\31\1\32\1\33\11\uffff\1\20\1\17\6\uffff\1\16\1\21\1\22\5\uffff\1\11\1\uffff\1\12\2\uffff\1\13\1\14\1\uffff\1\15\1\uffff\1\123\5\uffff\1\6\1\7\1\10\3\uffff\1\5\1\4\2\uffff\1\3\1\uffff\1\2\13\uffff\1\1";
+        "\30\uffff\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\uffff\1\111\1\112\1\114\1\uffff\1\117\1\120\1\121\4\uffff\1\132\1\133\1\uffff\1\121\55\uffff\1\66\1\67\1\113\1\70\1\115\1\uffff\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\130\1\131\1\110\1\111\1\112\1\114\1\116\1\uffff\1\117\1\120\1\126\1\122\2\uffff\1\127\1\132\3\uffff\1\75\1\uffff\1\74\20\uffff\1\100\5\uffff\1\72\2\uffff\1\71\1\uffff\1\76\1\77\25\uffff\1\73\3\uffff\1\65\32\uffff\1\64\40\uffff\1\47\11\uffff\1\60\3\uffff\1\57\2\uffff\1\61\6\uffff\1\63\1\uffff\1\50\2\uffff\1\54\2\uffff\1\55\1\56\3\uffff\1\51\1\52\3\uffff\1\53\1\62\1\uffff\1\124\1\uffff\1\125\22\uffff\1\43\1\44\1\uffff\1\45\2\uffff\1\35\2\uffff\1\46\6\uffff\1\42\1\36\1\37\1\40\1\41\1\uffff\1\124\13\uffff\1\25\5\uffff\1\34\2\uffff\1\24\2\uffff\1\26\1\27\1\30\1\31\1\32\1\33\12\uffff\1\21\1\20\6\uffff\1\17\1\22\1\23\6\uffff\1\12\1\uffff\1\13\2\uffff\1\14\1\15\1\uffff\1\16\1\uffff\1\123\6\uffff\1\7\1\10\1\11\2\uffff\1\6\1\uffff\1\5\1\4\2\uffff\1\3\1\uffff\1\2\13\uffff\1\1";
     static final String DFA18_specialS =
-        "\1\0\50\uffff\1\1\1\2\u017e\uffff}>";
+        "\1\0\50\uffff\1\1\1\2\u0182\uffff}>";
     static final String[] DFA18_transitionS = {
             "\11\54\2\53\2\54\1\53\22\54\1\53\1\24\1\51\4\54\1\52\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\2\47\10\50\1\40\1\41\1\25\1\42\1\26\2\54\1\10\1\27\1\4\1\3\1\13\1\17\1\20\1\14\1\2\1\22\2\46\1\21\1\1\1\11\1\5\1\46\1\15\1\16\1\6\1\7\1\23\1\12\3\46\1\43\1\54\1\44\1\45\2\54\1\10\1\27\1\4\1\3\1\13\1\17\1\20\1\14\1\2\1\22\2\46\1\21\1\1\1\11\1\5\1\46\1\15\1\16\1\6\1\7\1\23\1\12\3\46\uff85\54",
             "\1\55\37\uffff\1\55",
@@ -6679,7 +6715,7 @@ public class InternalCQLLexer extends Lexer {
             "\1\164\1\uffff\2\u014a\10\166",
             "\1\u014b\37\uffff\1\u014b",
             "\1\u014c\37\uffff\1\u014c",
-            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
+            "\1\u014d\37\uffff\1\u014d",
             "\1\u014e\37\uffff\1\u014e",
             "\1\u014f\37\uffff\1\u014f",
             "\1\u0150\37\uffff\1\u0150",
@@ -6720,22 +6756,22 @@ public class InternalCQLLexer extends Lexer {
             "\1\164\1\uffff\2\u0168\10\166",
             "\1\u0169",
             "\1\u016a\37\uffff\1\u016a",
-            "",
             "\1\u016b\37\uffff\1\u016b",
             "\1\u016c\37\uffff\1\u016c",
             "\1\u016d\37\uffff\1\u016d",
             "\1\u016e\37\uffff\1\u016e",
             "\1\u016f\37\uffff\1\u016f",
+            "\1\u0170\37\uffff\1\u0170",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "",
-            "\1\u0172\37\uffff\1\u0172",
             "\1\u0173\37\uffff\1\u0173",
             "\1\u0174\37\uffff\1\u0174",
             "\1\u0175\37\uffff\1\u0175",
             "\1\u0176\37\uffff\1\u0176",
-            "",
             "\1\u0177\37\uffff\1\u0177",
+            "",
+            "\1\u0178\37\uffff\1\u0178",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
@@ -6746,35 +6782,37 @@ public class InternalCQLLexer extends Lexer {
             "",
             "",
             "",
-            "\12\u017b",
-            "\1\164\1\uffff\2\u017c\10\166",
-            "\1\u017d\37\uffff\1\u017d",
+            "\12\u017c",
+            "\1\164\1\uffff\2\u017d\10\166",
             "\1\u017e\37\uffff\1\u017e",
             "\1\u017f\37\uffff\1\u017f",
-            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
+            "\1\u0180\37\uffff\1\u0180",
             "\1\u0181\37\uffff\1\u0181",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "\1\u0183\37\uffff\1\u0183",
+            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
+            "\1\u0185\37\uffff\1\u0185",
             "",
             "",
-            "\1\u0184\37\uffff\1\u0184",
+            "\1\u0186\37\uffff\1\u0186",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
-            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
-            "\1\u0187\37\uffff\1\u0187",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "\1\u0189\37\uffff\1\u0189",
-            "",
-            "",
-            "",
-            "\1\u011d\3\uffff\12\u017b\1\uffff\1\u0120\41\uffff\1\u011e",
-            "\1\164\1\uffff\12\166",
+            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "\1\u018b\37\uffff\1\u018b",
-            "\1\u018c\37\uffff\1\u018c",
+            "",
+            "",
+            "",
+            "\1\u011d\3\uffff\12\u017c\1\uffff\1\u0120\41\uffff\1\u011e",
+            "\1\164\1\uffff\12\166",
             "\1\u018d\37\uffff\1\u018d",
-            "",
             "\1\u018e\37\uffff\1\u018e",
-            "",
             "\1\u018f\37\uffff\1\u018f",
+            "\1\u0190\37\uffff\1\u0190",
+            "",
+            "\1\u0191\37\uffff\1\u0191",
+            "",
+            "\1\u0192\37\uffff\1\u0192",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "",
             "",
@@ -6782,34 +6820,36 @@ public class InternalCQLLexer extends Lexer {
             "",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "",
-            "\1\u0193\37\uffff\1\u0193",
-            "\1\u0194\37\uffff\1\u0194",
-            "\1\u0195\37\uffff\1\u0195",
+            "\1\u0196\37\uffff\1\u0196",
+            "\1\u0197\37\uffff\1\u0197",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
-            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
-            "",
-            "",
-            "",
-            "\1\u0198\37\uffff\1\u0198",
             "\1\u0199\37\uffff\1\u0199",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
-            "",
-            "",
-            "\1\u019b\37\uffff\1\u019b",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             "",
+            "",
+            "",
+            "\1\u019c\37\uffff\1\u019c",
             "\1\u019d\37\uffff\1\u019d",
             "",
-            "\1\u019e\37\uffff\1\u019e",
+            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
+            "",
+            "",
             "\1\u019f\37\uffff\1\u019f",
-            "\1\u01a0\37\uffff\1\u01a0",
+            "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
+            "",
             "\1\u01a1\37\uffff\1\u01a1",
-            "\1\u01a2",
+            "",
+            "\1\u01a2\37\uffff\1\u01a2",
             "\1\u01a3\37\uffff\1\u01a3",
             "\1\u01a4\37\uffff\1\u01a4",
             "\1\u01a5\37\uffff\1\u01a5",
-            "\1\u01a6\37\uffff\1\u01a6",
+            "\1\u01a6",
             "\1\u01a7\37\uffff\1\u01a7",
+            "\1\u01a8\37\uffff\1\u01a8",
+            "\1\u01a9\37\uffff\1\u01a9",
+            "\1\u01aa\37\uffff\1\u01aa",
+            "\1\u01ab\37\uffff\1\u01ab",
             "\13\56\6\uffff\32\56\4\uffff\1\56\1\uffff\33\56\1\uffff\1\56",
             ""
     };
@@ -6844,7 +6884,7 @@ public class InternalCQLLexer extends Lexer {
             this.transition = DFA18_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( NO_LAZY_CONNECTION_CHECK | INTERSECTION | DATAHANDLER | CONNECTION | DIFFERENCE | PARTITION | TRANSPORT | UNBOUNDED | DATABASE | DISTINCT | PASSWORD | PROTOCOL | TRUNCATE | ADVANCE | CHANNEL | CONTEXT | OPTIONS | WRAPPER | ATTACH | CREATE | EXISTS | HAVING | IDFIED | REVOKE | SELECT | SINGLE | STREAM | TENANT | ALTER | FALSE | GRANT | GROUP | MULTI | STORE | TABLE | TUPLE | UNION | WHERE | DROP | EACH | FILE | FROM | JDBC | ROLE | SINK | SIZE | TIME | TRUE | USER | VIEW | WITH | AND | NOT | ExclamationMarkEqualsSign | LessThanSignEqualsSign | GreaterThanSignEqualsSign | AS | AT | BY | IF | IN | ON | OR | TO | LeftParenthesis | RightParenthesis | Asterisk | PlusSign | Comma | HyphenMinus | FullStop | Solidus | Colon | Semicolon | LessThanSign | EqualsSign | GreaterThanSign | LeftSquareBracket | RightSquareBracket | CircumflexAccent | RULE_ID | RULE_FLOAT | RULE_BYTE | RULE_VECTOR_FLOAT | RULE_MATRIX_FLOAT | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( NO_LAZY_CONNECTION_CHECK | INTERSECTION | DATAHANDLER | CONNECTION | DIFFERENCE | IDENTIFIED | PARTITION | TRANSPORT | UNBOUNDED | DATABASE | DISTINCT | PASSWORD | PROTOCOL | TRUNCATE | ADVANCE | CHANNEL | CONTEXT | OPTIONS | WRAPPER | ATTACH | CREATE | EXISTS | HAVING | REVOKE | SELECT | SINGLE | STREAM | TENANT | ALTER | FALSE | GRANT | GROUP | MULTI | STORE | TABLE | TUPLE | UNION | WHERE | DROP | EACH | FILE | FROM | JDBC | ROLE | SINK | SIZE | TIME | TRUE | USER | VIEW | WITH | AND | NOT | ExclamationMarkEqualsSign | LessThanSignEqualsSign | GreaterThanSignEqualsSign | AS | AT | BY | IF | IN | ON | OR | TO | LeftParenthesis | RightParenthesis | Asterisk | PlusSign | Comma | HyphenMinus | FullStop | Solidus | Colon | Semicolon | LessThanSign | EqualsSign | GreaterThanSign | LeftSquareBracket | RightSquareBracket | CircumflexAccent | RULE_ID | RULE_FLOAT | RULE_BYTE | RULE_VECTOR_FLOAT | RULE_MATRIX_FLOAT | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             IntStream input = _input;

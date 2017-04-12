@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework;
@@ -49,10 +50,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SetOperator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression;
@@ -153,6 +153,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
+				return; 
+			case CQLPackage.COMPLEX_SELECT:
+				sequence_ComplexSelect(context, (ComplexSelect) semanticObject); 
 				return; 
 			case CQLPackage.CONTEXT_STORE_TYPE:
 				sequence_ContextStoreType(context, (ContextStoreType) semanticObject); 
@@ -300,9 +303,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.SCHEMA_DEFINITION:
 				sequence_SchemaDefinition(context, (SchemaDefinition) semanticObject); 
 				return; 
-			case CQLPackage.SELECT:
-				sequence_Select(context, (Select) semanticObject); 
-				return; 
 			case CQLPackage.SELECT_ARGUMENT:
 				sequence_SelectArgument(context, (SelectArgument) semanticObject); 
 				return; 
@@ -316,8 +316,8 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
-			case CQLPackage.SET_OPERATOR:
-				sequence_SetOperator(context, (SetOperator) semanticObject); 
+			case CQLPackage.SIMPLE_SELECT:
+				sequence_SimpleSelect(context, (SimpleSelect) semanticObject); 
 				return; 
 			case CQLPackage.SIMPLE_SOURCE:
 				sequence_SimpleSource(context, (SimpleSource) semanticObject); 
@@ -836,6 +836,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     ComplexSelect returns ComplexSelect
+	 *
+	 * Constraint:
+	 *     (left=SimpleSelect ((operation='UNION' | operation='DIFFERENCE' | operation='INTERSECTION') right=SimpleSelect)?)
+	 */
+	protected void sequence_ComplexSelect(ISerializationContext context, ComplexSelect semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     ContextStoreType returns ContextStoreType
 	 *
 	 * Constraint:
@@ -1158,7 +1170,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     InnerSelect2 returns InnerSelect2
 	 *
 	 * Constraint:
-	 *     select=Select
+	 *     select=SimpleSelect
 	 */
 	protected void sequence_InnerSelect2(ISerializationContext context, InnerSelect2 semanticObject) {
 		if (errorAcceptor != null) {
@@ -1166,7 +1178,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.INNER_SELECT2__SELECT));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getInnerSelect2Access().getSelectSelectParserRuleCall_0(), semanticObject.getSelect());
+		feeder.accept(grammarAccess.getInnerSelect2Access().getSelectSimpleSelectParserRuleCall_0(), semanticObject.getSelect());
 		feeder.finish();
 	}
 	
@@ -1176,7 +1188,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     InnerSelect returns InnerSelect
 	 *
 	 * Constraint:
-	 *     select=Select
+	 *     select=SimpleSelect
 	 */
 	protected void sequence_InnerSelect(ISerializationContext context, InnerSelect semanticObject) {
 		if (errorAcceptor != null) {
@@ -1184,7 +1196,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.INNER_SELECT__SELECT));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getInnerSelectAccess().getSelectSelectParserRuleCall_1_0(), semanticObject.getSelect());
+		feeder.accept(grammarAccess.getInnerSelectAccess().getSelectSimpleSelectParserRuleCall_1_0(), semanticObject.getSelect());
 		feeder.finish();
 	}
 	
@@ -1489,7 +1501,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     Select returns Select
+	 *     SimpleSelect returns SimpleSelect
 	 *
 	 * Constraint:
 	 *     (
@@ -1502,19 +1514,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         having=ExpressionsModel?
 	 *     )
 	 */
-	protected void sequence_Select(ISerializationContext context, Select semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     SetOperator returns SetOperator
-	 *
-	 * Constraint:
-	 *     (left=Select (name='UNION' | name='DIFFERENCE' | name='INTERSECTION') right=Select)
-	 */
-	protected void sequence_SetOperator(ISerializationContext context, SetOperator semanticObject) {
+	protected void sequence_SimpleSelect(ISerializationContext context, SimpleSelect semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1579,7 +1579,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
-	 *     (type=Select | type=Create | type=StreamTo)
+	 *     (type=Create | type=StreamTo | type=ComplexSelect)
 	 */
 	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

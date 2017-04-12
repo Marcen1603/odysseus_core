@@ -9,26 +9,26 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Select</b></em>'.
+ * A representation of the model object '<em><b>Simple Select</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getArguments <em>Arguments</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getSources <em>Sources</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates <em>Predicates</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getOrder <em>Order</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getHaving <em>Having</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getDistinct <em>Distinct</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getSources <em>Sources</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getPredicates <em>Predicates</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getOrder <em>Order</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getHaving <em>Having</em>}</li>
  * </ul>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect()
  * @model
  * @generated
  */
-public interface Select extends EObject
+public interface SimpleSelect extends EObject
 {
   /**
    * Returns the value of the '<em><b>Distinct</b></em>' attribute.
@@ -40,14 +40,14 @@ public interface Select extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Distinct</em>' attribute.
    * @see #setDistinct(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Distinct()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Distinct()
    * @model
    * @generated
    */
   String getDistinct();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getDistinct <em>Distinct</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getDistinct <em>Distinct</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Distinct</em>' attribute.
@@ -66,7 +66,7 @@ public interface Select extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Arguments</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Arguments()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Arguments()
    * @model containment="true"
    * @generated
    */
@@ -82,7 +82,7 @@ public interface Select extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Sources</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Sources()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Sources()
    * @model containment="true"
    * @generated
    */
@@ -98,14 +98,14 @@ public interface Select extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Predicates</em>' containment reference.
    * @see #setPredicates(ExpressionsModel)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Predicates()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Predicates()
    * @model containment="true"
    * @generated
    */
   ExpressionsModel getPredicates();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getPredicates <em>Predicates</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getPredicates <em>Predicates</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Predicates</em>' containment reference.
@@ -124,7 +124,7 @@ public interface Select extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Order</em>' containment reference list.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Order()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Order()
    * @model containment="true"
    * @generated
    */
@@ -140,14 +140,14 @@ public interface Select extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Having</em>' containment reference.
    * @see #setHaving(ExpressionsModel)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSelect_Having()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getSimpleSelect_Having()
    * @model containment="true"
    * @generated
    */
   ExpressionsModel getHaving();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select#getHaving <em>Having</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect#getHaving <em>Having</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Having</em>' containment reference.
@@ -156,4 +156,4 @@ public interface Select extends EObject
    */
   void setHaving(ExpressionsModel value);
 
-} // Select
+} // SimpleSelect

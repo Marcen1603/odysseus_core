@@ -6,8 +6,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 
 import java.util.Collection;
@@ -28,23 +28,23 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Select</b></em>'.
+ * An implementation of the model object '<em><b>Simple Select</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getDistinct <em>Distinct</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getArguments <em>Arguments</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getSources <em>Sources</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getPredicates <em>Predicates</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getOrder <em>Order</em>}</li>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SelectImpl#getHaving <em>Having</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getDistinct <em>Distinct</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getSources <em>Sources</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getPredicates <em>Predicates</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getOrder <em>Order</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.SimpleSelectImpl#getHaving <em>Having</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class SelectImpl extends MinimalEObjectImpl.Container implements Select
+public class SimpleSelectImpl extends MinimalEObjectImpl.Container implements SimpleSelect
 {
   /**
    * The default value of the '{@link #getDistinct() <em>Distinct</em>}' attribute.
@@ -121,7 +121,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
    * <!-- end-user-doc -->
    * @generated
    */
-  protected SelectImpl()
+  protected SimpleSelectImpl()
   {
     super();
   }
@@ -134,7 +134,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.SELECT;
+    return CQLPackage.Literals.SIMPLE_SELECT;
   }
 
   /**
@@ -157,7 +157,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     String oldDistinct = distinct;
     distinct = newDistinct;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__DISTINCT, oldDistinct, distinct));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SIMPLE_SELECT__DISTINCT, oldDistinct, distinct));
   }
 
   /**
@@ -169,7 +169,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     if (arguments == null)
     {
-      arguments = new EObjectContainmentEList<SelectArgument>(SelectArgument.class, this, CQLPackage.SELECT__ARGUMENTS);
+      arguments = new EObjectContainmentEList<SelectArgument>(SelectArgument.class, this, CQLPackage.SIMPLE_SELECT__ARGUMENTS);
     }
     return arguments;
   }
@@ -183,7 +183,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     if (sources == null)
     {
-      sources = new EObjectContainmentEList<Source>(Source.class, this, CQLPackage.SELECT__SOURCES);
+      sources = new EObjectContainmentEList<Source>(Source.class, this, CQLPackage.SIMPLE_SELECT__SOURCES);
     }
     return sources;
   }
@@ -209,7 +209,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     predicates = newPredicates;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__PREDICATES, oldPredicates, newPredicates);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SIMPLE_SELECT__PREDICATES, oldPredicates, newPredicates);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -226,14 +226,14 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     {
       NotificationChain msgs = null;
       if (predicates != null)
-        msgs = ((InternalEObject)predicates).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SELECT__PREDICATES, null, msgs);
+        msgs = ((InternalEObject)predicates).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SIMPLE_SELECT__PREDICATES, null, msgs);
       if (newPredicates != null)
-        msgs = ((InternalEObject)newPredicates).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SELECT__PREDICATES, null, msgs);
+        msgs = ((InternalEObject)newPredicates).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SIMPLE_SELECT__PREDICATES, null, msgs);
       msgs = basicSetPredicates(newPredicates, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__PREDICATES, newPredicates, newPredicates));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SIMPLE_SELECT__PREDICATES, newPredicates, newPredicates));
   }
 
   /**
@@ -245,7 +245,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     if (order == null)
     {
-      order = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.SELECT__ORDER);
+      order = new EObjectContainmentEList<Attribute>(Attribute.class, this, CQLPackage.SIMPLE_SELECT__ORDER);
     }
     return order;
   }
@@ -271,7 +271,7 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     having = newHaving;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__HAVING, oldHaving, newHaving);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.SIMPLE_SELECT__HAVING, oldHaving, newHaving);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -288,14 +288,14 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     {
       NotificationChain msgs = null;
       if (having != null)
-        msgs = ((InternalEObject)having).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SELECT__HAVING, null, msgs);
+        msgs = ((InternalEObject)having).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SIMPLE_SELECT__HAVING, null, msgs);
       if (newHaving != null)
-        msgs = ((InternalEObject)newHaving).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SELECT__HAVING, null, msgs);
+        msgs = ((InternalEObject)newHaving).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.SIMPLE_SELECT__HAVING, null, msgs);
       msgs = basicSetHaving(newHaving, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SELECT__HAVING, newHaving, newHaving));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.SIMPLE_SELECT__HAVING, newHaving, newHaving));
   }
 
   /**
@@ -308,15 +308,15 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__ARGUMENTS:
+      case CQLPackage.SIMPLE_SELECT__ARGUMENTS:
         return ((InternalEList<?>)getArguments()).basicRemove(otherEnd, msgs);
-      case CQLPackage.SELECT__SOURCES:
+      case CQLPackage.SIMPLE_SELECT__SOURCES:
         return ((InternalEList<?>)getSources()).basicRemove(otherEnd, msgs);
-      case CQLPackage.SELECT__PREDICATES:
+      case CQLPackage.SIMPLE_SELECT__PREDICATES:
         return basicSetPredicates(null, msgs);
-      case CQLPackage.SELECT__ORDER:
+      case CQLPackage.SIMPLE_SELECT__ORDER:
         return ((InternalEList<?>)getOrder()).basicRemove(otherEnd, msgs);
-      case CQLPackage.SELECT__HAVING:
+      case CQLPackage.SIMPLE_SELECT__HAVING:
         return basicSetHaving(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -332,17 +332,17 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__DISTINCT:
+      case CQLPackage.SIMPLE_SELECT__DISTINCT:
         return getDistinct();
-      case CQLPackage.SELECT__ARGUMENTS:
+      case CQLPackage.SIMPLE_SELECT__ARGUMENTS:
         return getArguments();
-      case CQLPackage.SELECT__SOURCES:
+      case CQLPackage.SIMPLE_SELECT__SOURCES:
         return getSources();
-      case CQLPackage.SELECT__PREDICATES:
+      case CQLPackage.SIMPLE_SELECT__PREDICATES:
         return getPredicates();
-      case CQLPackage.SELECT__ORDER:
+      case CQLPackage.SIMPLE_SELECT__ORDER:
         return getOrder();
-      case CQLPackage.SELECT__HAVING:
+      case CQLPackage.SIMPLE_SELECT__HAVING:
         return getHaving();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -359,25 +359,25 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__DISTINCT:
+      case CQLPackage.SIMPLE_SELECT__DISTINCT:
         setDistinct((String)newValue);
         return;
-      case CQLPackage.SELECT__ARGUMENTS:
+      case CQLPackage.SIMPLE_SELECT__ARGUMENTS:
         getArguments().clear();
         getArguments().addAll((Collection<? extends SelectArgument>)newValue);
         return;
-      case CQLPackage.SELECT__SOURCES:
+      case CQLPackage.SIMPLE_SELECT__SOURCES:
         getSources().clear();
         getSources().addAll((Collection<? extends Source>)newValue);
         return;
-      case CQLPackage.SELECT__PREDICATES:
+      case CQLPackage.SIMPLE_SELECT__PREDICATES:
         setPredicates((ExpressionsModel)newValue);
         return;
-      case CQLPackage.SELECT__ORDER:
+      case CQLPackage.SIMPLE_SELECT__ORDER:
         getOrder().clear();
         getOrder().addAll((Collection<? extends Attribute>)newValue);
         return;
-      case CQLPackage.SELECT__HAVING:
+      case CQLPackage.SIMPLE_SELECT__HAVING:
         setHaving((ExpressionsModel)newValue);
         return;
     }
@@ -394,22 +394,22 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__DISTINCT:
+      case CQLPackage.SIMPLE_SELECT__DISTINCT:
         setDistinct(DISTINCT_EDEFAULT);
         return;
-      case CQLPackage.SELECT__ARGUMENTS:
+      case CQLPackage.SIMPLE_SELECT__ARGUMENTS:
         getArguments().clear();
         return;
-      case CQLPackage.SELECT__SOURCES:
+      case CQLPackage.SIMPLE_SELECT__SOURCES:
         getSources().clear();
         return;
-      case CQLPackage.SELECT__PREDICATES:
+      case CQLPackage.SIMPLE_SELECT__PREDICATES:
         setPredicates((ExpressionsModel)null);
         return;
-      case CQLPackage.SELECT__ORDER:
+      case CQLPackage.SIMPLE_SELECT__ORDER:
         getOrder().clear();
         return;
-      case CQLPackage.SELECT__HAVING:
+      case CQLPackage.SIMPLE_SELECT__HAVING:
         setHaving((ExpressionsModel)null);
         return;
     }
@@ -426,17 +426,17 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
   {
     switch (featureID)
     {
-      case CQLPackage.SELECT__DISTINCT:
+      case CQLPackage.SIMPLE_SELECT__DISTINCT:
         return DISTINCT_EDEFAULT == null ? distinct != null : !DISTINCT_EDEFAULT.equals(distinct);
-      case CQLPackage.SELECT__ARGUMENTS:
+      case CQLPackage.SIMPLE_SELECT__ARGUMENTS:
         return arguments != null && !arguments.isEmpty();
-      case CQLPackage.SELECT__SOURCES:
+      case CQLPackage.SIMPLE_SELECT__SOURCES:
         return sources != null && !sources.isEmpty();
-      case CQLPackage.SELECT__PREDICATES:
+      case CQLPackage.SIMPLE_SELECT__PREDICATES:
         return predicates != null;
-      case CQLPackage.SELECT__ORDER:
+      case CQLPackage.SIMPLE_SELECT__ORDER:
         return order != null && !order.isEmpty();
-      case CQLPackage.SELECT__HAVING:
+      case CQLPackage.SIMPLE_SELECT__HAVING:
         return having != null;
     }
     return super.eIsSet(featureID);
@@ -459,4 +459,4 @@ public class SelectImpl extends MinimalEObjectImpl.Container implements Select
     return result.toString();
   }
 
-} //SelectImpl
+} //SimpleSelectImpl

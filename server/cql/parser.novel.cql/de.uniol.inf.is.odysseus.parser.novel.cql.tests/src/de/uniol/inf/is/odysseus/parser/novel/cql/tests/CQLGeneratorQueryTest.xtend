@@ -1164,4 +1164,20 @@ class CQLGeneratorQueryTest
 	//SELECT price, price AS p, Max([1.0,2.3;2.0,1.3]) * price AS result FROM bid
 	//operator_1 = RENAME({aliases=['price','p'],pairs='true'},bid)
 	//operator_2 = MAP({expressions=['bid.price','p',['Max([1.0,2.3;2.0,1.3])*bid.price','result']]},operator_1)
+	
+	@Test def void SetOperatorTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1
+			UNION
+			SELECT attr3 FROM stream2"
+			,
+			"operator_1=MAP({expressions=['stream1.attr1']},stream1)
+			 operator_2=MAP({expressions=['stream2.attr3']},stream2)
+			 operator_3=UNION(operator_1,operator_2)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
 }

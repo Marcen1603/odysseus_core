@@ -51,13 +51,22 @@ public interface CQLFactory extends EFactory
   Command createCommand();
 
   /**
-   * Returns a new object of class '<em>Select</em>'.
+   * Returns a new object of class '<em>Simple Select</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Select</em>'.
+   * @return a new object of class '<em>Simple Select</em>'.
    * @generated
    */
-  Select createSelect();
+  SimpleSelect createSimpleSelect();
+
+  /**
+   * Returns a new object of class '<em>Complex Select</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Complex Select</em>'.
+   * @generated
+   */
+  ComplexSelect createComplexSelect();
 
   /**
    * Returns a new object of class '<em>Inner Select</em>'.
@@ -139,15 +148,6 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   Starthing createStarthing();
-
-  /**
-   * Returns a new object of class '<em>Set Operator</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Set Operator</em>'.
-   * @generated
-   */
-  SetOperator createSetOperator();
 
   /**
    * Returns a new object of class '<em>Alias</em>'.

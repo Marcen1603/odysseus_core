@@ -68,7 +68,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.MODEL: return createModel();
       case CQLPackage.STATEMENT: return createStatement();
       case CQLPackage.COMMAND: return createCommand();
-      case CQLPackage.SELECT: return createSelect();
+      case CQLPackage.SIMPLE_SELECT: return createSimpleSelect();
+      case CQLPackage.COMPLEX_SELECT: return createComplexSelect();
       case CQLPackage.INNER_SELECT: return createInnerSelect();
       case CQLPackage.INNER_SELECT2: return createInnerSelect2();
       case CQLPackage.SELECT_ARGUMENT: return createSelectArgument();
@@ -78,7 +79,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
       case CQLPackage.STARTHING: return createStarthing();
-      case CQLPackage.SET_OPERATOR: return createSetOperator();
       case CQLPackage.ALIAS: return createAlias();
       case CQLPackage.ACCESS_FRAMEWORK: return createAccessFramework();
       case CQLPackage.SCHEMA_DEFINITION: return createSchemaDefinition();
@@ -171,10 +171,21 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select createSelect()
+  public SimpleSelect createSimpleSelect()
   {
-    SelectImpl select = new SelectImpl();
-    return select;
+    SimpleSelectImpl simpleSelect = new SimpleSelectImpl();
+    return simpleSelect;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ComplexSelect createComplexSelect()
+  {
+    ComplexSelectImpl complexSelect = new ComplexSelectImpl();
+    return complexSelect;
   }
 
   /**
@@ -274,17 +285,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     StarthingImpl starthing = new StarthingImpl();
     return starthing;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public SetOperator createSetOperator()
-  {
-    SetOperatorImpl setOperator = new SetOperatorImpl();
-    return setOperator;
   }
 
   /**

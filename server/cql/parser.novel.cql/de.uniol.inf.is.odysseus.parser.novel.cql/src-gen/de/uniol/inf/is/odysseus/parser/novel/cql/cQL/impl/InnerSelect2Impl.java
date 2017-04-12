@@ -5,7 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Select;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -39,7 +39,7 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
    * @generated
    * @ordered
    */
-  protected Select select;
+  protected SimpleSelect select;
 
   /**
    * <!-- begin-user-doc -->
@@ -67,7 +67,7 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
    * <!-- end-user-doc -->
    * @generated
    */
-  public Select getSelect()
+  public SimpleSelect getSelect()
   {
     return select;
   }
@@ -77,9 +77,9 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetSelect(Select newSelect, NotificationChain msgs)
+  public NotificationChain basicSetSelect(SimpleSelect newSelect, NotificationChain msgs)
   {
-    Select oldSelect = select;
+    SimpleSelect oldSelect = select;
     select = newSelect;
     if (eNotificationRequired())
     {
@@ -94,7 +94,7 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSelect(Select newSelect)
+  public void setSelect(SimpleSelect newSelect)
   {
     if (newSelect != select)
     {
@@ -153,7 +153,7 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
     switch (featureID)
     {
       case CQLPackage.INNER_SELECT2__SELECT:
-        setSelect((Select)newValue);
+        setSelect((SimpleSelect)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -170,7 +170,7 @@ public class InnerSelect2Impl extends MinimalEObjectImpl.Container implements In
     switch (featureID)
     {
       case CQLPackage.INNER_SELECT2__SELECT:
-        setSelect((Select)null);
+        setSelect((SimpleSelect)null);
         return;
     }
     super.eUnset(featureID);
