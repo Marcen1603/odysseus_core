@@ -21,13 +21,15 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "NO_LAZY_CONNECTION_CHECK", "INTERSECTION", "DATAHANDLER", "CONNECTION", "DIFFERENCE", "PARTITION", "TRANSPORT", "UNBOUNDED", "DATABASE", "DISTINCT", "PASSWORD", "PROTOCOL", "TRUNCATE", "ADVANCE", "CHANNEL", "CONTEXT", "OPTIONS", "WRAPPER", "ATTACH", "CREATE", "EXISTS", "HAVING", "IDFIED", "REVOKE", "SELECT", "SINGLE", "STREAM", "TENANT", "ALTER", "FALSE", "GRANT", "GROUP", "MULTI", "STORE", "TABLE", "TUPLE", "UNION", "WHERE", "DROP", "EACH", "FILE", "FROM", "JDBC", "ROLE", "SINK", "SIZE", "TIME", "TRUE", "USER", "VIEW", "WITH", "AND", "NOT", "ExclamationMarkEqualsSign", "LessThanSignEqualsSign", "GreaterThanSignEqualsSign", "AS", "AT", "BY", "IF", "IN", "ON", "OR", "TO", "LeftParenthesis", "RightParenthesis", "Asterisk", "PlusSign", "Comma", "HyphenMinus", "FullStop", "Solidus", "Colon", "Semicolon", "LessThanSign", "EqualsSign", "GreaterThanSign", "LeftSquareBracket", "RightSquareBracket", "CircumflexAccent", "RULE_LETTER", "RULE_SPECIAL_CHARS", "RULE_INT", "RULE_ID", "RULE_FLOAT", "RULE_STRING", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "NO_LAZY_CONNECTION_CHECK", "INTERSECTION", "DATAHANDLER", "CONNECTION", "DIFFERENCE", "PARTITION", "TRANSPORT", "UNBOUNDED", "DATABASE", "DISTINCT", "PASSWORD", "PROTOCOL", "TRUNCATE", "ADVANCE", "CHANNEL", "CONTEXT", "OPTIONS", "WRAPPER", "ATTACH", "CREATE", "EXISTS", "HAVING", "IDFIED", "REVOKE", "SELECT", "SINGLE", "STREAM", "TENANT", "ALTER", "FALSE", "GRANT", "GROUP", "MULTI", "STORE", "TABLE", "TUPLE", "UNION", "WHERE", "DROP", "EACH", "FILE", "FROM", "JDBC", "ROLE", "SINK", "SIZE", "TIME", "TRUE", "USER", "VIEW", "WITH", "AND", "NOT", "ExclamationMarkEqualsSign", "LessThanSignEqualsSign", "GreaterThanSignEqualsSign", "AS", "AT", "BY", "IF", "IN", "ON", "OR", "TO", "LeftParenthesis", "RightParenthesis", "Asterisk", "PlusSign", "Comma", "HyphenMinus", "FullStop", "Solidus", "Colon", "Semicolon", "LessThanSign", "EqualsSign", "GreaterThanSign", "LeftSquareBracket", "RightSquareBracket", "CircumflexAccent", "RULE_LETTER", "RULE_SPECIAL_CHARS", "RULE_INT", "RULE_ID", "RULE_FLOAT", "RULE_BIT", "RULE_BYTE", "RULE_VECTOR_FLOAT", "RULE_MATRIX_FLOAT", "RULE_STRING", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER"
     };
     public static final int CREATE=23;
     public static final int CONTEXT=19;
     public static final int LessThanSign=78;
     public static final int TABLE=38;
+    public static final int RULE_BIT=89;
     public static final int LeftParenthesis=68;
+    public static final int RULE_VECTOR_FLOAT=91;
     public static final int PARTITION=9;
     public static final int IF=63;
     public static final int EACH=43;
@@ -47,10 +49,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int CHANNEL=18;
     public static final int PlusSign=71;
     public static final int RULE_INT=86;
-    public static final int RULE_ML_COMMENT=90;
+    public static final int RULE_ML_COMMENT=94;
     public static final int LeftSquareBracket=81;
     public static final int ADVANCE=17;
     public static final int ALTER=32;
+    public static final int RULE_BYTE=90;
     public static final int IDFIED=26;
     public static final int ROLE=47;
     public static final int GROUP=35;
@@ -90,9 +93,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int SINK=48;
     public static final int AND=55;
     public static final int HAVING=25;
-    public static final int RULE_STRING=89;
+    public static final int RULE_STRING=93;
     public static final int DROP=42;
-    public static final int RULE_SL_COMMENT=91;
+    public static final int RULE_SL_COMMENT=95;
     public static final int EqualsSign=79;
     public static final int TRANSPORT=10;
     public static final int DIFFERENCE=8;
@@ -103,10 +106,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int ON=65;
     public static final int OR=66;
     public static final int EXISTS=24;
-    public static final int RULE_WS=92;
+    public static final int RULE_WS=96;
     public static final int STREAM=30;
     public static final int TIME=50;
-    public static final int RULE_ANY_OTHER=93;
+    public static final int RULE_ANY_OTHER=97;
     public static final int USER=52;
     public static final int TENANT=31;
     public static final int WITH=54;
@@ -114,6 +117,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int GRANT=34;
     public static final int ATTACH=22;
     public static final int FALSE=33;
+    public static final int RULE_MATRIX_FLOAT=92;
 
     // delegates
     // delegators
@@ -571,7 +575,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         throw nvae;
                     }
                 }
-                else if ( (LA5_1==EOF||(LA5_1>=ATTACH && LA5_1<=CREATE)||LA5_1==HAVING||(LA5_1>=REVOKE && LA5_1<=SELECT)||LA5_1==STREAM||(LA5_1>=ALTER && LA5_1<=GROUP)||LA5_1==DROP||LA5_1==FROM||LA5_1==TRUE||LA5_1==AND||(LA5_1>=ExclamationMarkEqualsSign && LA5_1<=AS)||LA5_1==IN||LA5_1==OR||(LA5_1>=RightParenthesis && LA5_1<=HyphenMinus)||LA5_1==Solidus||(LA5_1>=Semicolon && LA5_1<=GreaterThanSign)||LA5_1==RightSquareBracket||(LA5_1>=RULE_INT && LA5_1<=RULE_STRING)) ) {
+                else if ( (LA5_1==EOF||(LA5_1>=ATTACH && LA5_1<=CREATE)||LA5_1==HAVING||(LA5_1>=REVOKE && LA5_1<=SELECT)||LA5_1==STREAM||(LA5_1>=ALTER && LA5_1<=GROUP)||LA5_1==DROP||LA5_1==FROM||LA5_1==TRUE||LA5_1==AND||(LA5_1>=ExclamationMarkEqualsSign && LA5_1<=AS)||LA5_1==IN||LA5_1==OR||(LA5_1>=RightParenthesis && LA5_1<=HyphenMinus)||LA5_1==Solidus||(LA5_1>=Semicolon && LA5_1<=GreaterThanSign)||LA5_1==RightSquareBracket||(LA5_1>=RULE_INT && LA5_1<=RULE_FLOAT)||(LA5_1>=RULE_VECTOR_FLOAT && LA5_1<=RULE_STRING)) ) {
                     alt5=1;
                 }
                 else {
@@ -761,7 +765,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 if ( (LA6_1==FullStop) ) {
                     alt6=2;
                 }
-                else if ( (LA6_1==EOF||LA6_1==FALSE||LA6_1==FROM||LA6_1==TRUE||LA6_1==AS||(LA6_1>=RightParenthesis && LA6_1<=HyphenMinus)||LA6_1==Solidus||LA6_1==CircumflexAccent||(LA6_1>=RULE_INT && LA6_1<=RULE_STRING)) ) {
+                else if ( (LA6_1==EOF||LA6_1==FALSE||LA6_1==FROM||LA6_1==TRUE||LA6_1==AS||(LA6_1>=RightParenthesis && LA6_1<=HyphenMinus)||LA6_1==Solidus||LA6_1==CircumflexAccent||(LA6_1>=RULE_INT && LA6_1<=RULE_FLOAT)||(LA6_1>=RULE_VECTOR_FLOAT && LA6_1<=RULE_STRING)) ) {
                     alt6=1;
                 }
                 else {
@@ -1582,7 +1586,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             if ( (LA12_0==Asterisk) ) {
                 alt12=1;
             }
-            else if ( (LA12_0==FALSE||LA12_0==TRUE||(LA12_0>=RULE_INT && LA12_0<=RULE_STRING)) ) {
+            else if ( (LA12_0==FALSE||LA12_0==TRUE||(LA12_0>=RULE_INT && LA12_0<=RULE_FLOAT)||(LA12_0>=RULE_VECTOR_FLOAT && LA12_0<=RULE_STRING)) ) {
                 alt12=2;
             }
             else {
@@ -1615,7 +1619,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         int alt10=2;
                         int LA10_0 = input.LA(1);
 
-                        if ( (LA10_0==FALSE||LA10_0==TRUE||(LA10_0>=RULE_INT && LA10_0<=RULE_STRING)) ) {
+                        if ( (LA10_0==FALSE||LA10_0==TRUE||(LA10_0>=RULE_INT && LA10_0<=RULE_FLOAT)||(LA10_0>=RULE_VECTOR_FLOAT && LA10_0<=RULE_STRING)) ) {
                             alt10=1;
                         }
 
@@ -2401,7 +2405,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     if ( (LA20_3==RULE_ID) ) {
                         int LA20_5 = input.LA(4);
 
-                        if ( (LA20_5==EOF||LA20_5==FALSE||LA20_5==FROM||LA20_5==TRUE||LA20_5==AS||LA20_5==Comma||(LA20_5>=RULE_INT && LA20_5<=RULE_STRING)) ) {
+                        if ( (LA20_5==EOF||LA20_5==FALSE||LA20_5==FROM||LA20_5==TRUE||LA20_5==AS||LA20_5==Comma||(LA20_5>=RULE_INT && LA20_5<=RULE_FLOAT)||(LA20_5>=RULE_VECTOR_FLOAT && LA20_5<=RULE_STRING)) ) {
                             alt20=1;
                         }
                         else if ( ((LA20_5>=Asterisk && LA20_5<=PlusSign)||LA20_5==HyphenMinus||LA20_5==Solidus||LA20_5==CircumflexAccent) ) {
@@ -2434,6 +2438,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 case RULE_INT:
                 case RULE_ID:
                 case RULE_FLOAT:
+                case RULE_VECTOR_FLOAT:
+                case RULE_MATRIX_FLOAT:
                 case RULE_STRING:
                     {
                     alt20=1;
@@ -2457,7 +2463,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 }
 
             }
-            else if ( (LA20_0==FALSE||LA20_0==TRUE||LA20_0==RULE_INT||(LA20_0>=RULE_FLOAT && LA20_0<=RULE_STRING)) ) {
+            else if ( (LA20_0==FALSE||LA20_0==TRUE||LA20_0==RULE_INT||LA20_0==RULE_FLOAT||(LA20_0>=RULE_VECTOR_FLOAT && LA20_0<=RULE_STRING)) ) {
                 alt20=2;
             }
             else {
@@ -4594,7 +4600,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     throw nvae;
                 }
             }
-            else if ( (LA32_0==FALSE||LA32_0==TRUE||LA32_0==RULE_INT||(LA32_0>=RULE_FLOAT && LA32_0<=RULE_STRING)) ) {
+            else if ( (LA32_0==FALSE||LA32_0==TRUE||LA32_0==RULE_INT||LA32_0==RULE_FLOAT||(LA32_0>=RULE_VECTOR_FLOAT && LA32_0<=RULE_STRING)) ) {
                 alt32=1;
             }
             else {
@@ -4700,7 +4706,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     	    if ( (LA29_0==RULE_ID) ) {
                     	        int LA29_1 = input.LA(2);
 
-                    	        if ( (LA29_1==EOF||LA29_1==FALSE||LA29_1==FROM||LA29_1==TRUE||LA29_1==AS||(LA29_1>=RightParenthesis && LA29_1<=Solidus)||LA29_1==CircumflexAccent||(LA29_1>=RULE_INT && LA29_1<=RULE_STRING)) ) {
+                    	        if ( (LA29_1==EOF||LA29_1==FALSE||LA29_1==FROM||LA29_1==TRUE||LA29_1==AS||(LA29_1>=RightParenthesis && LA29_1<=Solidus)||LA29_1==CircumflexAccent||(LA29_1>=RULE_INT && LA29_1<=RULE_FLOAT)||(LA29_1>=RULE_VECTOR_FLOAT && LA29_1<=RULE_STRING)) ) {
                     	            alt29=2;
                     	        }
                     	        else if ( (LA29_1==LeftParenthesis) ) {
@@ -4713,7 +4719,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     	            throw nvae;
                     	        }
                     	    }
-                    	    else if ( (LA29_0==FALSE||LA29_0==TRUE||LA29_0==RULE_INT||(LA29_0>=RULE_FLOAT && LA29_0<=RULE_STRING)) ) {
+                    	    else if ( (LA29_0==FALSE||LA29_0==TRUE||LA29_0==RULE_INT||LA29_0==RULE_FLOAT||(LA29_0>=RULE_VECTOR_FLOAT && LA29_0<=RULE_STRING)) ) {
                     	        alt29=1;
                     	    }
                     	    else {
@@ -4881,7 +4887,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     if ( (LA31_0==RULE_ID) ) {
                         int LA31_1 = input.LA(2);
 
-                        if ( (LA31_1==EOF||LA31_1==FALSE||LA31_1==FROM||LA31_1==TRUE||LA31_1==AS||LA31_1==RightParenthesis||LA31_1==Comma||LA31_1==FullStop||(LA31_1>=RULE_INT && LA31_1<=RULE_STRING)) ) {
+                        if ( (LA31_1==EOF||LA31_1==FALSE||LA31_1==FROM||LA31_1==TRUE||LA31_1==AS||LA31_1==RightParenthesis||LA31_1==Comma||LA31_1==FullStop||(LA31_1>=RULE_INT && LA31_1<=RULE_FLOAT)||(LA31_1>=RULE_VECTOR_FLOAT && LA31_1<=RULE_STRING)) ) {
                             alt31=2;
                         }
                         else if ( (LA31_1==LeftParenthesis) ) {
@@ -4894,7 +4900,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                             throw nvae;
                         }
                     }
-                    else if ( (LA31_0==FALSE||LA31_0==TRUE||LA31_0==RULE_INT||(LA31_0>=RULE_FLOAT && LA31_0<=RULE_STRING)) ) {
+                    else if ( (LA31_0==FALSE||LA31_0==TRUE||LA31_0==RULE_INT||LA31_0==RULE_FLOAT||(LA31_0>=RULE_VECTOR_FLOAT && LA31_0<=RULE_STRING)) ) {
                         alt31=1;
                     }
                     else {
@@ -5320,6 +5326,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             case TRUE:
             case RULE_INT:
             case RULE_FLOAT:
+            case RULE_VECTOR_FLOAT:
+            case RULE_MATRIX_FLOAT:
             case RULE_STRING:
                 {
                 alt34=1;
@@ -5514,7 +5522,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             if ( (LA35_0==RULE_ID) ) {
                 alt35=1;
             }
-            else if ( (LA35_0==FALSE||LA35_0==TRUE||LA35_0==RULE_INT||(LA35_0>=RULE_FLOAT && LA35_0<=RULE_STRING)) ) {
+            else if ( (LA35_0==FALSE||LA35_0==TRUE||LA35_0==RULE_INT||LA35_0==RULE_FLOAT||(LA35_0>=RULE_VECTOR_FLOAT && LA35_0<=RULE_STRING)) ) {
                 alt35=2;
             }
             else {
@@ -14414,13 +14422,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAtomicWithoutAttributeRef"
-    // InternalCQLParser.g:5796:1: ruleAtomicWithoutAttributeRef returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) ) ;
+    // InternalCQLParser.g:5796:1: ruleAtomicWithoutAttributeRef returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) ;
     public final EObject ruleAtomicWithoutAttributeRef() throws RecognitionException {
         EObject current = null;
 
         Token lv_value_1_0=null;
         Token lv_value_3_0=null;
         Token lv_value_5_0=null;
+        Token lv_value_9_0=null;
+        Token lv_value_11_0=null;
         AntlrDatatypeRuleToken lv_value_7_0 = null;
 
 
@@ -14428,11 +14438,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5802:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) ) )
-            // InternalCQLParser.g:5803:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) )
+            // InternalCQLParser.g:5802:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) )
+            // InternalCQLParser.g:5803:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
             {
-            // InternalCQLParser.g:5803:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) )
-            int alt84=4;
+            // InternalCQLParser.g:5803:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
+            int alt84=6;
             switch ( input.LA(1) ) {
             case RULE_INT:
                 {
@@ -14453,6 +14463,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             case TRUE:
                 {
                 alt84=4;
+                }
+                break;
+            case RULE_MATRIX_FLOAT:
+                {
+                alt84=5;
+                }
+                break;
+            case RULE_VECTOR_FLOAT:
+                {
+                alt84=6;
                 }
                 break;
             default:
@@ -14664,6 +14684,104 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
                     break;
+                case 5 :
+                    // InternalCQLParser.g:5917:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
+                    {
+                    // InternalCQLParser.g:5917:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
+                    // InternalCQLParser.g:5918:4: () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
+                    {
+                    // InternalCQLParser.g:5918:4: ()
+                    // InternalCQLParser.g:5919:5: 
+                    {
+
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getAtomicWithoutAttributeRefAccess().getMatrixAction_4_0(),
+                    						current);
+                    				
+
+                    }
+
+                    // InternalCQLParser.g:5925:4: ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
+                    // InternalCQLParser.g:5926:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
+                    {
+                    // InternalCQLParser.g:5926:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
+                    // InternalCQLParser.g:5927:6: lv_value_9_0= RULE_MATRIX_FLOAT
+                    {
+                    lv_value_9_0=(Token)match(input,RULE_MATRIX_FLOAT,FOLLOW_2); 
+
+                    						newLeafNode(lv_value_9_0, grammarAccess.getAtomicWithoutAttributeRefAccess().getValueMATRIX_FLOATTerminalRuleCall_4_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getAtomicWithoutAttributeRefRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"value",
+                    							lv_value_9_0,
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
+                    					
+
+                    }
+
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 6 :
+                    // InternalCQLParser.g:5945:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
+                    {
+                    // InternalCQLParser.g:5945:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
+                    // InternalCQLParser.g:5946:4: () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
+                    {
+                    // InternalCQLParser.g:5946:4: ()
+                    // InternalCQLParser.g:5947:5: 
+                    {
+
+                    					current = forceCreateModelElement(
+                    						grammarAccess.getAtomicWithoutAttributeRefAccess().getVectorAction_5_0(),
+                    						current);
+                    				
+
+                    }
+
+                    // InternalCQLParser.g:5953:4: ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
+                    // InternalCQLParser.g:5954:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
+                    {
+                    // InternalCQLParser.g:5954:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
+                    // InternalCQLParser.g:5955:6: lv_value_11_0= RULE_VECTOR_FLOAT
+                    {
+                    lv_value_11_0=(Token)match(input,RULE_VECTOR_FLOAT,FOLLOW_2); 
+
+                    						newLeafNode(lv_value_11_0, grammarAccess.getAtomicWithoutAttributeRefAccess().getValueVECTOR_FLOATTerminalRuleCall_5_1_0());
+                    					
+
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getAtomicWithoutAttributeRefRule());
+                    						}
+                    						setWithLastConsumed(
+                    							current,
+                    							"value",
+                    							lv_value_11_0,
+                    							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
+                    					
+
+                    }
+
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
 
             }
 
@@ -14794,14 +14912,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000400L});
     public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000000000L,0x0000000000800000L});
     public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000040L});
-    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0008000200002000L,0x0000000003C00040L});
+    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0008000200002000L,0x0000000039C00040L});
     public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000200000000000L});
-    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0008200200002000L,0x0000000003C00140L});
+    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x0008200200002000L,0x0000000039C00140L});
     public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0000200000000000L,0x0000000000000100L});
     public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000000000L,0x0000000000800010L});
     public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0000020802000002L,0x0000000000800110L});
     public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000020802000002L,0x0000000000000100L});
-    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0108000200000000L,0x0000000003C00010L});
+    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0108000200000000L,0x0000000021C00010L});
     public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0000000802000002L});
     public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x4000000000000000L});
     public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000002000002L,0x0000000000800100L});
@@ -14815,12 +14933,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x1000000000000002L,0x0000000000080AC0L});
     public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080AC0L});
     public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000010L});
-    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000000000000L,0x0000000002000000L});
+    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000000000000L,0x0000000020000000L});
     public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000000008000L});
     public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000000000000400L});
     public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000000000000040L});
     public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000000000100000L});
-    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000000000000000L,0x0000000002000120L});
+    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000000000000000L,0x0000000020000120L});
     public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000120L});
     public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0021000040000000L});
     public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000000000200000L});

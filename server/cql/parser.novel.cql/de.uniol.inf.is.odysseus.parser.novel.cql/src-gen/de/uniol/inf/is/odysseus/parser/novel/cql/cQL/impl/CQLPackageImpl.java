@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDB
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
@@ -40,6 +39,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
@@ -65,6 +65,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -290,13 +291,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass dataTypeEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass simpleSourceEClass = null;
 
   /**
@@ -515,6 +509,20 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass attributeRefEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass matrixEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass vectorEClass = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -1487,26 +1495,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
   public EClass getExpression()
   {
     return expressionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getDataType()
-  {
-    return dataTypeEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getDataType_Value()
-  {
-    return (EAttribute)dataTypeEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2504,6 +2492,46 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getMatrix()
+  {
+    return matrixEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getMatrix_Value()
+  {
+    return (EAttribute)matrixEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getVector()
+  {
+    return vectorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getVector_Value()
+  {
+    return (EAttribute)vectorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public CQLFactory getCQLFactory()
   {
     return (CQLFactory)getEFactoryInstance();
@@ -2649,9 +2677,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     expressionEClass = createEClass(EXPRESSION);
 
-    dataTypeEClass = createEClass(DATA_TYPE);
-    createEAttribute(dataTypeEClass, DATA_TYPE__VALUE);
-
     simpleSourceEClass = createEClass(SIMPLE_SOURCE);
     createEAttribute(simpleSourceEClass, SIMPLE_SOURCE__NAME);
     createEReference(simpleSourceEClass, SIMPLE_SOURCE__WINDOW);
@@ -2782,6 +2807,12 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     attributeRefEClass = createEClass(ATTRIBUTE_REF);
     createEReference(attributeRefEClass, ATTRIBUTE_REF__VALUE);
+
+    matrixEClass = createEClass(MATRIX);
+    createEAttribute(matrixEClass, MATRIX__VALUE);
+
+    vectorEClass = createEClass(VECTOR);
+    createEAttribute(vectorEClass, VECTOR__VALUE);
   }
 
   /**
@@ -2845,6 +2876,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     stringConstantEClass.getESuperTypes().add(this.getExpression());
     boolConstantEClass.getESuperTypes().add(this.getExpression());
     attributeRefEClass.getESuperTypes().add(this.getExpression());
+    matrixEClass.getESuperTypes().add(this.getExpression());
+    vectorEClass.getESuperTypes().add(this.getExpression());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2966,9 +2999,6 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEReference(getExpressionsModel_Elements(), this.getExpression(), null, "elements", null, 0, -1, ExpressionsModel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(expressionEClass, Expression.class, "Expression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(dataTypeEClass, DataType.class, "DataType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getDataType_Value(), ecorePackage.getEString(), "value", null, 0, 1, DataType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(simpleSourceEClass, SimpleSource.class, "SimpleSource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getSimpleSource_Name(), ecorePackage.getEString(), "name", null, 0, 1, SimpleSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3100,6 +3130,12 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(attributeRefEClass, AttributeRef.class, "AttributeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAttributeRef_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, AttributeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(matrixEClass, Matrix.class, "Matrix", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMatrix_Value(), ecorePackage.getEString(), "value", null, 0, 1, Matrix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(vectorEClass, Vector.class, "Vector", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getVector_Value(), ecorePackage.getEString(), "value", null, 0, 1, Vector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Create resource
     createResource(eNS_URI);

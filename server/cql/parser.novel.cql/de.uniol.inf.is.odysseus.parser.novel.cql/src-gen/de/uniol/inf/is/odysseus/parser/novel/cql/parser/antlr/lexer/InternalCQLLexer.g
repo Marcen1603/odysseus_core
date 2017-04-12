@@ -181,6 +181,14 @@ fragment RULE_SPECIAL_CHARS : (':'|'_'|'{'|'}');
 
 RULE_FLOAT : RULE_INT '.' RULE_INT;
 
+fragment RULE_BIT : ('0'|'1');
+
+RULE_BYTE : RULE_BIT RULE_BIT RULE_BIT RULE_BIT RULE_BIT RULE_BIT RULE_BIT RULE_BIT;
+
+RULE_VECTOR_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* ']';
+
+RULE_MATRIX_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* (';' RULE_FLOAT+ (',' RULE_FLOAT)*)* ']';
+
 RULE_INT : ('0'..'9')+;
 
 RULE_STRING : ('"' ('\\' .|~(('\\'|'"')))* '"'|'\'' ('\\' .|~(('\\'|'\'')))* '\'');

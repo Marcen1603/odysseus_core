@@ -285,15 +285,6 @@ public interface CQLFactory extends EFactory
   Expression createExpression();
 
   /**
-   * Returns a new object of class '<em>Data Type</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Data Type</em>'.
-   * @generated
-   */
-  DataType createDataType();
-
-  /**
    * Returns a new object of class '<em>Simple Source</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -580,6 +571,24 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   AttributeRef createAttributeRef();
+
+  /**
+   * Returns a new object of class '<em>Matrix</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Matrix</em>'.
+   * @generated
+   */
+  Matrix createMatrix();
+
+  /**
+   * Returns a new object of class '<em>Vector</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Vector</em>'.
+   * @generated
+   */
+  Vector createVector();
 
   /**
    * Returns the package supported by this factory.

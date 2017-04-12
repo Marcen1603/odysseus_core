@@ -123,9 +123,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//ExpressionsModel/elements"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Expression"/>
-    <genClasses ecoreClass="CQL.ecore#//DataType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//DataType/value"/>
-    </genClasses>
     <genClasses ecoreClass="CQL.ecore#//SimpleSource">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//SimpleSource/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//SimpleSource/window"/>
@@ -252,6 +249,12 @@
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//AttributeRef">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//AttributeRef/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Matrix">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Matrix/value"/>
+    </genClasses>
+    <genClasses ecoreClass="CQL.ecore#//Vector">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute CQL.ecore#//Vector/value"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

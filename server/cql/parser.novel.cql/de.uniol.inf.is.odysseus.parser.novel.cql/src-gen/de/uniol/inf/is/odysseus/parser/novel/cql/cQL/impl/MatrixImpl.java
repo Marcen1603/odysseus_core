@@ -4,29 +4,28 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix;
 
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Data Type</b></em>'.
+ * An implementation of the model object '<em><b>Matrix</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.DataTypeImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.MatrixImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataType
+public class MatrixImpl extends ExpressionImpl implements Matrix
 {
   /**
    * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
@@ -53,7 +52,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
    * <!-- end-user-doc -->
    * @generated
    */
-  protected DataTypeImpl()
+  protected MatrixImpl()
   {
     super();
   }
@@ -66,7 +65,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.DATA_TYPE;
+    return CQLPackage.Literals.MATRIX;
   }
 
   /**
@@ -89,7 +88,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
     String oldValue = value;
     value = newValue;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.DATA_TYPE__VALUE, oldValue, value));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.MATRIX__VALUE, oldValue, value));
   }
 
   /**
@@ -102,7 +101,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
   {
     switch (featureID)
     {
-      case CQLPackage.DATA_TYPE__VALUE:
+      case CQLPackage.MATRIX__VALUE:
         return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -118,7 +117,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
   {
     switch (featureID)
     {
-      case CQLPackage.DATA_TYPE__VALUE:
+      case CQLPackage.MATRIX__VALUE:
         setValue((String)newValue);
         return;
     }
@@ -135,7 +134,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
   {
     switch (featureID)
     {
-      case CQLPackage.DATA_TYPE__VALUE:
+      case CQLPackage.MATRIX__VALUE:
         setValue(VALUE_EDEFAULT);
         return;
     }
@@ -152,7 +151,7 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
   {
     switch (featureID)
     {
-      case CQLPackage.DATA_TYPE__VALUE:
+      case CQLPackage.MATRIX__VALUE:
         return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
     }
     return super.eIsSet(featureID);
@@ -175,4 +174,4 @@ public class DataTypeImpl extends MinimalEObjectImpl.Container implements DataTy
     return result.toString();
   }
 
-} //DataTypeImpl
+} //MatrixImpl

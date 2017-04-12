@@ -2831,6 +2831,18 @@ rule__AtomicWithoutAttributeRef__Alternatives
 		(rule__AtomicWithoutAttributeRef__Group_3__0)
 		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_3()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_4()); }
+		(rule__AtomicWithoutAttributeRef__Group_4__0)
+		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_4()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5()); }
+		(rule__AtomicWithoutAttributeRef__Group_5__0)
+		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -12557,6 +12569,114 @@ finally {
 }
 
 
+rule__AtomicWithoutAttributeRef__Group_4__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__AtomicWithoutAttributeRef__Group_4__0__Impl
+	rule__AtomicWithoutAttributeRef__Group_4__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_4__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getMatrixAction_4_0()); }
+	()
+	{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getMatrixAction_4_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_4__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__AtomicWithoutAttributeRef__Group_4__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_4__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_4_1()); }
+	(rule__AtomicWithoutAttributeRef__ValueAssignment_4_1)
+	{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_4_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__AtomicWithoutAttributeRef__Group_5__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__AtomicWithoutAttributeRef__Group_5__0__Impl
+	rule__AtomicWithoutAttributeRef__Group_5__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_5__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getVectorAction_5_0()); }
+	()
+	{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getVectorAction_5_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_5__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__AtomicWithoutAttributeRef__Group_5__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__Group_5__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_5_1()); }
+	(rule__AtomicWithoutAttributeRef__ValueAssignment_5_1)
+	{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_5_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
 rule__Model__ComponentsAssignment_0
 	@init {
 		int stackSize = keepStackSize();
@@ -14950,6 +15070,36 @@ rule__AtomicWithoutAttributeRef__ValueAssignment_3_1
 		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueBOOLEANParserRuleCall_3_1_0()); }
 		ruleBOOLEAN
 		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueBOOLEANParserRuleCall_3_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__ValueAssignment_4_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueMATRIX_FLOATTerminalRuleCall_4_1_0()); }
+		RULE_MATRIX_FLOAT
+		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueMATRIX_FLOATTerminalRuleCall_4_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__AtomicWithoutAttributeRef__ValueAssignment_5_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueVECTOR_FLOATTerminalRuleCall_5_1_0()); }
+		RULE_VECTOR_FLOAT
+		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueVECTOR_FLOATTerminalRuleCall_5_1_0()); }
 	)
 ;
 finally {

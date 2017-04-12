@@ -276,13 +276,6 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.DATA_TYPE:
-      {
-        DataType dataType = (DataType)theEObject;
-        T result = caseDataType(dataType);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case CQLPackage.SIMPLE_SOURCE:
       {
         SimpleSource simpleSource = (SimpleSource)theEObject;
@@ -536,6 +529,22 @@ public class CQLSwitch<T> extends Switch<T>
         AttributeRef attributeRef = (AttributeRef)theEObject;
         T result = caseAttributeRef(attributeRef);
         if (result == null) result = caseExpression(attributeRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.MATRIX:
+      {
+        Matrix matrix = (Matrix)theEObject;
+        T result = caseMatrix(matrix);
+        if (result == null) result = caseExpression(matrix);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.VECTOR:
+      {
+        Vector vector = (Vector)theEObject;
+        T result = caseVector(vector);
+        if (result == null) result = caseExpression(vector);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1003,22 +1012,6 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseExpression(Expression object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Data Type</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Data Type</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDataType(DataType object)
   {
     return null;
   }
@@ -1531,6 +1524,38 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAttributeRef(AttributeRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Matrix</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Matrix</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseMatrix(Matrix object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Vector</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Vector</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseVector(Vector object)
   {
     return null;
   }

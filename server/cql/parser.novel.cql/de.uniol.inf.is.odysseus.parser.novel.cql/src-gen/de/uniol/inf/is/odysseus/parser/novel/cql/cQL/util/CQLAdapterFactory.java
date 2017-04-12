@@ -221,11 +221,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createExpressionAdapter();
       }
       @Override
-      public Adapter caseDataType(DataType object)
-      {
-        return createDataTypeAdapter();
-      }
-      @Override
       public Adapter caseSimpleSource(SimpleSource object)
       {
         return createSimpleSourceAdapter();
@@ -384,6 +379,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
       public Adapter caseAttributeRef(AttributeRef object)
       {
         return createAttributeRefAdapter();
+      }
+      @Override
+      public Adapter caseMatrix(Matrix object)
+      {
+        return createMatrixAdapter();
+      }
+      @Override
+      public Adapter caseVector(Vector object)
+      {
+        return createVectorAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -838,21 +843,6 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createExpressionAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType
-   * @generated
-   */
-  public Adapter createDataTypeAdapter()
   {
     return null;
   }
@@ -1333,6 +1323,36 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAttributeRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix <em>Matrix</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix
+   * @generated
+   */
+  public Adapter createMatrixAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector <em>Vector</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector
+   * @generated
+   */
+  public Adapter createVectorAdapter()
   {
     return null;
   }

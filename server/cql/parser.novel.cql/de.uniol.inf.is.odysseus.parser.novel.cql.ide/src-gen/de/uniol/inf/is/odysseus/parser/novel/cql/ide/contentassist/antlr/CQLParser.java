@@ -179,7 +179,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_1(), "rule__AtomicWithoutAttributeRef__Group_1__0");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_2(), "rule__AtomicWithoutAttributeRef__Group_2__0");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_3(), "rule__AtomicWithoutAttributeRef__Group_3__0");
-					put(grammarAccess.getAtomicWithOnlyStringConstantAccess().getGroup(), "rule__AtomicWithOnlyStringConstant__Group__0");
+					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_4(), "rule__AtomicWithoutAttributeRef__Group_4__0");
+					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5(), "rule__AtomicWithoutAttributeRef__Group_5__0");
 					put(grammarAccess.getModelAccess().getComponentsAssignment_0(), "rule__Model__ComponentsAssignment_0");
 					put(grammarAccess.getStatementAccess().getTypeAssignment(), "rule__Statement__TypeAssignment");
 					put(grammarAccess.getCommandAccess().getTypeAssignment(), "rule__Command__TypeAssignment");
@@ -340,8 +341,8 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_1_1(), "rule__AtomicWithoutAttributeRef__ValueAssignment_1_1");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_2_1(), "rule__AtomicWithoutAttributeRef__ValueAssignment_2_1");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_3_1(), "rule__AtomicWithoutAttributeRef__ValueAssignment_3_1");
-					put(grammarAccess.getAtomicWithOnlyStringConstantAccess().getValueAssignment_1(), "rule__AtomicWithOnlyStringConstant__ValueAssignment_1");
-					put(grammarAccess.getDataTypeAccess().getValueAssignment(), "rule__DataType__ValueAssignment");
+					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_4_1(), "rule__AtomicWithoutAttributeRef__ValueAssignment_4_1");
+					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueAssignment_5_1(), "rule__AtomicWithoutAttributeRef__ValueAssignment_5_1");
 				}
 			};
 		}

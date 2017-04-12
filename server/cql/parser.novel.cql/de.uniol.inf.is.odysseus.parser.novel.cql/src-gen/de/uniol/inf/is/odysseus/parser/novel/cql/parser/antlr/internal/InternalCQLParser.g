@@ -5913,5 +5913,61 @@ ruleAtomicWithoutAttributeRef returns [EObject current=null]
 				)
 			)
 		)
+		    |
+		(
+			(
+				{
+					$current = forceCreateModelElement(
+						grammarAccess.getAtomicWithoutAttributeRefAccess().getMatrixAction_4_0(),
+						$current);
+				}
+			)
+			(
+				(
+					lv_value_9_0=RULE_MATRIX_FLOAT
+					{
+						newLeafNode(lv_value_9_0, grammarAccess.getAtomicWithoutAttributeRefAccess().getValueMATRIX_FLOATTerminalRuleCall_4_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getAtomicWithoutAttributeRefRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"value",
+							lv_value_9_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				{
+					$current = forceCreateModelElement(
+						grammarAccess.getAtomicWithoutAttributeRefAccess().getVectorAction_5_0(),
+						$current);
+				}
+			)
+			(
+				(
+					lv_value_11_0=RULE_VECTOR_FLOAT
+					{
+						newLeafNode(lv_value_11_0, grammarAccess.getAtomicWithoutAttributeRefAccess().getValueVECTOR_FLOATTerminalRuleCall_5_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getAtomicWithoutAttributeRefRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"value",
+							lv_value_11_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
+					}
+				)
+			)
+		)
 	)
 ;

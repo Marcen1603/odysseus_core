@@ -1127,4 +1127,41 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
+	@Test def void MatrixTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT [1.0,2.0,3.0;3.0,4.0,6.0] + [2.0,4.0,5.0;12.0,5.0,1.0] FROM stream1;"
+			,
+			"operator_1=MAP({expressions=[['[1.0,2.0,3.0;3.0,4.0,6.0]+[2.0,4.0,5.0;12.0,5.0,1.0]','expression_0']]},stream1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void MatrixTest2()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT Max([1.0,2.0,3.0;3.0,4.0,6.0]) AS maxElement FROM stream1;"
+			,
+			"operator_1=MAP({expressions=[['Max([1.0,2.0,3.0;3.0,4.0,6.0])','maxElement']]},stream1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void MatrixTest3()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1 AS a1, Max([1.0,2.0,3.0;3.0,4.0,6.0]) + 7.5 * a1 AS maxElement FROM stream1;"
+			,
+			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
+			 operator_2=MAP({expressions=['a1',['Max([1.0,2.0,3.0;3.0,4.0,6.0])+7.5*a1','maxElement']]},operator_1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	//TODO price is missing in input source
+	//SELECT price, price AS p, Max([1.0,2.3;2.0,1.3]) * price AS result FROM bid
+	//operator_1 = RENAME({aliases=['price','p'],pairs='true'},bid)
+	//operator_2 = MAP({expressions=['bid.price','p',['Max([1.0,2.3;2.0,1.3])*bid.price','result']]},operator_1)
 }

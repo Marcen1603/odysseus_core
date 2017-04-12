@@ -20,6 +20,9 @@ class NameProviderHelper extends NameProvider
 	{
 		var list = newArrayList
 		list.add('DolToEur')
+		list.add('Max')
+		list.add('Min')
+		list.add('Det')
 		return list.contains(name)
 	}
 	

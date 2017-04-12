@@ -60,6 +60,11 @@ import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2
@@ -169,6 +174,18 @@ class CQLGenerator implements IGenerator2
 			parseCreateStreamFile(statement.create as CreateChannelFormatViaFile)
 		else if(statement.create instanceof CreateChannelFrameworkViaPort)
 			parseCreateStreamChannel(statement.create as CreateChannelFrameworkViaPort)
+		else if(statement.create instanceof CreateDataBaseConnectionGeneric)
+			parseCreateDatabaseStream(statement.create as CreateDatabaseStream)
+		else if(statement.create instanceof CreateDatabaseSink)
+			parseCreateDatabaseSink(statement.create as CreateDatabaseSink)
+	}
+	
+	def parseCreateDatabaseSink(CreateDatabaseSink sink) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	def parseCreateDatabaseStream(CreateDatabaseStream stream) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
 	def String createModel()
@@ -629,6 +646,8 @@ class CQLGenerator implements IGenerator2
 				FloatConstant:  str += component.value + ''
 				BoolConstant: 	str += component.value + ''//TODO Is a bool value feasible?
 				StringConstant: str += '\"' + component.value + '\"'
+				Vector: 		str += component.value
+				Matrix:			str += component.value
 			}
 			if(i != e.expressions.size - 1)
 				str += e.operators.get(i)

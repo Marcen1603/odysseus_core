@@ -21,6 +21,9 @@ public class NameProviderHelper extends NameProvider {
   public boolean isMapper(final String name, final String function) {
     ArrayList<String> list = CollectionLiterals.<String>newArrayList();
     list.add("DolToEur");
+    list.add("Max");
+    list.add("Min");
+    list.add("Det");
     return list.contains(name);
   }
 }

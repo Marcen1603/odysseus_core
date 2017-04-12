@@ -685,4 +685,28 @@ public class CQLGeneratorQueryTest {
       "SELECT DISTINCT * FROM stream1;", 
       "operator_1 = DISTINCT(MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1))", _cQLDictionaryHelper);
   }
+  
+  @Test
+  public void MatrixTest1() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT [1.0,2.0,3.0;3.0,4.0,6.0] + [2.0,4.0,5.0;12.0,5.0,1.0] FROM stream1;", 
+      "operator_1=MAP({expressions=[[\'[1.0,2.0,3.0;3.0,4.0,6.0]+[2.0,4.0,5.0;12.0,5.0,1.0]\',\'expression_0\']]},stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void MatrixTest2() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT Max([1.0,2.0,3.0;3.0,4.0,6.0]) AS maxElement FROM stream1;", 
+      "operator_1=MAP({expressions=[[\'Max([1.0,2.0,3.0;3.0,4.0,6.0])\',\'maxElement\']]},stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void MatrixTest3() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT attr1 AS a1, Max([1.0,2.0,3.0;3.0,4.0,6.0]) + 7.5 * a1 AS maxElement FROM stream1;", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'a1\',[\'Max([1.0,2.0,3.0;3.0,4.0,6.0])+7.5*a1\',\'maxElement\']]},operator_1)", _cQLDictionaryHelper);
+  }
 }

@@ -86,13 +86,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
 		
-		////terminal BIT: ('0'|'1');
-		////terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
-		////terminal VECTOR_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)*']';
-		////terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
-		////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
-		////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
-		////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
 		//QualifiedAttributename:
 		//	ID
 		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
@@ -714,6 +707,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		////	{ExistPredicate}
 		////	'ANY' statement=NestedStatement	
 		////;
+		////TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
 		////Operators for predicates and expressions
 		//AndOperator:
 		//	'AND';
@@ -1643,6 +1637,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cUnitAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
 		private final RuleCall cUnitIDTerminalRuleCall_5_2_0 = (RuleCall)cUnitAssignment_5_2.eContents().get(0);
 		
+		////TODO PQL
 		//CreateDatabaseStream:
 		//	attributes=SchemaDefinition
 		//	'DATABASE'
@@ -1717,6 +1712,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOptionDROPKeyword_6_1_0_0 = (Keyword)cOptionAlternatives_6_1_0.eContents().get(0);
 		private final Keyword cOptionTRUNCATEKeyword_6_1_0_1 = (Keyword)cOptionAlternatives_6_1_0.eContents().get(1);
 		
+		////TODO PQL
 		//CreateDatabaseSink:
 		//	name=ID
 		//	'AS'
@@ -3349,14 +3345,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	| {FloatConstant} value=FLOAT
 		//	| {StringConstant} value=STRING
 		//	| {BoolConstant} value=BOOLEAN
-		//	//TODO A SELECT * query offers no reference for an attribute.
-		//	//At the moment is no actual referencing possible!
 		//	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=BOOLEAN //TODO A SELECT * query offers no reference for an attribute.
-		////At the moment is no actual referencing possible!
-		//| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=BOOLEAN |
+		//{AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//{IntConstant} value=INT
@@ -3447,16 +3440,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cBoolConstantAction_3_0 = (Action)cGroup_3.eContents().get(0);
 		private final Assignment cValueAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cValueBOOLEANParserRuleCall_3_1_0 = (RuleCall)cValueAssignment_3_1.eContents().get(0);
+		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
+		private final Action cMatrixAction_4_0 = (Action)cGroup_4.eContents().get(0);
+		private final Assignment cValueAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cValueMATRIX_FLOATTerminalRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
+		private final Action cVectorAction_5_0 = (Action)cGroup_5.eContents().get(0);
+		private final Assignment cValueAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cValueVECTOR_FLOATTerminalRuleCall_5_1_0 = (RuleCall)cValueAssignment_5_1.eContents().get(0);
 		
-		////TODO Add matrix and vector notation
 		//AtomicWithoutAttributeRef Expression:
 		//	{IntConstant} value=INT
 		//	| {FloatConstant} value=FLOAT
 		//	| {StringConstant} value=STRING
 		//	| {BoolConstant} value=BOOLEAN
+		//	| {Matrix} value=MATRIX_FLOAT | {Vector} value=VECTOR_FLOAT
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=BOOLEAN
+		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=BOOLEAN |
+		//{Matrix} value=MATRIX_FLOAT | {Vector} value=VECTOR_FLOAT
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//{IntConstant} value=INT
@@ -3506,52 +3508,30 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//BOOLEAN
 		public RuleCall getValueBOOLEANParserRuleCall_3_1_0() { return cValueBOOLEANParserRuleCall_3_1_0; }
-	}
-	public class AtomicWithOnlyStringConstantElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithOnlyStringConstant");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cStringConstantAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValueSTRINGTerminalRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
 		
-		//AtomicWithOnlyStringConstant Expression:
-		//	{StringConstant} value=STRING
-		@Override public ParserRule getRule() { return rule; }
+		//{Matrix} value=MATRIX_FLOAT
+		public Group getGroup_4() { return cGroup_4; }
 		
-		//{StringConstant} value=STRING
-		public Group getGroup() { return cGroup; }
+		//{Matrix}
+		public Action getMatrixAction_4_0() { return cMatrixAction_4_0; }
 		
-		//{StringConstant}
-		public Action getStringConstantAction_0() { return cStringConstantAction_0; }
+		//value=MATRIX_FLOAT
+		public Assignment getValueAssignment_4_1() { return cValueAssignment_4_1; }
 		
-		//value=STRING
-		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		//MATRIX_FLOAT
+		public RuleCall getValueMATRIX_FLOATTerminalRuleCall_4_1_0() { return cValueMATRIX_FLOATTerminalRuleCall_4_1_0; }
 		
-		//STRING
-		public RuleCall getValueSTRINGTerminalRuleCall_1_0() { return cValueSTRINGTerminalRuleCall_1_0; }
-	}
-	public class DataTypeElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.DataType");
-		private final Assignment cValueAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cValueIDTerminalRuleCall_0 = (RuleCall)cValueAssignment.eContents().get(0);
+		//{Vector} value=VECTOR_FLOAT
+		public Group getGroup_5() { return cGroup_5; }
 		
-		//DataType:
-		//	value=ID;
-		@Override public ParserRule getRule() { return rule; }
+		//{Vector}
+		public Action getVectorAction_5_0() { return cVectorAction_5_0; }
 		
-		////	value=('INTEGER' | 'DOUBLE' | 'LONG'| 'FLOAT' | 'STRING' | 'BOOLEAN')
-		////| 'STARTTIMESTAMP' | 'ENDTIMESTAMP' 
-		////	|'Tuple'
-		////   value=('Object'|'Tuple'|'NTuple'|'Date'|'Double'|'EndTimestamp'|'EndTimestampString'|'Float'|'Integer'|'UnsignedInt16'|
-		////	'Long'|'StartTimestamp'|'StartTimestampString'|'Short'|'Char'|'Byte'|'BitVector'|'ByteBuffer'|'HexString'|'LIST<Object>'|
-		////	'LIST<String>'|'LIST<Long>'|'LIST<Integer>'|'LIST<Byte>'|'LIST<Char>'|'LIST<Float>'|'LIST<Double>'|'LIST<Date>'|'LIST<Boolean>'| 
-		////	'LIST<Short>'|'LIST<Tuple>'|'LIST<LIST<Object>>'|'String'|'DString'|'Document'|'MV'|'Timestamp'|'Boolean'|'Vector'|'Matrix'| 
-		////	'PartialAggregate'|'AvgSumPartialAggregate'|'CountPartialAggregate'|'RelationalElementPartialAggregate'|'ListPartialAggregate')
-		//value=ID
-		public Assignment getValueAssignment() { return cValueAssignment; }
+		//value=VECTOR_FLOAT
+		public Assignment getValueAssignment_5_1() { return cValueAssignment_5_1; }
 		
-		//ID
-		public RuleCall getValueIDTerminalRuleCall_0() { return cValueIDTerminalRuleCall_0; }
+		//VECTOR_FLOAT
+		public RuleCall getValueVECTOR_FLOATTerminalRuleCall_5_1_0() { return cValueVECTOR_FLOATTerminalRuleCall_5_1_0; }
 	}
 	
 	
@@ -3561,6 +3541,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tSPECIAL_CHARS;
 	private final TerminalRule tFLOAT;
 	private final BOOLEANElements pBOOLEAN;
+	private final TerminalRule tBIT;
+	private final TerminalRule tBYTE;
+	private final TerminalRule tVECTOR_FLOAT;
+	private final TerminalRule tMATRIX_FLOAT;
 	private final QualifiedAttributenameElements pQualifiedAttributename;
 	private final QualifiedAttributenameWithoutSpecialCharsElements pQualifiedAttributenameWithoutSpecialChars;
 	private final QualifiedSourcenameElements pQualifiedSourcename;
@@ -3631,8 +3615,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final PrimaryElements pPrimary;
 	private final AtomicElements pAtomic;
 	private final AtomicWithoutAttributeRefElements pAtomicWithoutAttributeRef;
-	private final AtomicWithOnlyStringConstantElements pAtomicWithOnlyStringConstant;
-	private final DataTypeElements pDataType;
 	
 	private final Grammar grammar;
 	
@@ -3649,6 +3631,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.tSPECIAL_CHARS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SPECIAL_CHARS");
 		this.tFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT");
 		this.pBOOLEAN = new BOOLEANElements();
+		this.tBIT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.BIT");
+		this.tBYTE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.BYTE");
+		this.tVECTOR_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
+		this.tMATRIX_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
 		this.pQualifiedAttributename = new QualifiedAttributenameElements();
 		this.pQualifiedAttributenameWithoutSpecialChars = new QualifiedAttributenameWithoutSpecialCharsElements();
 		this.pQualifiedSourcename = new QualifiedSourcenameElements();
@@ -3719,8 +3705,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pPrimary = new PrimaryElements();
 		this.pAtomic = new AtomicElements();
 		this.pAtomicWithoutAttributeRef = new AtomicWithoutAttributeRefElements();
-		this.pAtomicWithOnlyStringConstant = new AtomicWithOnlyStringConstantElements();
-		this.pDataType = new DataTypeElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -3794,13 +3778,30 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getBOOLEANAccess().getRule();
 	}
 	
-	////terminal BIT: ('0'|'1');
-	////terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
-	////terminal VECTOR_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)*']';
-	////terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
-	////terminal VECTOR_BOOLEAN: '[' (BOOLEAN)+ (',' BOOLEAN)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
-	////terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BOOLEAN)+ (',' BOOLEAN)*)* ']';
-	////terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
+	//terminal BIT:
+	//	'0' | '1';
+	public TerminalRule getBITRule() {
+		return tBIT;
+	}
+	
+	//terminal BYTE:
+	//	BIT BIT BIT BIT BIT BIT BIT BIT;
+	public TerminalRule getBYTERule() {
+		return tBYTE;
+	}
+	
+	//terminal VECTOR_FLOAT:
+	//	'[' FLOAT+ (',' FLOAT)* ']';
+	public TerminalRule getVECTOR_FLOATRule() {
+		return tVECTOR_FLOAT;
+	}
+	
+	//terminal MATRIX_FLOAT:
+	//	'[' FLOAT+ (',' FLOAT)* (';' FLOAT+ (',' FLOAT)*)* ']';
+	public TerminalRule getMATRIX_FLOATRule() {
+		return tMATRIX_FLOAT;
+	}
+	
 	//QualifiedAttributename:
 	//	ID
 	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
@@ -3991,6 +3992,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	////	{ExistPredicate}
 	////	'ANY' statement=NestedStatement	
 	////;
+	////TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
 	////Operators for predicates and expressions
 	//AndOperator:
 	//	'AND';
@@ -4275,6 +4277,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getCreateChannelFormatViaFileAccess().getRule();
 	}
 	
+	////TODO PQL
 	//CreateDatabaseStream:
 	//	attributes=SchemaDefinition
 	//	'DATABASE'
@@ -4291,6 +4294,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getCreateDatabaseStreamAccess().getRule();
 	}
 	
+	////TODO PQL
 	//CreateDatabaseSink:
 	//	name=ID
 	//	'AS'
@@ -4632,8 +4636,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	| {FloatConstant} value=FLOAT
 	//	| {StringConstant} value=STRING
 	//	| {BoolConstant} value=BOOLEAN
-	//	//TODO A SELECT * query offers no reference for an attribute.
-	//	//At the moment is no actual referencing possible!
 	//	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
 	public AtomicElements getAtomicAccess() {
 		return pAtomic;
@@ -4643,38 +4645,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAtomicAccess().getRule();
 	}
 	
-	////TODO Add matrix and vector notation
 	//AtomicWithoutAttributeRef Expression:
 	//	{IntConstant} value=INT
 	//	| {FloatConstant} value=FLOAT
 	//	| {StringConstant} value=STRING
 	//	| {BoolConstant} value=BOOLEAN
+	//	| {Matrix} value=MATRIX_FLOAT | {Vector} value=VECTOR_FLOAT
 	public AtomicWithoutAttributeRefElements getAtomicWithoutAttributeRefAccess() {
 		return pAtomicWithoutAttributeRef;
 	}
 	
 	public ParserRule getAtomicWithoutAttributeRefRule() {
 		return getAtomicWithoutAttributeRefAccess().getRule();
-	}
-	
-	//AtomicWithOnlyStringConstant Expression:
-	//	{StringConstant} value=STRING
-	public AtomicWithOnlyStringConstantElements getAtomicWithOnlyStringConstantAccess() {
-		return pAtomicWithOnlyStringConstant;
-	}
-	
-	public ParserRule getAtomicWithOnlyStringConstantRule() {
-		return getAtomicWithOnlyStringConstantAccess().getRule();
-	}
-	
-	//DataType:
-	//	value=ID;
-	public DataTypeElements getDataTypeAccess() {
-		return pDataType;
-	}
-	
-	public ParserRule getDataTypeRule() {
-		return getDataTypeAccess().getRule();
 	}
 	
 	//terminal INT returns ecore::EInt:

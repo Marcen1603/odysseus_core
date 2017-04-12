@@ -94,7 +94,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.WINDOW_OPERATOR: return createWindowOperator();
       case CQLPackage.EXPRESSIONS_MODEL: return createExpressionsModel();
       case CQLPackage.EXPRESSION: return createExpression();
-      case CQLPackage.DATA_TYPE: return createDataType();
       case CQLPackage.SIMPLE_SOURCE: return createSimpleSource();
       case CQLPackage.NESTED_SOURCE: return createNestedSource();
       case CQLPackage.FUNCTION: return createFunction();
@@ -127,6 +126,8 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.STRING_CONSTANT: return createStringConstant();
       case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
       case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
+      case CQLPackage.MATRIX: return createMatrix();
+      case CQLPackage.VECTOR: return createVector();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -449,17 +450,6 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     ExpressionImpl expression = new ExpressionImpl();
     return expression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DataType createDataType()
-  {
-    DataTypeImpl dataType = new DataTypeImpl();
-    return dataType;
   }
 
   /**
@@ -812,6 +802,28 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     AttributeRefImpl attributeRef = new AttributeRefImpl();
     return attributeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Matrix createMatrix()
+  {
+    MatrixImpl matrix = new MatrixImpl();
+    return matrix;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Vector createVector()
+  {
+    VectorImpl vector = new VectorImpl();
+    return vector;
   }
 
   /**

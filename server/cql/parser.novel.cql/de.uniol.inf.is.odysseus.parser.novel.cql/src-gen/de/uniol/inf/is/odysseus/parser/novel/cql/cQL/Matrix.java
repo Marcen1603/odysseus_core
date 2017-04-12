@@ -3,25 +3,24 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Data Type</b></em>'.
+ * A representation of the model object '<em><b>Matrix</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue <em>Value</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix#getValue <em>Value</em>}</li>
  * </ul>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getDataType()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getMatrix()
  * @model
  * @generated
  */
-public interface DataType extends EObject
+public interface Matrix extends Expression
 {
   /**
    * Returns the value of the '<em><b>Value</b></em>' attribute.
@@ -33,14 +32,14 @@ public interface DataType extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Value</em>' attribute.
    * @see #setValue(String)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getDataType_Value()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getMatrix_Value()
    * @model
    * @generated
    */
   String getValue();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType#getValue <em>Value</em>}' attribute.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix#getValue <em>Value</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Value</em>' attribute.
@@ -49,4 +48,4 @@ public interface DataType extends EObject
    */
   void setValue(String value);
 
-} // DataType
+} // Matrix

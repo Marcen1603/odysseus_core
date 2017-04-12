@@ -26,7 +26,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDB
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DataType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
@@ -39,6 +38,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UserManagement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector;
 import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
@@ -186,9 +187,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.CREATE_VIEW:
 				sequence_CreateView(context, (CreateView) semanticObject); 
 				return; 
-			case CQLPackage.DATA_TYPE:
-				sequence_DataType(context, (DataType) semanticObject); 
-				return; 
 			case CQLPackage.DROP_CONTEXT_STORE:
 				sequence_DropContextStore(context, (DropContextStore) semanticObject); 
 				return; 
@@ -269,6 +267,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 					return; 
 				}
 				else break;
+			case CQLPackage.MATRIX:
+				sequence_AtomicWithoutAttributeRef(context, (Matrix) semanticObject); 
+				return; 
 			case CQLPackage.MINUS:
 				sequence_PlusOrMinus(context, (Minus) semanticObject); 
 				return; 
@@ -337,11 +338,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				sequence_StreamTo(context, (StreamTo) semanticObject); 
 				return; 
 			case CQLPackage.STRING_CONSTANT:
-				if (rule == grammarAccess.getAtomicWithOnlyStringConstantRule()) {
-					sequence_AtomicWithOnlyStringConstant(context, (StringConstant) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
+				if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
 					sequence_AtomicWithoutAttributeRef(context, (StringConstant) semanticObject); 
 					return; 
 				}
@@ -376,6 +373,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.USER_MANAGEMENT:
 				sequence_UserManagement(context, (UserManagement) semanticObject); 
+				return; 
+			case CQLPackage.VECTOR:
+				sequence_AtomicWithoutAttributeRef(context, (Vector) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -446,24 +446,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     AtomicWithOnlyStringConstant returns StringConstant
-	 *
-	 * Constraint:
-	 *     value=STRING
-	 */
-	protected void sequence_AtomicWithOnlyStringConstant(ISerializationContext context, StringConstant semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.STRING_CONSTANT__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAtomicWithOnlyStringConstantAccess().getValueSTRINGTerminalRuleCall_1_0(), semanticObject.getValue());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     AtomicWithoutAttributeRef returns BoolConstant
 	 *
 	 * Constraint:
@@ -518,6 +500,24 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns Matrix
+	 *
+	 * Constraint:
+	 *     value=MATRIX_FLOAT
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, Matrix semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.MATRIX__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.MATRIX__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueMATRIX_FLOATTerminalRuleCall_4_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     AtomicWithoutAttributeRef returns StringConstant
 	 *
 	 * Constraint:
@@ -530,6 +530,24 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueSTRINGTerminalRuleCall_2_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     AtomicWithoutAttributeRef returns Vector
+	 *
+	 * Constraint:
+	 *     value=VECTOR_FLOAT
+	 */
+	protected void sequence_AtomicWithoutAttributeRef(ISerializationContext context, Vector semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.VECTOR__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.VECTOR__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueVECTOR_FLOATTerminalRuleCall_5_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -1006,24 +1024,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 */
 	protected void sequence_Create(ISerializationContext context, Create semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     DataType returns DataType
-	 *
-	 * Constraint:
-	 *     value=ID
-	 */
-	protected void sequence_DataType(ISerializationContext context, DataType semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.DATA_TYPE__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.DATA_TYPE__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getDataTypeAccess().getValueIDTerminalRuleCall_0(), semanticObject.getValue());
-		feeder.finish();
 	}
 	
 	
