@@ -51,7 +51,7 @@ public class ToTupleAO extends UnaryLogicalOp
 	@Override
 	public AbstractLogicalOperator clone()
 	{
-		return new ToTupleAO(this);
+		return new ToTupleAO(this); 
 	}
 
 	public IMetaAttribute getLocalMetaAttribute()
