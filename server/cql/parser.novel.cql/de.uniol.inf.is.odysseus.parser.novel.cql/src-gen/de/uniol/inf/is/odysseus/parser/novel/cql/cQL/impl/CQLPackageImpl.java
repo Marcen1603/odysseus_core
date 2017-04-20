@@ -61,6 +61,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.UndboundedWindow;
@@ -70,6 +71,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -523,6 +525,13 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass vectorEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum timeEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -2532,6 +2541,16 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EEnum getTime()
+  {
+    return timeEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public CQLFactory getCQLFactory()
   {
     return (CQLFactory)getEFactoryInstance();
@@ -2813,6 +2832,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     vectorEClass = createEClass(VECTOR);
     createEAttribute(vectorEClass, VECTOR__VALUE);
+
+    // Create enums
+    timeEEnum = createEEnum(TIME);
   }
 
   /**
@@ -2971,7 +2993,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getCreateDatabaseStream_Database(), ecorePackage.getEString(), "database", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDatabaseStream_Table(), ecorePackage.getEString(), "table", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCreateDatabaseStream_Size(), ecorePackage.getEInt(), "size", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCreateDatabaseStream_Unit(), ecorePackage.getEString(), "unit", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCreateDatabaseStream_Unit(), this.getTime(), "unit", null, 0, 1, CreateDatabaseStream.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(createDatabaseSinkEClass, CreateDatabaseSink.class, "CreateDatabaseSink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCreateDatabaseSink_Name(), ecorePackage.getEString(), "name", null, 0, 1, CreateDatabaseSink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3070,9 +3092,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(timebasedWindowEClass, TimebasedWindow.class, "TimebasedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTimebasedWindow_Size(), ecorePackage.getEInt(), "size", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTimebasedWindow_Unit(), ecorePackage.getEString(), "unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTimebasedWindow_Unit(), this.getTime(), "unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTimebasedWindow_Advance_size(), ecorePackage.getEInt(), "advance_size", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTimebasedWindow_Advance_unit(), ecorePackage.getEString(), "advance_unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTimebasedWindow_Advance_unit(), this.getTime(), "advance_unit", null, 0, 1, TimebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(tuplebasedWindowEClass, TuplebasedWindow.class, "TuplebasedWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getTuplebasedWindow_Size(), ecorePackage.getEInt(), "size", null, 0, 1, TuplebasedWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3136,6 +3158,19 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
 
     initEClass(vectorEClass, Vector.class, "Vector", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getVector_Value(), ecorePackage.getEString(), "value", null, 0, 1, Vector.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    // Initialize enums and add enum literals
+    initEEnum(timeEEnum, Time.class, "Time");
+    addEEnumLiteral(timeEEnum, Time.MILLISECOND);
+    addEEnumLiteral(timeEEnum, Time.SECOND);
+    addEEnumLiteral(timeEEnum, Time.MINUTE);
+    addEEnumLiteral(timeEEnum, Time.HOUR);
+    addEEnumLiteral(timeEEnum, Time.WEEK);
+    addEEnumLiteral(timeEEnum, Time.MILLISECONDS);
+    addEEnumLiteral(timeEEnum, Time.SECONDS);
+    addEEnumLiteral(timeEEnum, Time.MINUTES);
+    addEEnumLiteral(timeEEnum, Time.HOURS);
+    addEEnumLiteral(timeEEnum, Time.WEEKS);
 
     // Create resource
     createResource(eNS_URI);

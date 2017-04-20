@@ -72,6 +72,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicAccess().getAlternatives(), "rule__Atomic__Alternatives");
 					put(grammarAccess.getAtomicAccess().getAlternatives_4_1(), "rule__Atomic__Alternatives_4_1");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getAlternatives(), "rule__AtomicWithoutAttributeRef__Alternatives");
+					put(grammarAccess.getTimeAccess().getAlternatives(), "rule__Time__Alternatives");
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_1(), "rule__QualifiedAttributename__Group_1__0");
 					put(grammarAccess.getQualifiedAttributenameAccess().getGroup_2(), "rule__QualifiedAttributename__Group_2__0");

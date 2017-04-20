@@ -9,6 +9,8 @@ import java.util.List;
 import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Alternatives;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.EnumLiteralDeclaration;
+import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.Group;
@@ -17,6 +19,7 @@ import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.TerminalRule;
 import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
+import org.eclipse.xtext.service.AbstractElementFinder.AbstractEnumRuleElementFinder;
 import org.eclipse.xtext.service.AbstractElementFinder.AbstractGrammarElementFinder;
 import org.eclipse.xtext.service.GrammarProvider;
 
@@ -1648,7 +1651,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cSizeAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
 		private final RuleCall cSizeINTTerminalRuleCall_5_1_0 = (RuleCall)cSizeAssignment_5_1.eContents().get(0);
 		private final Assignment cUnitAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cUnitIDTerminalRuleCall_5_2_0 = (RuleCall)cUnitAssignment_5_2.eContents().get(0);
+		private final RuleCall cUnitTimeEnumRuleCall_5_2_0 = (RuleCall)cUnitAssignment_5_2.eContents().get(0);
 		
 		////TODO PQL
 		//CreateDatabaseStream:
@@ -1658,10 +1661,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	'TABLE'
 		//	table=ID ('EACH'
 		//	size=INT
-		//	unit=ID)?;
+		//	unit=Time)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//attributes=SchemaDefinition 'DATABASE' database=ID 'TABLE' table=ID ('EACH' size=INT unit=ID)?
+		//attributes=SchemaDefinition 'DATABASE' database=ID 'TABLE' table=ID ('EACH' size=INT unit=Time)?
 		public Group getGroup() { return cGroup; }
 		
 		//attributes=SchemaDefinition
@@ -1688,7 +1691,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getTableIDTerminalRuleCall_4_0() { return cTableIDTerminalRuleCall_4_0; }
 		
-		//('EACH' size=INT unit=ID)?
+		//('EACH' size=INT unit=Time)?
 		public Group getGroup_5() { return cGroup_5; }
 		
 		//'EACH'
@@ -1700,11 +1703,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getSizeINTTerminalRuleCall_5_1_0() { return cSizeINTTerminalRuleCall_5_1_0; }
 		
-		//unit=ID
+		//unit=Time
 		public Assignment getUnitAssignment_5_2() { return cUnitAssignment_5_2; }
 		
-		//ID
-		public RuleCall getUnitIDTerminalRuleCall_5_2_0() { return cUnitIDTerminalRuleCall_5_2_0; }
+		//Time
+		public RuleCall getUnitTimeEnumRuleCall_5_2_0() { return cUnitTimeEnumRuleCall_5_2_0; }
 	}
 	public class CreateDatabaseSinkElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.CreateDatabaseSink");
@@ -2853,22 +2856,22 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cSizeAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cSizeINTTerminalRuleCall_2_0 = (RuleCall)cSizeAssignment_2.eContents().get(0);
 		private final Assignment cUnitAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cUnitIDTerminalRuleCall_3_0 = (RuleCall)cUnitAssignment_3.eContents().get(0);
+		private final RuleCall cUnitTimeEnumRuleCall_3_0 = (RuleCall)cUnitAssignment_3.eContents().get(0);
 		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
 		private final Keyword cADVANCEKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
 		private final Assignment cAdvance_sizeAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
 		private final RuleCall cAdvance_sizeINTTerminalRuleCall_4_1_0 = (RuleCall)cAdvance_sizeAssignment_4_1.eContents().get(0);
 		private final Assignment cAdvance_unitAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
-		private final RuleCall cAdvance_unitIDTerminalRuleCall_4_2_0 = (RuleCall)cAdvance_unitAssignment_4_2.eContents().get(0);
+		private final RuleCall cAdvance_unitTimeEnumRuleCall_4_2_0 = (RuleCall)cAdvance_unitAssignment_4_2.eContents().get(0);
 		private final Keyword cTIMEKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
 		//TimebasedWindow WindowOperator:
 		//	{TimebasedWindow}
-		//	'SIZE' size=INT unit=ID ('ADVANCE' advance_size=INT advance_unit=ID)?
+		//	'SIZE' size=INT unit=Time ('ADVANCE' advance_size=INT advance_unit=Time)?
 		//	'TIME'
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{TimebasedWindow} 'SIZE' size=INT unit=ID ('ADVANCE' advance_size=INT advance_unit=ID)? 'TIME'
+		//{TimebasedWindow} 'SIZE' size=INT unit=Time ('ADVANCE' advance_size=INT advance_unit=Time)? 'TIME'
 		public Group getGroup() { return cGroup; }
 		
 		//{TimebasedWindow}
@@ -2883,13 +2886,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getSizeINTTerminalRuleCall_2_0() { return cSizeINTTerminalRuleCall_2_0; }
 		
-		//unit=ID
+		//unit=Time
 		public Assignment getUnitAssignment_3() { return cUnitAssignment_3; }
 		
-		//ID
-		public RuleCall getUnitIDTerminalRuleCall_3_0() { return cUnitIDTerminalRuleCall_3_0; }
+		//Time
+		public RuleCall getUnitTimeEnumRuleCall_3_0() { return cUnitTimeEnumRuleCall_3_0; }
 		
-		//('ADVANCE' advance_size=INT advance_unit=ID)?
+		//('ADVANCE' advance_size=INT advance_unit=Time)?
 		public Group getGroup_4() { return cGroup_4; }
 		
 		//'ADVANCE'
@@ -2901,11 +2904,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getAdvance_sizeINTTerminalRuleCall_4_1_0() { return cAdvance_sizeINTTerminalRuleCall_4_1_0; }
 		
-		//advance_unit=ID
+		//advance_unit=Time
 		public Assignment getAdvance_unitAssignment_4_2() { return cAdvance_unitAssignment_4_2; }
 		
-		//ID
-		public RuleCall getAdvance_unitIDTerminalRuleCall_4_2_0() { return cAdvance_unitIDTerminalRuleCall_4_2_0; }
+		//Time
+		public RuleCall getAdvance_unitTimeEnumRuleCall_4_2_0() { return cAdvance_unitTimeEnumRuleCall_4_2_0; }
 		
 		//'TIME'
 		public Keyword getTIMEKeyword_5() { return cTIMEKeyword_5; }
@@ -3547,6 +3550,106 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getValueVECTOR_FLOATTerminalRuleCall_5_1_0() { return cValueVECTOR_FLOATTerminalRuleCall_5_1_0; }
 	}
 	
+	public class TimeElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Time");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final EnumLiteralDeclaration cMILLISECONDEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
+		private final Keyword cMILLISECONDMILLISECONDKeyword_0_0 = (Keyword)cMILLISECONDEnumLiteralDeclaration_0.eContents().get(0);
+		private final EnumLiteralDeclaration cSECONDEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cSECONDSECONDKeyword_1_0 = (Keyword)cSECONDEnumLiteralDeclaration_1.eContents().get(0);
+		private final EnumLiteralDeclaration cMINUTEEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
+		private final Keyword cMINUTEMINUTEKeyword_2_0 = (Keyword)cMINUTEEnumLiteralDeclaration_2.eContents().get(0);
+		private final EnumLiteralDeclaration cHOUREnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
+		private final Keyword cHOURHOURKeyword_3_0 = (Keyword)cHOUREnumLiteralDeclaration_3.eContents().get(0);
+		private final EnumLiteralDeclaration cWEEKEnumLiteralDeclaration_4 = (EnumLiteralDeclaration)cAlternatives.eContents().get(4);
+		private final Keyword cWEEKWEEKKeyword_4_0 = (Keyword)cWEEKEnumLiteralDeclaration_4.eContents().get(0);
+		private final EnumLiteralDeclaration cMILLISECONDSEnumLiteralDeclaration_5 = (EnumLiteralDeclaration)cAlternatives.eContents().get(5);
+		private final Keyword cMILLISECONDSMILLISECONDSKeyword_5_0 = (Keyword)cMILLISECONDSEnumLiteralDeclaration_5.eContents().get(0);
+		private final EnumLiteralDeclaration cSECONDSEnumLiteralDeclaration_6 = (EnumLiteralDeclaration)cAlternatives.eContents().get(6);
+		private final Keyword cSECONDSSECONDSKeyword_6_0 = (Keyword)cSECONDSEnumLiteralDeclaration_6.eContents().get(0);
+		private final EnumLiteralDeclaration cMINUTESEnumLiteralDeclaration_7 = (EnumLiteralDeclaration)cAlternatives.eContents().get(7);
+		private final Keyword cMINUTESMINUTESKeyword_7_0 = (Keyword)cMINUTESEnumLiteralDeclaration_7.eContents().get(0);
+		private final EnumLiteralDeclaration cHOURSEnumLiteralDeclaration_8 = (EnumLiteralDeclaration)cAlternatives.eContents().get(8);
+		private final Keyword cHOURSHOURSKeyword_8_0 = (Keyword)cHOURSEnumLiteralDeclaration_8.eContents().get(0);
+		private final EnumLiteralDeclaration cWEEKSEnumLiteralDeclaration_9 = (EnumLiteralDeclaration)cAlternatives.eContents().get(9);
+		private final Keyword cWEEKSWEEKSKeyword_9_0 = (Keyword)cWEEKSEnumLiteralDeclaration_9.eContents().get(0);
+		
+		//enum Time:
+		//	MILLISECOND
+		//	| SECOND
+		//	| MINUTE
+		//	| HOUR
+		//	| WEEK
+		//	| MILLISECONDS
+		//	| SECONDS
+		//	| MINUTES
+		//	| HOURS
+		//	| WEEKS;
+		public EnumRule getRule() { return rule; }
+		
+		//MILLISECOND | SECOND | MINUTE | HOUR | WEEK | MILLISECONDS | SECONDS | MINUTES | HOURS | WEEKS
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//MILLISECOND
+		public EnumLiteralDeclaration getMILLISECONDEnumLiteralDeclaration_0() { return cMILLISECONDEnumLiteralDeclaration_0; }
+		
+		//"MILLISECOND"
+		public Keyword getMILLISECONDMILLISECONDKeyword_0_0() { return cMILLISECONDMILLISECONDKeyword_0_0; }
+		
+		//SECOND
+		public EnumLiteralDeclaration getSECONDEnumLiteralDeclaration_1() { return cSECONDEnumLiteralDeclaration_1; }
+		
+		//"SECOND"
+		public Keyword getSECONDSECONDKeyword_1_0() { return cSECONDSECONDKeyword_1_0; }
+		
+		//MINUTE
+		public EnumLiteralDeclaration getMINUTEEnumLiteralDeclaration_2() { return cMINUTEEnumLiteralDeclaration_2; }
+		
+		//"MINUTE"
+		public Keyword getMINUTEMINUTEKeyword_2_0() { return cMINUTEMINUTEKeyword_2_0; }
+		
+		//HOUR
+		public EnumLiteralDeclaration getHOUREnumLiteralDeclaration_3() { return cHOUREnumLiteralDeclaration_3; }
+		
+		//"HOUR"
+		public Keyword getHOURHOURKeyword_3_0() { return cHOURHOURKeyword_3_0; }
+		
+		//WEEK
+		public EnumLiteralDeclaration getWEEKEnumLiteralDeclaration_4() { return cWEEKEnumLiteralDeclaration_4; }
+		
+		//"WEEK"
+		public Keyword getWEEKWEEKKeyword_4_0() { return cWEEKWEEKKeyword_4_0; }
+		
+		//MILLISECONDS
+		public EnumLiteralDeclaration getMILLISECONDSEnumLiteralDeclaration_5() { return cMILLISECONDSEnumLiteralDeclaration_5; }
+		
+		//"MILLISECONDS"
+		public Keyword getMILLISECONDSMILLISECONDSKeyword_5_0() { return cMILLISECONDSMILLISECONDSKeyword_5_0; }
+		
+		//SECONDS
+		public EnumLiteralDeclaration getSECONDSEnumLiteralDeclaration_6() { return cSECONDSEnumLiteralDeclaration_6; }
+		
+		//"SECONDS"
+		public Keyword getSECONDSSECONDSKeyword_6_0() { return cSECONDSSECONDSKeyword_6_0; }
+		
+		//MINUTES
+		public EnumLiteralDeclaration getMINUTESEnumLiteralDeclaration_7() { return cMINUTESEnumLiteralDeclaration_7; }
+		
+		//"MINUTES"
+		public Keyword getMINUTESMINUTESKeyword_7_0() { return cMINUTESMINUTESKeyword_7_0; }
+		
+		//HOURS
+		public EnumLiteralDeclaration getHOURSEnumLiteralDeclaration_8() { return cHOURSEnumLiteralDeclaration_8; }
+		
+		//"HOURS"
+		public Keyword getHOURSHOURSKeyword_8_0() { return cHOURSHOURSKeyword_8_0; }
+		
+		//WEEKS
+		public EnumLiteralDeclaration getWEEKSEnumLiteralDeclaration_9() { return cWEEKSEnumLiteralDeclaration_9; }
+		
+		//"WEEKS"
+		public Keyword getWEEKSWEEKSKeyword_9_0() { return cWEEKSWEEKSKeyword_9_0; }
+	}
 	
 	private final ModelElements pModel;
 	private final TerminalRule tID;
@@ -3558,6 +3661,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tBYTE;
 	private final TerminalRule tVECTOR_FLOAT;
 	private final TerminalRule tMATRIX_FLOAT;
+	private final TimeElements eTime;
 	private final QualifiedAttributenameElements pQualifiedAttributename;
 	private final QualifiedAttributenameWithoutSpecialCharsElements pQualifiedAttributenameWithoutSpecialChars;
 	private final QualifiedSourcenameElements pQualifiedSourcename;
@@ -3648,6 +3752,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.tBYTE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.BYTE");
 		this.tVECTOR_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
 		this.tMATRIX_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
+		this.eTime = new TimeElements();
 		this.pQualifiedAttributename = new QualifiedAttributenameElements();
 		this.pQualifiedAttributenameWithoutSpecialChars = new QualifiedAttributenameWithoutSpecialCharsElements();
 		this.pQualifiedSourcename = new QualifiedSourcenameElements();
@@ -3813,6 +3918,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	'[' FLOAT+ (',' FLOAT)* (';' FLOAT+ (',' FLOAT)*)* ']';
 	public TerminalRule getMATRIX_FLOATRule() {
 		return tMATRIX_FLOAT;
+	}
+	
+	//enum Time:
+	//	MILLISECOND
+	//	| SECOND
+	//	| MINUTE
+	//	| HOUR
+	//	| WEEK
+	//	| MILLISECONDS
+	//	| SECONDS
+	//	| MINUTES
+	//	| HOURS
+	//	| WEEKS;
+	public TimeElements getTimeAccess() {
+		return eTime;
+	}
+	
+	public EnumRule getTimeRule() {
+		return getTimeAccess().getRule();
 	}
 	
 	//QualifiedAttributename:
@@ -4296,7 +4420,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	'TABLE'
 	//	table=ID ('EACH'
 	//	size=INT
-	//	unit=ID)?;
+	//	unit=Time)?;
 	public CreateDatabaseStreamElements getCreateDatabaseStreamAccess() {
 		return pCreateDatabaseStream;
 	}
@@ -4527,7 +4651,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//TimebasedWindow WindowOperator:
 	//	{TimebasedWindow}
-	//	'SIZE' size=INT unit=ID ('ADVANCE' advance_size=INT advance_unit=ID)?
+	//	'SIZE' size=INT unit=Time ('ADVANCE' advance_size=INT advance_unit=Time)?
 	//	'TIME'
 	public TimebasedWindowElements getTimebasedWindowAccess() {
 		return pTimebasedWindow;

@@ -16,6 +16,7 @@ import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
@@ -3113,19 +3114,20 @@ ruleCreateDatabaseStream returns [EObject current=null]
 			)
 			(
 				(
-					lv_unit_7_0=RULE_ID
 					{
-						newLeafNode(lv_unit_7_0, grammarAccess.getCreateDatabaseStreamAccess().getUnitIDTerminalRuleCall_5_2_0());
+						newCompositeNode(grammarAccess.getCreateDatabaseStreamAccess().getUnitTimeEnumRuleCall_5_2_0());
 					}
+					lv_unit_7_0=ruleTime
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCreateDatabaseStreamRule());
+							$current = createModelElementForParent(grammarAccess.getCreateDatabaseStreamRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
 							"unit",
 							lv_unit_7_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Time");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -4941,19 +4943,20 @@ ruleTimebasedWindow returns [EObject current=null]
 		)
 		(
 			(
-				lv_unit_3_0=RULE_ID
 				{
-					newLeafNode(lv_unit_3_0, grammarAccess.getTimebasedWindowAccess().getUnitIDTerminalRuleCall_3_0());
+					newCompositeNode(grammarAccess.getTimebasedWindowAccess().getUnitTimeEnumRuleCall_3_0());
 				}
+				lv_unit_3_0=ruleTime
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getTimebasedWindowRule());
+						$current = createModelElementForParent(grammarAccess.getTimebasedWindowRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"unit",
 						lv_unit_3_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Time");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -4982,19 +4985,20 @@ ruleTimebasedWindow returns [EObject current=null]
 			)
 			(
 				(
-					lv_advance_unit_6_0=RULE_ID
 					{
-						newLeafNode(lv_advance_unit_6_0, grammarAccess.getTimebasedWindowAccess().getAdvance_unitIDTerminalRuleCall_4_2_0());
+						newCompositeNode(grammarAccess.getTimebasedWindowAccess().getAdvance_unitTimeEnumRuleCall_4_2_0());
 					}
+					lv_advance_unit_6_0=ruleTime
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getTimebasedWindowRule());
+							$current = createModelElementForParent(grammarAccess.getTimebasedWindowRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
 							"advance_unit",
 							lv_advance_unit_6_0,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ID");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Time");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -6074,6 +6078,97 @@ ruleAtomicWithoutAttributeRef returns [EObject current=null]
 					}
 				)
 			)
+		)
+	)
+;
+
+// Rule Time
+ruleTime returns [Enumerator current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			enumLiteral_0=MILLISECOND
+			{
+				$current = grammarAccess.getTimeAccess().getMILLISECONDEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_0, grammarAccess.getTimeAccess().getMILLISECONDEnumLiteralDeclaration_0());
+			}
+		)
+		    |
+		(
+			enumLiteral_1=SECOND
+			{
+				$current = grammarAccess.getTimeAccess().getSECONDEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_1, grammarAccess.getTimeAccess().getSECONDEnumLiteralDeclaration_1());
+			}
+		)
+		    |
+		(
+			enumLiteral_2=MINUTE
+			{
+				$current = grammarAccess.getTimeAccess().getMINUTEEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_2, grammarAccess.getTimeAccess().getMINUTEEnumLiteralDeclaration_2());
+			}
+		)
+		    |
+		(
+			enumLiteral_3=HOUR
+			{
+				$current = grammarAccess.getTimeAccess().getHOUREnumLiteralDeclaration_3().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_3, grammarAccess.getTimeAccess().getHOUREnumLiteralDeclaration_3());
+			}
+		)
+		    |
+		(
+			enumLiteral_4=WEEK
+			{
+				$current = grammarAccess.getTimeAccess().getWEEKEnumLiteralDeclaration_4().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_4, grammarAccess.getTimeAccess().getWEEKEnumLiteralDeclaration_4());
+			}
+		)
+		    |
+		(
+			enumLiteral_5=MILLISECONDS
+			{
+				$current = grammarAccess.getTimeAccess().getMILLISECONDSEnumLiteralDeclaration_5().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_5, grammarAccess.getTimeAccess().getMILLISECONDSEnumLiteralDeclaration_5());
+			}
+		)
+		    |
+		(
+			enumLiteral_6=SECONDS
+			{
+				$current = grammarAccess.getTimeAccess().getSECONDSEnumLiteralDeclaration_6().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_6, grammarAccess.getTimeAccess().getSECONDSEnumLiteralDeclaration_6());
+			}
+		)
+		    |
+		(
+			enumLiteral_7=MINUTES
+			{
+				$current = grammarAccess.getTimeAccess().getMINUTESEnumLiteralDeclaration_7().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_7, grammarAccess.getTimeAccess().getMINUTESEnumLiteralDeclaration_7());
+			}
+		)
+		    |
+		(
+			enumLiteral_8=HOURS
+			{
+				$current = grammarAccess.getTimeAccess().getHOURSEnumLiteralDeclaration_8().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_8, grammarAccess.getTimeAccess().getHOURSEnumLiteralDeclaration_8());
+			}
+		)
+		    |
+		(
+			enumLiteral_9=WEEKS
+			{
+				$current = grammarAccess.getTimeAccess().getWEEKSEnumLiteralDeclaration_9().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_9, grammarAccess.getTimeAccess().getWEEKSEnumLiteralDeclaration_9());
+			}
 		)
 	)
 ;

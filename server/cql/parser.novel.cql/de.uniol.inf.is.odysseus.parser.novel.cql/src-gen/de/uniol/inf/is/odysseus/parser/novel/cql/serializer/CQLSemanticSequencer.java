@@ -989,7 +989,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     CreateDatabaseStream returns CreateDatabaseStream
 	 *
 	 * Constraint:
-	 *     (attributes=SchemaDefinition database=ID table=ID (size=INT unit=ID)?)
+	 *     (attributes=SchemaDefinition database=ID table=ID (size=INT unit=Time)?)
 	 */
 	protected void sequence_CreateDatabaseStream(ISerializationContext context, CreateDatabaseStream semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1604,7 +1604,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     TimebasedWindow returns TimebasedWindow
 	 *
 	 * Constraint:
-	 *     (size=INT unit=ID (advance_size=INT advance_unit=ID)?)
+	 *     (size=INT unit=Time (advance_size=INT advance_unit=Time)?)
 	 */
 	protected void sequence_TimebasedWindow(ISerializationContext context, TimebasedWindow semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

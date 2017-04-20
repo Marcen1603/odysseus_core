@@ -64,6 +64,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("EACH", "'EACH'");
 		tokenNameToValue.put("FILE", "'FILE'");
 		tokenNameToValue.put("FROM", "'FROM'");
+		tokenNameToValue.put("HOUR", "'HOUR'");
 		tokenNameToValue.put("JDBC", "'JDBC'");
 		tokenNameToValue.put("ROLE", "'ROLE'");
 		tokenNameToValue.put("SINK", "'SINK'");
@@ -72,22 +73,27 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("TRUE", "'TRUE'");
 		tokenNameToValue.put("USER", "'USER'");
 		tokenNameToValue.put("VIEW", "'VIEW'");
+		tokenNameToValue.put("WEEK", "'WEEK'");
 		tokenNameToValue.put("WITH", "'WITH'");
 		tokenNameToValue.put("ALTER", "'ALTER'");
 		tokenNameToValue.put("FALSE", "'FALSE'");
 		tokenNameToValue.put("GRANT", "'GRANT'");
 		tokenNameToValue.put("GROUP", "'GROUP'");
+		tokenNameToValue.put("HOURS", "'HOURS'");
 		tokenNameToValue.put("MULTI", "'MULTI'");
 		tokenNameToValue.put("STORE", "'STORE'");
 		tokenNameToValue.put("TABLE", "'TABLE'");
 		tokenNameToValue.put("TUPLE", "'TUPLE'");
 		tokenNameToValue.put("UNION", "'UNION'");
+		tokenNameToValue.put("WEEKS", "'WEEKS'");
 		tokenNameToValue.put("WHERE", "'WHERE'");
 		tokenNameToValue.put("ATTACH", "'ATTACH'");
 		tokenNameToValue.put("CREATE", "'CREATE'");
 		tokenNameToValue.put("EXISTS", "'EXISTS'");
 		tokenNameToValue.put("HAVING", "'HAVING'");
+		tokenNameToValue.put("MINUTE", "'MINUTE'");
 		tokenNameToValue.put("REVOKE", "'REVOKE'");
+		tokenNameToValue.put("SECOND", "'SECOND'");
 		tokenNameToValue.put("SELECT", "'SELECT'");
 		tokenNameToValue.put("SINGLE", "'SINGLE'");
 		tokenNameToValue.put("STREAM", "'STREAM'");
@@ -95,7 +101,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("ADVANCE", "'ADVANCE'");
 		tokenNameToValue.put("CHANNEL", "'CHANNEL'");
 		tokenNameToValue.put("CONTEXT", "'CONTEXT'");
+		tokenNameToValue.put("MINUTES", "'MINUTES'");
 		tokenNameToValue.put("OPTIONS", "'OPTIONS'");
+		tokenNameToValue.put("SECONDS", "'SECONDS'");
 		tokenNameToValue.put("WRAPPER", "'WRAPPER'");
 		tokenNameToValue.put("DATABASE", "'DATABASE'");
 		tokenNameToValue.put("DISTINCT", "'DISTINCT'");
@@ -109,7 +117,9 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("DIFFERENCE", "'DIFFERENCE'");
 		tokenNameToValue.put("IDENTIFIED", "'IDENTIFIED'");
 		tokenNameToValue.put("DATAHANDLER", "'DATAHANDLER'");
+		tokenNameToValue.put("MILLISECOND", "'MILLISECOND'");
 		tokenNameToValue.put("INTERSECTION", "'INTERSECTION'");
+		tokenNameToValue.put("MILLISECONDS", "'MILLISECONDS'");
 		tokenNameToValue.put("NO_LAZY_CONNECTION_CHECK", "'NO_LAZY_CONNECTION_CHECK'");
 	}
 
@@ -1931,6 +1941,22 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Rule Time
+ruleTime
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getTimeAccess().getAlternatives()); }
+		(rule__Time__Alternatives)
+		{ after(grammarAccess.getTimeAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Model__ComponentsAlternatives_0_0
 	@init {
 		int stackSize = keepStackSize();
@@ -2894,6 +2920,75 @@ rule__AtomicWithoutAttributeRef__Alternatives
 		{ before(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5()); }
 		(rule__AtomicWithoutAttributeRef__Group_5__0)
 		{ after(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Time__Alternatives
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getTimeAccess().getMILLISECONDEnumLiteralDeclaration_0()); }
+		(MILLISECOND)
+		{ after(grammarAccess.getTimeAccess().getMILLISECONDEnumLiteralDeclaration_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getSECONDEnumLiteralDeclaration_1()); }
+		(SECOND)
+		{ after(grammarAccess.getTimeAccess().getSECONDEnumLiteralDeclaration_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getMINUTEEnumLiteralDeclaration_2()); }
+		(MINUTE)
+		{ after(grammarAccess.getTimeAccess().getMINUTEEnumLiteralDeclaration_2()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getHOUREnumLiteralDeclaration_3()); }
+		(HOUR)
+		{ after(grammarAccess.getTimeAccess().getHOUREnumLiteralDeclaration_3()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getWEEKEnumLiteralDeclaration_4()); }
+		(WEEK)
+		{ after(grammarAccess.getTimeAccess().getWEEKEnumLiteralDeclaration_4()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getMILLISECONDSEnumLiteralDeclaration_5()); }
+		(MILLISECONDS)
+		{ after(grammarAccess.getTimeAccess().getMILLISECONDSEnumLiteralDeclaration_5()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getSECONDSEnumLiteralDeclaration_6()); }
+		(SECONDS)
+		{ after(grammarAccess.getTimeAccess().getSECONDSEnumLiteralDeclaration_6()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getMINUTESEnumLiteralDeclaration_7()); }
+		(MINUTES)
+		{ after(grammarAccess.getTimeAccess().getMINUTESEnumLiteralDeclaration_7()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getHOURSEnumLiteralDeclaration_8()); }
+		(HOURS)
+		{ after(grammarAccess.getTimeAccess().getHOURSEnumLiteralDeclaration_8()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getTimeAccess().getWEEKSEnumLiteralDeclaration_9()); }
+		(WEEKS)
+		{ after(grammarAccess.getTimeAccess().getWEEKSEnumLiteralDeclaration_9()); }
 	)
 ;
 finally {
@@ -13981,9 +14076,9 @@ rule__CreateDatabaseStream__UnitAssignment_5_2
 	}
 :
 	(
-		{ before(grammarAccess.getCreateDatabaseStreamAccess().getUnitIDTerminalRuleCall_5_2_0()); }
-		RULE_ID
-		{ after(grammarAccess.getCreateDatabaseStreamAccess().getUnitIDTerminalRuleCall_5_2_0()); }
+		{ before(grammarAccess.getCreateDatabaseStreamAccess().getUnitTimeEnumRuleCall_5_2_0()); }
+		ruleTime
+		{ after(grammarAccess.getCreateDatabaseStreamAccess().getUnitTimeEnumRuleCall_5_2_0()); }
 	)
 ;
 finally {
@@ -14921,9 +15016,9 @@ rule__TimebasedWindow__UnitAssignment_3
 	}
 :
 	(
-		{ before(grammarAccess.getTimebasedWindowAccess().getUnitIDTerminalRuleCall_3_0()); }
-		RULE_ID
-		{ after(grammarAccess.getTimebasedWindowAccess().getUnitIDTerminalRuleCall_3_0()); }
+		{ before(grammarAccess.getTimebasedWindowAccess().getUnitTimeEnumRuleCall_3_0()); }
+		ruleTime
+		{ after(grammarAccess.getTimebasedWindowAccess().getUnitTimeEnumRuleCall_3_0()); }
 	)
 ;
 finally {
@@ -14951,9 +15046,9 @@ rule__TimebasedWindow__Advance_unitAssignment_4_2
 	}
 :
 	(
-		{ before(grammarAccess.getTimebasedWindowAccess().getAdvance_unitIDTerminalRuleCall_4_2_0()); }
-		RULE_ID
-		{ after(grammarAccess.getTimebasedWindowAccess().getAdvance_unitIDTerminalRuleCall_4_2_0()); }
+		{ before(grammarAccess.getTimebasedWindowAccess().getAdvance_unitTimeEnumRuleCall_4_2_0()); }
+		ruleTime
+		{ after(grammarAccess.getTimebasedWindowAccess().getAdvance_unitTimeEnumRuleCall_4_2_0()); }
 	)
 ;
 finally {

@@ -4,6 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -58,7 +59,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * @generated
    * @ordered
    */
-  protected static final String UNIT_EDEFAULT = null;
+  protected static final Time UNIT_EDEFAULT = Time.MILLISECOND;
 
   /**
    * The cached value of the '{@link #getUnit() <em>Unit</em>}' attribute.
@@ -68,7 +69,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * @generated
    * @ordered
    */
-  protected String unit = UNIT_EDEFAULT;
+  protected Time unit = UNIT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getAdvance_size() <em>Advance size</em>}' attribute.
@@ -98,7 +99,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * @generated
    * @ordered
    */
-  protected static final String ADVANCE_UNIT_EDEFAULT = null;
+  protected static final Time ADVANCE_UNIT_EDEFAULT = Time.MILLISECOND;
 
   /**
    * The cached value of the '{@link #getAdvance_unit() <em>Advance unit</em>}' attribute.
@@ -108,7 +109,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * @generated
    * @ordered
    */
-  protected String advance_unit = ADVANCE_UNIT_EDEFAULT;
+  protected Time advance_unit = ADVANCE_UNIT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -159,7 +160,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getUnit()
+  public Time getUnit()
   {
     return unit;
   }
@@ -169,10 +170,10 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setUnit(String newUnit)
+  public void setUnit(Time newUnit)
   {
-    String oldUnit = unit;
-    unit = newUnit;
+    Time oldUnit = unit;
+    unit = newUnit == null ? UNIT_EDEFAULT : newUnit;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.TIMEBASED_WINDOW__UNIT, oldUnit, unit));
   }
@@ -205,7 +206,7 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getAdvance_unit()
+  public Time getAdvance_unit()
   {
     return advance_unit;
   }
@@ -215,10 +216,10 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setAdvance_unit(String newAdvance_unit)
+  public void setAdvance_unit(Time newAdvance_unit)
   {
-    String oldAdvance_unit = advance_unit;
-    advance_unit = newAdvance_unit;
+    Time oldAdvance_unit = advance_unit;
+    advance_unit = newAdvance_unit == null ? ADVANCE_UNIT_EDEFAULT : newAdvance_unit;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.TIMEBASED_WINDOW__ADVANCE_UNIT, oldAdvance_unit, advance_unit));
   }
@@ -259,13 +260,13 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
         setSize((Integer)newValue);
         return;
       case CQLPackage.TIMEBASED_WINDOW__UNIT:
-        setUnit((String)newValue);
+        setUnit((Time)newValue);
         return;
       case CQLPackage.TIMEBASED_WINDOW__ADVANCE_SIZE:
         setAdvance_size((Integer)newValue);
         return;
       case CQLPackage.TIMEBASED_WINDOW__ADVANCE_UNIT:
-        setAdvance_unit((String)newValue);
+        setAdvance_unit((Time)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -310,11 +311,11 @@ public class TimebasedWindowImpl extends WindowOperatorImpl implements Timebased
       case CQLPackage.TIMEBASED_WINDOW__SIZE:
         return size != SIZE_EDEFAULT;
       case CQLPackage.TIMEBASED_WINDOW__UNIT:
-        return UNIT_EDEFAULT == null ? unit != null : !UNIT_EDEFAULT.equals(unit);
+        return unit != UNIT_EDEFAULT;
       case CQLPackage.TIMEBASED_WINDOW__ADVANCE_SIZE:
         return advance_size != ADVANCE_SIZE_EDEFAULT;
       case CQLPackage.TIMEBASED_WINDOW__ADVANCE_UNIT:
-        return ADVANCE_UNIT_EDEFAULT == null ? advance_unit != null : !ADVANCE_UNIT_EDEFAULT.equals(advance_unit);
+        return advance_unit != ADVANCE_UNIT_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }

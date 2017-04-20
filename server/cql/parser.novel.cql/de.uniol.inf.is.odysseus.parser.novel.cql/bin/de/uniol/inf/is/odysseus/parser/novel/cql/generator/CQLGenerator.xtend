@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.mep.IExpressionParser
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.parser.novel.cql.PQLBuilder
+import de.uniol.inf.is.odysseus.parser.novel.cql.builder.PQLBuilder
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFormatViaFile
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPort
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
@@ -40,6 +39,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect
@@ -96,7 +96,7 @@ class CQLGenerator implements IGenerator2
 	var private firstJoinInQuery = true
 	//Provides different names e.g. to identify valid names for aggregations and map functions 
 	var private NameProvider nameProvider
-	var private PQLBuilder builder = new PQLBuilder
+	var private PQLBuilder builder = PQLBuilder.getInstance()
 	
 	var private IExpressionParser expressionParser
 	//
@@ -179,18 +179,10 @@ class CQLGenerator implements IGenerator2
 			parseCreateStreamFile(statement.create as CreateChannelFormatViaFile)
 		else if(statement.create instanceof CreateChannelFrameworkViaPort)
 			parseCreateStreamChannel(statement.create as CreateChannelFrameworkViaPort)
-		else if(statement.create instanceof CreateDataBaseConnectionGeneric)
+		else if(statement.create instanceof CreateDatabaseStream)
 			parseCreateDatabaseStream(statement.create as CreateDatabaseStream)
 		else if(statement.create instanceof CreateDatabaseSink)
 			parseCreateDatabaseSink(statement.create as CreateDatabaseSink)
-	}
-	
-	def parseCreateDatabaseSink(CreateDatabaseSink sink) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
-	}
-	
-	def parseCreateDatabaseStream(CreateDatabaseStream stream) {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	
 	def String createModel()
@@ -217,21 +209,10 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseComplexSelect(ComplexSelect operator) 
 	{
-	
-		println("ComplexSelect::"+operator)	
-		
 		parseSimpleSelect(operator.left)
 		var rightSelectOperatorName = getLastOperator()
-//		var rightSelectOperatorPlan = registry_Operators.get(rightSelectOperatorName)
-//		registry_Operators.remove(rightSelectOperatorName)
-//		registry_OperatorNames.remove(rightSelectOperatorName)
-		
 		parseSimpleSelect(operator.right)
 		var leftSelectOperatorName = getLastOperator()
-//		var leftSelectOperatorPlan = registry_Operators.get(leftSelectOperatorName)
-//		registry_Operators.remove(leftSelectOperatorName)
-//		registry_OperatorNames.remove(leftSelectOperatorName)	
-			
 		return registerOperator(operator.operation + '('+rightSelectOperatorName+','+leftSelectOperatorName+')')
 		
 	}
@@ -635,7 +616,6 @@ class CQLGenerator implements IGenerator2
 	
 	def private CharSequence parseCreateAccessFramework(CreateAccessFramework create, String type)
 	{
-		println("ACCESS FRAMEWORk " + type)
 		var String operator
 		switch(type.toUpperCase)
 		{
@@ -643,7 +623,6 @@ class CQLGenerator implements IGenerator2
 			case 'SINK': operator = 'SENDER'
 		}
 		operator = buildCreate1(operator, create.pars, create.attributes.arguments, create.attributes.name).toString
-		println(operator)
 		if(type.toUpperCase.equals('SINK'))
 			if(!operator.contains("--INPUT--"))
 				return registerOperator(operator, create.attributes.name)
@@ -652,53 +631,91 @@ class CQLGenerator implements IGenerator2
 		else
 			registerOperator(operator, create.attributes.name)
 			
-		println(registry_Operators)
 		return ''
+	}
+	
+	def private CharSequence extractSchema(SchemaDefinition schema)
+	{
+		var attributenames = newArrayList
+		var datatypes = newArrayList
+		for(var i = 0; i < schema.arguments.size - 1; i = i + 2)
+		{
+			attributenames.add(schema.arguments.get(i))
+			datatypes.add(schema.arguments.get(i + 1))
+		}
+		return generateKeyValueString(attributenames, datatypes, ',')
+	}
+	
+	def parseCreateDatabaseSink(CreateDatabaseSink sink) 
+	{
+		
+		
+	}
+	
+	def private float getTimeInMilliseconds(String time, float value)
+	{
+		switch(time.toUpperCase)
+		{
+		case 'MILLISECONDS',
+		case 'MILLISECOND': return value
+		case 'SECONDS',
+		case 'SECOND': return value * 1000
+		case 'MINUTES',
+		case 'MINUTE': return value * (60 * 1000)
+		case 'HOURS',
+		case 'HOUR' : return value * (60 * 60 * 1000)
+		case 'DAYS',
+		case 'DAY' : return value * (24 * 60 * 60 * 1000)
+		case 'WEEKS',
+		case 'WEEK': return value * (7 * 24 * 60 * 60 * 1000)
+		default: return 0
+		}
+	}
+	
+	def parseCreateDatabaseStream(CreateDatabaseStream stream) 
+	{
+		var Map<String, String> args = newHashMap
+		args.put('connection',stream.database + builder.ESC+builder.STRING_TYPE)
+		args.put('table',stream.table + builder.ESC+builder.STRING_TYPE)
+		args.put('attributes', extractSchema(stream.attributes) + builder.ESC+builder.LIST_TYPE)
+		var operator = ''
+		var waitMillis = getTimeInMilliseconds(stream.unit.getName, stream.size).toString
+		if(!waitMillis.equals('0.0'))
+			args.put('waiteach', waitMillis+builder.ESC+builder.INT_TYPE)
+		operator = builder.buildOperator("DATABASESOURCE", args)
+		return registerOperator(operator, stream.attributes.name)		
 	}
 	
 	def private CharSequence parseCreateStreamFile(CreateChannelFormatViaFile file)
 	{
-		println("VIA FILE")
-		var attributenames = newArrayList
-		var datatypes = newArrayList
-		for(var i = 0; i < file.attributes.arguments.size - 1; i = i + 2)
-		{
-			attributenames.add(file.attributes.arguments.get(i))
-			datatypes.add(file.attributes.arguments.get(i + 1))
-		}
-		var schema = generateKeyValueString(
-					attributenames,
-					datatypes,
-					','
-				  )
-		
-		var options = '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]'''		  
-		return registerOperator(buildCreate2('GenericPull', file.type, 'File', 'Tuple', schema, options, file.attributes.name).toString, file.attributes.name)
+		var Map<String, String> args = newHashMap
+		args.put('source', file.attributes.name+builder.ESC+builder.STRING_TYPE)
+		args.put('wrapper', 'GenericPull'+builder.ESC+builder.STRING_TYPE)
+		args.put('protocol', file.type+builder.ESC+builder.STRING_TYPE)
+		args.put('transport', 'File'+builder.ESC+builder.STRING_TYPE)
+		args.put('dataHandler', 'Tuple'+builder.ESC+builder.STRING_TYPE)
+		args.put('schema', extractSchema(file.attributes)+builder.ESC+builder.LIST_TYPE)
+		args.put('options', '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]'''+builder.ESC+builder.LIST_TYPE)
+		var operator = builder.buildOperator("ACCESS", args)	  
+		return registerOperator(operator, file.attributes.name)
 	}
 	
 	def private CharSequence parseCreateStreamChannel(CreateChannelFrameworkViaPort channel) 
 	{
-		println("VIA PORT")
-		var attributenames = newArrayList
-		var datatypes = newArrayList
-		for(var i = 0; i < channel.attributes.arguments.size - 1; i = i + 2)
-		{
-			attributenames.add(channel.attributes.arguments.get(i))
-			datatypes.add(channel.attributes.arguments.get(i + 1))
-		}
-		var schema = generateKeyValueString(
-			attributenames,
-			datatypes,
-			','
-		  )
-		
-		var options = '''['port','«channel.port»'],['host', '«channel.host»']'''		  
-		return registerOperator(buildCreate2('GenericPush', 'SizeByteBuffer', 'NonBlockingTcp', 'Tuple', schema, options, channel.attributes.name).toString, channel.attributes.name)
+		var Map<String, String> args = newHashMap
+		args.put('source', channel.attributes.name+builder.ESC+builder.STRING_TYPE)
+		args.put('wrapper', 'GenericPush'+builder.ESC+builder.STRING_TYPE)
+		args.put('protocol', 'SizeByteBuffer' + builder.ESC+builder.STRING_TYPE)
+		args.put('transport', 'NonBlockingTcp'+builder.ESC+builder.STRING_TYPE)
+		args.put('dataHandler', 'Tuple'+builder.ESC+builder.STRING_TYPE)
+		args.put('schema', extractSchema(channel.attributes)+builder.ESC+builder.LIST_TYPE)
+		args.put('options', '''['port','«channel.port»'],['host', '«channel.host»']''' + builder.ESC+builder.LIST_TYPE)
+		var operator = builder.buildOperator("ACCESS", args)	
+		return registerOperator(operator, channel.attributes.name)	
 	}	
 	
 	def private parseStreamTo(StreamTo query)
 	{
-		println("STREAMTO")
 		var lastOperator = ''
 		var sink = ''
 		if(registry_Sinks.keySet.contains(query.name))
@@ -706,13 +723,11 @@ class CQLGenerator implements IGenerator2
 	
 		if(query.statement !== null)
 		{
-			println("parse select: " + query.statement)
 			parseSimpleSelect(query.statement.select as SimpleSelect)
 			lastOperator = getLastOperator()
 		}		
 		else
 		{
-			println("not parse select")
 			lastOperator = query.name
 		}
 	
@@ -731,7 +746,6 @@ class CQLGenerator implements IGenerator2
 		}
 		else
 		{ 	
-			println("noooo")			
 			registry_StreamTo.put(query.name, query.name)
 			registryBackUp_Operators = registry_Operators
 			registry_Operators.clear()
@@ -772,13 +786,13 @@ class CQLGenerator implements IGenerator2
 			if(window instanceof TimebasedWindow)
 			{
 				var var1 = if(window.advance_size != 0) window.advance_size.toString else '1'
-				var var2 = if(window.advance_size != 0) window.advance_unit else window.unit
-				return builder.buildTimebasedWindowOperator(window.size.toString, window.unit, var1, var2, src.name)
+				var var2 = if(window.advance_size != 0) window.advance_unit.getName else window.unit.getName
+				return builder.buildTimebasedWindowOperator(window.size.toString, window.unit.getName, var1, var2, src.name)
 			}
 			else if(window instanceof TuplebasedWindow)
 			{
 				var var1 = if(window.advance_size != 0) window.advance_size else 1
-				if(window.partition_attribute == null)
+				if(window.partition_attribute === null)
 				{
 					return  '''ELEMENTWINDOW
 							   (

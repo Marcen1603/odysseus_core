@@ -6,6 +6,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -113,7 +114,7 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
    * @generated
    * @ordered
    */
-  protected static final String UNIT_EDEFAULT = null;
+  protected static final Time UNIT_EDEFAULT = Time.MILLISECOND;
 
   /**
    * The cached value of the '{@link #getUnit() <em>Unit</em>}' attribute.
@@ -123,7 +124,7 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
    * @generated
    * @ordered
    */
-  protected String unit = UNIT_EDEFAULT;
+  protected Time unit = UNIT_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -268,7 +269,7 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getUnit()
+  public Time getUnit()
   {
     return unit;
   }
@@ -278,10 +279,10 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setUnit(String newUnit)
+  public void setUnit(Time newUnit)
   {
-    String oldUnit = unit;
-    unit = newUnit;
+    Time oldUnit = unit;
+    unit = newUnit == null ? UNIT_EDEFAULT : newUnit;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.CREATE_DATABASE_STREAM__UNIT, oldUnit, unit));
   }
@@ -349,7 +350,7 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
         setSize((Integer)newValue);
         return;
       case CQLPackage.CREATE_DATABASE_STREAM__UNIT:
-        setUnit((String)newValue);
+        setUnit((Time)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -403,7 +404,7 @@ public class CreateDatabaseStreamImpl extends MinimalEObjectImpl.Container imple
       case CQLPackage.CREATE_DATABASE_STREAM__SIZE:
         return size != SIZE_EDEFAULT;
       case CQLPackage.CREATE_DATABASE_STREAM__UNIT:
-        return UNIT_EDEFAULT == null ? unit != null : !UNIT_EDEFAULT.equals(unit);
+        return unit != UNIT_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }

@@ -1180,4 +1180,37 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
+	@Test def void CreateDatabaseSourceTest1()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main"
+			,
+			"datastream:=DATABASESOURCE({connection='con1',table='main',attributes=[['id','INTEGER'],['value','STRING']]})"
+			, null
+		)
+	}
+	
+	@Test def void CreateDatabaseSourceTest2()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND"
+			,
+			"datastream:=DATABASESOURCE({connection='con1',table='main',attributes=[['id','INTEGER'],['value','STRING']],waiteach=1000.0})"
+			, null
+		)
+	}
+	
+	@Test def void CreateDatabaseSinkTest1()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND"
+			,
+			"datastream:=DATABASESOURCE({connection='con1',table='main',attributes=[['id','INTEGER'],['value','STRING']],waiteach=1000.0})"
+			, null
+		)
+	}
+	
 }

@@ -717,4 +717,25 @@ public class CQLGeneratorQueryTest {
       "SELECT attr1 FROM stream1\n\t\t\tUNION\n\t\t\tSELECT attr3 FROM stream2", 
       "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'stream2.attr3\']},stream2)\n\t\t\t operator_3=UNION(operator_1,operator_2)", _cQLDictionaryHelper);
   }
+  
+  @Test
+  public void CreateDatabaseSourceTest1() {
+    this.assertCorrectGenerated(
+      "CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main", 
+      "datastream:=DATABASESOURCE({connection=\'con1\',table=\'main\',attributes=[[\'id\',\'INTEGER\'],[\'value\',\'STRING\']]})", null);
+  }
+  
+  @Test
+  public void CreateDatabaseSourceTest2() {
+    this.assertCorrectGenerated(
+      "CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND", 
+      "datastream:=DATABASESOURCE({connection=\'con1\',table=\'main\',attributes=[[\'id\',\'INTEGER\'],[\'value\',\'STRING\']],waiteach=1000.0})", null);
+  }
+  
+  @Test
+  public void CreateDatabaseSinkTest1() {
+    this.assertCorrectGenerated(
+      "CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND", 
+      "datastream:=DATABASESOURCE({connection=\'con1\',table=\'main\',attributes=[[\'id\',\'INTEGER\'],[\'value\',\'STRING\']],waiteach=1000.0})", null);
+  }
 }

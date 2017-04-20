@@ -133,6 +133,7 @@ public interface CreateDatabaseStream extends EObject
 
   /**
    * Returns the value of the '<em><b>Unit</b></em>' attribute.
+   * The literals are from the enumeration {@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Unit</em>' attribute isn't clear,
@@ -140,21 +141,23 @@ public interface CreateDatabaseStream extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Unit</em>' attribute.
-   * @see #setUnit(String)
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time
+   * @see #setUnit(Time)
    * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getCreateDatabaseStream_Unit()
    * @model
    * @generated
    */
-  String getUnit();
+  Time getUnit();
 
   /**
    * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream#getUnit <em>Unit</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Unit</em>' attribute.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time
    * @see #getUnit()
    * @generated
    */
-  void setUnit(String value);
+  void setUnit(Time value);
 
 } // CreateDatabaseStream

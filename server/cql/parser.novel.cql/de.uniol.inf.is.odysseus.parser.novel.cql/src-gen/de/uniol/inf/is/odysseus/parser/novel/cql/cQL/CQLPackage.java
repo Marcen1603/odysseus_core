@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.cQL;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -2586,6 +2587,16 @@ public interface CQLPackage extends EPackage
    */
   int VECTOR_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
+  /**
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time <em>Time</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTime()
+   * @generated
+   */
+  int TIME = 63;
+
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model <em>Model</em>}'.
@@ -4659,6 +4670,16 @@ public interface CQLPackage extends EPackage
   EAttribute getVector_Value();
 
   /**
+   * Returns the meta object for enum '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time <em>Time</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Time</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time
+   * @generated
+   */
+  EEnum getTime();
+
+  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6358,6 +6379,16 @@ public interface CQLPackage extends EPackage
      * @generated
      */
     EAttribute VECTOR__VALUE = eINSTANCE.getVector_Value();
+
+    /**
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time <em>Time</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getTime()
+     * @generated
+     */
+    EEnum TIME = eINSTANCE.getTime();
 
   }
 

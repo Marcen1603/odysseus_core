@@ -6,6 +6,18 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="Time">
+    <eLiterals name="MILLISECOND" literal="MILLISECOND"/>
+    <eLiterals name="SECOND" value="1" literal="SECOND"/>
+    <eLiterals name="MINUTE" value="2" literal="MINUTE"/>
+    <eLiterals name="HOUR" value="3" literal="HOUR"/>
+    <eLiterals name="WEEK" value="4" literal="WEEK"/>
+    <eLiterals name="MILLISECONDS" value="5" literal="MILLISECONDS"/>
+    <eLiterals name="SECONDS" value="6" literal="SECONDS"/>
+    <eLiterals name="MINUTES" value="7" literal="MINUTES"/>
+    <eLiterals name="HOURS" value="8" literal="HOURS"/>
+    <eLiterals name="WEEKS" value="9" literal="WEEKS"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Statement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
@@ -123,7 +135,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="database" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="table" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="#//Time"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CreateDatabaseSink">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -226,9 +238,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="UndboundedWindow" eSuperTypes="#//WindowOperator"/>
   <eClassifiers xsi:type="ecore:EClass" name="TimebasedWindow" eSuperTypes="#//WindowOperator">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="#//Time"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="advance_size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="advance_unit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="advance_unit" eType="#//Time"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TuplebasedWindow" eSuperTypes="#//WindowOperator">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

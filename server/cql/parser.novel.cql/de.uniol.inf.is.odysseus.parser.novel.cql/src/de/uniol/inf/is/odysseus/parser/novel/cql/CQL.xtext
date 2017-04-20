@@ -22,6 +22,19 @@ terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* ']';
 //terminal MATRIX_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)* ']' ;
 terminal MATRIX_FLOAT : '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
 
+enum Time:
+	MILLISECOND 
+		|SECOND 
+		| MINUTE
+		| HOUR
+		| WEEK
+		| MILLISECONDS 
+		| SECONDS 
+		| MINUTES
+		| HOURS
+		| WEEKS
+;
+
 QualifiedAttributename:
 	(ID
 		| (QualifiedSourcename '.' ID) 
@@ -271,7 +284,7 @@ CreateDatabaseStream:
 	table=ID
 	('EACH'
 	 size=INT
-	 unit=ID)?
+	 unit=Time)?
 ;
 
 //TODO PQL
@@ -423,8 +436,8 @@ UnboundedWindow returns WindowOperator:
 
 TimebasedWindow returns WindowOperator:
 	{TimebasedWindow} 
-	'SIZE' size=INT unit=ID
-	('ADVANCE' advance_size=INT advance_unit=ID)?
+	'SIZE' size=INT unit=Time
+	('ADVANCE' advance_size=INT advance_unit=Time)?
 	'TIME'
 ;
 

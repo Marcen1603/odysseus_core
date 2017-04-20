@@ -6,6 +6,18 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.11">
   <genPackages prefix="CQL" basePackage="de.uniol.inf.is.odysseus.parser.novel.cql"
       disposableProviderFactory="true" fileExtensions="cql" ecorePackage="CQL.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="CQL.ecore#//Time">
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/MILLISECOND"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/SECOND"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/MINUTE"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/HOUR"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/WEEK"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/MILLISECONDS"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/SECONDS"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/MINUTES"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/HOURS"/>
+      <genEnumLiterals ecoreEnumLiteral="CQL.ecore#//Time/WEEKS"/>
+    </genEnums>
     <genClasses ecoreClass="CQL.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Model/components"/>
     </genClasses>
