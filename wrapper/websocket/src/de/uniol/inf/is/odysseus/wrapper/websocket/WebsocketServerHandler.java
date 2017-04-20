@@ -27,7 +27,7 @@ public class WebsocketServerHandler extends AbstractTransportHandler {
 
 	public WebsocketServerHandler(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT)) : 80;
+		port = options.getInt(PORT, 80);
 	}
 
 	@Override
@@ -65,18 +65,19 @@ public class WebsocketServerHandler extends AbstractTransportHandler {
 
 	@Override
 	public void processInClose() throws IOException {
-		try {
-			server.stop();
-		} catch (InterruptedException e) {
-			throw new IOException(e);
-		} finally {
-			server = null;
-		}
-
+		processClose();
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
+		processClose();
+	}
+
+	private void processClose() throws IOException {
+		if (server == null) {
+			return;
+		}
+
 		try {
 			server.stop();
 		} catch (InterruptedException e) {
@@ -84,6 +85,7 @@ public class WebsocketServerHandler extends AbstractTransportHandler {
 		} finally {
 			server = null;
 		}
+
 	}
 
 	@Override
