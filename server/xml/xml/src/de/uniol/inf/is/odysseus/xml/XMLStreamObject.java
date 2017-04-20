@@ -20,19 +20,19 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 // GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
 
-public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable 
+public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable
 {
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
 	private static XPath xpath;
-	
+
 	private Document content;
-	
+
 	public static XMLStreamObject<IMetaAttribute> createInstance(Document doc)
 	{
 		return new XMLStreamObject<>(doc);
 	}
-	
+
 	@Override
 	public String toString()
 	{
@@ -55,7 +55,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		System.out.println("XMLStreamObject Constructor");
 	}
 
-	private XMLStreamObject()
+	public XMLStreamObject()
 	{
 	}
 
@@ -81,7 +81,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		content = doc;
 	}
-	
+
 	public Document getDocument()
 	{
 		return content;
@@ -103,14 +103,14 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		return xpathToNode("/*") == null ? false : true;
 	}
-	
+
 	public Document xpathToDocument(String expression)
 	{
 		try
 		{
 			NodeList nodelist = xpathToNodeList(expression);
 			Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-	        for (int i = 0; i < nodelist.getLength(); i++) 
+	        for (int i = 0; i < nodelist.getLength(); i++)
 	        {
 	            Node node = nodelist.item(i);
 	            Node copyNode = newDoc.importNode(node, true);
@@ -124,8 +124,8 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		return null;
 	}
-	
-	public NodeList xpathToNodeList(String expression) 
+
+	public NodeList xpathToNodeList(String expression)
 	{
 		try
 		{
@@ -133,21 +133,21 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			return (NodeList) xExp.evaluate(content, XPathConstants.NODESET);
 		} catch (XPathExpressionException e)
 		{
-			LOG.error("XPathExpression Error", e);			
+			LOG.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public Node xpathToNode(String expression) 
-	{		
+	public Node xpathToNode(String expression)
+	{
 		try
 		{
 			XPathExpression xExp = xpath.compile(expression);
 			return (Node) xExp.evaluate(content, XPathConstants.NODE);
 		} catch (XPathExpressionException e)
 		{
-			LOG.error("XPathExpression Error", e);			
+			LOG.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
@@ -161,7 +161,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			return  xExp.evaluate(content);
 		} catch (XPathExpressionException e)
 		{
-			LOG.error("XPathExpression Error", e);			
+			LOG.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
