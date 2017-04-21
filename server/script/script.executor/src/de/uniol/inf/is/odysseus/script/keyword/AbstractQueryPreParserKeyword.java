@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.AddQueryCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterMaxSheddingFactor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryName;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterQueryParams;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterPriority;
@@ -39,6 +40,7 @@ import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 import de.uniol.inf.is.odysseus.script.parser.keyword.MaxSheddingFactorPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.NoMetadataPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryNamePreParserKeyword;
+import de.uniol.inf.is.odysseus.script.parser.keyword.QueryParamPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.keyword.QueryPriorityPreParserKeyword;
 
 @SuppressWarnings("deprecation")
@@ -76,18 +78,18 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 		if (transCfgName == null) {
 			transCfgName = "Standard";
 		}
-	
+
 		List<IQueryBuildSetting<?>> addSettings = (List<IQueryBuildSetting<?>>) variables.get(AbstractPreParserKeyword.ADD_TRANS_PARAMS);
 		if (addSettings == null) {
 			addSettings = new ArrayList<>();
 		}
-		
+
 		// CALLER
 		ISession queryCaller = (ISession) variables.get("USER");
 		if (queryCaller == null) {
 			queryCaller = caller;
 		}
-				
+
 		// QNAME
 		String queryName = (String) variables.get(QueryNamePreParserKeyword.QNAME);
 		if (queryName != null && queryName.trim().length() > 0) {
@@ -95,14 +97,25 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 			// Only for this query
 			variables.remove(QueryNamePreParserKeyword.QNAME);
 		}
-		
+
+		// QPRIORITY
+		// TODO: Query Prio?
+
+		// QPARAMS
+		Map<String, String> queryParams = (Map<String, String>) variables.get(QueryParamPreParserKeyword.NAME);
+		if (queryParams != null){
+			addSettings.add(new ParameterQueryParams(queryParams));
+			// Only for this query
+			variables.remove(QueryParamPreParserKeyword.NAME);
+		}
+
 		// MAX SHEDDING FACTOR
 		Integer maxSheddingFactor = (Integer)variables.get(MaxSheddingFactorPreParserKeyword.SHEDDING_FACTOR_NAME);
 		if( maxSheddingFactor == null ) {
 			maxSheddingFactor = 1;
 		}
 		addSettings.add(new ParameterMaxSheddingFactor(maxSheddingFactor));
-		
+
 		// PRIO
 		if (variables.containsKey(QueryPriorityPreParserKeyword.NAME)) {
 			try {
@@ -116,9 +129,9 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 			variables.remove(QueryPriorityPreParserKeyword.NAME);
 
 		}
-		
 
-		
+
+
 		// AC-QUERIES
 		if (isACQuery()){
 			addSettings.add(new ACQueryParameter(isACQuery()));
@@ -138,7 +151,7 @@ public abstract class AbstractQueryPreParserKeyword extends AbstractPreParserKey
 			if (variables.containsKey(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)) {
 				context.put(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE, new ArrayList<String>((ArrayList<String>) variables.get(DeActivateRewriteRulePreParserKeyword.DEACTIVATEREWRITERULE)));
 			}
-		
+
 			// Metadata
 			if (variables.containsKey(NoMetadataPreParserKeyword.NO_METADATA)){
 				context.put(NoMetadataPreParserKeyword.NO_METADATA,"true");

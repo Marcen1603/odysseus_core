@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * @author Andr� Bolles, Marco Grawunder
- * 
+ *
  */
 public class DataHandlerRegistry {
 
@@ -81,8 +81,12 @@ public class DataHandlerRegistry {
 		}
 		return (IStreamObjectDataHandler<?>) h;
 	}
-	
-	
+
+	public static IDataHandler<?> getDataHandler(SDFDatatype dataType,
+			SDFSchema schema) {
+		return getDataHandler(dataType.getURI(), schema);
+	}
+
 	public static IDataHandler<?> getDataHandler(String dataType,
 			SDFSchema schema) {
 		IDataHandler<?> ret = dataHandlers.get(dataType.toLowerCase());
@@ -95,7 +99,7 @@ public class DataHandlerRegistry {
 	public static boolean containsDataHandler(String dataType) {
 		return dataHandlers.containsKey(dataType.toLowerCase());
 	}
-	
+
 	public static IStreamObjectDataHandler<?> getStreamObjectDataHandler(String dataType,
 			List<SDFDatatype> schema) {
 		IDataHandler<?> h = getDataHandler(dataType, schema);
@@ -119,9 +123,9 @@ public class DataHandlerRegistry {
 
 	public static ImmutableList<String> getHandlerNames() {
 		return ImmutableList.copyOf(dataHandlers.keySet());
-	
+
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Class<? extends IStreamObject> getCreatedType(
 			String dhandlerText) {
@@ -147,11 +151,11 @@ public class DataHandlerRegistry {
 		if (dhandlerText != null) {
 			IDataHandler<?> dh = dataHandlers.get(dhandlerText.toLowerCase());
 			return dh;
-		}	
-		return null;	
+		}
+		return null;
 	}
-	
-	
+
+
 	public static List<String> getStreamableDataHandlerNames() {
 		List<String> list = new ArrayList<>();
 		for (String name : getHandlerNames()) {
@@ -174,7 +178,7 @@ public class DataHandlerRegistry {
 
 	/**
 	 * This method should only be used, if the data handler are used in a non
-	 * OSGi enviroment! In other cases there should be declarative services that
+	 * OSGi environment! In other cases there should be declarative services that
 	 * register new data handler!!
 	 */
 	public static void initDefaultHandler() {
@@ -188,7 +192,7 @@ public class DataHandlerRegistry {
 		registerDataHandler(new IntegerHandler());
 		registerDataHandler(new ListDataHandler());
 		registerDataHandler(new LongHandler());
-		registerDataHandler(new ObjectDataHandler<>());
+		registerDataHandler(new ObjectDataHandler());
 		registerDataHandler(new StringHandler());
 		registerDataHandler(new VectorDataHandler());
 		registerDataHandler(new MatrixDataHandler());

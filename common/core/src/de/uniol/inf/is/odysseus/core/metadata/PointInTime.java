@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,20 +18,20 @@ package de.uniol.inf.is.odysseus.core.metadata;
 import java.io.Serializable;
 
 /**
- * 
+ *
  * This immutable class represents a simple point in time and that can be
  * infinite
- * 
+ *
  * @author Jonas Jacobi, Marco Grawunder
- * 
+ *
  */
 public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		Serializable, ITimeComparable {
 
 	static long counter = 0;
-	
+
 	public final long tiBreaker = counter++;
-	
+
 	private static final String INFINITY_SYMBOL = "oo";
 
 	private static final long serialVersionUID = -350811211489411617L;
@@ -63,7 +63,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 
 	/**
 	 * Create a point in time from a long value
-	 * 
+	 *
 	 * @param point
 	 */
 	public PointInTime(long point) {
@@ -73,7 +73,7 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 
 	/**
 	 * Create a point in time from a number that can be cast to a long value
-	 * 
+	 *
 	 * @param point
 	 */
 	public PointInTime(Number point) {
@@ -86,10 +86,9 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 		point = -1 * Long.MAX_VALUE;
 	}
 
-//	protected PointInTime(PointInTime time) {
-//		this.point = time.point;
-//		// this.isInfinite = time.isInfinite;
-//	}
+	public PointInTime(PointInTime time) {
+		this.point = time.point;
+	}
 
 	public boolean isInfinite() {
 		return point == INFINITY.point;

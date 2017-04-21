@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +42,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 	private IPredicate<?> startCondition;
 	private IPredicate<?> endCondition;
 	private boolean sameStarttime;
+	private boolean keepEndElement;
 
 	private List<SDFAttribute> partitionedBy;
 
@@ -55,20 +56,21 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		this.windowType = windowType;
 	}
 
-	public AbstractWindowAO(AbstractWindowAO windowPO) {
-		super(windowPO);
-		this.windowSize = windowPO.windowSize;
-		this.windowAdvance = windowPO.windowAdvance;
-		this.windowSlide = windowPO.windowSlide;
-		this.partitionedBy = windowPO.partitionedBy;
-		this.windowType = windowPO.windowType;
-		if (windowPO.startCondition != null) {
-			this.startCondition = windowPO.startCondition.clone();
+	public AbstractWindowAO(AbstractWindowAO windowAO) {
+		super(windowAO);
+		this.windowSize = windowAO.windowSize;
+		this.windowAdvance = windowAO.windowAdvance;
+		this.windowSlide = windowAO.windowSlide;
+		this.partitionedBy = windowAO.partitionedBy;
+		this.windowType = windowAO.windowType;
+		if (windowAO.startCondition != null) {
+			this.startCondition = windowAO.startCondition.clone();
 		}
-		if (windowPO.endCondition != null) {
-			this.endCondition = windowPO.endCondition.clone();
+		if (windowAO.endCondition != null) {
+			this.endCondition = windowAO.endCondition.clone();
 		}
-		this.sameStarttime = windowPO.sameStarttime;
+		this.sameStarttime = windowAO.sameStarttime;
+		this.keepEndElement = windowAO.keepEndElement;
 	}
 
 	public AbstractWindowAO() {
@@ -156,6 +158,14 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 		return endCondition;
 	}
 
+	public void setKeepEndingElement(boolean keepEndElement) {
+		this.keepEndElement = keepEndElement;
+	}
+
+	public boolean isKeepEndElement() {
+		return keepEndElement;
+	}
+
 	/**
 	 * @param sameStarttime
 	 *            the sameStarttime to set
@@ -173,7 +183,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #getPredicates()
@@ -198,7 +208,7 @@ abstract public class AbstractWindowAO extends UnaryLogicalOp implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
 	 * #providesPredicates()

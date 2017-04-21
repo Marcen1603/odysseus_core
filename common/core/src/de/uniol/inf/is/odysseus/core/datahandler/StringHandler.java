@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,7 +79,6 @@ public class StringHandler extends AbstractDataHandler<String> {
 	public String readData(ByteBuffer b) {
 		int size = b.getInt();
 		if (size >= 0) {
-			// System.out.println("size "+size);
 			int limit = b.limit();
 			b.limit(b.position() + size);
 			try {
@@ -105,15 +104,18 @@ public class StringHandler extends AbstractDataHandler<String> {
 			text.append(options.getTextSeperator());
 			output.add(text.toString());
 		} else {
-			output.add((String) data);
+			if (data != null){
+				output.add(data.toString());
+			}else{
+				output.add(null);
+			}
+
 		}
 	}
 
 	@Override
 	public void writeData(ByteBuffer buffer, Object data) {
 		String s = (String) data;
-		// System.out.println("write String Data "+s+" "+s.length());
-		// buffer.putInt(s.length());
 		try {
 			if (data != null) {
 				ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(s));
@@ -135,7 +137,11 @@ public class StringHandler extends AbstractDataHandler<String> {
 	@Override
 	public int memSize(Object attribute) {
 		try {
-			int val = encoder.encode(CharBuffer.wrap((String) attribute)).limit() + Integer.SIZE / 8;
+			String attr = (String) attribute;
+			if (attr == null) {
+				attr = "";
+			}
+			int val = encoder.encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
 			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,19 +26,19 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
  * Describes an object which represents a basic query in odysseus.
- * 
+ *
  * It has a unique ID and consists of a logical plan, a physical plan, a
  * priority and a execution state.
- * 
+ *
  * @author Wolf Bauer, Marco Grawunder
- * 
+ *
  */
 public interface ILogicalQuery extends IOperatorOwner, Serializable,
 		ISerializable, Comparable<IOperatorOwner>, IQuery {
 
 	/**
 	 * ID of this query. Should be unique.
-	 * 
+	 *
 	 * @return ID of this query. Should be unique.
 	 */
 	@Override
@@ -46,28 +46,28 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * A query can be named, retrieve the value
-	 * 
+	 *
 	 * @return
 	 */
 	Resource getName();
 
 	/**
 	 * A query can be named, set the value
-	 * 
+	 *
 	 * @return
 	 */
 	void setName(Resource resource);
 
 	/**
 	 * Returns the priority with which this query should be scheduled.
-	 * 
+	 *
 	 * @return The priority with which this query should be scheduled.
 	 */
 	int getPriority();
 
 	/**
 	 * Sets the priority with which this query should be scheduled.
-	 * 
+	 *
 	 * @param priority
 	 *            The new priority with which this query should be scheduled.
 	 */
@@ -89,7 +89,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * Set the logical plan of this query.
-	 * 
+	 *
 	 * @param logicalPlan
 	 *            The new logical plan of this query
 	 * @setOwner: Sets all connected operators in the logical plan as owned by
@@ -103,24 +103,24 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * Returns the logical plan of this query.
-	 * 
+	 *
 	 * @return The logical plan of this query.
 	 */
 	ILogicalOperator getLogicalPlan();
 
 	/**
 	 * Set a list of alternative logical plans for this query.
-	 * 
+	 *
 	 * @param altPlans
 	 *            List of alternative logical plans for this query.
-	 * 
+	 *
 	 *            TODO: setOwner checken!
 	 */
 	void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans);
 
 	/**
 	 * Returns the list of alternative logical plans for this query.
-	 * 
+	 *
 	 * @return The list of alternative logical plans for this query.
 	 */
 	List<ILogicalOperator> getAlternativeLogicalPlans();
@@ -133,7 +133,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * Store key values pairs
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -141,15 +141,29 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * Retrieve value for key
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
 	Object getParameter(String key);
 
 	/**
+	 * Parameter that are set by the user (e.g. with Odysseus script command QPARAM)
+	 * @param key
+	 * @param value
+	 */
+	void setUserParameter(String key, String value);
+
+	/**
+	 * Retrieve user defined parameters
+	 * @param key
+	 * @return
+	 */
+	String getUserParameter(String key);
+
+	/**
 	 * Store key values pairs
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 */
@@ -157,7 +171,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	/**
 	 * Retrieve value for key
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -169,5 +183,9 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 	void setNotice(String notice);
 
 	String getNotice();
+
+	ILogicalOperator getInitialLogicalPlan();
+
+	void setInitialLogicalPlan(ILogicalOperator initialPlan);
 
 }

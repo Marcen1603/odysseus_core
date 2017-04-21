@@ -21,19 +21,28 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.server.keyvalue.logicaloperator.ToKeyValueAO;
 
 /**
  * This operator transforms a Tuple to a KeyValueObject
  *
- * @author Jan S�ren Schwarz
+ * @author Jan Soeren Schwarz
  *
  * @param <M>
  */
 
 public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tuple<M>, KeyValueObject<M>> {
 
+	private String template;
+
 	public TupleToKeyValuePO() {
 		super();
+		this.template = "";
+	}
+
+	public TupleToKeyValuePO(ToKeyValueAO ao) {
+		super();
+		this.template = ao.getTemplate();
 	}
 
 	public TupleToKeyValuePO(TupleToKeyValuePO<M> tupleToKeyValuePO) {
@@ -49,7 +58,12 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 	@Override
 	protected void process_next(Tuple<M> input, int port) {
 
-		KeyValueObject<M> output = convertToKeyValue(input, getOutputSchema());
+		/*
+		 * We need to use the input schema, not the output schema. As we as a
+		 * keyValue do not have any output schema (except meta schema), we would
+		 * not be able to use the input attributes.
+		 */
+		KeyValueObject<M> output = convertToKeyValue(input, getInputSchema(port));
 		if (output != null) {
 			output.setMetadata((M) input.getMetadata().clone());
 			transfer(output);
@@ -58,35 +72,16 @@ public class TupleToKeyValuePO<M extends IMetaAttribute> extends AbstractPipe<Tu
 
 	@SuppressWarnings("unchecked")
 	private KeyValueObject<M> convertToKeyValue(Tuple<M> input, SDFSchema sdfSchema) {
-		KeyValueObject<M> output = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) input, sdfSchema);
-//		if (getOutputSchema().getType() == KeyValueObject.class) {
-//			output = new KeyValueObject<M>();
-//		}
-//		for (int pos =0;pos<sdfSchema.size(); pos++) {
-//			SDFAttribute attr = sdfSchema.get(pos);
-//
-//			if (attr.getDatatype().isListValue()) {
-//				List<?> o = input.getAttribute(pos);
-//				for (int i=0;i<o.size();i++) {
-//					String name = attr.getQualName();
-//					// Could be a tuple or a base object
-//					if (attr.getDatatype().getSubType().isTuple()){
-//						KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)o.get(i), attr.getDatatype().getSchema());
-//						output.addAttributeValue(name, subObj);
-//					}else{
-//						output.addAttributeValue(name, o.get(i));
-//					}
-//
-//					// Lists from Lists?
-//				}
-//			}
-//			if (attr.getDatatype().isTuple()) {
-//				KeyValueObject<M> subObj = convertToKeyValue((Tuple<M>)input.getAttribute(pos), attr.getDatatype().getSchema());
-//				output.add(attr.getQualName(),subObj);
-//			} else {
-//				output.setAttribute(attr.getQualName(), input.getAttribute(pos));
-//			}
-//		}
+
+		KeyValueObject<M> output = null;
+
+		if (template == null || template.isEmpty()) {
+			output = (KeyValueObject<M>) KeyValueObject.fromTuple((Tuple<IMetaAttribute>) input, sdfSchema);
+		} else {
+			// We have a template to fill
+			output = (KeyValueObject<M>) KeyValueObject.fromTupleWithTemplate((Tuple<IMetaAttribute>) input, sdfSchema,
+					template);
+		}
 		return output;
 	}
 

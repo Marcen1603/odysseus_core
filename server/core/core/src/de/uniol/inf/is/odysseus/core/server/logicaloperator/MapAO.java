@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -33,7 +34,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 
 /**
  * @author Jonas Jacobi
@@ -49,9 +51,9 @@ public class MapAO extends UnaryLogicalOp {
 	private boolean evaluateOnPunctuation = false;
 	private boolean allowNullValue = true;
 	private boolean suppressErrors = false;
-	///private boolean printNull = false;
-	private boolean keepAllAttributes = false;
-	private List<String> removeAttributes;
+
+	private boolean keepInput = false;
+	private List<SDFAttribute> removeAttributes;
 
 	public MapAO() {
 		super();
@@ -64,7 +66,7 @@ public class MapAO extends UnaryLogicalOp {
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.allowNullValue = ao.allowNullValue;
 		this.suppressErrors = ao.suppressErrors;
-		this.keepAllAttributes = ao.keepAllAttributes;
+		this.keepInput = ao.keepInput;
 		this.removeAttributes = ao.removeAttributes;
 	}
 
@@ -73,8 +75,22 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	private void calcOutputSchema() {
+
+		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		if (keepInput){
+			if (removeAttributes == null || removeAttributes.size() == 0){
+				attrs.addAll(getInputSchema().getAttributes());
+			}else{
+				for (SDFAttribute keepAttribute: getInputSchema().getAttributes()){
+					if (!removeAttributes.contains(keepAttribute)){
+						attrs.add(keepAttribute);
+					}
+				}
+			}
+		}
+
+
 		if (namedExpressions != null) {
-			List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 			for (NamedExpression expr : namedExpressions) {
 
 				// TODO: Maybe here should an attribute resolver be used?
@@ -88,7 +104,7 @@ public class MapAO extends UnaryLogicalOp {
 				exprString = expr.expression.toString();
 				// Replace '(' and ')' so the expression will not be recognized
 				// as expression in the next operator (e.g. if it is a map)
-				exprString = exprString.replace('(', '_').replace(')', '_');
+				exprString = SDFAttribute.replaceSpecialChars(exprString);
 
 				// Variable could be source.name oder name, we are looking
 				// for
@@ -188,9 +204,17 @@ public class MapAO extends UnaryLogicalOp {
 				}
 
 			}
+
+
 			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory
 					.createNewWithAttributes(attrs, getInputSchema()),
 					getInputSchema().getURI(), false);
+			// check if all attributes are distinct
+			Set<String> amNames = s.checkNames();
+			if (amNames.size() > 0){
+				throw new TransformationException("Output schema of "+this.getName()+" contains multiple occurences of attributes "+amNames);
+			}
+
 			setOutputSchema(s);
 		}
 	}
@@ -211,22 +235,23 @@ public class MapAO extends UnaryLogicalOp {
 		return this.namedExpressions;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "keepAllAttributes", optional = true, doc = "Only for use with key value objects. If set to true, map will keep all attributes - even if not mentioned in kvexpressions.")
-	public void setKeepAllAttributes(boolean keepAllAttributes) {
-		this.keepAllAttributes = keepAllAttributes;
+
+	@Parameter(type=BooleanParameter.class, name="keepInput", optional = true, doc="If set to true, all attributes of the input are also part of the output, so there is no need to repeat all attributes.")
+	public void setKeepInput(boolean keepInput) {
+		this.keepInput = keepInput;
 	}
 
-	public boolean isKeepAllAttributes() {
-		return this.keepAllAttributes;
+	public boolean isKeepInput() {
+		return keepInput;
 	}
 
-	@Parameter(type = StringParameter.class, name = "removeAttributes", isList = true, optional = true, doc = "A list of attributes to remove. Only for use with key value objects.")
-	public void setRemoveAttributes(List<String> removeAttributes) {
+	@Parameter(type=ResolvedSDFAttributeParameter.class, name="removeAttributes", optional=true, isList = true, doc="If keepInput is set to true, you can here provides attributes that should not be part of the output.")
+	public void setRemoveAttributes(List<SDFAttribute> removeAttributes){
 		this.removeAttributes = removeAttributes;
 	}
 
-	public List<String> getRemoveAttributes() {
-		return this.removeAttributes;
+	public List<SDFAttribute> getRemoveAttributes() {
+		return removeAttributes;
 	}
 
 	/**
@@ -294,6 +319,17 @@ public class MapAO extends UnaryLogicalOp {
 	@Override
 	public MapAO clone() {
 		return new MapAO(this);
+	}
+
+	@Override
+	public boolean isValid() {
+		boolean valid = true;
+		if (removeAttributes != null &&	removeAttributes.size()>0 && !keepInput){
+			addError("When using removeAttributes, keepInput must be set to true!");
+			valid = false;
+		}
+
+		return valid && super.isValid();
 	}
 
 }

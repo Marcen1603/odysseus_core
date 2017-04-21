@@ -405,7 +405,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	@Override
 	public QueryState getQueryState(int queryID, ISession session) {
 		assureLogin(session);
-		return getWebserviceServer(session.getConnectionName()).getQueryState(queryID);
+		return getWebserviceServer(session.getConnectionName()).getQueryState(queryID, session.getToken());
 	}
 
 	@Override
@@ -417,8 +417,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	public List<QueryState> getQueryStates(List<Integer> queryIDs, List<ISession> sessions) {
 		List<QueryState> states = new ArrayList<QueryState>();
 
+		List<String> tokens = new ArrayList<>();
+		sessions.forEach((ISession s) -> tokens.add(s.getToken()));
+
 		for (ISession s : sessions) {
-			states.addAll(getWebserviceServer(s.getConnectionName()).getQueryStates(queryIDs));
+			states.addAll(getWebserviceServer(s.getConnectionName()).getQueryStates(queryIDs, tokens));
 		}
 
 		return states;
@@ -604,24 +607,6 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}catch (InvalidUserDataException_Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public Collection<Integer> addQuery(String query, String parserID, ISession user,
-			String queryBuildConfigurationName, Context context) throws PlanManagementException { //
-		assureLogin(user);
-		try {
-			Collection<Integer> response = getWebserviceServer(user.getConnectionName())
-					.addQuery(user.getToken(), parserID, query, queryBuildConfigurationName, context)
-					.getResponseValue();
-			fireUpdateEvent(IUpdateEventListener.QUERY);
-			// Query could create schema information ... fire events
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-			return response;
-		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
-			throw new PlanManagementException(e);
-		}
-
 	}
 
 	@Override

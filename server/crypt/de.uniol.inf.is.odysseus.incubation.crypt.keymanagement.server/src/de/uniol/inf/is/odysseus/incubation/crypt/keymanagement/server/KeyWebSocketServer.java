@@ -34,7 +34,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Constructor for the LaotseWebSocketServer.
-	 * 
+	 *
 	 * @param address
 	 *            the address to listen to.
 	 */
@@ -53,7 +53,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * Returns the KeymanagementSocketServer instance.
-	 * 
+	 *
 	 * @return the websocketserver instance.
 	 */
 	public static KeyWebSocketServer getInstance() {
@@ -106,7 +106,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * On EncryptedKeyMessage received
-	 * 
+	 *
 	 * @param conn
 	 *            The WebSocket, at which you received the message
 	 * @param message5
@@ -120,7 +120,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * On GetEncKeyMessage received
-	 * 
+	 *
 	 * @param conn
 	 *            The WebSocket, at which you received the message
 	 * @param message4
@@ -137,7 +137,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * On PublicKeyMessage received
-	 * 
+	 *
 	 * @param conn
 	 *            The WebSocket, at which you received the message
 	 * @param message3
@@ -153,7 +153,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * On GetPublicKeyMessage Received
-	 * 
+	 *
 	 * @param conn
 	 *            The WebSocket, at which you received the message
 	 * @param message2
@@ -179,7 +179,7 @@ public class KeyWebSocketServer extends WebSocketServer {
 
 	/**
 	 * On String Message received
-	 * 
+	 *
 	 * @param conn
 	 *            The WebSocket, at which you received the message
 	 * @param message

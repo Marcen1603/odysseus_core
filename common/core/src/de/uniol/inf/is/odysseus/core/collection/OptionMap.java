@@ -6,12 +6,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.base.Objects;
+
 import java.util.Set;
 
 /**
  * This class provides options that can be set once and has a marker for
  * elements that have been read
- * 
+ *
  * @author Marco Grawunder
  *
  */
@@ -28,7 +31,7 @@ public class OptionMap {
 		optionMap.clear();
 		keyRead.clear();
 	}
-	
+
 	public OptionMap(Map<String, Object> optionMap) {
 		putAll(optionMap);
 	}
@@ -38,13 +41,13 @@ public class OptionMap {
 			for (Entry<String, Object> e : options.entrySet()) {
 				overwriteOption(e.getKey().toLowerCase(), e.getValue());
 			}
-		}		
+		}
 	}
-	
+
 	public OptionMap(List<Option> optionMap) {
 		addAll(optionMap);
 	}
-	
+
 	public void addAll(List<Option> optionMap) {
 		if (optionMap != null) {
 			for (Option e : optionMap) {
@@ -52,7 +55,7 @@ public class OptionMap {
 			}
 		}
 	}
-	
+
 	public OptionMap(OptionMap optionMap) {
 		addAll(optionMap);
 	}
@@ -60,12 +63,12 @@ public class OptionMap {
 	public Map<String, Object> getOptions(){
 		return Collections.unmodifiableMap(optionMap);
 	}
-	
+
 	public void addAll(OptionMap optionMap) {
 		if (optionMap != null){
 			for (Entry<String, Object> e : optionMap.optionMap.entrySet()) {
 				overwriteOption(e.getKey().toLowerCase(), e.getValue());
-			}	
+			}
 		}
 	}
 
@@ -94,12 +97,12 @@ public class OptionMap {
 		return (K) optionMap.get(key.toLowerCase());
 	}
 
-	
+
 	public String get(String key) {
 		Object ret = getValue(key);
 		return ret != null?ret+"":null;
 	}
-	
+
 	public String getString(String key){
 		return get(key);
 	}
@@ -112,7 +115,7 @@ public class OptionMap {
 	public String getString(String key, String defaultValue){
 		return get(key, defaultValue);
 	}
-	
+
     public boolean getBoolean(String key, boolean defaultValue) {
 		String v = get(key);
 		return v != null ? Boolean.parseBoolean(v) : defaultValue;
@@ -147,7 +150,7 @@ public class OptionMap {
 		String v = get(key);
 		return v != null ? Double.parseDouble(v) : defaultValue;
 	}
-	
+
 	public List<String> getUnreadOptions() {
 		List<String> unread = new LinkedList<String>();
 		for (Entry<String, Boolean> e : keyRead.entrySet()) {
@@ -167,14 +170,14 @@ public class OptionMap {
 		}
 		return missing;
 	}
-	
+
 	public void checkRequiredException(String... keys){
 		List<String> missing = checkRequired(keys);
 		if (!missing.isEmpty()){
 			throw new IllegalArgumentException("The following required options are not set: "+missing);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return optionMap.toString();
@@ -187,11 +190,29 @@ public class OptionMap {
 		}
 		return ret;
 	}
-	
+
 	public Set<String> getKeySet() {
 		return this.optionMap.keySet();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof OptionMap)){
+			return false;
+		}
 
+		OptionMap other = (OptionMap) obj;
+
+		for (Entry<String, Object> e: optionMap.entrySet()){
+			 Object otherValue = other.get(e.getKey());
+			 if (otherValue == null){
+				 return false;
+			 }
+			 if (!Objects.equal(String.valueOf(e.getValue()), otherValue)){
+				 return false;
+			 }
+		}
+		return true;
+	}
 
 }

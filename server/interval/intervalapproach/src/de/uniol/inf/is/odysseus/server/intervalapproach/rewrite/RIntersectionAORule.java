@@ -55,9 +55,9 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
      */
     @Override
     public void execute(IntersectionAO operator, RewriteConfiguration config) throws RuleException {
-    	
+
     	throw new UnsupportedOperationException("Sorry. Intersection is currenlty not supported!");
-    	
+
 //        ILogicalOperator childLeft = operator.getSubscribedToSource(0).getTarget();
 //        ILogicalOperator childRight = operator.getSubscribedToSource(1).getTarget();
 //
@@ -99,6 +99,7 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
         return RewriteRuleFlowGroup.DELETE;
     }
 
+	@SuppressWarnings("unused")
     private UnionAO insertUnionAO(final ILogicalOperator parent) {
         final UnionAO unionAO = new UnionAO();
         for (final IOperatorOwner owner : parent.getOwner()) {
@@ -127,6 +128,7 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
         return unionAO;
     }
 
+	@SuppressWarnings("unused")
     private DifferenceAO insertDifferenceAO(final ILogicalOperator parent, ILogicalOperator child) {
         final DifferenceAO differenceAO = new DifferenceAO();
         for (final IOperatorOwner owner : parent.getOwner()) {

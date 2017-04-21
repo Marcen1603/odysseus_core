@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,28 +28,28 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 /**
  * Allgemeine Klasse fuer SlidingTimeWindow. Spezielle implementierungen fuer SlidingTimeWindow mit Delta = 1 und FixedWindow mit Delta = WindowSize
  * vorhanden, da diese performanter sind, als diese allgemeine Implementierung.
- * 
+ *
  * @author abolles
  *
  * @param <T>
  */
-public class SlidingAdvanceTimeWindowTIPO <T extends IStreamObject<? extends ITimeInterval>> extends AbstractNonBlockingWindowTIPO<T>{
+public class SlidingAdvanceTimeWindowTIPO <M extends ITimeInterval, T extends IStreamObject<M>> extends AbstractNonBlockingWindowTIPO<M, T>{
 
 	public SlidingAdvanceTimeWindowTIPO(AbstractWindowAO algebraOp) {
 		super(algebraOp);
 	}
-	
+
 	public SlidingAdvanceTimeWindowTIPO(TimeUnit baseTimeUnit,
 			TimeValueItem windowSize, TimeValueItem windowAdvance, SDFSchema inputSchema){
 		super(WindowType.TIME, baseTimeUnit, windowSize, windowAdvance,null, false, null, inputSchema);
 	}
-	
 
-		
+
+
 	@Override
-	protected PointInTime calcWindowEnd(ITimeInterval time) {		
+	protected PointInTime calcWindowEnd(PointInTime time) {
 		// Hint: This is an integer division!
-		return new PointInTime((time.getStart().getMainPoint() / windowAdvance)
+		return new PointInTime((time.getMainPoint() / windowAdvance)
 				* windowAdvance + windowSize);
 	}
 

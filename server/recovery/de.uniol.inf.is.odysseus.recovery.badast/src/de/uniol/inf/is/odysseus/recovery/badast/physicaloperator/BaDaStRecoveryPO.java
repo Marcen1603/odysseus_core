@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.recovery.badast.physicaloperator;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.recovery.badast.util.SubscriberControllerProvide
  * BaDaSt and elements after the element, that has been loaded as operator state
  * will be transferred. Additionally, the transfer mode will be switched again
  * from BaDaSt to the original source, if it is possible without data loss.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -80,7 +81,7 @@ public class BaDaStRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 
 	/**
 	 * Creates a new BaDaSt recovery operator.
-	 * 
+	 *
 	 * @param access
 	 *            The access to the source, which is recorded by BaDaSt.
 	 */
@@ -92,15 +93,24 @@ public class BaDaStRecoveryPO<StreamObject extends IStreamObject<IMetaAttribute>
 	}
 
 	/**
-	 * Initializes the consumption from BaDaSt. Should be called after open!
+	 * Initializes the consumption from BaDaSt. Should be called after open or after setStateIniternal!
 	 */
-	@Override
-	protected void process_open() throws OpenFailedException {
-		super.process_open();
-		// the following fields are not operator state
+	private void init() {
 		this.transferHandler.init();
 		this.subController.start();
 		// calls onNewMessage
+	}
+
+	@Override
+	protected void process_open() throws OpenFailedException {
+		super.process_open();
+		init();
+	}
+
+	@Override
+	public void setStateInternal(Serializable state) {
+		super.setStateInternal(state);
+		init();
 	}
 
 	/**

@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,6 +202,21 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 	}
 
 	@Override
+	protected void process_done(int port) {
+		if (port == 1) {
+			// There are no more join partners for every element in sweep area
+			// with port 0
+
+			StreamSupport.stream(this.areas[0].spliterator(), false)
+					.filter(elem -> !elem.hasTransientMarker(cMetaDataKey)).forEach(elem -> {
+						T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(elem);
+						this.transferFunction.transfer(out);
+					});
+		}
+		super.process_done(port);
+	}
+
+	@Override
 	public void processPunctuation(IPunctuation inPunctuation, int port) {
 		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
@@ -208,7 +224,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (port == 1) {
-					Iterator<T> extracted = this.areas[port^1].extractElementsBefore(punctuation.getTime());
+					Iterator<T> extracted = this.areas[port ^ 1].extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
 						if (!next.hasTransientMarker(cMetaDataKey)) {
@@ -217,7 +233,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						}
 					}
 				} else {
-					this.areas[port^1].purgeElementsBefore(punctuation.getTime());
+					this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
 				}
 			}
 		}

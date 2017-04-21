@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,8 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
 
 final public class Latency extends AbstractBaseMetaAttribute implements ILatency {
 
-	private static final String LATENCY = "Latency";
-	
+	public static final String LATENCY = "Latency";
+
 	public static final int LATENCY_ATTRIBUTE_INDEX = 3;
 
 	@SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 		this.minlstart = copy.minlstart;
 		this.maxlstart = copy.maxlstart;
 	}
-	
+
 	@Override
 	public void retrieveValues(List<Tuple<?>> values) {
 		@SuppressWarnings("rawtypes")
@@ -81,14 +81,14 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 		t.setAttribute(3, getLatency());
 		values.add(t);
 	}
-	
+
 	@Override
 	public void writeValue(Tuple<?> value) {
 		minlstart = value.getAttribute(0);
 		maxlstart= value.getAttribute(1);
 		lend = value.getAttribute(2);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
@@ -109,7 +109,7 @@ final public class Latency extends AbstractBaseMetaAttribute implements ILatency
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new LatencyMergeFunction();
 	}
-	
+
 	@Override
 	public long getLatency() {
 		return this.lend - this.minlstart;

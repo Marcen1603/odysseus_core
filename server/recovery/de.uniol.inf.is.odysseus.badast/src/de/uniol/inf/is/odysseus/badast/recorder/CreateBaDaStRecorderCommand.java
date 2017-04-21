@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryExcepti
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 /**
  * {@code IExecutorCommand} to create and start an {@code IBaDaStRecorder} for a
  * given source.
- * 
+ *
  * @author Michael Brand
  *
  */
@@ -42,6 +43,11 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	private final Resource sourcename;
 
 	/**
+	 * The full view name.
+	 */
+	private final Resource viewname;
+
+	/**
 	 * The keys for all needed recorder parameters.
 	 */
 	private final Collection<String> parameterKeys;
@@ -49,27 +55,30 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	/**
 	 * Creates a new {@code IExecutorCommand} to create and start an
 	 * {@code IBaDaStRecorder} for a given source.
-	 * 
+	 *
 	 * @param session
 	 *            The current session.
 	 * @param type
 	 *            The recorder type.
 	 * @param sourcename
 	 *            The full source name.
+	 * @param viewname
+	 *            The full view name.
 	 * @param parameterKeys
 	 *            The keys for all needed recorder parameters.
 	 */
-	public CreateBaDaStRecorderCommand(ISession session, String type, Resource sourcename,
+	public CreateBaDaStRecorderCommand(ISession session, String type, Resource sourcename, Resource viewname,
 			Collection<String> parameterKeys) {
 		super(session);
 		this.type = type;
 		this.sourcename = sourcename;
+		this.viewname = viewname;
 		this.parameterKeys = parameterKeys;
 	}
 
 	/**
 	 * Retrieves the access to the source from {@code IDataDictionary}.
-	 * 
+	 *
 	 * @param dd
 	 *            An {@code IDataDictionary}.
 	 * @return The {@code AbstractAccessAO} representing the stream or view.
@@ -78,33 +87,38 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	 *             {@code IDataDictionary} with the given name.
 	 */
 	private AbstractAccessAO getSourceAccess(IDataDictionary dd) throws DataDictionaryException {
-		ILogicalOperator sourceAccess = dd.getViewOrStream(this.sourcename.getResourceName(), getCaller());
-		if (sourceAccess == null) {
-			throw new DataDictionaryException("CreateBaDaStRecorderCommand: " + this.sourcename.getResourceName()
-					+ " is an unknown source name!");
+		ILogicalOperator view = dd.getViewOrStream(this.viewname.getResourceName(), getCaller());
+		if (view == null) {
+			throw new DataDictionaryException(
+					"CreateBaDaStRecorderCommand: " + this.viewname.getResourceName() + " is an unknown view name!");
 		}
-		// Note: this must not be the direct source, can be a rename or
-		// something else.
-		return getSourceAccessRecursive(sourceAccess);
+		return getSourceAccessRecursive(view, dd);
 	}
 
 	/**
 	 * Search recursively for an {@code AbstractAccessAO} with a given source
 	 * name (depth-first-search).
-	 * 
+	 *
 	 * @param topOperator
 	 *            The operator to check and to search from towards sources.
 	 * @return The found {@code AbstractAccessAO} or null.
 	 */
-	private AbstractAccessAO getSourceAccessRecursive(ILogicalOperator topOperator) {
-		if (AbstractAccessAO.class.isInstance(topOperator)
+	private AbstractAccessAO getSourceAccessRecursive(ILogicalOperator topOperator, IDataDictionary dd) {
+		if (topOperator instanceof AbstractAccessAO
 				&& ((AbstractAccessAO) topOperator).getAccessAOName().equals(this.sourcename)) {
 			// Break condition success
 			return (AbstractAccessAO) topOperator;
+		} else if (topOperator instanceof StreamAO) {
+			AbstractAccessAO sourceAccess = getSourceAccessRecursive(
+					dd.getStreamForTransformation(this.viewname, getCaller()), dd);
+			if (sourceAccess != null) {
+				// Break condition success
+				return sourceAccess;
+			}
 		}
 
 		for (LogicalSubscription subToSource : topOperator.getSubscribedToSource()) {
-			AbstractAccessAO sourceAccess = getSourceAccessRecursive(subToSource.getTarget());
+			AbstractAccessAO sourceAccess = getSourceAccessRecursive(subToSource.getTarget(), dd);
 			if (sourceAccess != null) {
 				// Break condition success
 				return sourceAccess;
@@ -118,7 +132,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	/**
 	 * Puts together the configuration for the {@code IBaDaStRecorder} to
 	 * create.
-	 * 
+	 *
 	 * @param sourceAccessParameters
 	 *            The parameter mapping of the source access (
 	 *            {@code ILogicalOperator}).
@@ -126,8 +140,9 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	 */
 	private Properties createRecorderConfig(OptionMap sourceAccessParameters) {
 		Properties config = new Properties();
-		config.put(AbstractBaDaStRecorder.TYPE_CONFIG, this.type);
-		config.put(AbstractBaDaStRecorder.SOURCENAME_CONFIG, this.sourcename.toString());
+		config.put(IBaDaStRecorder.TYPE_CONFIG, this.type);
+		config.put(IBaDaStRecorder.SOURCENAME_CONFIG, this.sourcename.toString());
+		config.put(IBaDaStRecorder.VIEWNAME_CONFIG, this.viewname.toString());
 		for (String key : this.parameterKeys) {
 			config.put(key, sourceAccessParameters.get(key));
 		}
@@ -136,12 +151,12 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
-		// Check, if DataDictionary contains source name
 		AbstractAccessAO sourceAccess = getSourceAccess(dd);
 		if (sourceAccess == null) {
 			throw new DataDictionaryException("CreateBaDaStRecorderCommand: " + this.sourcename.getResourceName()
 					+ " is an unknown source name!");
 		}
+
 		// Check, if source definition contains all needed options
 		// (parameters of ABaDaStRecorder)
 		OptionMap sourceAccessParameters = sourceAccess.getOptionsMap();
@@ -151,6 +166,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 						+ " misses the parameter " + recorderParameter + "!");
 			}
 		}
+
 		// Check, if there is already an recorder running for that source
 		String recorderName = BaDaStRecorderRegistry.getRecorder(this.sourcename.toString());
 		if (recorderName != null) {

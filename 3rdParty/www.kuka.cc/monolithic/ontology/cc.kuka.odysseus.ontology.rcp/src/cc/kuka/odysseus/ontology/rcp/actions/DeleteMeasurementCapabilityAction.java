@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import cc.kuka.odysseus.ontology.common.model.MeasurementCapability;
 
+@SuppressWarnings("unused")
 public class DeleteMeasurementCapabilityAction extends Action {
 	private Shell shell;
 	private MeasurementCapability measurementCapability;
@@ -23,6 +24,6 @@ public class DeleteMeasurementCapabilityAction extends Action {
      */
     @Override
     public void run() {
-    	
+
     }
 }

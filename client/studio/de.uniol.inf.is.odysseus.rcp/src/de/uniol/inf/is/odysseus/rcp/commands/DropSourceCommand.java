@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.rcp.util.SelectionProvider;
 
 /**
- * 
+ *
  * @author Dennis Geesen Created at: 03.11.2011
  */
 public class DropSourceCommand extends AbstractHandler implements IHandler {
@@ -69,34 +69,40 @@ public class DropSourceCommand extends AbstractHandler implements IHandler {
 
 		List<ViewInformation> selections = SelectionProvider.getSelection(event);
 		for (ViewInformation selection : selections) {
-			final String sourceName = selection.getName().getResourceName().toString();
-			final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
-			if (executor != null) {
-				Job job = new Job("Drop source") {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						try {
-							ISession user = OdysseusRCPPlugIn.getActiveSession();
-							executor.addQuery("DROP STREAM " + sourceName, "CQL", user, null);
-							StatusBarManager.getInstance().setMessage("Source dropped");
-						} catch (PlanManagementException e) {
-							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
-						} catch (PermissionException e) {
-							return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID, "Cannot remove source:\n See error log for details", e);
+			// TODO: magic string
+			if (!selection.getType().equalsIgnoreCase("access")) {
+				final String sourceName = selection.getName().getResourceName().toString();
+				final IExecutor executor = OdysseusRCPPlugIn.getExecutor();
+				if (executor != null) {
+					Job job = new Job("Drop source") {
+						@Override
+						protected IStatus run(IProgressMonitor monitor) {
+							try {
+								ISession user = OdysseusRCPPlugIn.getActiveSession();
+								executor.addQuery("DROP STREAM " + sourceName, "CQL", user, null);
+								StatusBarManager.getInstance().setMessage("Source dropped");
+							} catch (PlanManagementException e) {
+								return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID,
+										"Cannot remove source:\n See error log for details", e);
+							} catch (PermissionException e) {
+								return new Status(IStatus.ERROR, OdysseusRCPPlugIn.PLUGIN_ID,
+										"Cannot remove source:\n See error log for details", e);
+							}
+							return Status.OK_STATUS;
 						}
-						return Status.OK_STATUS;
-					}
-				};
-				job.setUser(true);
-				job.schedule();
-			} else {
-				logger.error(OdysseusNLS.NoExecutorFound);
-				MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR | SWT.OK);
-				box.setMessage(OdysseusNLS.NoExecutorFound);
-				box.setText("Error");
-				box.open();
+					};
+					job.setUser(true);
+					job.schedule();
+				} else {
+					logger.error(OdysseusNLS.NoExecutorFound);
+					MessageBox box = new MessageBox(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+							SWT.ICON_ERROR | SWT.OK);
+					box.setMessage(OdysseusNLS.NoExecutorFound);
+					box.setText("Error");
+					box.open();
 
-				return null;
+					return null;
+				}
 			}
 		}
 		return null;

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 
 public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart implements PaintListener {
 
@@ -61,12 +60,12 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 	private boolean showReferee = true;
 	private boolean showField = true;
 	private boolean showTime = true;
-	
+
 	private String xPosAttributeName = "x";
 	private String yPosAttributeName = "y";
 	private String timestampAttributeName = "ts";
 	private String sidAttributeName = "sid";
-	
+
 	private int xIndex;
 	private int yIndex;
 	private int tsIndex;
@@ -106,11 +105,6 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 	}
 
 	@Override
-	public void securityPunctuationElementRecieved(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
-		// do nothing
-	}
-
-	@Override
 	public void paintControl(PaintEvent e) {
 		if (!validAttributes) {
 			return;
@@ -122,7 +116,7 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 		if( showField ) {
 			renderBackground(gc);
 		}
-		
+
 		for (Entry<Integer, Tuple<?>> entry : currentTuples.entrySet()) {
 			Integer sid = entry.getKey();
 			Tuple<?> soccerTuple = entry.getValue();
@@ -173,7 +167,7 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 			gc.fillOval(getCoordX(x) - (PLAYER_SIZE_PIXELS / 2), getCoordY(y) - (PLAYER_SIZE_PIXELS / 2), PLAYER_SIZE_PIXELS, PLAYER_SIZE_PIXELS);
 		}
 	}
-	
+
 	public boolean isShowNumbers() {
 		return showNumbers;
 	}
@@ -181,7 +175,7 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 	public void setShowNumbers(boolean isShowNumbers) {
 		showNumbers = isShowNumbers;
 	}
-	
+
 	@Override
 	public Map<String, String> onSave() {
 		Map<String, String> config = Maps.newHashMap();
@@ -198,7 +192,7 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 		config.put("sidAttributeName", sidAttributeName);
 		return config;
 	}
-	
+
 	@Override
 	public void onLoad(Map<String, String> saved) {
 		showNumbers = Boolean.valueOf(getValue(saved, "showNumbers", "true"));
@@ -208,18 +202,18 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 		showReferee = Boolean.valueOf(getValue(saved, "showReferee", "true"));
 		showField = Boolean.valueOf(getValue(saved, "showField", "true"));
 		showTime = Boolean.valueOf(getValue(saved, "showTime", "true"));
-		
+
 		xPosAttributeName = (getValue(saved, "xPosAttributeName", "x"));
 		yPosAttributeName = (getValue(saved, "yPosAttributeName", "y"));
 		timestampAttributeName = (getValue(saved, "timestampAttributeName", "ts"));
 		sidAttributeName = (getValue(saved, "sidAttributeName", "sid"));
 	}
-	
+
 	private static String getValue( Map<String, String> map, String key, String defaultValue ) {
 		if( map.containsKey(key)) {
 			return map.get(key);
 		}
-		
+
 		return defaultValue;
 	}
 
@@ -306,5 +300,5 @@ public class SoccerOverviewDashboardPart extends AbstractSoccerDashboardPart imp
 		this.sidAttributeName = sidAttributeName;
 		sidIndex = getAttributeIndex(sidAttributeName);
 	}
-	
+
 }

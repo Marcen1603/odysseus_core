@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +55,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 		if (options.hasNumberFormatter()){
 			output.add(options.getNumberFormatter().format(data) );
 		}else{
-			output.add(((Number) data).toString());
+			output.add(data.toString());
 		}
 	}
 
@@ -74,7 +74,7 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 	public int memSize(Object attribute) {
 		return Integer.SIZE / 8;
 	}
-	
+
 	@Override
 	public Class<?> createsType() {
 		return Integer.class;

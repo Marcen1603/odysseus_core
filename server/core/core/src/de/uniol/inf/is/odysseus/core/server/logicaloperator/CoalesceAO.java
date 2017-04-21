@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -178,5 +179,10 @@ public class CoalesceAO extends AggregateAO implements IHasPredicates {
 		this.setPredicate(predicates.get(0));
 		this.setStartPredicate(predicates.get(1));
 		this.setEndPredicate(predicates.get(2));
+	}
+
+	@Override
+	public OperatorStateType getStateType() {
+		return IOperatorState.OperatorStateType.ARBITRARY_STATE;
 	}
 }

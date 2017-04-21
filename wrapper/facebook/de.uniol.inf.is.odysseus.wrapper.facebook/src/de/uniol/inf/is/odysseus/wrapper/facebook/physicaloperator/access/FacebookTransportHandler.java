@@ -22,15 +22,15 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	private String accessToken;
 	private String page;
 	private int limit = 50;
-	
+
 	private InputStream input;
-	
+
 	private String url;
-	
+
 	public FacebookTransportHandler() {
 		super();
 	}
-	
+
 	/**
 	 * @param protocolHandler
 	 */
@@ -38,7 +38,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		super(protocolHandler, options);
 		init(options);
 	}
-	
+
 
 	@Override
 	public ITransportHandler createInstance(
@@ -54,7 +54,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 		if (options.containsKey("page")) {
 			setPage(options.get("page"));
 		}
-		
+
 		if (options.containsKey("limit")) {
 			setLimit(Integer.parseInt(options.get("limit")));
 		}
@@ -73,8 +73,13 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	}
 
 	@Override
+	public void processInStart() {
+
+	}
+
+	@Override
 	public void processOutOpen() throws IOException {
-		
+
 	}
 
 	@Override
@@ -83,27 +88,27 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
         this.fireOnDisconnect();
 	}
 
-	
+
 	public String getAccessToken() {
 		return this.accessToken;
-	}	
+	}
 
 	public void setAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	
+
 	public String getPage() {
 		return this.page;
 	}
-	
+
 	public void setPage(String page){
 		this.page = page;
 	}
-	
+
 	public int getLimit() {
 		return this.limit;
 	}
-	
+
 	public void setLimit(int limit){
 		this.limit = limit;
 	}
@@ -117,12 +122,12 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
 	public OutputStream getOutputStream() {
 		return null;
 	}
-	
+
 	@Override
 	public void send(byte[] message) throws IOException {
 		// TODO Auto-generated method stub
 	}
-	
+
 	@Override
 	public void processOutClose() throws IOException {
 		// TODO Auto-generated method stub
@@ -141,7 +146,7 @@ public class FacebookTransportHandler extends AbstractPullTransportHandler {
     	} else if(!this.page.equals(other.page)) {
     		return false;
     	}
-    	
+
     	return true;
     }
 }

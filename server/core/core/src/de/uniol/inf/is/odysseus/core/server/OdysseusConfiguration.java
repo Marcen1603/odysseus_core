@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -117,7 +117,13 @@ public class OdysseusConfiguration {
 		props.setProperty("queriesBuildParamFilename", "queriesBuildParam.store");
 
 		props.setProperty("storedProceduresFilename", "procedures.store");
-		props.setProperty("storedProceduresFromUserFilename", "proceduresUser.store");
+		props.setProperty("storedProceduresFromUserFilename",
+				"proceduresUser.store");
+
+		props.setProperty("storesFilename", "stores.store");
+		props.setProperty("storesFromUserFilename",
+				"storesUser.store");
+
 		props.setProperty("datatypesFromDatatypesFilename", "datatypes.store");
 
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
@@ -284,9 +290,10 @@ public class OdysseusConfiguration {
 			home = home + File.separator;
 		}
 		if (tenantName != null && tenantName.length() > 0) {
-			return home + "store" + File.separator + tenantName + File.separator + get(key);
+			return home + "store"
+					+ File.separator + tenantName + File.separator + get(key);
 		}
-		return home + "store" + File.separator + "_default" + File.separator + get(key);
+		return home + "store" + File.separator +"_default"+ File.separator+ get(key);
 	}
 
 	public static String getFileProperty(String key) {

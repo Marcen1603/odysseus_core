@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * 
  */
 @XmlJavaTypeAdapter(AnyTypeAdapter.class)
-public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator, LogicalSubscription>, IClone, Serializable, ISerializable {
+public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogicalOperator, LogicalSubscription>, ISubscriber<ILogicalOperator, LogicalSubscription>, IClone, Serializable, ISerializable, IOperatorState {
 
 	/**
 	 * For debugging purposes and for visualization, each operator can have a

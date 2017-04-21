@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Preconditions;
@@ -77,7 +80,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param uri
 	 * @param schema
 	 * @param constraints
@@ -134,7 +137,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	// }
 
 	/**
-	 * 
+	 *
 	 * @param uri
 	 * @param type
 	 * @param constraints
@@ -155,7 +158,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param uri
 	 * @param type
 	 * @param attributes1
@@ -164,13 +167,13 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			Collection<SDFAttribute> attributes1) {
 		this(uri, type, null, attributes1, null, false);
 	}
-	
+
 	SDFSchema(String uri, Class<? extends IStreamObject> type,
 			Collection<SDFAttribute> attributes1, SDFSchema schema) {
 		this(uri, type, schema.constraints, attributes1, schema.metaschema, schema.outOfOrder);
 	}
 
-	
+
 	SDFSchema(String uri, SDFSchema schema, Collection<SDFAttribute> attributes1) {
 		this(uri, schema.type, schema.constraints, attributes1,
 				schema.metaschema, schema.outOfOrder);
@@ -186,7 +189,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				currentSchema.constraints, currentSchema.getAttributes(),
 				metaSchema, currentSchema.outOfOrder);
 	}
-	
+
 
 	SDFSchema(SDFSchema schema, boolean outOfOrder) {
 		this(schema.getURI(), schema.type, schema.constraints, schema
@@ -207,14 +210,14 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	void setContraints(Map<String, SDFConstraint> constraints) {
 		this.constraints = constraints;
 	}
-	
+
 	void setContraints(Collection<SDFConstraint> constraints) {
 		this.constraints = new HashMap<String, SDFConstraint>();
 		for (SDFConstraint c:constraints){
 			this.constraints.put(c.getURI(), c);
 		}
 	}
-	
+
 
 	public Collection<SDFConstraint> getConstraints() {
 		if (constraints != null) {
@@ -348,7 +351,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		return index;
 	}
 
-	
+
 	/**
 	 * @param requiredAttributes
 	 * @param requiredAttributes2
@@ -416,7 +419,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * attributes1 - attributes2
-	 * 
+	 *
 	 * @param attributes1
 	 * @param attributes2
 	 * @return
@@ -439,7 +442,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	/**
 	 * Berechnet den Durchschnitt der beiden Mengen, also die Menge der
 	 * Elemente, welche in beiden Sets vorkommen
-	 * 
+	 *
 	 * @param attributes1
 	 *            Set1
 	 * @param attributes2
@@ -464,7 +467,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * Testet ob alle Attribute aus attribs1 ins attribs2 enthalten sind
-	 * 
+	 *
 	 * @param attribs1
 	 * @param attribs2
 	 * @return
@@ -505,7 +508,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -521,7 +524,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * Removes the first occurrence of the attribute
-	 * 
+	 *
 	 * @param attribute
 	 *            The attribute to remove
 	 */
@@ -556,7 +559,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	/**
 	 * Returns the positions of all attributes in the schema with the given
 	 * datatype.
-	 * 
+	 *
 	 * @param datatype
 	 *            The {@link SDFDatatype datatype}
 	 * @return An array of all attribute indexes in the schema that are discrete
@@ -575,7 +578,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * Returns all attributes of the schema with the given datatype.
-	 * 
+	 *
 	 * @param datatype
 	 *            The {@link SDFDatatype datatype}
 	 * @return A list of all attributes that are of the given datatype.
@@ -595,7 +598,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	/**
 	 * Returns the indexes in the schema of the given list of attributes.
-	 * 
+	 *
 	 * @param attributes
 	 *            The {@link Collection attributes}
 	 * @return An array with the indexes of the attributes in the schema
@@ -620,7 +623,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 	/**
 	 * Search for a datatype START_TIMESTAMP or STARTTIME_STAMP_STRING and read
 	 * BASE_TIME_UNIT if available
-	 * 
+	 *
 	 * @return The TimeUnit if available or null else
 	 */
 	public TimeUnit determineTimeUnit() {
@@ -662,15 +665,40 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 				throw new IllegalArgumentException("no such attribute: "
 						+ outAttribute);
 			}
-			
+
 			int indexOf = in.indexOf(foundAttribute);
 			if (indexOf == -1){
 				throw new IllegalArgumentException("attribute: "
-						+ outAttribute+ " cannot be used here!");				
+						+ outAttribute+ " cannot be used here!");
 			}
 			ret[i++] = indexOf;
 		}
 		return ret;
+	}
+
+	/**
+	 * Calc for a given input schema and a list of attribute that should be remove from the input schema
+	 * a restrict list, if removeAttributes contains attributes
+	 *
+	 * @param schema
+	 * @param removeAttributes
+	 * @return the restrict list if removeAttributes contains values, null else
+	 */
+	public static int[] calcRestrictList(SDFSchema schema, List<SDFAttribute> removeAttributes) {
+		int[] restrictList = null;
+		if (removeAttributes != null && removeAttributes.size() > 0 ){
+
+			List<SDFAttribute> preInputAttributes = new ArrayList<>();
+			for (SDFAttribute a:schema.getAttributes()){
+				if (!removeAttributes.contains(a)){
+					preInputAttributes.add(a);
+				}
+			}
+
+			SDFSchema preInputSchema = SDFSchemaFactory.createNewWithAttributes(preInputAttributes, schema);
+			restrictList = SDFSchema.calcRestrictList(schema,preInputSchema);
+		}
+		return restrictList;
 	}
 
 	public static SDFSchema changeType(SDFSchema toAdapt,
@@ -700,16 +728,16 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 		}
 		return list;
 	}
-	
+
 	public void setMetaSchema(List<SDFMetaSchema> metaSchema) {
 		this.metaschema = metaSchema;
 	}
 
 	public Pair<Integer, Integer> indexOfMetaAttribute(SDFAttribute curAttribute) {
-		if( metaschema == null ) { 
+		if( metaschema == null ) {
 			return null;
 		}
-		
+
 		for (int i = 0; i < metaschema.size(); i++) {
 			int index = metaschema.get(i).indexOf(curAttribute);
 			if (index >= 0) {
@@ -717,6 +745,38 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 			}
 		}
 		return null;
+	}
+
+	public Pair<Integer, Integer> indexOfMetaAttribute(String curAttribute) {
+		if( metaschema == null ) {
+			return null;
+		}
+
+		for (int i = 0; i < metaschema.size(); i++) {
+			int index = metaschema.get(i).findAttributeIndex(curAttribute);
+			if (index >= 0) {
+				return new Pair<Integer, Integer>(i, index);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if all names are distinct. Else the set of not distinct names are send
+	 * @return
+	 */
+	public Set<String> checkNames() {
+		Set<String> amNames = new TreeSet<>();
+		Set<String> names = new HashSet<>();
+		for (SDFAttribute attr:getAttributes()){
+			if (names.contains(attr.getURI())){
+				amNames.add(attr.getURI());
+			}else{
+				names.add(attr.getURI());
+			}
+		}
+
+		return amNames;
 	}
 
 }

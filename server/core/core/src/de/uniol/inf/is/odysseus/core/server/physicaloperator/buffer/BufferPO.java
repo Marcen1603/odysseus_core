@@ -55,7 +55,7 @@ public class BufferPO<T extends IStreamObject<?>> extends AbstractIterablePipe<T
 	private String buffername;
 	private int puncWritten;
 	private int elementWritten;
-	private int elementsRead;
+	protected int elementsRead;
 	private int puncRead;
 
 	public BufferPO() {

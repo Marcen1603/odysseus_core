@@ -22,6 +22,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -31,7 +32,7 @@ import de.uniol.inf.is.odysseus.transform.engine.TransformationExecutor;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
+public class TSenderAOViewRule extends AbstractTransformationRule<AbstractSenderAO> {
 
 	@Override
 	public int getPriority() {
@@ -39,7 +40,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public void execute(SenderAO senderAO, TransformationConfiguration transformConfig) throws RuleException {
+	public void execute(AbstractSenderAO senderAO, TransformationConfiguration transformConfig) throws RuleException {
 		Resource sinkName = senderAO.getSinkname();
 		ILogicalOperator view = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
 		ILogicalOperator cPlan = view;
@@ -78,7 +79,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public boolean isExecutable(SenderAO senderAO, TransformationConfiguration transformConfig) {
+	public boolean isExecutable(AbstractSenderAO senderAO, TransformationConfiguration transformConfig) {
 		if (getDataDictionary().getSinkplan(senderAO.getSinkname()) == null) {
 			ILogicalOperator stream = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
 			// is there a suitable stream to transform and is this a view
@@ -100,8 +101,8 @@ public class TSenderAOViewRule extends AbstractTransformationRule<SenderAO> {
 	}
 
 	@Override
-	public Class<? super SenderAO> getConditionClass() {
-		return SenderAO.class;
+	public Class<? super AbstractSenderAO> getConditionClass() {
+		return AbstractSenderAO.class;
 	}
 
 }

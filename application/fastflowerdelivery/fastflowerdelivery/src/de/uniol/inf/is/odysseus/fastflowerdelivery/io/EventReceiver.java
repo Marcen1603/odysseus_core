@@ -146,4 +146,10 @@ public class EventReceiver extends Thread implements ITransferHandler {
 
 	}
 
+	@Override
+	public boolean isDone() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

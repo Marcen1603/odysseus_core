@@ -95,38 +95,6 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 	public void process_open() throws OpenFailedException {
 	}
 
-	// /* (non-Javadoc)
-	// * @see java.lang.Object#hashCode()
-	// */
-	// @Override
-	// public int hashCode() {
-	// final int prime = 31;
-	// int result = 1;
-	// result = prime * result
-	// + ((predicate == null) ? 0 : predicate.hashCode());
-	// return result;
-	// }
-	//
-	// /* (non-Javadoc)
-	// * @see java.lang.Object#equals(java.lang.Object)
-	// */
-	// @Override
-	// public boolean equals(Object obj) {
-	// if (this == obj)
-	// return true;
-	// if (obj == null)
-	// return false;
-	// if (getClass() != obj.getClass())
-	// return false;
-	// SelectPO<?> other = (SelectPO<?>) obj;
-	// if (predicate == null) {
-	// if (other.predicate != null)
-	// return false;
-	// } else if (!predicate.equals(other.predicate))
-	// return false;
-	// return true;
-	// }
-
 	@Override
 	public String toString() {
 		return super.toString() + " predicate: " + this.getPredicate().toString();

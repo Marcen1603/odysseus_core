@@ -112,7 +112,7 @@ final public class Datarate extends AbstractBaseMetaAttribute implements IDatara
 
 	@Override
 	public void setDatarates(Map<String, Double> datarates) {
-		datarates.putAll(datarates);
+		this.datarates.putAll(datarates);
 	}
 
 	@Override

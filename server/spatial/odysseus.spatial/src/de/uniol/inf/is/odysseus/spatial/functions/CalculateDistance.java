@@ -21,10 +21,8 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 
 public class CalculateDistance extends AbstractFunction<Double> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5262980729413311930L;
+	
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },
 			{ SDFDatatype.DOUBLE, SDFDatatype.FLOAT, SDFDatatype.INTEGER },

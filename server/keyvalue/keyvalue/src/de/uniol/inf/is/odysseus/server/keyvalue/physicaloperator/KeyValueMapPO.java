@@ -17,27 +17,28 @@ package de.uniol.inf.is.odysseus.server.keyvalue.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 /**
- * Implementation of map operator for key value objects.
- * Adapted from relational map.
+ * Implementation of map operator for key value objects. Adapted from relational
+ * map.
  *
  * @author Jan Soeren Schwarz
  * @author Marco Grawunder
@@ -52,81 +53,83 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 	private List<NamedExpression> expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
-	final private boolean keepAllAttributes;
-	final private List<String> removeAttributes;
 
 	public KeyValueMapPO(MapAO mapAO) {
 		this.inputSchema = mapAO.getInputSchema();
 		initExpressions(mapAO.getExpressions());
 		this.allowNull = false;
-		this.keepAllAttributes = mapAO.isKeepAllAttributes();
-		this.removeAttributes = mapAO.getRemoveAttributes();
+		if (mapAO.isKeepInput()) {
+			throw new RuntimeException("KeepInput is not possible for KeyValueMap. Use $ as expression instead");
+		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	final protected void process_next(T object, int port) {
+		if (object != null) {
 
-		T outputVal;
-		if(this.keepAllAttributes) {
-			outputVal = (T) KeyValueObject.createInstance((KeyValueObject)object);
-		} else {
-			outputVal = (T) KeyValueObject.createInstance();
-			// WTF???
-			//			if (object.getGetValueMap() != null) {
-//				for (Entry<String, Object> entry : object.getGetValueMap().entrySet()) {
-//					outputVal.setKeyValue(entry.getKey(), entry.getValue());
-//				}
-//			}
-		}
+			T outputVal = (T) KeyValueObject.createInstance();
 
-		outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
+			outputVal.setMetadata(object.getMetadata() == null ? null : (K) object.getMetadata().clone());
+			boolean nullValueOccured = false;
 
-
-		boolean nullValueOccured = false;
-		synchronized (this.expressions) {
-			for (int i = 0; i < this.expressions.size(); ++i) {
-				Object[] values = new Object[this.variables[i].length];
-				for (int j = 0; j < this.variables[i].length; ++j) {
-					if (object != null) {
-						values[j] = object.getAttribute(this.variables[i][j]);
+			synchronized (this.expressions) {
+				for (int i = 0; i < this.expressions.size(); ++i) {
+					Object[] values = new Object[this.variables[i].length];
+					for (int j = 0; j < this.variables[i].length; ++j) {
+						if (this.variables[i][j].equals("$")) {
+							values[j] = object.clone();
+							((T)values[j]).setMetadata(null);
+						} else {
+							values[j] = object.getAttribute(this.variables[i][j]);
+							// Could be metadata value
+							if (values[j] == null) {
+								Pair<Integer, Integer> pos = getInputSchema()
+										.indexOfMetaAttribute(this.variables[i][j]);
+								if (pos != null) {
+									values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
+								}
+							}
+							// Could be path
+							if (values[j] == null) {
+								List<Object> pathResult = object.path(this.variables[i][j]);
+								if (pathResult.size() == 1) {
+									values[j] = pathResult.get(0);
+								} else {
+									values[j] = pathResult;
+								}
+							}
+						}
 					}
-				}
-				SDFExpression expr = this.expressions.get(i).expression;
-				String name = this.expressions.get(i).name;
-				try {
+					SDFExpression expr = this.expressions.get(i).expression;
+					String name = this.expressions.get(i).name;
+					try {
 
-					expr.bindVariables(values);
-					Object val = expr.getValue();
+						expr.bindVariables(values);
+						Object val = expr.getValue();
 
-					outputVal.setAttribute(name, val);
+						outputVal.setAttribute(name, val);
 
-					if (val == null) {
+						if (val == null) {
+							nullValueOccured = true;
+						}
+					} catch (Exception e) {
 						nullValueOccured = true;
-					}
-				} catch (Exception e) {
-					nullValueOccured = true;
-					if (!(e instanceof NullPointerException)) {
-						logger.warn("Cannot calc result for " + object
-								+ " with expression " + expr, e);
-						// Not needed. Value is null, if not set!
-						// outputVal.setAttribute(i, null);
-						sendWarning("Cannot calc result for " + object
-								+ " with expression " + expr, e);
+						if (!(e instanceof NullPointerException)) {
+							logger.warn("Cannot calc result for " + object + " with expression " + expr, e);
+							// Not needed. Value is null, if not set!
+							// outputVal.setAttribute(i, null);
+							sendWarning("Cannot calc result for " + object + " with expression " + expr, e);
+						}
 					}
 				}
+
+			} // synchronized
+			if (!nullValueOccured || (nullValueOccured && allowNull)) {
+				transfer(outputVal);
 			}
 		}
-		if(this.keepAllAttributes) {
-			if(this.removeAttributes != null && this.removeAttributes.size() > 0) {
-				for(String att: this.removeAttributes) {
-					outputVal.removeAttribute(att);
-				}
-			}
-		}
-		if (!nullValueOccured || (nullValueOccured && allowNull)) {
-			transfer(outputVal);
-		}
+
 	}
 
 	protected void initExpressions(List<NamedExpression> exprToInit) {
@@ -134,25 +137,45 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 		this.expressions = new ArrayList<>(exprToInit.size());
 		int i = 0;
 		for (NamedExpression expression : exprToInit) {
-			List<SDFAttribute> neededAttributes = expression.expression.getAllAttributes();
+			List<SDFAttribute> exprAttributes = expression.expression.getAllAttributes();
+			// Check, if there are some attributes from the meta schema and set datatype
+			List<SDFAttribute> neededAttributes = new ArrayList<>();
+			boolean changedSchema = false;
+			for (SDFAttribute a: exprAttributes){
+				Pair<Integer, Integer> pos = getInputSchema()
+						.indexOfMetaAttribute(a.getURI());
+				if (pos != null){
+					neededAttributes.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
+					changedSchema = true;
+				}else{
+					neededAttributes.add(a);
+				}
+
+			}
+			if (changedSchema){
+				SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(inputSchema, neededAttributes);
+				List<SDFSchema> schemaList = new ArrayList<>();
+				schemaList.add(newSchema);
+				expression.expression.setSchema(schemaList);
+			}
 			String[] newArray = new String[neededAttributes.size()];
 			this.variables[i++] = newArray;
 			int j = 0;
 			for (SDFAttribute curAttribute : neededAttributes) {
 				newArray[j++] = removePoint(curAttribute.toString());
 			}
-			if (Strings.isNullOrEmpty(expression.name)){
+			if (Strings.isNullOrEmpty(expression.name)) {
 				String newName = expression.expression.getExpressionString();
 				newName = newName.replaceAll("(", "_").replaceAll(")", "_");
 				this.expressions.add(new NamedExpression(newName, expression));
-			}else{
+			} else {
 				this.expressions.add(expression);
 			}
 		}
 	}
 
 	private String removePoint(String name) {
-		if(name.substring(0, 1).equals(".")) {
+		if (name.substring(0, 1).equals(".")) {
 			return name.substring(1);
 		}
 		return name;
@@ -165,6 +188,7 @@ public class KeyValueMapPO<K extends IMetaAttribute, T extends KeyValueObject<K>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+
 	}
 
 	@Override

@@ -22,19 +22,19 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalStateExpress
 public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		RelationalMapPO<T> implements IStatefulPO {
 	Logger LOG = LoggerFactory.getLogger(RelationalStateMapPO.class);
-	
+
 	final private GroupedHistoryStore<Tuple<T>> history;
-	
+
 	public RelationalStateMapPO(SDFSchema inputSchema,
 			SDFExpression[] expressions, boolean allowNullInOutput,
 			IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor,
-			boolean evaluateOnPunctuation, boolean suppressErrors) {
+			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		// MUST USE THIS WAY, else maxHistoryElements is always 0 :-)
-		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, suppressErrors);
+		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, suppressErrors, keepInput, restrictList);
 		history = new GroupedHistoryStore<Tuple<T>>(groupProcessor);
 		init(inputSchema, expressions);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void init(SDFSchema schema, SDFExpression[] expr) {
@@ -42,7 +42,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		for (int i = 0; i < expr.length; ++i) {
 			this.expressions[i] = new RelationalStateExpression<T>(expr[i].clone());
 			this.expressions[i].initVars(schema);
-		}	
+		}
 		history.determineMaxHistoryElements((IProvidesMaxHistoryElements[])expressions);
 	}
 
@@ -57,16 +57,16 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		if (!this.history.equals(rmpo.history)){
 			return false;
 		}
-		
+
 		return super.isSemanticallyEqual(ipo);
 	}
-	
+
 	@Override
 	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		history.init();
 	}
-	
+
 	@Override
 	public List<Tuple<T>> preProcess(Tuple<T> object) {
 		return history.process(object);

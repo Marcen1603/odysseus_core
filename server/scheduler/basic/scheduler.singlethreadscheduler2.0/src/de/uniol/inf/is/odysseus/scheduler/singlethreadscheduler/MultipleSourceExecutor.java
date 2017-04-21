@@ -78,6 +78,7 @@ public class MultipleSourceExecutor extends Thread implements ISourceExecutor {
 
 	}
 
+	@SuppressWarnings("unused")
 	private void delay(int i) {
 		try {
 			Thread.sleep(i);

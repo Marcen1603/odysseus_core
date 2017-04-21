@@ -57,7 +57,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 /**
  * @author Marco Grawunder
  */
-public abstract class AbstractLogicalOperator implements Serializable, ILogicalOperator {
+public abstract class AbstractLogicalOperator implements Serializable, ILogicalOperator{
 
 	private static final long serialVersionUID = -4425148851059140851L;
 
@@ -858,5 +858,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public boolean isSourceOperator() {
 		return true;
+	}
+	
+	@Override
+	public OperatorStateType getStateType() {
+		return OperatorStateType.UNKNOWN;
 	}
 }

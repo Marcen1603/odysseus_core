@@ -61,7 +61,14 @@ public class SortTIPO<T extends IStreamObject<? extends ITimeInterval>> extends 
     @Override
     protected void process_next(T object, int port) {
         Iterator<T> iter = this.area.extractElementsBefore(object.getMetadata().getStart());
-        List<T> elements = new ArrayList<>();
+        sendElements(iter);
+
+        this.area.insert(object);
+
+    }
+
+	private void sendElements(Iterator<T> iter) {
+		List<T> elements = new ArrayList<>();
         while (iter.hasNext()) {
             T next = iter.next();
             int index = Collections.binarySearch(elements, next, this.comparator);
@@ -70,16 +77,20 @@ public class SortTIPO<T extends IStreamObject<? extends ITimeInterval>> extends 
         for (T element : elements) {
             transfer(element);
         }
+	}
 
-        this.area.insert(object);
-
-    }
+	@Override
+	protected void process_done(int port) {
+    	sendElements(this.area.extractAllElements());
+    	super.process_done(port);
+	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
+
+		//	sendPunctuation(punctuation);
 	}
-    
+
     /**
      * @param area
      *            the area to set

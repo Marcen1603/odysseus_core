@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
@@ -56,7 +55,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		this.connection = createConnection(observingOperator);
 		initConnection(connection);
 	}
-	
+
 	protected abstract void initConnection(IStreamConnection<IStreamObject<?>> connection);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -76,9 +75,9 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	}
 
 	protected abstract void reloadChart();
-	
+
     public abstract void saveImage(File path) throws IOException;
-    
+
 	protected boolean validate() {
 		for (Entry<Integer, ViewSchema<T>> e : viewSchema.entrySet()) {
 			if (e.getValue().getChoosenAttributes().size() > 0) {
@@ -137,7 +136,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
         }
 		return this.viewSchema.get(port).getChoosenAttributes();
 	}
-	
+
 	@Override
 	public List<IViewableAttribute> getGroupByAttributes(int port) {
         if (!this.viewSchema.containsKey(port)) {
@@ -151,7 +150,7 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 		this.viewSchema.get(port).setChoosenAttributes(choosenAttributes);
 		reloadChartImpl();
 	}
-	
+
 	@Override
 	public void setGroupByAttributes(int port,
 			List<IViewableAttribute> groupByAttributes) {
@@ -166,10 +165,6 @@ public abstract class AbstractChart<T, M extends IMetaAttribute> extends ViewPar
 	@Override
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation punctuation, int port) {
 
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp, int port) {
 	}
 
 	@Override

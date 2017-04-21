@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,6 +57,9 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	private List<ISession> sessions;
 
 	protected static final Map<String, Object> keyValueStore = new HashMap<String, Object>();
+	// Replaced with general Key Value Store concept
+	//	protected static final Map<String, Map<String, Object>> namedkeyValueStore = new HashMap<String, Map<String,Object>>();
+
 
 	public AbstractFunction(String symbol, int arity, SDFDatatype[][] acceptedTypes, SDFDatatype returnType) {
 		this(symbol, arity, acceptedTypes, returnType, true);
@@ -151,7 +154,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -166,7 +169,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	/**
-	 * 
+	 *
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -316,7 +319,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	 * Use this method to overwrite the string representation of the
 	 * operator/function WARNING: Do only overwrite if needed and if you know
 	 * what you are doing ;-)
-	 * 
+	 *
 	 * @return internal Representation
 	 */
 	protected String _internalToString() {

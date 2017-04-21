@@ -34,7 +34,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
@@ -49,6 +51,7 @@ import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 /**
  * 
  * @author Dennis Geesen Created at: 28.10.2011
+ * @author Tobias Brandt (metadata)
  */
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "DATABASESOURCE", doc = "This operator can read data from a relational database.", category = {
 		LogicalOperatorCategory.SOURCE, LogicalOperatorCategory.DATABASE })
@@ -88,7 +91,7 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		this.givenSchema = outputSchema;
 		this.fetchAttributes = false;
-		setOutputSchema( SDFSchemaFactory.createNewTupleSchema("", outputSchema));
+		setOutputSchema(SDFSchemaFactory.createNewTupleSchema("", outputSchema));
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "escape_names", optional = true)
@@ -135,7 +138,8 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	public boolean isValid() {
 		boolean valid = super.isValid();
 		if (this.givenSchema == null && this.fetchAttributes == false) {
-			addError("You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database");
+			addError(
+					"You have to either use ATTRIBUTES to define a schema or to use FETCH_ATTRIBUTES to invoke fetching the schema from the database");
 			valid = false;
 		}
 		return valid;
@@ -144,26 +148,43 @@ public class DatabaseSourceAO extends AbstractDatabaseOperator {
 	@Override
 	public void initialize() {
 		super.initialize();
+
+		// The schema we aim to fill
+		SDFSchema schema = null;
+
+		// The main part of the schema
 		if (this.fetchAttributes) {
+			// We want to get the schema from the database
 			try {
 				IDatabaseConnection conn = getConnection();
 				if (conn != null) {
-					SDFSchema schema = getConnection().getSchema(tablename);
-					if (schema != null) {
-						this.setOutputSchema(schema);
-					} else {
-						throw new SQLException(
-								"Error reading schema. Does table " + tablename
-										+ " exist?");
+					schema = getConnection().getSchema(tablename);
+
+					if (schema == null) {
+						throw new SQLException("Error reading schema. Does table " + tablename + " exist?");
 					}
 				} else {
-					throw new SQLException("No connection to "
-							+ getConnectionName() + "!");
+					throw new SQLException("No connection to " + getConnectionName() + "!");
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		} else {
+			// The user entered a schema
+			schema = SDFSchemaFactory.createNewTupleSchema("", this.givenSchema);
 		}
+
+		// The meta-attributes of the schema
+
+		// Use the metadata schema from the query
+		IMetaAttribute metaAttribute = getMetaAttribute();
+		if (metaAttribute != null) {
+			List<SDFMetaSchema> metaSchema = metaAttribute.getSchema();
+			schema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+		}
+
+		// Finally, set the output schema
+		this.setOutputSchema(schema);
 	}
 
 	@Override

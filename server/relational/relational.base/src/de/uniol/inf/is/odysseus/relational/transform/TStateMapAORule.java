@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StateMapAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IGroupProcessor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -43,28 +44,26 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 	}
 
 	@Override
-	public void execute(StateMapAO mapAO,
-			TransformationConfiguration transformConfig) throws RuleException {
+	public void execute(StateMapAO mapAO, TransformationConfiguration transformConfig) throws RuleException {
 		List<SDFAttribute> gAttr = mapAO.getGroupingAttributes();
 		@SuppressWarnings("rawtypes")
 		IGroupProcessor gp = null;
 		if (gAttr != null) {
-			gp = new RelationalGroupProcessor<>(mapAO.getInputSchema(),
-					mapAO.getOutputSchema(), gAttr, null, false);
+			gp = new RelationalGroupProcessor<>(mapAO.getInputSchema(), mapAO.getOutputSchema(), gAttr, null, false);
 		} else {
 			gp = RelationalNoGroupProcessor.getInstance();
 		}
+		int[] restrictList = SDFSchema.calcRestrictList(mapAO.getInputSchema(), mapAO.getRemoveAttributes());
+
 		@SuppressWarnings("unchecked")
-		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(
-				mapAO.getInputSchema(), mapAO.getExpressionList().toArray(
-						new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp,
-				mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors());
+		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(mapAO.getInputSchema(),
+				mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp,
+				mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(), restrictList);
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(StateMapAO operator,
-			TransformationConfiguration transformConfig) {
+	public boolean isExecutable(StateMapAO operator, TransformationConfiguration transformConfig) {
 		if (operator.getInputSchema().getType() == Tuple.class) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;

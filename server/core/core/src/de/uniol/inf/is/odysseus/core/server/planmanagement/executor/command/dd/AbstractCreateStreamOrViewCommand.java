@@ -1,8 +1,14 @@
 package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
+import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
+import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutorCommand {
@@ -22,6 +28,27 @@ public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutor
 		if (name.contains("-")) {
 			throw new TransformationException("'-' is not allowed in view/stream names");
 		}
+	}
+
+	protected void checkAccessAONames(IDataDictionaryWritable dd) {
+
+		FindSourcesLogicalVisitor<ILogicalOperator> visitor = new FindSourcesLogicalVisitor<ILogicalOperator>();
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
+		walker.prefixWalk(rootAO, visitor);
+
+		List<ILogicalOperator> accessAO = visitor.getResult();
+
+		for (ILogicalOperator op : accessAO) {
+			if (op instanceof IAccessAO) {
+				IAccessAO operator = (IAccessAO) op;
+				IAccessAO other = dd.getAccessAO(operator.getAccessAOName(), getCaller());
+				if (other != null && !other.isSemanticallyEqual(operator)) {
+					throw new TransformationException(
+							"Duplicate AccessOperator with name " + operator.getAccessAOName() + "!");
+				}
+			}
+		}
+
 	}
 
 	@Override

@@ -45,7 +45,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.SchemaUtils;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -53,9 +52,9 @@ import de.uniol.inf.is.odysseus.probabilistic.common.datatype.ProbabilisticDoubl
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
  */
 public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
     /** Logger. */
@@ -97,7 +96,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#createPartControl
      * (org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.ToolBar)
@@ -119,7 +118,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
      * #streamElementRecieved(java.lang.Object, int)
@@ -160,7 +159,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Checks whether the data set includes the given key.
-     * 
+     *
      * @param key
      *            The comparable key
      * @return <code>true</code> if the data set includes the key
@@ -171,7 +170,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
      * #punctuationElementRecieved
@@ -184,21 +183,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
-     * #securityPunctuationElementRecieved
-     * (de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation,
-     * int)
-     */
-    @Override
-    public void securityPunctuationElementRecieved(final IPhysicalOperator senderOperator, final ISecurityPunctuation sp, final int port) {
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(
      * java.util.List)
@@ -228,7 +213,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the samples property.
-     * 
+     *
      * @return The samples value
      */
     public final int getSamples() {
@@ -237,7 +222,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the samples property.
-     * 
+     *
      * @param samples
      *            The number of samples
      */
@@ -247,7 +232,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the xMax property.
-     * 
+     *
      * @return The xMax value
      */
     public final double getXMax() {
@@ -256,7 +241,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the xMax property.
-     * 
+     *
      * @param x
      *            The xMax value
      */
@@ -269,7 +254,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the yMax property.
-     * 
+     *
      * @return The yMax value
      */
     public final double getYMax() {
@@ -278,7 +263,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the yMax property.
-     * 
+     *
      * @param y
      *            The yMax value
      */
@@ -291,7 +276,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the xMin property.
-     * 
+     *
      * @return The xMin value
      */
     public final double getXMin() {
@@ -300,7 +285,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the xMin property.
-     * 
+     *
      * @param x
      *            The xMin value
      */
@@ -313,7 +298,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the yMin property.
-     * 
+     *
      * @return The yMin value
      */
     public final double getYMin() {
@@ -322,7 +307,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the yMin property.
-     * 
+     *
      * @param y
      *            The yMin value
      */
@@ -335,7 +320,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the dataset.
-     * 
+     *
      * @return The dataset
      */
     private XYSeriesCollection getDataset() {
@@ -344,7 +329,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Creates the line chart.
-     * 
+     *
      * @return The chart
      */
     private JFreeChart createChart() {
@@ -355,7 +340,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Returns the indexes of the given list of attributes in the given schema.
-     * 
+     *
      * @param schema
      *            The schema
      * @param attributes
@@ -379,7 +364,7 @@ public class ProbabilityChart2DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Updates the given series with the given continuous probabilistic value.
-     * 
+     *
      * @param series
      *            The series
      * @param mixture

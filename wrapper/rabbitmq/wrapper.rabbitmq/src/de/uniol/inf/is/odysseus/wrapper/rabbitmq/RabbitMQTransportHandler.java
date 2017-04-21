@@ -3,23 +3,35 @@ package de.uniol.inf.is.odysseus.wrapper.rabbitmq;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.ExceptionHandler;
+import com.rabbitmq.client.ShutdownListener;
+import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client.TopologyRecoveryException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class RabbitMQTransportHandler extends AbstractTransportHandler {
+public class RabbitMQTransportHandler extends AbstractTransportHandler implements UncaughtExceptionHandler, ExceptionHandler {
+
+	static final Logger LOG = LoggerFactory.getLogger(RabbitMQTransportHandler.class);
 
 	public static final String QUEUE_NAME = "queue_name";
 	public static final String EXCHANGE_NAME = "exchange_name";
@@ -34,7 +46,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public static final String DURABLE = "durable";
 	public static final String EXCLUSIVE = "exclusive";
 	public static final String AUTO_DELETE = "auto_delete";
-	
+
 	public static final String OPTIONS_PREFIX = "rabbit.";
 
 	public enum PublishStyle {
@@ -135,31 +147,60 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
 
-		if (publishStyle == PublishStyle.PublishSubscribe) {
-			String queueName = channel.queueDeclare().getQueue();
-			channel.queueBind(queueName, exchangeName, "");
+	@Override
+	public void processInStart() {
+		try {
+			if (publishStyle == PublishStyle.PublishSubscribe) {
+				String queueName = channel.queueDeclare().getQueue();
+				channel.queueBind(queueName, exchangeName, "");
+			}
+
+			// Create Consumer
+			boolean autoAck = false;
+			channel.basicConsume(queueName, autoAck, consumerTag, new DefaultConsumer(channel) {
+				@Override
+				public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
+						com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
+					// String routingKey = envelope.getRoutingKey();
+					// String contentType = properties.getContentType();
+					long deliveryTag = envelope.getDeliveryTag();
+					try {
+						ByteBuffer wrapped = ByteBuffer.wrap(body);
+						wrapped.position(wrapped.limit());
+						fireProcess(wrapped);
+					} catch (Exception e) {
+						LOG.warn("Error processing input", e);
+					}
+					channel.basicAck(deliveryTag, false);
+				};
+			});
+
+			connection.addShutdownListener(new ShutdownListener() {
+
+				@Override
+				public void shutdownCompleted(ShutdownSignalException cause) {
+					LOG.trace("Connection shutdown.", cause);
+				}
+			});
+
+			channel.addShutdownListener(new ShutdownListener() {
+
+				@Override
+				public void shutdownCompleted(ShutdownSignalException cause) {
+					LOG.trace("Channel shutdown.", cause);
+				}
+			});
+		} catch (IOException e) {
+			throw new StartFailedException(e);
 		}
 
-		// Create Consumer
-		boolean autoAck = false;
-		channel.basicConsume(queueName, autoAck, consumerTag, new DefaultConsumer(channel) {
-			@Override
-			public void handleDelivery(String consumerTag, com.rabbitmq.client.Envelope envelope,
-					com.rabbitmq.client.AMQP.BasicProperties properties, byte[] body) throws IOException {
-				// String routingKey = envelope.getRoutingKey();
-				// String contentType = properties.getContentType();
-				long deliveryTag = envelope.getDeliveryTag();
-				try {
-					ByteBuffer wrapped = ByteBuffer.wrap(body);
-					wrapped.position(wrapped.limit());
-					fireProcess(wrapped);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				channel.basicAck(deliveryTag, false);
-			};
-		});
+	}
+
+	@Override
+	public void uncaughtException(Thread thread, Throwable exception) {
+		LOG.error("Error in Thread " + thread.getName(), exception);
 	}
 
 	@Override
@@ -174,6 +215,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 
 	private void internalOpen() throws IOException, TimeoutException {
 		ConnectionFactory factory = new ConnectionFactory();
+		factory.setExceptionHandler(this);
 		if (username != null) {
 			factory.setUsername(username);
 		}
@@ -189,8 +231,10 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 		if (port > 0) {
 			factory.setPort(port);
 		}
+
 		connection = factory.newConnection();
 		channel = connection.createChannel();
+		channel.basicQos(10);
 
 		switch (publishStyle) {
 		case WorkQueue:
@@ -202,7 +246,7 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 			boolean durable = options.getBoolean(DURABLE, false);
 			boolean exclusive = options.getBoolean(EXCLUSIVE, false);
 			boolean autoDelete = options.getBoolean(AUTO_DELETE, false);
-			
+
 			Set<String> keySet = options.getKeySet();
 			Object[] keys = keySet.stream().filter(key -> key.startsWith(OPTIONS_PREFIX)).toArray();
 			for (Object key : keys) {
@@ -253,6 +297,52 @@ public class RabbitMQTransportHandler extends AbstractTransportHandler {
 	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void handleUnexpectedConnectionDriverException(Connection conn, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleReturnListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleFlowListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConfirmListenerException(Channel channel, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleBlockedListenerException(Connection connection, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConsumerException(Channel channel, Throwable exception, Consumer consumer, String consumerTag,
+			String methodName) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleConnectionRecoveryException(Connection conn, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleChannelRecoveryException(Channel ch, Throwable exception) {
+		exception.printStackTrace();
+	}
+
+	@Override
+	public void handleTopologyRecoveryException(Connection conn, Channel ch, TopologyRecoveryException exception) {
+		exception.printStackTrace();
 	}
 
 }

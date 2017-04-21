@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
+import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
@@ -50,6 +52,8 @@ public interface IDataDictionary {
 	boolean containsViewOrStream(Resource viewName, ISession user);
 
 	Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+
+	Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller);
 
 	// -------------------------------------------------------------------------
 	// View Management
@@ -123,7 +127,7 @@ public interface IDataDictionary {
 	/**
 	 * checks if the given user has higher permission as the given action. Calls
 	 * the corresponding method in the action class.
-	 * 
+	 *
 	 * @param action
 	 * @param objecturi
 	 * @param user
@@ -173,6 +177,16 @@ public interface IDataDictionary {
 	StoredProcedure getStoredProcedure(String name, ISession user);
 
 	List<StoredProcedure> getStoredProcedures(ISession caller);
+
+	// ---------------------------------------------------------------------------
+	// Stores
+	// ---------------------------------------------------------------------------
+	boolean containsStore(String name, ISession user);
+
+	IStore<String, Object> getStore(String name, ISession user);
+
+	List<IStore<String, Object>> getStores(ISession user);
+
 
 	// -------------------------------------------------------------------------
 	// Init

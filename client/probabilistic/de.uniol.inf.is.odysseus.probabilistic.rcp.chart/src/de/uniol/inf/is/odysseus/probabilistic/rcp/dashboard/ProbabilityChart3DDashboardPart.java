@@ -18,9 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.rcp.dashboard;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.ericaro.surfaceplotter.JSurfacePanel;
-import net.ericaro.surfaceplotter.ProgressiveSurfaceModel;
-
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -39,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.ProbabilisticTuple;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -49,11 +45,13 @@ import de.uniol.inf.is.odysseus.probabilistic.rcp.chart.ProbabilisticMapper;
 import de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
+import net.ericaro.surfaceplotter.JSurfacePanel;
+import net.ericaro.surfaceplotter.ProgressiveSurfaceModel;
 
 /**
- * 
+ *
  * @author Christian Kuka <christian.kuka@offis.de>
- * 
+ *
  */
 @SuppressWarnings("unused")
 public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
@@ -111,7 +109,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     // protected static ImageDescriptor IMG_COG =
     // ImageDescriptor.createFromURL(Activator.getBundleContext().getBundle().getEntry("icons/cog.png"));
     /*
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPart#createPartControl
      * (org.eclipse.swt.widgets.Composite, org.eclipse.swt.widgets.ToolBar)
@@ -139,7 +137,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     }
 
     /*
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
      * #streamElementRecieved(java.lang.Object, int)
@@ -173,7 +171,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     }
 
     /*
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
      * #punctuationElementRecieved
@@ -185,21 +183,8 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     }
 
     /*
-     * 
-     * @see
-     * de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener
-     * #securityPunctuationElementRecieved
-     * (de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation,
-     * int)
-     */
-    @Override
-    public void securityPunctuationElementRecieved(final IPhysicalOperator senderOperator, final ISecurityPunctuation sp, final int port) {
-
-    }
-
-    /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#onStart(
      * java.util.List)
@@ -227,7 +212,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
     /**
      * Checks whether the attribute at the given position is a continuous
      * probabilistic attribute.
-     * 
+     *
      * @param pos
      *            The position
      * @return <code>true</code> if the attribute at the given position is a
@@ -242,7 +227,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the samples property.
-     * 
+     *
      * @return The samples value
      */
     public final int getSamples() {
@@ -251,7 +236,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the samples property.
-     * 
+     *
      * @param samples
      *            The number of samples
      */
@@ -261,7 +246,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the xMax property.
-     * 
+     *
      * @return The xMax value
      */
     public final double getXMax() {
@@ -270,7 +255,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the xMax property.
-     * 
+     *
      * @param x
      *            The xMax value
      */
@@ -280,7 +265,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the yMax property.
-     * 
+     *
      * @return The yMax value
      */
     public final double getYMax() {
@@ -289,7 +274,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the yMax property.
-     * 
+     *
      * @param y
      *            The yMax value
      */
@@ -299,7 +284,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the xMin property.
-     * 
+     *
      * @return The xMin value
      */
     public final double getXMin() {
@@ -308,7 +293,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the xMin property.
-     * 
+     *
      * @param x
      *            The xMin value
      */
@@ -318,7 +303,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the yMin property.
-     * 
+     *
      * @return The yMin value
      */
     public final double getYMin() {
@@ -327,7 +312,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the yMin property.
-     * 
+     *
      * @param y
      *            The yMin value
      */
@@ -337,7 +322,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the zMin property.
-     * 
+     *
      * @return The zMin value
      */
     public final double getZMin() {
@@ -346,7 +331,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the zMin property.
-     * 
+     *
      * @param z
      *            The zMin value
      */
@@ -356,7 +341,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the zMax property.
-     * 
+     *
      * @return The zMax value
      */
     public final double getZMax() {
@@ -365,7 +350,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Sets the value of the zMax property.
-     * 
+     *
      * @param z
      *            The zMax value
      */
@@ -375,7 +360,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Returns the indexes of the given list of attributes in the given schema.
-     * 
+     *
      * @param schema
      *            The schema
      * @param attributes
@@ -399,7 +384,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Creates the surface panel.
-     * 
+     *
      * @return The chart
      */
     private JSurfacePanel createChart() {
@@ -439,7 +424,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the surfaceModel property.
-     * 
+     *
      * @return the surface model
      */
     private ProgressiveSurfaceModel getSurfaceModel() {
@@ -448,7 +433,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Gets the value of the mapper property.
-     * 
+     *
      * @return The mapper
      */
     private ProbabilisticMapper getMapper() {
@@ -466,7 +451,7 @@ public class ProbabilityChart3DDashboardPart extends AbstractDashboardPart {
 
     /**
      * Register actions.
-     * 
+     *
      * @param manager
      *            The contribution manager
      */

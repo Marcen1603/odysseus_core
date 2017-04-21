@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.map.ScreenTransformation;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 
 public class DataSet {
 
@@ -40,7 +41,7 @@ public class DataSet {
 	}
 
 	public void init(int idx, int destSrid, ScreenTransformation transformation) {
-		this.geometry = (Geometry) tuple.getAttribute(idx);
+		this.geometry = ((GeometryWrapper) tuple.getAttribute(idx)).getGeometry();
 		if (this.geometry.getSRID() != destSrid){
 			CoordinateTransform ct = transformation.getCoordinateTransform(this.geometry.getSRID(), destSrid);
 			this.geometry = (Geometry) this.geometry.clone();

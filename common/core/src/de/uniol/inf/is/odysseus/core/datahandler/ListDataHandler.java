@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
 /**
  * @author Andr� Bolles
@@ -54,26 +56,65 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 	public ListDataHandler(SDFSchema subType) {
 
-		// hmmm ... this should be more generic !!
-		if (subType.getAttribute(0).getDatatype().isTuple()
-				|| subType.getAttribute(0).getDatatype().getSubType().isTuple()) {
-			this.handler = DataHandlerRegistry.getDataHandler("TUPLE",
-					subType.getAttribute(0).getDatatype().getSchema());
-		} else {
-			this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getAttributeName(), subType);
+		if (subType.size() < 1){
+			throw new IllegalArgumentException("Subtype for List data handler not correctly set");
 		}
 
-		// Is needed for handling of KeyValueObject
-		if (this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
-			SDFDatatype localSubType = subType.getAttribute(0).getDatatype().getSubType();
-			if (localSubType.isTuple()) {
-				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(),
-						subType.getAttribute(0).getDatatype().getSchema());
-			} else {
-				this.handler = DataHandlerRegistry
-						.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
-			}
+		SDFDatatype listType = subType.getAttribute(0).getDatatype().getSubType();
+
+		if (listType == null){
+			throw new IllegalArgumentException("Missing subtype for List data handler");
 		}
+
+		if (listType.isTuple()) {
+
+			if (listType.getSchema() != null) {
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE, listType.getSchema());
+			}else if (subType.getAttribute(0).getDatatype().getSchema() != null){
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE, subType.getAttribute(0).getDatatype().getSchema());
+			}else{
+				throw new IllegalArgumentException("ListDataHandler cannot be initialized with TUPLE without schema");
+			}
+
+		} else if (listType.isListValue()) {
+			// Create subtypeschema
+			if (listType.getSubType() != null){
+				List<SDFAttribute> attribs = new ArrayList<>();
+				SDFDatatype type = new SDFDatatype("",SDFDatatype.KindOfDatatype.LIST,listType.getSubType());
+				attribs.add(new SDFAttribute("", "", type));
+
+				SDFSchema newSubSchema = SDFSchemaFactory.createNewTupleSchema("__", attribs);
+
+				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.LIST, newSubSchema);
+			}else{
+				throw new IllegalArgumentException("ListDataHandler cannot be initialized with LIST without a subtype");
+			}
+
+		} else {
+			// Basis type
+			this.handler = DataHandlerRegistry.getDataHandler(listType.getURI(), subType);
+		}
+
+//		// hmmm ... this should be more generic !!
+//		if (subType.getAttribute(0).getDatatype().isTuple()
+//				|| subType.getAttribute(0).getDatatype().getSubType().isTuple()) {
+//			this.handler = DataHandlerRegistry.getDataHandler("TUPLE",
+//					subType.getAttribute(0).getDatatype().getSchema());
+//		} else {
+//			this.handler = DataHandlerRegistry.getDataHandler(subType.getAttribute(0).getAttributeName(), subType);
+//		}
+//
+//		// Is needed for handling of KeyValueObject
+//		if (this.handler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
+//			SDFDatatype localSubType = subType.getAttribute(0).getDatatype().getSubType();
+//			if (localSubType.isTuple()) {
+//				this.handler = DataHandlerRegistry.getDataHandler(SDFDatatype.TUPLE.toString(),
+//						subType.getAttribute(0).getDatatype().getSchema());
+//			} else {
+//				this.handler = DataHandlerRegistry
+//						.getDataHandler(subType.getAttribute(0).getDatatype().getSubType().toString(), subType);
+//			}
+//		}
 
 		nullMode = false;
 	}
@@ -91,13 +132,16 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 		ArrayList<Object> returnValues = new ArrayList<Object>();
 
 		String trimmedString = string.trim();
-		
+
 		if (trimmedString.startsWith("[") && trimmedString.endsWith("]")) {
-			// there could be lists of lists so we need the special csv parser, inside this list there
+			// there could be lists of lists so we need the special csv parser,
+			// inside this list there
 			// can be string with [] if they are enclosed in "
-			List<String> vals = CSVParser.parseCSV(trimmedString.substring(1, trimmedString.length()-1),'"', ',', true);
-			for (String value:vals){
-				returnValues.add(this.handler.readData(value));
+			List<String> vals = CSVParser.parseCSV(trimmedString.substring(1, trimmedString.length() - 1), '"', ',',
+					true);
+			for (String value : vals) {
+				Object val = this.handler.readData(value);
+				returnValues.add(val);
 			}
 		} else {
 			String[] lines = string.split("\n");
@@ -106,6 +150,11 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 				Object value = this.handler.readData(lines[i]);
 				returnValues.add(value);
 			}
+		}
+		// It could be that the list contains of one element with value null
+		// this in an empty list and should be treated as empty list
+		if (returnValues.size() == 1 && returnValues.get(0)==null){
+			returnValues.clear();
 		}
 		return returnValues;
 	}
@@ -122,7 +171,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
 	 * #readData(java.nio.ByteBuffer)
@@ -148,7 +197,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.core.server.physicaloperator.access.IDataHandler
 	 * #writeData(java.nio.ByteBuffer, java.lang.Object)
@@ -175,7 +224,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.access.
 	 * AbstractDataHandler#getSupportedDataTypes()
 	 */

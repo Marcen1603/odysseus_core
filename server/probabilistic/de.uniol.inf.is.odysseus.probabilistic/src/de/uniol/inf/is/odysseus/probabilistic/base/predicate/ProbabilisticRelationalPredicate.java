@@ -23,7 +23,6 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.mep.IExpression;
@@ -54,6 +53,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.AbstractRelationalPred
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
+@SuppressWarnings("all")
 public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicate<ProbabilisticTuple<?>>
 		implements IProbabilisticRelationalPredicate<ProbabilisticTuple<?>> {
 	private static final long serialVersionUID = 1222104352250883947L;

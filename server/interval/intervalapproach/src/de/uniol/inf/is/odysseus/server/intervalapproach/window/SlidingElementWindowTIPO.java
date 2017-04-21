@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -35,7 +36,7 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		extends AbstractPartitionedWindowTIPO<T> implements IStatefulPO {
 
 	static final Logger LOG = LoggerFactory.getLogger(SlidingElementWindowTIPO.class);
-	
+
 	private final long advance;
 
 	public SlidingElementWindowTIPO(AbstractWindowAO ao) {
@@ -46,10 +47,10 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 					"Sorry. Size < Advance currently not implemented!");
 		}
 	}
-	
+
 
 	public SlidingElementWindowTIPO(TimeUnit baseTimeUnit,TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide, 
+			TimeValueItem windowSlide,
 			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
 		super(WindowType.TUPLE, baseTimeUnit, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
 		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
@@ -59,9 +60,9 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 		}
 	}
 
-	protected SlidingElementWindowTIPO(WindowType windowType, 
+	protected SlidingElementWindowTIPO(WindowType windowType,
 			TimeValueItem windowSize, TimeValueItem windowAdvance,
-			TimeValueItem windowSlide, 
+			TimeValueItem windowSlide,
 			List<SDFAttribute> partitionedBy, SDFSchema inputSchema){
 		super(WindowType.TUPLE, null, windowSize, windowAdvance, windowSlide, partitionedBy, inputSchema);
 		advance = this.windowAdvance > 0 ? this.windowAdvance : 1;
@@ -92,5 +93,19 @@ public class SlidingElementWindowTIPO<T extends IStreamObject<ITimeInterval>>
 			}
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof SlidingElementWindowTIPO)){
+			return false;
+		}
+		SlidingElementWindowTIPO<IStreamObject<ITimeInterval>> other = (SlidingElementWindowTIPO<IStreamObject<ITimeInterval>>)ipo;
+		if (this.advance != other.advance){
+			return false;
+		}
+		return super.isSemanticallyEqual(ipo);
+	}
+
 
 }

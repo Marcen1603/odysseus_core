@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.server.cache.ICache;
 abstract public class AbstractEnrichPO<T extends IStreamObject<M>, M extends IMetaAttribute>
 		extends AbstractPipe<T, T> implements IPhysicalOperatorKeyValueProvider {
 
-	static final Logger logger = LoggerFactory
+	static final private Logger logger = LoggerFactory
 			.getLogger(AbstractEnrichPO.class);
 
 	private final ICache cache;

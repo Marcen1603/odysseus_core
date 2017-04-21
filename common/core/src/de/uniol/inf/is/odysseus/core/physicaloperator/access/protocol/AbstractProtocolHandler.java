@@ -65,13 +65,13 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	@Override
-	public final void updateOption(String key, String value){
+	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
-		optionsMapChanged(key,value);
+		optionsMapChanged(key, value);
 	}
 
-	void optionsMapChanged(String key, String value){
-		throw new UnsupportedOperationException("Sorry. Update of options not supported by "+this.getName());
+	void optionsMapChanged(String key, String value) {
+		throw new UnsupportedOperationException("Sorry. Update of options not supported by " + this.getName());
 	}
 
 	@Override
@@ -136,6 +136,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	@Override
+	public void start() {
+		getTransportHandler().start();
+	}
+
+	@Override
 	public void close() throws IOException {
 		getTransportHandler().close();
 	}
@@ -147,7 +152,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
 		if (getTransfer() != null) {
-			getTransfer().propagateDone();
+			if (!getTransfer().isDone()) {
+				getTransfer().propagateDone();
+			}
 		}
 	}
 

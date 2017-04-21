@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.IQuery;
-import de.uniol.inf.is.odysseus.core.securitypunctuation.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamConnection;
 import de.uniol.inf.is.odysseus.core.streamconnection.IStreamElementListener;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
@@ -138,7 +137,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			long timeRangeInMs = userDefinedTimeRange * 1000;
 			long userDefinedTimeStamp = 0;
 			if (!puffer.isEmpty()) {
-				userDefinedTimeStamp = puffer.getMaxTs().getMainPoint()
+				userDefinedTimeStamp = puffer.getMaxStartTs().getMainPoint()
 						- timeRangeInMs;
 			}
 
@@ -149,7 +148,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 				// Update "current-list", timeSlider and all the other things
 				// which rely on the startTimeStamp
 				streamMapEditor.getScreenManager().setMaxIntervalStart(
-						puffer.getMinTs());
+						puffer.getMinStartTs());
 				this.elementList = this.puffer
 						.queryOverlapsAsList(this.streamMapEditor
 								.getScreenManager().getInterval());
@@ -162,7 +161,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		while (puffer.size() > maxNumerOfElements) {
 			// Remove old element(s)
 			Iterator<Tuple<? extends ITimeInterval>> oldestElements = puffer
-					.peekElementsContaing(puffer.getMinTs(), false);
+					.peekElementsContaing(puffer.getMinStartTs(), false);
 
 			PointInTime deleteTime = null;
 			if (oldestElements.hasNext()) {
@@ -182,7 +181,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 			// Update "current-list", timeSlider and all the other things which
 			// rely on the startTimeStamp
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+					puffer.getMinStartTs());
 			this.elementList = this.puffer
 					.queryOverlapsAsList(this.streamMapEditor
 							.getScreenManager().getInterval());
@@ -193,7 +192,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	/**
 	 * Updates the interval in the screenManager, e.g. when a connection was
 	 * deleted and the maximal possible interval changed
-	 * 
+	 *
 	 * @param first
 	 *            If this is the first connection to update, it will ignore, if
 	 *            there was an older / earlier date in the settings of the
@@ -206,20 +205,20 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 		boolean changedSomething = false;
 
 		// Start
-		if (puffer.getMinTs() != null
+		if (puffer.getMinStartTs() != null
 				&& (streamMapEditor.getScreenManager().getMaxIntervalStart()
-						.after(puffer.getMinTs()) || first)) {
+						.after(puffer.getMinStartTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalStart(
-					puffer.getMinTs());
+					puffer.getMinStartTs());
 			changedSomething = true;
 		}
 
 		// End
-		if (puffer.getMaxTs() != null
+		if (puffer.getMaxStartTs() != null
 				&& (streamMapEditor.getScreenManager().getMaxIntervalEnd()
-						.before(puffer.getMaxTs()) || first)) {
+						.before(puffer.getMaxStartTs()) || first)) {
 			streamMapEditor.getScreenManager().setMaxIntervalEnd(
-					puffer.getMaxTs());
+					puffer.getMaxStartTs());
 			changedSomething = true;
 		}
 
@@ -230,12 +229,6 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	public void punctuationElementReceived(IPhysicalOperator senderOperator, IPunctuation point, int port) {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void securityPunctuationElementReceived(IPhysicalOperator senderOperator, ISecurityPunctuation sp,
-			int port) {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -327,7 +320,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	/**
 	 * Size of the actual list (not the whole puffer)
-	 * 
+	 *
 	 * @param idx
 	 * @return
 	 */
@@ -339,7 +332,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 
 	/**
 	 * Size of the whole puffer (number of elements)
-	 * 
+	 *
 	 * @return
 	 */
 	public int getPufferSize() {
@@ -347,7 +340,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return The maximum size of the puffer
 	 */
 	public int getMaxPufferSize() {
@@ -355,7 +348,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param size
 	 *            The size which the puffer should have max
 	 */
@@ -371,13 +364,13 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	 * Sets the timerange the user wants to save E.g. if he wants to save 60
 	 * seconds, the puffer will save all elements with a start-timestamp between
 	 * the newest element and the newest timestamp-60 seconds
-	 * 
+	 *
 	 * The max-puffer-size has a higher priority (if more elements are in the
 	 * timerange the puffer will delete the oldest)
-	 * 
+	 *
 	 * Set to 0, if no time-range should be defined (just the maxPufferSize will
 	 * limit the puffer)
-	 * 
+	 *
 	 * @param seconds
 	 */
 	public void setTimeRange(int seconds) {
@@ -386,7 +379,7 @@ public class LayerUpdater extends ArrayList<ILayer> implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Timerange in seconds
 	 */
 	public int getTimeRange() {

@@ -33,8 +33,8 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 	private TreeViewer treeViewer;
 	private Action addConnectionAction;
 	private Action removeConnectionAction;
-	
-	
+
+
 	@Override
 	public void setFocus() {
 
@@ -106,7 +106,7 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 
 					if (executor instanceof IServerExecutor) {
 						serverExecutor = (IServerExecutor) executor;
-						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan().getQueries();
+						Collection<IPhysicalQuery> queries = serverExecutor.getExecutionPlan(OdysseusRCPPlugIn.getActiveSession()).getQueries(OdysseusRCPPlugIn.getActiveSession());
 
 						// for (IPhysicalQuery iPhysicalQuery : queries) {
 						// List<IPhysicalOperator> ops =
@@ -180,13 +180,13 @@ public class MapConnectionView extends AbstractStreamMapEditorViewPart {
 						// dlg..setInitialSelections(dirtyEditors);
 						dlg.setTitle("Select Map Stream Connections");
 						dlg.open();
-						
+
 						if(dlg.getReturnCode() == Window.OK){
 							Object[] sel = dlg.getResult();
 							for (Object object : sel) {
 								IPhysicalQuery op = (IPhysicalQuery) object;
 								editor.addConnection(op);
-	
+
 							}
 						}
 					}

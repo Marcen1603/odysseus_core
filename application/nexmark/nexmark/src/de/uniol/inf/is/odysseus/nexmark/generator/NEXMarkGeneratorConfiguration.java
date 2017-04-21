@@ -94,7 +94,7 @@ public class NEXMarkGeneratorConfiguration {
 
 		this.minAuctionDuration = Integer.parseInt(properties.getProperty("minAuctionDuration"));
 		this.maxAuctionDuration = Integer.parseInt(properties.getProperty("maxAuctionDuration"));
-		logger.debug("Config Set: "+toString());
+		logger.info("Config Set: "+toString());
 	}
 
 	public NEXMarkGeneratorConfiguration(int minDistBetweenPersons, int maxDistBetweenPersons,

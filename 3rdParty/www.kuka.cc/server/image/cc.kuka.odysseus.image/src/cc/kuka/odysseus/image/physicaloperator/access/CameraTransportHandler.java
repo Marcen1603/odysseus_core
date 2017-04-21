@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import cc.kuka.odysseus.image.util.OpenCVUtil;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
@@ -103,7 +104,11 @@ public class CameraTransportHandler extends AbstractPushTransportHandler {
      * {@inheritDoc}
      */
     @Override
-    public void processInOpen() throws IOException {
+    public void processInOpen()  {
+    }
+
+    @Override
+    public void processInStart() throws StartFailedException{
         try {
             if (this.getDeviceURL() != null) {
                 this.reader = new CameraReader(this.getDeviceURL());
@@ -115,9 +120,8 @@ public class CameraTransportHandler extends AbstractPushTransportHandler {
             this.reader.start();
         }
         catch (final Throwable e) {
-            throw new IOException(e);
+            throw new StartFailedException(e);
         }
-
     }
 
     /**

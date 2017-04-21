@@ -24,6 +24,7 @@ import javax.security.auth.login.Configuration;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.command.Command;
+import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -58,7 +59,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
-import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 
@@ -166,7 +166,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @return current active scheduler
 	 */
 
-	public IScheduler getCurrentScheduler(ISession session);
+	IScheduler getCurrentScheduler(ISession session);
 
 	/**
 	 *
@@ -224,10 +224,7 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 			IPhysicalQuery affectedQuery) throws SchedulerException,
 			NoSchedulerLoadedException;
 
-	public ISchedulerManager getSchedulerManager(ISession session);
-
-	// TODO: Remove method
-	public ISchedulerManager getSchedulerManager();
+	//public ISchedulerManager getSchedulerManager(ISession session);
 
 	public QueryBuildConfiguration getBuildConfigForQuery(ILogicalQuery query);
 
@@ -261,21 +258,21 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @param queryID The of the query
 	 * @return the current state of the query
 	 */
-	public QueryState getQueryState(int queryID);
+	public QueryState getQueryState(int queryID, ISession session);
 
 	/**
 	 * Return the current state of the query with the given queryname
 	 * @param queryID The query id for which the state should be retrieved
 	 * @return
 	 */
-	public QueryState getQueryState(Resource queryName);
+	public QueryState getQueryState(Resource queryName, ISession session);
 
 	/**
 	 * Returns the current state of queries
 	 * @param id a list of query ids for which the state should be delivered
 	 * @return a list of query states where the order is the same as in the input list
 	 */
-	public List<QueryState> getQueryStates(List<Integer> id);
+	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session);
 
 	/**
 	 * Stop all running queries
@@ -288,6 +285,10 @@ public interface IServerExecutor extends IExecutor, IPlanScheduling,
 	 * @param caller
 	 */
 	public void runCommand(Command command, ISession caller);
+
+	public void subscribeToAllSchedulerEvents(IEventListener listener);
+	public void unsubscribeFromAllSchedulerEvents(IEventListener listener);
+
 
 
 }

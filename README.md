@@ -1,6 +1,6 @@
 <h1>Odysseus Project</h1>
 
-See https://odysseus.uni-oldenburg.de/
+See https://odysseus.offis.uni-oldenburg.de/
 
 <h1>Installation Instructions of OdysseusCrypt</h1>
 

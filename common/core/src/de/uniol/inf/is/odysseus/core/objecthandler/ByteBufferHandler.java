@@ -18,8 +18,6 @@ package de.uniol.inf.is.odysseus.core.objecthandler;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -65,8 +63,6 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 		T retval = null;
 		synchronized (byteBuffer) {
 			byteBuffer.flip();
-			// retval = (T) ByteBufferUtil.createStreamObject(byteBuffer,
-			// (IDataHandler) dataHandler);
 			retval = (T) this.dataHandler.readData(byteBuffer);
 			byteBuffer.clear();
 		}
@@ -75,8 +71,7 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 
 	private void checkAndResizeBuffer(ByteBuffer buffer, int size) {
 		if (size + byteBuffer.position() >= byteBuffer.capacity()) {
-			// TODO: Effizientere ?berlaufbehandlung?
-			// logger.warn("ObjectHandler OVERFLOW");
+			// TODO: More efficient overflow handling?
 			ByteBuffer newBB = ByteBuffer.allocate((buffer.limit() + size + byteBuffer.position()) * 2);
 			int pos = byteBuffer.position();
 			byteBuffer.flip();
@@ -90,10 +85,8 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 	public void put(ByteBuffer buffer) throws IOException {
 		synchronized (buffer) {
 			synchronized (byteBuffer) {
-				// System.out.println("putBuffer "+buffer+" to "+byteBuffer);
 				checkAndResizeBuffer(byteBuffer, buffer.remaining());
 				byteBuffer.put(buffer);
-				// System.out.println("putBuffer "+buffer+" to "+byteBuffer);
 			}
 		}
 	}
@@ -102,7 +95,6 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 	public void put(ByteBuffer buffer, int size) throws IOException {
 		synchronized (buffer) {
 			synchronized (byteBuffer) {
-				// System.out.println("putBuffer2 "+buffer+" to "+byteBuffer);
 				checkAndResizeBuffer(byteBuffer, size);
 				if (buffer.isDirect()) {
 					// Fallback for direct buffers ... that do not implement e.g array
@@ -121,14 +113,10 @@ public class ByteBufferHandler<T extends IStreamObject<? extends IMetaAttribute>
 
 	@Override
 	public void put(T value, boolean withMetadata) {
-
 		synchronized (byteBuffer) {
 			checkAndResizeBuffer(byteBuffer, dataHandler.memSize(value));
 			byteBuffer.clear();
-			// ByteBufferUtil.toBuffer(byteBuffer, (IStreamObject) value,
-			// dataHandler, withMetadata);
 			this.dataHandler.writeData(byteBuffer, value);
-
 			byteBuffer.flip();
 		}
 	}

@@ -67,6 +67,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
     private boolean dirty = false;
     private EvaluationModel evaluationModel;
     private Button btnActivateLatencyMeasurements;
+    private Button btnUseMaxLatencyMeasurements;
     private Button btnActivateThroughputMeasurments;
     private Button btnActivateResourceMeasurments;
     private Text parameterValues;
@@ -76,7 +77,10 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
     private Text parameterName;
     private Color COLOR_RED;
     private Color COLOR_BLACK;
+    private Text setupQueryText;
     private Text queryFileText;
+    private Text tearDownQueryText;
+    private Button btnSetupTearDownMode;
     private Spinner numberOfTimesSpinner;
     private Button btnStartEvaluation;
     private Composite latencyComposite;
@@ -96,7 +100,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
 
     /**
      * Create contents of the editor part.
-     * 
+     *
      * @param parent
      */
     @Override
@@ -119,7 +123,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         grpGeneral.setText("General");
 
         Composite composite_1 = new Composite(grpGeneral, SWT.NONE);
-        composite_1.setLayout(new GridLayout(2, false));
+        composite_1.setLayout(new GridLayout(3, false));
         composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
         Label lblQueryFile = new Label(composite_1, SWT.NONE);
@@ -137,7 +141,7 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
             }
         });
 
-        Button btnBrowse_2 = new Button(grpGeneral, SWT.NONE);
+        Button btnBrowse_2 = new Button(composite_1, SWT.NONE);
         btnBrowse_2.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -152,6 +156,85 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
             }
         });
         btnBrowse_2.setText("Browse...");
+
+        Label lblQuerySetup = new Label(composite_1, SWT.NONE);
+        lblQuerySetup.setText("Query Setup File:");
+
+        setupQueryText = new Text(composite_1, SWT.BORDER);
+        setupQueryText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        if (evaluationModel.getSetupQueryFile() != null) {
+        	setupQueryText.setText(evaluationModel.getSetupQueryFile().getProjectRelativePath().toOSString());
+        }
+        setupQueryText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                setDirty(true);
+            }
+        });
+
+        Button btnBrowse_3 = new Button(composite_1, SWT.NONE);
+        btnBrowse_3.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                QueryTreeSelectionDialog dialog = new QueryTreeSelectionDialog(parent.getShell(), input.getFile());
+                if (dialog.open() == Window.OK) {
+                    IResource queryResource = (IResource) dialog.getFirstResult();
+                    String text = queryResource.getProjectRelativePath().toString();
+                    if (!text.equals(setupQueryText.getText())) {
+                    	setupQueryText.setText(text);
+                    }
+                }
+            }
+        });
+        btnBrowse_3.setText("Browse...");
+
+        Label lblQueryTearDown = new Label(composite_1, SWT.NONE);
+        lblQueryTearDown.setText("Query Tear Down File:");
+
+        tearDownQueryText = new Text(composite_1, SWT.BORDER);
+        tearDownQueryText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        if (evaluationModel.getTearDownQueryFile() != null) {
+        	tearDownQueryText.setText(evaluationModel.getTearDownQueryFile().getProjectRelativePath().toOSString());
+        }
+        tearDownQueryText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                setDirty(true);
+            }
+        });
+
+        Button btnBrowse_4 = new Button(composite_1, SWT.NONE);
+        btnBrowse_4.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                QueryTreeSelectionDialog dialog = new QueryTreeSelectionDialog(parent.getShell(), input.getFile());
+                if (dialog.open() == Window.OK) {
+                    IResource queryResource = (IResource) dialog.getFirstResult();
+                    String text = queryResource.getProjectRelativePath().toString();
+                    if (!text.equals(tearDownQueryText.getText())) {
+                    	tearDownQueryText.setText(text);
+                    }
+                }
+            }
+        });
+        btnBrowse_4.setText("Browse...");
+
+        // empty label
+        new Label(composite_1, SWT.NONE);
+
+        btnSetupTearDownMode = new Button(composite_1, SWT.CHECK);
+        btnSetupTearDownMode.setText("Setup/Tear down every Run");
+        btnSetupTearDownMode.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+            }
+        });
+        btnSetupTearDownMode.setSelection(evaluationModel.isRunSetupTearDownEveryRun());
+
+        // empty label
+        new Label(grpGeneral, SWT.NONE);
+
 
         Label lblDiagramFolder = new Label(grpGeneral, SWT.NONE);
         lblDiagramFolder.setText("Folder for processing results");
@@ -386,6 +469,17 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
         btnCreatePlotsForLatency.setText("Create plots for latencies");
         btnCreatePlotsForLatency.setSelection(this.evaluationModel.isCreateLatencyPlots());
         btnCreatePlotsForLatency.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                setDirty(true);
+            }
+        });
+
+        btnUseMaxLatencyMeasurements = new Button(grpLatency, SWT.CHECK);
+        btnUseMaxLatencyMeasurements.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        btnUseMaxLatencyMeasurements.setText("Use max latency");
+        btnUseMaxLatencyMeasurements.setSelection(this.evaluationModel.isUseMaxLatency());
+        btnUseMaxLatencyMeasurements.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 setDirty(true);
@@ -680,9 +774,18 @@ public class EvaluationEditorPart extends EditorPart implements IResourceChangeL
     public void doSave(IProgressMonitor monitor) {
 
         evaluationModel.setQueryFile(input.getFile().getProject().findMember(queryFileText.getText()));
+        if (setupQueryText != null){
+        	evaluationModel.setSetupQueryFile(input.getFile().getProject().findMember(setupQueryText.getText()));
+        }
+        if (tearDownQueryText != null){
+        	evaluationModel.setTearDownQueryFile(input.getFile().getProject().findMember(tearDownQueryText.getText()));
+        }
+
         evaluationModel.setPlotFilesPath(this.plotFolder.getText());
         evaluationModel.setProcessingResultsPath(this.processingResultFolder.getText());
         evaluationModel.setWithLatency(btnActivateLatencyMeasurements.getSelection());
+        evaluationModel.setRunSetupTearDownEveryRun(btnSetupTearDownMode.getSelection());
+        evaluationModel.setUseMaxLatency(btnUseMaxLatencyMeasurements.getSelection());
         evaluationModel.setWithThroughput(btnActivateThroughputMeasurments.getSelection());
         evaluationModel.setWithResource(btnActivateResourceMeasurments.getSelection());
         evaluationModel.setNumberOfRuns(numberOfTimesSpinner.getSelection());

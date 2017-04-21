@@ -77,6 +77,10 @@ public class ParallelIntraOperatorSettingValue {
 		}
 		individualSettings.put(operatorId, individualSetting);
 	}
+	
+	public void removeIndividualSettings(String operatorId) {
+		this.individualSettings.remove(operatorId);
+	}
 
 	public int getGlobalBuffersize() {
 		return globalBuffersize;

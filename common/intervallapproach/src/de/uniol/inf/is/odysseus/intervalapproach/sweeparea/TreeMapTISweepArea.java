@@ -60,8 +60,9 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 		}
 	});
 
+	@SuppressWarnings("unused")
 	private transient IPredicate<? super T> queryPredicate;
-
+	@SuppressWarnings("unused")
 	private transient IPredicate<? super T> removePredicate;
 
 	/**
@@ -477,7 +478,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMaxTs()
 	 */
 	@Override
-	public PointInTime getMaxTs() {
+	public PointInTime getMaxStartTs() {
 		if(elements.isEmpty())
 			return null;
 		return new PointInTime(elements.keySet().last());
@@ -487,7 +488,7 @@ public class TreeMapTISweepArea<T extends IStreamObject<? extends ITimeInterval>
 	 * @see de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea#getMinTs()
 	 */
 	@Override
-	public PointInTime getMinTs() {
+	public PointInTime getMinStartTs() {
 		if(elements.isEmpty())
 			return null;
 		return new PointInTime(elements.keySet().first());

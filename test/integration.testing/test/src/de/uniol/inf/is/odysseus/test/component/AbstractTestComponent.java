@@ -89,11 +89,11 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	 *
 	 * @param executor
 	 */
-	private static void tryStartExecutor(IServerExecutor executor) {
+	private static void tryStartExecutor(IServerExecutor executor, ISession session) {
 		try {
 			LOG.debug("Starting executor...");
 
-			executor.startExecution();
+			executor.startExecution(session);
 		} catch (PlanManagementException e1) {
 			throw new RuntimeException(e1);
 		}
@@ -105,10 +105,10 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	 *
 	 * @param executor
 	 */
-	private static void tryStopExecutor(IServerExecutor executor) {
+	private static void tryStopExecutor(IServerExecutor executor, ISession session) {
 		try {
 			LOG.debug("Stopping executor");
-			executor.stopExecution();
+			executor.stopExecution(session);
 		} catch (PlanManagementException e) {
 			LOG.error("Exception during stopping executor", e);
 		}
@@ -121,7 +121,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	@Override
 	public TestReport runTest(T context) {
 		int i = 0;
-		tryStartExecutor(executor);
+		tryStartExecutor(executor, session);
 		TestReport report = new TestReport(getName(), testsets.size());
 		for (S set : testsets) {
 		    report.set(i, set.getName(), set.getQuery());
@@ -143,7 +143,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 			LOG.debug("***************************************************************************************");
 			i++;
 		}
-		tryStopExecutor(executor);
+		tryStopExecutor(executor, session);
 		return report;
 	}
 

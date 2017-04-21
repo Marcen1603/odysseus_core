@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
@@ -62,7 +61,7 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 					for (int id : ids) {
 						SimplePlanPrinter<IPhysicalOperator> planPrinter = new SimplePlanPrinter<IPhysicalOperator>(
 								true);
-						for (IPhysicalOperator op : executor.getExecutionPlan().getQueryById(id).getRoots()) {
+						for (IPhysicalOperator op : executor.getExecutionPlan(session).getQueryById(id, session).getRoots()) {
 							String output = planPrinter.createString(op);
 							LOG.debug(output);
 						}

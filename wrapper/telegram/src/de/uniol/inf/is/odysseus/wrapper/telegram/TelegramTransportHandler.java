@@ -112,7 +112,7 @@ public class TelegramTransportHandler extends AbstractPushTransportHandler {
 			@SuppressWarnings("unchecked")
 			KeyValueObject<IMetaAttribute> kvMessage = (KeyValueObject<IMetaAttribute>)message;
 			// TODO: Why the cast?
-			Long chatID=  kvMessage.getAttribute("chat.id");
+			Integer chatID=  kvMessage.getAttribute("chat.id");
 			if (chatID == null){
 				throw new RuntimeException("Cannot find attribute with name chat.id");
 			}

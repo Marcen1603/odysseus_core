@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2015 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,10 +31,11 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  *
  */
 abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
-	
+
+	@SuppressWarnings("unused")
 	private static Logger LOG = LoggerFactory.getLogger(AbstractToListFunction.class);
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3868126801758929823L;
 
@@ -51,7 +52,7 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
         }
         return list;
     }
-    
+
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#determineTypeFromInput()
      */
@@ -59,20 +60,20 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
     public boolean determineTypeFromInput() {
     	return true;
     }
-    
+
     /* (non-Javadoc)
      * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#determineType(de.uniol.inf.is.odysseus.core.mep.IExpression[])
      */
     @Override
     public SDFDatatype determineType(IExpression<?>[] args) {
     	SDFDatatype subtype = args[0].getReturnType();
-    	
-    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
-			if(datatype.getSubType().equals(subtype)) {
-				return datatype;
-			}
-    	}
-    	LOG.warn("Could not find list datatype with subtype '{}'.", subtype);
-    	return SDFDatatype.LIST;
+
+//    	for(SDFDatatype datatype : SDFDatatype.LISTS) {
+//			if(datatype.getSubType().equals(subtype)) {
+//				return datatype;
+//			}
+//    	}
+
+    	return new SDFDatatype("LIST",SDFDatatype.KindOfDatatype.LIST,subtype);
     }
 }
