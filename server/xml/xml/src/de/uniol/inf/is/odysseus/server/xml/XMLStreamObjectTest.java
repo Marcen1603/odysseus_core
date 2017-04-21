@@ -1,4 +1,39 @@
-package de.uniol.inf.is.odysseus.xml;
+package de.uniol.inf.is.odysseus.server.xml;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import org.w3c.dom.NodeList;
+
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
+
+public class XMLStreamObjectTest
+{
+	public static void main(String[] args)
+	{
+		//System.out.println( new File("test.xml").getAbsolutePath());
+		XMLStreamObjectDataHandler dataHandler;
+		try
+		{
+			dataHandler = new XMLStreamObjectDataHandler();
+			FileInputStream fis = new FileInputStream("c:/test.xml");
+			XMLStreamObject<?> xmlDoc = dataHandler.readData(fis, false);
+			XMLStreamObject<?> xmlDoc2 = xmlDoc.createInstance(xmlDoc.xpathToDocument("//xfrom"));
+			System.out.println(xmlDoc.isEmpty() ? "EMPTY" : "NON EMPTY");
+			//System.out.println(xmlDoc.toString());
+			
+			
+			
+		} catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
+}
+/*
+package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,3 +113,4 @@ public class XMLStreamObjectTest
 		System.out.println(i);
 	}
 }
+*/

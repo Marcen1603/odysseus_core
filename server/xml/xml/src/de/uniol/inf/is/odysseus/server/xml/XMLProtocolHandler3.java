@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.xml;
+package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -287,7 +287,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 	public void process(long callerId, ByteBuffer message)
 	{
 		String msg = new String(message.array(), Charset.forName("UTF-8"));
-		System.out.println(msg);
+		//System.out.println(msg);
 
 		try
 		{

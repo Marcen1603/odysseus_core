@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.xml.feature"
+      id="de.uniol.inf.is.odysseus.server.xml.feature"
       label="Feature"
       version="1.0.0.qualifier">
 
@@ -25,7 +25,7 @@
    </requires>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.xml"
+         id="de.uniol.inf.is.odysseus.server.xml"
          download-size="0"
          install-size="0"
          version="0.0.0"

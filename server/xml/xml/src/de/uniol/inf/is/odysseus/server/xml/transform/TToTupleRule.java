@@ -1,15 +1,15 @@
-package de.uniol.inf.is.odysseus.xml.transform;
+package de.uniol.inf.is.odysseus.server.xml.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToTupleAO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ToTuplePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
-import de.uniol.inf.is.odysseus.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.xml.logicaloperator.ToTupleAO;
-import de.uniol.inf.is.odysseus.xml.physicaloperator.ToTuplePO;
 
 public class TToTupleRule extends AbstractTransformationRule<ToTupleAO>
 {

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.xml;
+package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -68,7 +68,7 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 
 	public XMLStreamObject<?> readData(String input, boolean handleMetaData)
 	{
-		System.out.println(input);
+		//System.out.println(input);
 		try
 		{
 			Document doc = docBuilder.parse(new InputSource(new StringReader(input)));

@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.xml.physicaloperator;
+package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.xml.XMLStreamObject;
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 
 public class XMLStreamObjectProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>,  XMLStreamObject<T>>
 {
@@ -43,9 +43,9 @@ public class XMLStreamObjectProjectPO<T extends IMetaAttribute> extends Abstract
 		for (SDFAttribute path : this.paths)
 		{
 			String pathURI = path.getURI();
-			System.out.println(pathURI);
 			XMLStreamObject<IMetaAttribute> newObject = XMLStreamObject.createInstance(object.xpathToDocument(pathURI)); 
 			newObject.setMetadata(object.getMetadata().clone());
+			System.out.println("PROJECT: \n" + newObject.toString());
 			if(!newObject.isEmpty()) transfer((XMLStreamObject<T>) newObject);
 		}
 	}
