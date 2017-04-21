@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.xml.physicaloperator;
+package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.xml.logicaloperator.ToTupleAO;
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToTupleAO;
 
 public class ToTuplePO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, Tuple<T>>
 {

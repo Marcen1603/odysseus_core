@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.xml.logicaloperator;
+package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;

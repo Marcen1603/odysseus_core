@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.xml;
+package de.uniol.inf.is.odysseus.server.xml;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import java.util.ArrayList;
