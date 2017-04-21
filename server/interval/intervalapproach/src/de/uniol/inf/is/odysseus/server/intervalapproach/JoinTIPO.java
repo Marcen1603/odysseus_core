@@ -551,4 +551,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;
 	}
+
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		// TODO 
+	}
 }

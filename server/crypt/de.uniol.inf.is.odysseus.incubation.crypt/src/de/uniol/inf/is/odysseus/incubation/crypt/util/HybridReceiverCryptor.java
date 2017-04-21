@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.util;
 
 import java.security.Key;
@@ -16,6 +13,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.provider.CryptorFactory;
 import de.uniol.inf.is.odysseus.incubation.crypt.provider.ICryptor;
 
 /**
+ * Util class for keymanagement in a hybrid cryptographic environment
+ * 
  * @author MarkMilster
  *
  */
@@ -23,6 +22,12 @@ public class HybridReceiverCryptor {
 
 	private ICryptor receiverCryptor;
 
+	/**
+	 * Constructor who crypts the key with the given algorithm
+	 * 
+	 * @param algorithm
+	 *            Algorithm to crypt the symmetric key with
+	 */
 	public HybridReceiverCryptor(String algorithm) {
 		switch (algorithm) {
 		case "RSA":
@@ -34,10 +39,28 @@ public class HybridReceiverCryptor {
 		}
 	}
 
+	/**
+	 * Constructor who crypts the key with the given Cryptor
+	 * 
+	 * @param asymCryptor
+	 *            Cryptor tp crypt the symmetrik key with
+	 */
 	public HybridReceiverCryptor(ICryptor asymCryptor) {
 		this.receiverCryptor = asymCryptor;
 	}
 
+	/**
+	 * Encrypt a sym Key with the given Cryptor in this object.
+	 * 
+	 * @param symKey
+	 *            The symKey to crypt
+	 * @param receiverKey
+	 *            the key to crypt the sym key with
+	 * @param streamId
+	 *            the id of the crypting the sym key was used for to identify
+	 *            the crypted key
+	 * @return the encrypted sym key
+	 */
 	public EncKeyWrapper encryptSymKey(KeyWrapper<Key> symKey, KeyWrapper<PublicKey> receiverKey, int streamId) {
 		receiverCryptor.setKey(receiverKey.getKey());
 		receiverCryptor.setMode(Cipher.ENCRYPT_MODE);
@@ -52,6 +75,15 @@ public class HybridReceiverCryptor {
 		return encKeyWrapper;
 	}
 
+	/**
+	 * Decrypt the encrypted symKey.
+	 * 
+	 * @param encKeyWrapper
+	 *            The encrypted symKey to decrypt
+	 * @param receiverKey
+	 *            the key to decrypt the encrypted key with
+	 * @return The symmetric key
+	 */
 	public KeyWrapper<Key> decryptSymKey(EncKeyWrapper encKeyWrapper, KeyWrapper<PrivateKey> receiverKey) {
 		receiverCryptor.setKey(receiverKey.getKey());
 		receiverCryptor.setMode(Cipher.DECRYPT_MODE);

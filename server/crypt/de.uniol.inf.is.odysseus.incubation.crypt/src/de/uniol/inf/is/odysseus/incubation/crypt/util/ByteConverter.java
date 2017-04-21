@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.util;
 
 import java.io.ByteArrayInputStream;
@@ -10,13 +7,23 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 /**
+ * This is a util class to convert byte streams
+ * 
  * @author MarkMilster
  *
  */
 public class ByteConverter {
 
+	/**
+	 * The given object will be parsed to an byteArray
+	 * 
+	 * @param obj
+	 *            The Object to parse
+	 * @return The byteArray that can be reparsed into the object
+	 */
 	public static byte[] objectToBytes(Object obj) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
@@ -40,6 +47,13 @@ public class ByteConverter {
 		return bytes;
 	}
 
+	/**
+	 * Parse a byteArray to an object
+	 * 
+	 * @param bytes
+	 *            The byteArray to parse
+	 * @return The object out of the byteArray
+	 */
 	public static Object bytesToObject(byte[] bytes) {
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 		ObjectInput in = null;
@@ -64,6 +78,19 @@ public class ByteConverter {
 			}
 		}
 		return o;
+	}
+
+	/**
+	 * Parses a byteBuffer to a byteArray
+	 * 
+	 * @param byteBuffer
+	 *            the byteBuffer to parse
+	 * @return the byteArray, containing the bytes in the ByteBuffer
+	 */
+	public static byte[] byteBufferToBytes(ByteBuffer byteBuffer) {
+		byte[] bytes = new byte[byteBuffer.remaining()];
+		byteBuffer.get(bytes, 0, bytes.length);
+		return bytes;
 	}
 
 }

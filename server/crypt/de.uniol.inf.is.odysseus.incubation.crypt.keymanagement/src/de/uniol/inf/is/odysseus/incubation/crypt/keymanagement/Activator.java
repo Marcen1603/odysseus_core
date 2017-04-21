@@ -3,10 +3,21 @@ package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+/**
+ * This is the Activator of this bundle.
+ * 
+ * @author MarkMilster
+ *
+ */
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 
+	/**
+	 * Returns the Context of this Bundle
+	 * 
+	 * @return the Context of this Bundle
+	 */
 	public static BundleContext getContext() {
 		return context;
 	}

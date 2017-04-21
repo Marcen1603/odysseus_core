@@ -13,16 +13,30 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.DefaultPrivKeyVault;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.IPrivKeyVault;
 
+/**
+ * Factory, to create ASymKey with some Default Setting
+ * 
+ * @author MarkMilster
+ *
+ */
 public class DefaultAsymKeyFactory implements IAsymKeyFactory {
 
 	private static DefaultAsymKeyFactory INSTANCE;
 
 	public static final String[] ALGORITHMS = { "DiffieHellman", "DSA", "RSA", "EC" };
 
+	/**
+	 * Default constructor
+	 */
 	private DefaultAsymKeyFactory() {
 
 	}
 
+	/**
+	 * Returns the instance of this Factory
+	 * 
+	 * @return The instance
+	 */
 	public static DefaultAsymKeyFactory getInstance() {
 		if (INSTANCE == null) {
 			INSTANCE = new DefaultAsymKeyFactory();
@@ -39,30 +53,41 @@ public class DefaultAsymKeyFactory implements IAsymKeyFactory {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		// TODO what todo, if you use an invalid algorithm?
-		KeyPair keyPair = keygen.genKeyPair();
 
-		LocalDateTime generated = LocalDateTime.now();
-		KeyWrapper<PublicKey> publicKeyWrapper = new KeyWrapper<>();
-		publicKeyWrapper.setKey(keyPair.getPublic());
-		publicKeyWrapper.setId(KeyManager.getInstance().getNextAsymKeyId());
-		publicKeyWrapper.setCreated(generated);
-		publicKeyWrapper.setValid(valid);
-		publicKeyWrapper.setComment(comment);
+		ASymKeyWrapper asymKeyWrapper = null;
+		try {
+			KeyPair keyPair = keygen.genKeyPair();
 
-		KeyWrapper<PrivateKey> privateKeyWrapper = new KeyWrapper<>();
-		privateKeyWrapper.acquireMetadata(publicKeyWrapper);
-		privateKeyWrapper.setKey(keyPair.getPrivate());
+			LocalDateTime generated = LocalDateTime.now();
+			KeyWrapper<PublicKey> publicKeyWrapper = new KeyWrapper<>();
+			publicKeyWrapper.setKey(keyPair.getPublic());
+			publicKeyWrapper.setId(KeyManager.getInstance().getNextAsymKeyId());
+			publicKeyWrapper.setCreated(generated);
+			publicKeyWrapper.setValid(valid);
+			publicKeyWrapper.setComment(comment);
 
-		ASymKeyWrapper asymKeyWrapper = new ASymKeyWrapper();
-		asymKeyWrapper.setPrivateKeyWrapper(privateKeyWrapper);
-		asymKeyWrapper.setPublicKeyWrapper(publicKeyWrapper);
+			KeyWrapper<PrivateKey> privateKeyWrapper = new KeyWrapper<>();
+			privateKeyWrapper.acquireMetadata(publicKeyWrapper);
+			privateKeyWrapper.setKey(keyPair.getPrivate());
+
+			asymKeyWrapper = new ASymKeyWrapper();
+			asymKeyWrapper.setPrivateKeyWrapper(privateKeyWrapper);
+			asymKeyWrapper.setPublicKeyWrapper(publicKeyWrapper);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return asymKeyWrapper;
 	}
 
-	// TODO die key factorys in extra bundle packen und auch ueber den server
-	// den keymanager ansprechen --> keymanagerserver und
-	// secretkeymanagerTrennen und client dafuer auch in extra bundle
+	/**
+	 * Store both parts of the keys (public and private) to the default vaults.
+	 * <br>
+	 * The PublicKey will be stored with the KeyManager.<br>
+	 * The PrivateKey will be stored in the DefaultPrivKeyVault.
+	 * 
+	 * @param keys
+	 */
 	public void saveAsymKeys(ASymKeyWrapper keys) {
 		// save public Key
 		KeyManager.getInstance().setPublicKey(keys.getPublicKeyWrapper());

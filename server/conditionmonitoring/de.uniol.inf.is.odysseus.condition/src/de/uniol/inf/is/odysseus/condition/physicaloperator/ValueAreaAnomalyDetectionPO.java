@@ -152,4 +152,10 @@ public class ValueAreaAnomalyDetectionPO<T extends Tuple<?>> extends AbstractPip
 		return OutputMode.MODIFIED_INPUT;
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		// TODO 
+		
+	}
+
 }
