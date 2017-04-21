@@ -185,5 +185,4 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		}
 		return buf.toString();
 	}
-
 }
