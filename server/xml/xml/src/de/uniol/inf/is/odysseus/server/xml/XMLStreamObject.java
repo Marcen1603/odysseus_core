@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
 // GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
 
-public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable
+public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject, Serializable
 {
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
