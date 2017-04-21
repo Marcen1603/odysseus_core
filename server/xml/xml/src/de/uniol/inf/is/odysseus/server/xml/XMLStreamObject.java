@@ -1,26 +1,30 @@
-package de.uniol.inf.is.odysseus.xml;
+package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.Serializable;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
 
 // GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
 
-public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable
+public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject, Serializable
 {
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
@@ -44,7 +48,8 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		StringBuilder ret = new StringBuilder();
 		ret.append(xpathToString("/node()"));
-		if(handleMetadata && getMetadata()!=null) ret.append(";").append(getMetadata().toString());
+		if (handleMetadata && getMetadata() != null)
+			ret.append(";").append(getMetadata().toString());
 		return ret.toString();
 	}
 
@@ -52,7 +57,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		xpath = XPathFactory.newInstance().newXPath();
 		content = _content;
-		System.out.println("XMLStreamObject Constructor");
+		// System.out.println("XMLStreamObject Constructor");
 	}
 
 	public XMLStreamObject()
@@ -66,10 +71,10 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		try
 		{
 			tx = tfactory.newTransformer();
-		DOMSource source = new DOMSource(obj.getDocument());
-		DOMResult result = new DOMResult();
-		tx.transform(source, result);
-		content = (Document)result.getNode();
+			DOMSource source = new DOMSource(obj.getDocument());
+			DOMResult result = new DOMResult();
+			tx.transform(source, result);
+			content = (Document) result.getNode();
 		} catch (TransformerException e)
 		{
 			LOG.error("Could not copy DOM", e);
@@ -101,7 +106,14 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	public boolean isEmpty()
 	{
-		return xpathToNode("/*") == null ? false : true;
+		try
+		{
+			Element check = content.getDocumentElement();
+			return false;
+		} catch(NullPointerException e)
+		{
+			return true;
+		}
 	}
 
 	public Document xpathToDocument(String expression)
@@ -110,13 +122,13 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		{
 			NodeList nodelist = xpathToNodeList(expression);
 			Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-	        for (int i = 0; i < nodelist.getLength(); i++)
-	        {
-	            Node node = nodelist.item(i);
-	            Node copyNode = newDoc.importNode(node, true);
-	            newDoc.appendChild(copyNode);
-	        }
-	        return newDoc;
+			if(nodelist.getLength()>0)
+			{
+				Node node = nodelist.item(0);
+				Node copyNode = newDoc.importNode(node, true);
+				newDoc.appendChild(copyNode);
+			}
+			return newDoc;
 		} catch (ParserConfigurationException e)
 		{
 			LOG.error("Returning Document from xpath failed", e);
@@ -155,16 +167,23 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	public String xpathToString(String expression)
 	{
-		try
+		NodeList nl = xpathToNodeList(expression);
+		StringWriter buf = new StringWriter();
+		for (int i = 0; i < nl.getLength(); i++)
 		{
-			XPathExpression xExp = xpath.compile(expression);
-			return  xExp.evaluate(content);
-		} catch (XPathExpressionException e)
-		{
-			LOG.error("XPathExpression Error", e);
-			e.printStackTrace();
+			Node elem = nl.item(i);// Your Node
+			try
+			{
+				Transformer xform = TransformerFactory.newInstance().newTransformer();
+				xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				xform.setOutputProperty(OutputKeys.INDENT, "yes");
+				xform.transform(new DOMSource(elem), new StreamResult(buf));
+			} catch (TransformerException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		return null;
+		return buf.toString();
 	}
-
 }
