@@ -67,6 +67,15 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		return newMeta;
 	}
 
+	protected void readAndAddMetadata(InputStream inputStream, boolean handleMetaData, IStreamObject<IMetaAttribute> ret)
+			throws IOException {
+		if (handleMetaData && hasMetadata()) {
+			IMetaAttribute meta = readMetaData(inputStream);
+			ret.setMetadata(meta);
+		}
+	}
+
+
 
 	protected final IMetaAttribute readMetaData(Iterator<String> input) {
 		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
@@ -78,6 +87,14 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		return newMeta;
 	}
 
+	protected void readAndAddMetadata(Iterator<String> input, boolean handleMetaData, IStreamObject<IMetaAttribute> tuple) {
+		if (handleMetaData && hasMetadata()) {
+			IMetaAttribute meta = readMetaData(input);
+			tuple.setMetadata(meta);
+		}
+	}
+
+
 	protected final IMetaAttribute readMetaData(ByteBuffer input) {
 		List<Tuple<?>> res = new ArrayList<Tuple<?>>();
 		for (NullAwareTupleDataHandler dh : metaDataHandler) {
@@ -87,6 +104,14 @@ public abstract class AbstractStreamObjectDataHandler<T extends IStreamObject<? 
 		newMeta.writeValues(res);
 		return newMeta;
 	}
+
+	protected void readAndAddMetadata(ByteBuffer input, boolean handleMetaData, IStreamObject<IMetaAttribute> tuple) {
+		if (handleMetaData && hasMetadata()) {
+			IMetaAttribute meta = readMetaData(input);
+			tuple.setMetadata(meta);
+		}
+	}
+
 
 	@Override
 	public T readData(String input, boolean handleMetaData) {
