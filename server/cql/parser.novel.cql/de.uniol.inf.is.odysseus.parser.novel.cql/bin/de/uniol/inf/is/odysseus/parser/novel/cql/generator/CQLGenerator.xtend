@@ -604,8 +604,6 @@ class CQLGenerator implements IGenerator2
 	{
 		parseSimpleSelect(view.select.select as SimpleSelect)
 		var lastOperator = getLastOperator()
-		println(lastOperator)
-		println(registry_Operators)
 		var operatorPlan = registry_Operators.get(getLastOperator())
 		registry_Operators.remove(lastOperator)
 		registry_OperatorNames.remove(lastOperator)
@@ -614,6 +612,8 @@ class CQLGenerator implements IGenerator2
 		return view.getName()
 	}
 	
+	
+	private val SINK_INPUT_KEYWORD = '--INPUT--'
 	def private CharSequence parseCreateAccessFramework(CreateAccessFramework create, String type)
 	{
 		var String operator
@@ -624,7 +624,7 @@ class CQLGenerator implements IGenerator2
 		}
 		operator = buildCreate1(operator, create.pars, create.attributes.arguments, create.attributes.name).toString
 		if(type.toUpperCase.equals('SINK'))
-			if(!operator.contains("--INPUT--"))
+			if(!operator.contains(SINK_INPUT_KEYWORD))
 				return registerOperator(operator, create.attributes.name)
 			else 
 				registry_Sinks.put(create.attributes.name, operator)
@@ -632,6 +632,21 @@ class CQLGenerator implements IGenerator2
 			registerOperator(operator, create.attributes.name)
 			
 		return ''
+	}
+	
+	def private parseCreateDatabaseSink(CreateDatabaseSink sink) 
+	{
+		var Map<String, String> args = newHashMap
+		args.put('connection', sink.database+builder.ESC+builder.STRING_TYPE)
+		args.put('table', sink.table+builder.ESC+builder.STRING_TYPE)
+		args.put('input', SINK_INPUT_KEYWORD)
+		if(sink.option !== null)
+			if(sink.option.toUpperCase().equals("DROP"))
+				args.put('drop', 'true'+builder.ESC+builder.STRING_TYPE)
+			else
+				args.put('truncate', 'true'+builder.ESC+builder.STRING_TYPE)
+		var operator = builder.buildOperator("DATABASESINK", args)	
+		registry_Sinks.put(sink.name, operator)
 	}
 	
 	def private CharSequence extractSchema(SchemaDefinition schema)
@@ -644,12 +659,6 @@ class CQLGenerator implements IGenerator2
 			datatypes.add(schema.arguments.get(i + 1))
 		}
 		return generateKeyValueString(attributenames, datatypes, ',')
-	}
-	
-	def parseCreateDatabaseSink(CreateDatabaseSink sink) 
-	{
-		
-		
 	}
 	
 	def private float getTimeInMilliseconds(String time, float value)
@@ -1590,7 +1599,6 @@ class CQLGenerator implements IGenerator2
 					attributes.add(attribute)
 		}
 				
-		println("attributes.: " + attributes)
 		var List<Source> sources = select.sources
 		
 		//Check if it's a select * query and add for each source its attributes

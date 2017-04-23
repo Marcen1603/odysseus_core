@@ -1206,10 +1206,27 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND"
+			"CREATE SINK dbsink AS DATABASE con1 TABLE example;
+			 STREAM TO dbsink SELECT * FROM stream1; 
+			"
 			,
-			"datastream:=DATABASESOURCE({connection='con1',table='main',attributes=[['id','INTEGER'],['value','STRING']],waiteach=1000.0})"
-			, null
+			"operator_1 = MAP({expressions=['stream1.attr1','stream1.attr2']},stream1)
+			 dbsink := DATABASESINK({connection='con1',table='example'},operator_1)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void CreateDatabaseSinkTest2()
+	{
+		assertCorrectGenerated
+		(
+			"CREATE SINK dbsink AS DATABASE con1 TABLE example AND DROP;
+			 STREAM TO dbsink SELECT * FROM stream1; 
+			"
+			,
+			"operator_1 = MAP({expressions=['stream1.attr1','stream1.attr2']},stream1)
+			 dbsink := DATABASESINK({connection='con1',table='example', drop='true'},operator_1)"
+			, new CQLDictionaryHelper()
 		)
 	}
 	

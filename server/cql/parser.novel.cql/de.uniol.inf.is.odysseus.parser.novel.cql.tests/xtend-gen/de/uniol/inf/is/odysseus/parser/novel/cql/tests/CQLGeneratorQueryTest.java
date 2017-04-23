@@ -734,8 +734,17 @@ public class CQLGeneratorQueryTest {
   
   @Test
   public void CreateDatabaseSinkTest1() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "CREATE STREAM datastream(id INTEGER, value STRING) DATABASE con1 TABLE main EACH 1 SECOND", 
-      "datastream:=DATABASESOURCE({connection=\'con1\',table=\'main\',attributes=[[\'id\',\'INTEGER\'],[\'value\',\'STRING\']],waiteach=1000.0})", null);
+      "CREATE SINK dbsink AS DATABASE con1 TABLE example;\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \n\t\t\t", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t dbsink := DATABASESINK({connection=\'con1\',table=\'example\'},operator_1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
+  public void CreateDatabaseSinkTest2() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "CREATE SINK dbsink AS DATABASE con1 TABLE example AND DROP;\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \n\t\t\t", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t dbsink := DATABASESINK({connection=\'con1\',table=\'example\', drop=\'true\'},operator_1)", _cQLDictionaryHelper);
   }
 }
