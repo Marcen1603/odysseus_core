@@ -1,15 +1,22 @@
 package de.uniol.inf.is.odysseus.server.xml;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +24,19 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 // GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
 
-public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject, Serializable
+public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable
 {
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
@@ -108,7 +120,8 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		try
 		{
-			Element check = content.getDocumentElement();
+			Node check = content.getFirstChild();
+			check.getNodeName();
 			return false;
 		} catch(NullPointerException e)
 		{
@@ -141,17 +154,31 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		try
 		{
-			XPathExpression xExp = xpath.compile(expression);
+			XPathExpression xExp = xpath.compile(expression);			
 			return (NodeList) xExp.evaluate(content, XPathConstants.NODESET);
 		} catch (XPathExpressionException e)
 		{
+			XPathExpression xExp;
+			try
+			{
+				xExp = xpath.compile(expression);
+				String atomicValue = "<?xml version=\"1.0\"?><atomicResult>" + xExp.evaluate(content) + "</atomicResult>";
+				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();				
+				Document doc = docBuilder.parse(new InputSource(new StringReader(atomicValue)));
+				xpath.reset();
+				xExp = xpath.compile("//node()");
+				return (NodeList) xExp.evaluate(doc, XPathConstants.NODESET);				
+			} catch (XPathExpressionException | SAXException | IOException | ParserConfigurationException e1)
+			{
+				e1.printStackTrace();
+			}			
 			LOG.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
 	}
-
-	public Node xpathToNode(String expression)
+	
+	/*public Node xpathToNode(String expression)
 	{
 		try
 		{
@@ -163,7 +190,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 
 	public String xpathToString(String expression)
 	{
@@ -175,7 +202,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			try
 			{
 				Transformer xform = TransformerFactory.newInstance().newTransformer();
-				xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 				xform.setOutputProperty(OutputKeys.INDENT, "yes");
 				xform.transform(new DOMSource(elem), new StreamResult(buf));
 			} catch (TransformerException e)
@@ -185,5 +212,12 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			}
 		}
 		return buf.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getAttribute(String name)
+	{
+		return (K) xpathToNodeList(name).item(0).getNodeName();
 	}
 }

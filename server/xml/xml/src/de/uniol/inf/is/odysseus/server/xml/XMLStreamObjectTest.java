@@ -19,10 +19,10 @@ public class XMLStreamObjectTest
 			dataHandler = new XMLStreamObjectDataHandler();
 			FileInputStream fis = new FileInputStream("c:/test.xml");
 			XMLStreamObject<?> xmlDoc = dataHandler.readData(fis, false);
-			XMLStreamObject<?> xmlDoc2 = xmlDoc.createInstance(xmlDoc.xpathToDocument("//xfrom"));
-			System.out.println(xmlDoc.isEmpty() ? "EMPTY" : "NON EMPTY");
-			//System.out.println(xmlDoc.toString());
-			
+			//XMLStreamObject<?> xmlDoc2 = xmlDoc.createInstance(xmlDoc.xpathToDocument("//mail"));
+			//System.out.println(xmlDoc.xpathToString("//node()"));
+			//System.out.println(xmlDoc2.isEmpty() ? "EMPTY" : "NON EMPTY");
+			System.out.println(xmlDoc.xpathToString("count(//mail)"));
 			
 			
 		} catch (FileNotFoundException e)
