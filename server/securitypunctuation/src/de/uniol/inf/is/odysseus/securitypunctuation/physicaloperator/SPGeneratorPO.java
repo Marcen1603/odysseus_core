@@ -28,7 +28,7 @@ public  class SPGeneratorPO<T extends IStreamObject<?>> extends AbstractPipe<T,T
 		int randomizer=(int)(Math.random()*5);
 		if(randomizer==4){
 			sendPunctuation(new SecurityPunctuation("Stream1","121,122","Heartbeat","Nurse",true,true,new Long(232)));
-			transfer(object);
+			
 		}transfer(object);
 		
 	}

@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
-
-public abstract class AbstractSAOperatorPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements ISAOperatorPO {
+@Deprecated
+public abstract class AbstractSAOperatorPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements ISAOperatorPO<T> {
 	List<AbstractSecurityPunctuation> recentSPs;
 
 	// checks, if the SPs in the buffer have the same timestamp as the incoming

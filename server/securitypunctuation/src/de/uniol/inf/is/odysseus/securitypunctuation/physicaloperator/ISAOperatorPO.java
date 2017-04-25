@@ -1,17 +1,14 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
-public interface ISAOperatorPO {
-
-
-	boolean match(Tuple t);
+public interface ISAOperatorPO<T extends IStreamObject<?>> {
 
 	void override(AbstractSecurityPunctuation sp);
 
+	ArrayList<AbstractSecurityPunctuation> match(T object);
 
 }

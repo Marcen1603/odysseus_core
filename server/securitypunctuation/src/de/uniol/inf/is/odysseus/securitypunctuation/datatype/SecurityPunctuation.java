@@ -107,6 +107,12 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		return new SecurityPunctuation(this);
 	}
 
+	@Override
+	public String toString(){
+		return ddp.getStreams().toString()+";"+ddp.getTupleRange()+";"+ddp.getAttributes().toString()+";"+srp.getRoles().toString()+";"+sign+";"+immutable+";"+timestamp;
+	}
+	
+	//compares if two SecurityPunctuations are referring to the same Objects
 	public boolean compareSP(AbstractSecurityPunctuation input) {
 		if (this.ddp.equals(input.getDDP()) && this.immutable == input.getImmutable() && this.sign == input.getSign()) {
 			return true;

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class DataDescriptionPart {
 	String tupleRange;
@@ -41,11 +42,15 @@ public class DataDescriptionPart {
 		return this.tupleRange;
 	}
 	//muss für verschiedene Arten von SPs angepasst werden->in AbstractDDP übernehmen
-	public boolean match(Tuple<?> t){
-		for(int i=0;i<t.size();i++){
-			if(t.getAttribute(i)==null||t.getAttribute(i).equals(tupleRange)||attributes.contains(t.getAttribute(i))||streams.contains(t.getAttribute(i))){
+	public boolean  match(IStreamObject<?> object){
+		Tuple<?> temp=(Tuple<?>)object;
+		for(int i=0;i<temp.size();i++){
+			if(temp.getAttribute(i)==null||temp.getAttribute(i).equals(tupleRange)||attributes.contains(temp.getAttribute(i))||streams.contains(temp.getAttribute(i))){
 				return true;
 			}
 		}return false;
+		
 	}
+
+
 }
