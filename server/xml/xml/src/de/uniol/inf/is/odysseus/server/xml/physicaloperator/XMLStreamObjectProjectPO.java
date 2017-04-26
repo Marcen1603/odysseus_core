@@ -1,6 +1,17 @@
 package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 
+import java.io.StringReader;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Node;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -40,13 +51,30 @@ public class XMLStreamObjectProjectPO<T extends IMetaAttribute> extends Abstract
 	@Override
 	protected void process_next(XMLStreamObject<T> object, int port)
 	{
-		for (SDFAttribute path : this.paths)
+		DocumentBuilder docBuilder;
+		try
 		{
-			String pathURI = path.getURI();
-			XMLStreamObject<IMetaAttribute> newObject = XMLStreamObject.createInstance(object.xpathToDocument(pathURI)); 
+			docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			Node root = object.getDocument().getFirstChild();
+			root = doc.importNode(root, false);
+			doc.appendChild(root);
+			for (SDFAttribute path : this.paths)
+			{
+				String pathURI = path.getURI();
+				NodeList nl = object.xpathToNodeList(pathURI);
+				for(int i = 0; i < nl.getLength(); i++)
+				{			
+					doc.appendChild(doc.importNode(nl.item(i), false));
+				}					
+			}
+			XMLStreamObject<IMetaAttribute> newObject = XMLStreamObject.createInstance(doc); 
 			newObject.setMetadata(object.getMetadata().clone());
-			System.out.println("PROJECT: \n" + newObject.toString());
 			if(!newObject.isEmpty()) transfer((XMLStreamObject<T>) newObject);
-		}
+		} catch (ParserConfigurationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
 	}
 }

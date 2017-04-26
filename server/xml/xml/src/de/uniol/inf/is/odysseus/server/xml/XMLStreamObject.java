@@ -178,7 +178,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return null;
 	}
 	
-	/*public Node xpathToNode(String expression)
+	public Node xpathToNode(String expression)
 	{
 		try
 		{
@@ -190,7 +190,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			e.printStackTrace();
 		}
 		return null;
-	}*/
+	}
 
 	public String xpathToString(String expression)
 	{
@@ -218,6 +218,6 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	@Override
 	public <K> K getAttribute(String name)
 	{
-		return (K) xpathToNodeList(name).item(0).getNodeName();
+		return (K) xpathToNodeList(name).item(0).getNodeValue();
 	}
 }

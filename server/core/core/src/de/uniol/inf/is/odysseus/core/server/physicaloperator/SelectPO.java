@@ -41,7 +41,7 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 		return predicate;
 	}
 
-	/**
+	/*
 	 * @return the heartbeat rate
 	 */
 	public int getHeartbeatRate() {
