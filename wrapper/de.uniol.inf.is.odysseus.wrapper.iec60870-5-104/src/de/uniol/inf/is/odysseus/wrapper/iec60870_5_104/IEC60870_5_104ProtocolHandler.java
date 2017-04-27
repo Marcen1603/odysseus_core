@@ -1,5 +1,14 @@
 package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
 
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+
 /**
  * The IEC60870-5-104 protocol handler implements the IEC60870-5-104
  * communication standard. <br />
@@ -54,19 +63,20 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
  * <li>Link address and ASDU (Application Service Data Unit) addresses are
  * provided for classifying the end station and different segments under the
  * same.</li>
- * <li>Data is classified into different information objects and each information
- * object is provided with a specific address.</li>
- * <li>Facility to classify the data into high priority (class-1) and low priority
- * (class-2) and transfer the same using separate mechanisms.</li>
- * <li>Possibility of classifying the data into different groups (1-16) to get the
- * data according to the group by issuing specific group interrogation commands
- * from the master & obtaining data under all the groups by issuing a general
- * interrogation.</li>
+ * <li>Data is classified into different information objects and each
+ * information object is provided with a specific address.</li>
+ * <li>Facility to classify the data into high priority (class-1) and low
+ * priority (class-2) and transfer the same using separate mechanisms.</li>
+ * <li>Possibility of classifying the data into different groups (1-16) to get
+ * the data according to the group by issuing specific group interrogation
+ * commands from the master & obtaining data under all the groups by issuing a
+ * general interrogation.</li>
  * <li>Cyclic & Spontaneous data updating schemes are provided.</li>
  * <li>Facility for time synchronization.</li>
- * <li>Schemes for transfer of files-Example:IED's will store disturbance recorder
- * file in the memory, When electrical disturbance is occurred in the field.
- * This file can be retrieved through IEC103 protocol for fault analysis.</li>
+ * <li>Schemes for transfer of files-Example:IED's will store disturbance
+ * recorder file in the memory, When electrical disturbance is occurred in the
+ * field. This file can be retrieved through IEC103 protocol for fault
+ * analysis.</li>
  * </ul>
  * Frame format: <br />
  * Character format of IEC 101 uses 1 start bit, 1 stop bit, 1 parity bit & 8
@@ -170,8 +180,10 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
  * <ul>
  * <li>Single indication without / with 24 / with 56 bit timestamps.</li>
  * <li>Double indication without / with 24 / with 56 bit timestamps.</li>
- * <li>Step position information without / with 24 / with 56 bit timestamps.</li>
- * <li>Measured value – normalized, scaled, short floating point without / with timestamps.</li>
+ * <li>Step position information without / with 24 / with 56 bit
+ * timestamps.</li>
+ * <li>Measured value – normalized, scaled, short floating point without / with
+ * timestamps.</li>
  * <li>Bitstring of 32 bit without / with timestamps.</li>
  * <li>Integrated totals (counters) without / with timestamps.</li>
  * <li>Packed events (start & tripping ) of protection equipments.</li>
@@ -188,6 +200,39 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class IEC60870_5_104ProtocolHandler {
+public class IEC60870_5_104ProtocolHandler<S extends IStreamObject<? extends IMetaAttribute>>
+		extends AbstractProtocolHandler<S> {
+
+	/**
+	 * The name of the protocol handler for query languages.
+	 */
+	private static final String name = "IEC60870";
+
+	/**
+	 * Creates a new protocol handler. <br />
+	 * See
+	 * {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IStreamObjectDataHandler)}
+	 * for parameters.
+	 */
+	public IEC60870_5_104ProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
+			IStreamObjectDataHandler<S> dataHandler) {
+		super(direction, access, dataHandler, options);
+	}
+
+	@Override
+	public IProtocolHandler<S> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
+			IStreamObjectDataHandler<S> dataHandler) {
+		return new IEC60870_5_104ProtocolHandler<>(direction, access, options, dataHandler);
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
+		return other != null && other instanceof IEC60870_5_104ProtocolHandler;
+	}
 
 }
