@@ -209,6 +209,12 @@ public class IEC60870_5_104ProtocolHandler<S extends IStreamObject<? extends IMe
 	private static final String name = "IEC60870";
 
 	/**
+	 * Empty default constructor. Needed to run as an OSGi service.
+	 */
+	public IEC60870_5_104ProtocolHandler() {
+	}
+
+	/**
 	 * Creates a new protocol handler. <br />
 	 * See
 	 * {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IStreamObjectDataHandler)}
