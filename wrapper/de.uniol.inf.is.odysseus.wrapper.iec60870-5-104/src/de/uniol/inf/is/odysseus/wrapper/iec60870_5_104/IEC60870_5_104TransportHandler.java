@@ -212,12 +212,12 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	/**
 	 * The logger instance for the IEC60870-5-104 wrapper.
 	 */
-	static final Logger log = LoggerFactory.getLogger("IEC60870");
+	static final Logger log = LoggerFactory.getLogger("IEC60870-5-104");
 
 	/**
 	 * The name of the transport handler for query languages.
 	 */
-	private static final String name = "IEC60870";
+	private static final String name = "IEC60870-5-104";
 
 	/**
 	 * The options name for the host to connect to.
@@ -365,9 +365,13 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	}
 
 	@Override
-	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isSemanticallyEqualImpl(ITransportHandler obj) {
+		if (obj == null || !(obj instanceof IEC60870_5_104TransportHandler)) {
+			return false;
+		}
+
+		IEC60870_5_104TransportHandler other = (IEC60870_5_104TransportHandler) obj;
+		return host.equals(other.host) && port == other.port;
 	}
 
 	/**
