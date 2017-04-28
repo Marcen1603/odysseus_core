@@ -9,20 +9,15 @@ import org.openmuc.j60870.ConnectionEventListener;
 //TODO implement
 public class IEC60870_5_104ClientListener implements ConnectionEventListener {
 
-	public IEC60870_5_104ClientListener(IEC60870_5_104TransportHandler iec60870_5_104TransportHandler) {
-		// TODO Auto-generated constructor stub
+	@Override
+	public void connectionClosed(IOException e) {
+		IEC60870_5_104TransportHandler.log.error("Received connection closed signal!", e);
 	}
 
 	@Override
-	public void connectionClosed(IOException arg0) {
+	public void newASdu(ASdu asdu) {
 		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void newASdu(ASdu arg0) {
-		// TODO Auto-generated method stub
-
+		IEC60870_5_104TransportHandler.log.debug("new ASDU: {}", asdu);
 	}
 
 }

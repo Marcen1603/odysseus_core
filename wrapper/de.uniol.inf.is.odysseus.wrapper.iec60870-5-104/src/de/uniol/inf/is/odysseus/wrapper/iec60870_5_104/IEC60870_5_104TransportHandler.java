@@ -337,7 +337,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 		// Start j60870 client
 		clientConnection = new ClientConnectionBuilder(host).setPort(port).connect();
 		try {
-			clientConnection.startDataTransfer(new IEC60870_5_104ClientListener(this), timeout);
+			clientConnection.startDataTransfer(new IEC60870_5_104ClientListener(), timeout);
 			log.debug("j60870 client successfully connected");
 		} catch (TimeoutException e) {
 			log.error("Connection closed for the following reason", e);
@@ -361,7 +361,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	@Override
 	public void send(byte[] message) throws IOException {
 		// TODO Auto-generated method stub
-
+		System.err.println("Send me!");
 	}
 
 	@Override
