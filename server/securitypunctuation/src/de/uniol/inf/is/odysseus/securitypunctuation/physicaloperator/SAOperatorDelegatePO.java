@@ -9,15 +9,22 @@ import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPun
 public class SAOperatorDelegatePO<T extends IStreamObject<?>> implements ISAOperatorPO<T> {
 	List<AbstractSecurityPunctuation> recentSPs;
 
+	
+	public SAOperatorDelegatePO(){
+		this.recentSPs=new ArrayList<AbstractSecurityPunctuation>();
+	}
 	// checks, if the SPs in the buffer have the same timestamp as the incoming
 	// SP and adds the new SP
 	@Override
 	public void override(AbstractSecurityPunctuation sp) {
-		if (sp.getTime() != recentSPs.get(recentSPs.size() - 1).getTime()) {
-			this.recentSPs.clear();
+		if (!recentSPs.isEmpty()) {
+			if (sp.getTime() != recentSPs.get(recentSPs.size()-1).getTime()) {
+				this.recentSPs.clear();
 
+			}
 		}
 		this.recentSPs.add(sp);
+
 	}
 
 	@Override
@@ -32,7 +39,8 @@ public class SAOperatorDelegatePO<T extends IStreamObject<?>> implements ISAOper
 
 		return matches;
 	}
-	public List<AbstractSecurityPunctuation> getRecentSPs(){
+
+	public List<AbstractSecurityPunctuation> getRecentSPs() {
 		return this.recentSPs;
 	}
 	/*

@@ -23,7 +23,7 @@ public abstract class AbstractSAOperatorPO<T extends IStreamObject<?>> extends A
 
 	}
 
-	// Attribut könnte auch an anderen Stellen sein
+/**	// Attribut könnte auch an anderen Stellen sein
 	@Override
 	public boolean match(Tuple t) {
 		for (AbstractSecurityPunctuation sp : recentSPs) {
@@ -35,7 +35,7 @@ public abstract class AbstractSAOperatorPO<T extends IStreamObject<?>> extends A
 		return false;
 
 	}
-
+**/
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Auto-generated method stub

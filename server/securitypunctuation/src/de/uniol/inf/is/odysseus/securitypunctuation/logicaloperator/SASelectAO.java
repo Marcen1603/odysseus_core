@@ -1,0 +1,35 @@
+package de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+
+@LogicalOperator(name = "SASelect", minInputPorts = 1, maxInputPorts = 1, doc = "Generates SPs and adds them to the Datastream randomly", url = "http://example.com/MyOperator.html", category = {
+		LogicalOperatorCategory.BASE })
+public class SASelectAO extends SelectAO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1527796968238947267L;
+
+	public SASelectAO() {
+		super();
+	}
+
+	public SASelectAO(SelectAO po) {
+		super(po);
+		
+	}
+	public SASelectAO(IPredicate<?> predicate) {
+		setPredicate(predicate);
+	}
+
+	@Override
+	public SASelectAO clone() {
+
+		return new SASelectAO(this);
+	}
+
+}

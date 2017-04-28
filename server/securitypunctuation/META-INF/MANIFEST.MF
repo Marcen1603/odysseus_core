@@ -10,10 +10,27 @@ Import-Package: de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,
  de.uniol.inf.is.odysseus.core.server.planmanagement,
+ de.uniol.inf.is.odysseus.core.server.usermanagement,
+ de.uniol.inf.is.odysseus.physicaloperator.relational,
  de.uniol.inf.is.odysseus.ruleengine.rule,
  de.uniol.inf.is.odysseus.ruleengine.ruleflow,
  de.uniol.inf.is.odysseus.transform.flow,
  de.uniol.inf.is.odysseus.transform.rule,
+ de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain,
  org.osgi.framework;version="1.3.0",
  org.slf4j
-Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
+Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.core.server
+Export-Package: de.uniol.inf.is.odysseus.securitypunctuation;uses:="org.osgi.framework",
+ de.uniol.inf.is.odysseus.securitypunctuation.datatype;
+  uses:="de.uniol.inf.is.odysseus.core.physicaloperator,
+   de.uniol.inf.is.odysseus.core.sdf.schema,
+   de.uniol.inf.is.odysseus.core.metadata,
+   de.uniol.inf.is.odysseus.core.collection",
+ de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator;uses:="de.uniol.inf.is.odysseus.core.server.logicaloperator",
+ de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
+  uses:="de.uniol.inf.is.odysseus.core.server.physicaloperator,
+   de.uniol.inf.is.odysseus.core.physicaloperator,
+   de.uniol.inf.is.odysseus.core.predicate,
+   de.uniol.inf.is.odysseus.securitypunctuation.datatype,
+   de.uniol.inf.is.odysseus.core.collection"

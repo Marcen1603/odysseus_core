@@ -26,5 +26,6 @@ public class SPGeneratorAO extends AbstractLogicalOperator {
 
 		return new SPGeneratorAO(this);
 	}
+	
 
 }

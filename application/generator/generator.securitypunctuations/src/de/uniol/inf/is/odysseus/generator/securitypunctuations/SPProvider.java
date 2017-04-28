@@ -15,13 +15,17 @@ public class SPProvider extends AbstractDataGenerator {
 	private long timestamp;
 	//zählt die Anzahl der versendeten Datentupel
 	private int counter = 0;
-	long delay;
+	private long delay;
+	private String stream;
+	private String streamingAttribute;
+	
 
 
-	public SPProvider(long delay) {
+	public SPProvider(String stream,String streamingAttribute,long delay) {
 		super();
 		this.delay=delay;
-		//this.stream=stream;
+		this.stream=stream;
+		this.streamingAttribute=streamingAttribute;
 	}
 	
 /*	@Override
@@ -126,7 +130,7 @@ public class SPProvider extends AbstractDataGenerator {
 
 	@Override
 	public SPProvider newCleanInstance() {
-		return new SPProvider(delay);
+		return new SPProvider(stream,streamingAttribute,delay);
 	}
 	@Override
 	public void close() {
@@ -136,10 +140,16 @@ public class SPProvider extends AbstractDataGenerator {
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
 		List<DataTuple> list=new ArrayList<DataTuple>();
-		
+		int streamingValue=((int)Math.random()*20);
+		timestamp=System.currentTimeMillis();
 		DataTuple tuple=new DataTuple();
-		int i=(int)(Math.random()*20);
-		tuple.addAttribute(new Integer(i));
+		
+		tuple.addAttribute(new String(stream));
+		tuple.addAttribute(counter);
+		tuple.addAttribute(streamingAttribute);
+		tuple.addAttribute(streamingValue);
+		tuple.addAttribute(timestamp);
+		counter++;
 		list.add(tuple);
 		Thread.sleep(delay);
 		return list;

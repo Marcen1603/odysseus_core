@@ -1,17 +1,23 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityRestrictionPart;
 
-@SuppressWarnings({ "rawtypes" })
-public class SPAnalyzerPO extends AbstractPipe<Tuple, Tuple> {
+
+public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	List<AbstractSecurityPunctuation> buffer;
 
+	
+	public SPAnalyzerPO(){
+		super();
+		this.buffer=new ArrayList<AbstractSecurityPunctuation>();
+	}
+	
 	public void processSecurityPunctuation(AbstractSecurityPunctuation punctuation, int port) {
 
 		if (buffer.get(buffer.size() - 1).getTime() == punctuation.getTime()) {
@@ -23,6 +29,8 @@ public class SPAnalyzerPO extends AbstractPipe<Tuple, Tuple> {
 		sendPunctuation(punctuation);
 
 	}
+	
+	
 
 	// Vergleicht ob die "neuere" SP gleich der alten ist und fügt dann die
 	// Rollen der beiden Sps zusammen
@@ -42,7 +50,8 @@ public class SPAnalyzerPO extends AbstractPipe<Tuple, Tuple> {
 	}
 
 	@Override
-	protected void process_next(Tuple object, int port) {
+	protected void process_next(T object, int port) {
+	
 		transfer(object);
 	}
 

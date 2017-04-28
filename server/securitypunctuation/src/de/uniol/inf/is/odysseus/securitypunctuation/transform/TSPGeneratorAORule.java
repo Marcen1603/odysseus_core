@@ -17,10 +17,10 @@ public class TSPGeneratorAORule extends AbstractTransformationRule<SPGeneratorAO
 	}
 
 	@Override
-	public void execute(SPGeneratorAO spgeneratorAO, TransformationConfiguration config) throws RuleException {
+	public void execute(SPGeneratorAO spGeneratorAO, TransformationConfiguration config) throws RuleException {
 		
 		SPGeneratorPO<?> spGeneratorPO=new SPGeneratorPO();
-		defaultExecute(spgeneratorAO, spGeneratorPO, config, true, true);
+		defaultExecute(spGeneratorAO, spGeneratorPO, config, true, true);
 
 	}
 

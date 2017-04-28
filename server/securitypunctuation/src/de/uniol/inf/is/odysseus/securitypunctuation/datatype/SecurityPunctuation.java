@@ -109,7 +109,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 
 	@Override
 	public String toString(){
-		return ddp.getStreams().toString()+";"+ddp.getTupleRange()+";"+ddp.getAttributes().toString()+";"+srp.getRoles().toString()+";"+sign+";"+immutable+";"+timestamp;
+		return ddp.toString()+";"+srp.toString()+";"+sign+";"+immutable+";"+timestamp;
 	}
 	
 	//compares if two SecurityPunctuations are referring to the same Objects
