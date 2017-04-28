@@ -1,16 +1,23 @@
 package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.concurrent.TimeoutException;
+
+import org.openmuc.j60870.ClientConnectionBuilder;
+import org.openmuc.j60870.Connection;
+import org.openmuc.j60870.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
 /**
- * The IEC60870-5-104 protocol handler implements the IEC60870-5-104
+ * The IEC60870-5-104 transport handler implements the IEC60870-5-104
  * communication standard. <br />
  * <br />
  * IEC 60870 part 5 is one of the IEC 60870 set of standards which define
@@ -200,35 +207,106 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class IEC60870_5_104ProtocolHandler<S extends IStreamObject<? extends IMetaAttribute>>
-		extends AbstractProtocolHandler<S> {
+public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler {
 
 	/**
-	 * The name of the protocol handler for query languages.
+	 * The logger instance for the IEC60870-5-104 wrapper.
+	 */
+	static final Logger log = LoggerFactory.getLogger("IEC60870");
+
+	/**
+	 * The name of the transport handler for query languages.
 	 */
 	private static final String name = "IEC60870";
 
 	/**
+	 * The options name for the host to connect to.
+	 */
+	private static final String hostKey = "host";
+
+	/**
+	 * The options name for the port to connect to.
+	 */
+	private static final String portKey = "port";
+
+	/**
+	 * The options name for the timeout [ms] for the client.
+	 */
+	private static final String timeoutKey = "timeout";
+
+	/**
+	 * The default port for IEC 60870-5-104 messages.
+	 */
+	private static final int defaultPort = 2404;
+
+	/**
+	 * The default timeout [ms] for the client.
+	 */
+	private static final int defaultTimeout = 5000;
+
+	/**
+	 * The host to connect to.
+	 */
+	private InetAddress host;
+
+	/**
+	 * The port to connect to.
+	 */
+	private int port;
+
+	/**
+	 * The timeout [ms] for the client. <br />
+	 * May only be set for sedning mode.
+	 */
+	private int timeout;
+
+	/**
+	 * The j60870 server, if the transport handler is in server mode (receiving
+	 * telegrams)
+	 */
+	private Server server;
+
+	/**
+	 * The j60870 connection, if the transport handler is in client mode
+	 * (sending telegrams)
+	 */
+	private Connection clientConnection;
+
+	/**
 	 * Empty default constructor. Needed to run as an OSGi service.
 	 */
-	public IEC60870_5_104ProtocolHandler() {
+	public IEC60870_5_104TransportHandler() {
 	}
 
 	/**
-	 * Creates a new protocol handler. <br />
-	 * See
-	 * {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IStreamObjectDataHandler)}
-	 * for parameters.
+	 * Creates a new transport handler.
+	 *
+	 * @param protocolHandler
+	 *            The transport handler to use.
+	 * @param options
+	 *            The options map.
+	 * @throws UnknownHostException
+	 *             if the host specified in the options map is unknown.
 	 */
-	public IEC60870_5_104ProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
-			IStreamObjectDataHandler<S> dataHandler) {
-		super(direction, access, dataHandler, options);
+	public IEC60870_5_104TransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options)
+			throws UnknownHostException {
+		super(protocolHandler, options);
+		init(options);
 	}
 
-	@Override
-	public IProtocolHandler<S> createInstance(ITransportDirection direction, IAccessPattern access, OptionMap options,
-			IStreamObjectDataHandler<S> dataHandler) {
-		return new IEC60870_5_104ProtocolHandler<>(direction, access, options, dataHandler);
+	/**
+	 * Initializes the transport handler.
+	 *
+	 * @param options
+	 *            The options map.
+	 * @throws UnknownHostException
+	 *             if the host specified in the options map is unknown.
+	 */
+	private void init(OptionMap options) throws UnknownHostException {
+		options.checkRequiredException(hostKey);
+		host = InetAddress.getByName(options.get(hostKey));
+		port = options.getInt(portKey, defaultPort);
+		timeout = options.getInt(timeoutKey, defaultTimeout);
 	}
 
 	@Override
@@ -237,8 +315,65 @@ public class IEC60870_5_104ProtocolHandler<S extends IStreamObject<? extends IMe
 	}
 
 	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
-		return other != null && other instanceof IEC60870_5_104ProtocolHandler;
+	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
+		try {
+			return new IEC60870_5_104TransportHandler(protocolHandler, options);
+		} catch (UnknownHostException e) {
+			log.error("{} is an unknown internet adress!", host);
+			return null;
+		}
 	}
 
+	@Override
+	public void processInOpen() throws IOException {
+		// Start j60870 server
+		server = new Server.Builder().setBindAddr(host).setPort(port).build();
+		server.start(new IEC60870_5_104ServerListener(this));
+		log.debug("j60870 server successfully started");
+	}
+
+	@Override
+	public void processOutOpen() throws IOException {
+		// Start j60870 client
+		clientConnection = new ClientConnectionBuilder(host).setPort(port).connect();
+		try {
+			clientConnection.startDataTransfer(new IEC60870_5_104ClientListener(this), timeout);
+			log.debug("j60870 client successfully connected");
+		} catch (TimeoutException e) {
+			log.error("Connection closed for the following reason", e);
+		}
+	}
+
+	@Override
+	public void processInClose() throws IOException {
+		// Stop j60870 server
+		server.stop();
+		log.debug("j60870 server successfully stopped");
+	}
+
+	@Override
+	public void processOutClose() throws IOException {
+		// Stop j60870 client
+		clientConnection.close();
+		log.debug("j60870 client successfully disconnected");
+	}
+
+	@Override
+	public void send(byte[] message) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isSemanticallyEqualImpl(ITransportHandler other) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Get he timeout [ms] for the client.
+	 */
+	public int getTimeout() {
+		return timeout;
+	}
 }
