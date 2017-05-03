@@ -16,6 +16,10 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import feature="de.uniol.inf.is.odysseus.common.resources.j60870.feature" version="1.2.0.qualifier"/>
+   </requires>
+
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.iec60870-5-104"
          download-size="0"
@@ -29,11 +33,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.openmuc.j60870"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
 </feature>
