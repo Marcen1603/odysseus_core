@@ -146,6 +146,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<Object> path(String path) {
 		if (!configured) {
 			Configuration.setDefaults(new Configuration.Defaults() {
@@ -300,6 +301,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 * @param value
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public void setAttribute(String key, Object value) {
 		// Must create hierarchy based on "."!
 		String subkeys[] = key.split("\\.");
