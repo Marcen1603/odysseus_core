@@ -5,26 +5,25 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.Activator;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
-import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.MoreFileUtils;
 
 /**
+ * Specialized DatabaseKeyVault for storing EncSymKeys.
+ * 
  * @author MarkMilster
  *
  */
 public class DbEncSymKeyVault extends AbstractDbKeyVault implements IDbEncSymKeyVault {
-	
-	public static String PROPERTIES_PATH = "Config/encSymKeyVault.properties";
 
+	/**
+	 * Default constructor, which uses the default Configuration file.
+	 */
 	public DbEncSymKeyVault() {
-		super(MoreFileUtils.getAbsolutePath(Activator.getContext().getBundle(), PROPERTIES_PATH));
+		super(AbstractDbKeyVault.Configuration.encSymKeys);
 	}
 
 	@Override
 	public boolean insertEncSymKey(EncKeyWrapper keyWrapper) {
-		// TODO ist die streamID ueberhaupt notwendig? kann dafuer nicht die
-		// normale ID genutzt werden?
 		PreparedStatement stmt = null;
 		boolean success = false;
 		Timestamp created = null;

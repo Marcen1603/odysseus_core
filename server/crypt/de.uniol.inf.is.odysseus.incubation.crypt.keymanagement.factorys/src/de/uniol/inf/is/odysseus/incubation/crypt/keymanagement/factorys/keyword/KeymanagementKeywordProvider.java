@@ -6,6 +6,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider;
 
+/**
+ * A PreParserKeywordProvider, which provides the Keyword, to create Keys.
+ * 
+ * @author MarkMilster
+ *
+ */
 public class KeymanagementKeywordProvider implements IPreParserKeywordProvider {
 
 	@Override

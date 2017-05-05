@@ -126,4 +126,11 @@ public class CloseStreamPO<T extends IStreamObject<?>> extends AbstractPipe<T, T
 		return false;
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		this.predicate = (IPredicate<? super T>) predicate.clone();
+	}
+
+
+
 }

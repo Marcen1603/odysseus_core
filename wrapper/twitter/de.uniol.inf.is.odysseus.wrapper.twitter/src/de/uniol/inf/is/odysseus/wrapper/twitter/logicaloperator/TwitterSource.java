@@ -66,11 +66,19 @@ public class TwitterSource extends AbstractAccessAO {
 		addOption(TwitterTransportHandler.ACCESSTOKENSECRET, accessTokenSecret);
 	}
 
-	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.SEARCHKEYS, optional = false, doc = "Twitter search keys. See documentation.")
+	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.SEARCHKEYS, optional = true, doc = "Twitter search keys. See documentation.")
 	public void setSearchKeys(List<String> searchKeys) {
 		addOption(TwitterTransportHandler.SEARCHKEYS,
 				buildString(searchKeys, ","));
 	}
+	
+	@Parameter(type = StringParameter.class, isList = true, name = TwitterTransportHandler.LANGUAGEKEYS, optional = true, doc = "Twitter language keys. Note that at least one additional filter is required. See documentation.")
+	public void setLanguageKeys(List<String> languages) {
+		addOption(TwitterTransportHandler.LANGUAGEKEYS,
+				buildString(languages, ","));
+	}
+	
+	
 
 	@Override
 	public TwitterSource clone() {

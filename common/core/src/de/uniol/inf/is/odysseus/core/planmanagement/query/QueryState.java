@@ -55,6 +55,9 @@ public enum QueryState {
 			if (function == QueryFunction.SUSPEND) {
 				return PARTIAL_SUSPENDED;
 			}
+			if (function == QueryFunction.PARTIAL) {
+				return PARTIAL;
+			}
 			break;
 		case PARTIAL_SUSPENDED:
 			if (function == QueryFunction.RESUME) {

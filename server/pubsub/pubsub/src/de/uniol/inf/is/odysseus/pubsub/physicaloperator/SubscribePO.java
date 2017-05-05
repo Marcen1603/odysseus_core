@@ -172,5 +172,10 @@ public class SubscribePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> 
 		sendPunctuation(retPunc);
 	}
 
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		//TODO
+	}
+
 
 }

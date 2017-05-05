@@ -4,6 +4,10 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
+ * Wrapper for ASymKeys.<br>
+ * This wrapper contains a PrivateKeyWrapper and a PublicKeyWrapper, but no
+ * metadata. The metadata is stored in the wrappers.
+ * 
  * @author MarkMilster
  *
  */
@@ -13,6 +17,8 @@ public class ASymKeyWrapper {
 	private KeyWrapper<PublicKey> publicKeyWrapper;
 
 	/**
+	 * Returns the PrivateKeyWrapper
+	 * 
 	 * @return the privateKeyWrapper
 	 */
 	public KeyWrapper<PrivateKey> getPrivateKeyWrapper() {
@@ -20,6 +26,8 @@ public class ASymKeyWrapper {
 	}
 
 	/**
+	 * Sets the PrivateKeyWrapper.
+	 * 
 	 * @param privateKeyWrapper
 	 *            the privateKeyWrapper to set
 	 */
@@ -28,6 +36,8 @@ public class ASymKeyWrapper {
 	}
 
 	/**
+	 * Returns the PublicKeyWrapper
+	 * 
 	 * @return the publicKeyWrapper
 	 */
 	public KeyWrapper<PublicKey> getPublicKeyWrapper() {
@@ -35,6 +45,8 @@ public class ASymKeyWrapper {
 	}
 
 	/**
+	 * Sets the PublicKeyWrapper
+	 * 
 	 * @param publicKeyWrapper
 	 *            the publicKeyWrapper to set
 	 */

@@ -3,6 +3,16 @@ package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Wrapper, to wrap any object with some metadata of keys. The Wrapped Object
+ * does not has to be a Key, so you can wrap own implementations or byteArrays,
+ * with contain information about keys.
+ * 
+ * @author MarkMilster
+ *
+ * @param <K>
+ *            Object, to wrap. This could be a key.
+ */
 public class KeyWrapper<K extends Object> implements Serializable {
 
 	private static final long serialVersionUID = 8839791650060851796L;
@@ -13,10 +23,22 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	protected LocalDateTime valid;
 	protected String comment;
 
+	/**
+	 * Default contrsuctor, to parse to JSON
+	 */
 	public KeyWrapper() {
 
 	}
 
+	/**
+	 * Constructor to set Key and Metadata. 
+	 * 
+	 * @param id ID of the wrapped key
+	 * @param key key or other object to wrap
+	 * @param created timestamp of creation of the key
+	 * @param valid timestamp, of next validation of the key
+	 * @param comment comment of the key
+	 */
 	public KeyWrapper(int id, K key, LocalDateTime created, LocalDateTime valid, String comment) {
 		this.setId(id);
 		this.setKey(key);
@@ -25,6 +47,11 @@ public class KeyWrapper<K extends Object> implements Serializable {
 		this.setComment(comment);
 	}
 
+	/**
+	 * Acquires Metadata of a other KeyWrapper. This will not change the wrapped key. 
+	 * 
+	 * @param keyWrapper KeyWrapper, to acquire the metadata from. 
+	 */
 	public void acquireMetadata(KeyWrapper<?> keyWrapper) {
 		this.setId(keyWrapper.id);
 		this.setCreated(keyWrapper.created);
@@ -33,6 +60,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Returns the id
+	 * 
 	 * @return the id
 	 */
 	public int getId() {
@@ -40,6 +69,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Sets the id
+	 * 
 	 * @param id
 	 *            the id to set
 	 */
@@ -48,6 +79,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Returns the key
+	 * 
 	 * @return the key
 	 */
 	public K getKey() {
@@ -55,6 +88,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Sets the key
+	 * 
 	 * @param key
 	 *            the key to set
 	 */
@@ -63,6 +98,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Returns the Timestamp of Creation
+	 * 
 	 * @return the created
 	 */
 	public LocalDateTime getCreated() {
@@ -70,6 +107,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Sets the Timestamp of Creation
+	 * 
 	 * @param created
 	 *            the created to set
 	 */
@@ -78,6 +117,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Returns the Timestamp of next Validation
+	 * 
 	 * @return the valid
 	 */
 	public LocalDateTime getValid() {
@@ -85,6 +126,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Sets the Timestamp of next Validation
+	 * 
 	 * @param valid
 	 *            the valid to set
 	 */
@@ -93,6 +136,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Returns the Comment
+	 * 
 	 * @return the comment
 	 */
 	public String getComment() {
@@ -100,6 +145,8 @@ public class KeyWrapper<K extends Object> implements Serializable {
 	}
 
 	/**
+	 * Sets the Comment
+	 * 
 	 * @param comment
 	 *            the comment to set
 	 */

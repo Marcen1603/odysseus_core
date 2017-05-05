@@ -17,13 +17,13 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 public class GrantPermissionCommand extends AbstractExecutorCommand {
 
 	private static final long serialVersionUID = -4220212834457736408L;
-	
+
 	private String userName;
 	private List<IPermission> operations;
 	private List<String> objects;
 
-	public GrantPermissionCommand(String userName,
-			List<IPermission> operations, List<String> objects, ISession caller) {
+	public GrantPermissionCommand(String userName, List<IPermission> operations, List<String> objects,
+			ISession caller) {
 		super(caller);
 		this.userName = userName;
 		this.operations = operations;
@@ -31,19 +31,19 @@ public class GrantPermissionCommand extends AbstractExecutorCommand {
 	}
 
 	@Override
-	public void execute(IDataDictionaryWritable dd,
-			IUserManagementWritable um, IServerExecutor executor) {
-		
+	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
+
 		List<Resource> resources = new ArrayList<>();
-		// Validate object names
-		for (String name: objects){
-			Resource r = dd.getResource(name, getCaller());
-			if (r != null){
-				resources.add(r);
+		if (objects != null) {
+			// Validate object names
+			for (String name : objects) {
+				Resource r = dd.getResource(name, getCaller());
+				if (r != null) {
+					resources.add(r);
+				}
 			}
 		}
-		
-		
+
 		IUser user = um.findUser(userName, getCaller());
 		if (user != null) {
 			for (IPermission action : operations) {

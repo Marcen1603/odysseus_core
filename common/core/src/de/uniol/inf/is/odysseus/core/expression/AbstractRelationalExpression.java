@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 abstract public class AbstractRelationalExpression<T extends IMetaAttribute> implements IRelationalExpression<T>, IPredicate<Tuple<T>> {
 
 	private static final long serialVersionUID = -3373856682130638058L;
-	final protected SDFExpression expression;
+	protected SDFExpression expression;
 	protected VarHelper[] variables;
 
 	final private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<>();

@@ -55,4 +55,9 @@ public class CreateNewFileNamePunctuationAO extends UnaryLogicalOp implements
 		return new CreateNewFileNamePunctuationAO(this);
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		this.setPredicate(predicate);
+	}
+
 }

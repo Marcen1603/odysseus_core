@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IPositionBasedStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 /**
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
  * @author Marco Grawunder, Jonas Jacobi
  */
 public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
-		implements Serializable, Comparable<Tuple<?>> {
+		implements Serializable, Comparable<Tuple<?>>, IPositionBasedStreamObject<T> {
 
 	private static final long serialVersionUID = 7119095568322125441L;
 
@@ -280,6 +281,7 @@ public class Tuple<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	// -----------------------------------------------------------------
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public final <K> K getAttribute(int pos) {
 		if (pos < 0 || pos > attributes.length)
 			return null;
