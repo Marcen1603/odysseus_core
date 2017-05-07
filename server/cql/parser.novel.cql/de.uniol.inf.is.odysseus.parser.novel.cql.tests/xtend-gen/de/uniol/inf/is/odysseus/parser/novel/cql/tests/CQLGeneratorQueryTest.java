@@ -131,7 +131,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT a.attr1 AS a1, b.attr1 AS b1 FROM stream1 AS a, stream1 AS b", 
-      "\n\t\t\t operator_1 = RENAME({aliases=[\'attr1\',\'a1\'], pairs=\'true\'}, stream1)\n\t\t\t operator_2 = RENAME({aliases=[\'attr1\',\'b1\',\'attr2\',\'stream1.attr2#1\'], pairs=\'true\'}, stream1)\n\t\t\t operator_3 = MAP({expressions=[\'a1\', \'b1\']}, JOIN(operator_1, operator_2))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'b1\',\'attr2\',\'stream1.attr2#1\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=MAP({expressions=[\'a1\',\'b1\']},JOIN(operator_1, operator_2))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -750,7 +750,7 @@ public class CQLGeneratorQueryTest {
   public void ExistsTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT * FROM stream1 WHERE EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10) AND attr1 != 50;", 
+      "SELECT * FROM stream1 WHERE EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10);", 
       "operator_1=MAP({expressions=[\'stream1.attr2\']},stream1)\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'stream1.attr2!=10\'},operator_1,stream1---INTEGER)\n\t\t     operator_2=SELECT({predicate=\'operator_3.attr1!=50\'},operator_3)", _cQLDictionaryHelper);
   }
   

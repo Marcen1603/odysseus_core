@@ -259,10 +259,12 @@ class CQLGenerator implements IGenerator2
 		for(Source source : select.sources)
 		{
 			var name = ''
-			if(source instanceof SimpleSource && !querySources.contains(name = (source as SimpleSource).name))
+			if(source instanceof SimpleSource)
 			{
-		        querySources.add(name)
-				registerSourceAlias(source)
+				if(!querySources.contains(name = (source as SimpleSource).name))
+		        	querySources.add(name)
+		        if(source.alias !== null && !getSource(source).aliases.contains(source.alias.name))
+					registerSourceAlias(source)
 			}
 			else if(source instanceof NestedSource)
 			{
@@ -454,34 +456,6 @@ class CQLGenerator implements IGenerator2
 		 		attributes2.put('', attributeList)
 	 		}
 		}
-//TODO not needed anymore?		
-//		var nested = EcoreUtil2.eAllOfType(stmt, ComplexPredicate)
-//		if(!nested.empty)
-//		{
-//			for(var i = 0; i < nested.size; i++)
-//			{
-//				//FIXME No attributes will be added
-//				attributes2 = extractAttributeInformation(stmt, attributes2)		
-//				var s = (nested.get(i).nested.select as SimpleSelect).sources
-//				var names = newArrayList
-//				for(Source s1 : sources)
-//				{
-//					if(s1 instanceof SimpleSource)
-//						names.add(s1.name)
-//				}
-//				for(Source s2 : s)
-//				{
-//					if(s2 instanceof SimpleSource 
-//						&& !names.contains((s2 as SimpleSource).name)
-//					)
-//						sources.add(s2)
-//				}	
-////				for(Source c : s)
-////					if(!sources.contains(c))
-////						sources.add(c)
-//			}
-//		}
-
 
 		predicateStringList.clear()
 		parsePredicate(predicates)
@@ -517,14 +491,14 @@ class CQLGenerator implements IGenerator2
 	
 	def String parsePredicateString(List<String> predicateString)
 	{
-		if(predicateString.get(0).equals('&&')
-			|| predicateString.get(0).equals('||')
-		)
-			predicateString.remove(0)
-		if(predicateString.get(predicateString.size - 1).equals('&&')
-			|| predicateString.get(predicateString.size - 1).equals('||')
-		)
-			predicateString.remove(predicateString.size - 1)
+//		if(predicateString.get(0).equals('&&')
+//			|| predicateString.get(0).equals('||')
+//		)
+//			predicateString.remove(0)
+//		if(predicateString.get(predicateString.size - 1).equals('&&')
+//			|| predicateString.get(predicateString.size - 1).equals('||')
+//		)
+//			predicateString.remove(predicateString.size - 1)
 		var predicate = ''
 		for(String pred : predicateString)
 			predicate += pred
@@ -611,7 +585,6 @@ class CQLGenerator implements IGenerator2
 				{
 					var complexPredicate = e.value as ComplexPredicate
 					var type = 'EXISTS'
-					
 					//
 					if(lastPredicateElement.equals('!'))
 					{
@@ -636,7 +609,6 @@ class CQLGenerator implements IGenerator2
 						predicateStringList.remove(predicateStringList.size() - 1)
 					}
 					
-					
 					//save the current predicate
 					var predicateStringListBackup = new ArrayList(predicateStringList)
 					predicateStringList = newArrayList
@@ -646,19 +618,21 @@ class CQLGenerator implements IGenerator2
 					var Map<String, String> args = newHashMap
 					args.put('type', type+builder.ESC+builder.STRING_TYPE)
 					//TODO copied code from parseSimpleSelect
-					for(Source source : (complexPredicate.select.select as SimpleSelect).sources)
-					{
-						var name = (source as SimpleSource).name
-						if(source instanceof SimpleSource 
-							&& !querySources.contains(name)
-						)
-						{
-					        querySources.add(name)
-							registerSourceAlias(source)
-						}
-					}
+//					for(Source source : (complexPredicate.select.select as SimpleSelect).sources)
+//					{
+//						var name = (source as SimpleSource).name
+//						if(source instanceof SimpleSource 
+//							&& !querySources.contains(name)
+//						)
+//						{
+//					        querySources.add(name)
+//							registerSourceAlias(source)
+//						}
+//					}
 					var subQuery = complexPredicate.select.select as SimpleSelect
+					prepareParsingSelect(subQuery)
 					parseSelectWithoutPredicate(subQuery)
+//					parseSimpleSelect(subQuery)
 					parsePredicate(complexPredicate.select.select.predicates.elements.get(0))
 //					parseSimpleSelect(complexPredicate.select.select as SimpleSelect)
 					args.put('input', getLastOperator())
@@ -732,7 +706,7 @@ class CQLGenerator implements IGenerator2
 				predicateString = ''
 				var result = parsePredicate(expressions.get(i))
 //				s +=  result + '&&'
-				buildPredicateString('&&')
+				buildPredicateString(result + '&&')
 				return predicateString 
 			}
 		}
@@ -1965,6 +1939,7 @@ class CQLGenerator implements IGenerator2
 	{
 		if(source instanceof SimpleSource)
 	    	return getSource(source.name)
+	    println("NULLL")
 	    return null
 	}
 	
