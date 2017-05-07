@@ -69,11 +69,29 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="alias" eType="#//Alias"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AttributeWithNestedStatement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Attribute"
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexPredicate">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="quantification" eType="#//QuantificationPredicate"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="nested" eType="#//InnerSelect"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exists" eType="#//ExistPredicate"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="in" eType="#//InPredicate"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="select" eType="#//InnerSelect"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="QuantificationPredicate">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attribute" eType="#//Attribute"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="predicate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExistPredicate">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="predicate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InPredicate">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attribute" eType="#//Attribute"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="predicate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SelectExpression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="expressions" upperBound="-1"
@@ -314,7 +332,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AttributeRef" eSuperTypes="#//Expression">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Attribute"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexPredicateRef" eSuperTypes="#//Expression">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//ComplexPredicate"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Matrix" eSuperTypes="#//Expression">

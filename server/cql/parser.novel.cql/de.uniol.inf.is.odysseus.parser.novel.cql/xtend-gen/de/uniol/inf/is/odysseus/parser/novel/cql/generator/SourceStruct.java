@@ -77,6 +77,7 @@ public class SourceStruct {
       } else {
         boolean _contains_2 = this.aliases.contains(split[0]);
         if (_contains_2) {
+          InputOutput.<String>println("alias!");
           for (final AttributeStruct attribute2 : this.attributes) {
             boolean _equals_2 = attribute2.attributename.equals(split[1]);
             if (_equals_2) {

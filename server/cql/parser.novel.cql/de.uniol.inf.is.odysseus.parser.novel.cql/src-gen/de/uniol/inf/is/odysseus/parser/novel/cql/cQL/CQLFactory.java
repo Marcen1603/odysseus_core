@@ -114,13 +114,40 @@ public interface CQLFactory extends EFactory
   Attribute createAttribute();
 
   /**
-   * Returns a new object of class '<em>Attribute With Nested Statement</em>'.
+   * Returns a new object of class '<em>Complex Predicate</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Attribute With Nested Statement</em>'.
+   * @return a new object of class '<em>Complex Predicate</em>'.
    * @generated
    */
-  AttributeWithNestedStatement createAttributeWithNestedStatement();
+  ComplexPredicate createComplexPredicate();
+
+  /**
+   * Returns a new object of class '<em>Quantification Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Quantification Predicate</em>'.
+   * @generated
+   */
+  QuantificationPredicate createQuantificationPredicate();
+
+  /**
+   * Returns a new object of class '<em>Exist Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Exist Predicate</em>'.
+   * @generated
+   */
+  ExistPredicate createExistPredicate();
+
+  /**
+   * Returns a new object of class '<em>In Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>In Predicate</em>'.
+   * @generated
+   */
+  InPredicate createInPredicate();
 
   /**
    * Returns a new object of class '<em>Select Expression</em>'.
@@ -571,6 +598,15 @@ public interface CQLFactory extends EFactory
    * @generated
    */
   AttributeRef createAttributeRef();
+
+  /**
+   * Returns a new object of class '<em>Complex Predicate Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Complex Predicate Ref</em>'.
+   * @generated
+   */
+  ComplexPredicateRef createComplexPredicateRef();
 
   /**
    * Returns a new object of class '<em>Matrix</em>'.

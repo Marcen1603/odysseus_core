@@ -82,7 +82,7 @@ SimpleSelect:
 		('FROM' sources+=Source+ (',' sources+=Source)*)
 		('WHERE' predicates=ExpressionsModel)?
 		('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-		('HAVING' having=ExpressionsModel)?
+		('HAVING' having=ExpressionsModel)?//TODO Add aggregation this model
 	)
 ;
 
@@ -129,11 +129,28 @@ AttributeForSelectExpression returns Attribute:
 	(name=QualifiedAttributenameWithoutSpecialChars)
 ;
 
-AttributeWithNestedStatement:
-	value=AttributeWithoutAliasDefinition
-	'IN'
-	nested=InnerSelect
+ComplexPredicate:
+	((quantification=QuantificationPredicate)
+	| (exists=ExistPredicate)
+	| (in=InPredicate))
+	select=InnerSelect
 ;  
+
+QuantificationPredicate:
+	attribute=AttributeWithoutAliasDefinition
+	operator=COMPARE_OPERATOR
+	predicate=('ALL'|'ANY'|'SOME')
+;
+
+
+ExistPredicate:
+	predicate=('EXISTS')
+;
+
+InPredicate:
+	attribute=AttributeWithoutAliasDefinition
+	predicate=('IN')
+;
 
 //QuantificationPredicate:
 //	ExistPredicate
@@ -501,9 +518,11 @@ Atomic returns Expression:
 	| {FloatConstant} value=FLOAT 
 	| {StringConstant} value=STRING 
 	| {BoolConstant} value=BOOLEAN
-	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+	| {AttributeRef} value=AttributeWithoutAliasDefinition
+	| {ComplexPredicateRef} value=ComplexPredicate
 ;
 
+//TODO Rename
 AtomicWithoutAttributeRef returns Expression:
 	{IntConstant} value=INT 
 	| {FloatConstant} value=FLOAT 

@@ -62,6 +62,7 @@ class SourceStruct
 				}
 				else if(this.aliases.contains(split.get(0)))
 				{
+					println("alias!")
 					for(AttributeStruct attribute2 : attributes)
 						if(attribute2.attributename.equals(split.get(1)))
 							return attribute2

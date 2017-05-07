@@ -8,13 +8,14 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicate;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicateRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
@@ -31,12 +32,14 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExistPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
@@ -160,7 +164,28 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass attributeWithNestedStatementEClass = null;
+  private EClass complexPredicateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass quantificationPredicateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass existPredicateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass inPredicateEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -511,6 +536,13 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * @generated
    */
   private EClass attributeRefEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass complexPredicateRefEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -891,9 +923,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getAttributeWithNestedStatement()
+  public EClass getComplexPredicate()
   {
-    return attributeWithNestedStatementEClass;
+    return complexPredicateEClass;
   }
 
   /**
@@ -901,9 +933,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAttributeWithNestedStatement_Value()
+  public EReference getComplexPredicate_Quantification()
   {
-    return (EReference)attributeWithNestedStatementEClass.getEStructuralFeatures().get(0);
+    return (EReference)complexPredicateEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -911,9 +943,119 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getAttributeWithNestedStatement_Nested()
+  public EReference getComplexPredicate_Exists()
   {
-    return (EReference)attributeWithNestedStatementEClass.getEStructuralFeatures().get(1);
+    return (EReference)complexPredicateEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComplexPredicate_In()
+  {
+    return (EReference)complexPredicateEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComplexPredicate_Select()
+  {
+    return (EReference)complexPredicateEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getQuantificationPredicate()
+  {
+    return quantificationPredicateEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getQuantificationPredicate_Attribute()
+  {
+    return (EReference)quantificationPredicateEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getQuantificationPredicate_Operator()
+  {
+    return (EAttribute)quantificationPredicateEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getQuantificationPredicate_Predicate()
+  {
+    return (EAttribute)quantificationPredicateEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getExistPredicate()
+  {
+    return existPredicateEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getExistPredicate_Predicate()
+  {
+    return (EAttribute)existPredicateEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getInPredicate()
+  {
+    return inPredicateEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getInPredicate_Attribute()
+  {
+    return (EReference)inPredicateEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getInPredicate_Predicate()
+  {
+    return (EAttribute)inPredicateEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2501,6 +2643,26 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getComplexPredicateRef()
+  {
+    return complexPredicateRefEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComplexPredicateRef_Value()
+  {
+    return (EReference)complexPredicateRefEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getMatrix()
   {
     return matrixEClass;
@@ -2615,9 +2777,23 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     createEAttribute(attributeEClass, ATTRIBUTE__NAME);
     createEReference(attributeEClass, ATTRIBUTE__ALIAS);
 
-    attributeWithNestedStatementEClass = createEClass(ATTRIBUTE_WITH_NESTED_STATEMENT);
-    createEReference(attributeWithNestedStatementEClass, ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE);
-    createEReference(attributeWithNestedStatementEClass, ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED);
+    complexPredicateEClass = createEClass(COMPLEX_PREDICATE);
+    createEReference(complexPredicateEClass, COMPLEX_PREDICATE__QUANTIFICATION);
+    createEReference(complexPredicateEClass, COMPLEX_PREDICATE__EXISTS);
+    createEReference(complexPredicateEClass, COMPLEX_PREDICATE__IN);
+    createEReference(complexPredicateEClass, COMPLEX_PREDICATE__SELECT);
+
+    quantificationPredicateEClass = createEClass(QUANTIFICATION_PREDICATE);
+    createEReference(quantificationPredicateEClass, QUANTIFICATION_PREDICATE__ATTRIBUTE);
+    createEAttribute(quantificationPredicateEClass, QUANTIFICATION_PREDICATE__OPERATOR);
+    createEAttribute(quantificationPredicateEClass, QUANTIFICATION_PREDICATE__PREDICATE);
+
+    existPredicateEClass = createEClass(EXIST_PREDICATE);
+    createEAttribute(existPredicateEClass, EXIST_PREDICATE__PREDICATE);
+
+    inPredicateEClass = createEClass(IN_PREDICATE);
+    createEReference(inPredicateEClass, IN_PREDICATE__ATTRIBUTE);
+    createEAttribute(inPredicateEClass, IN_PREDICATE__PREDICATE);
 
     selectExpressionEClass = createEClass(SELECT_EXPRESSION);
     createEReference(selectExpressionEClass, SELECT_EXPRESSION__EXPRESSIONS);
@@ -2827,6 +3003,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     attributeRefEClass = createEClass(ATTRIBUTE_REF);
     createEReference(attributeRefEClass, ATTRIBUTE_REF__VALUE);
 
+    complexPredicateRefEClass = createEClass(COMPLEX_PREDICATE_REF);
+    createEReference(complexPredicateRefEClass, COMPLEX_PREDICATE_REF__VALUE);
+
     matrixEClass = createEClass(MATRIX);
     createEAttribute(matrixEClass, MATRIX__VALUE);
 
@@ -2898,6 +3077,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     stringConstantEClass.getESuperTypes().add(this.getExpression());
     boolConstantEClass.getESuperTypes().add(this.getExpression());
     attributeRefEClass.getESuperTypes().add(this.getExpression());
+    complexPredicateRefEClass.getESuperTypes().add(this.getExpression());
     matrixEClass.getESuperTypes().add(this.getExpression());
     vectorEClass.getESuperTypes().add(this.getExpression());
 
@@ -2941,9 +3121,23 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getAttribute_Name(), ecorePackage.getEString(), "name", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAttribute_Alias(), this.getAlias(), null, "alias", null, 0, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(attributeWithNestedStatementEClass, AttributeWithNestedStatement.class, "AttributeWithNestedStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getAttributeWithNestedStatement_Value(), this.getAttribute(), null, "value", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAttributeWithNestedStatement_Nested(), this.getInnerSelect(), null, "nested", null, 0, 1, AttributeWithNestedStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(complexPredicateEClass, ComplexPredicate.class, "ComplexPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getComplexPredicate_Quantification(), this.getQuantificationPredicate(), null, "quantification", null, 0, 1, ComplexPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getComplexPredicate_Exists(), this.getExistPredicate(), null, "exists", null, 0, 1, ComplexPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getComplexPredicate_In(), this.getInPredicate(), null, "in", null, 0, 1, ComplexPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getComplexPredicate_Select(), this.getInnerSelect(), null, "select", null, 0, 1, ComplexPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(quantificationPredicateEClass, QuantificationPredicate.class, "QuantificationPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getQuantificationPredicate_Attribute(), this.getAttribute(), null, "attribute", null, 0, 1, QuantificationPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getQuantificationPredicate_Operator(), ecorePackage.getEString(), "operator", null, 0, 1, QuantificationPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getQuantificationPredicate_Predicate(), ecorePackage.getEString(), "predicate", null, 0, 1, QuantificationPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(existPredicateEClass, ExistPredicate.class, "ExistPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getExistPredicate_Predicate(), ecorePackage.getEString(), "predicate", null, 0, 1, ExistPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(inPredicateEClass, InPredicate.class, "InPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getInPredicate_Attribute(), this.getAttribute(), null, "attribute", null, 0, 1, InPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getInPredicate_Predicate(), ecorePackage.getEString(), "predicate", null, 0, 1, InPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(selectExpressionEClass, SelectExpression.class, "SelectExpression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getSelectExpression_Expressions(), this.getExpressionComponent(), null, "expressions", null, 0, -1, SelectExpression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3151,7 +3345,10 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEAttribute(getBoolConstant_Value(), ecorePackage.getEString(), "value", null, 0, 1, BoolConstant.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(attributeRefEClass, AttributeRef.class, "AttributeRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getAttributeRef_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, AttributeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAttributeRef_Value(), this.getAttribute(), null, "value", null, 0, 1, AttributeRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(complexPredicateRefEClass, ComplexPredicateRef.class, "ComplexPredicateRef", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getComplexPredicateRef_Value(), this.getComplexPredicate(), null, "value", null, 0, 1, ComplexPredicateRef.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(matrixEClass, Matrix.class, "Matrix", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMatrix_Value(), ecorePackage.getEString(), "value", null, 0, 1, Matrix.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

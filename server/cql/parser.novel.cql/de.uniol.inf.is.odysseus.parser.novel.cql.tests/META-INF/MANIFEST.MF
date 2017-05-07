@@ -11,10 +11,16 @@ Require-Bundle: de.uniol.inf.is.odysseus.parser.novel.cql,
  org.eclipse.xtext.xbase.junit,
  org.eclipse.xtext.xbase.lib,
  de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.test;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.tests
 Import-Package: de.uniol.inf.is.odysseus.core.sdf.schema,
+ de.uniol.inf.is.odysseus.test,
+ de.uniol.inf.is.odysseus.test.component,
+ de.uniol.inf.is.odysseus.test.context,
+ de.uniol.inf.is.odysseus.test.set,
+ de.uniol.inf.is.odysseus.test.sinks.physicaloperator,
  org.eclipse.equinox.p2.metadata.expression;version="2.0.0",
  org.hamcrest.core,
  org.junit;version="4.5.0",

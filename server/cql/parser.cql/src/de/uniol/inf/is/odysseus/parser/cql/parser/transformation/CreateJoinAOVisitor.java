@@ -265,6 +265,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
+		System.out.println("ASTAllPredicate:: " + node.isNegatived() );
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.EXISTS : ExistenceAO.Type.NOT_EXISTS);
 	}
 
@@ -297,6 +298,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
+		System.out.println("ASTAnyPredicate:: " + node.isNegatived() );
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 	}
 
@@ -333,6 +335,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTInPredicate node, Object data) throws QueryParseException {
+		System.out.println("ASTInPredicate:: " + node.isNegatived() );
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 	}
 

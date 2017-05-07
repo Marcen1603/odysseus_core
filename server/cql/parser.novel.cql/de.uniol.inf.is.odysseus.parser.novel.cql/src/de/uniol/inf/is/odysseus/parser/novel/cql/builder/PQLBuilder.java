@@ -35,10 +35,18 @@ public class PQLBuilder
 			
 		};
 	
+	enum Type
+	{
+		STRING,
+		LIST,
+		INT,
+	}
+	
 	private final StringBuilder builder = new StringBuilder();
 	
 	private PQLBuilder() 
 	{
+		
 		operatorArguments = new HashMap<>();
 		operatorNames = new ArrayList<>();
 		
@@ -49,7 +57,7 @@ public class PQLBuilder
 			 "connection",
 			 "table",
 			 "attributes",
-			 "waiteach"//is optional
+			 "waiteach"
 			}
 		);
 		
@@ -74,6 +82,16 @@ public class PQLBuilder
 				 "table",
 				 "drop",
 				 "truncate",
+				 "input"
+				}
+			);
+		
+		operatorNames.add("EXISTENCE");
+		operatorArguments.put(
+				"EXISTENCE", 
+				new String[] {
+				 "type",
+				 "predicate",
 				 "input"
 				}
 			);
@@ -106,6 +124,7 @@ public class PQLBuilder
 	 * @param attributes
 	 * @param waiteach (is optional)
 	 */
+	@Deprecated
 	public String buildCreateDataSourceOperator(Map<String, String> args)
 	{	
 		String[] variables = 
@@ -118,7 +137,7 @@ public class PQLBuilder
 		return buildOperator("DATABASESOURCE", args);
 	}
 	
-	/** Returns a string that represents {@link AccessAO} and is build by the given parameters in following order: 
+	/** Returns a string that represents {@link AccessAO} and is build by the given parameters in following order:
 	 * @param sourcename
 	 * @param wrapper
 	 * @param protocol
@@ -127,6 +146,7 @@ public class PQLBuilder
 	 * @param schema
 	 * @param options
 	 */
+	@Deprecated 
 	public String buildAccessOperator(Map<String, String> args)
 	{
 		String[] variables = 
@@ -183,7 +203,7 @@ public class PQLBuilder
 		for(Entry<String, String> _ : map.entrySet())
 		{
 			String value = getValue(map.get(variables[i]));
-			if(value != null)
+			if(value != null && !variables[i].equals("input"))
 			{
 				builder.append(variables[i] + "=" + value + ",");
 			}
@@ -194,6 +214,13 @@ public class PQLBuilder
 		return builder;
 	}
 	
+	private Type getType(String value) 
+	{
+		String[] split = value.split(ESC);
+		
+		return null;
+	}
+
 	private String getValue(String value)
 	{
 		if(value == null) return value;
@@ -231,6 +258,9 @@ public class PQLBuilder
 		{
 			System.out.println("token="+PQLParserImplConstants.tokenImage[i]+", index="+i);
 		}
+		System.out.println("hey: "+OperatorBuilderFactory.getOperatorBuilderNames());
+//		OperatorBuilderFactory.getOperatorBuilderType(name)
+		OperatorBuilderFactory.getOperatorBuilderType("ACCESS").getParameters().iterator();
 		
 	}
 	

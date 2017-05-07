@@ -1356,15 +1356,114 @@ ruleAttributeForSelectExpression returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleAttributeWithNestedStatement
-entryRuleAttributeWithNestedStatement returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getAttributeWithNestedStatementRule()); }
-	iv_ruleAttributeWithNestedStatement=ruleAttributeWithNestedStatement
-	{ $current=$iv_ruleAttributeWithNestedStatement.current; }
+// Entry rule entryRuleComplexPredicate
+entryRuleComplexPredicate returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getComplexPredicateRule()); }
+	iv_ruleComplexPredicate=ruleComplexPredicate
+	{ $current=$iv_ruleComplexPredicate.current; }
 	EOF;
 
-// Rule AttributeWithNestedStatement
-ruleAttributeWithNestedStatement returns [EObject current=null]
+// Rule ComplexPredicate
+ruleComplexPredicate returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getComplexPredicateAccess().getQuantificationQuantificationPredicateParserRuleCall_0_0_0());
+					}
+					lv_quantification_0_0=ruleQuantificationPredicate
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getComplexPredicateRule());
+						}
+						set(
+							$current,
+							"quantification",
+							lv_quantification_0_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QuantificationPredicate");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getComplexPredicateAccess().getExistsExistPredicateParserRuleCall_0_1_0());
+					}
+					lv_exists_1_0=ruleExistPredicate
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getComplexPredicateRule());
+						}
+						set(
+							$current,
+							"exists",
+							lv_exists_1_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExistPredicate");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getComplexPredicateAccess().getInInPredicateParserRuleCall_0_2_0());
+					}
+					lv_in_2_0=ruleInPredicate
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getComplexPredicateRule());
+						}
+						set(
+							$current,
+							"in",
+							lv_in_2_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.InPredicate");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getComplexPredicateAccess().getSelectInnerSelectParserRuleCall_1_0());
+				}
+				lv_select_3_0=ruleInnerSelect
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getComplexPredicateRule());
+					}
+					set(
+						$current,
+						"select",
+						lv_select_3_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.InnerSelect");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleQuantificationPredicate
+entryRuleQuantificationPredicate returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getQuantificationPredicateRule()); }
+	iv_ruleQuantificationPredicate=ruleQuantificationPredicate
+	{ $current=$iv_ruleQuantificationPredicate.current; }
+	EOF;
+
+// Rule QuantificationPredicate
+ruleQuantificationPredicate returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -1375,42 +1474,159 @@ ruleAttributeWithNestedStatement returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getQuantificationPredicateAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0());
 				}
-				lv_value_0_0=ruleAttributeWithoutAliasDefinition
+				lv_attribute_0_0=ruleAttributeWithoutAliasDefinition
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAttributeWithNestedStatementRule());
+						$current = createModelElementForParent(grammarAccess.getQuantificationPredicateRule());
 					}
 					set(
 						$current,
-						"value",
-						lv_value_0_0,
+						"attribute",
+						lv_attribute_0_0,
 						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
-		otherlv_1=IN
-		{
-			newLeafNode(otherlv_1, grammarAccess.getAttributeWithNestedStatementAccess().getINKeyword_1());
-		}
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getAttributeWithNestedStatementAccess().getNestedInnerSelectParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getQuantificationPredicateAccess().getOperatorCOMPARE_OPERATORParserRuleCall_1_0());
 				}
-				lv_nested_2_0=ruleInnerSelect
+				lv_operator_1_0=ruleCOMPARE_OPERATOR
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAttributeWithNestedStatementRule());
+						$current = createModelElementForParent(grammarAccess.getQuantificationPredicateRule());
 					}
 					set(
 						$current,
-						"nested",
-						lv_nested_2_0,
-						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.InnerSelect");
+						"operator",
+						lv_operator_1_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.COMPARE_OPERATOR");
 					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				(
+					lv_predicate_2_1=ALL
+					{
+						newLeafNode(lv_predicate_2_1, grammarAccess.getQuantificationPredicateAccess().getPredicateALLKeyword_2_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getQuantificationPredicateRule());
+						}
+						setWithLastConsumed($current, "predicate", lv_predicate_2_1, null);
+					}
+					    |
+					lv_predicate_2_2=ANY
+					{
+						newLeafNode(lv_predicate_2_2, grammarAccess.getQuantificationPredicateAccess().getPredicateANYKeyword_2_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getQuantificationPredicateRule());
+						}
+						setWithLastConsumed($current, "predicate", lv_predicate_2_2, null);
+					}
+					    |
+					lv_predicate_2_3=SOME
+					{
+						newLeafNode(lv_predicate_2_3, grammarAccess.getQuantificationPredicateAccess().getPredicateSOMEKeyword_2_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getQuantificationPredicateRule());
+						}
+						setWithLastConsumed($current, "predicate", lv_predicate_2_3, null);
+					}
+				)
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleExistPredicate
+entryRuleExistPredicate returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExistPredicateRule()); }
+	iv_ruleExistPredicate=ruleExistPredicate
+	{ $current=$iv_ruleExistPredicate.current; }
+	EOF;
+
+// Rule ExistPredicate
+ruleExistPredicate returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			lv_predicate_0_0=EXISTS
+			{
+				newLeafNode(lv_predicate_0_0, grammarAccess.getExistPredicateAccess().getPredicateEXISTSKeyword_0());
+			}
+			{
+				if ($current==null) {
+					$current = createModelElement(grammarAccess.getExistPredicateRule());
+				}
+				setWithLastConsumed($current, "predicate", lv_predicate_0_0, "EXISTS");
+			}
+		)
+	)
+;
+
+// Entry rule entryRuleInPredicate
+entryRuleInPredicate returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getInPredicateRule()); }
+	iv_ruleInPredicate=ruleInPredicate
+	{ $current=$iv_ruleInPredicate.current; }
+	EOF;
+
+// Rule InPredicate
+ruleInPredicate returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getInPredicateAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0());
+				}
+				lv_attribute_0_0=ruleAttributeWithoutAliasDefinition
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getInPredicateRule());
+					}
+					set(
+						$current,
+						"attribute",
+						lv_attribute_0_0,
+						"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				lv_predicate_1_0=IN
+				{
+					newLeafNode(lv_predicate_1_0, grammarAccess.getInPredicateAccess().getPredicateINKeyword_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getInPredicateRule());
+					}
+					setWithLastConsumed($current, "predicate", lv_predicate_1_0, "IN");
 				}
 			)
 		)
@@ -5852,43 +6068,50 @@ ruleAtomic returns [EObject current=null]
 			)
 			(
 				(
-					(
-						{
-							newCompositeNode(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0_0());
+					{
+						newCompositeNode(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0());
+					}
+					lv_value_9_0=ruleAttributeWithoutAliasDefinition
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getAtomicRule());
 						}
-						lv_value_9_0=ruleAttributeWithoutAliasDefinition
-						{
-							if ($current==null) {
-								$current = createModelElementForParent(grammarAccess.getAtomicRule());
-							}
-							set(
-								$current,
-								"value",
-								lv_value_9_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
-							afterParserOrEnumRuleCall();
-						}
-					)
+						set(
+							$current,
+							"value",
+							lv_value_9_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithoutAliasDefinition");
+						afterParserOrEnumRuleCall();
+					}
 				)
-				    |
+			)
+		)
+		    |
+		(
+			(
+				{
+					$current = forceCreateModelElement(
+						grammarAccess.getAtomicAccess().getComplexPredicateRefAction_5_0(),
+						$current);
+				}
+			)
+			(
 				(
-					(
-						{
-							newCompositeNode(grammarAccess.getAtomicAccess().getValueAttributeWithNestedStatementParserRuleCall_4_1_1_0());
+					{
+						newCompositeNode(grammarAccess.getAtomicAccess().getValueComplexPredicateParserRuleCall_5_1_0());
+					}
+					lv_value_11_0=ruleComplexPredicate
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getAtomicRule());
 						}
-						lv_value_10_0=ruleAttributeWithNestedStatement
-						{
-							if ($current==null) {
-								$current = createModelElementForParent(grammarAccess.getAtomicRule());
-							}
-							set(
-								$current,
-								"value",
-								lv_value_10_0,
-								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
-							afterParserOrEnumRuleCall();
-						}
-					)
+						set(
+							$current,
+							"value",
+							lv_value_11_0,
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ComplexPredicate");
+						afterParserOrEnumRuleCall();
+					}
 				)
 			)
 		)

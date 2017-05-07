@@ -9,12 +9,13 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicate;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicateRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create;
@@ -31,11 +32,13 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropStream;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExistPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponentAsAttribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant;
@@ -47,6 +50,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
@@ -117,9 +121,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.ATTRIBUTE_REF:
 				sequence_Atomic(context, (AttributeRef) semanticObject); 
 				return; 
-			case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT:
-				sequence_AttributeWithNestedStatement(context, (AttributeWithNestedStatement) semanticObject); 
-				return; 
 			case CQLPackage.BOOL_CONSTANT:
 				if (rule == grammarAccess.getAtomicWithoutAttributeRefRule()) {
 					sequence_AtomicWithoutAttributeRef(context, (BoolConstant) semanticObject); 
@@ -153,6 +154,12 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.COMPARISION:
 				sequence_Comparison(context, (Comparision) semanticObject); 
+				return; 
+			case CQLPackage.COMPLEX_PREDICATE:
+				sequence_ComplexPredicate(context, (ComplexPredicate) semanticObject); 
+				return; 
+			case CQLPackage.COMPLEX_PREDICATE_REF:
+				sequence_Atomic(context, (ComplexPredicateRef) semanticObject); 
 				return; 
 			case CQLPackage.COMPLEX_SELECT:
 				sequence_ComplexSelect(context, (ComplexSelect) semanticObject); 
@@ -202,6 +209,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.EQUALITY:
 				sequence_Equalitiy(context, (Equality) semanticObject); 
 				return; 
+			case CQLPackage.EXIST_PREDICATE:
+				sequence_ExistPredicate(context, (ExistPredicate) semanticObject); 
+				return; 
 			case CQLPackage.EXPRESSION_COMPONENT:
 				sequence_ExpressionComponent(context, (ExpressionComponent) semanticObject); 
 				return; 
@@ -238,6 +248,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				else break;
 			case CQLPackage.FUNCTION:
 				sequence_Function(context, (Function) semanticObject); 
+				return; 
+			case CQLPackage.IN_PREDICATE:
+				sequence_InPredicate(context, (InPredicate) semanticObject); 
 				return; 
 			case CQLPackage.INNER_SELECT:
 				sequence_InnerSelect(context, (InnerSelect) semanticObject); 
@@ -293,6 +306,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.PLUS:
 				sequence_PlusOrMinus(context, (Plus) semanticObject); 
+				return; 
+			case CQLPackage.QUANTIFICATION_PREDICATE:
+				sequence_QuantificationPredicate(context, (QuantificationPredicate) semanticObject); 
 				return; 
 			case CQLPackage.RIGHTS_MANAGEMENT:
 				sequence_RightsManagement(context, (RightsManagement) semanticObject); 
@@ -572,10 +588,16 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Atomic returns AttributeRef
 	 *
 	 * Constraint:
-	 *     (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+	 *     value=AttributeWithoutAliasDefinition
 	 */
 	protected void sequence_Atomic(ISerializationContext context, AttributeRef semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_REF__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_REF__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0(), semanticObject.getValue());
+		feeder.finish();
 	}
 	
 	
@@ -608,6 +630,39 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getAtomicAccess().getValueBOOLEANParserRuleCall_3_1_0(), semanticObject.getValue());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Expression returns ComplexPredicateRef
+	 *     OrPredicate returns ComplexPredicateRef
+	 *     OrPredicate.OrPredicate_1_0 returns ComplexPredicateRef
+	 *     AndPredicate returns ComplexPredicateRef
+	 *     AndPredicate.AndPredicate_1_0 returns ComplexPredicateRef
+	 *     Equalitiy returns ComplexPredicateRef
+	 *     Equalitiy.Equality_1_0 returns ComplexPredicateRef
+	 *     Comparison returns ComplexPredicateRef
+	 *     Comparison.Comparision_1_0 returns ComplexPredicateRef
+	 *     PlusOrMinus returns ComplexPredicateRef
+	 *     PlusOrMinus.Plus_1_0_0_0 returns ComplexPredicateRef
+	 *     PlusOrMinus.Minus_1_0_1_0 returns ComplexPredicateRef
+	 *     MulOrDiv returns ComplexPredicateRef
+	 *     MulOrDiv.MulOrDiv_1_0 returns ComplexPredicateRef
+	 *     Primary returns ComplexPredicateRef
+	 *     Atomic returns ComplexPredicateRef
+	 *
+	 * Constraint:
+	 *     value=ComplexPredicate
+	 */
+	protected void sequence_Atomic(ISerializationContext context, ComplexPredicateRef semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.COMPLEX_PREDICATE_REF__VALUE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.COMPLEX_PREDICATE_REF__VALUE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getAtomicAccess().getValueComplexPredicateParserRuleCall_5_1_0(), semanticObject.getValue());
 		feeder.finish();
 	}
 	
@@ -731,27 +786,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
-	 *     AttributeWithNestedStatement returns AttributeWithNestedStatement
-	 *
-	 * Constraint:
-	 *     (value=AttributeWithoutAliasDefinition nested=InnerSelect)
-	 */
-	protected void sequence_AttributeWithNestedStatement(ISerializationContext context, AttributeWithNestedStatement semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__VALUE));
-			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.ATTRIBUTE_WITH_NESTED_STATEMENT__NESTED));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_0_0(), semanticObject.getValue());
-		feeder.accept(grammarAccess.getAttributeWithNestedStatementAccess().getNestedInnerSelectParserRuleCall_2_0(), semanticObject.getNested());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     AttributeWithoutAliasDefinition returns Attribute
 	 *
 	 * Constraint:
@@ -831,6 +865,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		feeder.accept(grammarAccess.getComparisonAccess().getOpCOMPARE_OPERATORParserRuleCall_1_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getComparisonAccess().getRightPlusOrMinusParserRuleCall_1_2_0(), semanticObject.getRight());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ComplexPredicate returns ComplexPredicate
+	 *
+	 * Constraint:
+	 *     ((quantification=QuantificationPredicate | exists=ExistPredicate | in=InPredicate) select=InnerSelect)
+	 */
+	protected void sequence_ComplexPredicate(ISerializationContext context, ComplexPredicate semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1113,6 +1159,24 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     ExistPredicate returns ExistPredicate
+	 *
+	 * Constraint:
+	 *     predicate='EXISTS'
+	 */
+	protected void sequence_ExistPredicate(ISerializationContext context, ExistPredicate semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.EXIST_PREDICATE__PREDICATE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.EXIST_PREDICATE__PREDICATE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getExistPredicateAccess().getPredicateEXISTSKeyword_0(), semanticObject.getPredicate());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     ExpressionComponentAsAttribute returns ExpressionComponentAsAttribute
 	 *
 	 * Constraint:
@@ -1162,6 +1226,27 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 */
 	protected void sequence_Function(ISerializationContext context, Function semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     InPredicate returns InPredicate
+	 *
+	 * Constraint:
+	 *     (attribute=AttributeWithoutAliasDefinition predicate='IN')
+	 */
+	protected void sequence_InPredicate(ISerializationContext context, InPredicate semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.IN_PREDICATE__ATTRIBUTE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.IN_PREDICATE__ATTRIBUTE));
+			if (transientValues.isValueTransient(semanticObject, CQLPackage.Literals.IN_PREDICATE__PREDICATE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, CQLPackage.Literals.IN_PREDICATE__PREDICATE));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getInPredicateAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0(), semanticObject.getAttribute());
+		feeder.accept(grammarAccess.getInPredicateAccess().getPredicateINKeyword_1_0(), semanticObject.getPredicate());
+		feeder.finish();
 	}
 	
 	
@@ -1408,6 +1493,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getPrimaryAccess().getExpressionPrimaryParserRuleCall_1_2_0(), semanticObject.getExpression());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     QuantificationPredicate returns QuantificationPredicate
+	 *
+	 * Constraint:
+	 *     (attribute=AttributeWithoutAliasDefinition operator=COMPARE_OPERATOR (predicate='ALL' | predicate='ANY' | predicate='SOME'))
+	 */
+	protected void sequence_QuantificationPredicate(ISerializationContext context, QuantificationPredicate semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

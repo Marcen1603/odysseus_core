@@ -76,7 +76,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.SELECT_ARGUMENT: return createSelectArgument();
       case CQLPackage.SOURCE: return createSource();
       case CQLPackage.ATTRIBUTE: return createAttribute();
-      case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT: return createAttributeWithNestedStatement();
+      case CQLPackage.COMPLEX_PREDICATE: return createComplexPredicate();
+      case CQLPackage.QUANTIFICATION_PREDICATE: return createQuantificationPredicate();
+      case CQLPackage.EXIST_PREDICATE: return createExistPredicate();
+      case CQLPackage.IN_PREDICATE: return createInPredicate();
       case CQLPackage.SELECT_EXPRESSION: return createSelectExpression();
       case CQLPackage.EXPRESSION_COMPONENT: return createExpressionComponent();
       case CQLPackage.STARTHING: return createStarthing();
@@ -127,6 +130,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
       case CQLPackage.STRING_CONSTANT: return createStringConstant();
       case CQLPackage.BOOL_CONSTANT: return createBoolConstant();
       case CQLPackage.ATTRIBUTE_REF: return createAttributeRef();
+      case CQLPackage.COMPLEX_PREDICATE_REF: return createComplexPredicateRef();
       case CQLPackage.MATRIX: return createMatrix();
       case CQLPackage.VECTOR: return createVector();
       default:
@@ -283,10 +287,43 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public AttributeWithNestedStatement createAttributeWithNestedStatement()
+  public ComplexPredicate createComplexPredicate()
   {
-    AttributeWithNestedStatementImpl attributeWithNestedStatement = new AttributeWithNestedStatementImpl();
-    return attributeWithNestedStatement;
+    ComplexPredicateImpl complexPredicate = new ComplexPredicateImpl();
+    return complexPredicate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public QuantificationPredicate createQuantificationPredicate()
+  {
+    QuantificationPredicateImpl quantificationPredicate = new QuantificationPredicateImpl();
+    return quantificationPredicate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ExistPredicate createExistPredicate()
+  {
+    ExistPredicateImpl existPredicate = new ExistPredicateImpl();
+    return existPredicate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public InPredicate createInPredicate()
+  {
+    InPredicateImpl inPredicate = new InPredicateImpl();
+    return inPredicate;
   }
 
   /**
@@ -837,6 +874,17 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
   {
     AttributeRefImpl attributeRef = new AttributeRefImpl();
     return attributeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ComplexPredicateRef createComplexPredicateRef()
+  {
+    ComplexPredicateRefImpl complexPredicateRef = new ComplexPredicateRefImpl();
+    return complexPredicateRef;
   }
 
   /**

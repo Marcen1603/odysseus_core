@@ -304,12 +304,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	{SimpleSelect} ('SELECT'
 		//	distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM' sources+=Source+ (','
 		//	sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-		//	('HAVING' having=ExpressionsModel)?);
+		//	('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
+		//);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{SimpleSelect} ('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*)
 		//('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+
-		//(',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?)
+		//(',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
+		//)
 		public Group getGroup() { return cGroup; }
 		
 		//{SimpleSelect}
@@ -317,7 +319,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM'
 		//sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (','
-		//order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?)
+		//order+=Attribute)*)? ('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
+		//)
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'SELECT'
@@ -721,38 +724,144 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//QualifiedAttributenameWithoutSpecialChars
 		public RuleCall getNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0() { return cNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0; }
 	}
-	public class AttributeWithNestedStatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AttributeWithNestedStatement");
+	public class ComplexPredicateElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ComplexPredicate");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cValueAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_0_0 = (RuleCall)cValueAssignment_0.eContents().get(0);
-		private final Keyword cINKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cNestedAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cNestedInnerSelectParserRuleCall_2_0 = (RuleCall)cNestedAssignment_2.eContents().get(0);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final Assignment cQuantificationAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
+		private final RuleCall cQuantificationQuantificationPredicateParserRuleCall_0_0_0 = (RuleCall)cQuantificationAssignment_0_0.eContents().get(0);
+		private final Assignment cExistsAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
+		private final RuleCall cExistsExistPredicateParserRuleCall_0_1_0 = (RuleCall)cExistsAssignment_0_1.eContents().get(0);
+		private final Assignment cInAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
+		private final RuleCall cInInPredicateParserRuleCall_0_2_0 = (RuleCall)cInAssignment_0_2.eContents().get(0);
+		private final Assignment cSelectAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cSelectInnerSelectParserRuleCall_1_0 = (RuleCall)cSelectAssignment_1.eContents().get(0);
 		
-		//AttributeWithNestedStatement:
-		//	value=AttributeWithoutAliasDefinition
-		//	'IN'
-		//	nested=InnerSelect;
+		//ComplexPredicate:
+		//	(quantification=QuantificationPredicate | exists=ExistPredicate | in=InPredicate) select=InnerSelect;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//value=AttributeWithoutAliasDefinition 'IN' nested=InnerSelect
+		//(quantification=QuantificationPredicate | exists=ExistPredicate | in=InPredicate) select=InnerSelect
 		public Group getGroup() { return cGroup; }
 		
-		//value=AttributeWithoutAliasDefinition
-		public Assignment getValueAssignment_0() { return cValueAssignment_0; }
+		//(quantification=QuantificationPredicate | exists=ExistPredicate | in=InPredicate)
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//AttributeWithoutAliasDefinition
-		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_0_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_0_0; }
+		//quantification=QuantificationPredicate
+		public Assignment getQuantificationAssignment_0_0() { return cQuantificationAssignment_0_0; }
 		
-		//'IN'
-		public Keyword getINKeyword_1() { return cINKeyword_1; }
+		//QuantificationPredicate
+		public RuleCall getQuantificationQuantificationPredicateParserRuleCall_0_0_0() { return cQuantificationQuantificationPredicateParserRuleCall_0_0_0; }
 		
-		//nested=InnerSelect
-		public Assignment getNestedAssignment_2() { return cNestedAssignment_2; }
+		//exists=ExistPredicate
+		public Assignment getExistsAssignment_0_1() { return cExistsAssignment_0_1; }
+		
+		//ExistPredicate
+		public RuleCall getExistsExistPredicateParserRuleCall_0_1_0() { return cExistsExistPredicateParserRuleCall_0_1_0; }
+		
+		//in=InPredicate
+		public Assignment getInAssignment_0_2() { return cInAssignment_0_2; }
+		
+		//InPredicate
+		public RuleCall getInInPredicateParserRuleCall_0_2_0() { return cInInPredicateParserRuleCall_0_2_0; }
+		
+		//select=InnerSelect
+		public Assignment getSelectAssignment_1() { return cSelectAssignment_1; }
 		
 		//InnerSelect
-		public RuleCall getNestedInnerSelectParserRuleCall_2_0() { return cNestedInnerSelectParserRuleCall_2_0; }
+		public RuleCall getSelectInnerSelectParserRuleCall_1_0() { return cSelectInnerSelectParserRuleCall_1_0; }
+	}
+	public class QuantificationPredicateElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QuantificationPredicate");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cAttributeAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0 = (RuleCall)cAttributeAssignment_0.eContents().get(0);
+		private final Assignment cOperatorAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cOperatorCOMPARE_OPERATORParserRuleCall_1_0 = (RuleCall)cOperatorAssignment_1.eContents().get(0);
+		private final Assignment cPredicateAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Alternatives cPredicateAlternatives_2_0 = (Alternatives)cPredicateAssignment_2.eContents().get(0);
+		private final Keyword cPredicateALLKeyword_2_0_0 = (Keyword)cPredicateAlternatives_2_0.eContents().get(0);
+		private final Keyword cPredicateANYKeyword_2_0_1 = (Keyword)cPredicateAlternatives_2_0.eContents().get(1);
+		private final Keyword cPredicateSOMEKeyword_2_0_2 = (Keyword)cPredicateAlternatives_2_0.eContents().get(2);
+		
+		//QuantificationPredicate:
+		//	attribute=AttributeWithoutAliasDefinition
+		//	operator=COMPARE_OPERATOR
+		//	predicate=('ALL' | 'ANY' | 'SOME');
+		@Override public ParserRule getRule() { return rule; }
+		
+		//attribute=AttributeWithoutAliasDefinition operator=COMPARE_OPERATOR predicate=('ALL' | 'ANY' | 'SOME')
+		public Group getGroup() { return cGroup; }
+		
+		//attribute=AttributeWithoutAliasDefinition
+		public Assignment getAttributeAssignment_0() { return cAttributeAssignment_0; }
+		
+		//AttributeWithoutAliasDefinition
+		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0; }
+		
+		//operator=COMPARE_OPERATOR
+		public Assignment getOperatorAssignment_1() { return cOperatorAssignment_1; }
+		
+		//COMPARE_OPERATOR
+		public RuleCall getOperatorCOMPARE_OPERATORParserRuleCall_1_0() { return cOperatorCOMPARE_OPERATORParserRuleCall_1_0; }
+		
+		//predicate=('ALL' | 'ANY' | 'SOME')
+		public Assignment getPredicateAssignment_2() { return cPredicateAssignment_2; }
+		
+		//('ALL' | 'ANY' | 'SOME')
+		public Alternatives getPredicateAlternatives_2_0() { return cPredicateAlternatives_2_0; }
+		
+		//'ALL'
+		public Keyword getPredicateALLKeyword_2_0_0() { return cPredicateALLKeyword_2_0_0; }
+		
+		//'ANY'
+		public Keyword getPredicateANYKeyword_2_0_1() { return cPredicateANYKeyword_2_0_1; }
+		
+		//'SOME'
+		public Keyword getPredicateSOMEKeyword_2_0_2() { return cPredicateSOMEKeyword_2_0_2; }
+	}
+	public class ExistPredicateElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.ExistPredicate");
+		private final Assignment cPredicateAssignment = (Assignment)rule.eContents().get(1);
+		private final Keyword cPredicateEXISTSKeyword_0 = (Keyword)cPredicateAssignment.eContents().get(0);
+		
+		//ExistPredicate:
+		//	predicate='EXISTS';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//predicate='EXISTS'
+		public Assignment getPredicateAssignment() { return cPredicateAssignment; }
+		
+		//'EXISTS'
+		public Keyword getPredicateEXISTSKeyword_0() { return cPredicateEXISTSKeyword_0; }
+	}
+	public class InPredicateElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.InPredicate");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cAttributeAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0 = (RuleCall)cAttributeAssignment_0.eContents().get(0);
+		private final Assignment cPredicateAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Keyword cPredicateINKeyword_1_0 = (Keyword)cPredicateAssignment_1.eContents().get(0);
+		
+		//InPredicate:
+		//	attribute=AttributeWithoutAliasDefinition
+		//	predicate='IN';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//attribute=AttributeWithoutAliasDefinition predicate='IN'
+		public Group getGroup() { return cGroup; }
+		
+		//attribute=AttributeWithoutAliasDefinition
+		public Assignment getAttributeAssignment_0() { return cAttributeAssignment_0; }
+		
+		//AttributeWithoutAliasDefinition
+		public RuleCall getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0() { return cAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0; }
+		
+		//predicate='IN'
+		public Assignment getPredicateAssignment_1() { return cPredicateAssignment_1; }
+		
+		//'IN'
+		public Keyword getPredicateINKeyword_1_0() { return cPredicateINKeyword_1_0; }
 	}
 	public class AndOperatorElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AndOperator");
@@ -3350,22 +3459,24 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueBOOLEANParserRuleCall_3_1_0 = (RuleCall)cValueAssignment_3_1.eContents().get(0);
 		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
 		private final Action cAttributeRefAction_4_0 = (Action)cGroup_4.eContents().get(0);
-		private final Alternatives cAlternatives_4_1 = (Alternatives)cGroup_4.eContents().get(1);
-		private final Assignment cValueAssignment_4_1_0 = (Assignment)cAlternatives_4_1.eContents().get(0);
-		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0_0 = (RuleCall)cValueAssignment_4_1_0.eContents().get(0);
-		private final Assignment cValueAssignment_4_1_1 = (Assignment)cAlternatives_4_1.eContents().get(1);
-		private final RuleCall cValueAttributeWithNestedStatementParserRuleCall_4_1_1_0 = (RuleCall)cValueAssignment_4_1_1.eContents().get(0);
+		private final Assignment cValueAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
+		private final RuleCall cValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0 = (RuleCall)cValueAssignment_4_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
+		private final Action cComplexPredicateRefAction_5_0 = (Action)cGroup_5.eContents().get(0);
+		private final Assignment cValueAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cValueComplexPredicateParserRuleCall_5_1_0 = (RuleCall)cValueAssignment_5_1.eContents().get(0);
 		
 		//Atomic Expression:
 		//	{IntConstant} value=INT
 		//	| {FloatConstant} value=FLOAT
 		//	| {StringConstant} value=STRING
 		//	| {BoolConstant} value=BOOLEAN
-		//	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+		//	| {AttributeRef} value=AttributeWithoutAliasDefinition
+		//	| {ComplexPredicateRef} value=ComplexPredicate
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{IntConstant} value=INT | {FloatConstant} value=FLOAT | {StringConstant} value=STRING | {BoolConstant} value=BOOLEAN |
-		//{AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+		//{AttributeRef} value=AttributeWithoutAliasDefinition | {ComplexPredicateRef} value=ComplexPredicate
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//{IntConstant} value=INT
@@ -3416,26 +3527,29 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//BOOLEAN
 		public RuleCall getValueBOOLEANParserRuleCall_3_1_0() { return cValueBOOLEANParserRuleCall_3_1_0; }
 		
-		//{AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+		//{AttributeRef} value=AttributeWithoutAliasDefinition
 		public Group getGroup_4() { return cGroup_4; }
 		
 		//{AttributeRef}
 		public Action getAttributeRefAction_4_0() { return cAttributeRefAction_4_0; }
 		
-		//(value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
-		public Alternatives getAlternatives_4_1() { return cAlternatives_4_1; }
-		
 		//value=AttributeWithoutAliasDefinition
-		public Assignment getValueAssignment_4_1_0() { return cValueAssignment_4_1_0; }
+		public Assignment getValueAssignment_4_1() { return cValueAssignment_4_1; }
 		
 		//AttributeWithoutAliasDefinition
-		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0_0; }
+		public RuleCall getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0() { return cValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0; }
 		
-		//value=AttributeWithNestedStatement
-		public Assignment getValueAssignment_4_1_1() { return cValueAssignment_4_1_1; }
+		//{ComplexPredicateRef} value=ComplexPredicate
+		public Group getGroup_5() { return cGroup_5; }
 		
-		//AttributeWithNestedStatement
-		public RuleCall getValueAttributeWithNestedStatementParserRuleCall_4_1_1_0() { return cValueAttributeWithNestedStatementParserRuleCall_4_1_1_0; }
+		//{ComplexPredicateRef}
+		public Action getComplexPredicateRefAction_5_0() { return cComplexPredicateRefAction_5_0; }
+		
+		//value=ComplexPredicate
+		public Assignment getValueAssignment_5_1() { return cValueAssignment_5_1; }
+		
+		//ComplexPredicate
+		public RuleCall getValueComplexPredicateParserRuleCall_5_1_0() { return cValueComplexPredicateParserRuleCall_5_1_0; }
 	}
 	public class AtomicWithoutAttributeRefElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AtomicWithoutAttributeRef");
@@ -3465,6 +3579,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cValueAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
 		private final RuleCall cValueVECTOR_FLOATTerminalRuleCall_5_1_0 = (RuleCall)cValueAssignment_5_1.eContents().get(0);
 		
+		////TODO Rename
 		//AtomicWithoutAttributeRef Expression:
 		//	{IntConstant} value=INT
 		//	| {FloatConstant} value=FLOAT
@@ -3678,7 +3793,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final AttributeElements pAttribute;
 	private final AttributeWithoutAliasDefinitionElements pAttributeWithoutAliasDefinition;
 	private final AttributeForSelectExpressionElements pAttributeForSelectExpression;
-	private final AttributeWithNestedStatementElements pAttributeWithNestedStatement;
+	private final ComplexPredicateElements pComplexPredicate;
+	private final QuantificationPredicateElements pQuantificationPredicate;
+	private final ExistPredicateElements pExistPredicate;
+	private final InPredicateElements pInPredicate;
 	private final AndOperatorElements pAndOperator;
 	private final OrOperatorElements pOrOperator;
 	private final EQUALITIY_OPERATORElements pEQUALITIY_OPERATOR;
@@ -3769,7 +3887,10 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pAttribute = new AttributeElements();
 		this.pAttributeWithoutAliasDefinition = new AttributeWithoutAliasDefinitionElements();
 		this.pAttributeForSelectExpression = new AttributeForSelectExpressionElements();
-		this.pAttributeWithNestedStatement = new AttributeWithNestedStatementElements();
+		this.pComplexPredicate = new ComplexPredicateElements();
+		this.pQuantificationPredicate = new QuantificationPredicateElements();
+		this.pExistPredicate = new ExistPredicateElements();
+		this.pInPredicate = new InPredicateElements();
 		this.pAndOperator = new AndOperatorElements();
 		this.pOrOperator = new OrOperatorElements();
 		this.pEQUALITIY_OPERATOR = new EQUALITIY_OPERATORElements();
@@ -4004,7 +4125,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	{SimpleSelect} ('SELECT'
 	//	distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM' sources+=Source+ (','
 	//	sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-	//	('HAVING' having=ExpressionsModel)?);
+	//	('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
+	//);
 	public SimpleSelectElements getSimpleSelectAccess() {
 		return pSimpleSelect;
 	}
@@ -4113,16 +4235,47 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAttributeForSelectExpressionAccess().getRule();
 	}
 	
-	//AttributeWithNestedStatement:
-	//	value=AttributeWithoutAliasDefinition
-	//	'IN'
-	//	nested=InnerSelect;
-	public AttributeWithNestedStatementElements getAttributeWithNestedStatementAccess() {
-		return pAttributeWithNestedStatement;
+	//ComplexPredicate:
+	//	(quantification=QuantificationPredicate | exists=ExistPredicate | in=InPredicate) select=InnerSelect;
+	public ComplexPredicateElements getComplexPredicateAccess() {
+		return pComplexPredicate;
 	}
 	
-	public ParserRule getAttributeWithNestedStatementRule() {
-		return getAttributeWithNestedStatementAccess().getRule();
+	public ParserRule getComplexPredicateRule() {
+		return getComplexPredicateAccess().getRule();
+	}
+	
+	//QuantificationPredicate:
+	//	attribute=AttributeWithoutAliasDefinition
+	//	operator=COMPARE_OPERATOR
+	//	predicate=('ALL' | 'ANY' | 'SOME');
+	public QuantificationPredicateElements getQuantificationPredicateAccess() {
+		return pQuantificationPredicate;
+	}
+	
+	public ParserRule getQuantificationPredicateRule() {
+		return getQuantificationPredicateAccess().getRule();
+	}
+	
+	//ExistPredicate:
+	//	predicate='EXISTS';
+	public ExistPredicateElements getExistPredicateAccess() {
+		return pExistPredicate;
+	}
+	
+	public ParserRule getExistPredicateRule() {
+		return getExistPredicateAccess().getRule();
+	}
+	
+	//InPredicate:
+	//	attribute=AttributeWithoutAliasDefinition
+	//	predicate='IN';
+	public InPredicateElements getInPredicateAccess() {
+		return pInPredicate;
+	}
+	
+	public ParserRule getInPredicateRule() {
+		return getInPredicateAccess().getRule();
 	}
 	
 	////QuantificationPredicate:
@@ -4771,7 +4924,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	| {FloatConstant} value=FLOAT
 	//	| {StringConstant} value=STRING
 	//	| {BoolConstant} value=BOOLEAN
-	//	| {AttributeRef} (value=AttributeWithoutAliasDefinition | value=AttributeWithNestedStatement)
+	//	| {AttributeRef} value=AttributeWithoutAliasDefinition
+	//	| {ComplexPredicateRef} value=ComplexPredicate
 	public AtomicElements getAtomicAccess() {
 		return pAtomic;
 	}
@@ -4780,6 +4934,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAtomicAccess().getRule();
 	}
 	
+	////TODO Rename
 	//AtomicWithoutAttributeRef Expression:
 	//	{IntConstant} value=INT
 	//	| {FloatConstant} value=FLOAT

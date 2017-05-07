@@ -143,10 +143,31 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.ATTRIBUTE_WITH_NESTED_STATEMENT:
+      case CQLPackage.COMPLEX_PREDICATE:
       {
-        AttributeWithNestedStatement attributeWithNestedStatement = (AttributeWithNestedStatement)theEObject;
-        T result = caseAttributeWithNestedStatement(attributeWithNestedStatement);
+        ComplexPredicate complexPredicate = (ComplexPredicate)theEObject;
+        T result = caseComplexPredicate(complexPredicate);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.QUANTIFICATION_PREDICATE:
+      {
+        QuantificationPredicate quantificationPredicate = (QuantificationPredicate)theEObject;
+        T result = caseQuantificationPredicate(quantificationPredicate);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.EXIST_PREDICATE:
+      {
+        ExistPredicate existPredicate = (ExistPredicate)theEObject;
+        T result = caseExistPredicate(existPredicate);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case CQLPackage.IN_PREDICATE:
+      {
+        InPredicate inPredicate = (InPredicate)theEObject;
+        T result = caseInPredicate(inPredicate);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -532,6 +553,14 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case CQLPackage.COMPLEX_PREDICATE_REF:
+      {
+        ComplexPredicateRef complexPredicateRef = (ComplexPredicateRef)theEObject;
+        T result = caseComplexPredicateRef(complexPredicateRef);
+        if (result == null) result = caseExpression(complexPredicateRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case CQLPackage.MATRIX:
       {
         Matrix matrix = (Matrix)theEObject;
@@ -713,17 +742,65 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Attribute With Nested Statement</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Complex Predicate</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Attribute With Nested Statement</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Complex Predicate</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseAttributeWithNestedStatement(AttributeWithNestedStatement object)
+  public T caseComplexPredicate(ComplexPredicate object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Quantification Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Quantification Predicate</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseQuantificationPredicate(QuantificationPredicate object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Exist Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Exist Predicate</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseExistPredicate(ExistPredicate object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>In Predicate</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>In Predicate</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseInPredicate(InPredicate object)
   {
     return null;
   }
@@ -1524,6 +1601,22 @@ public class CQLSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAttributeRef(AttributeRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Complex Predicate Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Complex Predicate Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseComplexPredicateRef(ComplexPredicateRef object)
   {
     return null;
   }

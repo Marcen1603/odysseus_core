@@ -126,9 +126,24 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAttributeAdapter();
       }
       @Override
-      public Adapter caseAttributeWithNestedStatement(AttributeWithNestedStatement object)
+      public Adapter caseComplexPredicate(ComplexPredicate object)
       {
-        return createAttributeWithNestedStatementAdapter();
+        return createComplexPredicateAdapter();
+      }
+      @Override
+      public Adapter caseQuantificationPredicate(QuantificationPredicate object)
+      {
+        return createQuantificationPredicateAdapter();
+      }
+      @Override
+      public Adapter caseExistPredicate(ExistPredicate object)
+      {
+        return createExistPredicateAdapter();
+      }
+      @Override
+      public Adapter caseInPredicate(InPredicate object)
+      {
+        return createInPredicateAdapter();
       }
       @Override
       public Adapter caseSelectExpression(SelectExpression object)
@@ -381,6 +396,11 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createAttributeRefAdapter();
       }
       @Override
+      public Adapter caseComplexPredicateRef(ComplexPredicateRef object)
+      {
+        return createComplexPredicateRefAdapter();
+      }
+      @Override
       public Adapter caseMatrix(Matrix object)
       {
         return createMatrixAdapter();
@@ -563,16 +583,61 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement <em>Attribute With Nested Statement</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicate <em>Complex Predicate</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeWithNestedStatement
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicate
    * @generated
    */
-  public Adapter createAttributeWithNestedStatementAdapter()
+  public Adapter createComplexPredicateAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate <em>Quantification Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate
+   * @generated
+   */
+  public Adapter createQuantificationPredicateAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExistPredicate <em>Exist Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExistPredicate
+   * @generated
+   */
+  public Adapter createExistPredicateAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InPredicate <em>In Predicate</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InPredicate
+   * @generated
+   */
+  public Adapter createInPredicateAdapter()
   {
     return null;
   }
@@ -1323,6 +1388,21 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAttributeRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicateRef <em>Complex Predicate Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicateRef
+   * @generated
+   */
+  public Adapter createComplexPredicateRefAdapter()
   {
     return null;
   }

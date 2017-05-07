@@ -5,19 +5,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper
+import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper
 import java.util.Set
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.junit4.validation.ValidationTestHelper
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
-import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper
-import org.junit.rules.ExpectedException
-import org.junit.Rule
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)
@@ -37,8 +37,8 @@ class CQLGeneratorQueryTest
 		var model = s.parse 
 //		validate(model)
 		val fsa = new InMemoryFileSystemAccess()
-		if(dictionary != null)
-		CQLSchemata = dictionary.schema as Set<SDFSchema>
+		if(dictionary !== null)
+			CQLSchemata = dictionary.schema as Set<SDFSchema>
 		nameProvider = new NameProviderHelper()
 //		outerschema = dictionary.schema as Set<SDFSchema>
         doGenerate(model.eResource(), fsa, null)
@@ -450,6 +450,13 @@ class CQLGeneratorQueryTest
         , new CQLDictionaryHelper())
     }
 	
+	
+//	operator_1=RENAME({aliases=['attr1','aid'],pairs='true'},stream1)
+//	operator_2=RENAME({aliases=['attr1','aid'],pairs='true'},stream1)
+//	operator_3=RENAME({aliases=['attr1','d','attr2','stream1.attr2#1'],pairs='true'},stream1)
+//	operator_4=RENAME({aliases=['attr1','b.attr1','attr2','stream1.attr2#2'],pairs='true'},stream1)
+//	operator_5=SELECT({predicate='aid==b.attr1'},JOIN(JOIN(operator_1,operator_2),JOIN(operator_3,operator_4)))
+//	operator_6=MAP({expressions=['aid','d','b.attr1']},operator_5)
  	@Test def void SelectAttr1Test8() 
     { 
         assertCorrectGenerated
@@ -884,12 +891,13 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT attr1, attr3 FROM (SELECT attr1 FROM stream1) AS s1, (SELECT * FROM stream2) AS s2"
+			"SELECT s1.attr1 AS a1, s1.attr2 AS a3 FROM (SELECT s2.attr1 AS a11 FROM stream1 AS s2) AS s1"
 			,
 			"
-			operator_1 = MAP({expressions=['stream1.attr1']}, stream1)
-			operator_2 = MAP({expressions=['stream2.attr3', 'stream2.attr4']}, stream2)
-			operator_3 = MAP({expressions=['stream1.attr1', 'stream2.attr3']}, JOIN(operator_1, operator_2))"
+			operator_1=RENAME({aliases=['attr1','a11'],pairs='true'}, stream1)
+			operator_2=RENAME({aliases=['attr1','a1'],pairs='true'}, stream1)
+			operator_3=MAP({expressions=['a11']},JOIN(operator_1, operator_2))
+			operator_4=MAP({expressions=['a1','a3']}, operator_3)S"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -942,12 +950,6 @@ class CQLGeneratorQueryTest
 			, new CQLDictionaryHelper()
 		)
 	}
-	
-	//TODO Top-k operator
-	//TODO Limit operator
-	//TODO Exists 
-	//TODO ASC / DESC ?
-	//TODO CreateContextStore
 	
 	@Test def void NestedStatementTest6()
 	{
@@ -1230,4 +1232,122 @@ class CQLGeneratorQueryTest
 		)
 	}
 	
+	@Test def void ExistsTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10) AND attr1 != 50;"
+			,
+			"operator_1=MAP({expressions=['stream1.attr2']},stream1)
+			 operator_3=EXISTENCE({type='EXISTS',predicate='stream1.attr2!=10'},operator_1,stream1---INTEGER)
+		     operator_2=SELECT({predicate='operator_3.attr1!=50'},operator_3)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void ExistsTest2()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1 as b FROM stream1 WHERE EXISTS(SELECT attr3 FROM stream2 WHERE b != attr3) AND b != 50 OR b > 100;"
+			,
+			"operator_1=MAP({expressions=['stream2.attr3']},stream2)
+			 operator_2=RENAME({aliases=['attr1','b'],pairs='true'},stream1)
+			 operator_4=EXISTENCE({type='EXISTS',predicate='b!=stream2.attr3'},operator_1,operator_2---INTEGER)
+			 operator_3=SELECT({predicate='b!=50||b>100'},operator_4)
+			 operator_5=MAP({expressions=['b']},operator_3)
+			"	
+			, new CQLDictionaryHelper()
+		)
+	}
+
+	@Test def void ExistsTest3()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE attr1 != 50 AND EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10);"
+			,
+			"operator_1=SELECT({predicate='stream1.attr2!=10'},stream1)
+			 operator_2=MAP({expressions=['stream1.attr2']},operator_1)
+		     operator_3=SELECT({predicate=''},stream1)
+			 operator_4=EXISTENCE({type='EXISTS',predicate='stream1.attr2!=10'},operator_2,operator_3---INTEGER)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void ExistsTest4()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE attr1 != 50 AND EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10) OR attr1 > 100;"
+			,
+			"operator_1=SELECT({predicate='stream1.attr2!=10'},stream1)
+			 operator_2=MAP({expressions=['stream1.attr2']},operator_1)
+		     operator_3=SELECT({predicate=''},stream1)
+			 operator_4=EXISTENCE({type='EXISTS',predicate='stream1.attr2!=10'},operator_2,operator_3---INTEGER)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void QuantificationPredicateTest1()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE attr1 != 50 AND EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10) OR attr1 > 100;"
+			,
+			"operator_1=SELECT({predicate='stream1.attr2!=10'},stream1)
+			 operator_2=MAP({expressions=['stream1.attr2']},operator_1)
+		     operator_3=SELECT({predicate=''},stream1)
+			 operator_4=EXISTENCE({type='EXISTS',predicate='stream1.attr2!=10'},operator_2,operator_3---INTEGER)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+	@Test def void footest()
+	{
+		assertCorrectGenerated//TODO MINUTE must be mapped to MINUTES
+		(
+		   "SELECT b2.attr1 as b
+			FROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num
+			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1
+			        GROUP BY b1.attr1
+			        ) AS b2
+			WHERE num >= 200"
+			,
+			"operator_1=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
+			 operator_3=MAP({expressions=['b1.attr1','num']},operator_2)
+			 operator_4=RENAME({aliases=['b1_attr1','b'],pairs='true'},operator_3)
+			 operator_5=SELECT({predicate='num>=200'},operator_4)
+			 operator_6=MAP({expressions=['b']},operator_5)"
+			, new CQLDictionaryHelper()
+		)
+	}
+	
+//TODO MINUTE must be mapped to MINUTES	
+	@Test def void footest2()
+	{
+		assertCorrectGenerated
+		(
+		   "SELECT b2.attr1, b3.attr3
+			FROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num
+			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1
+			        GROUP BY b1.attr1
+			        ) AS b2, 
+					(SELECT c1.attr3 FROM stream2 AS c1
+					) AS b3 
+			WHERE num >= 200"
+			,
+			"operator_1=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
+			 operator_3=MAP({expressions=['b1.attr1','num']},operator_2)
+			 operator_4=RENAME({aliases=['attr3','c1.attr3'],pairs='true'},stream2)
+			 operator_5=MAP({expressions=['c1.attr3']},operator_4)
+			 operator_6=RENAME({aliases=['b1_attr1','b2.attr1'],pairs='true'},operator_3)
+			 operator_7=RENAME({aliases=['c1_attr3','b3.attr3'],pairs='true'},operator_5)
+			 operator_8=SELECT({predicate='num>=200'},JOIN(operator_6,operator_7))
+			 operator_9=MAP({expressions=['b2.attr1','b3.attr3']},operator_8)"
+			, new CQLDictionaryHelper()
+		)
+	}
 }
