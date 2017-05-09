@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
@@ -123,15 +122,15 @@ public class CQLParser implements IQueryParser
 			resource.unload();
 			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
 		}
-		// Register schemata from cql create stream/sink queries
-		CQLDictionary dictionary = createDictionary(EcoreUtil2.eAllOfType(model, SchemaDefinition.class), user);
-		Set<SDFSchema> cqlschemata = dictionary.getSchema();
+		// Register schemata from cql create stream/sink queries//TODO remove this
+//		CQLDictionary dictionary = createDictionary(EcoreUtil2.eAllOfType(model, SchemaDefinition.class), user);
+//		Set<SDFSchema> cqlschemata = dictionary.getSchema();
 		// Get schemata from other parsers and query languages
 		Set<SDFSchema> otherschemata = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
 				.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
 		// Set schemata to the generator
 		generator.setOtherSchemata(otherschemata);
-		generator.setCQLSchemata(cqlschemata);
+//		generator.setCQLSchemata(cqlschemata);
 		generator.setNameProvider(new NameProvider());
 		executorCommands.clear();
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
@@ -184,7 +183,7 @@ public class CQLParser implements IQueryParser
 		}
 		catch(Exception e)
 		{
-			CQLDictionaryProvider.removeDictionary(user);
+//			CQLDictionaryProvider.removeDictionary(user);//TODO remove this
 			executorCommands.clear();
 			throw e;
 		}
@@ -444,6 +443,7 @@ public class CQLParser implements IQueryParser
 		}
 	}
 	
+	@Deprecated
 	private synchronized CQLDictionary createDictionary(List<SchemaDefinition> schemata, ISession user)
 	{
 		CQLDictionary dictionary = CQLDictionaryProvider.getDictionary(user);

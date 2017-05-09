@@ -265,7 +265,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAllPredicate node, Object data) throws QueryParseException {
-		System.out.println("ASTAllPredicate:: " + node.isNegatived() );
+		System.out.println("ASTAllPredicate:: " + node.isNegatived());
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.EXISTS : ExistenceAO.Type.NOT_EXISTS);
 	}
 
@@ -298,7 +298,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 
 	@Override
 	public Object visit(ASTAnyPredicate node, Object data) throws QueryParseException {
-		System.out.println("ASTAnyPredicate:: " + node.isNegatived() );
+		System.out.println("visit(ASTAnyPredicate node, ..) ->  node.isNegatived= " + node.isNegatived() );
 		return createExistenceAO(node, (AbstractLogicalOperator) data, node.isNegatived() ? ExistenceAO.Type.NOT_EXISTS : ExistenceAO.Type.EXISTS);
 	}
 
@@ -313,6 +313,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		existsAO.subscribeToSource(subquery, BinaryLogicalOp.RIGHT, 0, subquery.getOutputSchema());
 		existsAO.setType(type);
 		String expression = node.getTuple().toString() + node.getCompareOperator().toString() + toExpression(subquery);
+		System.out.println("createExistenceAO() -> expression= " + expression);
 		AttributeResolver tmpResolver = new AttributeResolver(this.attributeResolver);
 		for (SDFAttribute attr : subquery.getOutputSchema()) {
 			tmpResolver.addAttribute(attr);

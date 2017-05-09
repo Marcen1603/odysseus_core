@@ -200,12 +200,16 @@ public class PQLBuilder
 	private StringBuilder buildArguments(String[] variables, Map<String, String> map)
 	{
 		int i = 0;
-		for(Entry<String, String> _ : map.entrySet())
+		for(Entry<String, String> e : map.entrySet())
 		{
-			String value = getValue(map.get(variables[i]));
-			if(value != null && !variables[i].equals("input"))
+			String var = variables[i];
+			if(!var.equals("input"))
 			{
-				builder.append(variables[i] + "=" + value + ",");
+				String value = getValue(map.get(var));
+				if(value != null)
+				{
+					builder.append(var + "=" + value + ",");
+				}
 			}
 			if(i++ == variables.length)
 				break;
