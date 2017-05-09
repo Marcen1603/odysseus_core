@@ -1,10 +1,8 @@
-/**
- *
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.server;
 
 import java.net.InetSocketAddress;
-import java.util.Collection;
+import java.security.PublicKey;
+import java.util.List;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -12,6 +10,7 @@ import org.java_websocket.server.WebSocketServer;
 
 import com.google.gson.Gson;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.EncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetEncKeyMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.GetPublicKeyMessage;
@@ -20,11 +19,11 @@ import de.uniol.inf.is.odysseus.incubation.crypt.common.messages.StringMessage;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.IKeyManager;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.KeyManager;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.EncKeyWrapper;
+import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.util.JsonUtils;
 
 /**
- * A server to communicate with laotseClients and to distribute requests to the
- * LaotseDb, Mosaik and Odysseus.
+ * A server to communicate with crypt Clients
  *
  */
 public class KeyWebSocketServer extends WebSocketServer {
@@ -44,27 +43,29 @@ public class KeyWebSocketServer extends WebSocketServer {
 		init();
 	}
 
+	/**
+	 * Initiates this server
+	 */
 	private void init() {
 		this.gson = new Gson();
 		this.keyManager = KeyManager.getInstance();
 	}
 
 	/**
-	 * Returns the LaotseWebSocketServer instance.
+	 * Returns the KeymanagementSocketServer instance.
 	 *
 	 * @return the websocketserver instance.
 	 */
 	public static KeyWebSocketServer getInstance() {
-		// TODO config file?
 		if (instance == null) {
-			instance = new KeyWebSocketServer(new InetSocketAddress("localhost", 8887));
+			instance = new KeyWebSocketServer(new InetSocketAddress(OdysseusConfiguration.get("crypt.server.hostname"),
+					Integer.parseInt(OdysseusConfiguration.get("crypt.server.port"))));
 		}
 		return instance;
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int arg1, String arg2, boolean arg3) {
-		// TODO logger?
 		System.out.println("Closed connection to " + conn.getRemoteSocketAddress());
 	}
 
@@ -103,35 +104,87 @@ public class KeyWebSocketServer extends WebSocketServer {
 		}
 	}
 
+	/**
+	 * On EncryptedKeyMessage received
+	 *
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message5
+	 *            The EncKeyMessage
+	 */
 	private void onEncKeyMessage(WebSocket conn, EncKeyMessage message5) {
 		if (message5 != null) {
 			this.keyManager.setEncSymKey(message5.getEncKey());
 		}
 	}
 
+	/**
+	 * On GetEncKeyMessage received
+	 *
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message4
+	 *            The GetEncKeyMessage
+	 */
 	private void onGetEncKeyMessage(WebSocket conn, GetEncKeyMessage message4) {
 		if (message4 != null) {
 			EncKeyWrapper encKey = this.keyManager.getEncSymKey(message4.getReceiverId(), message4.getStreamId());
-			EncKeyMessage encKeyMessage = new EncKeyMessage(encKey);
+			EncKeyMessage encKeyMessage = new EncKeyMessage(encKey, message4.getReceiver());
 			String json = JsonUtils.getJsonString(encKeyMessage);
 			conn.send(json);
 		}
 	}
 
+	/**
+	 * On PublicKeyMessage received
+	 *
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message3
+	 *            The PublicKeyMessage
+	 */
 	private void onPublicKeyMessage(WebSocket conn, PublicKeyMessage message3) {
 		if (message3 != null) {
-			this.keyManager.setPublicKey(message3.getPublicKey());
+			for (int i = 0; i < message3.getPublicKey().size(); i++) {
+				this.keyManager.setPublicKey(message3.getPublicKey().get(i));
+			}
 		}
 	}
 
+	/**
+	 * On GetPublicKeyMessage Received
+	 *
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message2
+	 *            The GetPubkicKeyMessage
+	 */
 	private void onGetPublicKeyMessage(WebSocket conn, GetPublicKeyMessage message2) {
 		if (message2 != null) {
-			PublicKeyMessage pubKeyMessage = new PublicKeyMessage(this.keyManager.getPublicKey(message2.getId()));
+			List<KeyWrapper<PublicKey>> pubKeys = this.keyManager.getPublicKey(message2.getId());
+			PublicKeyMessage pubKeyMessage = new PublicKeyMessage(pubKeys);
+
+			// workaround for interface
+			// Gson gson = new
+			// GsonBuilder().registerTypeAdapter(PublicKey.class, new
+			// InterfaceAdapter<PublicKey>()).create();
+			// String serialized = gson.toJson(pubKeyMessage);
+			// String json = gson.toJson(new String[] {
+			// pubKeyMessage.getClass().getSimpleName(), serialized });
+
 			String json = JsonUtils.getJsonString(pubKeyMessage);
 			conn.send(json);
 		}
 	}
 
+	/**
+	 * On String Message received
+	 *
+	 * @param conn
+	 *            The WebSocket, at which you received the message
+	 * @param message
+	 *            The String message
+	 */
 	private void onStringMessage(WebSocket conn, StringMessage message) {
 		System.out.println(message.getString());
 	}
@@ -139,42 +192,6 @@ public class KeyWebSocketServer extends WebSocketServer {
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake arg1) {
 		System.out.println("Connected to " + conn.getRemoteSocketAddress());
-	}
-
-	/**
-	 * Sends a string to all connected clients.
-	 *
-	 * @param json
-	 *            the string.
-	 */
-	@SuppressWarnings("unused")
-	private void broadcast(String json) {
-		Collection<WebSocket> sockets = connections();
-		synchronized (sockets) {
-			for (WebSocket socket : sockets) {
-				socket.send(json);
-			}
-		}
-	}
-
-	/**
-	 * Sends a String to all connected sockets except conn.
-	 *
-	 * @param json
-	 *            the string.
-	 * @param conn
-	 *            the websocket that should not receive json.
-	 */
-	@SuppressWarnings("unused")
-	private void broadcastExceptConn(WebSocket conn, String json) {
-		Collection<WebSocket> sockets = connections();
-		synchronized (sockets) {
-			for (WebSocket socket : sockets) {
-				if (socket != conn) {
-					socket.send(json);
-				}
-			}
-		}
 	}
 
 }

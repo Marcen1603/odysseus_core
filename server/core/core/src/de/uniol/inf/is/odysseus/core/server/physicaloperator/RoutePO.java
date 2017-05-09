@@ -138,4 +138,9 @@ public class RoutePO<T extends IStreamObject<IMetaAttribute>> extends AbstractPi
 		return false;
 	}
 
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		this.predicates = predicates;
+	}
+
 }

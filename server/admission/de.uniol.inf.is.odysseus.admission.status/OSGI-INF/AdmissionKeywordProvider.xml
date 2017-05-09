@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.admission.status.keyword.AdmissionKeywordProvider">
+   <implementation class="de.uniol.inf.is.odysseus.admission.status.keyword.AdmissionKeywordProvider"/>
+   <service>
+      <provide interface="de.uniol.inf.is.odysseus.script.parser.IPreParserKeywordProvider"/>
+   </service>
+</scr:component>

@@ -139,5 +139,10 @@ public class ChangeCorrelateAO extends BinaryLogicalOp implements IHasPredicates
 		return predicates;
 	}
 
+	@Override
+	public void setPredicates(List<IPredicate<?>> predicates) {
+		this.predicates = predicates;
+	}
+
 
 }

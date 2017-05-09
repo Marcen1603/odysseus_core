@@ -122,4 +122,10 @@ public class PredicateCoalescePO<M extends ITimeInterval> extends
 		return super.isSemanticallyEqual(ipo);
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -113,10 +113,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 		}
 		Tuple<IMetaAttribute> ret = new Tuple<IMetaAttribute>(attributes, false);
-		if (handleMetaData && hasMetadata()) {
-			IMetaAttribute meta = readMetaData(inputStream);
-			ret.setMetadata(meta);
-		}
+		readAndAddMetadata(inputStream, handleMetaData, ret);
 		return ret;
 	}
 
@@ -145,10 +142,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			}
 		}
 
-		if (handleMetaData && hasMetadata()) {
-			IMetaAttribute meta = readMetaData(input);
-			tuple.setMetadata(meta);
-		}
+		readAndAddMetadata(input, handleMetaData, tuple);
 		return tuple;
 	}
 
@@ -161,7 +155,7 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 	 */
 	@Override
 	public Tuple<? extends IMetaAttribute> readData(ByteBuffer buffer, boolean handleMetaData) {
-		Tuple<IMetaAttribute> r = null;
+		Tuple<IMetaAttribute> tuple = null;
 		synchronized (buffer) {
 			// buffer.flip(); // DO NOT FLIP THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
@@ -186,15 +180,12 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 					}
 				}
 			}
-			r = new Tuple<IMetaAttribute>(attributes, false);
+			tuple = new Tuple<IMetaAttribute>(attributes, false);
 			// buffer.clear(); // DO NOT CLEAR THIS BUFFER, OTHER READERS MIGHT
 			// STILL USE IT
-			if (handleMetaData) {
-				IMetaAttribute meta = readMetaData(buffer);
-				r.setMetadata(meta);
-			}
+			readAndAddMetadata(buffer, handleMetaData, tuple);
 		}
-		return r;
+		return tuple;
 	}
 
 	@Override

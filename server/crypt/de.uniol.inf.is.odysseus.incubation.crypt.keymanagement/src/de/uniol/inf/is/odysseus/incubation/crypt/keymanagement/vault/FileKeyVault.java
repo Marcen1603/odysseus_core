@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.vault;
 
 import java.io.File;
@@ -18,6 +15,9 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.Activator;
 import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys.KeyWrapper;
 
 /**
+ * This class manages a key Vault, where the Keys are stored in Files. <br>
+ * Each Key is stores in one File on the Filesystem.
+ * 
  * @author MarkMilster
  *
  */
@@ -25,6 +25,12 @@ public class FileKeyVault implements IFileKeyVault {
 
 	private String path;
 
+	/**
+	 * Constructor, which specifies the path to the folder, where the keys are
+	 * stored in files.
+	 * 
+	 * @param path
+	 */
 	public FileKeyVault(String path) {
 		this.path = path;
 	}
@@ -59,6 +65,12 @@ public class FileKeyVault implements IFileKeyVault {
 		return key;
 	}
 
+	/**
+	 * Returns the absolute path of a key, which is stored in a bundle. 
+	 * 
+	 * @param id The id of the key, you want to get the absolute path of.
+	 * @return The absolute path of the key, specified by the id in the parameter
+	 */
 	private String getAbsoluteKeyPath(int id) {
 		try {
 			BundleContext context = Activator.getContext();

@@ -1,9 +1,8 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.keys;
 
 /**
+ * Wrapper for EncKeys with metadata. 
+ * 
  * @author MarkMilster
  *
  */
@@ -16,6 +15,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	private int streamId;
 
 	/**
+	 * Returns the symmetric algorithm of the encrypted key.
+	 * 
 	 * @return the algoritm
 	 */
 	public String getAlgoritm() {
@@ -23,6 +24,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	}
 
 	/**
+	 * Sets the algorithm
+	 * 
 	 * @param algoritm
 	 *            the algoritm to set
 	 */
@@ -31,6 +34,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	}
 
 	/**
+	 * Returns the ReceiverId of the EncKey
+	 * 
 	 * @return the receiverId
 	 */
 	public int getReceiverId() {
@@ -38,6 +43,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	}
 
 	/**
+	 * Sets the ReceiverId
+	 * 
 	 * @param receiverId
 	 *            the receiverId to set
 	 */
@@ -46,6 +53,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	}
 
 	/**
+	 * Returns the StreamId of the crypting with the encrypted SymKey
+	 * 
 	 * @return the streamId
 	 */
 	public int getStreamId() {
@@ -53,6 +62,8 @@ public class EncKeyWrapper extends KeyWrapper<byte[]> {
 	}
 
 	/**
+	 * Sets the StreamId
+	 * 
 	 * @param streamId
 	 *            the streamId to set
 	 */

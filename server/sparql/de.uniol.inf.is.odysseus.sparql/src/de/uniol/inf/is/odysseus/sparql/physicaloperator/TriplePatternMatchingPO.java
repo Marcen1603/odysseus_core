@@ -259,4 +259,10 @@ public class TriplePatternMatchingPO<M extends IMetaAttribute> extends AbstractP
 	public String toString() {
 		return "TriplePatternMatchingPO (" + this.hashCode() + "): " + this.predicate;
 	}
+
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		// TODO 
+		
+	}
 }

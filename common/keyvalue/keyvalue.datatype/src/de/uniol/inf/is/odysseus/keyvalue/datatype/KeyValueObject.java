@@ -35,6 +35,7 @@ import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -47,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @param <T>
  */
 
-public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable {
+public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements Serializable, INamedAttributeStreamObject<T> {
 
 	final private static long serialVersionUID = -94667746890198612L;
 	final static private ObjectMapper mapper = new ObjectMapper();
@@ -125,6 +126,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	// ----------------------------------------------
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <K> K getAttribute(String key) {
 		return (K) this.flat.get(key);
 	}
@@ -144,6 +146,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<Object> path(String path) {
 		if (!configured) {
 			Configuration.setDefaults(new Configuration.Defaults() {
@@ -298,6 +301,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	 * @param value
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public void setAttribute(String key, Object value) {
 		// Must create hierarchy based on "."!
 		String subkeys[] = key.split("\\.");
@@ -587,7 +591,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	/**
 	 * Converts a tuple into a keyValue / JSON object
-	 * 
+	 *
 	 * @param tuple
 	 *            The tuple to convert.
 	 * @param schema
@@ -637,7 +641,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	/**
 	 * Converts a tuple into a keyValue / JSON object matching a given template.
 	 * Attributes which are not used in the template will be ignored.
-	 * 
+	 *
 	 * @param tuple
 	 *            The tuple to convert.
 	 * @param schema
@@ -774,7 +778,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	/**
 	 * For quick testing purposes
-	 * 
+	 *
 	 * @param args
 	 *            Not used.
 	 */

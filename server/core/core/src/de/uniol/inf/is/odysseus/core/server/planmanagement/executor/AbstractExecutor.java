@@ -119,6 +119,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -134,7 +135,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
  *
  */
 public abstract class AbstractExecutor implements IServerExecutor, ISettingChangeListener, IQueryReoptimizeListener,
-		IPlanReoptimizeListener, IDataDictionaryListener, ISessionListener {
+		IPlanReoptimizeListener, IDataDictionaryListener, ISessionListener, IUserManagementListener {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractExecutor.class);
 
@@ -1058,6 +1059,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					UserManagementProvider.getSessionmanagement().subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
+					UserManagementProvider.getUsermanagement(true).addUserManagementListener(this);
 					break;
 				}
 			}
@@ -1125,6 +1127,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public void sessionEventOccured(ISessionEvent event) {
 		fireGenericEvent(IUpdateEventListener.SESSION);
+	}
+
+	@Override
+	public void roleChangedEvent() {
+		fireGenericEvent(IUpdateEventListener.USER);
+	}
+
+	@Override
+	public void usersChangedEvent() {
+		fireGenericEvent(IUpdateEventListener.USER);
 	}
 
 	public void fireDataDictionaryEvent(IDataDictionary dd) {

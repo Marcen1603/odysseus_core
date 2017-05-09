@@ -47,7 +47,7 @@ public class OdysseusConfiguration {
 
 	static Properties props = new Properties();
 
-	static{
+	static {
 		try {
 			loadProperties(OdysseusBaseConfiguration.getHomeDir(), "odysseus.conf", props);
 		} catch (FileNotFoundException e) {
@@ -57,9 +57,8 @@ public class OdysseusConfiguration {
 		}
 	}
 
-
-	private static void loadProperties(String odysseusHome, String filename,
-			Properties properties) throws IOException, FileNotFoundException {
+	private static void loadProperties(String odysseusHome, String filename, Properties properties)
+			throws IOException, FileNotFoundException {
 		// If there are new properties, load defaults and overwrite with
 		// file-properties
 		setDefaults(odysseusHome);
@@ -83,7 +82,7 @@ public class OdysseusConfiguration {
 			}
 		}
 		in.close();
-		getLogger().info("Read config file from "+odysseusHome + filename);
+		getLogger().info("Read config file from " + odysseusHome + filename);
 		// Save always because there could be new properties ... do only if
 		// there are new defaults?
 		savePropertyFile(odysseusHome);
@@ -94,10 +93,10 @@ public class OdysseusConfiguration {
 
 		props.setProperty("StoretypeUserMgmt", "Memorystore");
 		props.setProperty("StoretypeDataDict", "Memorystore");
-		props.setProperty("Filestore.StoreQueries","false");
+		props.setProperty("Filestore.StoreQueries", "false");
 
 		// Store-Filename
-		props.setProperty("Tenant.DefaultName","");
+		props.setProperty("Tenant.DefaultName", "");
 		props.setProperty("tenantStoreFilename", "tenants.store");
 		props.setProperty("userStoreFilename", "users.store");
 		props.setProperty("privilegStoreFilename", "priviliges.store");
@@ -105,11 +104,9 @@ public class OdysseusConfiguration {
 		props.setProperty("slasFilename", "slas.store");
 		props.setProperty("streamDefinitionsFilename", "viewDefinitions.store");
 		props.setProperty("streamOrViewFromUserFilename", "viewFromUser.store");
-		props.setProperty("viewDefinitionsFilename",
-				"logicalViewDefinitions.store");
+		props.setProperty("viewDefinitionsFilename", "logicalViewDefinitions.store");
 		props.setProperty("sinkDefinitionsFilename", "sinkDefinitions.store");
-		props.setProperty("sinkDefinitionsUserFilename",
-				"sinkDefinitionsUser.store");
+		props.setProperty("sinkDefinitionsUserFilename", "sinkDefinitionsUser.store");
 		props.setProperty("entitiesFilename", "entities.store");
 		props.setProperty("entityUsedByFileName", "entityUsedBy.store");
 		props.setProperty("sourceTypeMapFilename", "sourceTypeMap.store");
@@ -117,8 +114,7 @@ public class OdysseusConfiguration {
 		props.setProperty("sourceFromUserFilename", "sourceFromUser.store");
 		props.setProperty("queriesFilename", "queries.store");
 		props.setProperty("queriesUserFilename", "queriesUser.store");
-		props.setProperty("queriesBuildParamFilename",
-				"queriesBuildParam.store");
+		props.setProperty("queriesBuildParamFilename", "queriesBuildParam.store");
 
 		props.setProperty("storedProceduresFilename", "procedures.store");
 		props.setProperty("storedProceduresFromUserFilename",
@@ -132,11 +128,9 @@ public class OdysseusConfiguration {
 
 		props.setProperty("storeReloadLog", Boolean.TRUE.toString());
 
-		props.setProperty("reloadLogStoreFilename", odysseusHome
-				+ "reloadlog.store");
+		props.setProperty("reloadLogStoreFilename", odysseusHome + "reloadlog.store");
 
-		props.setProperty("schedulingConfigFile", odysseusHome
-				+ "scheduling.conf");
+		props.setProperty("schedulingConfigFile", odysseusHome + "scheduling.conf");
 
 		props.setProperty("sessionTimeout", (24 * 60 * 60000) + ""); // Milliseconds
 
@@ -144,15 +138,13 @@ public class OdysseusConfiguration {
 		props.setProperty("debug_Scheduler", Boolean.FALSE.toString());
 		props.setProperty("debug_Scheduler_maxLines", 1048476 + "");
 		props.setProperty("scheduler_TimeSlicePerStrategy", 10 + "");
-		props.setProperty(
-				"scheduler_simpleThreadScheduler_executorThreadsCount", (-1)
-						+ "");
+		props.setProperty("scheduler_simpleThreadScheduler_executorThreadsCount", (-1) + "");
 		props.setProperty("scheduler_DebugFileName", "SchedulerLog");
 		props.setProperty("scheduler_trainSize", 1 + "");
 		props.setProperty("Scheduler.sleepAllowed", "false");
 		props.setProperty("Scheduler.Simplethreaded.SourcesPerThread", "10");
 		props.setProperty("Scheduler.Simplethreaded.NumberOfThreads", "10");
-		props.setProperty("Scheduler.Simplethreaded.SourceThreadCount","10");
+		props.setProperty("Scheduler.Simplethreaded.SourceThreadCount", "10");
 
 		// SLA
 		props.setProperty("sla_history_size", 10000 + ""); // Milliseconds
@@ -185,26 +177,27 @@ public class OdysseusConfiguration {
 		props.setProperty("adaption_blockingTime", "30000");
 
 		// Web-Service
-		props.setProperty("WebService.Server","0.0.0.0");
-		props.setProperty("WebService.Port","9669");
-		props.setProperty("WebService.ExecutorContext","/odysseus");
-		props.setProperty("WebService.CommandContext","/odysseus/command");
-		props.setProperty("WebService.MaxPort","10000");
+		props.setProperty("WebService.Server", "0.0.0.0");
+		props.setProperty("WebService.Port", "9669");
+		props.setProperty("WebService.ExecutorContext", "/odysseus");
+		props.setProperty("WebService.CommandContext", "/odysseus/command");
+		props.setProperty("WebService.MaxPort", "10000");
 		props.setProperty("WebService.SSL", "false");
 		props.setProperty("Webservice.SSL_Client_Authentication", "false");
-		props.setProperty("webservice.queryconnect.sink.minport","10000");
-		props.setProperty("webservice.queryconnect.sink.maxport","20000");
-
+		props.setProperty("webservice.queryconnect.sink.minport", "10000");
+		props.setProperty("webservice.queryconnect.sink.maxport", "20000");
 
 		// security and crypto stuff, e.g. for creating self-signed certificates
 		props.setProperty("security.applicationName", "Odysseus");
-		props.setProperty("security.organization","University of Oldenburg");
-		props.setProperty("security.dir", odysseusHome+"certificates"+File.separator);
-		// the private information exchange (PKCS#12) pfx file, containing the private key and an according certificate
+		props.setProperty("security.organization", "University of Oldenburg");
+		props.setProperty("security.dir", odysseusHome + "certificates" + File.separator);
+		// the private information exchange (PKCS#12) pfx file, containing the
+		// private key and an according certificate
 		props.setProperty("security.default.pfx", "odysseus.default.pfx");
 		// the alias within the key store that contains the default key
 		props.setProperty("security.default.pfx.alias", "odysseus.default");
-		// destination for the X.509 certificate that will be automatically exported from the pfx file
+		// destination for the X.509 certificate that will be automatically
+		// exported from the pfx file
 		props.setProperty("security.default.der", "odysseus.default.der");
 		// truststore
 		props.setProperty("security.default.tst", "odysseus.default.tst");
@@ -218,8 +211,11 @@ public class OdysseusConfiguration {
 		props.setProperty(DEFAULT_UPDATE_SITE, "http://odysseus.informatik.uni-oldenburg.de/update/");
 
 		// Recovery, Kafka and BaDaSt
-		props.setProperty("systemlogThresholdMilliseconds", String.valueOf((long) (Math.pow(10, 3)
-				* Math.pow(60, 2) * 24 * 30))); // 30 days in milliseconds
+		props.setProperty("systemlogThresholdMilliseconds",
+				String.valueOf((long) (Math.pow(10, 3) * Math.pow(60, 2) * 24 * 30))); // 30
+																						// days
+																						// in
+																						// milliseconds
 		props.setProperty("checkpointDefaultManager", "SystemTimeCheckpointManager");
 		props.setProperty("checkpointDefaultUnit", "MINUTES");
 		props.setProperty("checkpointDefaultPeriod", "30");
@@ -227,14 +223,40 @@ public class OdysseusConfiguration {
 		props.setProperty("kafka.clientPort", "9092");
 		props.setProperty("badast.host.name", "localhost");
 		props.setProperty("badast.clientPort", "6789");
+
+		// Crypting Client
+		props.setProperty("crypt.client.uri", "ws://localhost:8887");
+		// Crypting Keymanagement server
+		props.setProperty("crypt.server.hostname", "localhost");
+		props.setProperty("crypt.server.port", "8887");
+		// Crypting encSymKeyVault
+		props.setProperty("crypt.encSymKeyVault.server", "localhost");
+		props.setProperty("crypt.encSymKeyVault.port", "3306");
+		props.setProperty("crypt.encSymKeyVault.database", "encSymKeyVault");
+		props.setProperty("crypt.encSymKeyVault.user", "odysseus");
+		props.setProperty("crypt.encSymKeyVault.password", "suessydo");
+		props.setProperty("crypt.encSymKeyVault.keyTableName", "ENCKEYS");
+		// Crypting pubKeyVault
+		props.setProperty("crypt.pubKeyVault.server", "localhost");
+		props.setProperty("crypt.pubKeyVault.port", "3306");
+		props.setProperty("crypt.pubKeyVault.database", "pubKeyVault");
+		props.setProperty("crypt.pubKeyVault.user", "odysseus");
+		props.setProperty("crypt.pubKeyVault.password", "suessydo");
+		props.setProperty("crypt.pubKeyVault.keyTableName", "PUBKEYS");
+		// Crypting symKeyVault
+		props.setProperty("crypt.symKeyVault.server", "localhost");
+		props.setProperty("crypt.symKeyVault.port", "3306");
+		props.setProperty("crypt.symKeyVault.database", "symKeyVault");
+		props.setProperty("crypt.symKeyVault.user", "odysseus");
+		props.setProperty("crypt.symKeyVault.password", "suessydo");
+		props.setProperty("crypt.symKeyVault.keyTableName", "SYMKEYS");
 	}
 
 	private static void savePropertyFile(String odysseusHome) {
 		FileOutputStream out;
 		try {
 			out = new FileOutputStream(odysseusHome + "odysseus.conf");
-			props.storeToXML(out,
-					"Odysseus Property File edit only if you know what you are doing");
+			props.storeToXML(out, "Odysseus Property File edit only if you know what you are doing");
 			out.close();
 			getLogger().trace("New Odysseus-Config-File created");
 		} catch (Exception e2) {
@@ -249,8 +271,7 @@ public class OdysseusConfiguration {
 	public static String get(String key) {
 		String ret = props.getProperty(key);
 		if (ret == null) {
-			getLogger().warn(
-					"Try to get a property that is not registered " + key);
+			getLogger().warn("Try to get a property that is not registered " + key);
 		}
 		return ret;
 	}
@@ -263,10 +284,9 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
-
 	public static String getFileProperty(String key, String tenantName) {
 		String home = getHomeDir();
-		if(!home.endsWith(File.separator)){
+		if (!home.endsWith(File.separator)) {
 			home = home + File.separator;
 		}
 		if (tenantName != null && tenantName.length() > 0) {
@@ -278,32 +298,28 @@ public class OdysseusConfiguration {
 
 	public static String getFileProperty(String key) {
 		String home = getHomeDir();
-		if(!home.endsWith(File.separator)){
+		if (!home.endsWith(File.separator)) {
 			home = home + File.separator;
 		}
-		return home + "store"
-					+ File.separator + get(key);
+		return home + "store" + File.separator + get(key);
 	}
-
 
 	public static long getLong(String key, long defaultValue) {
 		String val = props.getProperty(key);
 		return val != null ? Long.parseLong(val) : defaultValue;
 	}
 
-    public static double getDouble(String key, double defaultValue) {
-        String val = props.getProperty(key);
-        return val != null ? Double.parseDouble(val) : defaultValue;
-    }
+	public static double getDouble(String key, double defaultValue) {
+		String val = props.getProperty(key);
+		return val != null ? Double.parseDouble(val) : defaultValue;
+	}
 
 	public static int getInt(String key, int defaultValue) {
 		String val = props.getProperty(key);
 		try {
 			return val != null ? Integer.parseInt(val) : defaultValue;
 		} catch (Exception ex) {
-			_logger.error(
-					"Exception during getting value of configuration-key '{}'",
-					key, ex);
+			_logger.error("Exception during getting value of configuration-key '{}'", key, ex);
 			return defaultValue;
 		}
 	}
@@ -327,36 +343,27 @@ public class OdysseusConfiguration {
 		return defaultValue;
 	}
 
-	public static void set(String key, String value, boolean permanent,
-			ISession caller) {
+	public static void set(String key, String value, boolean permanent, ISession caller) {
 
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller,
-				ConfigurationPermission.SET_PARAM,
+		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
 				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagementProvider.getUsermanagement(true).hasPermission(
-						caller, ConfigurationPermission.SAVE_PARAM,
-						ConfigurationPermission.objectURI)) {
+				if (UserManagementProvider.getUsermanagement(true).hasPermission(caller,
+						ConfigurationPermission.SAVE_PARAM, ConfigurationPermission.objectURI)) {
 					savePropertyFile(getHomeDir());
 				} else {
 					throw new PermissionException(
-							"User "
-									+ caller
-									+ " is not allowed to permanently set config param "
-									+ key);
+							"User " + caller + " is not allowed to permanently set config param " + key);
 				}
 			}
 		} else {
-			throw new PermissionException("User " + caller
-					+ " is not allowed to temporally set config param " + key);
+			throw new PermissionException("User " + caller + " is not allowed to temporally set config param " + key);
 		}
 	}
 
 	public static String getHomeDir() {
 		return OdysseusBaseConfiguration.getHomeDir();
 	}
-
-
 
 }
