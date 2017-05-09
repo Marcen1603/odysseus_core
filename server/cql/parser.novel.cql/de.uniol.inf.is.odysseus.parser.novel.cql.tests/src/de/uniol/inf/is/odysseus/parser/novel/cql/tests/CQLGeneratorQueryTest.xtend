@@ -756,10 +756,12 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT attr2, COUNT(attr1) AS Counter FROM stream1 [SIZE 5 MINUTES TIME];"
+			"SELECT attr1 as a1, COUNT(attr1) AS Counter FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1))
-			 operator_2=MAP({expressions=['stream1.attr2','Counter']},JOIN(operator_1,TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1)))"
+			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','a1','Counter','Integer']]},operator_1)
+			 operator_3=RENAME({aliases=['attr1','a1'],pairs='true'},TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_4=MAP({expressions=['a1','Counter']},JOIN(operator_2,operator_3))"
 			, new CQLDictionaryHelper()
 		)
 	}	
@@ -803,7 +805,7 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
 			,
 			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
-			 operator_2=SELECT({predicate='stream2.attr3>100'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2))))
+			 operator_2=SELECT({predicate='stream2.attr3>100'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2))))	
 			 operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
 		)
@@ -970,7 +972,7 @@ class CQLGeneratorQueryTest
 	{
 		assertCorrectGenerated
 		(
-			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 AS a1 FROM stream1;"
+			"SELECT attr1 AS a1, DolToEur(attr1), AVG(attr1) FROM stream1;"
 			,
 			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
 			 operator_2=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},operator_1)
@@ -1236,19 +1238,27 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT stream1.attr2, COUNT(stream1.attr2) AS num FROM stream1 WHERE attr2 < attr1);"
 			,
 			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
-			 operator_2=SELECT({predicate='stream1.attr2<stream1.attr1'},operator_1)
+			 operator_2=SELECT({predicate='stream1.attr2<stream1.attr1'},JOIN(operator_1,stream1))
 			 operator_3=MAP({expressions=['stream1.attr2','num']},operator_2)
-			 operator_4=EXISTENCE({type='EXISTS',predicate='attr1>stream1.attr2&&attr1>num'},operator_3,stream1)
+		     operator_4=EXISTENCE({type='EXISTS',predicate='attr1>stream1.attr2&&attr1>num'},operator_3,stream1)
 			 operator_5=MAP({expressions=['stream1.attr1']},JOIN(operator_4,stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
 	
-/*operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
- * operator_2=MAP({expressions=['stream1.attr2','num']},operator_1)
- * operator_3=EXISTENCE({type='EXISTS',predicate='attr1>stream1.attr2&&attr1>num'},operator_2,stream1)
- * operator_4=MAP({expressions=['stream1.attr1']},JOIN(operator_3,stream1))
- */
+	@Test def void QuantificationPredicateTest5()
+	{
+		assertCorrectGenerated
+		(
+			"SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT stream1.attr2 FROM stream1 WHERE attr2 < attr1);"
+			,
+			"operator_1=SELECT({predicate='stream1.attr2<stream1.attr1'},stream1)
+			 operator_2=MAP({expressions=['stream1.attr2']},operator_1)
+			 operator_3=EXISTENCE({type='EXISTS',predicate='attr1>stream1.attr2'},operator_2,stream1)
+			 operator_4=MAP({expressions=['stream1.attr1']},JOIN(operator_3,stream1))"
+			, new CQLDictionaryHelper()
+		)
+	}
 	
 	@Test def void InPredicateTest1()
 	{
@@ -1256,32 +1266,30 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT COUNT(attr2) AS num FROM stream1);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1) 
+			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=MAP({expressions=['num']},operator_1)
-			 operator_3=EXISTENCE({type='EXISTS',predicate='stream1.attr1<stream1.attr2'},operator_2,stream1)
-			 operator_4=MAP({expressions=['stream1.attr1']},JOIN(operator_3,stream1))"
+			 operator_3=EXISTENCE({type='EXISTS',predicate='attr1==num'},operator_2,stream1)
+			 operator_4=MAP({expressions=['stream1.attr1']}, JOIN(operator_3,stream1))"
 			, new CQLDictionaryHelper()
 		)
 	}
 	
 	@Test def void SubQueryTest1()
 	{
-		assertCorrectGenerated//TODO MINUTE must be mapped to MINUTES//TODO b1.attr1 not registered as alias!
+		assertCorrectGenerated//TODO MINUTE must be mapped to MINUTES//TODO b1.attr1 not registered as alias!//TODO duplicated rename operator during join!
 		(
 		   "SELECT b2.attr1 as b
 			FROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num
-			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1
-			        GROUP BY b1.attr1
-			        ) AS b2
+			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1) AS b2
 			WHERE num >= 200"
 			,
 			"operator_1=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
- 			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
- 		     operator_3=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
- 			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
- 			 operator_5=RENAME({aliases=['b1_attr1','b'],pairs='true'},operator_4)
- 			 operator_6=SELECT({predicate='num>=200'},operator_5)
- 			 operator_7=MAP({expressions=['b']},operator_6)"
+			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']]},operator_1)
+			 operator_3=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
+			 operator_5=RENAME({aliases=['b1_attr1','b'],pairs='true'},operator_4)
+			 operator_6=SELECT({predicate='num>=200'},operator_5)
+			 operator_7=MAP({expressions=['b']},operator_6)"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -1306,9 +1314,35 @@ class CQLGeneratorQueryTest
 			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
 			 operator_5=RENAME({aliases=['attr3','c1.attr3'],pairs='true'},stream2)
 			 operator_6=MAP({expressions=['c1.attr3']},operator_5)
-			 operator_7=RENAME({aliases=['b1_attr1','b2.attr1'],pairs='true'},operator_4)operator_8=RENAME({aliases=['c1_attr3','b3.attr3'],pairs='true'},operator_6)
-			 operator_9=SELECT({predicate='num>=200'},JOIN(operator_7,operator_8))
- 			 operator_10=MAP({expressions=['b2.attr1','b3.attr3']},operator_9)"
+			 operator_7=RENAME({aliases=['b1_attr1','b2.attr1'],pairs='true'},operator_4)
+			 operator_8=RENAME({aliases=['c1_attr3','b3.attr3'],pairs='true'},operator_6)
+			 operator_9=SELECT({predicate='num>=200'},JOIN(operator_7,operator_8))operator_10=MAP({expressions=['b2.attr1','b3.attr3']},operator_9)"
+			, new CQLDictionaryHelper()
+		)
+	}
+
+	@Test def void SubQueryTest3()
+	{
+		assertCorrectGenerated
+		(
+		   "SELECT b2.attr1, b3.attr3
+			FROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num
+			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1
+			        GROUP BY b1.attr1
+			        ) AS b2, 
+					(SELECT c1.attr3 FROM stream2 AS c1
+					) AS b3 
+			WHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)"
+			,
+			"operator_1=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
+			 operator_3=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
+			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
+			 operator_5=RENAME({aliases=['attr3','c1.attr3'],pairs='true'},stream2)
+			 operator_6=MAP({expressions=['c1.attr3']},operator_5)
+			 operator_7=RENAME({aliases=['b1_attr1','b2.attr1'],pairs='true'},operator_4)
+			 operator_8=RENAME({aliases=['c1_attr3','b3.attr3'],pairs='true'},operator_6)
+			 operator_9=SELECT({predicate='num>=200'},JOIN(operator_7,operator_8))operator_10=MAP({expressions=['b2.attr1','b3.attr3']},operator_9)"
 			, new CQLDictionaryHelper()
 		)
 	}
