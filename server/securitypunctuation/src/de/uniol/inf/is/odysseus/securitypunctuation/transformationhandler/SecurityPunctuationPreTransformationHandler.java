@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SPAnalyzerAO;
+import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SecurityShieldAO;
 
 public class SecurityPunctuationPreTransformationHandler extends AbstractPreTransformationHandler {
 	public final static String NAME = "SecurityPunctuationPreTransformationHandler";
@@ -29,9 +30,14 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 		ILogicalOperator logicalOp = query.getLogicalPlan();
 
 		List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalOp);
+	
+		
 		for (ILogicalOperator s : sources) {
+			SecurityShieldAO SecurityShieldToInsert=new SecurityShieldAO();
+			RestructHelper.insertOperatorBefore2(SecurityShieldToInsert, s);
 			SPAnalyzerAO toInsert = new SPAnalyzerAO();
 			RestructHelper.insertOperatorBefore2(toInsert, s);
+			
 		}
 
 	}

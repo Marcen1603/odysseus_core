@@ -12,7 +12,7 @@ public class TSASelectAORule extends AbstractTransformationRule<SASelectAO> {
 	
 	@Override
 	public int getPriority() {
-		return 0;
+		return 1;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

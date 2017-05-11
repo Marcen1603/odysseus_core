@@ -1,32 +1,43 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
+public class SPGeneratorPO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-public  class SPGeneratorPO<T extends IStreamObject<?>> extends AbstractPipe<T,T>{
-	
+	static boolean secondStream=true;
+	boolean temp;
+	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
+	int counterOne;
+	int counterTwo;
+	int counter;
+	int spCounter;
+	int counter2;
 
-	String csvFile="C:\\Users\\Lennart\\Desktop\\SecurityPunctuation.csv";
-	BufferedReader br=null;
-	String line="";
-	
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		sendPunctuation(punctuation);
-		
-		
+
 	}
-	public SPGeneratorPO(){
+
+	public SPGeneratorPO() {
 		super();
+		this.temp=secondStream;
+		counterOne = 0;
+		counterTwo = 0;
+		counter = 0;
+		spCounter = 0;
+		secondStream=false;
 	}
+
+
 
 	@Override
 	public OutputMode getOutputMode() {
@@ -35,51 +46,44 @@ public  class SPGeneratorPO<T extends IStreamObject<?>> extends AbstractPipe<T,T
 
 	@Override
 	protected void process_next(T object, int port) {
-		int randomizer=(int)(Math.random()*5);
-		if(randomizer==4){
-			String[] temp=readCSV();
-			sendPunctuation(new SecurityPunctuation(temp[0],temp[1],temp[2],temp[3],true,true,new Long(232)));
+		String[] sps;
+		if (temp) {
+			sps = initSecondStream();
 			
-		}transfer(object);
+		} else {
+			sps = initFirstStream();
 		
+		}
+		if (counter % 10 == 0) {
+			String[] sp = sps[spCounter % 5].split(";");
+			SecurityPunctuation spToSend = new SecurityPunctuation(sp[0], sp[1], sp[2], true, true,
+					object.getMetadata().getStart());
+			sendPunctuation(spToSend);
+			spCounter++;
+		}
+		transfer(object);
+		counter++;
+		counter2=counter+5;
 	}
-	public String[] readCSV(){
-		 try {
 
-	            br = new BufferedReader(new FileReader(csvFile));
-	            while ((line = br.readLine()) != null) {
-
-	                
-	                String[] SPAttributes = line.split(";");
-
-	                return SPAttributes;
-
-	            }
-		 } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (br != null) {
-	                try {
-	                    br.close();
-	                } catch (IOException e) {
-	                    e.printStackTrace();
-	                }
-	            }
-	        }
-		return null;
-		
-
+	private String[] initSecondStream() {
+		String[] sps = new String[5];
+		sps[0] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
+		sps[1] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
+		sps[2] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
+		sps[3] = counter+1+","+counter2+";PatientID,Puls,Atemfrequenz;queryexecutor;true;false";
+		sps[4] = counter+1+","+counter2+";PatientID,Puls,Atemfrequenz;queryexecutor;true;false";
+		return sps;
 	}
-	
-	
 
-
-
-	
-	
-	
-
+	private String[] initFirstStream() {
+		String[] sps = new String[5];
+		sps[0] = counter+1+","+counter2+";PatientID,Puls,Heartbeat;*;true;false";
+		sps[1] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
+		sps[2] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
+		sps[3] = counter+1+","+counter2+";PatientID,Heartbeat;*;true;false";
+		sps[4] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
+		return sps;
+	}
 
 }

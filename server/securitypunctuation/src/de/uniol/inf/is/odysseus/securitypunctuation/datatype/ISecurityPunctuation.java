@@ -23,6 +23,8 @@ public interface ISecurityPunctuation extends IPunctuation {
 
 	void setTime(PointInTime timestamp);
 	
-	public SDFSchema getSchema();
+
+	
+	public AbstractSecurityPunctuation intersectPunctuation(AbstractSecurityPunctuation punctuation);
 
 }

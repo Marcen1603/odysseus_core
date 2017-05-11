@@ -5,24 +5,39 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class SecurityRestrictionPart {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	List<String> roles;
+	// private static final Logger LOG =
+	// LoggerFactory.getLogger(SecurityRestrictionPart.class);
 
 	SecurityRestrictionPart() {
 
 	}
 
 	// Merges two SRPs
-	public void mergeSRP(SecurityRestrictionPart srp) {
-		for (String role : srp.getRoles()) {
-			if (!this.roles.contains(role))
-				this.roles.add(role);
-		}
+	public void union(SecurityRestrictionPart srp) {
+		if (this.roles.get(0).equals("*") || srp.getRoles().get(0).equals("")) {
+			return;
+		} else if (srp.getRoles().get(0).equals("*")) {
+			this.roles.clear();
+			this.roles.add("*");
+			return;
+		} else
+			for (String roleInput : srp.getRoles()) {
+				if (!this.roles.contains(roleInput)) {
+					this.roles.add(roleInput);
+				}
+			}
+	
+
 	}
 
 	public SecurityRestrictionPart(String roles) {
 		this.roles = new ArrayList<String>(Arrays.asList(roles.split(",")));
-		Collections.sort(this.roles);
+		//Collections.sort(this.roles);
 
 	}
 
@@ -36,11 +51,51 @@ public class SecurityRestrictionPart {
 
 	@Override
 	public String toString() {
-		String str="[";
-		for(String role:roles){
-			str+=role;
-		}str+="]";
+		String str = "Roles: [";
+		for (String role : roles) {
+			str += role;
+		}
+		str += "]";
 		return str;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((roles == null) ? 0 : roles.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SecurityRestrictionPart other = (SecurityRestrictionPart) obj;
+		if (roles == null) {
+			if (other.roles != null)
+				return false;
+		} else if (!compare(this.roles, other.getRoles()))
+			return false;
+		return true;
+	}
+
+	private boolean compare(List<String> inputOne, List<String> inputTwo) {
+		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && inputTwo.isEmpty()) {
+			return false;
+
+		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {
+			return true;
+		} else
+			return false;
+
+	}
+	
 
 }

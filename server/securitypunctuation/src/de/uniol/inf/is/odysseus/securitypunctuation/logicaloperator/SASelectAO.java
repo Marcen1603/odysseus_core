@@ -5,14 +5,15 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "SASelect", minInputPorts = 1, maxInputPorts = 1, doc = "Generates SPs and adds them to the Datastream randomly", url = "http://example.com/MyOperator.html", category = {
+@LogicalOperator(name = "SASelect", minInputPorts = 1, maxInputPorts = 1, doc = "Generates SPs and adds them to the Datastream randomly", url = "-", category = {
 		LogicalOperatorCategory.BASE })
 public class SASelectAO extends SelectAO {
+
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1527796968238947267L;
+	private static final long serialVersionUID = 540726703125811883L;
 
 	public SASelectAO() {
 		super();
