@@ -8,9 +8,6 @@ import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.ConnectionEventListener;
 import org.openmuc.j60870.ServerEventListener;
 
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-
 // TODO javaDoc
 public class IEC60870_5_104ServerListener implements ServerEventListener {
 
@@ -94,12 +91,7 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 				return;
 			}
 
-			// send the ASDU as tuple with one "object" field that contains the whole ASDU
-			// TODO split the object into several attributes
-			// TODO When receiving: TelegramTransportHandler.this.fireProcess(kv);
-			Tuple<IMetaAttribute> tuple = new Tuple<>(1, false);
-			tuple.setAttribute(0, asdu);
-			transportHandler.fireProcess(tuple);
+			transportHandler.fireProcess(ASDUConverter.asduToTuple(asdu));
 		}
 
 	}

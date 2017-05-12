@@ -307,6 +307,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 		host = InetAddress.getByName(options.get(hostKey));
 		port = options.getInt(portKey, defaultPort);
 		timeout = options.getInt(timeoutKey, defaultTimeout);
+		// TODO validate schema
 	}
 
 	@Override
@@ -324,17 +325,27 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 		}
 	}
 
-	@Override
-	public void processInOpen() throws IOException {
-		// Start j60870 server
+	/**
+	 * Starts a new j60870 {@link #server}.
+	 *
+	 * @throws IOException
+	 *             may be thrown by
+	 *             {@link Server#start(org.openmuc.j60870.ServerEventListener)}.
+	 */
+	private void startServer() throws IOException {
 		server = new Server.Builder().setBindAddr(host).setPort(port).build();
 		server.start(new IEC60870_5_104ServerListener(this));
 		log.debug("j60870 server successfully started");
 	}
 
-	@Override
-	public void processOutOpen() throws IOException {
-		// Start j60870 client
+	/**
+	 * Starts a new j60870 {@link #clientConnection}.
+	 *
+	 * @throws IOException
+	 *             may be thrown by
+	 *             {@link Connection#startDataTransfer(org.openmuc.j60870.ConnectionEventListener, int)}.
+	 */
+	private void startClient() throws IOException {
 		clientConnection = new ClientConnectionBuilder(host).setPort(port).connect();
 		try {
 			clientConnection.startDataTransfer(new IEC60870_5_104ClientListener(), timeout);
@@ -344,18 +355,44 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 		}
 	}
 
+	/**
+	 * Stops a running j60870 {@link #server}.
+	 */
+	private void stopServer() {
+		if(server != null) {
+			server.stop();
+			log.debug("j60870 server successfully stopped");
+		}
+	}
+
+	/**
+	 * Stops a running j60870 {@link #clientConnection}.
+	 */
+	private void stopClient() {
+		if(clientConnection != null) {
+			clientConnection.close();
+			log.debug("j60870 client successfully disconnected");
+		}
+	}
+
+	@Override
+	public void processInOpen() throws IOException {
+		startServer();
+	}
+
+	@Override
+	public void processOutOpen() throws IOException {
+		startClient();
+	}
+
 	@Override
 	public void processInClose() throws IOException {
-		// Stop j60870 server
-		server.stop();
-		log.debug("j60870 server successfully stopped");
+		stopServer();
 	}
 
 	@Override
 	public void processOutClose() throws IOException {
-		// Stop j60870 client
-		clientConnection.close();
-		log.debug("j60870 client successfully disconnected");
+		stopClient();
 	}
 
 	@Override
