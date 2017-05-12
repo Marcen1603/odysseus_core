@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmuc.j60870.ASdu;
-import org.openmuc.j60870.CauseOfTransmission;
 import org.openmuc.j60870.InformationObject;
-import org.openmuc.j60870.TypeId;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -45,9 +43,9 @@ public class ASDUConverter {
 	public static Tuple<IMetaAttribute> asduToTuple(ASdu asdu) throws NullPointerException {
 		final int numAttributes = 10;
 		final Tuple<IMetaAttribute> tuple = new Tuple<>(numAttributes, false);
-		tuple.setAttribute(0, typeIdToTuple(asdu.getTypeIdentification()));
+		tuple.setAttribute(0, asdu.getTypeIdentification());
 		tuple.setAttribute(1, asdu.isSequenceOfElements());
-		tuple.setAttribute(2, causeOfTransmissionToTuple(asdu.getCauseOfTransmission()));
+		tuple.setAttribute(2, asdu.getCauseOfTransmission());
 		tuple.setAttribute(3, asdu.isTestFrame());
 		tuple.setAttribute(4, asdu.isNegativeConfirm());
 		tuple.setAttribute(5, asdu.getOriginatorAddress());
@@ -59,90 +57,22 @@ public class ASDUConverter {
 	}
 
 	/**
-	 * Converts a {@link TypeId} to a tuple by going over the fields of the enum
-	 * in the following order:<br />
-	 * 0: key -- {@link SDFDatatype#STRING}<br />
-	 * 1: id -- {@link SDFDatatype#INTEGER}<br />
-	 * 2: description -- {@link SDFDatatype#STRING}
-	 *
-	 * @param typeId
-	 *            A valid typeId.
-	 * @return A tuple with to schema given above.
-	 */
-	private static Tuple<IMetaAttribute> typeIdToTuple(TypeId typeId) {
-		final int numAttributes = 3;
-		final Tuple<IMetaAttribute> tuple = new Tuple<>(numAttributes, false);
-
-		if (typeId != null) {
-			tuple.setAttribute(0, typeId.toString());
-			tuple.setAttribute(1, typeId.getId());
-			tuple.setAttribute(2, typeId.getDescription());
-		}
-
-		return tuple;
-	}
-
-	/**
-	 * Converts a {@link CauseOfTransmission} to a tuple by going over the
-	 * fields of the enum in the following order:<br />
-	 * 0: key -- {@link SDFDatatype#STRING}< br/> 1: id --
-	 * {@link SDFDatatype#INTEGER}
-	 *
-	 * @param causeOfTransmission
-	 *            A valid typeId.
-	 * @return A tuple with to schema given above.
-	 */
-	private static Tuple<IMetaAttribute> causeOfTransmissionToTuple(CauseOfTransmission causeOfTransmission) {
-		final int numAttributes = 2;
-		final Tuple<IMetaAttribute> tuple = new Tuple<>(numAttributes, false);
-
-		if (causeOfTransmission != null) {
-			tuple.setAttribute(0, causeOfTransmission.toString());
-			tuple.setAttribute(1, causeOfTransmission.getId());
-		}
-
-		return tuple;
-	}
-
-	/**
 	 * Converts an array of {@link InformationObject}s to a list of tuples.
 	 *
 	 * @param informationObjects
 	 *            A valid array of information objects.
 	 * @return A list of tuples.
 	 */
-	private static List<Tuple<IMetaAttribute>> informationObjectsToListTuple(InformationObject[] informationObjects) {
-		if(informationObjects == null) {
+	private static List<Object> informationObjectsToListTuple(InformationObject[] informationObjects) {
+		if (informationObjects == null) {
 			return new ArrayList<>();
 		}
 
-		List<Tuple<IMetaAttribute>> list = new ArrayList<>(informationObjects.length);
+		List<Object> list = new ArrayList<>(informationObjects.length);
 		for (InformationObject object : informationObjects) {
-			list.add(informationObjectToTuple(object));
+			list.add(object);
 		}
 		return list;
-	}
-
-	/**
-	 * Converts an {@link InformationObject} to a tuple by going over the fields
-	 * of the class in the following order:<br />
-	 * 0: informationObjectAddress -- {@link SDFDatatype#INTEGER}< br/> 1:
-	 * informationElements -- {@link SDFDatatype#OBJECT}
-	 *
-	 * @param object
-	 *            A valid information object.
-	 * @return A tuple with to schema given above.
-	 */
-	private static Tuple<IMetaAttribute> informationObjectToTuple(InformationObject object) {
-		final int numAttributes = 2;
-		final Tuple<IMetaAttribute> tuple = new Tuple<>(numAttributes, false);
-
-		if (object != null) {
-			tuple.setAttribute(0, object.getInformationObjectAddress());
-			tuple.setAttribute(1, object.getInformationElements());
-		}
-
-		return tuple;
 	}
 
 	/**
@@ -153,7 +83,7 @@ public class ASDUConverter {
 	 * @return A list of bytes.
 	 */
 	private static List<Byte> privateInformationToListByte(byte[] privateInformation) {
-		if(privateInformation == null) {
+		if (privateInformation == null) {
 			return new ArrayList<>();
 		}
 
