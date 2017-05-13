@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal;
 
+
+
 import org.eclipse.xtext.*;
 import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;

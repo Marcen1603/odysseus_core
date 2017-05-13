@@ -11,9 +11,9 @@ class ExpressionsTypeProviderHelper extends ExpressionsTypeProvider
 	
 	@Inject extension CQLDictionaryHelper
 	
-	override getSchemas() 
-	{
-		return schema			
-	}
-	
+//	override getSchemas() 
+//	{
+//		return schema			
+//	}
+//	
 }

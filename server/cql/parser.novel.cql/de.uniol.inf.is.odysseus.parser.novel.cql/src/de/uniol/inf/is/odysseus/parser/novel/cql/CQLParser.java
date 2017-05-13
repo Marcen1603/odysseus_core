@@ -1,9 +1,13 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,13 +92,16 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 public class CQLParser implements IQueryParser 
 {
 	
+	private static Set<SDFSchema> currentSchema;
+	private static CQLGenerator generator;
+	
 	private List<IExecutorCommand> executorCommands;
 	private Injector injector;
-	private CQLGenerator generator;
 	private XtextResourceSet resourceSet;
 	private Resource resource;
 	private Model model;
-
+	private String[] tokens;
+	
 	public CQLParser() 
 	{
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri("../");
@@ -104,6 +111,31 @@ public class CQLParser implements IQueryParser
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
 		executorCommands = new ArrayList<>();
+		//Get all parser tokens
+		List<String> list = new ArrayList<>();
+		String pathToTokens = "/../bin/de/uniol/inf/is/odysseus/parser/novel/cql/parser/antlr/internal/InternalCQLParser.tokens";
+		try(InputStream in = getClass().getClassLoader().getResourceAsStream(pathToTokens))
+		{
+			String line;
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			while((line = br.readLine()) != null)
+			{
+				if(line.contains("'"))
+				{
+					line = line.substring(1, line.lastIndexOf("'"));
+					list.add(line);
+				}
+			}
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			tokens = list.toArray(new String[list.size()]);
+		}
+		
 	}
 	
 	@Override
@@ -122,15 +154,9 @@ public class CQLParser implements IQueryParser
 			resource.unload();
 			throw new QueryParseException("internal error while loading the cql model" + e.getMessage(), e); 
 		}
-		// Register schemata from cql create stream/sink queries//TODO remove this
-//		CQLDictionary dictionary = createDictionary(EcoreUtil2.eAllOfType(model, SchemaDefinition.class), user);
-//		Set<SDFSchema> cqlschemata = dictionary.getSchema();
-		// Get schemata from other parsers and query languages
 		Set<SDFSchema> otherschemata = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
 				.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
-		// Set schemata to the generator
-		generator.setOtherSchemata(otherschemata);
-//		generator.setCQLSchemata(cqlschemata);
+		generator.setOtherSchemata((currentSchema = otherschemata));
 		generator.setNameProvider(new NameProvider());
 		executorCommands.clear();
 		InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
@@ -183,7 +209,6 @@ public class CQLParser implements IQueryParser
 		}
 		catch(Exception e)
 		{
-//			CQLDictionaryProvider.removeDictionary(user);//TODO remove this
 			executorCommands.clear();
 			throw e;
 		}
@@ -194,6 +219,7 @@ public class CQLParser implements IQueryParser
 				for(String filename : fsa.getTextFiles().keySet())
 					fsa.deleteFile(filename);
 			}
+			
 			generator.clear();
 			resource.unload();
 		}
@@ -443,27 +469,15 @@ public class CQLParser implements IQueryParser
 		}
 	}
 	
-	@Deprecated
-	private synchronized CQLDictionary createDictionary(List<SchemaDefinition> schemata, ISession user)
-	{
-		CQLDictionary dictionary = CQLDictionaryProvider.getDictionary(user);
-		for(SchemaDefinition schema : schemata)
-		{
-			int size = schema.getArguments().size();
-			List<SDFAttribute> attributes = new ArrayList<>(size);
-			for(int i = 0; i < size - 1 ; i = i + 2)
-			{
-				String attributename 	  = schema.getArguments().get(i);
-				SDFDatatype attributetype = new SDFDatatype(schema.getArguments().get(i + 1));
-				attributes.add(new SDFAttribute(schema.getName(), attributename, attributetype));
-			}
-			dictionary.add(schema.getName(), attributes);
-		}
-		return dictionary;
-	}
-
+	public static Set<SDFSchema> getCurrentSchema() { return currentSchema; }
+	
 	@Override
-	public Map<String, List<String>> getTokens(ISession user) { return new HashMap<>(); }
+	public Map<String, List<String>> getTokens(ISession user) 
+	{
+		Map<String, List<String>> tokens = new HashMap<>();
+		tokens.put("TOKEN", Arrays.asList(this.tokens));
+		return tokens; 
+	}
 
 	@Override
 	public List<String> getSuggestions(String hint, ISession user) { return new ArrayList<>(); }

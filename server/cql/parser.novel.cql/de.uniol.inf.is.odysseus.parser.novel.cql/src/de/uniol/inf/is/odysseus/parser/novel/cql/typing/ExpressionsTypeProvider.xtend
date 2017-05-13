@@ -3,7 +3,8 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.parser.novel.cql.CQLDictionaryProvider
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
@@ -15,11 +16,10 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import java.util.Collection
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
+import java.util.List
 
 class ExpressionsTypeProvider 
 {
@@ -28,6 +28,8 @@ class ExpressionsTypeProvider
 	public static val intType	 = new IntType
 	public static val boolType	 = new BoolType
 	public static val floatType  = new FloatType
+
+	public static var List<String> aliases = newArrayList
 
 	def dispatch ExpressionsType typeFor(Expression e)
 	{
@@ -83,35 +85,30 @@ class ExpressionsTypeProvider
 		else if (left == intType && right == intType) 
 			intType
 	}
-
-	def dispatch ExpressionsType typeFor(Void e)
-	{
-		//TODO Implement typeFor(Void e)
-	}
-	
-	def Collection<SDFSchema> getSchemas()
-	{
-		return CQLDictionaryProvider.getCurrentUsersDictionary.schema
-	}
 	
 	def dispatch ExpressionsType typeFor(AttributeRef e)
 	{
-		for(SDFSchema s : getSchemas())
-		{
+		var schemata = CQLParser.getCurrentSchema()
+		if(schemata === null) return null
+		for(SDFSchema s : schemata)
 			for(SDFAttribute a : s.attributes)
 			{
-				if(a.attributeName.equals((e.value as Attribute).name))
+				var name = a.attributeName
+				if(aliases.contains(name))
+				{//TODO does not detect an alias
+					println(name + ' is an alias')
+					println('real name is -> ' + name)
+				}
+				if(name.equals((e.value as Attribute).name))
 					return typeFor(a.datatype)
-			}	
-		}
+				
+			}		
 		return null
 	}
 	
 	def dispatch ExpressionsType typeFor(SDFDatatype e)	
 	{
-//		println("data type " + e.toString+", URI= "+e.URI)
-		
-		switch e.URI	
+		switch e.URI.toUpperCase	
 		{
 			case "INTEGER": intType
 			case "STRING" : stringType

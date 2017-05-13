@@ -3,10 +3,11 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.ui.contentassist
 
-
 /**
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#content-assist
  * on how to customize the content assistant.
  */
-class CQLProposalProvider extends AbstractCQLProposalProvider {
+class CQLProposalProvider extends AbstractCQLProposalProvider 
+{
+	
 }

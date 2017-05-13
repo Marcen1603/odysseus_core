@@ -18,6 +18,4 @@ public class CQLFileExecutor implements IFileExecutor
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
         executor.addQuery(text, "CQL", OdysseusRCPPlugIn.getActiveSession(), context);
 	}
-
-	
 }

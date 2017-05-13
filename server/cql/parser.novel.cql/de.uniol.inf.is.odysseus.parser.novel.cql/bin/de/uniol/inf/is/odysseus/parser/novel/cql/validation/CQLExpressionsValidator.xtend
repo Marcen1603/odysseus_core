@@ -19,6 +19,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.typing.ExpressionsTypeProvider
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
+import java.util.List
 
 /**
  * This class contains custom validation rules. 
@@ -63,7 +65,7 @@ class CQLExpressionsValidator extends AbstractCQLValidator
 	def ExpressionsType getTypeAndNotNull(Expression e, EReference ref) 
 	{
 		var type = e?.typeFor
-		if(type == null)
+		if(type === null)
 			error("null type", ref, WRONG_TYPE)
 		return type	
 	}
@@ -119,9 +121,19 @@ class CQLExpressionsValidator extends AbstractCQLValidator
 		checkNotBoolean(left, CQLPackage.Literals::COMPARISION__RIGHT)
 	}	
 	
+	static var List<String> aliases = newArrayList
+	
+	@Check def checkType(Attribute type)
+	{
+		println('beep')//TODO ...
+		if(type.alias !== null)
+			aliases.add(type.alias.name)
+		ExpressionsTypeProvider.aliases = aliases				
+	}
+	
 	def checkExpectedSame(ExpressionsType left, ExpressionsType right) 
 	{
-		if(left != null && right != null && right != left)
+		if(left !== null && right !== null && right !== left)
 			error("expected the same type, but was " + left + ", " + right,
 				CQLPackage.Literals::EQUALITY.EIDAttribute, WRONG_TYPE
 			)
