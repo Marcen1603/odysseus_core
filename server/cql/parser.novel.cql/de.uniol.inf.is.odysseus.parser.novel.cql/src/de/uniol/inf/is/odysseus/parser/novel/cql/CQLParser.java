@@ -94,6 +94,7 @@ public class CQLParser implements IQueryParser
 	
 	private static Set<SDFSchema> currentSchema;
 	private static CQLGenerator generator;
+	private static Map<String, String> databaseConnections = new HashMap<>();
 	
 	private List<IExecutorCommand> executorCommands;
 	private Injector injector;
@@ -174,7 +175,8 @@ public class CQLParser implements IQueryParser
 						// Generate a pql operator plan from the given model and create a new {@ IExecutorCommand}
 						generator.doGenerate(component.eResource(), fsa, null);
 						for(Entry<String, CharSequence> e : fsa.getTextFiles().entrySet())
-							executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
+							if(e.getValue() != null && !e.getValue().equals(""))
+								executorCommands.add(new AddQueryCommand(e.getValue().toString(), "PQL", user, null, context, new ArrayList<>(), false));
 					}
 					else if(component instanceof Command)
 					{
@@ -229,6 +231,7 @@ public class CQLParser implements IQueryParser
 
 	private IExecutorCommand getExecutorCommand(Command command, ISession user,IDataDictionary dictionary, IMetaAttribute metaattribute, List<IExecutorCommand> commands)
 	{
+		System.out.println("CQLParser.getExecutorCommand(..) -> ");
 		boolean noExecutorCommand = false;
 		IExecutorCommand executorCommand = null;
 		EObject commandType = command.getType();
@@ -320,7 +323,12 @@ public class CQLParser implements IQueryParser
 		else if(commandType instanceof DropDatabaseConnection)
 		{
 			noExecutorCommand = true;
-			DatabaseConnectionDictionary.removeConnection(((DropDatabaseConnection) commandType).getName());
+			String connectionName = ((DropDatabaseConnection) commandType).getName();
+			if(DatabaseConnectionDictionary.isConnectionExisting(connectionName))
+			{
+				DatabaseConnectionDictionary.removeConnection(connectionName);
+				databaseConnections.remove(connectionName);
+			}
 		}
 		else if(commandType instanceof CreateContextStore)
 		{
@@ -424,7 +432,6 @@ public class CQLParser implements IQueryParser
 		{
 			if(dbms != null && dbname != null)
 			{
-	
 				IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(dbms);
 				if (factory == null) 
 				{
@@ -439,6 +446,7 @@ public class CQLParser implements IQueryParser
 				}
 				IDatabaseConnection con = factory.createConnection(host, port, dbname, user, pass);
 				DatabaseConnectionDictionary.addConnection(connectionName, con);
+				databaseConnections.put(connectionName, dbms);
 			}
 			else//otherwise, we have a JDBC based connection
 			{
@@ -447,6 +455,7 @@ public class CQLParser implements IQueryParser
 				props.setProperty("password", pass);
 				IDatabaseConnection connection = new DatabaseConnection(host, props);
 				DatabaseConnectionDictionary.addConnection(connectionName, connection);
+				databaseConnections.put(connectionName, dbms);
 			}
 		}
 		catch (Exception e) 
@@ -469,6 +478,7 @@ public class CQLParser implements IQueryParser
 		}
 	}
 	
+	public static Map<String, String> getDatabaseConnections() { return databaseConnections; }
 	public static Set<SDFSchema> getCurrentSchema() { return currentSchema; }
 	
 	@Override

@@ -2640,20 +2640,37 @@ ruleAccessFramework returns [EObject current=null]
 			)
 			(
 				(
-					lv_values_11_0=RULE_STRING
-					{
-						newLeafNode(lv_values_11_0, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_10_1_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+					(
+						lv_values_11_1=RULE_STRING
+						{
+							newLeafNode(lv_values_11_1, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_10_1_0_0());
 						}
-						addWithLastConsumed(
-							$current,
-							"values",
-							lv_values_11_0,
-							"org.eclipse.xtext.common.Terminals.STRING");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"values",
+								lv_values_11_1,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
+						    |
+						lv_values_11_2=RULE_PATH
+						{
+							newLeafNode(lv_values_11_2, grammarAccess.getAccessFrameworkAccess().getValuesPATHTerminalRuleCall_10_1_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"values",
+								lv_values_11_2,
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.PATH");
+						}
+					)
 				)
 			)
 		)+
@@ -2682,23 +2699,40 @@ ruleAccessFramework returns [EObject current=null]
 			)
 			(
 				(
-					lv_values_14_0=RULE_STRING
-					{
-						newLeafNode(lv_values_14_0, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_11_2_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+					(
+						lv_values_14_1=RULE_STRING
+						{
+							newLeafNode(lv_values_14_1, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_11_2_0_0());
 						}
-						addWithLastConsumed(
-							$current,
-							"values",
-							lv_values_14_0,
-							"org.eclipse.xtext.common.Terminals.STRING");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"values",
+								lv_values_14_1,
+								"org.eclipse.xtext.common.Terminals.STRING");
+						}
+						    |
+						lv_values_14_2=RULE_PATH
+						{
+							newLeafNode(lv_values_14_2, grammarAccess.getAccessFrameworkAccess().getValuesPATHTerminalRuleCall_11_2_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAccessFrameworkRule());
+							}
+							addWithLastConsumed(
+								$current,
+								"values",
+								lv_values_14_2,
+								"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.PATH");
+						}
+					)
 				)
 			)
-		)?
+		)*
 		otherlv_15=RightParenthesis
 		{
 			newLeafNode(otherlv_15, grammarAccess.getAccessFrameworkAccess().getRightParenthesisKeyword_12());

@@ -1,0 +1,26 @@
+#PARSER CQL
+#RUNQUERY
+SELECT * 
+FROM bid AS B
+WHERE B.price > ALL (SELECT * FROM bid);
+
+#PARSER CQL
+#RUNQUERY
+SELECT B.price 
+FROM bid AS B
+WHERE B.price > ALL (SELECT price FROM bid);
+
+#PARSER CQL
+#RUNQUERY
+SELECT price 
+FROM bid
+WHERE price > ALL (SELECT B2.price FROM bid AS B2);
+
+SELECT b2.attr1, b3.attr3
+			FROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num
+			        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1
+			        GROUP BY b1.attr1
+			        ) AS b2, 
+					(SELECT c1.attr3 FROM stream2 AS c1
+					) AS b3 
+			WHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)

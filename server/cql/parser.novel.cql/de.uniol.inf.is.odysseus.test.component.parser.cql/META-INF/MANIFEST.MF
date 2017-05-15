@@ -12,6 +12,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  org.eclipse.xtext.junit4,
  org.junit,
  de.uniol.inf.is.odysseus.parser.novel.cql,
- org.eclipse.emf.mwe.core
+ org.eclipse.emf.mwe.core,
+ de.uniol.inf.is.odysseus.database
 Import-Package: com.google.inject,
  org.slf4j

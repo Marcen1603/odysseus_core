@@ -4,9 +4,18 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import org.osgi.service.jdbc.DataSourceFactory;
+
+import de.uniol.inf.is.odysseus.core.server.monitoring.MyStats;
+import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
+import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.component.AbstractQueryTestComponent;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
@@ -34,6 +43,7 @@ public class CQLParserTest extends AbstractQueryTestComponent<BasicTestContext, 
 			searchQueryFilesRecursive(dir, queryFiles, pqlFiles);
 			for (File qf : queryFiles) 
 			{
+				
 				QueryTestSet set = TestSetFactory.createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);
 				if (set != null)
 					testsets.add(set);

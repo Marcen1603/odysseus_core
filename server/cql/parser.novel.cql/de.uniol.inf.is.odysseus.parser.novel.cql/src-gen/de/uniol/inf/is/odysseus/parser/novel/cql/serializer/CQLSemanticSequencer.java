@@ -408,8 +408,8 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         protocol=STRING 
 	 *         transport=STRING 
 	 *         datahandler=STRING 
-	 *         (keys+=STRING values+=STRING)+ 
-	 *         (keys+=STRING values+=STRING)?
+	 *         (keys+=STRING (values+=STRING | values+=PATH))+ 
+	 *         (keys+=STRING (values+=STRING | values+=PATH))*
 	 *     )
 	 */
 	protected void sequence_AccessFramework(ISerializationContext context, AccessFramework semanticObject) {

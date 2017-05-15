@@ -253,8 +253,16 @@ AccessFramework:
 	'PROTOCOL' protocol=STRING
 	'TRANSPORT' transport=STRING
 	'DATAHANDLER' datahandler=STRING
-	'OPTIONS' '('(keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)?')'
+	'OPTIONS' '('(keys+=STRING values+=(STRING|PATH))+ (',' keys+=STRING values+=(STRING|PATH))*')'
 ;
+
+terminal PATH:
+	"'" (("\' \\ \'") .) (("\' \\ \'") .)* "'" |
+	'"' (("\' \\ \'") .) (("\' \\ \'") .)* '"'  
+; 
+
+//	'"' ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|'"') )* '"' |
+//			"'" ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|"'") )* "'"
 
 SchemaDefinition:
 	name=ID
@@ -292,7 +300,6 @@ CreateChannelFormatViaFile:
  	'FILE' filename=STRING 'AS' type=ID
 ;
 
-//TODO PQL
 CreateDatabaseStream:
 	attributes=SchemaDefinition
 	'DATABASE'
@@ -304,7 +311,6 @@ CreateDatabaseStream:
 	 unit=Time)?
 ;
 
-//TODO PQL
 CreateDatabaseSink:
 	name=ID
 	'AS'

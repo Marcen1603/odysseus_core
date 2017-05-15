@@ -1372,13 +1372,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cKeysAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
 		private final RuleCall cKeysSTRINGTerminalRuleCall_10_0_0 = (RuleCall)cKeysAssignment_10_0.eContents().get(0);
 		private final Assignment cValuesAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
-		private final RuleCall cValuesSTRINGTerminalRuleCall_10_1_0 = (RuleCall)cValuesAssignment_10_1.eContents().get(0);
+		private final Alternatives cValuesAlternatives_10_1_0 = (Alternatives)cValuesAssignment_10_1.eContents().get(0);
+		private final RuleCall cValuesSTRINGTerminalRuleCall_10_1_0_0 = (RuleCall)cValuesAlternatives_10_1_0.eContents().get(0);
+		private final RuleCall cValuesPATHTerminalRuleCall_10_1_0_1 = (RuleCall)cValuesAlternatives_10_1_0.eContents().get(1);
 		private final Group cGroup_11 = (Group)cGroup.eContents().get(11);
 		private final Keyword cCommaKeyword_11_0 = (Keyword)cGroup_11.eContents().get(0);
 		private final Assignment cKeysAssignment_11_1 = (Assignment)cGroup_11.eContents().get(1);
 		private final RuleCall cKeysSTRINGTerminalRuleCall_11_1_0 = (RuleCall)cKeysAssignment_11_1.eContents().get(0);
 		private final Assignment cValuesAssignment_11_2 = (Assignment)cGroup_11.eContents().get(2);
-		private final RuleCall cValuesSTRINGTerminalRuleCall_11_2_0 = (RuleCall)cValuesAssignment_11_2.eContents().get(0);
+		private final Alternatives cValuesAlternatives_11_2_0 = (Alternatives)cValuesAssignment_11_2.eContents().get(0);
+		private final RuleCall cValuesSTRINGTerminalRuleCall_11_2_0_0 = (RuleCall)cValuesAlternatives_11_2_0.eContents().get(0);
+		private final RuleCall cValuesPATHTerminalRuleCall_11_2_0_1 = (RuleCall)cValuesAlternatives_11_2_0.eContents().get(1);
 		private final Keyword cRightParenthesisKeyword_12 = (Keyword)cGroup.eContents().get(12);
 		
 		//AccessFramework:
@@ -1386,11 +1390,11 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//	'PROTOCOL' protocol=STRING
 		//	'TRANSPORT' transport=STRING
 		//	'DATAHANDLER' datahandler=STRING
-		//	'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')';
+		//	'OPTIONS' '(' (keys+=STRING values+=(STRING | PATH))+ (',' keys+=STRING values+=(STRING | PATH))* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//'WRAPPER' wrapper=STRING 'PROTOCOL' protocol=STRING 'TRANSPORT' transport=STRING 'DATAHANDLER' datahandler=STRING
-		//'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')'
+		//'OPTIONS' '(' (keys+=STRING values+=(STRING | PATH))+ (',' keys+=STRING values+=(STRING | PATH))* ')'
 		public Group getGroup() { return cGroup; }
 		
 		//'WRAPPER'
@@ -1435,7 +1439,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_9() { return cLeftParenthesisKeyword_9; }
 		
-		//(keys+=STRING values+=STRING)+
+		//(keys+=STRING values+=(STRING | PATH))+
 		public Group getGroup_10() { return cGroup_10; }
 		
 		//keys+=STRING
@@ -1444,13 +1448,19 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getKeysSTRINGTerminalRuleCall_10_0_0() { return cKeysSTRINGTerminalRuleCall_10_0_0; }
 		
-		//values+=STRING
+		//values+=(STRING | PATH)
 		public Assignment getValuesAssignment_10_1() { return cValuesAssignment_10_1; }
 		
-		//STRING
-		public RuleCall getValuesSTRINGTerminalRuleCall_10_1_0() { return cValuesSTRINGTerminalRuleCall_10_1_0; }
+		//(STRING | PATH)
+		public Alternatives getValuesAlternatives_10_1_0() { return cValuesAlternatives_10_1_0; }
 		
-		//(',' keys+=STRING values+=STRING)?
+		//STRING
+		public RuleCall getValuesSTRINGTerminalRuleCall_10_1_0_0() { return cValuesSTRINGTerminalRuleCall_10_1_0_0; }
+		
+		//PATH
+		public RuleCall getValuesPATHTerminalRuleCall_10_1_0_1() { return cValuesPATHTerminalRuleCall_10_1_0_1; }
+		
+		//(',' keys+=STRING values+=(STRING | PATH))*
 		public Group getGroup_11() { return cGroup_11; }
 		
 		//','
@@ -1462,11 +1472,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getKeysSTRINGTerminalRuleCall_11_1_0() { return cKeysSTRINGTerminalRuleCall_11_1_0; }
 		
-		//values+=STRING
+		//values+=(STRING | PATH)
 		public Assignment getValuesAssignment_11_2() { return cValuesAssignment_11_2; }
 		
+		//(STRING | PATH)
+		public Alternatives getValuesAlternatives_11_2_0() { return cValuesAlternatives_11_2_0; }
+		
 		//STRING
-		public RuleCall getValuesSTRINGTerminalRuleCall_11_2_0() { return cValuesSTRINGTerminalRuleCall_11_2_0; }
+		public RuleCall getValuesSTRINGTerminalRuleCall_11_2_0_0() { return cValuesSTRINGTerminalRuleCall_11_2_0_0; }
+		
+		//PATH
+		public RuleCall getValuesPATHTerminalRuleCall_11_2_0_1() { return cValuesPATHTerminalRuleCall_11_2_0_1; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_12() { return cRightParenthesisKeyword_12; }
@@ -1489,6 +1505,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cArgumentsIDTerminalRuleCall_4_2_0 = (RuleCall)cArgumentsAssignment_4_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
+		////	'"' ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|'"') )* '"' |
+		////			"'" ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|"'") )* "'"
 		//SchemaDefinition:
 		//	name=ID
 		//	'('
@@ -1762,7 +1780,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cUnitAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
 		private final RuleCall cUnitTimeEnumRuleCall_5_2_0 = (RuleCall)cUnitAssignment_5_2.eContents().get(0);
 		
-		////TODO PQL
 		//CreateDatabaseStream:
 		//	attributes=SchemaDefinition
 		//	'DATABASE'
@@ -1837,7 +1854,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOptionDROPKeyword_6_1_0_0 = (Keyword)cOptionAlternatives_6_1_0.eContents().get(0);
 		private final Keyword cOptionTRUNCATEKeyword_6_1_0_1 = (Keyword)cOptionAlternatives_6_1_0.eContents().get(1);
 		
-		////TODO PQL
 		//CreateDatabaseSink:
 		//	name=ID
 		//	'AS'
@@ -3816,6 +3832,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final ExpressionComponentAsAttributeElements pExpressionComponentAsAttribute;
 	private final AliasElements pAlias;
 	private final AccessFrameworkElements pAccessFramework;
+	private final TerminalRule tPATH;
 	private final SchemaDefinitionElements pSchemaDefinition;
 	private final CreateElements pCreate;
 	private final CreateAccessFrameworkElements pCreateAccessFramework;
@@ -3910,6 +3927,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pExpressionComponentAsAttribute = new ExpressionComponentAsAttributeElements();
 		this.pAlias = new AliasElements();
 		this.pAccessFramework = new AccessFrameworkElements();
+		this.tPATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.PATH");
 		this.pSchemaDefinition = new SchemaDefinitionElements();
 		this.pCreate = new CreateElements();
 		this.pCreateAccessFramework = new CreateAccessFrameworkElements();
@@ -4495,7 +4513,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	'PROTOCOL' protocol=STRING
 	//	'TRANSPORT' transport=STRING
 	//	'DATAHANDLER' datahandler=STRING
-	//	'OPTIONS' '(' (keys+=STRING values+=STRING)+ (',' keys+=STRING values+=STRING)? ')';
+	//	'OPTIONS' '(' (keys+=STRING values+=(STRING | PATH))+ (',' keys+=STRING values+=(STRING | PATH))* ')';
 	public AccessFrameworkElements getAccessFrameworkAccess() {
 		return pAccessFramework;
 	}
@@ -4504,6 +4522,15 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getAccessFrameworkAccess().getRule();
 	}
 	
+	//terminal PATH:
+	//	'"' ('\\' . ('\\' .))* '"' |
+	//	"'" ('\\' . ('\\' .))* "'";
+	public TerminalRule getPATHRule() {
+		return tPATH;
+	}
+	
+	////	'"' ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|'"') )* '"' |
+	////			"'" ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|"'") )* "'"
 	//SchemaDefinition:
 	//	name=ID
 	//	'('
@@ -4565,7 +4592,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getCreateChannelFormatViaFileAccess().getRule();
 	}
 	
-	////TODO PQL
 	//CreateDatabaseStream:
 	//	attributes=SchemaDefinition
 	//	'DATABASE'
@@ -4582,7 +4608,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getCreateDatabaseStreamAccess().getRule();
 	}
 	
-	////TODO PQL
 	//CreateDatabaseSink:
 	//	name=ID
 	//	'AS'

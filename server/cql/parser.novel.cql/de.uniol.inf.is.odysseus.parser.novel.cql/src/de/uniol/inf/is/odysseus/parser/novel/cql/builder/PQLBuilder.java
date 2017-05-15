@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.builder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ public class PQLBuilder
 				 "table",
 				 "drop",
 				 "truncate",
+				 "type",
 				 "input"
 				}
 			);
@@ -167,6 +169,8 @@ public class PQLBuilder
 		if(!operatorNames.contains(Operatorname))
 			throw new IllegalArgumentException("Given operator name is unknown: " + Operatorname);
 		
+		System.out.println("args= " + args.toString());
+		
 		buildPrefix(Operatorname);
 		buildArguments(operatorArguments.get(Operatorname), args);
 		buildSuffix(args.get("input"));
@@ -199,20 +203,15 @@ public class PQLBuilder
 	
 	private StringBuilder buildArguments(String[] variables, Map<String, String> map)
 	{
-		int i = 0;
-		for(Entry<String, String> e : map.entrySet())
+		for(String var : variables)
 		{
-			String var = variables[i];
+			System.out.println(var);
 			if(!var.equals("input"))
 			{
 				String value = getValue(map.get(var));
 				if(value != null)
-				{
 					builder.append(var + "=" + value + ",");
-				}
 			}
-			if(i++ == variables.length)
-				break;
 		}
 		builder.deleteCharAt(builder.toString().length() - 1);
 		return builder;

@@ -215,6 +215,8 @@ RULE_VECTOR_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* ']';
 
 RULE_MATRIX_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* (';' RULE_FLOAT+ (',' RULE_FLOAT)*)* ']';
 
+RULE_PATH : ('"' ('\\' . '\\' .)* '"'|'\'' ('\\' . '\\' .)* '\'');
+
 RULE_INT : ('0'..'9')+;
 
 RULE_STRING : ('"' ('\\' .|~(('\\'|'"')))* '"'|'\'' ('\\' .|~(('\\'|'\'')))* '\'');
