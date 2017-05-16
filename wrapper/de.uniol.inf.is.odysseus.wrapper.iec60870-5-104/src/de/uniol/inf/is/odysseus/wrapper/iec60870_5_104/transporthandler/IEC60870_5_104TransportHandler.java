@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.transporthandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -256,7 +256,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 
 	/**
 	 * The timeout [ms] for the client. <br />
-	 * May only be set for sedning mode.
+	 * May only be set for sending mode.
 	 */
 	private int timeout;
 
@@ -396,7 +396,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO Use j60870 to send data. But j60870 needs ASDU objects.
 		System.err.println("Send me!");
 	}
 
@@ -411,7 +411,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	}
 
 	/**
-	 * Get he timeout [ms] for the client.
+	 * Get the timeout [ms] for the client.
 	 */
 	public int getTimeout() {
 		return timeout;

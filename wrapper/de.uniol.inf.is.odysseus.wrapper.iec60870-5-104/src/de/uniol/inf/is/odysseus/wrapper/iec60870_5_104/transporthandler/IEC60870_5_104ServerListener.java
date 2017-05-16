@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.transporthandler;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -7,6 +7,8 @@ import org.openmuc.j60870.ASdu;
 import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.ConnectionEventListener;
 import org.openmuc.j60870.ServerEventListener;
+
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
  * Listener implementation for new IEC60870-5-104 clients. <br />
