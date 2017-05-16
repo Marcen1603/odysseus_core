@@ -8,7 +8,18 @@ import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.ConnectionEventListener;
 import org.openmuc.j60870.ServerEventListener;
 
-// TODO javaDoc
+/**
+ * Listener implementation for new IEC60870-5-104 clients. <br />
+ * It starts the data transfer, when a new client connects, and uses an internal
+ * {@link ConnectionEventListener} implementation for new ASDUs from the client
+ * as follows. <br />
+ * First, it confirms every received ASDU. Second, it converts an ASDU to a
+ * tuple (see {@link ASDUConverter#asduToTuple(ASdu)}. Finally, it sends the
+ * tuple to the next operators.
+ *
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public class IEC60870_5_104ServerListener implements ServerEventListener {
 
 	/**
@@ -64,7 +75,15 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 		IEC60870_5_104TransportHandler.log.error("Server has stopped listening for new connections! Will quit.", e);
 	}
 
-	// TODO javaDoc
+	/**
+	 * Listener implementation for new ASDUs. <br />
+	 * First, it confirms every received ASDU. Second, it converts an ASDU to a
+	 * tuple (see {@link ASDUConverter#asduToTuple(ASdu)}. Finally, it sends the
+	 * tuple to the next operators.
+	 *
+	 * @author Michael Brand (michael.brand@uol.de)
+	 *
+	 */
 	private class ConnectionListener implements ConnectionEventListener {
 
 		private final Connection connection;
@@ -91,6 +110,7 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 				return;
 			}
 
+			// Convert ASDU to tuple and send it
 			transportHandler.fireProcess(ASDUConverter.asduToTuple(asdu));
 		}
 

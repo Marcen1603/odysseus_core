@@ -307,7 +307,6 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 		host = InetAddress.getByName(options.get(hostKey));
 		port = options.getInt(portKey, defaultPort);
 		timeout = options.getInt(timeoutKey, defaultTimeout);
-		// TODO validate schema
 	}
 
 	@Override
@@ -359,7 +358,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	 * Stops a running j60870 {@link #server}.
 	 */
 	private void stopServer() {
-		if(server != null) {
+		if (server != null) {
 			server.stop();
 			log.debug("j60870 server successfully stopped");
 		}
@@ -369,7 +368,7 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 	 * Stops a running j60870 {@link #clientConnection}.
 	 */
 	private void stopClient() {
-		if(clientConnection != null) {
+		if (clientConnection != null) {
 			clientConnection.close();
 			log.debug("j60870 client successfully disconnected");
 		}
