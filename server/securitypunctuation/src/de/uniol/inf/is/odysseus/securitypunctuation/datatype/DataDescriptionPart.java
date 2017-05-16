@@ -17,19 +17,14 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 	// [0] is the start of the tupleRange, [1] is the end
 	// if tuple ranges=-1 access to all tuples is allowed if tuple ranges=-2
 	// access to no tuples is allowed
-	int[] tupleRange;
-	List<String> attributes;
+	private int[] tupleRange;
+	private List<String> attributes;
 
-	DataDescriptionPart() {
-
-	}
+	
 
 	public DataDescriptionPart(String tupleRange, String attributes) {
 		this.tupleRange = tupleRangeToInt(tupleRange);
-		// LOG.info("range1:" + this.tupleRange[0] + "range2" +
-		// this.tupleRange[1]);
 		this.attributes = new ArrayList<String>(Arrays.asList(attributes.split(",")));
-	//	Collections.sort(this.attributes);
 
 	}
 
@@ -41,7 +36,6 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 	public DataDescriptionPart(int[] tupleRange2, String attributes2) {
 		this.tupleRange = tupleRange2;
 		this.attributes = new ArrayList<String>(Arrays.asList(attributes2.split(",")));
-		//Collections.sort(this.attributes);
 	}
 
 	public List<String> getAttributes() {
@@ -160,8 +154,8 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 			return true;
 		} else if (tupleRange[0] == -2 || tupleRange[1] == -2) {
 			return false;
-		} else if (((int) obj.getAttribute(idIndex)) >= tupleRange[0]
-				&& ((int) obj.getAttribute(idIndex)) <= tupleRange[1] && match == true) {
+		} else if (((long) obj.getAttribute(idIndex)) >= (long)tupleRange[0]
+				&& ((long) obj.getAttribute(idIndex)) <= (long)tupleRange[1] && match == true) {
 
 			return true;
 

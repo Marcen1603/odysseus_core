@@ -46,43 +46,52 @@ public class SPGeneratorPO<T extends IStreamObject<? extends ITimeInterval>> ext
 
 	@Override
 	protected void process_next(T object, int port) {
+	Tuple<?> obj=(Tuple<?>)object;
+	counter=(int)(long)obj.getAttribute(0);
+	counter2=counter+5;
 		String[] sps;
 		if (temp) {
 			sps = initSecondStream();
 			
 		} else {
-			sps = initFirstStream();
+			//sps = initFirstStream();
+			sps=initFirstStream();
 		
 		}
-		if (counter % 10 == 0) {
+		if (counter % 3 == 0) {
 			String[] sp = sps[spCounter % 5].split(";");
 			SecurityPunctuation spToSend = new SecurityPunctuation(sp[0], sp[1], sp[2], true, true,
 					object.getMetadata().getStart());
+			if(counter%12==0){
+				SecurityPunctuation spToSend2 = new SecurityPunctuation("*", "patientID,pulse", "Krankenschwester", true, true,
+						object.getMetadata().getStart());
+				sendPunctuation(spToSend2);
+			}
 			sendPunctuation(spToSend);
 			spCounter++;
 		}
 		transfer(object);
-		counter++;
-		counter2=counter+5;
+//		counter++;
+		
 	}
 
 	private String[] initSecondStream() {
 		String[] sps = new String[5];
-		sps[0] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
+		sps[0] = counter+1+","+counter2+";PatientenID,Atemfrequenz;queryexecutor;true;false";
 		sps[1] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
 		sps[2] = counter+1+","+counter2+";PatientID,Atemfrequenz;queryexecutor;true;false";
-		sps[3] = counter+1+","+counter2+";PatientID,Puls,Atemfrequenz;queryexecutor;true;false";
+		sps[3] = counter+1+","+counter2+";PatientID,Puls,Atemfrequenz;Krankenschwester;true;false";
 		sps[4] = counter+1+","+counter2+";PatientID,Puls,Atemfrequenz;queryexecutor;true;false";
 		return sps;
 	}
 
 	private String[] initFirstStream() {
 		String[] sps = new String[5];
-		sps[0] = counter+1+","+counter2+";PatientID,Puls,Heartbeat;*;true;false";
-		sps[1] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
-		sps[2] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
-		sps[3] = counter+1+","+counter2+";PatientID,Heartbeat;*;true;false";
-		sps[4] = counter+1+","+counter2+";PatientID,Puls;*;true;false";
+		sps[0] = "*;patientID,breathingRate;*;true;false";
+		sps[1] = "*;patientID,pulse;*;queryexecutor;false";
+		sps[2] = "*;patientID,pulse;queryexecutor;false;false";
+		sps[3] = counter+1+","+counter2+";patientID,breathingRate;Krankenschwester;true;false";
+		sps[4] = counter+1+","+counter2+";patientID,pulse;*;true;false";
 		return sps;
 	}
 

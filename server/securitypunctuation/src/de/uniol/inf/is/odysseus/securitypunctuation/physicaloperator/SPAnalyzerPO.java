@@ -9,18 +9,18 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 
 public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
-	List<AbstractSecurityPunctuation> buffer;
+	List<ISecurityPunctuation> buffer;
 	private static final Logger LOG = LoggerFactory.getLogger(SPAnalyzerPO.class);
 
 	public SPAnalyzerPO() {
 		super();
-		this.buffer = new ArrayList<AbstractSecurityPunctuation>();
+		this.buffer = new ArrayList<ISecurityPunctuation>();
 	}
 
-	public void processSecurityPunctuation(AbstractSecurityPunctuation punctuation) {
+	public void processSecurityPunctuation(ISecurityPunctuation punctuation) {
 		if (buffer.isEmpty()) {
 			buffer.add(punctuation);
 			return;
@@ -47,11 +47,11 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		return OutputMode.INPUT;
 	}
 /*
- * Die SPs werden solange zurückgehalten, bis ein Tupel verschickt ankommt
+ * Die SPs werden solange zurückgehalten, bis ein Tupel verschickt wird
  */
 	@Override
 	protected void process_next(T object, int port) {
-		for(AbstractSecurityPunctuation sp:this.buffer){
+		for(ISecurityPunctuation sp:this.buffer){
 			sendPunctuation(sp);
 		}this.buffer.clear();
 		transfer(object);
@@ -59,8 +59,8 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (punctuation instanceof AbstractSecurityPunctuation) {
-			processSecurityPunctuation((AbstractSecurityPunctuation) punctuation);
+		if (punctuation instanceof ISecurityPunctuation) {
+			processSecurityPunctuation((ISecurityPunctuation) punctuation);
 		} else
 			sendPunctuation(punctuation);
 

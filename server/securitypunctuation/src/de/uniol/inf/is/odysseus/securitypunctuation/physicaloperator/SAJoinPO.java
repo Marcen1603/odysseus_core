@@ -16,7 +16,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SPMap;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
@@ -25,10 +26,10 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
 	private static final Logger LOG = LoggerFactory.getLogger(SAJoinPO.class);
 	SPMap<K, T> spMap;
-	List<AbstractSecurityPunctuation> lastSentPunctuation;
+	List<ISecurityPunctuation> lastSentPunctuation;
 
 	List<SAOperatorDelegate<T>> saOpDelPo;
-	List<List<AbstractSecurityPunctuation>> spList = new ArrayList<List<AbstractSecurityPunctuation>>();
+	List<List<ISecurityPunctuation>> spList = new ArrayList<List<ISecurityPunctuation>>();
 
 	public SAJoinPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
 			ITransferArea<T, T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
@@ -36,9 +37,9 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.spMap = new SPMap<K, T>();
 		this.saOpDelPo = new ArrayList<SAOperatorDelegate<T>>();
 
-		this.spList = new ArrayList<List<AbstractSecurityPunctuation>>();
-		this.spList.add(new ArrayList<AbstractSecurityPunctuation>());
-		this.spList.add(new ArrayList<AbstractSecurityPunctuation>());
+		this.spList = new ArrayList<List<ISecurityPunctuation>>();
+		this.spList.add(new ArrayList<ISecurityPunctuation>());
+		this.spList.add(new ArrayList<ISecurityPunctuation>());
 		this.saOpDelPo.add(new SAOperatorDelegate());
 		this.saOpDelPo.add(new SAOperatorDelegate());
 		lastSentPunctuation = new ArrayList<>();
@@ -50,9 +51,9 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		super((IMetadataMergeFunction<K>) metaDataMerge);
 		this.spMap = new SPMap<K, T>();
 		this.saOpDelPo = new ArrayList<SAOperatorDelegate<T>>();
-		this.spList = new ArrayList<List<AbstractSecurityPunctuation>>();
-		this.spList.add(new ArrayList<AbstractSecurityPunctuation>());
-		this.spList.add(new ArrayList<AbstractSecurityPunctuation>());
+		this.spList = new ArrayList<List<ISecurityPunctuation>>();
+		this.spList.add(new ArrayList<ISecurityPunctuation>());
+		this.spList.add(new ArrayList<ISecurityPunctuation>());
 		this.saOpDelPo.add(new SAOperatorDelegate());
 		this.saOpDelPo.add(new SAOperatorDelegate());
 		lastSentPunctuation = new ArrayList<>();
@@ -62,10 +63,10 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	public void processPunctuation(IPunctuation inPunctuation, int port) {
 
-		if (inPunctuation instanceof AbstractSecurityPunctuation) {
-			this.spList.get(port).add((AbstractSecurityPunctuation) inPunctuation);
-			this.saOpDelPo.get(port).override((AbstractSecurityPunctuation) inPunctuation);
-			this.spMap.addSP((AbstractSecurityPunctuation) inPunctuation, port);
+		if (inPunctuation instanceof ISecurityPunctuation) {
+			this.spList.get(port).add((ISecurityPunctuation) inPunctuation);
+			this.saOpDelPo.get(port).override((ISecurityPunctuation) inPunctuation);
+			this.spMap.addSP((ISecurityPunctuation) inPunctuation, port);
 		} else {
 			super.processPunctuation(inPunctuation, port);
 		}
@@ -77,16 +78,16 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		// adds the incoming Object to the SPMap, with the current active SPs as
 		// key
 		if (!this.saOpDelPo.get(port).getRecentSPs().isEmpty()) {
-			for (AbstractSecurityPunctuation sp : this.saOpDelPo.get(port).getRecentSPs()) {
+			for (ISecurityPunctuation sp : this.saOpDelPo.get(port).getRecentSPs()) {
 				this.spMap.addValue(sp, object, port);
 
 			}
 		}
 		// removes the sps that are not required anymore from the SPMap, based
 		// on the timestamp of the incoming object
-		List<AbstractSecurityPunctuation> spsToDelete = new ArrayList<>();
+		List<ISecurityPunctuation> spsToDelete = new ArrayList<>();
 		if (!this.spList.isEmpty() && !this.spList.get(port ^ 1).isEmpty()) {
-			for (AbstractSecurityPunctuation sp : this.spList.get(port ^ 1)) {
+			for (ISecurityPunctuation sp : this.spList.get(port ^ 1)) {
 				spsToDelete.add(this.spMap.invalidate(sp, object.getMetadata().getStart(), port ^ 1));
 			}
 		}
@@ -145,22 +146,22 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 		qualifies = areas[otherport].queryCopy(object, order, extract);
 
-		List<AbstractSecurityPunctuation> intersectedSPs = new ArrayList<>();
+		List<ISecurityPunctuation> intersectedSPs = new ArrayList<>();
 
 		// extracts the SPs of the matching Tuples from the other port and
 		// intersects them with the SPs from the incoming object
 		while (qualifies.hasNext()) {
-			AbstractSecurityPunctuation intersectedSP;
+			ISecurityPunctuation intersectedSP;
 			T next = qualifies.next();
-			List<AbstractSecurityPunctuation> matchingSPs = this.spMap.getMatchingSPs(next, otherport);
+			List<ISecurityPunctuation> matchingSPs = this.spMap.getMatchingSPs(next, otherport);
 			if (!matchingSPs.isEmpty()) {
-				for (AbstractSecurityPunctuation matchingSP : matchingSPs) {
-					AbstractSecurityPunctuation temp = matchingSP;
-					for (AbstractSecurityPunctuation currentSP : this.saOpDelPo.get(port).getRecentSPs()) {
+				for (ISecurityPunctuation matchingSP : matchingSPs) {
+					ISecurityPunctuation temp = matchingSP;
+					for (ISecurityPunctuation currentSP : this.saOpDelPo.get(port).getRecentSPs()) {
 						if (port == 0) {
-							intersectedSP = temp.intersectPunctuation(currentSP);
+							intersectedSP = temp.intersect(currentSP);
 						} else {
-							intersectedSP = currentSP.intersectPunctuation(temp);
+							intersectedSP = currentSP.intersect(temp);
 						}
 						if (!intersectedSPs.contains(intersectedSP)) {
 							intersectedSPs.add(intersectedSP);
@@ -170,21 +171,21 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 			}
 		}
-		List<AbstractSecurityPunctuation> intersectedSPsCopy = new ArrayList<>(intersectedSPs);
+		List<ISecurityPunctuation> intersectedSPsCopy = new ArrayList<>(intersectedSPs);
 		if (!(intersectedSPs.containsAll(lastSentPunctuation) && lastSentPunctuation.containsAll(intersectedSPs))) {
 
 			// if the last sent punctuations are not the same like the new
 			// intersected Punctuations and the new intersected Punctuations are
 			// not empty, the last sent punctuations are cleared and the new
 			// punctuations are added
-			for (AbstractSecurityPunctuation sp : intersectedSPs) {
+			for (ISecurityPunctuation sp : intersectedSPs) {
 				if (!sp.isEmpty()) {
 					lastSentPunctuation.clear();
 				}
 			}
 			// if the intersected SPs are empty, the object and the intersected
 			// SPs are discarded
-			for (AbstractSecurityPunctuation sp : intersectedSPs) {
+			for (ISecurityPunctuation sp : intersectedSPs) {
 				if (!sp.isEmpty()) {
 					sendPunctuation(sp);
 					lastSentPunctuation.add(sp);

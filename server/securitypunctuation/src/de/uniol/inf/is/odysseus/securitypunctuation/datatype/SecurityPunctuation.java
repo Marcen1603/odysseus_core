@@ -8,19 +8,26 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 
-public class SecurityPunctuation extends AbstractSecurityPunctuation {
+public class SecurityPunctuation implements ISecurityPunctuation {
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7436458563105118060L;
 
+	private DataDescriptionPart ddp;
+	private SecurityRestrictionPart srp;
+	private boolean sign;
+	private boolean immutable;
+	private PointInTime timestamp;
+	
 	public SecurityPunctuation(SecurityPunctuation securityPunctuation) {
 		this.ddp = securityPunctuation.getDDP();
 		this.srp = securityPunctuation.getSRP();
@@ -130,7 +137,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	}
 
 	@Override
-	public AbstractSecurityPunctuation clone() {
+	public SecurityPunctuation clone() {
 		return new SecurityPunctuation(this);
 	}
 
@@ -140,11 +147,11 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 				+ timestamp;
 	}
 
-	// muss überschrieben werden für andere Arten von SPs
-	public AbstractSecurityPunctuation intersectPunctuation(AbstractSecurityPunctuation punctuation) {
+	
+	public SecurityPunctuation intersect(ISecurityPunctuation punctuation) {
 		String attributes = "";
 		String roles = "";
-		int[] tupleRange = new int[2];
+//		int[] tupleRange = new int[2];
 		SecurityPunctuation newSP = new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
 
 		if (this.sign != punctuation.getSign()) {
@@ -168,37 +175,35 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		}
 
 		// intersect tupleRange
-		if (this.ddp.getTupleRange()[0] == -2 && this.ddp.getTupleRange()[1] == -2
-				|| punctuation.getDDP().getTupleRange()[0] == -2 && punctuation.getDDP().getTupleRange()[1] == -2
-				|| this.ddp.getTupleRange()[0] > punctuation.getDDP().getTupleRange()[1]
-				|| this.ddp.getTupleRange()[1] < punctuation.getDDP().getTupleRange()[0]) {
-			return newSP;
+//		if (this.ddp.getTupleRange()[0] == -2 && this.ddp.getTupleRange()[1] == -2
+//				|| punctuation.getDDP().getTupleRange()[0] == -2 && punctuation.getDDP().getTupleRange()[1] == -2
+//				|| this.ddp.getTupleRange()[0] > punctuation.getDDP().getTupleRange()[1]
+//				|| this.ddp.getTupleRange()[1] < punctuation.getDDP().getTupleRange()[0]) {
+//			return newSP;
+//
+//		} else if (this.ddp.getTupleRange()[0] != -1 && punctuation.getDDP().getTupleRange()[0] != -1) {
+//
+//			if (this.ddp.getTupleRange()[0] >= punctuation.getDDP().getTupleRange()[0]) {
+//				tupleRange[0] = this.ddp.getTupleRange()[0];
+//			} else
+//				tupleRange[0] = punctuation.getDDP().getTupleRange()[0];
+//			if (this.ddp.getTupleRange()[1] <= punctuation.getDDP().getTupleRange()[1]) {
+//				tupleRange[1] = this.ddp.getTupleRange()[1];
+//			} else
+//				tupleRange[1] = punctuation.getDDP().getTupleRange()[1];
+//		} else if (this.ddp.getTupleRange()[0] == -1) {
+//			tupleRange = punctuation.getDDP().getTupleRange();
+//		} else if (punctuation.getDDP().getTupleRange()[0] == -1) {
+//			tupleRange = this.ddp.getTupleRange();
+//		}
 
-		} else if (this.ddp.getTupleRange()[0] != -1 && punctuation.getDDP().getTupleRange()[0] != -1) {
-
-			if (this.ddp.getTupleRange()[0] >= punctuation.getDDP().getTupleRange()[0]) {
-				tupleRange[0] = this.ddp.getTupleRange()[0];
-			} else
-				tupleRange[0] = punctuation.getDDP().getTupleRange()[0];
-			if (this.ddp.getTupleRange()[1] <= punctuation.getDDP().getTupleRange()[1]) {
-				tupleRange[1] = this.ddp.getTupleRange()[1];
-			} else
-				tupleRange[1] = punctuation.getDDP().getTupleRange()[1];
-		} else if (this.ddp.getTupleRange()[0] == -1) {
-			tupleRange = punctuation.getDDP().getTupleRange();
-		} else if (punctuation.getDDP().getTupleRange()[0] == -1) {
-			tupleRange = this.ddp.getTupleRange();
-		}
-
-		return newSP = new SecurityPunctuation(tupleRange, attributes, roles, this.sign, this.immutable,
+		return newSP = new SecurityPunctuation("*", attributes, roles, this.sign, this.immutable,
 				this.timestamp);
 
 	}
 
 	private String mergeStrings(List<String> inputOne, List<String> inputTwo) {
 		String output = "";
-		// falls eines der gemergten Attribute leer ist, ist die Schnittmenge
-		// der Attribute auch leer, somit die SP ungültig
 		if (inputOne.get(0).equals("") || inputTwo.get(0).equals("")) {
 			return output;
 
@@ -231,20 +236,113 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation {
 		} else
 			return false;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((ddp == null) ? 0 : ddp.hashCode());
+		result = prime * result + (immutable ? 1231 : 1237);
+		result = prime * result + (sign ? 1231 : 1237);
+		result = prime * result + ((srp == null) ? 0 : srp.hashCode());
+		result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SecurityPunctuation other = (SecurityPunctuation) obj;
+		if (ddp == null) {
+			if (other.ddp != null)
+				return false;
+		} else if (!ddp.equals(other.ddp))
+			return false;
+		if (immutable != other.immutable)
+			return false;
+		if (sign != other.sign)
+			return false;
+		if (srp == null) {
+			if (other.srp != null)
+				return false;
+		} else if (!srp.equals(other.srp))
+			return false;
+		if (timestamp == null) {
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
+		return true;
+	}
+
+	@Override
+	public boolean isHeartbeat() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public byte getNumber() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public SDFSchema getSchema() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Tuple<?> getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPunctuation clone(PointInTime p_start) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean before(PointInTime time) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean beforeOrEquals(PointInTime time) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean after(PointInTime time) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean afterOrEquals(PointInTime time) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isPunctuation() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 	
 
-//	@Override
-//	public SDFSchema getSchema() {
-//		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-//
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "tupleRange", SDFDatatype.STRING));
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "attributes", SDFDatatype.STRING));
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "roles", SDFDatatype.STRING));
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "sign", SDFDatatype.BOOLEAN));
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "immutable", SDFDatatype.BOOLEAN));
-//		attributes.add(new SDFAttribute("SecurityPunctuation", "timestamp", SDFDatatype.TIMESTAMP));
-//		return SDFSchemaFactory.createNewSchema("SecurityPunctuation", Tuple.class, attributes);
-//
-//	}
 
+	
 }

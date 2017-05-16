@@ -68,7 +68,6 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 //			}
 //		} else {
 
-			tuple.addAttribute("Test");
 			tuple.addAttribute(new Long(counter));// TupelID
 			tuple.addAttribute(Integer.parseInt(temp[0]));// patientenID
 			tuple.addAttribute(Integer.parseInt(temp[1]));// Puls oder

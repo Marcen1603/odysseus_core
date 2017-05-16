@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -13,8 +14,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
 public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 	ArrayList<String> roles = new ArrayList<String>();
@@ -24,8 +26,8 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 	private ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
 			.loginSuperUser(null);
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
-	List<AbstractSecurityPunctuation> recentlySentSPs;
-//	SDFSchema schema;
+	List<ISecurityPunctuation> recentlySentSPs;
+	// SDFSchema schema;
 
 	/*
 	 * When a new SP arrives SPchecked is set to false. When a new Tuple arrives
@@ -34,22 +36,23 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 	 */
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (punctuation instanceof AbstractSecurityPunctuation) {
-			saOpDel.override((AbstractSecurityPunctuation) punctuation);
+		if (punctuation instanceof ISecurityPunctuation) {
+			saOpDel.override((ISecurityPunctuation) punctuation);
 			SPchecked = false;
-			recentlySentSPs = new ArrayList<>();
+			recentlySentSPs.clear();
 		}
 	}
 
 	public SecurityShieldPO() {
 		super();
 		addRoles();
-
+		recentlySentSPs = new ArrayList<>();
 	}
 
 	public SecurityShieldPO(SecurityShieldPO<T> securityShieldPO) {
 		super();
 		addRoles();
+		recentlySentSPs = new ArrayList<>();
 	}
 
 	private void addRoles() {
@@ -65,22 +68,42 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 	}
 
 	public void checkSP() {
-		for (AbstractSecurityPunctuation sp : saOpDel.getRecentSPs()) {
-			for (String role : roles) {
-				for (String roles : sp.getSRP().getRoles()) {
-					if ((roles.equals(role) && sp.getSign() == true) || (roles.equals("*") && sp.getSign() == true)) {
-
-						this.match = true;
-						return;
-					}
-
-					else {
-						this.match = false;
-					}
-
+		// removes the sps that dont contain any role of the query specifier but
+		// have the same TS like other SPs in the cache
+		List<ISecurityPunctuation> punctuationsToRemove = new ArrayList<>();
+		for (ISecurityPunctuation sp : this.saOpDel.getRecentSPs()) {
+			if (!sp.getSRP().getRoles().get(0).equals("*")) {
+				if (Collections.disjoint(roles, sp.getSRP().getRoles())) {
+					punctuationsToRemove.add(sp);
+					LOG.info("Punctuation entfernt:"+sp.toString());
 				}
 			}
+
 		}
+		this.saOpDel.getRecentSPs().removeAll(punctuationsToRemove);
+		if (!saOpDel.getRecentSPs().isEmpty()) {
+			for (ISecurityPunctuation sp : saOpDel.getRecentSPs()) {
+				for (String role : roles) {
+					for (String roles : sp.getSRP().getRoles()) {
+						if ((roles.equals(role) && sp.getSign() == true)
+								|| (roles.equals("*") && sp.getSign() == true)) {
+
+							this.match = true;
+							return;
+						}
+
+						else {
+							this.match = false;
+							punctuationsToRemove.add(sp);
+						}
+
+					}
+				}
+			}
+		}else{
+			this.saOpDel.getRecentSPs().add(new SecurityPunctuation("-2,-2", "", "", false, false, -1L));
+		}
+
 	}
 
 	/**
@@ -95,16 +118,16 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 			checkSP();
 			SPchecked = true;
 		}
-//		if (this.schema == null) {
-//			this.schema = this.getInputSchema(port);
-//		}
 
+		// if (this.schema == null) {
+		// this.schema = this.getInputSchema(port);
+		// }
 
 		if (match) {
 			if (!saOpDel.getRecentSPs().isEmpty()) {
-				
-				for (AbstractSecurityPunctuation sp : saOpDel.getRecentSPs()) {
-					//könnte sein, dass match bei einem späteren tupel true ist
+
+				for (ISecurityPunctuation sp : saOpDel.getRecentSPs()) {
+					// könnte sein, dass match bei einem späteren tupel true ist
 					if (sp.getDDP().match(object, this.getInputSchema(port))) {
 
 						sendPunctuation(sp);
@@ -115,11 +138,11 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 
 			}
 			if (!recentlySentSPs.isEmpty()) {
-				for (AbstractSecurityPunctuation sp : recentlySentSPs) {
+				for (ISecurityPunctuation sp : recentlySentSPs) {
 					if (sp.getDDP().match(object, this.getInputSchema(port))) {
-						//removeall ist wwahrscheinlcih besser
-					//	saOpDel.getRecentSPs().removeAll(recentlySentSPs);
-						saOpDel.getRecentSPs().clear();
+
+						saOpDel.getRecentSPs().removeAll(recentlySentSPs);
+						// saOpDel.getRecentSPs().clear();
 						transfer(object);
 						break;
 					}

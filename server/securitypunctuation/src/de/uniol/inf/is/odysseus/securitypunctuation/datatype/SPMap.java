@@ -15,22 +15,22 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 
-	List<Map<AbstractSecurityPunctuation, List<T>>> spMap;
+	List<Map<ISecurityPunctuation, List<T>>> spMap;
 	private static final Logger LOG = LoggerFactory.getLogger(SPMap.class);
 
 	public SPMap() {
-		this.spMap = new ArrayList<Map<AbstractSecurityPunctuation, List<T>>>();
-		this.spMap.add(new HashMap<AbstractSecurityPunctuation, List<T>>());
-		this.spMap.add(new HashMap<AbstractSecurityPunctuation, List<T>>());
+		this.spMap = new ArrayList<Map<ISecurityPunctuation, List<T>>>();
+		this.spMap.add(new HashMap<ISecurityPunctuation, List<T>>());
+		this.spMap.add(new HashMap<ISecurityPunctuation, List<T>>());
 	}
 
-	public void addSP(AbstractSecurityPunctuation sp, int port) {
+	public void addSP(ISecurityPunctuation sp, int port) {
 		if (!this.spMap.isEmpty() && !this.spMap.get(port).containsKey(sp)) {
 			this.spMap.get(port).put(sp, new ArrayList<T>());
 		}
 	}
 
-	public void addValue(AbstractSecurityPunctuation sp, T object, int port) {
+	public void addValue(ISecurityPunctuation sp, T object, int port) {
 		if (!this.spMap.isEmpty() && this.spMap.get(port).containsKey(sp)) {
 			if (this.spMap.get(port).containsKey(sp)) {
 				this.spMap.get(port).get(sp).add(object);
@@ -38,8 +38,8 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 		}
 	}
 
-	public AbstractSecurityPunctuation invalidate(AbstractSecurityPunctuation sp, PointInTime ts, int port) {
-		AbstractSecurityPunctuation removedSPs = null;
+	public ISecurityPunctuation invalidate(ISecurityPunctuation sp, PointInTime ts, int port) {
+		ISecurityPunctuation removedSPs = null;
 		List<T> objectsToRemove = new ArrayList<>();
 		if (!this.spMap.isEmpty() && !this.spMap.get(port).isEmpty() && this.spMap.get(port).containsKey(sp)) {
 			for (T obj : this.spMap.get(port).get(sp)) {
@@ -58,17 +58,17 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 		return removedSPs;
 	}
 
-	public List<Map<AbstractSecurityPunctuation, List<T>>> getSpMap() {
+	public List<Map<ISecurityPunctuation, List<T>>> getSpMap() {
 		return spMap;
 	}
 
-	public void setSpMap(List<Map<AbstractSecurityPunctuation, List<T>>> spMap) {
+	public void setSpMap(List<Map<ISecurityPunctuation, List<T>>> spMap) {
 		this.spMap = spMap;
 	}
 
-	public List<AbstractSecurityPunctuation> getMatchingSPs(T object, int port) {
-		List<AbstractSecurityPunctuation> matchingSPs = new ArrayList<>();
-		for (Map.Entry<AbstractSecurityPunctuation, List<T>> entry : this.spMap.get(port).entrySet()) {
+	public List<ISecurityPunctuation> getMatchingSPs(T object, int port) {
+		List<ISecurityPunctuation> matchingSPs = new ArrayList<>();
+		for (Map.Entry<ISecurityPunctuation, List<T>> entry : this.spMap.get(port).entrySet()) {
 			if (entry.getValue().contains(object)) {
 				matchingSPs.add(entry.getKey());
 			}

@@ -9,16 +9,31 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SecurityRestrictionPart implements ISecurityRestrictionPart{
-	List<String> roles;
+	private List<String> roles;
 	// private static final Logger LOG =
 	// LoggerFactory.getLogger(SecurityRestrictionPart.class);
 
-	SecurityRestrictionPart() {
+	
+
+
+
+	public SecurityRestrictionPart(String roles) {
+		this.roles = new ArrayList<String>(Arrays.asList(roles.split(",")));
+		//Collections.sort(this.roles);
 
 	}
 
+	public SecurityRestrictionPart(SecurityRestrictionPart srp) {
+		this.roles = srp.getRoles();
+	}
+
+	public List<String> getRoles() {
+		return this.roles;
+	}
+	
 	// Merges two SRPs
-	public void union(SecurityRestrictionPart srp) {
+	@Override
+	public void union(ISecurityRestrictionPart srp) {
 		if (this.roles.get(0).equals("*") || srp.getRoles().get(0).equals("")) {
 			return;
 		} else if (srp.getRoles().get(0).equals("*")) {
@@ -33,20 +48,6 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 			}
 	
 
-	}
-
-	public SecurityRestrictionPart(String roles) {
-		this.roles = new ArrayList<String>(Arrays.asList(roles.split(",")));
-		//Collections.sort(this.roles);
-
-	}
-
-	public SecurityRestrictionPart(SecurityRestrictionPart srp) {
-		this.roles = srp.getRoles();
-	}
-
-	public List<String> getRoles() {
-		return this.roles;
 	}
 
 	@Override

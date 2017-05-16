@@ -25,6 +25,8 @@ public interface ISecurityPunctuation extends IPunctuation {
 	
 
 	
-	public AbstractSecurityPunctuation intersectPunctuation(AbstractSecurityPunctuation punctuation);
+	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation);
+
+	public boolean isEmpty();
 
 }

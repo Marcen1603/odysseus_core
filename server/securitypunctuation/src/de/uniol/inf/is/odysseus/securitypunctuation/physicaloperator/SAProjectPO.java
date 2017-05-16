@@ -8,33 +8,35 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.AbstractSecurityPunctuation;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
-@SuppressWarnings("rawtypes")
+
 public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T> {
 
-	SAOperatorDelegate saOpDelPO;
-	List<String> restrictedAttributes;
-	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
+	//private SAOperatorDelegate saOpDelPO;
+	private List<String> restrictedAttributes;
+	private static final Logger LOG = LoggerFactory.getLogger(SAProjectPO.class);
 
 	public SAProjectPO(int[] restrictList) {
 		super(restrictList);
-		this.saOpDelPO = new SAOperatorDelegate();
+	//	this.saOpDelPO = new SAOperatorDelegate();
+	LOG.info("SAProjectPO aufgerufen");
+
 		
 	}
 
 	public SAProjectPO(int[] restrictList, List<String> restrictedAttributes) {
 		super(restrictList);
-		this.saOpDelPO = new SAOperatorDelegate();
+	//	this.saOpDelPO = new SAOperatorDelegate();
 		this.restrictedAttributes = restrictedAttributes;
+		LOG.info("SAProjectPO aufgerufen");
 
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (punctuation instanceof AbstractSecurityPunctuation) {
+		if (punctuation instanceof ISecurityPunctuation) {
 			sendPunctuation(checkSP(punctuation));
 		} else
 			sendPunctuation(punctuation);
@@ -45,10 +47,10 @@ public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T
 //return new SecurityPunctuation überarbeiten
 	public IPunctuation checkSP(IPunctuation punctuation) {
 		for (String attribute : restrictedAttributes) {
-			for (String SPattribute : ((AbstractSecurityPunctuation) punctuation).getDDP().getAttributes()) {
+			for (String SPattribute : ((ISecurityPunctuation) punctuation).getDDP().getAttributes()) {
 				if ((attribute).equals(SPattribute)) {
-					((AbstractSecurityPunctuation) punctuation).getDDP().getAttributes().remove(SPattribute);
-					if (((AbstractSecurityPunctuation) punctuation).getDDP().getAttributes().isEmpty()) {
+					((ISecurityPunctuation) punctuation).getDDP().getAttributes().remove(SPattribute);
+					if (((ISecurityPunctuation) punctuation).getDDP().getAttributes().isEmpty()) {
 						return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
 					}
 				}
