@@ -72,6 +72,7 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException
 import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import java.util.Collections
+import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess.UnboundedWindowElements
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2
@@ -412,7 +413,7 @@ class CQLGenerator implements IGenerator2
 		var predicate = parsePredicateString(predicateStringList)
 		var select = ''
 		if(!predicate.equals(''))
-			select = registerOperator('''SELECT({predicate='«predicate»'},«selectInput»)''')
+			select = registerOperator(builder.buildOperator('SELECT', newLinkedHashMap('predicate' -> predicate, 'input' -> selectInput)))
 		else
 		{
 			var Map<String, String> newArgs = registry_existenceOperators.get(0)
@@ -555,23 +556,6 @@ class CQLGenerator implements IGenerator2
 				AttributeRef: { buildPredicateString(getAttributename(e.value as Attribute)) }  	 
 				ComplexPredicateRef:
 				{
-					/*
-					 * ALLPredciate (false) --> type = NOT_EXISTS
-					 * >=  --> <
-					 * >   --> <=
-					 * <=  --> >
-					 * <   --> >=
-					 * 
-					 * ANYPredicate (false) --> type = EXISTS
-					 * >=  --> >=
-					 * >   --> >
-					 * <=  --> <=
-					 * <   --> <
-					 * 
-					 * IN type (false) --> type = EXISTS
-					 * ==
-					 * 
-					 */
 					var complexPredicate = e.value as ComplexPredicate
 					var QuantificationPredicate quantification = null
 					var ExistPredicate exists = null
@@ -600,7 +584,6 @@ class CQLGenerator implements IGenerator2
 //						var attributeAliasesBackup = registry_AttributeAliases
 //						registry_AttributeAliases = newHashMap
 						
-						
 						var select = complexPredicate.select.select
 						prepareParsingSelect(select)
 						var predicate = ''
@@ -620,7 +603,7 @@ class CQLGenerator implements IGenerator2
 						}
 						
 						var Map<String, String> args = newHashMap
-						args.put('type', type+builder.ESC+builder.STRING_TYPE)
+						args.put('type', type)
 						args.put('input', getLastOperator())
 						
 						for(Entry<String ,List<String>> l : queryAttributes.get(select).entrySet)
@@ -636,7 +619,7 @@ class CQLGenerator implements IGenerator2
 							}
 						
 						
-						args.put('predicate', predicate+builder.ESC+builder.STRING_TYPE)
+						args.put('predicate', predicate)
 						registry_existenceOperators.add(args)
 												
 						//restore predicate
@@ -664,43 +647,7 @@ class CQLGenerator implements IGenerator2
 							if(predicateStringList.size > 0)
 								predicateStringList.remove(predicateStringList.size() - 1)
 						}
-						
-						//save the current predicate
-						var predicateStringListBackup = new ArrayList(predicateStringList)
-						predicateStringList = newArrayList
-						var predicateBackup = predicateString
-						predicateString = ''
-
-						var Map<String, String> args = newHashMap
-						args.put('type', type+builder.ESC+builder.STRING_TYPE)
-						
-						var subQuery = complexPredicate.select.select as SimpleSelect
-						prepareParsingSelect(subQuery)
-						parseSelectWithoutPredicate(subQuery)
-						parsePredicate(complexPredicate.select.select.predicates.elements.get(0))
-						
-						println("exists() -> " + predicateString)
-						
-						for(Entry<String ,List<String>> l : queryAttributes.get(subQuery).entrySet)
-							for(String s : l.value)
-							{
-								var attributename = s
-								if(!attributename.contains('.'))
-								{
-									attributename = l.key + '.' + attributename
-								}
-								println(attributename)
-								predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
-							}
-						
-						println("exists() -> " + predicateString)
-						args.put('predicate', predicateString+builder.ESC+builder.STRING_TYPE)
-						args.put('input', getLastOperator())
-						registry_existenceOperators.add(args)
-						
-						//restore predicate
-						predicateString = predicateBackup
-						predicateStringList = new ArrayList(predicateStringListBackup)
+						parseComplexPredicate(complexPredicate, type)
 					}
 					else if((in = complexPredicate.in) !== null)
 					{
@@ -750,9 +697,9 @@ class CQLGenerator implements IGenerator2
 						
 //						predicate = predicate.replace('\\.', '_')
 						var Map<String, String> args = newHashMap
-						args.put('type', type+builder.ESC+builder.STRING_TYPE)
+						args.put('type', type)
 						args.put('input', getLastOperator())
-						args.put('predicate', predicate+builder.ESC+builder.STRING_TYPE)
+						args.put('predicate', predicate)
 						registry_existenceOperators.add(args)
 												
 						//restore predicate
@@ -779,6 +726,47 @@ class CQLGenerator implements IGenerator2
 	}
 	
 	private var List<Map<String, String>> registry_existenceOperators = newArrayList	
+	
+	def private parseComplexPredicate(ComplexPredicate complexPredicate, String type)
+	{
+		//save the current predicate
+		var predicateStringListBackup = new ArrayList(predicateStringList)
+		predicateStringList = newArrayList
+		var predicateBackup = predicateString
+		predicateString = ''
+
+		var Map<String, String> args = newHashMap
+		args.put('type', type)
+		
+		var subQuery = complexPredicate.select.select as SimpleSelect
+		prepareParsingSelect(subQuery)
+		parseSelectWithoutPredicate(subQuery)
+		parsePredicate(complexPredicate.select.select.predicates.elements.get(0))
+		
+		println("exists() -> " + predicateString)
+		
+		for(Entry<String ,List<String>> l : queryAttributes.get(subQuery).entrySet)
+			for(String s : l.value)
+			{
+				var attributename = s
+				if(!attributename.contains('.'))
+				{
+					attributename = l.key + '.' + attributename
+				}
+				println(attributename)
+				predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
+			}
+		
+		println("exists() -> " + predicateString)
+		args.put('predicate', predicateString)
+		args.put('input', getLastOperator())
+		registry_existenceOperators.add(args)
+		
+		//restore predicate
+		predicateString = predicateBackup
+		predicateStringList = new ArrayList(predicateStringListBackup)
+	}
+	
 	
 	def private CharSequence parsePredicate(List<Expression> expressions)//TODO something is wrong here
 	{
@@ -861,7 +849,7 @@ class CQLGenerator implements IGenerator2
 			case 'STREAM': operator = 'ACCESS' 
 			case 'SINK': operator = 'SENDER'
 		}
-		operator = buildCreate1(operator, create.pars, create.attributes.arguments, create.attributes.name).toString
+		operator = buildCreate1(operator, create.pars, create.attributes, create.attributes.name).toString
 		if(type.toUpperCase.equals('SINK'))
 			if(!operator.contains(SINK_INPUT_KEYWORD))
 				return registerOperator(operator, VIEW + create.attributes.name)
@@ -875,20 +863,20 @@ class CQLGenerator implements IGenerator2
 	def private parseCreateDatabaseSink(CreateDatabaseSink sink) 
 	{
 		var Map<String, String> args = newHashMap
-		args.put('connection', sink.database+builder.ESC+builder.STRING_TYPE)
-		args.put('table', sink.table+builder.ESC+builder.STRING_TYPE)
+		args.put('connection', sink.database)
+		args.put('table', sink.table)
 		var type = ''
 		if(CQLParser.databaseConnections.keySet.contains(sink.database))
 			type = CQLParser.databaseConnections.get(sink.database)
 		else
 			throw new QueryParseException("Database connection " + sink.database + " could not be found");
-		args.put('type', type+builder.ESC+builder.STRING_TYPE)
+		args.put('type', type)
 		args.put('input', SINK_INPUT_KEYWORD)
 		if(sink.option !== null)
 			if(sink.option.toUpperCase().equals("DROP"))
-				args.put('drop', 'true'+builder.ESC+builder.STRING_TYPE)
+				args.put('drop', 'true')
 			else
-				args.put('truncate', 'true'+builder.ESC+builder.STRING_TYPE)
+				args.put('truncate', 'true')
 		var operator = builder.buildOperator("DATABASESINK", args)	
 		registry_Sinks.put(sink.name, operator)
 	}
@@ -928,13 +916,13 @@ class CQLGenerator implements IGenerator2
 	def parseCreateDatabaseStream(CreateDatabaseStream stream) 
 	{
 		var Map<String, String> args = newHashMap
-		args.put('connection',stream.database + builder.ESC+builder.STRING_TYPE)
-		args.put('table',stream.table + builder.ESC+builder.STRING_TYPE)
-		args.put('attributes', extractSchema(stream.attributes) + builder.ESC+builder.LIST_TYPE)
+		args.put('connection',stream.database )
+		args.put('table',stream.table )
+		args.put('attributes', extractSchema(stream.attributes).toString)
 		var operator = ''
 		var waitMillis = getTimeInMilliseconds(stream.unit.getName, stream.size).toString
 		if(!waitMillis.equals('0.0'))
-			args.put('waiteach', waitMillis+builder.ESC+builder.INT_TYPE)
+			args.put('waiteach', waitMillis)
 		operator = builder.buildOperator("DATABASESOURCE", args)
 		return registerOperator(operator, VIEW + stream.attributes.name)		
 	}
@@ -942,13 +930,13 @@ class CQLGenerator implements IGenerator2
 	def private CharSequence parseCreateStreamFile(CreateChannelFormatViaFile file)
 	{
 		var Map<String, String> args = newHashMap
-		args.put('source', file.attributes.name+builder.ESC+builder.STRING_TYPE)
-		args.put('wrapper', 'GenericPull'+builder.ESC+builder.STRING_TYPE)
-		args.put('protocol', file.type+builder.ESC+builder.STRING_TYPE)
-		args.put('transport', 'File'+builder.ESC+builder.STRING_TYPE)
-		args.put('dataHandler', 'Tuple'+builder.ESC+builder.STRING_TYPE)
-		args.put('schema', extractSchema(file.attributes)+builder.ESC+builder.LIST_TYPE)
-		args.put('options', '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]'''+builder.ESC+builder.LIST_TYPE)
+		args.put('source', file.attributes.name)
+		args.put('wrapper', 'GenericPull')
+		args.put('protocol', file.type)
+		args.put('transport', 'File')
+		args.put('datahandler', 'Tuple')
+		args.put('schema', extractSchema(file.attributes).toString)
+		args.put('options', '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]''')
 		var operator = builder.buildOperator("ACCESS", args)	  
 		return registerOperator(operator, VIEW + file.attributes.name)
 	}
@@ -956,13 +944,13 @@ class CQLGenerator implements IGenerator2
 	def private CharSequence parseCreateStreamChannel(CreateChannelFrameworkViaPort channel) 
 	{
 		var Map<String, String> args = newHashMap
-		args.put('source', channel.attributes.name+builder.ESC+builder.STRING_TYPE)
-		args.put('wrapper', 'GenericPush'+builder.ESC+builder.STRING_TYPE)
-		args.put('protocol', 'SizeByteBuffer' + builder.ESC+builder.STRING_TYPE)
-		args.put('transport', 'NonBlockingTcp'+builder.ESC+builder.STRING_TYPE)
-		args.put('dataHandler', 'Tuple'+builder.ESC+builder.STRING_TYPE)
-		args.put('schema', extractSchema(channel.attributes)+builder.ESC+builder.LIST_TYPE)
-		args.put('options', '''['port','«channel.port»'],['host', '«channel.host»']''' + builder.ESC+builder.LIST_TYPE)
+		args.put('source', channel.attributes.name)
+		args.put('wrapper', 'GenericPush')
+		args.put('protocol', 'SizeByteBuffer' )
+		args.put('transport', 'NonBlockingTcp')
+		args.put('datahandler', 'Tuple')
+		args.put('schema', extractSchema(channel.attributes).toString)
+		args.put('options', '''['port','«channel.port»'],['host', '«channel.host»']''' )
 		var operator = builder.buildOperator("ACCESS", args)	
 		return registerOperator(operator, VIEW + channel.attributes.name)	
 	}	
@@ -1027,7 +1015,7 @@ class CQLGenerator implements IGenerator2
 		{
 			input = buildJoin(sources).toString//buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
 			println('groupByyy')
-			if(registry_Operators.get(aggregate).contains('GROUP_BY'))
+			if(registry_Operators.get(aggregate).contains('group_by'))
 			{
 				var groupAttributes = newArrayList
 				var j = 0
@@ -1038,9 +1026,7 @@ class CQLGenerator implements IGenerator2
 					groupAttributes.add(groupAttribute + '_groupAttribute#' + j)
 					j++
 				}
-				var rename = '''RENAME({aliases=[«generateListString(groupAttributes)»], pairs='true'},«aggregate»)'''
-				input = buildJoin(#[rename, input]).toString
-				
+				input = buildJoin(#[builder.buildOperator('RENAME', newHashMap('pairs' -> 'true', 'aliases' -> generateListString(groupAttributes), 'input' -> aggregate)), input]).toString
 			}
 			else
 				input = buildJoin(#[aggregate, buildJoin(sources).toString]).toString
@@ -1060,7 +1046,7 @@ class CQLGenerator implements IGenerator2
 			{
 				input = buildJoin(sources).toString//buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
 				println('groupByyy')
-				if(registry_Operators.get(aggregate).contains('GROUP_BY'))
+				if(registry_Operators.get(aggregate).contains('group_by'))
 				{
 					var groupAttributes = newArrayList
 					var j = 0
@@ -1071,8 +1057,7 @@ class CQLGenerator implements IGenerator2
 						groupAttributes.add(groupAttribute + '_groupAttribute#' + j)
 						j++
 					}
-					var rename = '''RENAME({aliases=[«generateListString(groupAttributes)»], pairs='true'},«aggregate»)'''
-					input = buildJoin(#[rename, input]).toString
+					input = buildJoin(#[builder.buildOperator('RENAME', newHashMap('aliases' -> generateListString(groupAttributes), 'pairs' -> 'true', 'input' -> aggregate)), input]).toString
 				}
 				else
 					input = buildJoin(#[aggregate, input]).toString
@@ -1083,47 +1068,29 @@ class CQLGenerator implements IGenerator2
 		return input
 	}
 	
-	def private CharSequence buildWindowOP(SimpleSource src)
+	def private CharSequence buildWindowOP(SimpleSource source)
 	{
-		if(src.window !== null)
+		if(source.window === null) return source.name
+		var Map<String, String> args = newHashMap
+		var window = source.window
+		if(window instanceof TimebasedWindow)
 		{
-			var window = src.window
-			if(window instanceof TimebasedWindow)
-			{
-				var var1 = if(window.advance_size != 0) window.advance_size.toString else '1'
-				var var2 = if(window.advance_size != 0) window.advance_unit.getName else window.unit.getName
-				return builder.buildTimebasedWindowOperator(window.size.toString, window.unit.getName, var1, var2, src.name)
-			}
-			else if(window instanceof TuplebasedWindow)
-			{
-				var var1 = if(window.advance_size != 0) window.advance_size else 1
-				if(window.partition_attribute === null)
-				{
-					return  '''ELEMENTWINDOW
-							   (
-							   	{
-									size = «window.size»,
-									advance = «var1»
-							   	},
-							   	«src.name»
-							   )'''
-	
-				}
-				else
-				{
-					return  '''ELEMENTWINDOW
-							   (
-							   	{
-									size = «window.size»,
-									advance = «var1»,
-									partition = '«window.partition_attribute.name»'
-							   	},
-							   	«src.name»
-							   )'''
-				}	
-			}
+			var var1 = if(window.advance_size != 0) window.advance_size.toString else '1'
+			var var2 = if(window.advance_size != 0) window.advance_unit.getName else window.unit.getName
+			args.put('size', window.size.toString + ",'" + window.unit.getName + "'")
+			args.put('advance',  var1 + ",'" + var2 + "'")
+			args.put('input', source.name)
+			return builder.buildOperator('TIMEWINDOW', args)
 		}
-		return src.name
+		else if(window instanceof TuplebasedWindow)
+		{
+			args.put('size', window.size.toString)
+			args.put('advance', (if(window.advance_size != 0) window.advance_size else 1).toString)
+			args.put('partition', if(window.partition_attribute !== null) window.partition_attribute.name else null)
+			args.put('input', source.name)
+			return builder.buildOperator('ELEMENTWINDOW', args)
+		}
+		else return source.name
 	}
 	
 	val EXPRESSSION_NAME_PREFIX = 'expression_'
@@ -1160,7 +1127,7 @@ class CQLGenerator implements IGenerator2
 	
 	def private Object[] buildMapOperator(List<SelectExpression> expressions) { return buildMapOperator(expressions, null) }
 	
-	def private Object[] buildMapOperator(List<SelectExpression> expressions, CharSequence input)
+	def private Object[] buildMapOperator(List<SelectExpression> expressions, String input)
 	{
 		var expressionArgument = ''
 		var List<String> expressionStrings = newArrayList()
@@ -1186,7 +1153,7 @@ class CQLGenerator implements IGenerator2
 			attributeNames.add(expressionName)
 		}
 //		Collections.sort(attributeNames)
-		return #[attributeNames, '''MAP({expressions=[«expressionArgument»]},«input»)''']//TODO refactore
+		return #[attributeNames, builder.buildOperator('MAP', newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
 	}
 	
 	def private Object[] buildAggregateOP(List<SelectExpression> aggAttr, List<Attribute> orderAttr, CharSequence input)
@@ -1216,7 +1183,7 @@ class CQLGenerator implements IGenerator2
 			}
 			else
 			{
-				var mapOperator = buildMapOperator(#[aggregation.value as SelectExpression], input)
+				var mapOperator = buildMapOperator(#[aggregation.value as SelectExpression], input.toString)
 				mapName = registerOperator(mapOperator.get(1) as CharSequence)
 				attributename = (mapOperator.get(0) as List<String>).get(0)
 				datatype = 'DOUBLE'
@@ -1242,73 +1209,29 @@ class CQLGenerator implements IGenerator2
 		//Generates the group by argument that is formed like ['attr1', attr2', ...]
 		var groupby = ''
 		if(!orderAttr.empty)
-		{
-			groupby += ',GROUP_BY=['
-			groupby += generateListString(
-				orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList)
-			) + ']'
-		}
-		return #[aliases, '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «IF mapName != ''»«mapName»«ELSE»«»«input»«ENDIF»)''']
+			groupby += generateListString(orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList))
+		return #[aliases, builder.buildOperator('AGGREGATE', newHashMap('aggregations' -> argsstr, 'group_by' -> if(groupby != '') groupby else null, 'input' -> if(mapName != '') mapName else input.toString))]//'''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «IF mapName != ''»«mapName»«ELSE»«»«input»«ENDIF»)''']
 	}
 	
 	def private Object[] buildAggregateOP(List<SelectExpression> list, List<Attribute> list2, List<Source> srcs) { return buildAggregateOP(list, list2, buildJoin(srcs)) }
 	
-	def private CharSequence buildCreate1(String type, AccessFramework pars, List<String> attrs, String name)
+	def private CharSequence buildCreate1(String type, AccessFramework pars, SchemaDefinition schema, String name)
 	{
-		var wrapper     = pars.wrapper
-		var protocol    = pars.protocol
-		var transport   = pars.transport
-		var dataHandler = pars.datahandler
-		var attributenames = newArrayList
-		var datatypes = newArrayList
-		for(var i = 0; i < attrs.size - 1; i = i + 2)
-		{
-			attributenames.add(attrs.get(i))
-			datatypes.add(attrs.get(i + 1))
-		}
-		var args 		= generateKeyValueString(
-							attributenames,
-							datatypes,
-							','
-						  )
-						  
-		var options 	= generateKeyValueString(
-							pars.keys,
-							pars.values,
-							','
-						  )		
 		var t = ''
-		var s = ''
-		var b = false
-		if(type.equals("ACCESS"))
-		{
-			t = 'source'
-			s = '''schema = [«args»],'''	
-		}
-		else
-		{
-			b = true
-			t = 'sink'	
-		}				  
-
 		var input = "--INPUT--"
-		if(registry_StreamTo.keySet.contains(name))
-			input = registry_StreamTo.get(name)
-						  
-		var sink = '''«type»
-				  (
-					{	  
-						«t»      = '«name»', 
-						wrapper     = '«wrapper»',
-						protocol    = '«protocol»',
-						transport   = '«transport»',
-						dataHandler = '«dataHandler»',
-						«s»
-						options =[«options»]
-					 }
-					 «IF b»,«input»«ENDIF»
-				   )'''
-		return sink
+		if(type.equals("ACCESS")) t = 'source'
+		else			  		  t = 'sink'	
+		if(registry_StreamTo.keySet.contains(name)) input = registry_StreamTo.get(name)
+		var Map<String, String> argss = newHashMap
+		argss.put(t, name)
+		argss.put('wrapper', pars.wrapper)
+		argss.put('protocol', pars.protocol)
+		argss.put('transport', pars.transport)
+		argss.put('datahandler', pars.datahandler)
+		argss.put('schema', if(t.equals("source")) extractSchema(schema).toString else null)
+		argss.put('options', generateKeyValueString(pars.keys,pars.values,','))
+		argss.put('input', if(t.equals("sink")) input else null)
+		return builder.buildOperator(type, argss)						  
 	}	
 	
 	def private buildJoin(List<Source> sources)
@@ -1358,7 +1281,7 @@ class CQLGenerator implements IGenerator2
 									aliasses.add(name2)
 								}
 							}
-						inputs.add(registerOperator('''RENAME({aliases=[«generateListString(aliasses)»], pairs='true'}, «lastOperator»)'''))						
+						inputs.add(registerOperator(builder.buildOperator('RENAME', newHashMap('aliases' -> generateListString(aliasses), 'pairs' -> 'true', 'input' -> lastOperator))))						
 					}
 				}
 				sourceStrings.set(i, buildJoin(inputs).toString)
@@ -1466,7 +1389,7 @@ class CQLGenerator implements IGenerator2
 		processedSources.add(source.sourcename)
 //		renames.add(source.sourcename)
 		for(var j = 0; j < listOfLists.size; j++)
-			renames.add(registerOperator('''RENAME({aliases=[«generateListString(listOfLists.get(j))»], pairs='true'}, «input»)'''))
+			renames.add(registerOperator(builder.buildOperator('RENAME', newLinkedHashMap('aliases' -> generateListString(listOfLists.get(j)), 'pairs' -> 'true', 'input' -> input.toString))))
 		if(renames.size > 1)
 			return buildJoin(renames)
 		if(renames.size == 1)
@@ -1482,151 +1405,6 @@ class CQLGenerator implements IGenerator2
 		return alias
 	}
 	
-/*
- * def CharSequence buildRenameOperatorX(CharSequence input, SimpleSource source, int selfJoin)
-	{
-		var List<String> aliases = newArrayList
-		var sourcealias = if(source.alias !== null) source.alias.name else null
-		var sourceStruct = getSource(source)
-		var aliasedAttributes = newArrayList
-		var counter = 0
-		//Check for aliases
-		for(AttributeStruct struct : sourceStruct.attributes)
-		{
-			for(String structAlias : struct.aliases)
-			{				
-				var correspondingSource = registry_AttributeAliases.get(structAlias)
-				println("correspondingSource= " + correspondingSource)
-				if(correspondingSource.contains('.'))
-				{
-					var split = correspondingSource.split("\\.")
-					val realSourcename = split.get(0)
-					if(sourcealias !== null)
-					{
-						println("selfJoin= " +  selfJoin)
-						println("source= " + source.name)
-						println("realSourcename= " + realSourcename)
-						println("sourcealias !== null :: " + sourcealias + ', ' + source.name)
-						if(realSourcename.equals(sourcealias) || realSourcename.equals(source.name))
-						{
-							var countSources = 0//sourcesDuringRename.stream.filter(e|e.name.equals(realSourcename)).count
-							for(Source s1 : sourcesDuringRename)
-								if(s1 instanceof SimpleSource)
-									if(s1.name.equals(realSourcename))
-										countSources++
-							if(aliases.contains(struct.attributename) || (countSources > 1))
-							{
-//								throw new IllegalArgumentException("given attribute " + struct.attributename + " with alias " + structAlias + " cannot be referenced")
-								if(selfJoin > 0 && counter != sourceStruct.attributes.size)
-								{
-									var newAliases = newArrayList
-									for(String attributename : getAttributeNamesFrom(source.name))
-									{
-										if(!aliases.contains(attributename))
-										{
-											//Choose an alias for the self joined attribute
-											var newAlias = source.name + '.' + attributename + '#' + selfJoin
-											newAliases.add(attributename)
-											newAliases.add(newAlias)
-											aliases.add(attributename)
-											aliases.add(newAlias)
-										}
-									}
-								}
-								var i = registerOperator('''RENAME({aliases=[«generateListString(aliases)»], pairs='true'}, «input»)''')
-								aliases.clear()
-								aliases.add(struct.attributename)
-								aliases.add(structAlias)
-								if(selfJoin > 0 && counter != sourceStruct.attributes.size)
-								{
-									var newAliases = newArrayList
-									for(String attributename : getAttributeNamesFrom(source.name))
-									{
-										if(!aliases.contains(attributename))
-										{
-											//Choose an alias for the self joined attribute
-											var newAlias = source.name + '.' + attributename + '#' + (selfJoin + 1)
-											newAliases.add(attributename)
-											newAliases.add(newAlias)
-											aliases.add(attributename)
-											aliases.add(newAlias)
-										}
-									}
-								}
-								var j = registerOperator('''RENAME({aliases=[«generateListString(aliases)»], pairs='true'}, «input»)''')
-								return '''JOIN(«i»,«j»)'''													
-							}
-							else
-							{
-								aliases.add(struct.attributename)
-								aliases.add(structAlias)
-							}
-							counter++
-						}
-					}
-					else
-					{
-						println('buildRenameOperatorX() -> realSourcename= ' + realSourcename + ', source.name= ' + source.name)
-						if(realSourcename.equals(source.name))
-						{
-							if(aliases.contains(struct.attributename))
-							{
-								
-								
-//								throw new IllegalArgumentException("given attribute " + struct.attributename + " cannot be referenced")
-							}
-							aliases.add(struct.attributename)
-							aliases.add(structAlias)
-							counter++
-						}
-						else if(realSourcename.isSourceAlias && getSourcenameFromAlias(realSourcename).equals(source.name))
-						{
-							if(aliases.contains(struct.attributename))
-								throw new IllegalArgumentException("given attribute " + struct.attributename + " cannot be referenced")
-							aliases.add(struct.attributename)
-							aliases.add(structAlias)
-							counter++
-						}
-						else
-							throw new IllegalArgumentException("given attribute " + struct.attributename + " cannot be referenced")
-					}
-				}
-				else
-				{
-					if(correspondingSource.equals(source.name))
-					{
-						if(aliases.contains(struct.attributename))
-							throw new IllegalArgumentException("given attribute " + struct.attributename + " cannot be referenced")
-						aliases.add(struct.attributename)
-						aliases.add(structAlias)
-						counter++
-					}
-				}
-			}
-			aliasedAttributes.add(struct.attributename)
-		}
-		if(selfJoin > 0 && counter != sourceStruct.attributes.size)
-		{
-			var newAliases = newArrayList
-			for(String attributename : getAttributeNamesFrom(source.name))
-			{
-				if(!aliases.contains(attributename))
-				{
-					//Choose an alias for the self joined attribute
-					var newAlias = source.name + '.' + attributename + '#' + selfJoin
-					newAliases.add(attributename)
-					newAliases.add(newAlias)
-					aliases.add(attributename)
-					aliases.add(newAlias)
-				}
-			}
-		}
-		//Build rename operator
-		if(!aliases.empty)
-			return registerOperator('''RENAME({aliases=[«generateListString(aliases)»], pairs='true'}, «input»)''')
-		return input
-	}
- */
 	def private CharSequence buildJoin(String[] srcs)
 	{
 		var sourcenames = srcs
@@ -1709,11 +1487,8 @@ class CQLGenerator implements IGenerator2
 			var alias = renameAliases.get(i + 2)
 			getSource(sourcename).findbyName(attributename).aliases.remove(alias)
 		}
-		
-		var argument = generateListString(list)
-		.replace("'['", "['")
-		.replace("']'", "']")
-		return '''MAP({expressions=[«argument»]},«operator»)'''			
+		var argument = generateListString(list).replace("'['", "['").replace("']'", "']")
+		return builder.buildOperator('MAP', newLinkedHashMap('expressions' -> argument, 'input' -> operator.toString))			
 	}
 		
 	def boolean checkIfSelectAll(List<Attribute> attributes)
@@ -2577,7 +2352,6 @@ class CQLGenerator implements IGenerator2
 	            return containedBySources.get(0).sourcename + '.' + attribute
             }
 		}
-				
 		throw new IllegalArgumentException("attribute " + attribute + " could not be resolved" )		
 	}
 	

@@ -430,7 +430,7 @@ class CQLGeneratorQueryTest
 //		(
 //			"SELECT COUNT(stream1.attr1) AS value1 FROM stream1 AS s1 WHERE attr1 > 2;"
 //			,
-//			"operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','value1','Integer']]}, stream1)
+//			"operator_1 = AGGREGATE({aggregations=[['COUNT','stream1.attr1','value1','Integer']]}, stream1)
 //			 operator_2 = SELECT({predicate='stream1.attr1>2'}, operator_1)
 //			 operator_3 = MAP({expressions=['value1']}, operator_2)"   
 //			, new CQLDictionaryHelper()
@@ -515,7 +515,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT stream1.attr1, AVG(attr1) AS avgAttr1, stream1.attr2, attr3 FROM stream1, stream2, stream3;"
 			,
-			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','avgAttr1','Integer']]}, JOIN(stream1,JOIN(stream2,stream3)))
+			"operator_1 = AGGREGATE({aggregations=[['AVG','stream1.attr1','avgAttr1','Integer']]}, JOIN(stream1,JOIN(stream2,stream3)))
 			 operator_2 = MAP({expressions=['stream1.attr1','avgAttr1','stream1.attr2','stream2.attr3']}, JOIN(operator_1, JOIN(stream1, JOIN(stream2, stream3))))"
 		, new CQLDictionaryHelper())
 	}
@@ -634,7 +634,7 @@ class CQLGeneratorQueryTest
 				  wrapper = 'GenericPush',
 				  protocol = 'CSV',
 				  transport = 'File',
-				  dataHandler ='Tuple',
+				  datahandler ='Tuple',
 				  schema = [['attr1', 'Integer']],
 				  options =[['port', '54321'],['host', 'localhost']]
 				}
@@ -655,7 +655,7 @@ class CQLGeneratorQueryTest
 				  wrapper = 'GenericPush',
 				  protocol = 'SizeByteBuffer',
 				  transport = 'NonBlockingTcp',
-				  dataHandler ='Tuple',
+				  datahandler ='Tuple',
 				  schema = [['attr1', 'INTEGER']],
 				  options =[['port', '54321'],['host', 'localhost']]
 				}
@@ -676,7 +676,7 @@ class CQLGeneratorQueryTest
 				  wrapper = 'GenericPull',
 				  protocol = 'SimpleCSV',
 				  transport = 'File',
-				  dataHandler ='Tuple',
+				  datahandler ='Tuple',
 				  schema = [['attr1', 'Integer']],
 				  options =[['filename', 'this/is/a/filename.file'],['delimiter',';'],['textDelimiter',\"'\"]]
 				}
@@ -730,7 +730,7 @@ class CQLGeneratorQueryTest
 						wrapper     = 'GenericPush',
 						protocol    = 'CSV',
 						transport   = 'FILE',
-						dataHandler = 'TUPLE',
+						datahandler = 'TUPLE',
 						options =[['filename','outfile1']]
 					 }
 					 ,operator_2
@@ -738,7 +738,7 @@ class CQLGeneratorQueryTest
 			, new CQLDictionaryHelper()	
 		)	
 	}
-
+	
 	@Test def void StreamtoTest4()
 	{
 		assertCorrectGenerated
@@ -753,7 +753,7 @@ class CQLGeneratorQueryTest
 
 			STREAM TO out1 stream1;" 
 			,
-			"out1=SENDER({sink='out1',wrapper='GenericPush',protocol='CSV',transport='FILE',dataHandler='TUPLE',options=[['filename','outfile1']]}, stream1)"
+			"out1=SENDER({sink='out1',wrapper='GenericPush',protocol='CSV',transport='FILE',datahandler='TUPLE',options=[['filename','outfile1']]}, stream1)"
 			, new CQLDictionaryHelper()	
 		)	
 	}
@@ -875,7 +875,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']],GROUP_BY=['stream1.attr1']},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr1','Counter','Integer']],group_by=['stream1.attr1']},stream1)
 			 operator_2=MAP({expressions=['Counter']},operator_1)"
 			, new CQLDictionaryHelper()
 		)
@@ -887,7 +887,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer'],['AVG','stream1.attr2','AVG_0','String']],GROUP_BY=['stream1.attr1','stream1.attr2']},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr1','Counter','Integer'],['AVG','stream1.attr2','AVG_0','String']],group_by=['stream1.attr1','stream1.attr2']},stream1)
 			 operator_2=MAP({expressions=['Counter','AVG_0']},operator_1)"
 			, new CQLDictionaryHelper()
 		)
@@ -899,7 +899,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] AS s1 , stream2 GROUP BY attr1, attr2;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','s1.attr1','Counter','Integer'],['AVG','s1.attr2','AVG_0','String']],GROUP_BY=['s1.attr1','s1.attr2']},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream1),stream2))
+			"operator_1=AGGREGATE({aggregations=[['COUNT','s1.attr1','Counter','Integer'],['AVG','s1.attr2','AVG_0','String']],group_by=['s1.attr1','s1.attr2']},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream1),stream2))
 			 operator_2=MAP({expressions=['Counter','AVG_0']},operator_1)"
 			, new CQLDictionaryHelper()
 		)
@@ -912,7 +912,7 @@ class CQLGeneratorQueryTest
 			"SELECT attr1 as a1, COUNT(attr1) AS Counter FROM stream1 [SIZE 5 MINUTES TIME];"
 			,
 			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1))
-			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','a1','Counter','Integer']]},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['COUNT','a1','Counter','Integer']]},operator_1)
 			 operator_3=RENAME({aliases=['attr1','a1'],pairs='true'},TIMEWINDOW({size=[5,'MINUTES'],advance=[1,'MINUTES']},stream1))
 			 operator_4=MAP({expressions=['a1','Counter']},JOIN(operator_2,operator_3))"
 			, new CQLDictionaryHelper()
@@ -929,7 +929,7 @@ class CQLGeneratorQueryTest
 			operator_1 = AGGREGATE
 			(
 				{
-					AGGREGATIONS=[
+					aggregations=[
 									['COUNT', 'stream1.attr1', 'Counter', 'Integer']
 								 ]
 				}, JOIN(stream1, stream2)
@@ -945,7 +945,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(stream1,TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(stream1,TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
 			 operator_2=MAP({expressions=['Counter','stream2.attr3']},JOIN(operator_1,JOIN(stream1,TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2))))"
 			, new CQLDictionaryHelper()
 		)
@@ -957,7 +957,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
 			 operator_2=SELECT({predicate='stream2.attr3>100'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2))))	
 			 operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
@@ -970,7 +970,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr1','Counter','Integer']]},JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2)))
 			 operator_2=SELECT({predicate='Counter>1000&&stream2.attr3>100'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,'MINUTES'],advance=[2,'SECONDS']},stream1),TIMEWINDOW({size=[10,'MINUTES'],advance=[1,'MINUTES']},stream2))))
 			 operator_3=MAP({expressions=['Counter','stream2.attr3']},operator_2)"
 			, new CQLDictionaryHelper()
@@ -984,7 +984,7 @@ class CQLGeneratorQueryTest
 			"SELECT COUNT(attr1 + 20) AS Counter FROM stream1;"
 			,
 			"operator_1=MAP({expressions=[['stream1.attr1+20','expression_0']]},stream1)
-			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','expression_0','Counter','DOUBLE']]},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['COUNT','expression_0','Counter','DOUBLE']]},operator_1)
 			 operator_3=MAP({expressions=['Counter']},operator_2)"
 			, new CQLDictionaryHelper()
 		)
@@ -996,7 +996,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT COUNT(*) AS count FROM stream1;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','*','count']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','*','count']]},stream1)
 			 operator_2=MAP({expressions=['count']}, operator_1)"
 			, new CQLDictionaryHelper()
 		)
@@ -1008,7 +1008,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1, AVG(attr2) AS aprice FROM stream1 GROUP BY attr1;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr2','aprice','String']],GROUP_BY=['stream1.attr1']},stream1)
+			"operator_1=AGGREGATE({aggregations=[['AVG','stream1.attr2','aprice','String']],group_by=['stream1.attr1']},stream1)
 			 operator_2=MAP({expressions=['stream1.attr1','aprice']},JOIN(RENAME({aliases=['attr1','attr1_groupAttribute#0'],pairs='true'},operator_1),stream1))"
 			, new CQLDictionaryHelper()
 		)
@@ -1127,7 +1127,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1;"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
 			 operator_2=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0']},JOIN(operator_1, stream1))"
 			, new CQLDictionaryHelper()
 		)
@@ -1143,7 +1143,7 @@ class CQLGeneratorQueryTest
 		  	 HAVING avgPrice > 150;"
 			,
 			"operator_1=RENAME({aliases=['attr2','A'],pairs='true'},stream1)
-			 operator_2=AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','avgPrice','Integer']],GROUP_BY=['A']},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['AVG','stream1.attr1','avgPrice','Integer']],group_by=['A']},operator_1)
 			 operator_3=RENAME({aliases=['attr2','A'],pairs='true'},stream1)
 			 operator_4=SELECT({predicate='avgPrice>150'},JOIN(RENAME({aliases=['A','A_groupAttribute#0'],pairs='true'},operator_2),operator_3))
 			 operator_5=MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'avgPrice','A']},operator_4)"
@@ -1151,16 +1151,17 @@ class CQLGeneratorQueryTest
 		)
 	}
 
-	@Test def void SelectExpressionTest9() 
+	@Test def void SelectExpressionTest9()//TODO something is wrong here -> operator plan not correct 
 	{
 		assertCorrectGenerated
 		(
 			"SELECT attr1 AS a1, DolToEur(attr1), AVG(attr1) FROM stream1;"
 			,
 			"operator_1=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
-			 operator_2=AGGREGATE({AGGREGATIONS=[['AVG','a1','AVG_0','Integer']]},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['AVG','a1','AVG_0','Integer']]},operator_1)
 			 operator_3=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
-			 operator_4=MAP({expressions=['a1',['DolToEur(a1)','expression_0'],'AVG_0']},JOIN(operator_2,operator_3))"
+			 operator_4=RENAME({aliases=['attr1','a1'],pairs='true'},stream1)
+			 operator_5=MAP({expressions=['a1',['DolToEur(a1)','expression_0'],'AVG_0']},JOIN(operator_2,operator_4))x"
 			, new CQLDictionaryHelper()
 		)
 	}
@@ -1171,7 +1172,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 FROM stream1 WHERE attr1 > 10;"
 			,
-			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
+			"operator_1 = AGGREGATE({aggregations=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
              operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1, stream1))
              operator_3 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0', 'stream1.attr1']}, operator_2)"
 			, new CQLDictionaryHelper()
@@ -1184,7 +1185,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1 WHERE attr1 > 10;"
 			,
-			"operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
+			"operator_1 = AGGREGATE({aggregations=[['AVG','stream1.attr1','AVG_0','Integer']]},stream1)
 			 operator_2 = SELECT({predicate='stream1.attr1>10'}, JOIN(operator_1, stream1))
 			 operator_3 = MAP({expressions=[['DolToEur(stream1.attr1)','expression_0'],'AVG_0']}, operator_2)"
 			, new CQLDictionaryHelper()
@@ -1403,7 +1404,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > ALL (SELECT COUNT(attr2) AS num FROM stream1);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=MAP({expressions=['num']},operator_1)
 			 operator_3=EXISTENCE({type='NOT_EXISTS',predicate='attr1<=num'},operator_2,stream1)
 			 operator_4=MAP({expressions=['stream1.attr1']}, JOIN(operator_3, stream1))"
@@ -1417,7 +1418,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > ANY (SELECT COUNT(attr2) AS num FROM stream1);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=MAP({expressions=['num']},operator_1)
 			 operator_3=EXISTENCE({type='EXISTS',predicate='attr1>num'},operator_2,stream1)
 			 operator_4=MAP({expressions=['stream1.attr1']}, JOIN(operator_3, stream1))"
@@ -1431,7 +1432,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT COUNT(attr2) AS num FROM stream1 WHERE attr1 < attr2);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=SELECT({predicate='stream1.attr1<stream1.attr2'},operator_1)
 			 operator_3=MAP({expressions=['num']},operator_2)
 			 operator_4=EXISTENCE({type='EXISTS',predicate='attr1>num'},operator_3,stream1)
@@ -1446,7 +1447,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT stream1.attr2, COUNT(stream1.attr2) AS num FROM stream1 WHERE attr2 < attr1);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=SELECT({predicate='stream1.attr2<stream1.attr1'},JOIN(operator_1,stream1))
 			 operator_3=MAP({expressions=['stream1.attr2','num']},operator_2)
 		     operator_4=EXISTENCE({type='EXISTS',predicate='attr1>stream1_attr2&&attr1>num'},operator_3,stream1)
@@ -1482,7 +1483,7 @@ class CQLGeneratorQueryTest
 		(
 			"SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT COUNT(attr2) AS num FROM stream1);"
 			,
-			"operator_1=AGGREGATE({AGGREGATIONS=[['COUNT','stream1.attr2','num','String']]},stream1)
+			"operator_1=AGGREGATE({aggregations=[['COUNT','stream1.attr2','num','String']]},stream1)
 			 operator_2=MAP({expressions=['num']},operator_1)
 			 operator_3=EXISTENCE({type='EXISTS',predicate='attr1==num'},operator_2,stream1)
 			 operator_4=MAP({expressions=['stream1.attr1']}, JOIN(operator_3,stream1))"
@@ -1513,7 +1514,7 @@ class CQLGeneratorQueryTest
 			WHERE num >= 200"
 			,
 			"operator_1=RENAME({aliases=['attr1','b1.attr1','attr2','b1.attr2'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
-			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']]},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['COUNT','b1.attr1','num','Integer']]},operator_1)
 			 operator_3=RENAME({aliases=['attr1','b1.attr1','attr2','b1.attr2'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
    			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
 			 operator_5=RENAME({aliases=['b1_attr1','b'],pairs='true'},operator_4)
@@ -1537,7 +1538,7 @@ class CQLGeneratorQueryTest
 			WHERE num >= 200"
 			,
 			"operator_1=RENAME({aliases=['attr1','b1.attr1','attr2','b1.attr2'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
-			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['COUNT','b1.attr1','num','Integer']],group_by=['b1.attr1']},operator_1)
 			 operator_3=RENAME({aliases=['attr1','b1.attr1','attr2','b1.attr2'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
 			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(RENAME({aliases=['b1.attr1','b1.attr1_groupAttribute#0'],pairs='true'},operator_2),operator_3))
 			 operator_5=RENAME({aliases=['attr3','c1.attr3','attr4','c1.attr4'],pairs='true'},stream2)	
@@ -1564,7 +1565,7 @@ class CQLGeneratorQueryTest
 			WHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)"
 			,
 			"operator_1=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
-			 operator_2=AGGREGATE({AGGREGATIONS=[['COUNT','b1.attr1','num','Integer']],GROUP_BY=['b1.attr1']},operator_1)
+			 operator_2=AGGREGATE({aggregations=[['COUNT','b1.attr1','num','Integer']],group_by=['b1.attr1']},operator_1)
 			 operator_3=RENAME({aliases=['attr1','b1.attr1'],pairs='true'},TIMEWINDOW({size=[60,'MINUTES'],advance=[1,'MINUTES']},stream1))
 			 operator_4=MAP({expressions=['b1.attr1','num']},JOIN(operator_2,operator_3))
 			 operator_5=RENAME({aliases=['attr3','c1.attr3'],pairs='true'},stream2)

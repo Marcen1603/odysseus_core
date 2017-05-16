@@ -47,7 +47,6 @@ public class PQLBuilder
 	
 	private PQLBuilder() 
 	{
-		
 		operatorArguments = new HashMap<>();
 		operatorNames = new ArrayList<>();
 		
@@ -55,10 +54,10 @@ public class PQLBuilder
 		operatorArguments.put(
 			"DATABASESOURCE", 
 			new String[] {
-			 "connection",
-			 "table",
-			 "attributes",
-			 "waiteach"
+			 "connection"+ESC+STRING_TYPE,
+			 "table"+ESC+STRING_TYPE,
+			 "attributes"+ESC+LIST_TYPE,
+			 "waiteach"+ESC+INT_TYPE
 			}
 		);
 		
@@ -66,24 +65,40 @@ public class PQLBuilder
 		operatorArguments.put(
 			"ACCESS", 
 			new String[] {
-			 "source",
-			 "wrapper",
-			 "protocol",
-			 "transport",
-			 "dataHandler",
-			 "schema",
-			 "options"
+			 "source"+ESC+STRING_TYPE,
+			 "wrapper"+ESC+STRING_TYPE,
+			 "protocol"+ESC+STRING_TYPE,
+			 "transport"+ESC+STRING_TYPE,
+			 "datahandler"+ESC+STRING_TYPE,
+			 "schema"+ESC+LIST_TYPE,
+			 "options"+ESC+LIST_TYPE
 			}
 		);
+		
+		operatorNames.add("SENDER");
+		operatorArguments.put(
+			"SENDER", 
+			new String[] {
+			 "sink"+ESC+STRING_TYPE,
+			 "wrapper"+ESC+STRING_TYPE,
+			 "protocol"+ESC+STRING_TYPE,
+			 "transport"+ESC+STRING_TYPE,
+			 "datahandler"+ESC+STRING_TYPE,
+			 "schema"+ESC+LIST_TYPE,
+			 "options"+ESC+LIST_TYPE,
+			 "input"
+			}
+		);
+		
 		operatorNames.add("DATABASESINK");
 		operatorArguments.put(
 				"DATABASESINK", 
 				new String[] {
-				 "connection",
-				 "table",
-				 "drop",
-				 "truncate",
-				 "type",
+				 "connection"+ESC+STRING_TYPE,
+				 "table"+ESC+STRING_TYPE,
+				 "drop"+ESC+STRING_TYPE,
+				 "truncate"+ESC+STRING_TYPE,
+				 "type"+ESC+STRING_TYPE,
 				 "input"
 				}
 			);
@@ -92,87 +107,80 @@ public class PQLBuilder
 		operatorArguments.put(
 				"EXISTENCE", 
 				new String[] {
-				 "type",
-				 "predicate",
+				 "type"+ESC+STRING_TYPE,
+				 "predicate"+ESC+STRING_TYPE,
 				 "input"
 				}
 			);
 		
-	}
-	
-	public String buildTimebasedWindowOperator(String windowSize, String windowUnit, String advanceSize, String advanceUnit, String input)
-	{
-		builder.setLength(0);
-		builder.append("TIMEWINDOW({size=[");
-		builder.append(windowSize);
-		builder.append(",");
-		builder.append("'");
-		builder.append(windowUnit);
-		builder.append("'");
-		builder.append("],advance=[");
-		builder.append(advanceSize);
-		builder.append(",'");
-		builder.append(advanceUnit);
-		builder.append("']},");
-		builder.append(input);
-		builder.append(")");
+		operatorNames.add("SELECT");
+		operatorArguments.put(
+				"SELECT", 
+				new String[] {
+				 "predicate"+ESC+STRING_TYPE,
+				 "input"
+				}
+			);
+		
+		operatorNames.add("MAP");
+		operatorArguments.put(
+				"MAP", 
+				new String[] {
+				 "expressions"+ESC+LIST_TYPE,
+				 "input"
+				}
+			);	
+		
+		operatorNames.add("TIMEWINDOW");
+		operatorArguments.put(
+				"TIMEWINDOW", 
+				new String[] {
+				 "size"+ESC+LIST_TYPE,
+				 "advance"+ESC+LIST_TYPE,
+				 "input"
+				}
+			);	
 
-		return builder.toString();//"TIMEWINDOW({size = ["+windowSize+",'"+windowUnit+"'],advance = ["+advanceSize+",'"+advanceUnit+"']},"+input+")";
+		operatorNames.add("ELEMENTWINDOW");
+		operatorArguments.put(
+				"ELEMENTWINDOW", 
+				new String[] {
+				 "size"+ESC+INT_TYPE,
+				 "advance"+ESC+INT_TYPE,
+				 "partition"+ESC+INT_TYPE,
+				 "input"
+				}
+			);	
+		
+		operatorNames.add("RENAME");
+		operatorArguments.put(
+				"RENAME", 
+				new String[] {
+				 "aliases"+ESC+LIST_TYPE,
+				 "pairs"+ESC+STRING_TYPE,
+				 "input"
+				}
+			);	
+		
+		operatorNames.add("AGGREGATE");
+		operatorArguments.put(
+				"AGGREGATE", 
+				new String[] {
+				 "aggregations"+ESC+LIST_TYPE,
+				 "group_by"+ESC+LIST_TYPE,
+				 "input"
+				}
+			);			
+		
 	}
 
-	/** Returns a string that represents {@link DatabaseSourceAO} and is build by the given parameters in following order: 
-	 * @param connection
-	 * @param table
-	 * @param attributes
-	 * @param waiteach (is optional)
-	 */
-	@Deprecated
-	public String buildCreateDataSourceOperator(Map<String, String> args)
-	{	
-		String[] variables = 
-			{
-			 "connection",
-			 "table",
-			 "attributes",
-			 "waiteach"//is optional
-			};
-		return buildOperator("DATABASESOURCE", args);
-	}
-	
-	/** Returns a string that represents {@link AccessAO} and is build by the given parameters in following order:
-	 * @param sourcename
-	 * @param wrapper
-	 * @param protocol
-	 * @param transport
-	 * @param datahandler
-	 * @param schema
-	 * @param options
-	 */
-	@Deprecated 
-	public String buildAccessOperator(Map<String, String> args)
-	{
-		String[] variables = 
-			{
-			 "source",
-			 "wrapper",
-			 "protocol",
-			 "transport",
-			 "dataHandler",
-			 "schema",
-			 "options"
-			};
-		return buildOperator("ACCESS", args);
-	}
-	
 	public String buildOperator(String Operatorname, Map<String, String> args)
 	{
 		if(!operatorNames.contains(Operatorname))
-			throw new IllegalArgumentException("Given operator name is unknown: " + Operatorname);
-		
-		System.out.println("args= " + args.toString());
+			throw new IllegalArgumentException("Given operator is unknown: " + Operatorname);
 		
 		buildPrefix(Operatorname);
-		buildArguments(operatorArguments.get(Operatorname), args);
+		buildArguments(operatorArguments.get(Operatorname.toUpperCase()), args);
 		buildSuffix(args.get("input"));
 		return builder.toString();
 	}
@@ -180,7 +188,7 @@ public class PQLBuilder
 	private StringBuilder buildPrefix(String operatorname)
 	{
 		builder.setLength(0);
-		builder.append(operatorname);
+		builder.append(operatorname.toUpperCase());
 		builder.append("(");
 		builder.append("{");
 		return builder;
@@ -204,54 +212,29 @@ public class PQLBuilder
 	private StringBuilder buildArguments(String[] variables, Map<String, String> map)
 	{
 		for(String var : variables)
-		{
-			System.out.println(var);
 			if(!var.equals("input"))
 			{
-				String value = getValue(map.get(var));
+				String[] split = var.split(ESC);
+				String value = getValue(split[1], map.get(split[0].toLowerCase()));
 				if(value != null)
-					builder.append(var + "=" + value + ",");
+					builder.append(split[0] + "=" + value + ",");
 			}
-		}
 		builder.deleteCharAt(builder.toString().length() - 1);
 		return builder;
 	}
-	
-	private Type getType(String value) 
-	{
-		String[] split = value.split(ESC);
-		
-		return null;
-	}
 
-	private String getValue(String value)
+	private String getValue(String type, String value)
 	{
 		if(value == null) return value;
-		if(!value.contains(ESC))
-		{
-			throw new IllegalArgumentException("given value " 
-					+ value + " must contain a type that is decoded such as " 
-					+ ESC + " with one of the following types:"+types.toString());
-		}
-		
-		String[] split = value.split(ESC);
-		String type = split[1];
-		String name = split[0];
 		switch(type)
 		{
 		case(STRING_TYPE):
-			return "'" + name + "'";
+			return "'" + value + "'";
 		case(LIST_TYPE):
-			return "[" + name + "]";
+			return "[" + value + "]";
 		default: 
-			return name;
+			return value;
 		}
-	}
-	
-	private StringBuilder buildWindowOperator()
-	{
-		builder.setLength(0);
-		return null;
 	}
 	
 	public static void main(String[] args) 
