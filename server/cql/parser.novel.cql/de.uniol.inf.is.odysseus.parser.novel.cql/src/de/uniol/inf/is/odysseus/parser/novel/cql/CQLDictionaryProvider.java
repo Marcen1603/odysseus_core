@@ -6,6 +6,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
+@Deprecated
 public class CQLDictionaryProvider 
 {
 

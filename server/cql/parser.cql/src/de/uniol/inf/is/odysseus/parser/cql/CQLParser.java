@@ -112,6 +112,7 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttribute
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
+@Deprecated
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	final private List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();

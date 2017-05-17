@@ -4,12 +4,10 @@ Bundle-Name: de.uniol.inf.is.odysseus.parser.novel.cql
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.novel.cql; singleton:=true
-Service-Component: OSGI-INF/component.xml
-Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/component.xml,
+ OSGI-INF/ExtensionService.xml
 Require-Bundle: org.eclipse.xtext,
  org.eclipse.equinox.common,
- de.uniol.inf.is.odysseus.core,
- de.uniol.inf.is.odysseus.core.server,
  org.eclipse.osgi,
  org.eclipse.emf.ecore,
  org.eclipse.xtext.xbase.lib,
@@ -18,31 +16,32 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtend.lib,
  org.eclipse.emf.common,
  org.eclipse.xtext.junit4,
- de.uniol.inf.is.odysseus.parser.pql,
  com.google.guava,
  org.eclipse.xtend.lib.macro,
  org.eclipse.xtext.generator,
  org.eclipse.xtext.builder.standalone;bundle-version="2.10.0",
+ de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.is.odysseus.core.server,
+ de.uniol.inf.is.odysseus.parser.pql,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.database;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.context,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.intervalapproach
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql,
+ de.uniol.inf.is.odysseus.parser.novel.cql.builder,
  de.uniol.inf.is.odysseus.parser.novel.cql.cQL,
  de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl,
  de.uniol.inf.is.odysseus.parser.novel.cql.cQL.util,
  de.uniol.inf.is.odysseus.parser.novel.cql.generator,
  de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr,
  de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.internal,
+ de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer,
  de.uniol.inf.is.odysseus.parser.novel.cql.scoping,
  de.uniol.inf.is.odysseus.parser.novel.cql.serializer,
  de.uniol.inf.is.odysseus.parser.novel.cql.services,
  de.uniol.inf.is.odysseus.parser.novel.cql.typing,
  de.uniol.inf.is.odysseus.parser.novel.cql.util,
- de.uniol.inf.is.odysseus.parser.novel.cql.validation,
- de.uniol.inf.is.odysseus.parser.novel.cql.parser.antlr.lexer
-Import-Package: de.uniol.inf.is.odysseus.database.connection,
- de.uniol.inf.is.odysseus.database.logicaloperator,
- org.apache.log4j
+ de.uniol.inf.is.odysseus.parser.novel.cql.validation
+Import-Package: org.slf4j
+

@@ -8,7 +8,8 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
-import de.uniol.inf.is.odysseus.parser.novel.cql.builder.PQLBuilder
+import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException
+import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
@@ -68,11 +69,7 @@ import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary
-import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException
-import de.uniol.inf.is.odysseus.parser.novel.cql.CQLParser
-import java.util.Collections
-import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess.UnboundedWindowElements
+import de.uniol.inf.is.odysseus.parser.novel.cql.builder.PQLStringBuilder
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2
@@ -117,7 +114,7 @@ class CQLGenerator implements IGenerator2
 	var private firstJoinInQuery = true
 	//Provides different names e.g. to identify valid names for aggregations and map functions 
 	var private NameProvider nameProvider
-	var private PQLBuilder builder = PQLBuilder.getInstance()
+	var private PQLStringBuilder builder = PQLStringBuilder.getInstance()
 	
 	var private List<String> querySources = newArrayList
 	//
@@ -722,6 +719,7 @@ class CQLGenerator implements IGenerator2
 			}
 			buildPredicateString(str)
 		}
+		println(predicateString)
 		return predicateString
 	}
 	
@@ -1756,6 +1754,7 @@ class CQLGenerator implements IGenerator2
             sourceOrder = sourceOrderList
             projectionAttributes.put(select, attributeOrder)
             projectionSources.put(select, sourceOrder)
+            println('getAttibutename() -> map = ' + map.toString)
     		return map
         }
 		//Get all attributes from predicates

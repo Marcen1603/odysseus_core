@@ -88,13 +88,17 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedSourcenameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
 		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
+		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
+		private final Keyword cLeftCurlyBracketKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final RuleCall cIDTerminalRuleCall_3_1 = (RuleCall)cGroup_3.eContents().get(1);
+		private final Keyword cRightCurlyBracketKeyword_3_2 = (Keyword)cGroup_3.eContents().get(2);
 		
 		//QualifiedAttributename:
 		//	ID
-		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*'
+		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -123,6 +127,18 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'*'
 		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
+		
+		//'{' ID '}'
+		public Group getGroup_3() { return cGroup_3; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_3_0() { return cLeftCurlyBracketKeyword_3_0; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_3_1() { return cIDTerminalRuleCall_3_1; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_3_2() { return cRightCurlyBracketKeyword_3_2; }
 	}
 	public class QualifiedAttributenameWithoutSpecialCharsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributenameWithoutSpecialChars");
@@ -174,6 +190,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTypeStreamToParserRuleCall_0_1 = (RuleCall)cTypeAlternatives_0.eContents().get(1);
 		private final RuleCall cTypeComplexSelectParserRuleCall_0_2 = (RuleCall)cTypeAlternatives_0.eContents().get(2);
 		
+		////TODO rename to query
 		//Statement:
 		//	type=(Create
 		//	| StreamTo
@@ -186,7 +203,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//(Create | StreamTo | ComplexSelect)
 		public Alternatives getTypeAlternatives_0() { return cTypeAlternatives_0; }
 		
-		////	Select
 		//Create
 		public RuleCall getTypeCreateParserRuleCall_0_0() { return cTypeCreateParserRuleCall_0_0; }
 		
@@ -301,17 +317,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cHavingExpressionsModelParserRuleCall_1_6_1_0 = (RuleCall)cHavingAssignment_1_6_1.eContents().get(0);
 		
 		//SimpleSelect:
-		//	{SimpleSelect} ('SELECT'
-		//	distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM' sources+=Source+ (','
-		//	sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-		//	('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
-		//);
+		//	{SimpleSelect} ('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*)
+		//	('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY'
+		//	order+=Attribute+ (',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{SimpleSelect} ('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*)
 		//('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+
-		//(',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
-		//)
+		//(',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{SimpleSelect}
@@ -319,8 +332,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM'
 		//sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (','
-		//order+=Attribute)*)? ('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
-		//)
+		//order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?)
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'SELECT'
@@ -867,21 +879,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.AndOperator");
 		private final Keyword cANDKeyword = (Keyword)rule.eContents().get(1);
 		
-		////QuantificationPredicate:
-		////	ExistPredicate
-		////;
-		////
-		////ExistPredicate returns QuantificationPredicate:
-		////	{ExistPredicate}
-		////	'EXISTS' statement=NestedStatement	
-		////;
-		////
-		////AnyPredicate returns QuantificationPredicate:
-		////	{ExistPredicate}
-		////	'ANY' statement=NestedStatement	
-		////;
-		////TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
-		////Operators for predicates and expressions
 		//AndOperator:
 		//	'AND';
 		@Override public ParserRule getRule() { return rule; }
@@ -1505,8 +1502,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cArgumentsIDTerminalRuleCall_4_2_0 = (RuleCall)cArgumentsAssignment_4_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		
-		////	'"' ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|'"') )* '"' |
-		////			"'" ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|"'") )* "'"
 		//SchemaDefinition:
 		//	name=ID
 		//	'('
@@ -3787,9 +3782,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tLETTER;
 	private final TerminalRule tSPECIAL_CHARS;
 	private final TerminalRule tFLOAT;
-	private final BOOLEANElements pBOOLEAN;
 	private final TerminalRule tBIT;
 	private final TerminalRule tBYTE;
+	private final BOOLEANElements pBOOLEAN;
 	private final TerminalRule tVECTOR_FLOAT;
 	private final TerminalRule tMATRIX_FLOAT;
 	private final TimeElements eTime;
@@ -3882,9 +3877,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.tLETTER = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.LETTER");
 		this.tSPECIAL_CHARS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SPECIAL_CHARS");
 		this.tFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.FLOAT");
-		this.pBOOLEAN = new BOOLEANElements();
 		this.tBIT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.BIT");
 		this.tBYTE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.BYTE");
+		this.pBOOLEAN = new BOOLEANElements();
 		this.tVECTOR_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
 		this.tMATRIX_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
 		this.eTime = new TimeElements();
@@ -4014,7 +4009,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal SPECIAL_CHARS:
-	//	':' | '_' | '{' | '}';
+	//	':' | '_' | '{' | '}' | '$';
 	public TerminalRule getSPECIAL_CHARSRule() {
 		return tSPECIAL_CHARS;
 	}
@@ -4023,16 +4018,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	INT '.' INT;
 	public TerminalRule getFLOATRule() {
 		return tFLOAT;
-	}
-	
-	//BOOLEAN:
-	//	'FALSE' | 'TRUE';
-	public BOOLEANElements getBOOLEANAccess() {
-		return pBOOLEAN;
-	}
-	
-	public ParserRule getBOOLEANRule() {
-		return getBOOLEANAccess().getRule();
 	}
 	
 	//terminal BIT:
@@ -4045,6 +4030,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	//	BIT BIT BIT BIT BIT BIT BIT BIT;
 	public TerminalRule getBYTERule() {
 		return tBYTE;
+	}
+	
+	//BOOLEAN:
+	//	'FALSE' | 'TRUE';
+	public BOOLEANElements getBOOLEANAccess() {
+		return pBOOLEAN;
+	}
+	
+	public ParserRule getBOOLEANRule() {
+		return getBOOLEANAccess().getRule();
 	}
 	
 	//terminal VECTOR_FLOAT:
@@ -4080,7 +4075,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//QualifiedAttributename:
 	//	ID
-	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}';
 	public QualifiedAttributenameElements getQualifiedAttributenameAccess() {
 		return pQualifiedAttributename;
 	}
@@ -4109,6 +4104,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getQualifiedSourcenameAccess().getRule();
 	}
 	
+	////TODO rename to query
 	//Statement:
 	//	type=(Create
 	//	| StreamTo
@@ -4140,11 +4136,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//SimpleSelect:
-	//	{SimpleSelect} ('SELECT'
-	//	distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*) ('FROM' sources+=Source+ (','
-	//	sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-	//	('HAVING' having=ExpressionsModel)? //TODO Add aggregation this model
-	//);
+	//	{SimpleSelect} ('SELECT' distinct='DISTINCT'? ('*' | arguments+=SelectArgument+ (',' arguments+=SelectArgument)*)
+	//	('FROM' sources+=Source+ (',' sources+=Source)*) ('WHERE' predicates=ExpressionsModel)? ('GROUP' 'BY'
+	//	order+=Attribute+ (',' order+=Attribute)*)? ('HAVING' having=ExpressionsModel)?);
 	public SimpleSelectElements getSimpleSelectAccess() {
 		return pSimpleSelect;
 	}
@@ -4296,21 +4290,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getInPredicateAccess().getRule();
 	}
 	
-	////QuantificationPredicate:
-	////	ExistPredicate
-	////;
-	////
-	////ExistPredicate returns QuantificationPredicate:
-	////	{ExistPredicate}
-	////	'EXISTS' statement=NestedStatement	
-	////;
-	////
-	////AnyPredicate returns QuantificationPredicate:
-	////	{ExistPredicate}
-	////	'ANY' statement=NestedStatement	
-	////;
-	////TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
-	////Operators for predicates and expressions
 	//AndOperator:
 	//	'AND';
 	public AndOperatorElements getAndOperatorAccess() {
@@ -4523,14 +4502,12 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal PATH:
-	//	'"' ('\\' . ('\\' .))* '"' |
-	//	"'" ('\\' . ('\\' .))* "'";
+	//	"'" ("\' \\ \'" .) ("\' \\ \'" .)* "'" |
+	//	'"' ("\' \\ \'" .) ("\' \\ \'" .)* '"';
 	public TerminalRule getPATHRule() {
 		return tPATH;
 	}
 	
-	////	'"' ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|'"') )* '"' |
-	////			"'" ( '\\' . / * 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' * / | !('\\'|"'") )* "'"
 	//SchemaDefinition:
 	//	name=ID
 	//	'('

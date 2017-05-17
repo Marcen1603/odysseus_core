@@ -197,13 +197,17 @@ RightSquareBracket : ']';
 
 CircumflexAccent : '^';
 
+LeftCurlyBracket : '{';
+
+RightCurlyBracket : '}';
+
 // Rules duplicated to allow inter-rule references
 
 RULE_ID : RULE_LETTER (RULE_LETTER|RULE_SPECIAL_CHARS|RULE_INT)*;
 
 fragment RULE_LETTER : ('a'..'z'|'A'..'Z');
 
-fragment RULE_SPECIAL_CHARS : (':'|'_'|'{'|'}');
+fragment RULE_SPECIAL_CHARS : (':'|'_'|'{'|'}'|'$');
 
 RULE_FLOAT : RULE_INT '.' RULE_INT;
 
@@ -215,7 +219,7 @@ RULE_VECTOR_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* ']';
 
 RULE_MATRIX_FLOAT : '[' RULE_FLOAT+ (',' RULE_FLOAT)* (';' RULE_FLOAT+ (',' RULE_FLOAT)*)* ']';
 
-RULE_PATH : ('"' ('\\' . '\\' .)* '"'|'\'' ('\\' . '\\' .)* '\'');
+RULE_PATH : ('\'' '\' \\ \'' . ('\' \\ \'' .)* '\''|'"' '\' \\ \'' . ('\' \\ \'' .)* '"');
 
 RULE_INT : ('0'..'9')+;
 

@@ -456,6 +456,14 @@ public class CQLGeneratorQueryTest {
   }
   
   @Test
+  public void foo() {
+    CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
+    this.assertCorrectGenerated(
+      "SELECT * FROM stream1 WHERE attr1 < ${Now}", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)", _cQLDictionaryHelper);
+  }
+  
+  @Test
   public void WindowUnboundedTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(

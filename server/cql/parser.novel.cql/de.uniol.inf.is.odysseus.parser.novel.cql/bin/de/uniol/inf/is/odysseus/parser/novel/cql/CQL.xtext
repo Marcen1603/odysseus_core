@@ -8,18 +8,13 @@ Model:
 	
 terminal ID: (LETTER) (LETTER|SPECIAL_CHARS|INT)*;	
 terminal LETTER: ('a'..'z'|'A'..'Z') ;	
-terminal SPECIAL_CHARS: (':'|'_'|'{'|'}') ;
+terminal SPECIAL_CHARS: (':'|'_'|'{'|'}'|'$') ;
 terminal FLOAT:  INT '.' INT;
-BOOLEAN: ('FALSE'|'TRUE');
 terminal BIT: ('0'|'1');
 terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
+BOOLEAN: ('FALSE'|'TRUE');
 
-//terminal VECTOR_INT: '[' (INT)+ (',' INT)* ']';
 terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* ']';
-//terminal VECTOR_BOOLEAN: '[' (('FALSE'|'TRUE'))+ (',' ('FALSE'|'TRUE'))* ']';
-//terminal VECTOR_BIT: '[' (BIT)+ (',' BIT)* (';' (BIT)+ (',' BIT)*)* ']';
-//terminal VECTOR_BYTE: '[' (BYTE)+ (',' BYTE)* (';' (BYTE)+ (',' BYTE)*)* ']';
-//terminal MATRIX_INT: '[' (INT)+ (',' INT)* (';' (INT)+ (',' INT)*)* ']' ;
 terminal MATRIX_FLOAT : '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
 
 enum Time:
@@ -39,6 +34,7 @@ QualifiedAttributename:
 	(ID
 		| (QualifiedSourcename '.' ID) 
 		| (QualifiedSourcename '.' '*')
+		| ( '{' ID '}')
 	)
 ;
 
@@ -50,9 +46,9 @@ QualifiedSourcename:
 	ID
 ;
 
+//TODO rename to query
 Statement:
 	type=(
-//	Select
 	Create
 	| StreamTo
 	| ComplexSelect
@@ -76,13 +72,12 @@ Command :
 SimpleSelect:
 	{SimpleSelect}
 	(
-		'SELECT'
-		(distinct='DISTINCT')?
+		'SELECT' (distinct='DISTINCT')?
 		('*'|(arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
 		('FROM' sources+=Source+ (',' sources+=Source)*)
 		('WHERE' predicates=ExpressionsModel)?
 		('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-		('HAVING' having=ExpressionsModel)?//TODO Add aggregation this model
+		('HAVING' having=ExpressionsModel)?
 	)
 ;
 
@@ -152,23 +147,6 @@ InPredicate:
 	predicate=('IN')
 ;
 
-//QuantificationPredicate:
-//	ExistPredicate
-//;
-//
-//ExistPredicate returns QuantificationPredicate:
-//	{ExistPredicate}
-//	'EXISTS' statement=NestedStatement	
-//;
-//
-//AnyPredicate returns QuantificationPredicate:
-//	{ExistPredicate}
-//	'ANY' statement=NestedStatement	
-//;
-
-
-//TODO JoinVisitor, schauen wo ExistenceAo erzeugt wird
-//Operators for predicates and expressions
 AndOperator: 'AND' ;
 OrOperator: 'OR' ;
 EQUALITIY_OPERATOR: ('=' | '!=') ;
@@ -260,9 +238,6 @@ terminal PATH:
 	"'" (("\' \\ \'") .) (("\' \\ \'") .)* "'" |
 	'"' (("\' \\ \'") .) (("\' \\ \'") .)* '"'  
 ; 
-
-//	'"' ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|'"') )* '"' |
-//			"'" ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|"'") )* "'"
 
 SchemaDefinition:
 	name=ID

@@ -30,6 +30,8 @@
 
 package de.uniol.inf.is.odysseus.database.connection;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -108,9 +110,15 @@ public class DatabaseConnectionDictionary {
             for (final Entry<String, IDatabaseConnection> c : DatabaseConnectionDictionary.connections.entrySet()) {
                 if (c.getValue() != null) {
                     try {
-                        if (c.getValue().getConnection() != null) {
-                            c.getValue().getConnection().close();
-                        }
+                    	Connection connection = null;
+                    	try {
+                    		connection = c.getValue().getConnection();
+                    	} catch(SQLException e) {
+                    		//ignore: could be no driver class on system shutdown
+                    	}
+                    	if (connection != null) {
+                    		connection.close();
+                    	}
                     }
                     catch (final Throwable e) {
                         DatabaseConnectionDictionary.LOG.error(e.getMessage(), e);

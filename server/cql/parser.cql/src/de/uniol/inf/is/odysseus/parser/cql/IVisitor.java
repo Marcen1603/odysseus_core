@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExe
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.parser.SimpleNode;
 
+@Deprecated
 public interface IVisitor {
 
 	public Object visit(SimpleNode node, Object data, Object baseObject); 

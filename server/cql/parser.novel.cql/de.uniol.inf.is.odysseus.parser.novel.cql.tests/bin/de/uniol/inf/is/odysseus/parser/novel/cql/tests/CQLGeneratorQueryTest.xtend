@@ -758,6 +758,18 @@ class CQLGeneratorQueryTest
 		)	
 	}
 	
+	@Test def void foo() 
+	{ 
+		assertCorrectGenerated
+		(
+			"SELECT * FROM stream1 WHERE attr1 < ${Now}"
+			,
+			"operator_1 = MAP({expressions=['stream1.attr1', 'stream1.attr2']}, stream1)"
+		, new CQLDictionaryHelper())
+	}
+	
+
+	
 	@Test def void WindowUnboundedTest1() 
 	{ 
 		assertCorrectGenerated

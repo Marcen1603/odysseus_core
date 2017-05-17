@@ -67,6 +67,7 @@ import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
  * 
  * @author Dennis Geesen Created at: 06.02.2012
  */
+@Deprecated
 public class ContextVisitor implements IVisitor {
 
 	private ISession session;

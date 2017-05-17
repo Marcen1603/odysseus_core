@@ -3,18 +3,14 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.validation
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.typing.TypeListener
-import org.eclipse.xtext.validation.Check
 import org.eclipse.xtext.validation.ComposedChecks
-import org.eclipse.xtext.scoping.Scopes
-
 
 /**
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-@ComposedChecks(validators = #[CQLExpressionsValidator, TypeListener])
+@ComposedChecks(validators = #[CQLExpressionsValidator])
 class CQLValidator extends AbstractCQLValidator 
 {
 	
