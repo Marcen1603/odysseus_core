@@ -10,7 +10,9 @@ Require-Bundle: org.openmuc.j60870;bundle-version="1.2.0",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.transform;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0"
-Service-Component: OSGI-INF/IEC60870_5_104TransportHandler.xml
+ de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0",
+ de.uniol.inf.is.odysseus.mep
+Service-Component: OSGI-INF/IEC60870_5_104TransportHandler.xml,
+ OSGI-INF/IEC60870_5_104MEPFunctionProvider.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang
