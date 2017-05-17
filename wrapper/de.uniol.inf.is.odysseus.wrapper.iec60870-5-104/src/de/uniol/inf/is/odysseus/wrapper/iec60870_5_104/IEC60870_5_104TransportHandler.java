@@ -1,10 +1,11 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.transporthandler;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.openmuc.j60870.ClientConnectionBuilder;
 import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.Server;
@@ -12,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
@@ -396,8 +399,17 @@ public class IEC60870_5_104TransportHandler extends AbstractPushTransportHandler
 
 	@Override
 	public void send(byte[] message) throws IOException {
-		// TODO Use j60870 to send data. But j60870 needs ASDU objects.
-		System.err.println("Send me!");
+		throw new NotImplementedException(
+				"The method send(byte[]) of the IEC60870_5_104 transport handler is not implemented! Use the IEC60870_5_104 transport handler only with the None protocol handler so that the method send(Object) is called.");
+	}
+
+	@Override
+	public void send(Object message) throws IOException {
+		if (message instanceof Tuple) {
+			@SuppressWarnings("unchecked")
+			Tuple<IMetaAttribute> tuple = (Tuple<IMetaAttribute>) message;
+			clientConnection.send(ASDUConverter.TupleToASDU(tuple));
+		}
 	}
 
 	@Override

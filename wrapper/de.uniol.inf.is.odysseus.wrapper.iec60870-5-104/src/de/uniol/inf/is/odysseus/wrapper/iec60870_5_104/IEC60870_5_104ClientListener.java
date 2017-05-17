@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.transporthandler;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
 
 import java.io.IOException;
 
