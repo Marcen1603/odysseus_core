@@ -35,7 +35,7 @@ public class IEC104ServerListener implements ServerEventListener {
 	private IEC104ServerTransportHandler transportHandler;
 
 	/**
-	 * Opened connections.
+	 * The listeners representing opened connections to clients.
 	 */
 	private List<ConnectionListener> connectionListeners = new ArrayList<>();;
 
@@ -84,7 +84,12 @@ public class IEC104ServerListener implements ServerEventListener {
 		AbstractIEC104TransportHandler.log.error("Server has stopped listening for new connections! Will quit.", e);
 	}
 
-	// TODO javaDoc
+	/**
+	 * Sends a tuple to all connected clients.
+	 *
+	 * @param tuple
+	 *            The tuple to send.
+	 */
 	public void sendTuple(Tuple<IMetaAttribute> tuple) {
 		connectionListeners.forEach(listener -> listener.newTuple(tuple));
 	}
@@ -128,7 +133,12 @@ public class IEC104ServerListener implements ServerEventListener {
 			transportHandler.fireProcess(ASDUConverter.asduToTuple(asdu));
 		}
 
-		// TODO javaDoc
+		/**
+		 * A new tuple to send received from transport handler.
+		 *
+		 * @param tuple
+		 *            The tuple to send.
+		 */
 		public void newTuple(Tuple<IMetaAttribute> tuple) {
 			try {
 				connection.send(ASDUConverter.TupleToASDU(tuple));
