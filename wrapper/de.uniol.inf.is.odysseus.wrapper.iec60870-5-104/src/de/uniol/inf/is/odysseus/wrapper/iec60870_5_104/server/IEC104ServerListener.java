@@ -1,12 +1,19 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.server;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import org.openmuc.j60870.ASdu;
 import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.ConnectionEventListener;
 import org.openmuc.j60870.ServerEventListener;
+
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.ASDUConverter;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.AbstractIEC104TransportHandler;
 
 /**
  * Listener implementation for new IEC60870-5-104 clients. <br />
@@ -20,17 +27,17 @@ import org.openmuc.j60870.ServerEventListener;
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class IEC60870_5_104ServerListener implements ServerEventListener {
+public class IEC104ServerListener implements ServerEventListener {
 
 	/**
 	 * The transport handler object.
 	 */
-	private IEC60870_5_104TransportHandler transportHandler;
+	private IEC104ServerTransportHandler transportHandler;
 
 	/**
-	 * Amount of connected clients
+	 * Opened connections.
 	 */
-	private int connectionCounter = 0;
+	private List<ConnectionListener> connectionListeners = new ArrayList<>();;
 
 	/**
 	 * Creates a new server listener.
@@ -38,41 +45,48 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 	 * @param transportHandler
 	 *            The calling transport handler object.
 	 */
-	public IEC60870_5_104ServerListener(IEC60870_5_104TransportHandler transportHandler) {
+	public IEC104ServerListener(IEC104ServerTransportHandler transportHandler) {
 		this.transportHandler = transportHandler;
 	}
 
 	@Override
 	public void connectionAttemptFailed(IOException arg0) {
-		IEC60870_5_104TransportHandler.log.error("Connection attempt failed!", arg0);
+		AbstractIEC104TransportHandler.log.error("Connection attempt failed!", arg0);
 	}
 
 	@Override
 	public void connectionIndication(Connection connection) {
-		int connectionId = connectionCounter++;
-		IEC60870_5_104TransportHandler.log.debug(
+		int connectionId = connectionListeners.size();
+		ConnectionListener connectionListener = new ConnectionListener(connection, connectionId);
+		AbstractIEC104TransportHandler.log.debug(
 				"A client has connected using TCP/IP. Will listen for a StartDT request. Connection ID: {}",
 				connectionId);
 
 		try {
-			connection.waitForStartDT(new ConnectionListener(connection, connectionId), transportHandler.getTimeout());
+			connection.waitForStartDT(connectionListener, transportHandler.getTimeout());
 		} catch (IOException e) {
-			IEC60870_5_104TransportHandler.log
+			AbstractIEC104TransportHandler.log
 					.error("Connection (" + connectionId + ") interrupted while waiting for StartDT. Will quit.", e);
 			return;
 		} catch (TimeoutException e) {
-			IEC60870_5_104TransportHandler.log
+			AbstractIEC104TransportHandler.log
 					.error("Timeout of connection (" + connectionId + ") while waiting for StartDT. Will quit.", e);
 			return;
 		}
 
-		IEC60870_5_104TransportHandler.log
+		connectionListeners.add(connectionListener);
+		AbstractIEC104TransportHandler.log
 				.debug("Started data transfer on connection ({}) Will listen for incoming commands.", connectionId);
 	}
 
 	@Override
 	public void serverStoppedListeningIndication(IOException e) {
-		IEC60870_5_104TransportHandler.log.error("Server has stopped listening for new connections! Will quit.", e);
+		AbstractIEC104TransportHandler.log.error("Server has stopped listening for new connections! Will quit.", e);
+	}
+
+	// TODO javaDoc
+	public void sendTuple(Tuple<IMetaAttribute> tuple) {
+		connectionListeners.forEach(listener -> listener.newTuple(tuple));
 	}
 
 	/**
@@ -96,7 +110,7 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 
 		@Override
 		public void connectionClosed(IOException e) {
-			IEC60870_5_104TransportHandler.log.error("Connection (" + connectionId + ") was closed!", e);
+			AbstractIEC104TransportHandler.log.error("Connection (" + connectionId + ") was closed!", e);
 		}
 
 		@Override
@@ -105,13 +119,25 @@ public class IEC60870_5_104ServerListener implements ServerEventListener {
 			try {
 				connection.sendConfirmation(asdu);
 			} catch (IOException e) {
-				IEC60870_5_104TransportHandler.log.error(
+				AbstractIEC104TransportHandler.log.error(
 						"Will quit listening for commands on connection (" + connectionId + ") because of error", e);
 				return;
 			}
 
 			// Convert ASDU to tuple and send it
 			transportHandler.fireProcess(ASDUConverter.asduToTuple(asdu));
+		}
+
+		// TODO javaDoc
+		public void newTuple(Tuple<IMetaAttribute> tuple) {
+			try {
+				connection.send(ASDUConverter.TupleToASDU(tuple));
+			} catch (NullPointerException e) {
+				AbstractIEC104TransportHandler.log.error("Tuple to send via IEC104 is null!", e);
+			} catch (IOException e) {
+				AbstractIEC104TransportHandler.log
+						.error("Can not send tuple via IEC104, connection (" + connectionId + "), because of error", e);
+			}
 		}
 
 	}
