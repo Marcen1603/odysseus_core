@@ -15,9 +15,13 @@
  */
 package de.uniol.inf.is.odysseus.core.metadata;
 
+import java.util.List;
+
 /**
  * @author Marco Grawunder
  */
 public interface INamedAttributeStreamObject<M extends IMetaAttribute> extends IStreamObject<M> {
 	<T> T getAttribute(String name);
+	List<Object> path(String path);
+	void setAttribute(String name, Object value);
 }
