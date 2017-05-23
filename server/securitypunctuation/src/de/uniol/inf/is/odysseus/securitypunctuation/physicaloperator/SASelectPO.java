@@ -13,46 +13,49 @@ import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuatio
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
 
 public class SASelectPO<T extends IStreamObject<?>> extends SelectPO<T> implements IHasPredicate {
-	private SAOperatorDelegate<T> saOpDel=new SAOperatorDelegate<T>();;
+	private SAOperatorDelegate<T> saOpDel = new SAOperatorDelegate<T>();;
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
+
 	public SASelectPO(IPredicate<? super T> predicate) {
 		super(predicate);
-		LOG.info("SASelect eingefügt");
-		
-	}
-	
 
+	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation instanceof ISecurityPunctuation) {
 			this.saOpDel.override((ISecurityPunctuation) punctuation);
-		
-		} else sendPunctuation(punctuation);
+
+		} else
+			sendPunctuation(punctuation);
 
 	}
 
-
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.INPUT;
-	}
 
 	@Override
 	protected void process_next(T object, int port) {
 		if (super.getPredicate().evaluate(object)) {
 			transferPunctuation();
-		} super.process_next(object, port);
+		}
+		super.process_next(object, port);
 	}
 
 	private void transferPunctuation() {
 		if (!saOpDel.getRecentSPs().isEmpty()) {
 			for (ISecurityPunctuation sp : saOpDel.getRecentSPs()) {
 				sendPunctuation(sp);
-			}saOpDel.getRecentSPs().clear();
+			}
+			saOpDel.getRecentSPs().clear();
 		}
-		
 
+	}
+
+	@Override
+	public boolean process_isSemanticallyEqual(IPhysicalOperator ipo) {
+		if (!(ipo instanceof SASelectPO<?>)) {
+			return false;
+		}
+		return super.process_isSemanticallyEqual(ipo);
 	}
 	
 

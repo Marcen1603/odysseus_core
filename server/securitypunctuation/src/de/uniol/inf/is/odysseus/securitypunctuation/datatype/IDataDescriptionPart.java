@@ -1,9 +1,11 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 
+import java.io.Serializable;
+
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public interface IDataDescriptionPart {
+public interface IDataDescriptionPart extends Serializable {
 
 	/**
 	 * Checks if the Security Punctuation this DDP belongs to refers to the

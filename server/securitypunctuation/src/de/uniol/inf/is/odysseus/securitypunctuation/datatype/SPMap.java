@@ -72,11 +72,7 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 			if (entry.getValue().contains(object)) {
 				matchingSPs.add(entry.getKey());
 			}
-			// for(T value:entry.getValue()){
-			// if(value.equals(object)){
-			//
-			// }
-			// }
+		
 		}
 
 		return matchingSPs;

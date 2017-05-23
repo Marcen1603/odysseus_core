@@ -32,7 +32,6 @@ public class TSAProjectAORule extends AbstractTransformationRule<SAProjectAO> {
 	@Override
 	public boolean isExecutable(SAProjectAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
-//		return true;
 	}
 
 	@Override

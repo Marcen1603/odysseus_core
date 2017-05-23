@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +14,23 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DataDescriptionPart implements IDataDescriptionPart{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8776732310776468142L;
 	private static final Logger LOG = LoggerFactory.getLogger(DataDescriptionPart.class);
+	
+	
 	// [0] is the start of the tupleRange, [1] is the end
 	// if tuple ranges=-1 access to all tuples is allowed if tuple ranges=-2
 	// access to no tuples is allowed
 	private int[] tupleRange;
 	private List<String> attributes;
 
-	
+	public DataDescriptionPart(String tupleRange,List<String> attributes){
+		this.tupleRange = tupleRangeToInt(tupleRange);
+		this.attributes=attributes;
+	}
 
 	public DataDescriptionPart(String tupleRange, String attributes) {
 		this.tupleRange = tupleRangeToInt(tupleRange);
@@ -33,9 +43,9 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 		this.attributes = ddp.getAttributes();
 	}
 
-	public DataDescriptionPart(int[] tupleRange2, String attributes2) {
-		this.tupleRange = tupleRange2;
-		this.attributes = new ArrayList<String>(Arrays.asList(attributes2.split(",")));
+	public DataDescriptionPart(int[] tupleRange, String attributes) {
+		this.tupleRange = tupleRange;
+		this.attributes = new ArrayList<String>(Arrays.asList(attributes.split(",")));
 	}
 
 	public List<String> getAttributes() {
@@ -91,7 +101,7 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 	}
 
 	private boolean compare(List<String> inputOne, List<String> inputTwo) {
-		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && inputTwo.isEmpty()) {
+		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
 			return false;
 
 		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {

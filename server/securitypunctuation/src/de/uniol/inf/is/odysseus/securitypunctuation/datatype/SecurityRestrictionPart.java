@@ -9,11 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SecurityRestrictionPart implements ISecurityRestrictionPart{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6650668868603118657L;
 	private List<String> roles;
 	// private static final Logger LOG =
 	// LoggerFactory.getLogger(SecurityRestrictionPart.class);
 
-	
+	public SecurityRestrictionPart(List<String> roles) {
+		this.roles = roles;
+		//Collections.sort(this.roles);
+
+	}
 
 
 
@@ -88,7 +96,7 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	}
 
 	private boolean compare(List<String> inputOne, List<String> inputTwo) {
-		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && inputTwo.isEmpty()) {
+		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
 			return false;
 
 		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {

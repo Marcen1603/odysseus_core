@@ -34,6 +34,11 @@ public class SAProjectAO extends ProjectAO {
 		super(saProjectAO);
 		LOG.info("SAProjectAO aufgerufen");
 	}
+	
+	public SAProjectAO(ProjectAO projectAO) {
+		super(projectAO);
+		
+	}
 
 	@Override
 	public SAProjectAO clone() {
@@ -51,7 +56,9 @@ public class SAProjectAO extends ProjectAO {
 				restrictedAttributes.add(in.getAttributeName());
 			}
 		}
-
+		for(String str:restrictedAttributes){
+			LOG.info(str);
+		}
 		return restrictedAttributes;
 
 		/*

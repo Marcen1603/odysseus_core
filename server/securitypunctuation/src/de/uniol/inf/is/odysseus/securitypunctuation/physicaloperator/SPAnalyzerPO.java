@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
@@ -24,8 +25,8 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 		if (buffer.isEmpty()) {
 			buffer.add(punctuation);
 			return;
-			
-			//timestamp verlgiechen
+
+			// timestamp vergliechen
 		} else if (buffer.get(buffer.size() - 1).equals(punctuation)) {
 
 			punctuation.getSRP().union(buffer.get(buffer.size() - 1).getSRP());
@@ -37,23 +38,22 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 			this.buffer.add(punctuation);
 		}
 
-		
-
 	}
-
 
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.INPUT;
 	}
-/*
- * Die SPs werden solange zurückgehalten, bis ein Tupel verschickt wird
- */
+
+	/*
+	 * Die SPs werden solange zurückgehalten, bis ein Tupel verschickt wird
+	 */
 	@Override
 	protected void process_next(T object, int port) {
-		for(ISecurityPunctuation sp:this.buffer){
+		for (ISecurityPunctuation sp : this.buffer) {
 			sendPunctuation(sp);
-		}this.buffer.clear();
+		}
+		this.buffer.clear();
 		transfer(object);
 	}
 
