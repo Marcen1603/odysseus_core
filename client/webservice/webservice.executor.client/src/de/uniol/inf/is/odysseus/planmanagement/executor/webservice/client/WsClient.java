@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -108,6 +109,8 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	InfoService INFO = InfoServiceFactory.getInfoService(WsClient.class);
+
+	final static SDFSchema EMPTY_SCHEMA = SDFSchemaFactory.createNewTupleSchema("NOT AVAILABLE", new SDFAttribute("","",SDFDatatype.OBJECT),new SDFAttribute("","",SDFDatatype.OBJECT));
 
 	// TODO: When connecting to multiple servers ... query id is not unique
 	// anymore --> need server in gui
@@ -914,11 +917,16 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				for (ViewInformationWS viws : l) {
 					ViewInformation vi = new ViewInformation();
 					vi.setName(toResource(viws.getName()));
-					vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					try{
+						vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					}catch(ClassNotFoundException e){
+						// TODO: Should there be an output??
+						vi.setOutputSchema(EMPTY_SCHEMA);
+					}
 					result.add(vi);
 				}
 				return result;
-			} catch (InvalidUserDataException_Exception | ClassNotFoundException e) {
+			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
