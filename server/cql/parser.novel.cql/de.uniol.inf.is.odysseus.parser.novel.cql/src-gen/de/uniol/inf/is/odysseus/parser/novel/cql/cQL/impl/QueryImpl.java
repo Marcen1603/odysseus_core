@@ -4,7 +4,7 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -18,18 +18,18 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Statement</b></em>'.
+ * An implementation of the model object '<em><b>Query</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl#getType <em>Type</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.QueryImpl#getType <em>Type</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class StatementImpl extends MinimalEObjectImpl.Container implements Statement
+public class QueryImpl extends MinimalEObjectImpl.Container implements Query
 {
   /**
    * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
@@ -46,7 +46,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
-  protected StatementImpl()
+  protected QueryImpl()
   {
     super();
   }
@@ -59,7 +59,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   @Override
   protected EClass eStaticClass()
   {
-    return CQLPackage.Literals.STATEMENT;
+    return CQLPackage.Literals.QUERY;
   }
 
   /**
@@ -83,7 +83,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     type = newType;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.STATEMENT__TYPE, oldType, newType);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CQLPackage.QUERY__TYPE, oldType, newType);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -100,14 +100,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     {
       NotificationChain msgs = null;
       if (type != null)
-        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.STATEMENT__TYPE, null, msgs);
+        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CQLPackage.QUERY__TYPE, null, msgs);
       if (newType != null)
-        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.STATEMENT__TYPE, null, msgs);
+        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CQLPackage.QUERY__TYPE, null, msgs);
       msgs = basicSetType(newType, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.STATEMENT__TYPE, newType, newType));
+      eNotify(new ENotificationImpl(this, Notification.SET, CQLPackage.QUERY__TYPE, newType, newType));
   }
 
   /**
@@ -120,7 +120,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case CQLPackage.STATEMENT__TYPE:
+      case CQLPackage.QUERY__TYPE:
         return basicSetType(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -136,7 +136,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case CQLPackage.STATEMENT__TYPE:
+      case CQLPackage.QUERY__TYPE:
         return getType();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -152,7 +152,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case CQLPackage.STATEMENT__TYPE:
+      case CQLPackage.QUERY__TYPE:
         setType((EObject)newValue);
         return;
     }
@@ -169,7 +169,7 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case CQLPackage.STATEMENT__TYPE:
+      case CQLPackage.QUERY__TYPE:
         setType((EObject)null);
         return;
     }
@@ -186,10 +186,10 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   {
     switch (featureID)
     {
-      case CQLPackage.STATEMENT__TYPE:
+      case CQLPackage.QUERY__TYPE:
         return type != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //StatementImpl
+} //QueryImpl

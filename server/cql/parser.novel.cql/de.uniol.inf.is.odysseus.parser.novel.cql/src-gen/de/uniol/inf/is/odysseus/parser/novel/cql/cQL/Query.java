@@ -7,21 +7,21 @@ import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Statement</b></em>'.
+ * A representation of the model object '<em><b>Query</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement#getType <em>Type</em>}</li>
+ *   <li>{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query#getType <em>Type</em>}</li>
  * </ul>
  *
- * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getStatement()
+ * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getQuery()
  * @model
  * @generated
  */
-public interface Statement extends EObject
+public interface Query extends EObject
 {
   /**
    * Returns the value of the '<em><b>Type</b></em>' containment reference.
@@ -33,14 +33,14 @@ public interface Statement extends EObject
    * <!-- end-user-doc -->
    * @return the value of the '<em>Type</em>' containment reference.
    * @see #setType(EObject)
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getStatement_Type()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage#getQuery_Type()
    * @model containment="true"
    * @generated
    */
   EObject getType();
 
   /**
-   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement#getType <em>Type</em>}' containment reference.
+   * Sets the value of the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query#getType <em>Type</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Type</em>' containment reference.
@@ -49,4 +49,4 @@ public interface Statement extends EObject
    */
   void setType(EObject value);
 
-} // Statement
+} // Query

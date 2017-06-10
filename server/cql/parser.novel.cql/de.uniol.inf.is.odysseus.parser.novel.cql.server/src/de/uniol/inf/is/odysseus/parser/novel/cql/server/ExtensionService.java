@@ -1,4 +1,5 @@
-package de.uniol.inf.is.odysseus.parser.novel.cql;
+package de.uniol.inf.is.odysseus.parser.novel.cql.server;
+
 
 public class ExtensionService {
 
