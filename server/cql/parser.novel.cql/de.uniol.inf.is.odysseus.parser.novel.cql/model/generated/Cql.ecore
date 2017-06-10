@@ -18,7 +18,7 @@
     <eLiterals name="HOURS" value="8" literal="HOURS"/>
     <eLiterals name="WEEKS" value="9" literal="WEEKS"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Statement">
+  <eClassifiers xsi:type="ecore:EClass" name="Query">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
   </eClassifiers>

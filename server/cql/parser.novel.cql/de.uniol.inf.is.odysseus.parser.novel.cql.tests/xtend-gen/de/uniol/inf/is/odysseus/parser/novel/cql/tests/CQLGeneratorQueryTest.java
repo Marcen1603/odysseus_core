@@ -1,22 +1,15 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper;
-import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.NameProviderHelper;
-import java.util.Map;
-import java.util.Set;
-import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -42,28 +35,8 @@ public class CQLGeneratorQueryTest {
   public ExpectedException thrown = ExpectedException.none();
   
   public void assertCorrectGenerated(final String s, final String t, final CQLDictionaryHelper dictionary) {
-    try {
-      Model model = this._parseHelper.parse(s);
-      final InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-      if ((dictionary != null)) {
-        Set<SDFSchema> _schema = dictionary.getSchema();
-        this._cQLGenerator.setCQLSchemata(((Set<SDFSchema>) _schema));
-      }
-      NameProviderHelper _nameProviderHelper = new NameProviderHelper();
-      this._cQLGenerator.setNameProvider(_nameProviderHelper);
-      this._cQLGenerator.doGenerate(model.eResource(), fsa, null);
-      this._cQLGenerator.clear();
-      String query = "";
-      Set<Map.Entry<String, CharSequence>> _entrySet = fsa.getTextFiles().entrySet();
-      for (final Map.Entry<String, CharSequence> e : _entrySet) {
-        String _query = query;
-        CharSequence _value = e.getValue();
-        query = (_query + _value);
-      }
-      Assert.assertEquals(this.format(t), this.format(query));
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method CQLSchemata(Set<SDFSchema>) is undefined");
   }
   
   public String format(final String s) {

@@ -5,9 +5,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
-import de.uniol.inf.is.odysseus.parser.novel.cql.tests.util.CQLDictionaryHelper;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +14,6 @@ import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Assert;
@@ -80,56 +77,9 @@ public class CQLGeneratorMethodTest {
   
   @Before
   public void setup() {
-    this.source = "stream1";
-    this.aliases = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("a1", "a2", "aa1", "stream1X"));
-    this.attributes = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("attr1", "attr2", "attr1", "attrX"));
-    this.source2 = "stream2";
-    this.aliases2 = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("b1", "b2", "bb2", "stream2X"));
-    this.attributes2 = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("attr4", "attr5", "attr5", "attrX"));
-    this.aggregates = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("AVG(attr1)", (("SUM(" + this.source2) + ".attr5)"), (("COUNT(" + this.source) + ".aa1)"), "MAX(b2)", (("MIN(" + this.source1Alias) + ".attr2)"), (("MIN(" + this.source2Alias) + ".b2)")));
-    this.aggregationAliases = Collections.<String>unmodifiableList(CollectionLiterals.<String>newArrayList("avgAttr1", "sumAttr5", "countAa1", "maxB2", "minAttr2", "minB2"));
-    this._cQLGenerator.setCQLSchemata(new CQLDictionaryHelper(this.source, ((String[])Conversions.unwrapArray(this.attributes, String.class))).getSchema());
-    this._cQLGenerator.setCQLSchemata(new CQLDictionaryHelper(this.source2, ((String[])Conversions.unwrapArray(this.attributes2, String.class))).getSchema());
-    String attributesWithAlias = "";
-    for (int i = 0; (i < this.attributes.size()); i++) {
-      String _attributesWithAlias = attributesWithAlias;
-      String _get = this.attributes.get(i);
-      String _plus = (_get + " AS ");
-      String _get_1 = this.aliases.get(i);
-      String _plus_1 = (_plus + _get_1);
-      String _plus_2 = (_plus_1 + ",");
-      attributesWithAlias = (_attributesWithAlias + _plus_2);
-    }
-    for (int i = 0; (i < this.attributes2.size()); i++) {
-      String _attributesWithAlias = attributesWithAlias;
-      String _get = this.attributes2.get(i);
-      String _plus = (_get + " AS ");
-      String _get_1 = this.aliases2.get(i);
-      String _plus_1 = (_plus + _get_1);
-      String _plus_2 = (_plus_1 + ",");
-      attributesWithAlias = (_attributesWithAlias + _plus_2);
-    }
-    for (int i = 0; (i < (this.aggregates.size() - 1)); i++) {
-      String _attributesWithAlias = attributesWithAlias;
-      String _get = this.aggregates.get(i);
-      String _plus = (_get + " AS ");
-      String _get_1 = this.aggregationAliases.get(i);
-      String _plus_1 = (_plus + _get_1);
-      String _plus_2 = (_plus_1 + ",");
-      attributesWithAlias = (_attributesWithAlias + _plus_2);
-    }
-    String _attributesWithAlias = attributesWithAlias;
-    int _size = this.aggregates.size();
-    int _minus = (_size - 1);
-    String _get = this.aggregates.get(_minus);
-    String _plus = (_get + " AS ");
-    int _size_1 = this.aggregationAliases.size();
-    int _minus_1 = (_size_1 - 1);
-    String _get_1 = this.aggregationAliases.get(_minus_1);
-    String _plus_1 = (_plus + _get_1);
-    attributesWithAlias = (_attributesWithAlias + _plus_1);
-    String query = ((((((((("SELECT " + attributesWithAlias) + " FROM ") + this.source) + " AS ") + this.source1Alias) + ",") + this.source2) + " AS ") + this.source2Alias);
-    this.generateModel(query);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method CQLSchemata(Set<SDFSchema>) is undefined"
+      + "\nThe method CQLSchemata(Set<SDFSchema>) is undefined");
   }
   
   @Test

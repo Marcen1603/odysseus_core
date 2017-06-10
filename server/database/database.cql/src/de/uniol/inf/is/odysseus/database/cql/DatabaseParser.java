@@ -15,12 +15,12 @@ import de.uniol.inf.is.odysseus.database.connection.DatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnection;
 import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
-import de.uniol.inf.is.odysseus.parser.novel.cql.IExtension;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionGeneric;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDataBaseConnectionJDBC;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropDatabaseConnection;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query;
+import de.uniol.inf.is.odysseus.parser.novel.cql.server.IExtension;
 
 public class DatabaseParser implements IExtension {
 
@@ -32,7 +32,7 @@ public class DatabaseParser implements IExtension {
 	private Map<String, String> databaseConnections = new HashMap<>();
 
 	@Override
-	public Object parse(Statement command) {
+	public Object parse(Query command) {
 		throw new QueryParseException("this method has no implementation");
 	}
 

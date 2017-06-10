@@ -21,8 +21,8 @@
     <genClasses ecoreClass="CQL.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Model/components"/>
     </genClasses>
-    <genClasses ecoreClass="CQL.ecore#//Statement">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Statement/type"/>
+    <genClasses ecoreClass="CQL.ecore#//Query">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Query/type"/>
     </genClasses>
     <genClasses ecoreClass="CQL.ecore#//Command">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference CQL.ecore#//Command/type"/>

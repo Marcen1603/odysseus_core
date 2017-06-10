@@ -4,18 +4,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import org.osgi.service.jdbc.DataSourceFactory;
-
-import de.uniol.inf.is.odysseus.core.server.monitoring.MyStats;
-import de.uniol.inf.is.odysseus.database.connection.DatabaseConnectionDictionary;
-import de.uniol.inf.is.odysseus.database.connection.IDatabaseConnectionFactory;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.component.AbstractQueryTestComponent;
 import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
@@ -40,7 +31,7 @@ public class CQLParserTest extends AbstractQueryTestComponent<BasicTestContext, 
 		{
 			URL bundleroot = context.getDataRootPath();
 			dir = new File(bundleroot.toURI());
-			searchQueryFilesRecursive(dir, queryFiles, pqlFiles);
+			CQLParserUtil.searchQueryFilesRecursive(dir, queryFiles, pqlFiles);
 			for (File qf : queryFiles) 
 			{
 				
@@ -79,25 +70,6 @@ public class CQLParserTest extends AbstractQueryTestComponent<BasicTestContext, 
 		default:
 		}
 		return status;
-	}
-	
-	private static void searchQueryFilesRecursive(File dir, List<File> queryFiles, List<File> pqlFiles)
-	{
-		if (dir.isDirectory()) 
-		{
-			for (File child : dir.listFiles()) 
-			{
-				if (child.isDirectory())
-					searchQueryFilesRecursive(child, queryFiles, pqlFiles);
-				else 
-				{
-					if (child.getName().endsWith(".qry")) 
-						queryFiles.add(child);
-					else if(child.getName().endsWith(".pql"))
-						pqlFiles.add(child);
-				}
-			}
-		}
 	}
 	
 	@Override

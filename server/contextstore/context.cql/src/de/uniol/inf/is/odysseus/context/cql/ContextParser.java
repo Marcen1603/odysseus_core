@@ -21,13 +21,13 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
-import de.uniol.inf.is.odysseus.parser.novel.cql.IExtension;
+import de.uniol.inf.is.odysseus.parser.novel.cql.server.IExtension;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ContextStoreType;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateContextStore;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.DropContextStore;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
@@ -39,7 +39,7 @@ public class ContextParser implements IExtension {
 	private IMetaAttribute metaattribute;
 
 	@Override
-	public Object parse(Statement command) {
+	public Object parse(Query command) {
 		throw new QueryParseException("this method is not implemented");
 	}
 

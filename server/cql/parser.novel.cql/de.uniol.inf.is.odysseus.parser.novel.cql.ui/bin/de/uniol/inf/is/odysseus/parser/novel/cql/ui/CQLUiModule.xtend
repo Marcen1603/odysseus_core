@@ -19,9 +19,9 @@ class CQLUiModule extends AbstractCQLUiModule
 		return CQLEditor;
 	}
 	
-	def Class<? extends IGenerator2> bindGenerator() 
-	{
-		return CQLUiGenerator;
-	}
+//	def Class<? extends IGenerator2> bindGenerator() 
+//	{
+//		return CQLUiGenerator;
+//	}
 	
 }

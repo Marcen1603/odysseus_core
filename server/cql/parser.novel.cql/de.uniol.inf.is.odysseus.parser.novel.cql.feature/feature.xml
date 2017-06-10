@@ -32,10 +32,6 @@
          id="org.eclipse.emf.mwe.core.feature"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.database.feature"
-         version="0.0.0"/>
-
    <requires>
       <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
       <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
@@ -107,19 +103,6 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtext.junit4"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.junit"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="org.hamcrest.core"
@@ -317,7 +300,7 @@
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.context"
+         id="de.uniol.inf.is.odysseus.parser.novel.cql.server"
          download-size="0"
          install-size="0"
          version="0.0.0"

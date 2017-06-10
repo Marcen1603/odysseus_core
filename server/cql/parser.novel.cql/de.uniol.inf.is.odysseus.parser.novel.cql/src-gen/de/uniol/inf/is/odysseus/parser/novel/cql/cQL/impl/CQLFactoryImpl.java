@@ -67,7 +67,7 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
     switch (eClass.getClassifierID())
     {
       case CQLPackage.MODEL: return createModel();
-      case CQLPackage.STATEMENT: return createStatement();
+      case CQLPackage.QUERY: return createQuery();
       case CQLPackage.COMMAND: return createCommand();
       case CQLPackage.SIMPLE_SELECT: return createSimpleSelect();
       case CQLPackage.COMPLEX_SELECT: return createComplexSelect();
@@ -188,10 +188,10 @@ public class CQLFactoryImpl extends EFactoryImpl implements CQLFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Statement createStatement()
+  public Query createQuery()
   {
-    StatementImpl statement = new StatementImpl();
-    return statement;
+    QueryImpl query = new QueryImpl();
+    return query;
   }
 
   /**

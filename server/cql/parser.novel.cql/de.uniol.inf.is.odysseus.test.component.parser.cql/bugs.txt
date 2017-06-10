@@ -24,3 +24,17 @@ SELECT b2.attr1, b3.attr3
 					(SELECT c1.attr3 FROM stream2 AS c1
 					) AS b3 
 			WHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)
+			
+			
+
+SELECT AVG(auction) AS auctionAVG 
+FROM bid 
+WHERE bidder != 10 AND price > 1000.0
+GROUP BY auction
+			
+			
+operator_1 = AGGREGATE({aggregations=[['AVG','bid.auction','auctionAVG','Integer']],group_by=['bid.auction']},bid)
+operator_2 = SELECT({predicate='bid.bidder!=10&&bid.price>1000.0'},operator_1)
+operator_3 = MAP({expressions=['auctionAVG']},operator_2)
+
+${Now} not working

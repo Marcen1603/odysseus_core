@@ -33,13 +33,13 @@ public interface CQLFactory extends EFactory
   Model createModel();
 
   /**
-   * Returns a new object of class '<em>Statement</em>'.
+   * Returns a new object of class '<em>Query</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Statement</em>'.
+   * @return a new object of class '<em>Query</em>'.
    * @generated
    */
-  Statement createStatement();
+  Query createQuery();
 
   /**
    * Returns a new object of class '<em>Command</em>'.

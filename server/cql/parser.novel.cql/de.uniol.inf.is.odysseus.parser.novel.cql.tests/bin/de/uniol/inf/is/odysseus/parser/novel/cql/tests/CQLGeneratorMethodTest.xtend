@@ -11,13 +11,14 @@ import org.junit.runner.RunWith
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 
-import static extension org.junit.Assert.*
 import org.junit.Rule
 import org.junit.rules.ExpectedException
 import org.junit.Before
 import java.util.List
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.SourceStruct
 import java.util.Map.Entry
+
+import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(CQLInjectorProvider)

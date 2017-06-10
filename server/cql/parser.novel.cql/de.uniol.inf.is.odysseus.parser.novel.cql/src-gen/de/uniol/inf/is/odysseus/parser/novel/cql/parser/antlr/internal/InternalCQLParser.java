@@ -212,7 +212,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleModel"
-    // InternalCQLParser.g:65:1: ruleModel returns [EObject current=null] : ( ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )* ;
+    // InternalCQLParser.g:65:1: ruleModel returns [EObject current=null] : ( ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )* ;
     public final EObject ruleModel() throws RecognitionException {
         EObject current = null;
 
@@ -226,10 +226,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:71:2: ( ( ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )* )
-            // InternalCQLParser.g:72:2: ( ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )*
+            // InternalCQLParser.g:71:2: ( ( ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )* )
+            // InternalCQLParser.g:72:2: ( ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )*
             {
-            // InternalCQLParser.g:72:2: ( ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )*
+            // InternalCQLParser.g:72:2: ( ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )? )*
             loop3:
             do {
                 int alt3=2;
@@ -242,15 +242,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt3) {
             	case 1 :
-            	    // InternalCQLParser.g:73:3: ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )?
+            	    // InternalCQLParser.g:73:3: ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) ) (otherlv_1= Semicolon )?
             	    {
-            	    // InternalCQLParser.g:73:3: ( ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) ) )
-            	    // InternalCQLParser.g:74:4: ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) )
+            	    // InternalCQLParser.g:73:3: ( ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) ) )
+            	    // InternalCQLParser.g:74:4: ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) )
             	    {
-            	    // InternalCQLParser.g:74:4: ( (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand ) )
-            	    // InternalCQLParser.g:75:5: (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand )
+            	    // InternalCQLParser.g:74:4: ( (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand ) )
+            	    // InternalCQLParser.g:75:5: (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand )
             	    {
-            	    // InternalCQLParser.g:75:5: (lv_components_0_1= ruleStatement | lv_components_0_2= ruleCommand )
+            	    // InternalCQLParser.g:75:5: (lv_components_0_1= ruleQuery | lv_components_0_2= ruleCommand )
             	    int alt1=2;
             	    switch ( input.LA(1) ) {
             	    case CREATE:
@@ -295,13 +295,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    switch (alt1) {
             	        case 1 :
-            	            // InternalCQLParser.g:76:6: lv_components_0_1= ruleStatement
+            	            // InternalCQLParser.g:76:6: lv_components_0_1= ruleQuery
             	            {
 
-            	            						newCompositeNode(grammarAccess.getModelAccess().getComponentsStatementParserRuleCall_0_0_0());
+            	            						newCompositeNode(grammarAccess.getModelAccess().getComponentsQueryParserRuleCall_0_0_0());
             	            					
             	            pushFollow(FOLLOW_3);
-            	            lv_components_0_1=ruleStatement();
+            	            lv_components_0_1=ruleQuery();
 
             	            state._fsp--;
 
@@ -313,7 +313,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	            							current,
             	            							"components",
             	            							lv_components_0_1,
-            	            							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
+            	            							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Query");
             	            						afterParserOrEnumRuleCall();
             	            					
 
@@ -981,25 +981,25 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleQualifiedSourcename"
 
 
-    // $ANTLR start "entryRuleStatement"
-    // InternalCQLParser.g:319:1: entryRuleStatement returns [EObject current=null] : iv_ruleStatement= ruleStatement EOF ;
-    public final EObject entryRuleStatement() throws RecognitionException {
+    // $ANTLR start "entryRuleQuery"
+    // InternalCQLParser.g:319:1: entryRuleQuery returns [EObject current=null] : iv_ruleQuery= ruleQuery EOF ;
+    public final EObject entryRuleQuery() throws RecognitionException {
         EObject current = null;
 
-        EObject iv_ruleStatement = null;
+        EObject iv_ruleQuery = null;
 
 
         try {
-            // InternalCQLParser.g:319:50: (iv_ruleStatement= ruleStatement EOF )
-            // InternalCQLParser.g:320:2: iv_ruleStatement= ruleStatement EOF
+            // InternalCQLParser.g:319:46: (iv_ruleQuery= ruleQuery EOF )
+            // InternalCQLParser.g:320:2: iv_ruleQuery= ruleQuery EOF
             {
-             newCompositeNode(grammarAccess.getStatementRule()); 
+             newCompositeNode(grammarAccess.getQueryRule()); 
             pushFollow(FOLLOW_1);
-            iv_ruleStatement=ruleStatement();
+            iv_ruleQuery=ruleQuery();
 
             state._fsp--;
 
-             current =iv_ruleStatement; 
+             current =iv_ruleQuery; 
             match(input,EOF,FOLLOW_2); 
 
             }
@@ -1014,12 +1014,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "entryRuleStatement"
+    // $ANTLR end "entryRuleQuery"
 
 
-    // $ANTLR start "ruleStatement"
-    // InternalCQLParser.g:326:1: ruleStatement returns [EObject current=null] : ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) ;
-    public final EObject ruleStatement() throws RecognitionException {
+    // $ANTLR start "ruleQuery"
+    // InternalCQLParser.g:326:1: ruleQuery returns [EObject current=null] : ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) ;
+    public final EObject ruleQuery() throws RecognitionException {
         EObject current = null;
 
         EObject lv_type_0_1 = null;
@@ -1073,7 +1073,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     // InternalCQLParser.g:336:5: lv_type_0_1= ruleCreate
                     {
 
-                    					newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateParserRuleCall_0_0());
+                    					newCompositeNode(grammarAccess.getQueryAccess().getTypeCreateParserRuleCall_0_0());
                     				
                     pushFollow(FOLLOW_2);
                     lv_type_0_1=ruleCreate();
@@ -1082,7 +1082,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
                     					if (current==null) {
-                    						current = createModelElementForParent(grammarAccess.getStatementRule());
+                    						current = createModelElementForParent(grammarAccess.getQueryRule());
                     					}
                     					set(
                     						current,
@@ -1098,7 +1098,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     // InternalCQLParser.g:352:5: lv_type_0_2= ruleStreamTo
                     {
 
-                    					newCompositeNode(grammarAccess.getStatementAccess().getTypeStreamToParserRuleCall_0_1());
+                    					newCompositeNode(grammarAccess.getQueryAccess().getTypeStreamToParserRuleCall_0_1());
                     				
                     pushFollow(FOLLOW_2);
                     lv_type_0_2=ruleStreamTo();
@@ -1107,7 +1107,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
                     					if (current==null) {
-                    						current = createModelElementForParent(grammarAccess.getStatementRule());
+                    						current = createModelElementForParent(grammarAccess.getQueryRule());
                     					}
                     					set(
                     						current,
@@ -1123,7 +1123,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     // InternalCQLParser.g:368:5: lv_type_0_3= ruleComplexSelect
                     {
 
-                    					newCompositeNode(grammarAccess.getStatementAccess().getTypeComplexSelectParserRuleCall_0_2());
+                    					newCompositeNode(grammarAccess.getQueryAccess().getTypeComplexSelectParserRuleCall_0_2());
                     				
                     pushFollow(FOLLOW_2);
                     lv_type_0_3=ruleComplexSelect();
@@ -1132,7 +1132,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
                     					if (current==null) {
-                    						current = createModelElementForParent(grammarAccess.getStatementRule());
+                    						current = createModelElementForParent(grammarAccess.getQueryRule());
                     					}
                     					set(
                     						current,
@@ -1169,7 +1169,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         }
         return current;
     }
-    // $ANTLR end "ruleStatement"
+    // $ANTLR end "ruleQuery"
 
 
     // $ANTLR start "entryRuleCommand"

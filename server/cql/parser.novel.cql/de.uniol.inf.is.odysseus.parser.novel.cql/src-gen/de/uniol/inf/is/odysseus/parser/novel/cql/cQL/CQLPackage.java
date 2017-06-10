@@ -87,14 +87,14 @@ public interface CQLPackage extends EPackage
   int MODEL_FEATURE_COUNT = 1;
 
   /**
-   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl <em>Statement</em>}' class.
+   * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.QueryImpl <em>Query</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStatement()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.QueryImpl
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getQuery()
    * @generated
    */
-  int STATEMENT = 1;
+  int QUERY = 1;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' containment reference.
@@ -103,16 +103,16 @@ public interface CQLPackage extends EPackage
    * @generated
    * @ordered
    */
-  int STATEMENT__TYPE = 0;
+  int QUERY__TYPE = 0;
 
   /**
-   * The number of structural features of the '<em>Statement</em>' class.
+   * The number of structural features of the '<em>Query</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int STATEMENT_FEATURE_COUNT = 1;
+  int QUERY_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.
@@ -2777,25 +2777,25 @@ public interface CQLPackage extends EPackage
   EReference getModel_Components();
 
   /**
-   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement <em>Statement</em>}'.
+   * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query <em>Query</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Statement</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
+   * @return the meta object for class '<em>Query</em>'.
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query
    * @generated
    */
-  EClass getStatement();
+  EClass getQuery();
 
   /**
-   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement#getType <em>Type</em>}'.
+   * Returns the meta object for the containment reference '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query#getType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Type</em>'.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement#getType()
-   * @see #getStatement()
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query#getType()
+   * @see #getQuery()
    * @generated
    */
-  EReference getStatement_Type();
+  EReference getQuery_Type();
 
   /**
    * Returns the meta object for class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Command <em>Command</em>}'.
@@ -5017,14 +5017,14 @@ public interface CQLPackage extends EPackage
     EReference MODEL__COMPONENTS = eINSTANCE.getModel_Components();
 
     /**
-     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl <em>Statement</em>}' class.
+     * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.QueryImpl <em>Query</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.StatementImpl
-     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getStatement()
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.QueryImpl
+     * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CQLPackageImpl#getQuery()
      * @generated
      */
-    EClass STATEMENT = eINSTANCE.getStatement();
+    EClass QUERY = eINSTANCE.getQuery();
 
     /**
      * The meta object literal for the '<em><b>Type</b></em>' containment reference feature.
@@ -5032,7 +5032,7 @@ public interface CQLPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference STATEMENT__TYPE = eINSTANCE.getStatement_Type();
+    EReference QUERY__TYPE = eINSTANCE.getQuery_Type();
 
     /**
      * The meta object literal for the '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.impl.CommandImpl <em>Command</em>}' class.

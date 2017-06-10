@@ -74,9 +74,9 @@ ruleModel returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getModelAccess().getComponentsStatementParserRuleCall_0_0_0());
+						newCompositeNode(grammarAccess.getModelAccess().getComponentsQueryParserRuleCall_0_0_0());
 					}
-					lv_components_0_1=ruleStatement
+					lv_components_0_1=ruleQuery
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getModelRule());
@@ -85,7 +85,7 @@ ruleModel returns [EObject current=null]
 							$current,
 							"components",
 							lv_components_0_1,
-							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
+							"de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Query");
 						afterParserOrEnumRuleCall();
 					}
 					    |
@@ -315,15 +315,15 @@ ruleQualifiedSourcename returns [AntlrDatatypeRuleToken current=new AntlrDatatyp
 	}
 ;
 
-// Entry rule entryRuleStatement
-entryRuleStatement returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getStatementRule()); }
-	iv_ruleStatement=ruleStatement
-	{ $current=$iv_ruleStatement.current; }
+// Entry rule entryRuleQuery
+entryRuleQuery returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getQueryRule()); }
+	iv_ruleQuery=ruleQuery
+	{ $current=$iv_ruleQuery.current; }
 	EOF;
 
-// Rule Statement
-ruleStatement returns [EObject current=null]
+// Rule Query
+ruleQuery returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -334,12 +334,12 @@ ruleStatement returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getTypeCreateParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getQueryAccess().getTypeCreateParserRuleCall_0_0());
 				}
 				lv_type_0_1=ruleCreate
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
+						$current = createModelElementForParent(grammarAccess.getQueryRule());
 					}
 					set(
 						$current,
@@ -350,12 +350,12 @@ ruleStatement returns [EObject current=null]
 				}
 				    |
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getTypeStreamToParserRuleCall_0_1());
+					newCompositeNode(grammarAccess.getQueryAccess().getTypeStreamToParserRuleCall_0_1());
 				}
 				lv_type_0_2=ruleStreamTo
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
+						$current = createModelElementForParent(grammarAccess.getQueryRule());
 					}
 					set(
 						$current,
@@ -366,12 +366,12 @@ ruleStatement returns [EObject current=null]
 				}
 				    |
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getTypeComplexSelectParserRuleCall_0_2());
+					newCompositeNode(grammarAccess.getQueryAccess().getTypeComplexSelectParserRuleCall_0_2());
 				}
 				lv_type_0_3=ruleComplexSelect
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
+						$current = createModelElementForParent(grammarAccess.getQueryRule());
 					}
 					set(
 						$current,

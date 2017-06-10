@@ -80,10 +80,10 @@ public class CQLSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case CQLPackage.STATEMENT:
+      case CQLPackage.QUERY:
       {
-        Statement statement = (Statement)theEObject;
-        T result = caseStatement(statement);
+        Query query = (Query)theEObject;
+        T result = caseQuery(query);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -598,17 +598,17 @@ public class CQLSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Statement</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Query</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Statement</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Query</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseStatement(Statement object)
+  public T caseQuery(Query object)
   {
     return null;
   }

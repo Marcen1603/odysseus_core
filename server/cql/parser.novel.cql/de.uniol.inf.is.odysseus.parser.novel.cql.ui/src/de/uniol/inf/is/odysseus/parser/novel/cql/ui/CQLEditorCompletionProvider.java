@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.ui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 

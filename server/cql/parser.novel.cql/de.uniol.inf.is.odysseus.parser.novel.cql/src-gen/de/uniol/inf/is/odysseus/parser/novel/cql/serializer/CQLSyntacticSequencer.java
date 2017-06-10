@@ -92,10 +92,10 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     components+=Command (ambiguity) (rule end)
 	 *     components+=Command (ambiguity) components+=Command
-	 *     components+=Command (ambiguity) components+=Statement
-	 *     components+=Statement (ambiguity) (rule end)
-	 *     components+=Statement (ambiguity) components+=Command
-	 *     components+=Statement (ambiguity) components+=Statement
+	 *     components+=Command (ambiguity) components+=Query
+	 *     components+=Query (ambiguity) (rule end)
+	 *     components+=Query (ambiguity) components+=Command
+	 *     components+=Query (ambiguity) components+=Query
 	 */
 	protected void emit_Model_SemicolonKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

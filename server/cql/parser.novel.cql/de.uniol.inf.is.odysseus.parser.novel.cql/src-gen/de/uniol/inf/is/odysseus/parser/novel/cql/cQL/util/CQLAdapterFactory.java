@@ -81,9 +81,9 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
         return createModelAdapter();
       }
       @Override
-      public Adapter caseStatement(Statement object)
+      public Adapter caseQuery(Query object)
       {
-        return createStatementAdapter();
+        return createQueryAdapter();
       }
       @Override
       public Adapter caseCommand(Command object)
@@ -448,16 +448,16 @@ public class CQLAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement <em>Statement</em>}'.
+   * Creates a new adapter for an object of class '{@link de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query <em>Query</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement
+   * @see de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query
    * @generated
    */
-  public Adapter createStatementAdapter()
+  public Adapter createQueryAdapter()
   {
     return null;
   }

@@ -31,25 +31,25 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cComponentsAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final Alternatives cComponentsAlternatives_0_0 = (Alternatives)cComponentsAssignment_0.eContents().get(0);
-		private final RuleCall cComponentsStatementParserRuleCall_0_0_0 = (RuleCall)cComponentsAlternatives_0_0.eContents().get(0);
+		private final RuleCall cComponentsQueryParserRuleCall_0_0_0 = (RuleCall)cComponentsAlternatives_0_0.eContents().get(0);
 		private final RuleCall cComponentsCommandParserRuleCall_0_0_1 = (RuleCall)cComponentsAlternatives_0_0.eContents().get(1);
 		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
 		//Model:
-		//	(components+=(Statement | Command) ';'?)*;
+		//	(components+=(Query | Command) ';'?)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(components+=(Statement | Command) ';'?)*
+		//(components+=(Query | Command) ';'?)*
 		public Group getGroup() { return cGroup; }
 		
-		//components+=(Statement | Command)
+		//components+=(Query | Command)
 		public Assignment getComponentsAssignment_0() { return cComponentsAssignment_0; }
 		
-		//(Statement | Command)
+		//(Query | Command)
 		public Alternatives getComponentsAlternatives_0_0() { return cComponentsAlternatives_0_0; }
 		
-		//Statement
-		public RuleCall getComponentsStatementParserRuleCall_0_0_0() { return cComponentsStatementParserRuleCall_0_0_0; }
+		//Query
+		public RuleCall getComponentsQueryParserRuleCall_0_0_0() { return cComponentsQueryParserRuleCall_0_0_0; }
 		
 		//Command
 		public RuleCall getComponentsCommandParserRuleCall_0_0_1() { return cComponentsCommandParserRuleCall_0_0_1; }
@@ -182,16 +182,15 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getIDTerminalRuleCall() { return cIDTerminalRuleCall; }
 	}
-	public class StatementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Statement");
+	public class QueryElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.Query");
 		private final Assignment cTypeAssignment = (Assignment)rule.eContents().get(1);
 		private final Alternatives cTypeAlternatives_0 = (Alternatives)cTypeAssignment.eContents().get(0);
 		private final RuleCall cTypeCreateParserRuleCall_0_0 = (RuleCall)cTypeAlternatives_0.eContents().get(0);
 		private final RuleCall cTypeStreamToParserRuleCall_0_1 = (RuleCall)cTypeAlternatives_0.eContents().get(1);
 		private final RuleCall cTypeComplexSelectParserRuleCall_0_2 = (RuleCall)cTypeAlternatives_0.eContents().get(2);
 		
-		////TODO rename to query
-		//Statement:
+		//Query:
 		//	type=(Create
 		//	| StreamTo
 		//	| ComplexSelect);
@@ -3791,7 +3790,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final QualifiedAttributenameElements pQualifiedAttributename;
 	private final QualifiedAttributenameWithoutSpecialCharsElements pQualifiedAttributenameWithoutSpecialChars;
 	private final QualifiedSourcenameElements pQualifiedSourcename;
-	private final StatementElements pStatement;
+	private final QueryElements pQuery;
 	private final CommandElements pCommand;
 	private final SimpleSelectElements pSimpleSelect;
 	private final ComplexSelectElements pComplexSelect;
@@ -3886,7 +3885,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pQualifiedAttributename = new QualifiedAttributenameElements();
 		this.pQualifiedAttributenameWithoutSpecialChars = new QualifiedAttributenameWithoutSpecialCharsElements();
 		this.pQualifiedSourcename = new QualifiedSourcenameElements();
-		this.pStatement = new StatementElements();
+		this.pQuery = new QueryElements();
 		this.pCommand = new CommandElements();
 		this.pSimpleSelect = new SimpleSelectElements();
 		this.pComplexSelect = new ComplexSelectElements();
@@ -3987,7 +3986,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Model:
-	//	(components+=(Statement | Command) ';'?)*;
+	//	(components+=(Query | Command) ';'?)*;
 	public ModelElements getModelAccess() {
 		return pModel;
 	}
@@ -4104,17 +4103,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getQualifiedSourcenameAccess().getRule();
 	}
 	
-	////TODO rename to query
-	//Statement:
+	//Query:
 	//	type=(Create
 	//	| StreamTo
 	//	| ComplexSelect);
-	public StatementElements getStatementAccess() {
-		return pStatement;
+	public QueryElements getQueryAccess() {
+		return pQuery;
 	}
 	
-	public ParserRule getStatementRule() {
-		return getStatementAccess().getRule();
+	public ParserRule getQueryRule() {
+		return getQueryAccess().getRule();
 	}
 	
 	//Command:

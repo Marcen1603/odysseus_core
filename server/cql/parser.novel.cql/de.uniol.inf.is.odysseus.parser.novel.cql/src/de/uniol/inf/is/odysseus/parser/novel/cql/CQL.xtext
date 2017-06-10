@@ -3,7 +3,7 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
 Model: 
-	((components+=(Statement|Command)) (';')?)*
+	((components+=(Query|Command)) (';')?)*
 ;
 	
 terminal ID: (LETTER) (LETTER|SPECIAL_CHARS|INT)*;	
@@ -46,8 +46,7 @@ QualifiedSourcename:
 	ID
 ;
 
-//TODO rename to query
-Statement:
+Query:
 	type=(
 	Create
 	| StreamTo

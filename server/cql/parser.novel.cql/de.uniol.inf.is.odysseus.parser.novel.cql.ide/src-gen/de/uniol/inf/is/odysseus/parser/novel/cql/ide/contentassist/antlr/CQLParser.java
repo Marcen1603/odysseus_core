@@ -39,7 +39,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getBOOLEANAccess().getAlternatives(), "rule__BOOLEAN__Alternatives");
 					put(grammarAccess.getQualifiedAttributenameAccess().getAlternatives(), "rule__QualifiedAttributename__Alternatives");
 					put(grammarAccess.getQualifiedAttributenameWithoutSpecialCharsAccess().getAlternatives(), "rule__QualifiedAttributenameWithoutSpecialChars__Alternatives");
-					put(grammarAccess.getStatementAccess().getTypeAlternatives_0(), "rule__Statement__TypeAlternatives_0");
+					put(grammarAccess.getQueryAccess().getTypeAlternatives_0(), "rule__Query__TypeAlternatives_0");
 					put(grammarAccess.getCommandAccess().getTypeAlternatives_0(), "rule__Command__TypeAlternatives_0");
 					put(grammarAccess.getSimpleSelectAccess().getAlternatives_1_2(), "rule__SimpleSelect__Alternatives_1_2");
 					put(grammarAccess.getComplexSelectAccess().getOperationAlternatives_2_0_0(), "rule__ComplexSelect__OperationAlternatives_2_0_0");
@@ -192,7 +192,7 @@ public class CQLParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_4(), "rule__AtomicWithoutAttributeRef__Group_4__0");
 					put(grammarAccess.getAtomicWithoutAttributeRefAccess().getGroup_5(), "rule__AtomicWithoutAttributeRef__Group_5__0");
 					put(grammarAccess.getModelAccess().getComponentsAssignment_0(), "rule__Model__ComponentsAssignment_0");
-					put(grammarAccess.getStatementAccess().getTypeAssignment(), "rule__Statement__TypeAssignment");
+					put(grammarAccess.getQueryAccess().getTypeAssignment(), "rule__Query__TypeAssignment");
 					put(grammarAccess.getCommandAccess().getTypeAssignment(), "rule__Command__TypeAssignment");
 					put(grammarAccess.getSimpleSelectAccess().getDistinctAssignment_1_1(), "rule__SimpleSelect__DistinctAssignment_1_1");
 					put(grammarAccess.getSimpleSelectAccess().getArgumentsAssignment_1_2_1_0(), "rule__SimpleSelect__ArgumentsAssignment_1_2_1_0");

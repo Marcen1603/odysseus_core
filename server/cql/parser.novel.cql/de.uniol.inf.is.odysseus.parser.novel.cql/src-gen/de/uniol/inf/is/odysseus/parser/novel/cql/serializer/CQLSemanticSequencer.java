@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
@@ -61,7 +62,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TimebasedWindow;
@@ -310,6 +310,9 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case CQLPackage.QUANTIFICATION_PREDICATE:
 				sequence_QuantificationPredicate(context, (QuantificationPredicate) semanticObject); 
 				return; 
+			case CQLPackage.QUERY:
+				sequence_Query(context, (Query) semanticObject); 
+				return; 
 			case CQLPackage.RIGHTS_MANAGEMENT:
 				sequence_RightsManagement(context, (RightsManagement) semanticObject); 
 				return; 
@@ -346,9 +349,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				return; 
 			case CQLPackage.STARTHING:
 				sequence_Starthing(context, (Starthing) semanticObject); 
-				return; 
-			case CQLPackage.STATEMENT:
-				sequence_Statement(context, (Statement) semanticObject); 
 				return; 
 			case CQLPackage.STREAM_TO:
 				sequence_StreamTo(context, (StreamTo) semanticObject); 
@@ -1291,7 +1291,7 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     Model returns Model
 	 *
 	 * Constraint:
-	 *     (components+=Statement | components+=Command)+
+	 *     (components+=Query | components+=Command)+
 	 */
 	protected void sequence_Model(ISerializationContext context, Model semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1510,6 +1510,18 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	
 	/**
 	 * Contexts:
+	 *     Query returns Query
+	 *
+	 * Constraint:
+	 *     (type=Create | type=StreamTo | type=ComplexSelect)
+	 */
+	protected void sequence_Query(ISerializationContext context, Query semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     RightsManagement returns RightsManagement
 	 *
 	 * Constraint:
@@ -1667,18 +1679,6 @@ public class CQLSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     {Starthing}
 	 */
 	protected void sequence_Starthing(ISerializationContext context, Starthing semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     Statement returns Statement
-	 *
-	 * Constraint:
-	 *     (type=Create | type=StreamTo | type=ComplexSelect)
-	 */
-	protected void sequence_Statement(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

@@ -51,6 +51,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition;
@@ -62,7 +63,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Star;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StarExpression;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Starthing;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Statement;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Time;
@@ -101,7 +101,7 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass statementEClass = null;
+  private EClass queryEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -653,9 +653,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getStatement()
+  public EClass getQuery()
   {
-    return statementEClass;
+    return queryEClass;
   }
 
   /**
@@ -663,9 +663,9 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Type()
+  public EReference getQuery_Type()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(0);
+    return (EReference)queryEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2741,8 +2741,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     modelEClass = createEClass(MODEL);
     createEReference(modelEClass, MODEL__COMPONENTS);
 
-    statementEClass = createEClass(STATEMENT);
-    createEReference(statementEClass, STATEMENT__TYPE);
+    queryEClass = createEClass(QUERY);
+    createEReference(queryEClass, QUERY__TYPE);
 
     commandEClass = createEClass(COMMAND);
     createEReference(commandEClass, COMMAND__TYPE);
@@ -3085,8 +3085,8 @@ public class CQLPackageImpl extends EPackageImpl implements CQLPackage
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getModel_Components(), ecorePackage.getEObject(), null, "components", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getStatement_Type(), ecorePackage.getEObject(), null, "type", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(queryEClass, Query.class, "Query", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getQuery_Type(), ecorePackage.getEObject(), null, "type", null, 0, 1, Query.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(commandEClass, Command.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCommand_Type(), this.getCommand(), null, "type", null, 0, 1, Command.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

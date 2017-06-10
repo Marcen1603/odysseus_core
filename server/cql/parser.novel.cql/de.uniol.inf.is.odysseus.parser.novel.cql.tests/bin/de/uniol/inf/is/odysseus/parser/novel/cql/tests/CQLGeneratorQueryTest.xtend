@@ -39,7 +39,7 @@ class CQLGeneratorQueryTest
 		val fsa = new InMemoryFileSystemAccess()
 		if(dictionary !== null)
 			CQLSchemata = dictionary.schema as Set<SDFSchema>
-		nameProvider = new NameProviderHelper()
+//		nameProvider = new NameProviderHelper()
 //		outerschema = dictionary.schema as Set<SDFSchema>
         doGenerate(model.eResource(), fsa, null)
         clear
