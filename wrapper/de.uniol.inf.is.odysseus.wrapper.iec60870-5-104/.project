@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>de.uniol.inf.is.odysseus.core.server.defaultdatadictionary</name>
+	<name>de.uniol.inf.is.odysseus.wrapper.iec60870-5-104</name>
 	<comment></comment>
 	<projects>
 	</projects>
