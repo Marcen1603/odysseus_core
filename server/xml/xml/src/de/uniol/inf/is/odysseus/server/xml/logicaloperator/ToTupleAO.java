@@ -7,7 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -87,7 +87,7 @@ public class ToTupleAO extends UnaryLogicalOp
 		final List<SDFMetaSchema> metaSchema;
 		metaSchema = getInputSchema().getMetaschema();
 		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) XMLStreanObject.class, attributeList, getInputSchema());
+		SDFSchema schema = SDFSchemaFactory.createNewSchema("", (Class<? extends IStreamObject<?>>) Tuple.class, attributeList, getInputSchema());
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
 		setOutputSchema(outputSchema);
 		return outputSchema;

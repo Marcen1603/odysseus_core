@@ -1,19 +1,12 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ConstructAO;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToXMLAO;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
 import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ConstructPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ToXMLPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ProjectPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XPathPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -32,7 +25,7 @@ public class TConstructRule extends AbstractTransformationRule<ConstructAO>{
 
 	@Override
 	public boolean isExecutable(ConstructAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == XMLStreanObject.class ) &&
+		if ((operator.getInputSchema().getType() == XMLStreamObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}

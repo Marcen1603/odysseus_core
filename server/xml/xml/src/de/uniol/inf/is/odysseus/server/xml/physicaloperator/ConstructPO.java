@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -13,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.Output
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ConstructAO;
 
-public class ConstructPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreanObject<T>>
+public class ConstructPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>,  XMLStreamObject<T>>
 {
 	private List<String> newExpressions;
 	private List<String> expressions;

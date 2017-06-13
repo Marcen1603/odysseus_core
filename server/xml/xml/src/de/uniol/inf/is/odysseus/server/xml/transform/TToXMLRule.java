@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -30,7 +30,7 @@ public class TToXMLRule extends AbstractTransformationRule<ToXMLAO>{
 
 	@Override
 	public boolean isExecutable(ToXMLAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == XMLStreanObject.class ) &&
+		if ((operator.getInputSchema().getType() == Tuple.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}

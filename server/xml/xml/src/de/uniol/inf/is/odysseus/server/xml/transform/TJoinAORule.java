@@ -20,7 +20,7 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO>{
 
 	@Override
 	public void execute(JoinAO operator, TransformationConfiguration config) throws RuleException {
-		JoinPO<IStreamObject<IMetaAttribute>, IMetaAttribute> po = new JoinPO<IStreamObject<IMetaAttribute>, IMetaAttribute>(operator.getPredicate(), operator.getMinimumSize());
+		JoinPO<IMetaAttribute> po = new JoinPO<IMetaAttribute>(operator.getPredicate(), operator.getMinimumSize());
 		defaultExecute(operator, po, config, true, true);
 	}
 
