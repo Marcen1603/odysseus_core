@@ -462,7 +462,7 @@ public class WebserviceServer {
 		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
 		ILogicalQuery logicalQuery = executer.getLogicalQueryById(queryID, session);
 		if (logicalQuery == null) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryID);
 		}
 		ILogicalOperator operator = logicalQuery.getLogicalPlan();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
@@ -561,7 +561,7 @@ public class WebserviceServer {
 		LogicalQuery logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor()
 				.getLogicalQueryById(Integer.valueOf(id), user);
 		if (queryById == null || logicalQuery == null) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+id);
 		}
 		List<String> roots = new ArrayList<String>();
 		for (IPhysicalOperator operator : queryById.getRoots()) {
@@ -807,7 +807,7 @@ public class WebserviceServer {
 		try {
 			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
 		} catch (Exception e) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryId, e);
 		}
 		return createSDFSchemaInformation(schema);
 
@@ -823,7 +823,7 @@ public class WebserviceServer {
 					.getRoots().get(port);
 			schema = operator.getOutputSchema();
 		} catch (Exception e) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryId, e);
 		}
 		return createSDFSchemaInformation(schema);
 
