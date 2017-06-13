@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -13,14 +12,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToTupleAO;
 
-public class ToTuplePO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreanObject<T>>
+public class ToTuplePO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, Tuple<T>>
 {
-	private IStreamObjectDataHandler<XMLStreanObject<? extends IMetaAttribute>> tHandler = new TupleDataHandler();
+	private IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>> tHandler = new TupleDataHandler();
 	private List<String> expressions;
 
 	public ToTuplePO(ToTupleAO operator)
 	{
-		this.tHandler = (IStreamObjectDataHandler<XMLStreanObject<? extends IMetaAttribute>>) tHandler.createInstance(operator.getOutputSchema());
+		this.tHandler = (IStreamObjectDataHandler<Tuple<? extends IMetaAttribute>>) tHandler.createInstance(operator.getOutputSchema());
 		setOutputSchema(operator.getOutputSchema());
 		expressions = operator.getExpressions();
 	}
@@ -49,7 +48,7 @@ public class ToTuplePO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamO
 			dataValues.add(object.xpathToNode(xpath).getTextContent());
 		}
 
-		XMLStreanObject<T> output = (XMLStreanObject<T>) tHandler.readData(dataValues.iterator());
+		Tuple<T> output = (Tuple<T>) tHandler.readData(dataValues.iterator());
 		if (object.getMetadata() != null)
 			output.setMetadata((T) object.getMetadata().clone());
 

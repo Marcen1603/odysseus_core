@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 
 import com.ganesh.transformer.DynamicXMLTransformer;
 
-import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToXMLAO;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
 
-public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreanObject<T>, XMLStreamObject<T>>
+public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XMLStreamObject<T>>
 {
 	private IStreamObjectDataHandler<XMLStreamObject<? extends IMetaAttribute>> xsoHandler = new XMLStreamObjectDataHandler();
 	private List<String> expressions;
@@ -57,7 +57,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreanObj
 
 	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void process_next(XMLStreanObject<T> object, int port)
+	protected void process_next(Tuple<T> object, int port)
 	{
 		DynamicXMLTransformer xmlTransformer = new DynamicXMLTransformer();
 		Map<String, String> xpaths = new LinkedHashMap<String, String>();
