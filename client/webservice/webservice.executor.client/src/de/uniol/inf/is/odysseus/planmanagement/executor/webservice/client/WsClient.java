@@ -653,8 +653,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
-		query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
-
+		if (info.getName() != null){
+			query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
+		}
 		return query;
 	}
 
