@@ -22,8 +22,9 @@ public class XMLStreamObjectTest
 			//XMLStreamObject<?> xmlDoc2 = xmlDoc.createInstance(xmlDoc.xpathToDocument("//mail"));
 			//System.out.println(xmlDoc.xpathToString("//node()"));
 			//System.out.println(xmlDoc2.isEmpty() ? "EMPTY" : "NON EMPTY");
-			System.out.println(xmlDoc.xpathToString("count(//mail)"));
-			
+			//System.out.println(xmlDoc.xpathToString("count(//mail)"));
+			System.out.println(xmlDoc.getAttribute("//from[text()='Javam Suwanda mailto:Suwanda@gmu.edu']").toString());
+			//System.out.println(xmlDoc.xpathToString("//from"));
 			
 		} catch (FileNotFoundException e)
 		{

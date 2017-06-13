@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable
 {
+	public static final String SLASH_REPLACEMENT_STRING = "__SLASH_PLACEHOLDER__";
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
 	private static XPath xpath;
@@ -49,6 +51,27 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return new XMLStreamObject<>(doc);
 	}
 
+	public static XMLStreamObject<IMetaAttribute> createInstance(Node node)
+	{
+		Document newDoc;
+		try
+		{
+			newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Node copyNode = newDoc.importNode(node, true);
+			newDoc.appendChild(copyNode);
+			return new XMLStreamObject<>(newDoc);
+		} catch (ParserConfigurationException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right)
+	{
+		return null;
+	}
+	
 	@Override
 	public String toString()
 	{
@@ -59,7 +82,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	public String toString(boolean handleMetadata)
 	{
 		StringBuilder ret = new StringBuilder();
-		ret.append(xpathToString("/node()"));
+		ret.append(xpathToString("/node()")); // Rootnode
 		if (handleMetadata && getMetadata() != null)
 			ret.append(";").append(getMetadata().toString());
 		return ret.toString();
@@ -67,7 +90,14 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	private XMLStreamObject(Document _content)
 	{
-		xpath = XPathFactory.newInstance().newXPath();
+		try
+		{
+			xpath = XPathFactory.newInstance(XPathConstants.DOM_OBJECT_MODEL).newXPath();
+		} catch (XPathFactoryConfigurationException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		content = _content;
 		// System.out.println("XMLStreamObject Constructor");
 	}
@@ -123,38 +153,57 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			Node check = content.getFirstChild();
 			check.getNodeName();
 			return false;
-		} catch(NullPointerException e)
+		} catch (NullPointerException e)
 		{
 			return true;
 		}
 	}
 
+	public static boolean hasParent(NodeList nl, Node node)
+	{
+		Node parent = node.getParentNode();
+		for (int i = 0; i < nl.getLength(); i++)
+		{
+			if (nl.item(i) == parent)
+				return true;
+		}
+		return false;
+	}
+	
+	/*
 	public Document xpathToDocument(String expression)
 	{
 		try
 		{
 			NodeList nodelist = xpathToNodeList(expression);
-			Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			if(nodelist.getLength()>0)
+			for(int i=0; i < nodelist.getLength(); i++)
 			{
-				Node node = nodelist.item(0);
-				Node copyNode = newDoc.importNode(node, true);
-				newDoc.appendChild(copyNode);
+				if(hasParent(nodelist, nodelist.item(i)))
+				{
+					Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+					if (nodelist.getLength() > 0)
+					{
+						Node node = nodelist.item(0);
+						Node copyNode = newDoc.importNode(node, true);
+						newDoc.appendChild(copyNode);
+					}
+					return newDoc;				
+				}
 			}
-			return newDoc;
+			return null;
 		} catch (ParserConfigurationException e)
 		{
 			LOG.error("Returning Document from xpath failed", e);
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 
 	public NodeList xpathToNodeList(String expression)
 	{
 		try
 		{
-			XPathExpression xExp = xpath.compile(expression);			
+			XPathExpression xExp = xpath.compile(expression);
 			return (NodeList) xExp.evaluate(content, XPathConstants.NODESET);
 		} catch (XPathExpressionException e)
 		{
@@ -163,31 +212,32 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			{
 				xExp = xpath.compile(expression);
 				String atomicValue = "<?xml version=\"1.0\"?><atomicResult>" + xExp.evaluate(content) + "</atomicResult>";
-				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();				
+				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document doc = docBuilder.parse(new InputSource(new StringReader(atomicValue)));
 				xpath.reset();
 				xExp = xpath.compile("//node()");
-				return (NodeList) xExp.evaluate(doc, XPathConstants.NODESET);				
+				return (NodeList) xExp.evaluate(doc, XPathConstants.NODESET);
 			} catch (XPathExpressionException | SAXException | IOException | ParserConfigurationException e1)
 			{
 				e1.printStackTrace();
-			}			
+			}
 			LOG.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
+
 	public Node xpathToNode(String expression)
 	{
 		try
 		{
 			XPathExpression xExp = xpath.compile(expression);
-			return (Node) xExp.evaluate(content, XPathConstants.NODE);
+			Node item = (Node) xExp.evaluate(content, XPathConstants.NODE);
+			return item;
 		} catch (XPathExpressionException e)
 		{
 			LOG.error("XPathExpression Error", e);
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return null;
 	}
@@ -196,20 +246,21 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	{
 		NodeList nl = xpathToNodeList(expression);
 		StringWriter buf = new StringWriter();
-		for (int i = 0; i < nl.getLength(); i++)
+		try
 		{
-			Node elem = nl.item(i);// Your Node
-			try
+			Transformer xform = TransformerFactory.newInstance().newTransformer();
+			xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			xform.setOutputProperty(OutputKeys.INDENT, "yes");
+			xform.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			for (int i = 0; i < nl.getLength(); i++)
 			{
-				Transformer xform = TransformerFactory.newInstance().newTransformer();
-				xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-				xform.setOutputProperty(OutputKeys.INDENT, "yes");
+				Node elem = nl.item(i);// Your Node
 				xform.transform(new DOMSource(elem), new StreamResult(buf));
-			} catch (TransformerException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+		} catch (TransformerException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return buf.toString();
 	}
@@ -218,6 +269,13 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	@Override
 	public <K> K getAttribute(String name)
 	{
-		return (K) xpathToNodeList(name).item(0).getNodeValue();
+		name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
+		try
+		{
+			return (K) xpath.compile(name).evaluate(content);
+		} catch (XPathExpressionException e)
+		{
+			return null;
+		}
 	}
 }

@@ -1,16 +1,21 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
+import de.uniol.inf.is.odysseus.core.collection.XMLStreanObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLStreamObjectProjectPO;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToXMLAO;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ToXMLPO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ProjectPO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XPathPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TXMLStreamObjectProjectRule extends AbstractTransformationRule<ProjectAO>{
+public class TToXMLRule extends AbstractTransformationRule<ToXMLAO>{
 
 	@Override
 	public int getPriority() {
@@ -18,14 +23,14 @@ public class TXMLStreamObjectProjectRule extends AbstractTransformationRule<Proj
 	}
 
 	@Override
-	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
-		XMLStreamObjectProjectPO<?> projectPO = new XMLStreamObjectProjectPO<IMetaAttribute>(operator.getAttributes());
-		defaultExecute(operator, projectPO, config, true, false);
+	public void execute(ToXMLAO operator, TransformationConfiguration config) throws RuleException {
+		ToXMLPO<?> toxmlPO = new ToXMLPO<IMetaAttribute>(operator.getExpressions(), operator.getAttributes());
+		defaultExecute(operator, toxmlPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
-		if ((operator.getInputSchema().getType() == XMLStreamObject.class ) &&
+	public boolean isExecutable(ToXMLAO operator, TransformationConfiguration config) {
+		if ((operator.getInputSchema().getType() == XMLStreanObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
 		}
@@ -34,7 +39,7 @@ public class TXMLStreamObjectProjectRule extends AbstractTransformationRule<Proj
 
 	@Override
 	public String getName() {
-		return "ProjectAO --> XMLStreamObjectProjectPO";
+		return "ToXMLAO --> ToXMLPO";
 	}
 
 	@Override

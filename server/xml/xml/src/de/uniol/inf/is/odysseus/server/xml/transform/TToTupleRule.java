@@ -1,7 +1,14 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
+import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -18,7 +25,6 @@ public class TToTupleRule extends AbstractTransformationRule<ToTupleAO>
 	public void execute(ToTupleAO operator, TransformationConfiguration config) throws RuleException
 	{
 		ISource<?> inputPO = new ToTuplePO<IMetaAttribute>(operator);
-		// this.processMetaData(operator, config, inputPO);
 		defaultExecute(operator, inputPO, config, true, false);
 	}
 
@@ -37,4 +43,17 @@ public class TToTupleRule extends AbstractTransformationRule<ToTupleAO>
 	{
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+
+	@Override
+	public int getPriority()
+	{
+		return 0;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "XMLToTupleAO --> XMLToTuplePO";
+	}
+
 }

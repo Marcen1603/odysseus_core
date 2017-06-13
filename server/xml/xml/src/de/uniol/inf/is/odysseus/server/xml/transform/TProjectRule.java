@@ -6,47 +6,40 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
 import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ProjectPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XPathPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TXPathRule extends AbstractTransformationRule<XPathAO>
-{
+public class TProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
-	public int getPriority()
-	{
+	public int getPriority() {
 		return 10;
 	}
 
 	@Override
-	public void execute(XPathAO operator, TransformationConfiguration config) throws RuleException
-	{
-		XPathPO<?> xpathPO = new XPathPO<IMetaAttribute>(operator.getAttributes());
-		defaultExecute(operator, xpathPO, config, true, false);
+	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
+		ProjectPO<?> projectPO = new ProjectPO<IMetaAttribute>(operator.getAttributes());
+		defaultExecute(operator, projectPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(XPathAO operator, TransformationConfiguration config)
-	{
-		if ((operator.getInputSchema().getType() == XMLStreamObject.class) && operator.isAllPhysicalInputSet())
-		{
+	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
+		if ((operator.getInputSchema().getType() == XMLStreamObject.class ) &&
+				operator.isAllPhysicalInputSet()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public String getName()
-	{
-		return "XPathAO --> XPathPO";
+	public String getName() {
+		return "ProjectAO --> XMLStreamObjectProjectPO";
 	}
 
 	@Override
-	public IRuleFlowGroup getRuleFlowGroup()
-	{
+	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
+
 }

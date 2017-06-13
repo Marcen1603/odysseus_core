@@ -30,59 +30,72 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-/**
- * @author Marco Grawunder
- */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XPATH", doc = "Return result of the XPath specified", url = "", category = {
-		LogicalOperatorCategory.BASE })
-public class XPathAO extends UnaryLogicalOp {
-	
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XPATH", doc = "Return result of the XPath specified", url = "", category = {LogicalOperatorCategory.BASE})
+public class XPathAO extends UnaryLogicalOp
+{
 	private static final long serialVersionUID = 7905167437851186586L;
 	private List<SDFAttribute> attributes = new ArrayList<>();
 
-	public XPathAO() {
+	public XPathAO()
+	{
 		super();
 	}
 
-	public XPathAO(XPathAO ao) {
+	public XPathAO(XPathAO ao)
+	{
 		super(ao);
 		this.attributes = new ArrayList<>(ao.attributes);
 	}
 
-	public @Override XPathAO clone() {
+	public @Override XPathAO clone()
+	{
 		return new XPathAO(this);
 	}
 
-	public int[] determineRestrictList() {
+	/*
+	public int[] determineRestrictList()
+	{
 		int[] ret = SDFSchema.calcRestrictList(this.getInputSchema(), this.getOutputSchema());
 		return ret;
 	}
+	 */
 
 	// Must be another name than setOutputSchema, else this method is not found!
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "PATHS", optional = false, isList = true, doc = "A list of XPAths to be evaluated.")
-	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
+	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema)
+	{
 		attributes = outputSchema;
 	}
 
-	public List<SDFAttribute> getAttributes() {
+	public List<SDFAttribute> getAttributes()
+	{
 		return attributes;
 	}
 
-	public List<SDFAttribute> getOutputSchemaWithList() {
+	
+	public List<SDFAttribute> getOutputSchemaWithList()	
+	{
 		return attributes;
 	}
 
-	public SDFSchema getOutputSchemaIntern() {
-		try {
-			if (getInputSchema().getType().newInstance().isSchemaLess()) {
+	public SDFSchema getOutputSchemaIntern()
+	{
+		try
+		{
+			if (getInputSchema().getType().newInstance().isSchemaLess())
+			{
 				return getInputSchema();
-			} else {
+			} else
+			{
 				return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
 			}
-		} catch (InstantiationException e) {
+		} catch (InstantiationException e)
+		{
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e)
+		{
 			e.printStackTrace();
 		}
 		return null;
@@ -95,15 +108,13 @@ public class XPathAO extends UnaryLogicalOp {
 	 * AbstractLogicalOperator #getOutputSchemaIntern(int)
 	 */
 	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
+	protected SDFSchema getOutputSchemaIntern(int pos)
+	{
 		return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
 	}
 
 	@Override
-	public void initialize() {
-		/// WTF ???
-		/// setOutputSchema(new SDFSchema(getInputSchema().getURI(),
-		/// getOutputSchema()));
+	public void initialize()
+	{
 	}
-
 }
