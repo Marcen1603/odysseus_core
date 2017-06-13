@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
+import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -78,6 +79,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.util.BundleClassLoading;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientUser;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
@@ -818,7 +820,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 
 		try{
-			Class<?> typeClass = Class.forName(info.getTypeClass());
+			// TODO: This will not work in OSGi if type class is in different bundle!
+			//Class<?> typeClass = Class.forName(info.getTypeClass());
+			Class<?> typeClass = BundleClassLoading.findClass(info.getTypeClass(), Activator.getBundleContext().getBundle());
 			return SDFSchemaFactory.createNewSchema(uri, typeClass, attributes);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -1183,8 +1187,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
 			attributes.add(new SDFAttribute(sda.getSourcename(), sda.getAttributename(), dt, null, null, null));
 		}
+
+		// Will not work in OSGi environments!
+		//Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
 		@SuppressWarnings({ "rawtypes" })
-		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
+		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) BundleClassLoading.findClass(si.getTypeClass(), Activator.getBundleContext().getBundle());
+
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), type,
 				attributes);
 		return schema;
