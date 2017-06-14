@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
+import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicate;
 
 /**
  * @author Dennis Geesen
@@ -37,16 +38,12 @@ import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> implements IHasPredicate
 {
 
-	private IPredicate<XMLStreamObject> predicate;
+	private XMLStreamObjectPredicate<XMLStreamObject> predicate;
 	private List<XMLStreamObject> cache = new ArrayList<>();
 	private List<XMLStreamObject> buffer = new ArrayList<>();
+	private String target;
 
 	private int minSize = 0;
-
-	public JoinPO(IPredicate<XMLStreamObject> predicate)
-	{
-		this.predicate = predicate;
-	}
 
 	public JoinPO(int minimalSize)
 	{
@@ -54,10 +51,11 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
-	public JoinPO(IPredicate<?> predicate, int minimumSize)
+	public JoinPO(IPredicate predicate, int minimumSize, String _target)
 	{
-		this.predicate = (IPredicate<XMLStreamObject>) predicate;
+		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject>) predicate;
 		this.minSize = minimumSize;
+		this.target = _target;
 	}
 
 	/**
@@ -67,7 +65,7 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 	{
 		super(po);
 		this.minSize = po.minSize;
-		this.predicate = po.predicate.clone();
+		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject>) po.predicate.clone();
 	}
 
 	@Override
@@ -137,7 +135,7 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 			{
 				if (this.predicate.evaluate(cached, object))
 				{
-					XMLStreamObject enriched = XMLStreamObject.merge(object, cached);
+					XMLStreamObject enriched = XMLStreamObject.merge(object, cached, this.target);
 					transfer(enriched);
 				}
 			}

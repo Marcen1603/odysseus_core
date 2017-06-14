@@ -14,6 +14,11 @@ public class XMLStreamObjectPredicateBuilder<T extends XMLStreamObject<?>> imple
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver, String predicate) {
 		predicate = predicate.replaceAll("/", XMLStreamObject.SLASH_REPLACEMENT_STRING);
+		predicate = predicate.replaceAll("@", XMLStreamObject.AT_REPLACEMENT_STRING);
+		/*
+		predicate = predicate.replaceAll("(", XMLStreamObject.LEFT_BRACE_REPLACEMENT_STRING);
+		predicate = predicate.replaceAll(")", XMLStreamObject.RIGHT_BRACE_REPLACEMENT_STRING);
+		*/
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		XMLStreamObjectPredicate<T> pred = new XMLStreamObjectPredicate<>(expression, resolver.getSchema());
 		return pred;

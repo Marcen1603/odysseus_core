@@ -39,9 +39,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable
 {
-	public static final String SLASH_REPLACEMENT_STRING = "__SLASH_PLACEHOLDER__";
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
+	public static final String SLASH_REPLACEMENT_STRING = "__SLASH_PLACEHOLDER__";
+	public static final String AT_REPLACEMENT_STRING = "__AT_PLACEHOLDER__";
+	public static final String LEFT_BRACE_REPLACEMENT_STRING = "__LEFT_BRACE_PLACEHOLDER__";
+	public static final String RIGHT_BRACE_REPLACEMENT_STRING = "__RIGHT_BRACE_PLACEHOLDER__";
 	private static XPath xpath;
 
 	private Document content;
@@ -67,9 +70,17 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return null;
 	}
 
-	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right)
+	@SuppressWarnings("unchecked")
+	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
 	{
-		return null;
+		XMLStreamObject<IMetaAttribute> result = (XMLStreamObject<IMetaAttribute>) new XMLStreamObject<IMetaAttribute>(right.getDocument());
+		Node node = result.xpathToNode(path);
+		if(node!=null)
+		{
+			Node appendNode = right.getDocument().importNode(left.getDocument().getFirstChild().cloneNode(true), true);
+			node.appendChild(appendNode);
+		}
+		return result;			
 	}
 	
 	@Override
@@ -270,6 +281,9 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	public <K> K getAttribute(String name)
 	{
 		name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
+		name = name.replaceAll(AT_REPLACEMENT_STRING, "@");
+		name = name.replaceAll(LEFT_BRACE_REPLACEMENT_STRING, "(");
+		name = name.replaceAll(RIGHT_BRACE_REPLACEMENT_STRING, ")");
 		try
 		{
 			return (K) xpath.compile(name).evaluate(content);
