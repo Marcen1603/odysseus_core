@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "Construct", doc = "Constructs a new DOM filled with resolved XPath-Expressions", category = {
 		LogicalOperatorCategory.TRANSFORM })
@@ -50,7 +52,7 @@ public class ConstructAO extends UnaryLogicalOp
 		expressions = outputSchema;
 	}
 
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "newExpressions", optional = false, isList = true, doc = "A list of XPAthExpressions.")
+	@Parameter(type = StringParameter.class, name = "newExpressions", optional = false, isList = true, doc = "A list of XPAthExpressions.")
 	public void setNewExpressions(List<String> outputSchema)
 	{
 		newExpressions = outputSchema;
@@ -75,4 +77,15 @@ public class ConstructAO extends UnaryLogicalOp
 	{
 		return false;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
+				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes, getInputSchema());
+		setOutputSchema(newOutputSchema);
+		return newOutputSchema;
+	}
+	
 }
