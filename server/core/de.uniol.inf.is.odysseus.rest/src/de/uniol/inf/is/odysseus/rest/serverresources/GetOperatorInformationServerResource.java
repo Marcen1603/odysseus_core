@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.rest.serverresources;
 
-import java.util.List;
-
 import org.restlet.resource.Post;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
@@ -9,15 +7,17 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.rest.ExecutorServiceBinding;
 import de.uniol.inf.is.odysseus.rest.dto.request.GenericSessionRequestDTO;
 
-public class GetAllOperatorInformationServerResource extends AbstractSessionServerResource {
+public class GetOperatorInformationServerResource extends AbstractSessionServerResource {
 
-	public static final String PATH = "getAllOperatorInformation";
+	public static final String PATH = "getOperatorInformation";
 
 	@Post
-	public List<LogicalOperatorInformation> getAllOperatorInformation(GenericSessionRequestDTO<String> command){
+	public LogicalOperatorInformation getOperatorInformation(GenericSessionRequestDTO<String> command){
 		ISession session = this.loginWithToken(command.getToken());
 
-		List<LogicalOperatorInformation> res = ExecutorServiceBinding.getExecutor().getOperatorInformations(session);
+		String name = command.getValue();
+
+		LogicalOperatorInformation res = ExecutorServiceBinding.getExecutor().getOperatorInformation(name, session);
 
 		return res;
 	}
