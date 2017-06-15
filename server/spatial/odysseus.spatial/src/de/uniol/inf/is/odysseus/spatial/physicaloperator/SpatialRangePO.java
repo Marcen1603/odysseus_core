@@ -32,20 +32,12 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 
 		this.range = ao.getRange();
 
-		this.dataStructure = SpatioTemporalDataStructureProvider.getInstance().getDataStructure(ao.getDataStructureName());
+		this.dataStructure = SpatioTemporalDataStructureProvider.getInstance()
+				.getDataStructure(ao.getDataStructureName());
 		if (this.dataStructure == null) {
 			throw new RuntimeException("The spatial data structure with the name " + ao.getDataStructureName()
 					+ " does not exist. Use a SpatialStore operator to create and fill one.");
 		}
-	}
-
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-	}
-
-	@Override
-	public OutputMode getOutputMode() {
-		return OutputMode.MODIFIED_INPUT;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,5 +93,14 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 					new TimeInterval(tuple.getMetadata().getStart(), tuple.getMetadata().getEnd()));
 		}
 		return null;
+	}
+
+	@Override
+	public void processPunctuation(IPunctuation punctuation, int port) {
+	}
+
+	@Override
+	public OutputMode getOutputMode() {
+		return OutputMode.MODIFIED_INPUT;
 	}
 }
