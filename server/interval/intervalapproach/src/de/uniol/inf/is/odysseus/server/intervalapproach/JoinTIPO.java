@@ -261,7 +261,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 
 			qualifies = areas[otherport].queryCopy(object, order, extract);
-
 			boolean hit = qualifies.hasNext();
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
@@ -269,38 +268,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				transferFunction.transfer(newElement);
 
 			}
-			// Depending on card insert elements into sweep area
-			if (card == null || card == Cardinalities.MANY_MANY) {
-				areas[port].insert(object);
-			} else {
-				switch (card) {
-				case ONE_ONE:
-					// If one to one case, a hit cannot be produce another hit
-					if (!hit) {
-						areas[port].insert(object);
-					}
-					break;
-				case ONE_MANY:
-					// If from left insert
-					// if from right and no hit, insert (corresponding left
-					// element not found now)
-					if (port == 0 || (port == 1 && !hit)) {
-						areas[port].insert(object);
-					}
-					break;
-				case MANY_ONE:
-					// If from rightt insert
-					// if from left and no hit, insert (corresponding right
-					// element not found now)
-					if (port == 1 || (port == 0 && !hit)) {
-						areas[port].insert(object);
-					}
-					break;
-				default:
-					areas[port].insert(object);
-					break;
-				}
-			}
+			insertElement(object,port,hit);
+			
 		PointInTime a = areas[port].getMinStartTs();
 		PointInTime b = areas[otherport].getMinStartTs();
 		PointInTime heartbeat = PointInTime.max(a, b);
@@ -355,6 +324,42 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			// Ignore
 			return true;
 		}
+	}
+	
+	// Depending on card insert elements into sweep area
+	public void insertElement(T object,int port,boolean hit){
+		
+					if (card == null || card == Cardinalities.MANY_MANY) {
+						areas[port].insert(object);
+					} else {
+						switch (card) {
+						case ONE_ONE:
+							// If one to one case, a hit cannot be produce another hit
+							if (!hit) {
+								areas[port].insert(object);
+							}
+							break;
+						case ONE_MANY:
+							// If from left insert
+							// if from right and no hit, insert (corresponding left
+							// element not found now)
+							if (port == 0 || (port == 1 && !hit)) {
+								areas[port].insert(object);
+							}
+							break;
+						case MANY_ONE:
+							// If from rightt insert
+							// if from left and no hit, insert (corresponding right
+							// element not found now)
+							if (port == 1 || (port == 0 && !hit)) {
+								areas[port].insert(object);
+							}
+							break;
+						default:
+							areas[port].insert(object);
+							break;
+						}
+					}
 	}
 
 	public ITimeIntervalSweepArea<T>[] getAreas() {

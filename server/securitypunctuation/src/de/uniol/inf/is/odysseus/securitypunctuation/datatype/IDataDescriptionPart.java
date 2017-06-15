@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public interface IDataDescriptionPart extends Serializable {
 
 	/**
-	 * Checks if the Security Punctuation this DDP belongs to refers to the
+	 * Checks if the Security Punctuation, this DDP belongs to, refers to the
 	 * object
 	 * 
 	 * @param object

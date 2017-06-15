@@ -71,16 +71,15 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 		// removes the sps that dont contain any role of the query specifier but
 		// have the same TS like other SPs in the cache
 		List<ISecurityPunctuation> punctuationsToRemove = new ArrayList<>();
-		for (ISecurityPunctuation sp : this.saOpDel.getRecentSPs()) {
-			if (!sp.getSRP().getRoles().get(0).equals("*")) {
-				if (Collections.disjoint(roles, sp.getSRP().getRoles())) {
-					punctuationsToRemove.add(sp);
-					LOG.info("Punctuation entfernt:"+sp.toString());
-				}
-			}
-
-		}
-		this.saOpDel.getRecentSPs().removeAll(punctuationsToRemove);
+//		for (ISecurityPunctuation sp : this.saOpDel.getRecentSPs()) {
+//			if (!sp.getSRP().getRoles().get(0).equals("*")) {
+//				if (Collections.disjoint(roles, sp.getSRP().getRoles())) {
+//					punctuationsToRemove.add(sp);
+//				}
+//			}
+//
+//		}
+//		this.saOpDel.getRecentSPs().removeAll(punctuationsToRemove);
 		if (!saOpDel.getRecentSPs().isEmpty()) {
 			for (ISecurityPunctuation sp : saOpDel.getRecentSPs()) {
 				for (String role : roles) {
@@ -100,7 +99,8 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 					}
 				}
 			}
-		}else{
+		}
+		else{
 			this.saOpDel.getRecentSPs().add(new SecurityPunctuation("-2,-2", "", "", false, false, -1L));
 		}
 
@@ -119,9 +119,6 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 			SPchecked = true;
 		}
 
-		// if (this.schema == null) {
-		// this.schema = this.getInputSchema(port);
-		// }
 
 		if (match) {
 			if (!saOpDel.getRecentSPs().isEmpty()) {
@@ -142,7 +139,6 @@ public class SecurityShieldPO<T extends IStreamObject<?>> extends AbstractPipe<T
 					if (sp.getDDP().match(object, this.getInputSchema(port))) {
 
 						saOpDel.getRecentSPs().removeAll(recentlySentSPs);
-						// saOpDel.getRecentSPs().clear();
 						transfer(object);
 						break;
 					}

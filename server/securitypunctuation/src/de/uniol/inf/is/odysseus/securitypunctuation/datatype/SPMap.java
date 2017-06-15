@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
@@ -32,9 +33,8 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 
 	public void addValue(ISecurityPunctuation sp, T object, int port) {
 		if (!this.spMap.isEmpty() && this.spMap.get(port).containsKey(sp)) {
-			if (this.spMap.get(port).containsKey(sp)) {
 				this.spMap.get(port).get(sp).add(object);
-			}
+			
 		}
 	}
 
@@ -45,7 +45,7 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 			for (T obj : this.spMap.get(port).get(sp)) {
 				if (obj.getMetadata().getEnd().before(ts)) {
 					objectsToRemove.add(obj);
-
+					
 				}
 			}
 			this.spMap.get(port).get(sp).removeAll(objectsToRemove);

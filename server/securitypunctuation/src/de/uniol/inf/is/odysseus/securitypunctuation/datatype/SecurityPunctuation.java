@@ -142,9 +142,9 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 	public SecurityPunctuation intersect(ISecurityPunctuation punctuation) {
 		List<String> attributes = new ArrayList<>();
 		List<String> roles = new ArrayList<>();
-		// int[] tupleRange = new int[2];
+
 		SecurityPunctuation newSP = new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
-//		attributes.add("");
+
 		if (this.sign != punctuation.getSign()) {
 			return newSP;
 		}
@@ -190,7 +190,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 		// tupleRange = this.ddp.getTupleRange();
 		// }
 
-		return newSP = new SecurityPunctuation("*", attributes, roles, this.sign, this.immutable, this.timestamp);
+		return newSP = new SecurityPunctuation("*", attributes, roles, this.sign, this.immutable, new PointInTime(this.timestamp));
 
 	}
 
@@ -207,7 +207,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 			attributes = new ArrayList<>(ddp.getAttributes());
 			return attributes;
 		} else
-			attributes = this.ddp.getAttributes();
+			attributes = new ArrayList(this.ddp.getAttributes());
 		for (String inputAttribute : ddp.getAttributes()) {
 			if (!attributes.contains(inputAttribute)) {
 				attributes.add(inputAttribute);
@@ -222,24 +222,29 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 			return output;
 
 		} else if (inputOne.get(0).equals("*")) {
-			for (String inputAttributeTwo : inputTwo) {
-				output.add(inputAttributeTwo);
-			}
+//			for (String inputAttributeTwo : inputTwo) {
+//				output.add(inputAttributeTwo);
+//			}#
+			output=new ArrayList(inputTwo);
 			return output;
 		} else if (inputTwo.get(0).equals("*")) {
-			for (String inputAttributeOne : inputOne) {
-				output.add(inputAttributeOne);
-			}
+			output=new ArrayList(inputTwo);
+//			for (String inputAttributeOne : inputOne) {
+//				output.add(inputAttributeOne);
+//			}
 			return output;
 		} else {
-			for (String inputAttributeOne : inputOne) {
-				for (String inputAttributeTwo : inputTwo) {
-					if (inputAttributeOne.equals(inputAttributeTwo)) {
-						output.add(inputAttributeOne);
-					}
-
-				}
-			}
+			output=new ArrayList(inputOne);
+			output.retainAll(inputTwo);
+			
+//			for (String inputAttributeOne : inputOne) {
+//				for (String inputAttributeTwo : inputTwo) {
+//					if (inputAttributeOne.equals(inputAttributeTwo)) {
+//						output.add(inputAttributeOne);
+//					}
+//
+//				}
+//			}
 		}
 
 		return output;
@@ -260,7 +265,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 		result = prime * result + (immutable ? 1231 : 1237);
 		result = prime * result + (sign ? 1231 : 1237);
 		result = prime * result + ((srp == null) ? 0 : srp.hashCode());
-		result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+		//result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
 		return result;
 	}
 
@@ -352,7 +357,10 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 	@Override
 	public boolean isPunctuation() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
+
+	
+	
 
 }

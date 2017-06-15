@@ -31,7 +31,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	List<ISecurityPunctuation> lastSentPunctuation;
 
 	List<SAOperatorDelegate<T>> saOpDelPo;
-	List<List<ISecurityPunctuation>> spList = new ArrayList<List<ISecurityPunctuation>>();
+	List<List<ISecurityPunctuation>> spList;
 
 	public SAJoinPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
 			ITransferArea<T, T> transferFunction, ITimeIntervalSweepArea<T>[] areas) {
@@ -51,7 +51,9 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void processPunctuation(IPunctuation inPunctuation, int port) {
 
 		if (inPunctuation instanceof ISecurityPunctuation) {
-			this.spList.get(port).add((ISecurityPunctuation) inPunctuation);
+			if (!this.spList.get(port).contains(inPunctuation)) {
+				this.spList.get(port).add((ISecurityPunctuation) inPunctuation);
+			}
 			this.saOpDelPo.get(port).override((ISecurityPunctuation) inPunctuation);
 			this.spMap.addSP((ISecurityPunctuation) inPunctuation, port);
 		} else {
@@ -62,15 +64,21 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	protected synchronized void process_next(T object, int port) {
+		// if no SP is referring to this object, it is discarded
+		if (!checkSP(object, port)) {
+			return;
+		}
+
 		boolean send = false;
+
 		// adds the incoming Object to the SPMap, with the current active SPs as
 		// key
 		if (!this.saOpDelPo.get(port).getRecentSPs().isEmpty()) {
 			for (ISecurityPunctuation sp : this.saOpDelPo.get(port).getRecentSPs()) {
 				this.spMap.addValue(sp, object, port);
-
 			}
 		}
+
 		// removes the sps that are not required anymore from the SPMap, based
 		// on the timestamp of the incoming object
 		List<ISecurityPunctuation> spsToDelete = new ArrayList<>();
@@ -79,62 +87,30 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				spsToDelete.add(this.spMap.invalidate(sp, object.getMetadata().getStart(), port ^ 1));
 			}
 		}
+		// removes the SPs that got deleted from the SPMap from the spList,
+		// which is functioning as a collection of keys for the SPMap
+		this.spList.get(port ^ 1).removeAll(spsToDelete);
 
-		this.spList.removeAll(spsToDelete);
-
-		transferFunction.newElement(object, port);
-
-		if (isDone()) {
-			return;
-		}
-
-		int otherport = port ^ 1;
-		Order order = Order.fromOrdinal(port);
 		Iterator<T> qualifies;
-
-		if (inOrder && object.isTimeProgressMarker()) {
-			areas[otherport].purgeElements(object, order);
-		}
-
-		if (isDone()) {
-			propagateDone();
-			return;
-		}
-
-		boolean extract = false;
-		if (card != null) {
-			switch (card) {
-			case ONE_ONE:
-				extract = true;
-				break;
-			case MANY_ONE:
-				extract = port == 1;
-				break;
-			case ONE_MANY:
-				extract = port == 0;
-				break;
-			default:
-				break;
-			}
-		}
-
-		qualifies = areas[otherport].queryCopy(object, order, extract);
-
+		Order order = Order.fromOrdinal(port);
+		qualifies = areas[port ^ 1].queryCopy(object, order, false);
 		List<ISecurityPunctuation> intersectedSPs = new ArrayList<>();
 
 		// extracts the SPs of the matching Tuples from the other port and
 		// intersects them with the SPs from the incoming object
+		boolean hit = qualifies.hasNext();
 		while (qualifies.hasNext()) {
 			ISecurityPunctuation intersectedSP;
 			T next = qualifies.next();
-			List<ISecurityPunctuation> matchingSPs = this.spMap.getMatchingSPs(next, otherport);
-			LOG.info("matching SPs größe:" + matchingSPs.size());
+			List<ISecurityPunctuation> matchingSPs = this.spMap.getMatchingSPs(next, port ^ 1);
 			if (!matchingSPs.isEmpty()) {
 				for (ISecurityPunctuation matchingSP : matchingSPs) {
 					ISecurityPunctuation temp = matchingSP;
 					for (ISecurityPunctuation currentSP : this.saOpDelPo.get(port).getRecentSPs()) {
+
 						if (port == 0) {
 							intersectedSP = temp.intersect(currentSP);
+
 						} else {
 							intersectedSP = currentSP.intersect(temp);
 						}
@@ -146,15 +122,13 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 			}
 		}
-
-		LOG.info("intersectedSPS Größe" + intersectedSPs.size());
-		LOG.info("lastsentsps Größe" + lastSentPunctuation.size());
-
+		
 		// if the intersected SPs are empty, the object and the intersected
 		// SPs are discarded
 		if (!intersectedSPs.isEmpty()) {
 			send = true;
-			if (!(intersectedSPs.containsAll(lastSentPunctuation) && lastSentPunctuation.containsAll(intersectedSPs))) {
+			if (!checkIfAlreadySent(intersectedSPs)) {
+
 				lastSentPunctuation.clear();
 				for (ISecurityPunctuation sp : intersectedSPs) {
 
@@ -163,57 +137,38 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				}
 			}
 		}
-
-		qualifies = areas[otherport].queryCopy(object, order, extract);
-		boolean hit = qualifies.hasNext();
-		while (qualifies.hasNext() && send) {
-			T next = qualifies.next();
-			T newElement = dataMerge.merge(object, next, metadataMerge, order);
-			transferFunction.transfer(newElement);
-
+		if (!send) {
+			super.insertElement(object, port, hit);
+		} else if (send) {
+			super.process_next(object, port);
 		}
 
-		// Depending on card insert elements into sweep area
-		if (card == null || card == Cardinalities.MANY_MANY) {
-			areas[port].insert(object);
-		} else {
-			switch (card) {
-			case ONE_ONE:
-				// If one to one case, a hit cannot be produce another
-				// hit
-				if (!hit) {
-					areas[port].insert(object);
-				}
-				break;
-			case ONE_MANY:
-				// If from left insert
-				// if from right and no hit, insert (corresponding left
-				// element not found now)
-				if (port == 0 || (port == 1 && !hit)) {
-					areas[port].insert(object);
-				}
-				break;
-			case MANY_ONE:
-				// If from rightt insert
-				// if from left and no hit, insert (corresponding right
-				// element not found now)
-				if (port == 1 || (port == 0 && !hit)) {
-					areas[port].insert(object);
-				}
-				break;
-			default:
-				areas[port].insert(object);
-				break;
+	}
+
+	// checks if the object fits to one of the current SPs in the
+	// SAOperatorDelegate
+	private boolean checkSP(T object, int port) {
+		for (ISecurityPunctuation sp : this.saOpDelPo.get(port).getRecentSPs()) {
+			if (sp.getDDP().match(object, this.getInputSchema(port))) {
+				return true;
 			}
 		}
-		PointInTime a = areas[port].getMinStartTs();
-		PointInTime b = areas[otherport].getMinStartTs();
-		PointInTime heartbeat = PointInTime.max(a, b);
-		if (heartbeat != null) {
-			transferFunction.newHeartbeat(heartbeat, port);
-			transferFunction.newHeartbeat(heartbeat, otherport);
-		}
+		return false;
 
+	}
+	//checks if the last sent SPs are the same like the new intersected SPs
+	private boolean checkIfAlreadySent(List<ISecurityPunctuation> intersectedSPs) {
+		if (lastSentPunctuation.isEmpty()) {
+			return false;
+		} else if (intersectedSPs.size() != this.lastSentPunctuation.size()) {
+			return false;
+		}
+		for (ISecurityPunctuation sp : intersectedSPs) {
+			if (!lastSentPunctuation.contains(sp)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void initLists() {
@@ -223,7 +178,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.spList = new ArrayList<List<ISecurityPunctuation>>();
 		for (int i = 0; i < 2; i++) {
 			this.spList.add(new ArrayList<ISecurityPunctuation>());
-			this.saOpDelPo.add(new SAOperatorDelegate());
+			this.saOpDelPo.add(new SAOperatorDelegate<T>());
 		}
 
 	}

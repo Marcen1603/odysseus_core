@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.transformationhandler;
 
 import java.util.HashSet;
+
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,12 +12,14 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
@@ -53,6 +57,7 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 
 		// add the Operatorclasses that are supposed to be replaced with their
 		// security aware counterpart
+		
 		operatorClasses.add(SelectAO.class);
 		operatorClasses.add(ProjectAO.class);
 		operatorClasses.add(JoinAO.class);
@@ -64,17 +69,38 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 		replaceOperator(logicalPlan);
 
 		/*
-		 * finds the sources and places a SPAnalyzer and a Security Shield  behind it
+		 * finds the sources and places a SPAnalyzer behind it
 		 */
 		List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalOp);
 
 		for (ILogicalOperator s : sources) {
-			SecurityShieldAO SecurityShieldToInsert = new SecurityShieldAO();
-			RestructHelper.insertOperatorBefore2(SecurityShieldToInsert, s);
 			SPAnalyzerAO toInsert = new SPAnalyzerAO();
 			RestructHelper.insertOperatorBefore2(toInsert, s);
 
 		}
+		
+		//places a Security Shield Operator at the top of the logical query plan
+				if (logicalOp instanceof TopAO) {
+					CopyOnWriteArrayList<LogicalSubscription> sourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
+							logicalOp.getSubscribedToSource());
+					for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
+						// unsibscribe the topAO from all source subscriptions
+						ILogicalOperator sourceOperator = logicalSubscription
+								.getTarget();
+						logicalOp.unsubscribeFromSource(logicalSubscription);
+
+						// create ObserverBenchmark operator and connect to all existing sources
+						SecurityShieldAO observerBenchmarkAO = new SecurityShieldAO();
+						sourceOperator.subscribeSink(observerBenchmarkAO, 0,
+								logicalSubscription.getSourceOutPort(),
+								logicalSubscription.getSchema());
+
+						// reconnect existing topAO
+						observerBenchmarkAO.subscribeSink(logicalOp,
+								logicalSubscription.getSinkInPort(), 0,
+								logicalSubscription.getSchema());
+					}
+				}
 
 	}
 

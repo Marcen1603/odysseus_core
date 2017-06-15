@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.securitypunctuation.datatype.DataDescriptionPart;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 
 public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
@@ -26,12 +27,38 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 			buffer.add(punctuation);
 			return;
 
-			// timestamp vergliechen
-		} else if (buffer.get(buffer.size() - 1).equals(punctuation)) {
+		} else if (buffer.get(buffer.size() - 1).getTime().equals(punctuation.getTime())) {
 
-			punctuation.getSRP().union(buffer.get(buffer.size() - 1).getSRP());
-			LOG.info(punctuation.toString());
-			this.buffer.clear();
+			for (ISecurityPunctuation sp : this.buffer) {
+
+				if (sp.getImmutable() == punctuation.getImmutable() && sp.getSign() == punctuation.getSign()) {
+					// if the DDPs of the SPs are the same, they get unioned,
+					// i.e. the Roles in their SRP are unioned
+					if (punctuation.getDDP().equals(sp.getDDP())) {
+						sp.getSRP().union(punctuation.getSRP());
+						return;
+					}
+					// if the roles of the SPs are the same and the tupleRange
+					// are the same, the SPs are intersected, resulting in a
+					// union of the attributes in the DDP
+					else if (punctuation.getSRP().equals(sp.getSRP())
+							&& (punctuation.getDDP().getTupleRange()[0] == sp.getDDP().getTupleRange()[0]
+									&& punctuation.getDDP().getTupleRange()[1] == sp.getDDP().getTupleRange()[1])) {
+						
+						punctuation=punctuation.intersect(sp);
+						punctuation.setDDP(new DataDescriptionPart(
+								String.valueOf(sp.getDDP().getTupleRange()[0]) + ","
+										+ String.valueOf(sp.getDDP().getTupleRange()[1]),
+								punctuation.getDDP().getAttributes()));
+						LOG.info("SP: " + punctuation.toString());
+						this.buffer.add(punctuation);
+						this.buffer.remove(sp);
+						return;
+					}
+				}
+
+			}
+			// this.buffer.clear();
 			this.buffer.add(punctuation);
 		} else {
 			this.buffer.clear();
@@ -46,7 +73,7 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 	}
 
 	/*
-	 * Die SPs werden solange zurückgehalten, bis ein Tupel verschickt wird
+	 * The SPs are stored until at least one tuple is sent
 	 */
 	@Override
 	protected void process_next(T object, int port) {

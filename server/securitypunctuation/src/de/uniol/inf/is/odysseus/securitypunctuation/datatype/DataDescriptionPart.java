@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,39 +14,41 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class DataDescriptionPart implements IDataDescriptionPart{
+public class DataDescriptionPart implements IDataDescriptionPart {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8776732310776468142L;
 	private static final Logger LOG = LoggerFactory.getLogger(DataDescriptionPart.class);
-	
-	
+
 	// [0] is the start of the tupleRange, [1] is the end
 	// if tuple ranges=-1 access to all tuples is allowed if tuple ranges=-2
 	// access to no tuples is allowed
 	private int[] tupleRange;
 	private List<String> attributes;
 
-	public DataDescriptionPart(String tupleRange,List<String> attributes){
+	public DataDescriptionPart(String tupleRange, List<String> attributes) {
 		this.tupleRange = tupleRangeToInt(tupleRange);
-		this.attributes=attributes;
+		this.attributes = attributes;
+		Collections.sort(this.attributes);
 	}
 
 	public DataDescriptionPart(String tupleRange, String attributes) {
 		this.tupleRange = tupleRangeToInt(tupleRange);
 		this.attributes = new ArrayList<String>(Arrays.asList(attributes.split(",")));
-
+		Collections.sort(this.attributes);
 	}
 
 	public DataDescriptionPart(DataDescriptionPart ddp) {
 		this.tupleRange = ddp.getTupleRange();
 		this.attributes = ddp.getAttributes();
+		Collections.sort(this.attributes);
 	}
 
 	public DataDescriptionPart(int[] tupleRange, String attributes) {
 		this.tupleRange = tupleRange;
 		this.attributes = new ArrayList<String>(Arrays.asList(attributes.split(",")));
+		Collections.sort(this.attributes);
 	}
 
 	public List<String> getAttributes() {
@@ -101,13 +104,22 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 	}
 
 	private boolean compare(List<String> inputOne, List<String> inputTwo) {
-		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
+		if (inputOne.size() != inputTwo.size()) {
 			return false;
+		} else if (!inputOne.equals(inputTwo)) {
+			return false;
+		}
+		return true;
 
-		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {
-			return true;
-		} else
-			return false;
+		// if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty()
+		// && !inputTwo.isEmpty()) {
+		// return false;
+		//
+		// } else if (inputTwo.containsAll(inputOne) &&
+		// inputOne.containsAll(inputTwo)) {
+		// return true;
+		// } else
+		// return false;
 
 	}
 
@@ -138,21 +150,23 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 	 */
 	public boolean match(IStreamObject<?> object, SDFSchema schema) {
 		boolean match = false;
-		Tuple<?> obj = (Tuple<?>) object;
-		if(StringUtils.isBlank(this.getAttributes().get(0))){
+		if (StringUtils.isBlank(this.getAttributes().get(0))) {
 			return false;
 		}
+		Tuple<?> obj = (Tuple<?>) object;
+		
 		if (this.attributes.get(0).equals("*")) {
 			match = true;
 		}
+		if (!match) {
+			for (int i = 0; i < schema.size(); i++) {
 
-		for (int i = 0; i < schema.size(); i++) {
-			
-			if (!schema.get(i).getAttributeName().equals("id") && !schema.get(i).getAttributeName().equals("TS")
-					&& !schema.getAttribute(i).getAttributeName().equals("start")
-					&& !schema.getAttribute(i).getAttributeName().equals("end")) {
-				if (!this.attributes.contains(schema.get(i).getAttributeName())) {
-					return false;
+				if (!schema.get(i).getAttributeName().equals("id") && !schema.get(i).getAttributeName().equals("TS")
+						&& !schema.getAttribute(i).getAttributeName().equals("start")
+						&& !schema.getAttribute(i).getAttributeName().equals("end")) {
+					if (!this.attributes.contains(schema.get(i).getAttributeName())) {
+						return false;
+					}
 				}
 			}
 		}
@@ -164,8 +178,8 @@ public class DataDescriptionPart implements IDataDescriptionPart{
 			return true;
 		} else if (tupleRange[0] == -2 || tupleRange[1] == -2) {
 			return false;
-		} else if (((long) obj.getAttribute(idIndex)) >= (long)tupleRange[0]
-				&& ((long) obj.getAttribute(idIndex)) <= (long)tupleRange[1] && match == true) {
+		} else if (((long) obj.getAttribute(idIndex)) >= (long) tupleRange[0]
+				&& ((long) obj.getAttribute(idIndex)) <= (long) tupleRange[1] && match == true) {
 
 			return true;
 

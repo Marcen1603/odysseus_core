@@ -26,11 +26,12 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 	long counter = 0L;
 	private long timestamp;
 	int iterator = 0;
+	int amount = 0;
 
-	public CSVTupleProvider(int delay, String fileName) {
+	public CSVTupleProvider(int delay, String fileName, int amount) {
 		super();
 		this.delay = delay;
-
+		this.amount = amount;
 		this.fileName = fileName;
 		this.fileURL = Activator.getContext().getBundle().getEntry("/data/" + fileName);
 
@@ -38,51 +39,53 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 
 	@Override
 	public List<DataTuple> next() throws InterruptedException {
-		if (br == null || iterator == 9) {
-			initFileStream();
-		}
+		if (counter <= amount) {
+			if (br == null || iterator == 9) {
+				initFileStream();
+			}
 
-		try {
-			line = br.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String[] temp = line.split(",");
-		List<DataTuple> list = new ArrayList<DataTuple>();
-		timestamp = System.currentTimeMillis();
-		DataTuple tuple = new DataTuple();
-//		if (temp[0].equals("1")) {
-//			tuple.addAttribute(true);
-//			tuple.addAttribute(temp[1]);
-//			tuple.addAttribute(temp[2]);
-//			tuple.addAttribute(temp[3]);
-//			if (temp[4].equals("true")) {
-//				tuple.addAttribute(true);
-//			} else {
-//				tuple.addAttribute(false);
-//			}if(temp[5].equals("true")){
-//				tuple.addAttribute(true);
-//			}else{
-//				tuple.addAttribute(false);
-//			}
-//		} else {
+			try {
+				line = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String[] temp = line.split(",");
+			List<DataTuple> list = new ArrayList<DataTuple>();
+			timestamp = System.currentTimeMillis();
+			DataTuple tuple = new DataTuple();
+			// if (temp[0].equals("1")) {
+			// tuple.addAttribute(true);
+			// tuple.addAttribute(temp[1]);
+			// tuple.addAttribute(temp[2]);
+			// tuple.addAttribute(temp[3]);
+			// if (temp[4].equals("true")) {
+			// tuple.addAttribute(true);
+			// } else {
+			// tuple.addAttribute(false);
+			// }if(temp[5].equals("true")){
+			// tuple.addAttribute(true);
+			// }else{
+			// tuple.addAttribute(false);
+			// }
+			// } else {
 
 			tuple.addAttribute(new Long(counter));// TupelID
 			tuple.addAttribute(Integer.parseInt(temp[0]));// patientenID
 			tuple.addAttribute(Integer.parseInt(temp[1]));// Puls oder
 															// Atemfrequenz
-		
-		tuple.addAttribute(timestamp);// start Timestamp
-		tuple.addAttribute(timestamp + 10000);// end Timestamp
-		list.add(tuple);
-		if (iterator != 9) {
-			iterator++;
-		} else
-			iterator = 0;
-		counter++;
-		Thread.sleep(delay);
-		return list;
+
+			tuple.addAttribute(timestamp);// start Timestamp
+			tuple.addAttribute(timestamp + 2000);// end Timestamp
+			list.add(tuple);
+			if (iterator != 9) {
+				iterator++;
+			} else
+				iterator = 0;
+			counter++;
+			Thread.sleep(delay);
+			return list;
+		}return null;
 	}
 
 	@Override
@@ -99,7 +102,7 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 
 	@Override
 	public IDataGenerator newCleanInstance() {
-		return new CSVTupleProvider(delay, fileName);
+		return new CSVTupleProvider(delay, fileName, amount);
 	}
 
 	public void initFileStream() {

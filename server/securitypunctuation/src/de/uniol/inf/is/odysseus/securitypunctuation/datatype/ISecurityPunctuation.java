@@ -19,14 +19,15 @@ public interface ISecurityPunctuation extends IPunctuation {
 
 	void setImmutable(boolean immutable);
 
+
 	void setSign(boolean sign);
 
 	void setTime(PointInTime timestamp);
 	
-
-	
 	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation);
 
 	public boolean isEmpty();
+
+	
 
 }

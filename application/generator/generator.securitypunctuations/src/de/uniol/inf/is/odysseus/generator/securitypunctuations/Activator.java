@@ -20,8 +20,8 @@ public class Activator implements BundleActivator {
 //		StreamServer server2 = new StreamServer(25599, new SPProvider("Pulse",1000,false));
 //		server1.start();
 //		server2.start();
-		StreamServer server1=new StreamServer(25599,new CSVTupleProvider(1000,"InputStream1.csv"));
-	StreamServer server2=new StreamServer(25600,new CSVTupleProvider(1000,"InputStream2.csv"));
+		StreamServer server1=new StreamServer(25599,new CSVTupleProvider(1,"InputStream1.csv",20000));
+		StreamServer server2=new StreamServer(25600,new CSVTupleProvider(1,"InputStream2.csv",20000));
 		server1.start();
 		server2.start();
 	}

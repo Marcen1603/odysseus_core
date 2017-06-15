@@ -19,7 +19,7 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 
 	public SecurityRestrictionPart(List<String> roles) {
 		this.roles = roles;
-		//Collections.sort(this.roles);
+		Collections.sort(this.roles);
 
 	}
 
@@ -27,12 +27,13 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 
 	public SecurityRestrictionPart(String roles) {
 		this.roles = new ArrayList<String>(Arrays.asList(roles.split(",")));
-		//Collections.sort(this.roles);
+		Collections.sort(this.roles);
 
 	}
 
 	public SecurityRestrictionPart(SecurityRestrictionPart srp) {
 		this.roles = srp.getRoles();
+		Collections.sort(this.roles);
 	}
 
 	public List<String> getRoles() {
@@ -54,7 +55,7 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 					this.roles.add(roleInput);
 				}
 			}
-	
+		Collections.sort(this.roles);
 
 	}
 
@@ -62,7 +63,8 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	public String toString() {
 		String str = "Roles: [";
 		for (String role : roles) {
-			str += role;
+			
+			str += role+",";
 		}
 		str += "]";
 		return str;
@@ -96,15 +98,22 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	}
 
 	private boolean compare(List<String> inputOne, List<String> inputTwo) {
-		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
+		if(inputOne.size()!=inputTwo.size()){
 			return false;
-
-		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {
-			return true;
-		} else
+		}else if(!inputOne.equals(inputTwo)){
 			return false;
-
+		}return true;
+		
+		
+//		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
+//			return false;
+//
+//		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {
+//			return true;
+//		} else
+//			return false;
+//
 	}
-	
+//	
 
 }

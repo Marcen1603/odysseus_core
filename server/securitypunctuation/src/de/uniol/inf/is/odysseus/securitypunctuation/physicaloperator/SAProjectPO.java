@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
@@ -40,24 +41,44 @@ public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		if (punctuation instanceof ISecurityPunctuation) {
-			sendPunctuation(checkSP(punctuation));
+			sendPunctuation(checkSP2((ISecurityPunctuation)punctuation));
 		} else
 			sendPunctuation(punctuation);
 
 	}
 
 	// return new SecurityPunctuation überarbeiten
-	public IPunctuation checkSP(IPunctuation punctuation) {
+	public ISecurityPunctuation checkSP(ISecurityPunctuation punctuation) {
+		ISecurityPunctuation copy=punctuation;
 		for (String attribute : restrictedAttributes) {
 			for (String SPattribute : ((ISecurityPunctuation) punctuation).getDDP().getAttributes()) {
 				if ((attribute).equals(SPattribute)) {
-					((ISecurityPunctuation) punctuation).getDDP().getAttributes().remove(SPattribute);
-					if (((ISecurityPunctuation) punctuation).getDDP().getAttributes().isEmpty()) {
+					((ISecurityPunctuation) copy).getDDP().getAttributes().remove(SPattribute);
+					if (((ISecurityPunctuation) copy).getDDP().getAttributes().isEmpty()) {
 						return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
 					}
 				}
 			}
 		}
+		punctuation.setTime(new PointInTime(33333));
+		return punctuation;
+
+	}
+	
+	public ISecurityPunctuation checkSP2(ISecurityPunctuation punctuation) {
+		if(restrictedAttributes.containsAll(punctuation.getDDP().getAttributes())){
+			return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
+		}
+//		for (String attribute : restrictedAttributes) {
+//			for (String SPattribute : ((ISecurityPunctuation) punctuation).getDDP().getAttributes()) {
+//				if ((attribute).equals(SPattribute)) {
+//					((ISecurityPunctuation) copy).getDDP().getAttributes().remove(SPattribute);
+//					if (((ISecurityPunctuation) copy).getDDP().getAttributes().isEmpty()) {
+//						return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
+//					}
+//				}
+//			}
+//		}
 		return punctuation;
 
 	}
