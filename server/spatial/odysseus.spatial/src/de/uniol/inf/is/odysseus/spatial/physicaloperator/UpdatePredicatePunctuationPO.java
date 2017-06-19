@@ -28,8 +28,13 @@ public class UpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterva
 		for (SDFAttribute attribute : this.inputSchema.getAttributes()) {
 			String templateStyle = "<" + attribute.getAttributeName() + ">";
 			if (newPredicate.contains(templateStyle)) {
-				String replacement = String.valueOf(object.getAttribute(attributePosition));
-				newPredicate.replace(templateStyle, replacement);
+				String replacement = "";
+				if (object.getAttribute(attributePosition) instanceof Double) {
+					replacement = String.valueOf((Double) object.getAttribute(attributePosition));
+				} else {
+					replacement = String.valueOf(object.getAttribute(attributePosition));
+				}
+				newPredicate = newPredicate.replace(templateStyle, replacement);
 			}
 			attributePosition++;
 		}

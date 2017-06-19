@@ -55,5 +55,10 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 	public String getNewPredicate() {
 		return newPredicate;
 	}
+	
+	@Override
+	public String toString() {
+		return "UpdatePredicatePunctuation - new predicate: " + this.getNewPredicate() + "  " + this.getTime();
+	}
 
 }

@@ -7,14 +7,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.UpdateableSelectAO;
 import de.uniol.inf.is.odysseus.spatial.punctuation.UpdatePredicatePunctuation;
 
 public class UpdateableSelectPO extends SelectPO {
 
 	private IAttributeResolver attributeResolver;
-	
+		
 	@SuppressWarnings("unchecked")
-	public UpdateableSelectPO(SelectAO ao, IPredicate predicate) {
+	public UpdateableSelectPO(UpdateableSelectAO ao, IPredicate predicate) {
 		super(predicate);
 		this.attributeResolver = new DirectAttributeResolver(ao.getInputSchema());
 	}
@@ -27,9 +28,9 @@ public class UpdateableSelectPO extends SelectPO {
 			String newPredicate = updatePredicatePunctuation.getNewPredicate();		
 			IPredicate pridicate = createPredicate(newPredicate);
 			this.setPredicate(pridicate);
+		} else {
+			super.processPunctuation(punctuation, port);			
 		}
-		
-		super.processPunctuation(punctuation, port);
 	}
 	
 	private IPredicate createPredicate(String rawPredicate) {
