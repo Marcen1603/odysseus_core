@@ -4,7 +4,7 @@ Bundle-Name: de.uniol.inf.is.odysseus.parser.novel.cql.ui
 Bundle-Vendor: My Company
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.novel.cql.ui; singleton:=true
-Service-Component: OSGI-INF/CQLFileExecutor.xml, OSGI-INF/CQLEditorCompletionProvider.xml
+Service-Component: OSGI-INF/CQLFileExecutor.xml, OSGI-INF/CQLEditorCompletionProvider.xml, OSGI-INF/CQLScriptTemplate.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,
@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.jdt.core,
  org.antlr.runtime,
  org.eclipse.xtext.common.types.ui,
- org.eclipse.xtend.lib,
+ org.eclipse.xtend.lib;resolution:=optional,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.emf.edit.ui,
  org.apache.commons.io,
@@ -32,4 +32,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.novel.cql.ui.quickfix,
  de.uniol.inf.is.odysseus.parser.novel.cql.ui.contentassist,
  de.uniol.inf.is.odysseus.parser.novel.cql.ui.internal
-Bundle-Activator: de.uniol.inf.is.odysseus.parser.novel.cql.ui.internal.CqlActivator
+Bundle-Activator: de.uniol.inf.is.odysseus.parser.novel.cql.ui.Activator

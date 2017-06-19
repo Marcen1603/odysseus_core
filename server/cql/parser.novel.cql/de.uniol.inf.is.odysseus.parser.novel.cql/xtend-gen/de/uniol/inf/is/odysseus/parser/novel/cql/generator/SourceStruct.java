@@ -158,7 +158,10 @@ public class SourceStruct {
   @Override
   public boolean equals(final Object obj) {
     if ((obj instanceof SourceStruct)) {
-      if ((((this.sourcename.equals(((SourceStruct) obj).sourcename) && this.attributes.equals(((SourceStruct) obj).attributes)) && this.aliases.equals(((SourceStruct) obj).aliases)) && Boolean.valueOf(this.internal).equals(Boolean.valueOf(((SourceStruct) obj).internal)))) {
+      if ((((this.sourcename.equals(((SourceStruct) obj).sourcename) && 
+        this.attributes.equals(((SourceStruct) obj).attributes)) && 
+        this.aliases.equals(((SourceStruct) obj).aliases)) && 
+        Boolean.valueOf(this.internal).equals(Boolean.valueOf(((SourceStruct) obj).internal)))) {
         return true;
       }
     }

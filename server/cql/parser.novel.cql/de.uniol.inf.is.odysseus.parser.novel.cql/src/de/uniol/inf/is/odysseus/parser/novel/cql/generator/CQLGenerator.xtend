@@ -2175,6 +2175,14 @@ class CQLGenerator implements IGenerator2 {
 				println("getAttributename() -> attributename=" + attributename + ", sourcename= " + sourcename)
 				var String attribute
 				var String source
+				//If attribute is a system variable like ${Now} //TODO system variable not recognized				
+//				var charArray = attributename.toCharArray
+//				if (charArray.get(0) == '$' 
+//					&& charArray.get(1) == '{' 
+//					&& charArray.get(charArray.size - 1) == '}'
+//				)
+//					return attributename
+					
 				if (sourcename !== null && !sourcename.equals("")) {
 					var SourceStruct tmp
 					attribute = attributename

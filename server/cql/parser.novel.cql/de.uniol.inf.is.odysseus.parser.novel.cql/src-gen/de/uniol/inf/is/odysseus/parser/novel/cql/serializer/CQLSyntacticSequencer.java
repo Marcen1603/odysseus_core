@@ -41,7 +41,8 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	}
 	
 	/**
-	 * AndOperator: 'AND' ;
+	 * AndOperator:
+	 * 	'AND';
 	 */
 	protected String getAndOperatorToken(EObject semanticObject, RuleCall ruleCall, INode node) {
 		if (node != null)
@@ -50,7 +51,8 @@ public class CQLSyntacticSequencer extends AbstractSyntacticSequencer {
 	}
 	
 	/**
-	 * OrOperator: 'OR' ;
+	 * OrOperator:
+	 * 	'OR';
 	 */
 	protected String getOrOperatorToken(EObject semanticObject, RuleCall ruleCall, INode node) {
 		if (node != null)

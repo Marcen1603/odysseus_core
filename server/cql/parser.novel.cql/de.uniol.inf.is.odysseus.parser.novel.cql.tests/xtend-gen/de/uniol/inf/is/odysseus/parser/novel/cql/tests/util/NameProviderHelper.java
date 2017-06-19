@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.tests.util;
 
-import de.uniol.inf.is.odysseus.parser.novel.cql.generator.NameProvider;
 import java.util.ArrayList;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
 @SuppressWarnings("all")
-public class NameProviderHelper extends NameProvider {
+public class NameProviderHelper /* implements NameProvider  */{
   @Override
   public boolean isAggregation(final String name) {
     ArrayList<String> list = CollectionLiterals.<String>newArrayList();

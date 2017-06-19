@@ -17,7 +17,9 @@ public class AttributeStruct {
   @Override
   public boolean equals(final Object obj) {
     if ((obj instanceof AttributeStruct)) {
-      if (((this.attributename.equals(((AttributeStruct) obj).attributename) && this.sourcename.equals(((AttributeStruct) obj).sourcename)) && this.datatype.equals(((AttributeStruct) obj).datatype))) {
+      if (((this.attributename.equals(((AttributeStruct) obj).attributename) && 
+        this.sourcename.equals(((AttributeStruct) obj).sourcename)) && 
+        this.datatype.equals(((AttributeStruct) obj).datatype))) {
         return true;
       }
     }
@@ -41,7 +43,8 @@ public class AttributeStruct {
     String _plus_5 = (_plus_4 + this.datatype);
     String _property_2 = System.getProperty("line.separator");
     String _plus_6 = (_plus_5 + _property_2);
-    String _plus_7 = (_plus_6 + " aliases ");
+    String _plus_7 = (_plus_6 + 
+      " aliases ");
     String _string = this.aliases.toString();
     return (_plus_7 + _string);
   }

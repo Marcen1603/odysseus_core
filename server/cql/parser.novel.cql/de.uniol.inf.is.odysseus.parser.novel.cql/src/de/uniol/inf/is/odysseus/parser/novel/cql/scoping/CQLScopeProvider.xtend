@@ -3,12 +3,7 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.scoping
 
-import com.google.inject.Inject
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider
-import org.eclipse.xtext.scoping.IScope
-import org.eclipse.emf.ecore.EReference
-import java.sql.Statement
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model
 
 /**
  * This class contains custom scoping description.

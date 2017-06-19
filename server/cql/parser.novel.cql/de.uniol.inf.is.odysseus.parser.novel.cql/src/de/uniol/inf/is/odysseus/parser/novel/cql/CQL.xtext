@@ -2,61 +2,66 @@ grammar de.uniol.inf.is.odysseus.parser.novel.cql.CQL with org.eclipse.xtext.com
 
 generate cQL "http://www.uniol.de/inf/is/odysseus/parser/novel/cql/CQL"
 
-Model: 
-	((components+=(Query|Command)) (';')?)*
-;
-	
-terminal ID: (LETTER) (LETTER|SPECIAL_CHARS|INT)*;	
-terminal LETTER: ('a'..'z'|'A'..'Z') ;	
-terminal SPECIAL_CHARS: (':'|'_'|'{'|'}'|'$') ;
-terminal FLOAT:  INT '.' INT;
-terminal BIT: ('0'|'1');
-terminal BYTE: BIT BIT BIT BIT BIT BIT BIT BIT;
-BOOLEAN: ('FALSE'|'TRUE');
+Model:
+	((components+=(Query | Command)) (';')?)*;
 
-terminal VECTOR_FLOAT: '[' (FLOAT)+ (',' FLOAT)* ']';
-terminal MATRIX_FLOAT : '[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
+terminal ID:
+	(LETTER | SPECIAL_CHARS) (LETTER | SPECIAL_CHARS | INT)*;
+
+terminal LETTER:
+	('a'..'z' | 'A'..'Z');
+
+terminal SPECIAL_CHARS:
+	(':' | '_' | '{' | '}' | '$');
+
+terminal FLOAT:
+	INT '.' INT;
+
+terminal BIT:
+	('0' | '1');
+
+terminal BYTE:
+	BIT BIT BIT BIT BIT BIT BIT BIT;
+
+BOOLEAN:
+	('FALSE' | 'TRUE');
+
+terminal VECTOR_FLOAT:
+	'[' (FLOAT)+ (',' FLOAT)* ']';
+
+terminal MATRIX_FLOAT:
+	'[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
 
 enum Time:
-	MILLISECOND 
-		|SECOND 
-		| MINUTE
-		| HOUR
-		| WEEK
-		| MILLISECONDS 
-		| SECONDS 
-		| MINUTES
-		| HOURS
-		| WEEKS
-;
+	MILLISECOND
+	| SECOND
+	| MINUTE
+	| HOUR
+	| WEEK
+	| MILLISECONDS
+	| SECONDS
+	| MINUTES
+	| HOURS
+	| WEEKS;
 
 QualifiedAttributename:
 	(ID
-		| (QualifiedSourcename '.' ID) 
-		| (QualifiedSourcename '.' '*')
-		| ( '{' ID '}')
-	)
-;
+	| (QualifiedSourcename '.' ID)
+	| (QualifiedSourcename '.' '*'));
 
 QualifiedAttributenameWithoutSpecialChars:
-	(ID| (QualifiedSourcename '.' ID))
-;
+	(ID | (QualifiedSourcename '.' ID));
 
 QualifiedSourcename:
-	ID
-;
+	ID;
 
 Query:
-	type=(
-	Create
+	type=(Create
 	| StreamTo
-	| ComplexSelect
-	)
-;
- 
-Command :
-	type=(
-	DropStream
+	| ComplexSelect);
+
+Command:
+	type=(DropStream
 	| UserManagement
 	| RightsManagement
 	| RoleManagement
@@ -64,124 +69,114 @@ Command :
 	| CreateDataBaseJDBCConnection
 	| DropDatabaseConnection
 	| CreateContextStore
-	| DropContextStore
-	)
-; 
- 
+	| DropContextStore);
+
 SimpleSelect:
 	{SimpleSelect}
-	(
-		'SELECT' (distinct='DISTINCT')?
-		('*'|(arguments+=SelectArgument+  ( ',' arguments+=SelectArgument) *))
-		('FROM' sources+=Source+ (',' sources+=Source)*)
-		('WHERE' predicates=ExpressionsModel)?
-		('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
-		('HAVING' having=ExpressionsModel)?
-	)
-;
+	('SELECT' (distinct='DISTINCT')?
+	('*' | (arguments+=SelectArgument+ (',' arguments+=SelectArgument)*))
+	('FROM' sources+=Source+ (',' sources+=Source)*)
+	('WHERE' predicates=ExpressionsModel)?
+	('GROUP' 'BY' order+=Attribute+ (',' order+=Attribute)*)?
+	('HAVING' having=ExpressionsModel)?);
 
 ComplexSelect:
 	{ComplexSelect}
 	left=SimpleSelect
-	(operation=('UNION'|'DIFFERENCE'|'INTERSECTION') right=SimpleSelect)?
-;
+	(operation=('UNION' | 'DIFFERENCE' | 'INTERSECTION') right=SimpleSelect)?;
 
 InnerSelect:
-	'(' select=SimpleSelect ')'
-;
+	'(' select=SimpleSelect ')';
 
 InnerSelect2:
-	select=SimpleSelect
-;
+	select=SimpleSelect;
 
-SelectArgument: (attribute=Attribute | expression=SelectExpression);
+SelectArgument:
+	(attribute=Attribute | expression=SelectExpression);
 
-Source: 
-	(SimpleSource | NestedSource)
-;
+Source:
+	(SimpleSource | NestedSource);
 
 SimpleSource returns Source:
 	{SimpleSource}
-	name=QualifiedSourcename (window=WindowOperator)? ('AS' alias=Alias)?
-;
+	name=QualifiedSourcename (window=WindowOperator)? ('AS' alias=Alias)?;
 
 NestedSource returns Source:
 	{NestedSource}
-	statement=InnerSelect 'AS' alias=Alias
-;
+	statement=InnerSelect 'AS' alias=Alias;
 
-Attribute: 
+Attribute:
 	name=QualifiedAttributename
-	('AS' alias=Alias)?
-;
- 
-AttributeWithoutAliasDefinition returns Attribute: 
-	name=QualifiedAttributename
-; 
+	('AS' alias=Alias)?;
+
+AttributeWithoutAliasDefinition returns Attribute:
+	name=QualifiedAttributename;
 
 AttributeForSelectExpression returns Attribute:
-	(name=QualifiedAttributenameWithoutSpecialChars)
-;
+	(name=QualifiedAttributenameWithoutSpecialChars);
 
 ComplexPredicate:
 	((quantification=QuantificationPredicate)
 	| (exists=ExistPredicate)
 	| (in=InPredicate))
-	select=InnerSelect
-;  
+	select=InnerSelect;
 
 QuantificationPredicate:
 	attribute=AttributeWithoutAliasDefinition
 	operator=COMPARE_OPERATOR
-	predicate=('ALL'|'ANY'|'SOME')
-;
-
+	predicate=('ALL' | 'ANY' | 'SOME');
 
 ExistPredicate:
-	predicate=('EXISTS')
-;
+	predicate=('EXISTS');
 
 InPredicate:
 	attribute=AttributeWithoutAliasDefinition
-	predicate=('IN')
-;
+	predicate=('IN');
 
-AndOperator: 'AND' ;
-OrOperator: 'OR' ;
-EQUALITIY_OPERATOR: ('=' | '!=') ;
-COMPARE_OPERATOR: ('>=' | '<=' | '<' | '>') ;
+AndOperator:
+	'AND';
+
+OrOperator:
+	'OR';
+
+EQUALITIY_OPERATOR:
+	('=' | '!=');
+
+COMPARE_OPERATOR:
+	('>=' | '<=' | '<' | '>');
+
 ARITHMETIC_OPERATOR:
 	ADD_OPERATOR
-	| MINUS_OPERATOR 
+	| MINUS_OPERATOR
 	| MUL_OR_DIV_OPERATOR
-	| EXPONENT_OPERATOR
-;
-EXPONENT_OPERATOR: '^' ;
-MUL_OR_DIV_OPERATOR: ('/'|'*') ;
-ADD_OPERATOR: '+' ;
-MINUS_OPERATOR: '-' ;
+	| EXPONENT_OPERATOR;
+
+EXPONENT_OPERATOR:
+	'^';
+
+MUL_OR_DIV_OPERATOR:
+	('/' | '*');
+
+ADD_OPERATOR:
+	'+';
+
+MINUS_OPERATOR:
+	'-';
 
 SelectExpression:
-	(
-		(expressions+=ExpressionComponent
-			(operators+=ARITHMETIC_OPERATOR
-			expressions+=(ExpressionComponent|ExpressionComponentAsAttribute)
-			)*
-		)
-		|(expressions+=ExpressionComponentAsAttribute
-			(operators+=ARITHMETIC_OPERATOR
-			expressions+=(ExpressionComponent|ExpressionComponentAsAttribute)
-			)
-		)
-	)
-	('AS' alias=Alias)?//TODO Add SelectExpression without an alias
+	((expressions+=ExpressionComponent
+	(operators+=ARITHMETIC_OPERATOR
+	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))*)
+	| (expressions+=ExpressionComponentAsAttribute
+	(operators+=ARITHMETIC_OPERATOR
+	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))))
+	('AS' alias=Alias)? //TODO Add SelectExpression without an alias
 ;
 
 SelectExpressionOnlyWithAttribute returns SelectExpression:
-	expressions+=ExpressionComponentAsAttribute
-;
+	expressions+=ExpressionComponentAsAttribute;
 
-//Is either a map function or an aggregation function. This depends 
+	//Is either a map function or an aggregation function. This depends 
 //on the given name and is decided by the generator on runtime. Also
 //checked is that an aggregation is no part of a select expression like
 //SELECT attr1 + 10 - SUM(attr1) FROM.., but a select expression can be 
@@ -190,89 +185,70 @@ Function returns ExpressionComponent:
 	{Function}
 	name=ID
 	'('
-	value=(SelectExpression|SelectExpressionOnlyWithAttribute|StarExpression)
-	')'
-;
-
-
-//Determines the structure of a component of a select expression
+	value=(SelectExpression | SelectExpressionOnlyWithAttribute | StarExpression)
+	')';
+	//Determines the structure of a component of a select expression
 ExpressionComponent:
-	value=(Function | AtomicWithoutAttributeRef)
-;
+	value=(Function | AtomicWithoutAttributeRef);
 
 StarExpression returns SelectExpression:
-	{StarExpression}
-	expressions+=Star
-;
-
+	{StarExpression} expressions+=Star;
 
 Star returns ExpressionComponent:
 	{Star}
-	value=Starthing
-;
+	value=Starthing;
 
 Starthing:
 	{Starthing}
-	'*'
-;
+	'*';
 
 ExpressionComponentAsAttribute returns ExpressionComponent:
 	{ExpressionComponentAsAttribute}
-	value=AttributeForSelectExpression
-;
+	value=AttributeForSelectExpression;
 
 Alias:
-	name=ID
-;  
+	name=ID;
 
 AccessFramework:
 	'WRAPPER' wrapper=STRING
 	'PROTOCOL' protocol=STRING
 	'TRANSPORT' transport=STRING
 	'DATAHANDLER' datahandler=STRING
-	'OPTIONS' '('(keys+=STRING values+=(STRING|PATH))+ (',' keys+=STRING values+=(STRING|PATH))*')'
-;
+	'OPTIONS' '(' (keys+=STRING values+=(STRING | PATH))+ (',' keys+=STRING values+=(STRING | PATH))* ')';
 
 terminal PATH:
 	"'" (("\' \\ \'") .) (("\' \\ \'") .)* "'" |
-	'"' (("\' \\ \'") .) (("\' \\ \'") .)* '"'  
-; 
+	'"' (("\' \\ \'") .) (("\' \\ \'") .)* '"';
 
 SchemaDefinition:
 	name=ID
 	'('
 	arguments+=ID arguments+=ID
 	(',' arguments+=ID arguments+=ID)*
-	')'
-;
+	')';
 
 Create:
 	{Create}
-	('CREATE'|'ATTACH')
-	type=('STREAM'|'SINK'|'VIEW')
+	('CREATE' | 'ATTACH')
+	type=('STREAM' | 'SINK' | 'VIEW')
 	create=(CreateAccessFramework
-			|CreateChannelFrameworkViaPort
-			|CreateChannelFormatViaFile
-			|CreateDatabaseStream
-			|CreateDatabaseSink
-			|CreateView)
-	
-;
+	| CreateChannelFrameworkViaPort
+	| CreateChannelFormatViaFile
+	| CreateDatabaseStream
+	| CreateDatabaseSink
+	| CreateView);
 
 CreateAccessFramework:
 	attributes=SchemaDefinition
-	pars=AccessFramework
-;
+	pars=AccessFramework;
 
 CreateChannelFrameworkViaPort:
 	attributes=SchemaDefinition
-	'CHANNEL' host=ID ':' port=INT
-;
+	'CHANNEL' host=ID ':' port=INT;
 
 CreateChannelFormatViaFile:
 	attributes=SchemaDefinition
- 	'FILE' filename=STRING 'AS' type=ID
-;
+	'FILE' filename=STRING 'AS' type=ID;
 
 CreateDatabaseStream:
 	attributes=SchemaDefinition
@@ -281,9 +257,8 @@ CreateDatabaseStream:
 	'TABLE'
 	table=ID
 	('EACH'
-	 size=INT
-	 unit=Time)?
-;
+	size=INT
+	unit=Time)?;
 
 CreateDatabaseSink:
 	name=ID
@@ -292,14 +267,12 @@ CreateDatabaseSink:
 	database=ID
 	'TABLE'
 	table=ID
-	('AND' option=('DROP'|'TRUNCATE'))?
-;
+	('AND' option=('DROP' | 'TRUNCATE'))?;
 
-CreateView:  
-	name=ID 
-	'FROM' 
-	select=InnerSelect
-;
+CreateView:
+	name=ID
+	'FROM'
+	select=InnerSelect;
 
 CreateDataBaseJDBCConnection returns Command:
 	{CreateDataBaseConnectionJDBC}
@@ -309,13 +282,12 @@ CreateDataBaseJDBCConnection returns Command:
 	name=ID
 	'JDBC'
 	server=ID
-	('WITH' 
-	 'USER'
-	 user=ID
-	 'PASSWORD'
-	 password=ID
-	 (lazy='NO_LAZY_CONNECTION_CHECK')?)?
-;
+	('WITH'
+	'USER'
+	user=ID
+	'PASSWORD'
+	password=ID
+	(lazy='NO_LAZY_CONNECTION_CHECK')?)?;
 
 CreateDataBaseGenericConnection returns Command:
 	{CreateDataBaseConnectionGeneric}
@@ -331,31 +303,27 @@ CreateDataBaseGenericConnection returns Command:
 	host=ID
 	':'
 	port=INT)?
-	('WITH' 
-	 'USER'
-	 user=ID
-	 'PASSWORD'
-	 password=ID
-	 (lazy='NO_LAZY_CONNECTION_CHECK')?)?
-;
+	('WITH'
+	'USER'
+	user=ID
+	'PASSWORD'
+	password=ID
+	(lazy='NO_LAZY_CONNECTION_CHECK')?)?;
 
 DropDatabaseConnection returns Command:
 	{DropDatabaseConnection}
 	'DROP'
 	'DATABASE'
 	'CONNECTION'
-	name=ID
-;
+	name=ID;
 
 ContextStoreType:
 	(type='SINGLE')
-	|(type='MULTI' 
-		size=INT 
-		('PARTITION' 
-		'BY' 
-		partition=INT)?
-	)
-;
+	| (type='MULTI'
+	size=INT
+	('PARTITION'
+	'BY'
+	partition=INT)?);
 
 CreateContextStore returns Command:
 	{CreateContextStore}
@@ -364,8 +332,7 @@ CreateContextStore returns Command:
 	'STORE'
 	attributes=SchemaDefinition
 	'AS'
-	contextType=ContextStoreType
-;
+	contextType=ContextStoreType;
 
 DropContextStore returns Command:
 	{DropContextStore}
@@ -373,141 +340,115 @@ DropContextStore returns Command:
 	'CONTEXT'
 	'STORE'
 	name=ID
-	('IF' exists='EXISTS')?
-;
+	('IF' exists='EXISTS')?;
 
-StreamTo: 
+StreamTo:
 	{StreamTo}
-	'STREAM' 
-	'TO' 
-	name=ID 
-	(statement=InnerSelect2|inputname=ID)
-;
+	'STREAM'
+	'TO'
+	name=ID
+	(statement=InnerSelect2 | inputname=ID);
 
 DropStream returns Command:
 	{DropStream}
 	'DROP'
-	name=('SINK'|'STREAM'|'VIEW')
+	name=('SINK' | 'STREAM' | 'VIEW')
 	stream=ID
-	(exists='IF' 'EXISTS')?
-;
+	(exists='IF' 'EXISTS')?;
 
 UserManagement returns Command:
 	{UserManagement}
-	name=('CREATE'|'ALTER'|'DROP')
-	subject=('USER'|'ROLE'|'TENANT')
+	name=('CREATE' | 'ALTER' | 'DROP')
+	subject=('USER' | 'ROLE' | 'TENANT')
 	subjectName=ID
-	('IDENTIFIED' 'BY' password=STRING)?
-;
+	('IDENTIFIED' 'BY' password=STRING)?;
 
 RightsManagement returns Command:
-	({RightsManagement} name='GRANT' 
+	({RightsManagement} name='GRANT'
 	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
 	'TO' user=ID)
-	|({RightsManagement} name='REVOKE' 
-	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?	
-	'FROM' user=ID)
-;
+	| ({RightsManagement} name='REVOKE'
+	operations+=ID (',' operations+=ID)* ('ON' operations2+=ID (',' operations2+=ID)*)?
+	'FROM' user=ID);
 
 RoleManagement returns Command:
-	({RoleManagement} name='GRANT' 
+	({RoleManagement} name='GRANT'
 	'ROLE' operations+=ID (',' operations+=ID)*
 	'TO' user=ID)
-	|({RoleManagement} name='REVOKE' 
-	'ROLE' operations+=ID (',' operations+=ID)*	
-	'FROM' user=ID)
-;
+	| ({RoleManagement} name='REVOKE'
+	'ROLE' operations+=ID (',' operations+=ID)*
+	'FROM' user=ID);
 
 WindowOperator:
 	'['
 	(UnboundedWindow
 	| TimebasedWindow
 	| TuplebasedWindow)
-	']'
-;
+	']';
 
-UnboundedWindow returns WindowOperator:  
+UnboundedWindow returns WindowOperator:
 	{UndboundedWindow}
-	'UNBOUNDED'
-;
+	'UNBOUNDED';
 
 TimebasedWindow returns WindowOperator:
-	{TimebasedWindow} 
+	{TimebasedWindow}
 	'SIZE' size=INT unit=Time
 	('ADVANCE' advance_size=INT advance_unit=Time)?
-	'TIME'
-;
+	'TIME';
 
 TuplebasedWindow returns WindowOperator:
-	{TuplebasedWindow}
-	'SIZE' size=INT
+	{TuplebasedWindow} 'SIZE' size=INT
 	('ADVANCE' advance_size=INT)?
 	'TUPLE'
-	('PARTITION' 'BY' partition_attribute=Attribute)?
-;
+	('PARTITION' 'BY' partition_attribute=Attribute)?;
 
-// Expression DSL ///////////////////////////////////////////////////////
-ExpressionsModel: {ExpressionsModel} elements+=Expression;
+	// Expression DSL ///////////////////////////////////////////////////////
+ExpressionsModel:
+	{ExpressionsModel} elements+=Expression;
 
-Expression: OrPredicate;
+Expression:
+	OrPredicate;
 
 OrPredicate returns Expression:
-	AndPredicate ({OrPredicate.left=current} OrOperator right=AndPredicate)*
-;
+	AndPredicate ({OrPredicate.left=current} OrOperator right=AndPredicate)*;
 
 AndPredicate returns Expression:
-	Equalitiy ({AndPredicate.left=current} AndOperator right=Equalitiy)*
-;
+	Equalitiy ({AndPredicate.left=current} AndOperator right=Equalitiy)*;
 
 Equalitiy returns Expression:
-	Comparison (
-		{Equality.left=current} op=EQUALITIY_OPERATOR
-		right=Comparison	
-	)*
-;
+	Comparison ({Equality.left=current} op=EQUALITIY_OPERATOR
+	right=Comparison)*;
 
 Comparison returns Expression:
-	PlusOrMinus (
-		{Comparision.left=current} op=COMPARE_OPERATOR
-		right=PlusOrMinus
-	)*
-;
+	PlusOrMinus ({Comparision.left=current} op=COMPARE_OPERATOR
+	right=PlusOrMinus)*;
 
 PlusOrMinus returns Expression:
-	MulOrDiv (
-		({Plus.left=current} '+' | {Minus.left=current} '-')
-		right=MulOrDiv
-	)*
-;
+	MulOrDiv (({Plus.left=current} '+' | {Minus.left=current} '-')
+	right=MulOrDiv)*;
 
 MulOrDiv returns Expression:
-	Primary (
-		{MulOrDiv.left=current} op=('/'|'*')
-		right=Primary
-	)*
-;
+	Primary ({MulOrDiv.left=current} op=('/' | '*')
+	right=Primary)*;
 
 Primary returns Expression:
 	({Bracket} '(' inner=Expression ')') |
 	{NOT} 'NOT' expression=Primary |
-	Atomic
-;
+	Atomic;
 
 Atomic returns Expression:
-	{IntConstant} value=INT 
-	| {FloatConstant} value=FLOAT 
-	| {StringConstant} value=STRING 
+	{IntConstant} value=INT
+	| {FloatConstant} value=FLOAT
+	| {StringConstant} value=STRING
 	| {BoolConstant} value=BOOLEAN
 	| {AttributeRef} value=AttributeWithoutAliasDefinition
-	| {ComplexPredicateRef} value=ComplexPredicate
-;
+	| {ComplexPredicateRef} value=ComplexPredicate;
 
-//TODO Rename
+	//TODO Rename
 AtomicWithoutAttributeRef returns Expression:
-	{IntConstant} value=INT 
-	| {FloatConstant} value=FLOAT 
-	| {StringConstant} value=STRING 
+	{IntConstant} value=INT
+	| {FloatConstant} value=FLOAT
+	| {StringConstant} value=STRING
 	| {BoolConstant} value=BOOLEAN
 	| {Matrix} value=(MATRIX_FLOAT)
-	| {Vector} value=(VECTOR_FLOAT)
-;
+	| {Vector} value=(VECTOR_FLOAT);

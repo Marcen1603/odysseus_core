@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql
 
-
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */

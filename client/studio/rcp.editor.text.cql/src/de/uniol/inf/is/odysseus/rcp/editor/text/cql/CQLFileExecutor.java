@@ -16,7 +16,7 @@ public class CQLFileExecutor implements IFileExecutor {
 	@Override
 	public void run(String text, Context context) {
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-        executor.addQuery(text, "CQL_old", OdysseusRCPPlugIn.getActiveSession(),context);
+        executor.addQuery(text, getFileExtension(), OdysseusRCPPlugIn.getActiveSession(),context);
 	}
 
 }

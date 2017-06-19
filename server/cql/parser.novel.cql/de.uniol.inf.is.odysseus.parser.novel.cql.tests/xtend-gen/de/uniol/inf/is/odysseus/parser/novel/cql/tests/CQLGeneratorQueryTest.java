@@ -64,7 +64,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1, stream2 AS s2, stream3 WHERE attr1 > 2 AND attr2 = \'Test\';", 
-      "operator_1=RENAME({aliases=[\'attr3\',\'s2.attr3\',\'attr4\',\'s2.attr4\'],pairs=\'true\'},stream2)\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1>2&&stream1.attr2==\"Test\"\'},JOIN(stream1,JOIN(operator_1,stream3)))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr3\',\'s2.attr3\',\'attr4\',\'s2.attr4\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1>2&&stream1.attr2==\"Test\"\'},JOIN(stream1,JOIN(operator_1,stream3)))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -80,7 +80,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT s1.* FROM stream1 AS s1 WHERE attr1 > 2 AND attr2 = \'Test\';", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'s1.attr1>2&&s1.attr2==\"Test\"\'},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'s1.attr1>2&&s1.attr2==\"Test\"\'},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -96,7 +96,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.* FROM stream1 as b", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -104,7 +104,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.* FROM stream1 as b WHERE b.attr1 > 100", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'b.attr1>100\'},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'b.attr1>100\'},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -112,7 +112,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.*, d.* FROM stream1 AS b, stream2 AS d", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'d.attr3\',\'attr4\',\'d.attr4\'],pairs=\'true\'},stream2)\n\t\t\t operator_3=MAP({expressions=[\'b.attr1\',\'b.attr2\',\'d.attr3\',\'d.attr4\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'d.attr3\',\'attr4\',\'d.attr4\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_3=MAP({expressions=[\'b.attr1\',\'b.attr2\',\'d.attr3\',\'d.attr4\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -120,7 +120,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 AS b", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -128,7 +128,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 AS b WHERE b.attr1 > 10", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'b.attr1>10\'},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'b.attr1>10\'},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -136,7 +136,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 AS a1, attr2 AS a2 FROM stream1", 
-      "\n\t\t\t operator_1 = RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'a2\'], pairs=\'true\'}, stream1)\n\t\t\t operator_2 = MAP({expressions=[\'a1\', \'a2\']}, operator_1)", _cQLDictionaryHelper);
+      "\r\n\t\t\t operator_1 = RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'a2\'], pairs=\'true\'}, stream1)\r\n\t\t\t operator_2 = MAP({expressions=[\'a1\', \'a2\']}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -144,7 +144,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT a.attr1 AS a1, b.attr1 AS b1 FROM stream1 AS a, stream1 AS b", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'a.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'b1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=MAP({expressions=[\'a1\',\'b1\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'a.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'b1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_3=MAP({expressions=[\'a1\',\'b1\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -152,7 +152,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT a.attr1 AS a1, attr2 AS b1 FROM stream1 AS a", 
-      "\n\t\t\t operator_1 = RENAME({aliases=[\'attr1\',\'a1\', \'attr2\', \'b1\'], pairs=\'true\'}, stream1)\n\t\t\t operator_2 = MAP({expressions=[\'a1\', \'b1\']}, operator_1)", _cQLDictionaryHelper);
+      "\r\n\t\t\t operator_1 = RENAME({aliases=[\'attr1\',\'a1\', \'attr2\', \'b1\'], pairs=\'true\'}, stream1)\r\n\t\t\t operator_2 = MAP({expressions=[\'a1\', \'b1\']}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -160,7 +160,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT B1.attr2 AS bidder1 FROM stream1 [SIZE 5 MINUTES TIME] AS B1", 
-      "operator_1=RENAME({aliases=[\'attr2\',\'bidder1\',\'attr1\',\'B1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_2=MAP({expressions=[\'bidder1\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr2\',\'bidder1\',\'attr1\',\'B1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_2=MAP({expressions=[\'bidder1\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -168,7 +168,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.attr1, b.attr2 FROM stream1 AS b", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',\'b.attr2\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -236,7 +236,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 AS value1 FROM stream1;", 
-      "operator_1  = RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'}, stream1)\n\t\t\t operator_2 = MAP({expressions=[\'value1\']}, operator_1)", _cQLDictionaryHelper);
+      "operator_1  = RENAME({aliases=[\'attr1\',\'value1\'],pairs=\'true\'}, stream1)\r\n\t\t\t operator_2 = MAP({expressions=[\'value1\']}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -244,7 +244,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 AS value1 FROM stream1 AS s1 WHERE s1.value1 > 2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'value1>2\'},operator_1)\n\t\t\t operator_3=MAP({expressions=[\'value1\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'value1>2\'},operator_1)\r\n\t\t\t operator_3=MAP({expressions=[\'value1\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -252,7 +252,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT s1.attr1 AS value1 FROM stream1 AS s1 WHERE s1.value1 > 2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'value1>2\'},operator_1)\n\t\t\t operator_3=MAP({expressions=[\'value1\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'value1>2\'},operator_1)\r\n\t\t\t operator_3=MAP({expressions=[\'value1\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -260,7 +260,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT s1.attr1 AS value1 FROM stream1 AS s1 WHERE s1.attr1 > 2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'stream1.attr2#1\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=SELECT({predicate=\'s1.attr1>2\'},JOIN(operator_1,operator_2))\n\t\t\t operator_4=MAP({expressions=[\'value1\']},operator_3)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\',\'attr2\',\'s1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'value1\',\'attr2\',\'stream1.attr2#1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_3=SELECT({predicate=\'s1.attr1>2\'},JOIN(operator_1,operator_2))\r\n\t\t\t operator_4=MAP({expressions=[\'value1\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -268,7 +268,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 > 2;", 
-      "\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>2\'},stream1)\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']},operator_1)", _cQLDictionaryHelper);
+      "\r\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>2\'},stream1)\r\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -276,7 +276,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT S1.attr1 AS a1, S1.attr2 AS b1, S2.attr1 AS a2 FROM stream1 AS S1, stream1 AS S2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'b1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'a2\',\'attr2\',\'S2.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=MAP({expressions=[\'a1\',\'b1\',\'a2\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\',\'attr2\',\'b1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'a2\',\'attr2\',\'S2.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_3=MAP({expressions=[\'a1\',\'b1\',\'a2\']},JOIN(operator_1,operator_2))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -284,7 +284,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 AS B, stream2 AS P WHERE B.attr2 = P.attr3;", 
-      "operator_1=RENAME({aliases=[\'attr2\',\'B.attr2\',\'attr1\',\'B.attr1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'P.attr3\',\'attr4\',\'P.attr4\'],pairs=\'true\'},stream2)\n\t\t\t operator_3=SELECT({predicate=\'B.attr2==P.attr3\'},JOIN(operator_1,operator_2))\n     \t\t operator_4=MAP({expressions=[\'B.attr1\']},operator_3)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr2\',\'B.attr2\',\'attr1\',\'B.attr1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'P.attr3\',\'attr4\',\'P.attr4\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_3=SELECT({predicate=\'B.attr2==P.attr3\'},JOIN(operator_1,operator_2))\r\n     \t\t operator_4=MAP({expressions=[\'B.attr1\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -292,7 +292,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT stream1.attr1 FROM stream1, stream2, stream3 WHERE attr1 > 2", 
-      "\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>2\'},JOIN(stream1,JOIN(stream2,stream3)))\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']},operator_1)", _cQLDictionaryHelper);
+      "\r\n\t\t\toperator_1 = SELECT({predicate=\'stream1.attr1>2\'},JOIN(stream1,JOIN(stream2,stream3)))\r\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -308,7 +308,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT stream1.attr1, stream1.attr2, attr3 FROM stream1, stream2, stream3;", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\', \'stream2.attr3\']},\n\t\t\t\t\t\t\tJOIN(stream1, \n\t\t\t\t\t\t\t\tJOIN(stream2, stream3)))", _cQLDictionaryHelper);
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\', \'stream2.attr3\']},\r\n\t\t\t\t\t\t\tJOIN(stream1, \r\n\t\t\t\t\t\t\t\tJOIN(stream2, stream3)))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -316,7 +316,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT stream1.attr1, AVG(attr1) AS avgAttr1, stream1.attr2, attr3 FROM stream1, stream2, stream3;", 
-      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'avgAttr1\',\'Integer\']]}, JOIN(stream1,JOIN(stream2,stream3)))\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'avgAttr1\',\'stream1.attr2\',\'stream2.attr3\']}, JOIN(operator_1, JOIN(stream1, JOIN(stream2, stream3))))", _cQLDictionaryHelper);
+      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'avgAttr1\',\'Integer\']]}, JOIN(stream1,JOIN(stream2,stream3)))\r\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'avgAttr1\',\'stream1.attr2\',\'stream2.attr3\']}, JOIN(operator_1, JOIN(stream1, JOIN(stream2, stream3))))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -324,15 +324,15 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1, attr2 FROM stream1 WHERE attr1=7 OR attr1=20 OR attr1=21 OR attr1=59 OR attr1=87;", 
-      "operator_1 = SELECT({predicate=\'stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87\'},stream1)\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1 = SELECT({predicate=\'stream1.attr1==7||stream1.attr1==20||stream1.attr1==21||stream1.attr1==59||stream1.attr1==87\'},stream1)\r\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SelectAttr1Test7() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT B1.attr1 AS auctioneer1, B2.attr1 AS auctioneer2, B2.attr2\n\t\t\t FROM stream1 AS B1, stream1 AS B2 \n\t\t\t WHERE auctioneer1=auctioneer2;", 
-      "operator_1 = RENAME({aliases=[\'attr1\',\'auctioneer1\',\'attr2\',\'B1.attr2\'],pairs=\'true\'},stream1)\n \t\t\t operator_2 = RENAME({aliases=[\'attr1\',\'auctioneer2\',\'attr2\',\'B2.attr2\'],pairs=\'true\'},stream1) \n\t\t\t operator_3 = SELECT({predicate=\'auctioneer1==auctioneer2\'},JOIN(operator_1,operator_2))\n\t\t\t operator_4 = MAP({expressions=[\'auctioneer1\',\'auctioneer2\',\'B2.attr2\']},operator_3)", _cQLDictionaryHelper);
+      "SELECT B1.attr1 AS auctioneer1, B2.attr1 AS auctioneer2, B2.attr2\r\n\t\t\t FROM stream1 AS B1, stream1 AS B2 \r\n\t\t\t WHERE auctioneer1=auctioneer2;", 
+      "operator_1 = RENAME({aliases=[\'attr1\',\'auctioneer1\',\'attr2\',\'B1.attr2\'],pairs=\'true\'},stream1)\r\n \t\t\t operator_2 = RENAME({aliases=[\'attr1\',\'auctioneer2\',\'attr2\',\'B2.attr2\'],pairs=\'true\'},stream1) \r\n\t\t\t operator_3 = SELECT({predicate=\'auctioneer1==auctioneer2\'},JOIN(operator_1,operator_2))\r\n\t\t\t operator_4 = MAP({expressions=[\'auctioneer1\',\'auctioneer2\',\'B2.attr2\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -340,7 +340,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.attr1 FROM stream1 AS b WHERE b.attr1 < 150.0;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\', \'attr2\', \'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=SELECT({predicate=\'b.attr1<150.0\'},operator_1)\n\t\t\t operator_3=MAP({expressions=[\'b.attr1\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\', \'attr2\', \'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'b.attr1<150.0\'},operator_1)\r\n\t\t\t operator_3=MAP({expressions=[\'b.attr1\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -348,52 +348,52 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 AS b, stream2 AS p WHERE b.attr2 = p.attr3;", 
-      "operator_1=RENAME({aliases=[\'attr2\',\'b.attr2\',\'attr1\',\'b.attr1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'p.attr3\',\'attr4\',\'p.attr4\'],pairs=\'true\'},stream2)\n\t\t\t operator_3=SELECT({predicate=\'b.attr2==p.attr3\'},JOIN(operator_1,operator_2))\n\t\t\t operator_4=MAP({expressions=[\'b.attr1\']},operator_3)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr2\',\'b.attr2\',\'attr1\',\'b.attr1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr3\',\'p.attr3\',\'attr4\',\'p.attr4\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_3=SELECT({predicate=\'b.attr2==p.attr3\'},JOIN(operator_1,operator_2))\r\n\t\t\t operator_4=MAP({expressions=[\'b.attr1\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SelectAttr1Test10() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "\tSELECT B1.attr1, B2.attr1\n\t\t\t\tFROM stream1 AS B1, stream1 AS B2\n\t\t\t\tWHERE B1.attr2!=B2.attr2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'B1.attr1\', \'attr2\', \'B1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'B2.attr1\',\'attr2\', \'B2.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=SELECT({predicate=\'B1.attr2!=B2.attr2\'},JOIN(operator_1,operator_2))\n\t\t     operator_4=MAP({expressions=[\'B1.attr1\',\'B2.attr1\']},operator_3)", _cQLDictionaryHelper);
+      "\tSELECT B1.attr1, B2.attr1\r\n\t\t\t\tFROM stream1 AS B1, stream1 AS B2\r\n\t\t\t\tWHERE B1.attr2!=B2.attr2;", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'B1.attr1\', \'attr2\', \'B1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'B2.attr1\',\'attr2\', \'B2.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_3=SELECT({predicate=\'B1.attr2!=B2.attr2\'},JOIN(operator_1,operator_2))\r\n\t\t     operator_4=MAP({expressions=[\'B1.attr1\',\'B2.attr1\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SelectAttr1Test14() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "\tSELECT B1.attr1 AS auctioneer, B2.attr1\n\t\t\t\tFROM stream1 AS B1, stream1 AS B2\n\t\t\t\tWHERE B1.attr1!=B2.attr2;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'B1.attr1\',\'attr2\',\'B1.attr2\'],pairs=\'true\'},stream1)\t\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'auctioneer\',\'attr2\',\'stream1.attr2#1\'],pairs=\'true\'},stream1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'B2.attr1\',\'attr2\',\'B2.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=SELECT({predicate=\'B1.attr1!=B2.attr2\'},JOIN(JOIN(operator_1,operator_2),operator_3))\n\t\t\t operator_5=MAP({expressions=[\'auctioneer\',\'B2.attr1\']},operator_4)", _cQLDictionaryHelper);
+      "\tSELECT B1.attr1 AS auctioneer, B2.attr1\r\n\t\t\t\tFROM stream1 AS B1, stream1 AS B2\r\n\t\t\t\tWHERE B1.attr1!=B2.attr2;", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'B1.attr1\',\'attr2\',\'B1.attr2\'],pairs=\'true\'},stream1)\t\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'auctioneer\',\'attr2\',\'stream1.attr2#1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'B2.attr1\',\'attr2\',\'B2.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=SELECT({predicate=\'B1.attr1!=B2.attr2\'},JOIN(JOIN(operator_1,operator_2),operator_3))\r\n\t\t\t operator_5=MAP({expressions=[\'auctioneer\',\'B2.attr1\']},operator_4)", _cQLDictionaryHelper);
   }
   
   @Test
   public void CreateViewTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "CREATE VIEW view1 FROM (\n\t\t\t\tSELECT * FROM stream1\n\t\t\t)", 
-      "\n\t\t\tview1 := MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)\n\t\t\t", _cQLDictionaryHelper);
+      "CREATE VIEW view1 FROM (\r\n\t\t\t\tSELECT * FROM stream1\r\n\t\t\t)", 
+      "\r\n\t\t\tview1 := MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, stream1)\r\n\t\t\t", _cQLDictionaryHelper);
   }
   
   @Test
   public void CreateStreamTest1() {
     this.assertCorrectGenerated(
-      "CREATE STREAM stream1 (attr1 Integer) \n    \t\tWRAPPER \'GenericPush\'\n    \t\tPROTOCOL \'CSV\'\n    \t\tTRANSPORT \'File\'\n    \t\tDATAHANDLER \'Tuple\'\n    \t\tOPTIONS (\'port\' \'54321\', \'host\' \'localhost\')", 
-      "stream1 := ACCESS\n\t\t\t(\n\t\t\t\t{ source = \'stream1\', \n\t\t\t\t  wrapper = \'GenericPush\',\n\t\t\t\t  protocol = \'CSV\',\n\t\t\t\t  transport = \'File\',\n\t\t\t\t  datahandler =\'Tuple\',\n\t\t\t\t  schema = [[\'attr1\', \'Integer\']],\n\t\t\t\t  options =[[\'port\', \'54321\'],[\'host\', \'localhost\']]\n\t\t\t\t}\n\t\t\t)", null);
+      "CREATE STREAM stream1 (attr1 Integer) \r\n    \t\tWRAPPER \'GenericPush\'\r\n    \t\tPROTOCOL \'CSV\'\r\n    \t\tTRANSPORT \'File\'\r\n    \t\tDATAHANDLER \'Tuple\'\r\n    \t\tOPTIONS (\'port\' \'54321\', \'host\' \'localhost\')", 
+      "stream1 := ACCESS\r\n\t\t\t(\r\n\t\t\t\t{ source = \'stream1\', \r\n\t\t\t\t  wrapper = \'GenericPush\',\r\n\t\t\t\t  protocol = \'CSV\',\r\n\t\t\t\t  transport = \'File\',\r\n\t\t\t\t  datahandler =\'Tuple\',\r\n\t\t\t\t  schema = [[\'attr1\', \'Integer\']],\r\n\t\t\t\t  options =[[\'port\', \'54321\'],[\'host\', \'localhost\']]\r\n\t\t\t\t}\r\n\t\t\t)", null);
   }
   
   @Test
   public void CreateStreamTest2() {
     this.assertCorrectGenerated(
       "ATTACH STREAM stream1 (attr1 INTEGER) CHANNEL localhost : 54321;", 
-      "stream1 := ACCESS\n\t\t\t(\n\t\t\t\t{ source = \'stream1\', \n\t\t\t\t  wrapper = \'GenericPush\',\n\t\t\t\t  protocol = \'SizeByteBuffer\',\n\t\t\t\t  transport = \'NonBlockingTcp\',\n\t\t\t\t  datahandler =\'Tuple\',\n\t\t\t\t  schema = [[\'attr1\', \'INTEGER\']],\n\t\t\t\t  options =[[\'port\', \'54321\'],[\'host\', \'localhost\']]\n\t\t\t\t}\n\t\t\t)", null);
+      "stream1 := ACCESS\r\n\t\t\t(\r\n\t\t\t\t{ source = \'stream1\', \r\n\t\t\t\t  wrapper = \'GenericPush\',\r\n\t\t\t\t  protocol = \'SizeByteBuffer\',\r\n\t\t\t\t  transport = \'NonBlockingTcp\',\r\n\t\t\t\t  datahandler =\'Tuple\',\r\n\t\t\t\t  schema = [[\'attr1\', \'INTEGER\']],\r\n\t\t\t\t  options =[[\'port\', \'54321\'],[\'host\', \'localhost\']]\r\n\t\t\t\t}\r\n\t\t\t)", null);
   }
   
   @Test
   public void CreateStreamTest3() {
     this.assertCorrectGenerated(
       "CREATE STREAM stream1 (attr1 Integer) FILE \'this/is/a/filename.file\' AS SimpleCSV;", 
-      "stream1 := ACCESS\n\t\t\t(\n\t\t\t\t{ source = \'stream1\', \n\t\t\t\t  wrapper = \'GenericPull\',\n\t\t\t\t  protocol = \'SimpleCSV\',\n\t\t\t\t  transport = \'File\',\n\t\t\t\t  datahandler =\'Tuple\',\n\t\t\t\t  schema = [[\'attr1\', \'Integer\']],\n\t\t\t\t  options =[[\'filename\', \'this/is/a/filename.file\'],[\'delimiter\',\';\'],[\'textDelimiter\',\"\'\"]]\n\t\t\t\t}\n\t\t\t)", null);
+      "stream1 := ACCESS\r\n\t\t\t(\r\n\t\t\t\t{ source = \'stream1\', \r\n\t\t\t\t  wrapper = \'GenericPull\',\r\n\t\t\t\t  protocol = \'SimpleCSV\',\r\n\t\t\t\t  transport = \'File\',\r\n\t\t\t\t  datahandler =\'Tuple\',\r\n\t\t\t\t  schema = [[\'attr1\', \'Integer\']],\r\n\t\t\t\t  options =[[\'filename\', \'this/is/a/filename.file\'],[\'delimiter\',\';\'],[\'textDelimiter\',\"\'\"]]\r\n\t\t\t\t}\r\n\t\t\t)", null);
   }
   
   @Test
@@ -416,15 +416,15 @@ public class CQLGeneratorQueryTest {
   public void StreamtoTest3() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "\n\t\t\tCREATE SINK out1 (attr1 INTEGER, attr2 STRING)\n\t\t\tWRAPPER \'GenericPush\'\n\t\t\tPROTOCOL \'CSV\'\n\t\t\tTRANSPORT \'FILE\'\n\t\t\tDATAHANDLER \'TUPLE\'\n\t\t\tOPTIONS(\'filename\' \'outfile1\') \t\t\t\n\n\t\t\tSTREAM TO out1 SELECT attr1, attr2 FROM stream1 WHERE attr2 != attr1;", 
-      "operator_1 = SELECT({predicate=\'stream1.attr2!=stream1.attr1\'},stream1) \n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)\n\t\t\t out1 = SENDER\n\t\t\t\t  (\n\t\t\t\t\t{\t  \n\t\t\t\t\t\tsink      = \'out1\', \n\t\t\t\t\t\twrapper     = \'GenericPush\',\n\t\t\t\t\t\tprotocol    = \'CSV\',\n\t\t\t\t\t\ttransport   = \'FILE\',\n\t\t\t\t\t\tdatahandler = \'TUPLE\',\n\t\t\t\t\t\toptions =[[\'filename\',\'outfile1\']]\n\t\t\t\t\t }\n\t\t\t\t\t ,operator_2\n\t\t\t\t   )", _cQLDictionaryHelper);
+      "\r\n\t\t\tCREATE SINK out1 (attr1 INTEGER, attr2 STRING)\r\n\t\t\tWRAPPER \'GenericPush\'\r\n\t\t\tPROTOCOL \'CSV\'\r\n\t\t\tTRANSPORT \'FILE\'\r\n\t\t\tDATAHANDLER \'TUPLE\'\r\n\t\t\tOPTIONS(\'filename\' \'outfile1\') \t\t\t\r\n\r\n\t\t\tSTREAM TO out1 SELECT attr1, attr2 FROM stream1 WHERE attr2 != attr1;", 
+      "operator_1 = SELECT({predicate=\'stream1.attr2!=stream1.attr1\'},stream1) \r\n\t\t\t operator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},operator_1)\r\n\t\t\t out1 = SENDER\r\n\t\t\t\t  (\r\n\t\t\t\t\t{\t  \r\n\t\t\t\t\t\tsink      = \'out1\', \r\n\t\t\t\t\t\twrapper     = \'GenericPush\',\r\n\t\t\t\t\t\tprotocol    = \'CSV\',\r\n\t\t\t\t\t\ttransport   = \'FILE\',\r\n\t\t\t\t\t\tdatahandler = \'TUPLE\',\r\n\t\t\t\t\t\toptions =[[\'filename\',\'outfile1\']]\r\n\t\t\t\t\t }\r\n\t\t\t\t\t ,operator_2\r\n\t\t\t\t   )", _cQLDictionaryHelper);
   }
   
   @Test
   public void StreamtoTest4() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "\n\t\t\tCREATE SINK out1 (attr1 INTEGER, attr2 STRING)\n\t\t\tWRAPPER \'GenericPush\'\n\t\t\tPROTOCOL \'CSV\'\n\t\t\tTRANSPORT \'FILE\'\n\t\t\tDATAHANDLER \'TUPLE\'\n\t\t\tOPTIONS(\'filename\' \'outfile1\') \t\t\t\n\n\t\t\tSTREAM TO out1 stream1;", 
+      "\r\n\t\t\tCREATE SINK out1 (attr1 INTEGER, attr2 STRING)\r\n\t\t\tWRAPPER \'GenericPush\'\r\n\t\t\tPROTOCOL \'CSV\'\r\n\t\t\tTRANSPORT \'FILE\'\r\n\t\t\tDATAHANDLER \'TUPLE\'\r\n\t\t\tOPTIONS(\'filename\' \'outfile1\') \t\t\t\r\n\r\n\t\t\tSTREAM TO out1 stream1;", 
       "out1=SENDER({sink=\'out1\',wrapper=\'GenericPush\',protocol=\'CSV\',transport=\'FILE\',datahandler=\'TUPLE\',options=[[\'filename\',\'outfile1\']]}, stream1)", _cQLDictionaryHelper);
   }
   
@@ -449,7 +449,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 [SIZE 5 MINUTES TIME];", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']},\n\t\t\t\t\t\t\t TIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream1))", _cQLDictionaryHelper);
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']},\r\n\t\t\t\t\t\t\t TIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -457,7 +457,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 [SIZE 5 MINUTES ADVANCE 1 SECONDS TIME];", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, \n\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'SECONDS\']}, stream1))", _cQLDictionaryHelper);
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, \r\n\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'SECONDS\']}, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -465,7 +465,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 [SIZE 5 TUPLE];", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, \n\t\t\t\t\t\t\tELEMENTWINDOW({size=5,advance=1}, stream1))", _cQLDictionaryHelper);
+      "operator_1 = MAP({expressions=[\'stream1.attr1\', \'stream1.attr2\']}, \r\n\t\t\t\t\t\t\tELEMENTWINDOW({size=5,advance=1}, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -481,7 +481,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME];", 
-      "operator_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), \n\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2))", _cQLDictionaryHelper);
+      "operator_1 = JOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), \r\n\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -489,7 +489,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3;", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\',\'stream2.attr4\']}, \n\t\t\t\t\t\t\tJOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), \n\t\t\t\t\t\t\t\tJOIN(TIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2), stream3)))", _cQLDictionaryHelper);
+      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\',\'stream2.attr4\']}, \r\n\t\t\t\t\t\t\tJOIN(ELEMENTWINDOW({size=5,advance=1}, stream1), \r\n\t\t\t\t\t\t\t\tJOIN(TIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2), stream3)))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -497,7 +497,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1, attr2, attr4 FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME], stream3 WHERE attr4 != attr1;", 
-      "\n\t\t\toperator_1 = SELECT({predicate=\'stream2.attr4 != stream1.attr1\'}, JOIN(ELEMENTWINDOW({size=5,advance=1},stream1),\n\t\t\t\t\t\t\t\tJOIN(TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2),stream3)))\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\',\'stream2.attr4\']}, operator_1)", _cQLDictionaryHelper);
+      "\r\n\t\t\toperator_1 = SELECT({predicate=\'stream2.attr4 != stream1.attr1\'}, JOIN(ELEMENTWINDOW({size=5,advance=1},stream1),\r\n\t\t\t\t\t\t\t\tJOIN(TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2),stream3)))\r\n\t\t\toperator_2 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\',\'stream2.attr4\']}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -505,7 +505,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 [SIZE 5 TUPLE], stream2 [SIZE 5 MINUTES TIME] WHERE attr4 != attr1;", 
-      "operator_1 = SELECT({predicate=\'stream2.attr4 != stream1.attr1\'}, \n\t\t\t\t\t\t\tJOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),\n\t\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2)))", _cQLDictionaryHelper);
+      "operator_1 = SELECT({predicate=\'stream2.attr4 != stream1.attr1\'}, \r\n\t\t\t\t\t\t\tJOIN(ELEMENTWINDOW({size=5,advance=1}, stream1),\r\n\t\t\t\t\t\t\t\tTIMEWINDOW({size=[5, \'MINUTES\'], advance=[1, \'MINUTES\']}, stream2)))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -521,7 +521,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter FROM stream1 GROUP BY attr1;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']],group_by=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'Counter\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']],group_by=[\'stream1.attr1\']},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'Counter\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -529,7 +529,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 GROUP BY attr1, attr2;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\'],[\'AVG\',\'stream1.attr2\',\'AVG_0\',\'String\']],group_by=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'AVG_0\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\'],[\'AVG\',\'stream1.attr2\',\'AVG_0\',\'String\']],group_by=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'AVG_0\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -537,7 +537,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, AVG(attr2) FROM stream1 [SIZE 10 MINUTES TIME] AS s1 , stream2 GROUP BY attr1, attr2;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'s1.attr1\',\'Counter\',\'Integer\'],[\'AVG\',\'s1.attr2\',\'AVG_0\',\'String\']],group_by=[\'s1.attr1\',\'s1.attr2\']},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1),stream2))\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'AVG_0\']},operator_1)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'s1.attr1\',\'Counter\',\'Integer\'],[\'AVG\',\'s1.attr2\',\'AVG_0\',\'String\']],group_by=[\'s1.attr1\',\'s1.attr2\']},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1),stream2))\r\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'AVG_0\']},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -545,7 +545,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 as a1, COUNT(attr1) AS Counter FROM stream1 [SIZE 5 MINUTES TIME];", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'a1\',\'Counter\',\'Integer\']]},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_4=MAP({expressions=[\'a1\',\'Counter\']},JOIN(operator_2,operator_3))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'a1\',\'Counter\',\'Integer\']]},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},TIMEWINDOW({size=[5,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_4=MAP({expressions=[\'a1\',\'Counter\']},JOIN(operator_2,operator_3))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -553,7 +553,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, attr3 FROM stream1, stream2;", 
-      "\n\t\t\toperator_1 = AGGREGATE\n\t\t\t(\n\t\t\t\t{\n\t\t\t\t\taggregations=[\n\t\t\t\t\t\t\t\t\t[\'COUNT\', \'stream1.attr1\', \'Counter\', \'Integer\']\n\t\t\t\t\t\t\t\t ]\n\t\t\t\t}, JOIN(stream1, stream2)\n\t\t\t)\n\t\t\toperator_2 = MAP({expressions=[\'Counter\', \'stream2.attr3\']}, JOIN(operator_1, JOIN(stream1, stream2)))", _cQLDictionaryHelper);
+      "\r\n\t\t\toperator_1 = AGGREGATE\r\n\t\t\t(\r\n\t\t\t\t{\r\n\t\t\t\t\taggregations=[\r\n\t\t\t\t\t\t\t\t\t[\'COUNT\', \'stream1.attr1\', \'Counter\', \'Integer\']\r\n\t\t\t\t\t\t\t\t ]\r\n\t\t\t\t}, JOIN(stream1, stream2)\r\n\t\t\t)\r\n\t\t\toperator_2 = MAP({expressions=[\'Counter\', \'stream2.attr3\']}, JOIN(operator_1, JOIN(stream1, stream2)))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -561,7 +561,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 , stream2 [SIZE 10 MINUTES TIME];", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(stream1,TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'stream2.attr3\']},JOIN(operator_1,JOIN(stream1,TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(stream1,TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\r\n\t\t\t operator_2=MAP({expressions=[\'Counter\',\'stream2.attr3\']},JOIN(operator_1,JOIN(stream1,TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -569,7 +569,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\n\t\t\t operator_2=SELECT({predicate=\'stream2.attr3>100\'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))\t\n\t\t\t operator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\r\n\t\t\t operator_2=SELECT({predicate=\'stream2.attr3>100\'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))\t\r\n\t\t\t operator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -577,7 +577,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1) AS Counter, attr3 FROM stream1 [SIZE 10 MINUTES ADVANCE 2 SECONDS TIME] , stream2 [SIZE 10 MINUTES TIME] WHERE attr3 > 100 HAVING Counter > 1000;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\n\t\t\t operator_2=SELECT({predicate=\'Counter>1000&&stream2.attr3>100\'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))\n\t\t\t operator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr1\',\'Counter\',\'Integer\']]},JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2)))\r\n\t\t\t operator_2=SELECT({predicate=\'Counter>1000&&stream2.attr3>100\'},JOIN(operator_1,JOIN(TIMEWINDOW({size=[10,\'MINUTES\'],advance=[2,\'SECONDS\']},stream1),TIMEWINDOW({size=[10,\'MINUTES\'],advance=[1,\'MINUTES\']},stream2))))\r\n\t\t\t operator_3=MAP({expressions=[\'Counter\',\'stream2.attr3\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -585,7 +585,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(attr1 + 20) AS Counter FROM stream1;", 
-      "operator_1=MAP({expressions=[[\'stream1.attr1+20\',\'expression_0\']]},stream1)\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'expression_0\',\'Counter\',\'DOUBLE\']]},operator_1)\n\t\t\t operator_3=MAP({expressions=[\'Counter\']},operator_2)", _cQLDictionaryHelper);
+      "operator_1=MAP({expressions=[[\'stream1.attr1+20\',\'expression_0\']]},stream1)\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'expression_0\',\'Counter\',\'DOUBLE\']]},operator_1)\r\n\t\t\t operator_3=MAP({expressions=[\'Counter\']},operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -593,7 +593,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT COUNT(*) AS count FROM stream1;", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'*\',\'count\']]},stream1)\n\t\t\t operator_2=MAP({expressions=[\'count\']}, operator_1)", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'*\',\'count\']]},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'count\']}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -601,7 +601,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1, AVG(attr2) AS aprice FROM stream1 GROUP BY attr1;", 
-      "operator_1=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr2\',\'aprice\',\'String\']],group_by=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'stream1.attr1\',\'aprice\']},JOIN(RENAME({aliases=[\'attr1\',\'attr1_groupAttribute#0\'],pairs=\'true\'},operator_1),stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr2\',\'aprice\',\'String\']],group_by=[\'stream1.attr1\']},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'stream1.attr1\',\'aprice\']},JOIN(RENAME({aliases=[\'attr1\',\'attr1_groupAttribute#0\'],pairs=\'true\'},operator_1),stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -609,7 +609,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT str1.attr1 FROM (SELECT s1.attr1 FROM stream1 AS s1) AS str1", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\', \'attr2\', \'s1.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'s1.attr1\']},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'s1_attr1\',\'str1.attr1\'],pairs=\'true\'},operator_2)\n\t\t\t operator_4=MAP({expressions=[\'str1.attr1\']},operator_3)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'s1.attr1\', \'attr2\', \'s1.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'s1.attr1\']},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'s1_attr1\',\'str1.attr1\'],pairs=\'true\'},operator_2)\r\n\t\t\t operator_4=MAP({expressions=[\'str1.attr1\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -617,7 +617,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT s1.attr1 AS a1, s1.attr2 AS a3 FROM (SELECT s2.attr1 AS a11, s2.attr2 AS a12 FROM stream1 AS s2) AS s1", 
-      "\n\t\t\toperator_1=RENAME({aliases=[\'attr1\',\'a11\',\'attr2\',\'a12\'],pairs=\'true\'},stream1)\n\t\t\toperator_2=MAP({expressions=[\'a11\',\'a12\']},operator_1)\n\t\t\toperator_3=RENAME({aliases=[\'a11\',\'a1\',\'a12\',\'a3\'],pairs=\'true\'},operator_2)\n\t\t\toperator_4=MAP({expressions=[\'a1\',\'a3\']},operator_3)", _cQLDictionaryHelper);
+      "\r\n\t\t\toperator_1=RENAME({aliases=[\'attr1\',\'a11\',\'attr2\',\'a12\'],pairs=\'true\'},stream1)\r\n\t\t\toperator_2=MAP({expressions=[\'a11\',\'a12\']},operator_1)\r\n\t\t\toperator_3=RENAME({aliases=[\'a11\',\'a1\',\'a12\',\'a3\'],pairs=\'true\'},operator_2)\r\n\t\t\toperator_4=MAP({expressions=[\'a1\',\'a3\']},operator_3)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -672,7 +672,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT b.attr1, DolToEur(b.attr2) AS euroPrice FROM stream1 [UNBOUNDED] AS b;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',[\'DolToEur(b.attr2)\',\'euroPrice\']]}, operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'b.attr1\',\'attr2\',\'b.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'b.attr1\',[\'DolToEur(b.attr2)\',\'euroPrice\']]}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -680,15 +680,15 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1;", 
-      "operator_1=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\n\t\t\t operator_2=MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\']},JOIN(operator_1, stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\r\n\t\t\t operator_2=MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\']},JOIN(operator_1, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
   public void SelectExpressionTest14() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT DolToEur(attr1), AVG(attr1) as avgPrice, attr2 as A\n\t\t\t FROM stream1\n\t\t\t GROUP BY A\n\t\t  \t HAVING avgPrice > 150;", 
-      "operator_1=RENAME({aliases=[\'attr2\',\'A\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'avgPrice\',\'Integer\']],group_by=[\'A\']},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr2\',\'A\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=SELECT({predicate=\'avgPrice>150\'},JOIN(RENAME({aliases=[\'A\',\'A_groupAttribute#0\'],pairs=\'true\'},operator_2),operator_3))\n\t\t\t operator_5=MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'avgPrice\',\'A\']},operator_4)", _cQLDictionaryHelper);
+      "SELECT DolToEur(attr1), AVG(attr1) as avgPrice, attr2 as A\r\n\t\t\t FROM stream1\r\n\t\t\t GROUP BY A\r\n\t\t  \t HAVING avgPrice > 150;", 
+      "operator_1=RENAME({aliases=[\'attr2\',\'A\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'avgPrice\',\'Integer\']],group_by=[\'A\']},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr2\',\'A\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=SELECT({predicate=\'avgPrice>150\'},JOIN(RENAME({aliases=[\'A\',\'A_groupAttribute#0\'],pairs=\'true\'},operator_2),operator_3))\r\n\t\t\t operator_5=MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'avgPrice\',\'A\']},operator_4)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -696,7 +696,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 AS a1, DolToEur(attr1), AVG(attr1) FROM stream1;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'AVG\',\'a1\',\'AVG_0\',\'Integer\']]},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_5=MAP({expressions=[\'a1\',[\'DolToEur(a1)\',\'expression_0\'],\'AVG_0\']},JOIN(operator_2,operator_4))x", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'AVG\',\'a1\',\'AVG_0\',\'Integer\']]},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_5=MAP({expressions=[\'a1\',[\'DolToEur(a1)\',\'expression_0\'],\'AVG_0\']},JOIN(operator_2,operator_4))x", _cQLDictionaryHelper);
   }
   
   @Test
@@ -704,7 +704,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT DolToEur(stream1.attr1), AVG(attr1), attr1 FROM stream1 WHERE attr1 > 10;", 
-      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\n             operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1, stream1))\n             operator_3 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\', \'stream1.attr1\']}, operator_2)", _cQLDictionaryHelper);
+      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\r\n             operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1, stream1))\r\n             operator_3 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\', \'stream1.attr1\']}, operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -712,7 +712,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT DolToEur(stream1.attr1), AVG(attr1) FROM stream1 WHERE attr1 > 10;", 
-      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1, stream1))\n\t\t\t operator_3 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\']}, operator_2)", _cQLDictionaryHelper);
+      "operator_1 = AGGREGATE({aggregations=[[\'AVG\',\'stream1.attr1\',\'AVG_0\',\'Integer\']]},stream1)\r\n\t\t\t operator_2 = SELECT({predicate=\'stream1.attr1>10\'}, JOIN(operator_1, stream1))\r\n\t\t\t operator_3 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\'],\'AVG_0\']}, operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -720,7 +720,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT DolToEur(stream1.attr1) FROM stream1 WHERE attr1 > 10;", 
-      "operator_1 = SELECT({predicate=\'stream1.attr1>10\'}, stream1)\n\t\t\t operator_2 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\']]}, operator_1)", _cQLDictionaryHelper);
+      "operator_1 = SELECT({predicate=\'stream1.attr1>10\'}, stream1)\r\n\t\t\t operator_2 = MAP({expressions=[[\'DolToEur(stream1.attr1)\',\'expression_0\']]}, operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -760,15 +760,15 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 AS a1, Max([1.0,2.0,3.0;3.0,4.0,6.0]) + 7.5 * a1 AS maxElement FROM stream1;", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'a1\',[\'Max([1.0,2.0,3.0;3.0,4.0,6.0])+7.5*a1\',\'maxElement\']]},operator_1)", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr1\',\'a1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'a1\',[\'Max([1.0,2.0,3.0;3.0,4.0,6.0])+7.5*a1\',\'maxElement\']]},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SetOperatorTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT attr1 FROM stream1\n\t\t\tUNION\n\t\t\tSELECT attr3 FROM stream2", 
-      "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=MAP({expressions=[\'stream2.attr3\']},stream2)\n\t\t\t operator_3=UNION(operator_1,operator_2)", _cQLDictionaryHelper);
+      "SELECT attr1 FROM stream1\r\n\t\t\tUNION\r\n\t\t\tSELECT attr3 FROM stream2", 
+      "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'stream2.attr3\']},stream2)\r\n\t\t\t operator_3=UNION(operator_1,operator_2)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -789,16 +789,16 @@ public class CQLGeneratorQueryTest {
   public void CreateDatabaseSinkTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "CREATE SINK dbsink AS DATABASE con1 TABLE example;\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \n\t\t\t", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t dbsink = DATABASESINK({connection=\'con1\',table=\'example\', type=\'mysql\'},operator_1)", _cQLDictionaryHelper);
+      "CREATE SINK dbsink AS DATABASE con1 TABLE example;\r\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \r\n\t\t\t", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\r\n\t\t\t dbsink = DATABASESINK({connection=\'con1\',table=\'example\', type=\'mysql\'},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
   public void CreateDatabaseSinkTest2() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "CREATE SINK dbsink AS DATABASE con1 TABLE example AND DROP;\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \n\t\t\t", 
-      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\n\t\t\t dbsink = DATABASESINK({connection=\'con1\',table=\'example\',type=\'mysql\', drop=\'true\'},operator_1)", _cQLDictionaryHelper);
+      "CREATE SINK dbsink AS DATABASE con1 TABLE example AND DROP;\r\n\t\t\t STREAM TO dbsink SELECT * FROM stream1; \r\n\t\t\t", 
+      "operator_1 = MAP({expressions=[\'stream1.attr1\',\'stream1.attr2\']},stream1)\r\n\t\t\t dbsink = DATABASESINK({connection=\'con1\',table=\'example\',type=\'mysql\', drop=\'true\'},operator_1)", _cQLDictionaryHelper);
   }
   
   @Test
@@ -806,7 +806,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 AS P WHERE EXISTS(SELECT B.attr2 FROM stream1 AS B WHERE B.attr2 != P.attr2);", 
-      "operator_1=RENAME({aliases=[\'attr2\',\'B.attr2\',\'attr1\',\'B.attr1\'],pairs=\'true\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'B.attr2\']},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'P.attr1\',\'attr2\',\'P.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'B_attr2!=P.attr2\'},operator_2,operator_3)\n\t\t\t operator_5=MAP({expressions=[\'P.attr1\',\'P.attr2\']},JOIN(operator_4,operator_3))", _cQLDictionaryHelper);
+      "operator_1=RENAME({aliases=[\'attr2\',\'B.attr2\',\'attr1\',\'B.attr1\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'B.attr2\']},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'P.attr1\',\'attr2\',\'P.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'B_attr2!=P.attr2\'},operator_2,operator_3)\r\n\t\t\t operator_5=MAP({expressions=[\'P.attr1\',\'P.attr2\']},JOIN(operator_4,operator_3))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -814,7 +814,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 as b FROM stream1 WHERE EXISTS(SELECT attr3 FROM stream2 WHERE b != attr3) AND b != 50 OR b > 100;", 
-      "operator_1=MAP({expressions=[\'stream2.attr3\']},stream2)\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'b\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'b!=stream2_attr3\'},operator_1,operator_2)\n\t\t\t operator_3=SELECT({predicate=\'b!=50||b>100\'},JOIN(operator_4,operator_2))\n\t\t\t operator_5=MAP({expressions=[\'b\']},operator_3)\n\t\t\t", _cQLDictionaryHelper);
+      "operator_1=MAP({expressions=[\'stream2.attr3\']},stream2)\r\n\t\t\t operator_2=RENAME({aliases=[\'attr1\',\'b\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'b!=stream2_attr3\'},operator_1,operator_2)\r\n\t\t\t operator_3=SELECT({predicate=\'b!=50||b>100\'},JOIN(operator_4,operator_2))\r\n\t\t\t operator_5=MAP({expressions=[\'b\']},operator_3)\r\n\t\t\t", _cQLDictionaryHelper);
   }
   
   @Test
@@ -822,7 +822,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 WHERE attr1 != 50 AND EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10);", 
-      "operator_1=MAP({expressions=[\'stream1.attr2\']},stream1)\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'stream1_attr2!=10\'},operator_1,stream1)\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1!=50\'},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
+      "operator_1=MAP({expressions=[\'stream1.attr2\']},stream1)\r\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'stream1_attr2!=10\'},operator_1,stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1!=50\'},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -830,15 +830,15 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT * FROM stream1 WHERE attr1 != 50 AND EXISTS(SELECT attr2 FROM stream1 WHERE attr2 != 10) OR attr1 > 100;", 
-      "operator_1=MAP({expressions=[\'stream1.attr2\']},stream1)\n  \t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'stream1_attr2!=10\'},operator_1,stream1)\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1!=50||stream1.attr1>100\'},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
+      "operator_1=MAP({expressions=[\'stream1.attr2\']},stream1)\r\n  \t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'stream1_attr2!=10\'},operator_1,stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1!=50||stream1.attr1>100\'},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
   public void ExistsTest5() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT B.attr1 FROM stream1 AS B \n\t\t\t WHERE EXISTS(SELECT * FROM stream2 AS P WHERE P.attr3!= B.attr1 AND P.attr4 != 10);", 
-      "operator_1=RENAME({aliases=[\'attr3\',\'P.attr3\',\'attr4\',\'P.attr4\'],pairs=\'true\'},stream2)\n\t\t\t operator_2=MAP({expressions=[\'P.attr3\',\'P.attr4\']},operator_1)\n\t\t \t operator_3=RENAME({aliases=[\'attr1\',\'B.attr1\',\'attr2\',\'B.attr2\'],pairs=\'true\'},stream1)\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'P_attr3!=B.attr1&&P_attr4!=10\'},operator_2,operator_3)\n\t\t\t operator_5=MAP({expressions=[\'B.attr1\']},JOIN(operator_4,operator_3))", _cQLDictionaryHelper);
+      "SELECT B.attr1 FROM stream1 AS B \r\n\t\t\t WHERE EXISTS(SELECT * FROM stream2 AS P WHERE P.attr3!= B.attr1 AND P.attr4 != 10);", 
+      "operator_1=RENAME({aliases=[\'attr3\',\'P.attr3\',\'attr4\',\'P.attr4\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_2=MAP({expressions=[\'P.attr3\',\'P.attr4\']},operator_1)\r\n\t\t \t operator_3=RENAME({aliases=[\'attr1\',\'B.attr1\',\'attr2\',\'B.attr2\'],pairs=\'true\'},stream1)\r\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'P_attr3!=B.attr1&&P_attr4!=10\'},operator_2,operator_3)\r\n\t\t\t operator_5=MAP({expressions=[\'B.attr1\']},JOIN(operator_4,operator_3))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -846,7 +846,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 > ALL (SELECT COUNT(attr2) AS num FROM stream1);", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\n\t\t\t operator_3=EXISTENCE({type=\'NOT_EXISTS\',predicate=\'attr1<=num\'},operator_2,stream1)\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3, stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\r\n\t\t\t operator_3=EXISTENCE({type=\'NOT_EXISTS\',predicate=\'attr1<=num\'},operator_2,stream1)\r\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -854,7 +854,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 > ANY (SELECT COUNT(attr2) AS num FROM stream1);", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>num\'},operator_2,stream1)\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3, stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\r\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>num\'},operator_2,stream1)\r\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3, stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -862,7 +862,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT COUNT(attr2) AS num FROM stream1 WHERE attr1 < attr2);", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1<stream1.attr2\'},operator_1)\n\t\t\t operator_3=MAP({expressions=[\'num\']},operator_2)\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>num\'},operator_3,stream1)\n\t\t\t operator_5=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_4,stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr1<stream1.attr2\'},operator_1)\r\n\t\t\t operator_3=MAP({expressions=[\'num\']},operator_2)\r\n\t\t\t operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>num\'},operator_3,stream1)\r\n\t\t\t operator_5=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_4,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -870,7 +870,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 > SOME (SELECT stream1.attr2, COUNT(stream1.attr2) AS num FROM stream1 WHERE attr2 < attr1);", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr2<stream1.attr1\'},JOIN(operator_1,stream1))\n\t\t\t operator_3=MAP({expressions=[\'stream1.attr2\',\'num\']},operator_2)\n\t\t     operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>stream1_attr2&&attr1>num\'},operator_3,stream1)\n\t\t\t operator_5=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_4,stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\r\n\t\t\t operator_2=SELECT({predicate=\'stream1.attr2<stream1.attr1\'},JOIN(operator_1,stream1))\r\n\t\t\t operator_3=MAP({expressions=[\'stream1.attr2\',\'num\']},operator_2)\r\n\t\t     operator_4=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>stream1_attr2&&attr1>num\'},operator_3,stream1)\r\n\t\t\t operator_5=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_4,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -878,7 +878,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 AS S1 WHERE attr1 > SOME (SELECT stream1.attr2 FROM stream1 AS S1 WHERE attr2 < attr1);", 
-      "operator_1=SELECT({predicate=\'stream1.attr2<stream1.attr1\'},stream1)\n\t\t\t operator_2=MAP({expressions=[\'stream1.attr2\']},operator_1)\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>stream1_attr2\'},operator_2,stream1)\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
+      "operator_1=SELECT({predicate=\'stream1.attr2<stream1.attr1\'},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'stream1.attr2\']},operator_1)\r\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1>stream1_attr2\'},operator_2,stream1)\r\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_3,stream1))", _cQLDictionaryHelper);
   }
   
   /**
@@ -892,7 +892,7 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT COUNT(attr2) AS num FROM stream1);", 
-      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1==num\'},operator_2,stream1)\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3,stream1))", _cQLDictionaryHelper);
+      "operator_1=AGGREGATE({aggregations=[[\'COUNT\',\'stream1.attr2\',\'num\',\'String\']]},stream1)\r\n\t\t\t operator_2=MAP({expressions=[\'num\']},operator_1)\r\n\t\t\t operator_3=EXISTENCE({type=\'EXISTS\',predicate=\'attr1==num\'},operator_2,stream1)\r\n\t\t\t operator_4=MAP({expressions=[\'stream1.attr1\']}, JOIN(operator_3,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
@@ -900,30 +900,30 @@ public class CQLGeneratorQueryTest {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
       "SELECT attr1 FROM stream1 WHERE attr1 IN (SELECT attr1 FROM stream1);", 
-      "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\n\t\t\t operator_2=EXISTENCE({type=\'EXISTS\',predicate=\'attr1==stream1_attr1\'},operator_1,stream1)\n\t\t\t operator_3=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_2,stream1))", _cQLDictionaryHelper);
+      "operator_1=MAP({expressions=[\'stream1.attr1\']},stream1)\r\n\t\t\t operator_2=EXISTENCE({type=\'EXISTS\',predicate=\'attr1==stream1_attr1\'},operator_1,stream1)\r\n\t\t\t operator_3=MAP({expressions=[\'stream1.attr1\']},JOIN(operator_2,stream1))", _cQLDictionaryHelper);
   }
   
   @Test
   public void SubQueryTest1() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT b2.attr1 as b\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1) AS b2\n\t\t\tWHERE num >= 200", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']]},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n   \t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(operator_2,operator_3))\n\t\t\t operator_5=RENAME({aliases=[\'b1_attr1\',\'b\'],pairs=\'true\'},operator_4)\n\t\t\t operator_6=SELECT({predicate=\'num>=200\'},operator_5)operator_7=MAP({expressions=[\'b\']},operator_6)", _cQLDictionaryHelper);
+      "SELECT b2.attr1 as b\r\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\r\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1) AS b2\r\n\t\t\tWHERE num >= 200", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']]},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n   \t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(operator_2,operator_3))\r\n\t\t\t operator_5=RENAME({aliases=[\'b1_attr1\',\'b\'],pairs=\'true\'},operator_4)\r\n\t\t\t operator_6=SELECT({predicate=\'num>=200\'},operator_5)operator_7=MAP({expressions=[\'b\']},operator_6)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SubQueryTest2() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT b2.attr1, b3.attr3\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1\n\t\t\t        GROUP BY b1.attr1\n\t\t\t        ) AS b2, \n\t\t\t\t\t(SELECT c1.attr3 FROM stream2 AS c1\n\t\t\t\t\t) AS b3 \n\t\t\tWHERE num >= 200", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']],group_by=[\'b1.attr1\']},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(RENAME({aliases=[\'b1.attr1\',\'b1.attr1_groupAttribute#0\'],pairs=\'true\'},operator_2),operator_3))\n\t\t\t operator_5=RENAME({aliases=[\'attr3\',\'c1.attr3\',\'attr4\',\'c1.attr4\'],pairs=\'true\'},stream2)\t\n\t\t\t operator_6=MAP({expressions=[\'c1.attr3\']},operator_5)\n\t\t\t operator_7=RENAME({aliases=[\'b1_attr1\',\'b2.attr1\'],pairs=\'true\'},operator_4)\n\t\t\t operator_8=RENAME({aliases=[\'c1_attr3\',\'b3.attr3\'],pairs=\'true\'},operator_6)\n\t\t\t operator_9=SELECT({predicate=\'num>=200\'},JOIN(operator_7,operator_8))\n\t\t\t operator_10=MAP({expressions=[\'b2.attr1\',\'b3.attr3\']},operator_9)", _cQLDictionaryHelper);
+      "SELECT b2.attr1, b3.attr3\r\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\r\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1\r\n\t\t\t        GROUP BY b1.attr1\r\n\t\t\t        ) AS b2, \r\n\t\t\t\t\t(SELECT c1.attr3 FROM stream2 AS c1\r\n\t\t\t\t\t) AS b3 \r\n\t\t\tWHERE num >= 200", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']],group_by=[\'b1.attr1\']},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\',\'attr2\',\'b1.attr2\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(RENAME({aliases=[\'b1.attr1\',\'b1.attr1_groupAttribute#0\'],pairs=\'true\'},operator_2),operator_3))\r\n\t\t\t operator_5=RENAME({aliases=[\'attr3\',\'c1.attr3\',\'attr4\',\'c1.attr4\'],pairs=\'true\'},stream2)\t\r\n\t\t\t operator_6=MAP({expressions=[\'c1.attr3\']},operator_5)\r\n\t\t\t operator_7=RENAME({aliases=[\'b1_attr1\',\'b2.attr1\'],pairs=\'true\'},operator_4)\r\n\t\t\t operator_8=RENAME({aliases=[\'c1_attr3\',\'b3.attr3\'],pairs=\'true\'},operator_6)\r\n\t\t\t operator_9=SELECT({predicate=\'num>=200\'},JOIN(operator_7,operator_8))\r\n\t\t\t operator_10=MAP({expressions=[\'b2.attr1\',\'b3.attr3\']},operator_9)", _cQLDictionaryHelper);
   }
   
   @Test
   public void SubQueryTest3() {
     CQLDictionaryHelper _cQLDictionaryHelper = new CQLDictionaryHelper();
     this.assertCorrectGenerated(
-      "SELECT b2.attr1, b3.attr3\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1\n\t\t\t        GROUP BY b1.attr1\n\t\t\t        ) AS b2, \n\t\t\t\t\t(SELECT c1.attr3 FROM stream2 AS c1\n\t\t\t\t\t) AS b3 \n\t\t\tWHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)", 
-      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']],group_by=[\'b1.attr1\']},operator_1)\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\n\t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(operator_2,operator_3))\n\t\t\t operator_5=RENAME({aliases=[\'attr3\',\'c1.attr3\'],pairs=\'true\'},stream2)\n\t\t\t operator_6=MAP({expressions=[\'c1.attr3\']},operator_5)\n\t\t\t operator_7=RENAME({aliases=[\'b1_attr1\',\'b2.attr1\'],pairs=\'true\'},operator_4)\n\t\t\t operator_8=RENAME({aliases=[\'c1_attr3\',\'b3.attr3\'],pairs=\'true\'},operator_6)\n\t\t\t operator_9=SELECT({predicate=\'num>=200\'},JOIN(operator_7,operator_8))operator_10=MAP({expressions=[\'b2.attr1\',\'b3.attr3\']},operator_9)", _cQLDictionaryHelper);
+      "SELECT b2.attr1, b3.attr3\r\n\t\t\tFROM   (SELECT b1.attr1, COUNT(b1.attr1) AS num\r\n\t\t\t        FROM stream1 [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS b1\r\n\t\t\t        GROUP BY b1.attr1\r\n\t\t\t        ) AS b2, \r\n\t\t\t\t\t(SELECT c1.attr3 FROM stream2 AS c1\r\n\t\t\t\t\t) AS b3 \r\n\t\t\tWHERE num >= ALL (SELECT d1.attr2 FROM stream1 as d1)", 
+      "operator_1=RENAME({aliases=[\'attr1\',\'b1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_2=AGGREGATE({aggregations=[[\'COUNT\',\'b1.attr1\',\'num\',\'Integer\']],group_by=[\'b1.attr1\']},operator_1)\r\n\t\t\t operator_3=RENAME({aliases=[\'attr1\',\'b1.attr1\'],pairs=\'true\'},TIMEWINDOW({size=[60,\'MINUTES\'],advance=[1,\'MINUTES\']},stream1))\r\n\t\t\t operator_4=MAP({expressions=[\'b1.attr1\',\'num\']},JOIN(operator_2,operator_3))\r\n\t\t\t operator_5=RENAME({aliases=[\'attr3\',\'c1.attr3\'],pairs=\'true\'},stream2)\r\n\t\t\t operator_6=MAP({expressions=[\'c1.attr3\']},operator_5)\r\n\t\t\t operator_7=RENAME({aliases=[\'b1_attr1\',\'b2.attr1\'],pairs=\'true\'},operator_4)\r\n\t\t\t operator_8=RENAME({aliases=[\'c1_attr3\',\'b3.attr3\'],pairs=\'true\'},operator_6)\r\n\t\t\t operator_9=SELECT({predicate=\'num>=200\'},JOIN(operator_7,operator_8))operator_10=MAP({expressions=[\'b2.attr1\',\'b3.attr3\']},operator_9)", _cQLDictionaryHelper);
   }
 }

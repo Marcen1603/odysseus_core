@@ -7,11 +7,9 @@ import org.eclipse.xtext.validation.ComposedChecks
 
 /**
  * This class contains custom validation rules. 
- *
+ * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-@ComposedChecks(validators = #[CQLExpressionsValidator])
-class CQLValidator extends AbstractCQLValidator 
-{
-	
+@ComposedChecks(validators=#[CQLExpressionsValidator])
+class CQLValidator extends AbstractCQLValidator {
 }

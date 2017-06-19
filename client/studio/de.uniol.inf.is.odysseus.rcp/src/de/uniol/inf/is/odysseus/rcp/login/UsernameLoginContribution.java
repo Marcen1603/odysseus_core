@@ -174,6 +174,9 @@ public class UsernameLoginContribution implements ILoginContribution {
 			}
 
 			session.setConnectionName("");
+			
+			System.out.println("realLogin()");//TODO remove me
+			
 			OdysseusRCPPlugIn.setActiveSession(session);
 			ClientSessionStore.addSession(session.getConnectionName(), session);
 			StringBuffer message = new StringBuffer(OdysseusNLS.LoggedInAs)

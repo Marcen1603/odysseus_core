@@ -4,7 +4,9 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.ui;
 
 import de.uniol.inf.is.odysseus.parser.novel.cql.ui.AbstractCQLUiModule;
+import de.uniol.inf.is.odysseus.parser.novel.cql.ui.Activator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.ui.CQLEditor;
+import de.uniol.inf.is.odysseus.parser.novel.cql.ui.internal.CqlActivator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
 import org.eclipse.xtext.ui.editor.XtextEditor;
@@ -17,6 +19,10 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 public class CQLUiModule extends AbstractCQLUiModule {
   public Class<? extends XtextEditor> bindXtextEditor() {
     return CQLEditor.class;
+  }
+  
+  public Class<? extends CqlActivator> bindCqlActivator() {
+    return Activator.class;
   }
   
   public CQLUiModule(final AbstractUIPlugin plugin) {

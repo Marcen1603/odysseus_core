@@ -197,13 +197,9 @@ RightSquareBracket : ']';
 
 CircumflexAccent : '^';
 
-LeftCurlyBracket : '{';
-
-RightCurlyBracket : '}';
-
 // Rules duplicated to allow inter-rule references
 
-RULE_ID : RULE_LETTER (RULE_LETTER|RULE_SPECIAL_CHARS|RULE_INT)*;
+RULE_ID : (RULE_LETTER|RULE_SPECIAL_CHARS) (RULE_LETTER|RULE_SPECIAL_CHARS|RULE_INT)*;
 
 fragment RULE_LETTER : ('a'..'z'|'A'..'Z');
 

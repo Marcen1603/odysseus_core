@@ -217,26 +217,6 @@ ruleQualifiedAttributename returns [AntlrDatatypeRuleToken current=new AntlrData
 				newLeafNode(kw, grammarAccess.getQualifiedAttributenameAccess().getAsteriskKeyword_2_2());
 			}
 		)
-		    |
-		(
-			kw=LeftCurlyBracket
-			{
-				$current.merge(kw);
-				newLeafNode(kw, grammarAccess.getQualifiedAttributenameAccess().getLeftCurlyBracketKeyword_3_0());
-			}
-			this_ID_8=RULE_ID
-			{
-				$current.merge(this_ID_8);
-			}
-			{
-				newLeafNode(this_ID_8, grammarAccess.getQualifiedAttributenameAccess().getIDTerminalRuleCall_3_1());
-			}
-			kw=RightCurlyBracket
-			{
-				$current.merge(kw);
-				newLeafNode(kw, grammarAccess.getQualifiedAttributenameAccess().getRightCurlyBracketKeyword_3_2());
-			}
-		)
 	)
 ;
 

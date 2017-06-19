@@ -88,17 +88,13 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedSourcenameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
 		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
-		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Keyword cLeftCurlyBracketKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final RuleCall cIDTerminalRuleCall_3_1 = (RuleCall)cGroup_3.eContents().get(1);
-		private final Keyword cRightCurlyBracketKeyword_3_2 = (Keyword)cGroup_3.eContents().get(2);
 		
 		//QualifiedAttributename:
 		//	ID
-		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}';
+		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}'
+		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -127,18 +123,6 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'*'
 		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
-		
-		//'{' ID '}'
-		public Group getGroup_3() { return cGroup_3; }
-		
-		//'{'
-		public Keyword getLeftCurlyBracketKeyword_3_0() { return cLeftCurlyBracketKeyword_3_0; }
-		
-		//ID
-		public RuleCall getIDTerminalRuleCall_3_1() { return cIDTerminalRuleCall_3_1; }
-		
-		//'}'
-		public Keyword getRightCurlyBracketKeyword_3_2() { return cRightCurlyBracketKeyword_3_2; }
 	}
 	public class QualifiedAttributenameWithoutSpecialCharsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributenameWithoutSpecialChars");
@@ -1055,8 +1039,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//SelectExpression:
 		//	(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR
-		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))*
-		//	| expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
+		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute
+		//	(operators+=ARITHMETIC_OPERATOR
 		//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
 		//;
 		@Override public ParserRule getRule() { return rule; }
@@ -3051,8 +3035,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cPartition_attributeAttributeParserRuleCall_5_2_0 = (RuleCall)cPartition_attributeAssignment_5_2.eContents().get(0);
 		
 		//TuplebasedWindow WindowOperator:
-		//	{TuplebasedWindow}
-		//	'SIZE' size=INT ('ADVANCE' advance_size=INT)?
+		//	{TuplebasedWindow} 'SIZE' size=INT ('ADVANCE' advance_size=INT)?
 		//	'TUPLE' ('PARTITION' 'BY' partition_attribute=Attribute)?
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -3996,7 +3979,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal ID:
-	//	LETTER (LETTER | SPECIAL_CHARS | INT)*;
+	//	(LETTER | SPECIAL_CHARS) (LETTER | SPECIAL_CHARS | INT)*;
 	public TerminalRule getIDRule() {
 		return tID;
 	}
@@ -4074,7 +4057,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//QualifiedAttributename:
 	//	ID
-	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | '{' ID '}';
+	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
 	public QualifiedAttributenameElements getQualifiedAttributenameAccess() {
 		return pQualifiedAttributename;
 	}
@@ -4383,8 +4366,8 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//SelectExpression:
 	//	(expressions+=ExpressionComponent (operators+=ARITHMETIC_OPERATOR
-	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))*
-	//	| expressions+=ExpressionComponentAsAttribute (operators+=ARITHMETIC_OPERATOR
+	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))* | expressions+=ExpressionComponentAsAttribute
+	//	(operators+=ARITHMETIC_OPERATOR
 	//	expressions+=(ExpressionComponent | ExpressionComponentAsAttribute))) ('AS' alias=Alias)? //TODO Add SelectExpression without an alias
 	//;
 	public SelectExpressionElements getSelectExpressionAccess() {
@@ -4815,8 +4798,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//TuplebasedWindow WindowOperator:
-	//	{TuplebasedWindow}
-	//	'SIZE' size=INT ('ADVANCE' advance_size=INT)?
+	//	{TuplebasedWindow} 'SIZE' size=INT ('ADVANCE' advance_size=INT)?
 	//	'TUPLE' ('PARTITION' 'BY' partition_attribute=Attribute)?
 	public TuplebasedWindowElements getTuplebasedWindowAccess() {
 		return pTuplebasedWindow;

@@ -11,9 +11,8 @@ import org.eclipse.xtext.generator.IGenerator2
  */
 class CQLRuntimeModule extends AbstractCQLRuntimeModule {
 
-	def Class<? extends IGenerator2> bindGenerator() 
-	{
+	def Class<? extends IGenerator2> bindGenerator() {
 		return CQLGenerator;
 	}
-		
+
 }

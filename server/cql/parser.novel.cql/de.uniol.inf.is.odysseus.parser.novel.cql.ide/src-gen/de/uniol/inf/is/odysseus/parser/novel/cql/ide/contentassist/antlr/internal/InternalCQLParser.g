@@ -47,8 +47,6 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("LeftSquareBracket", "'['");
 		tokenNameToValue.put("RightSquareBracket", "']'");
 		tokenNameToValue.put("CircumflexAccent", "'^'");
-		tokenNameToValue.put("LeftCurlyBracket", "'{'");
-		tokenNameToValue.put("RightCurlyBracket", "'}'");
 		tokenNameToValue.put("ExclamationMarkEqualsSign", "'!='");
 		tokenNameToValue.put("LessThanSignEqualsSign", "'<='");
 		tokenNameToValue.put("GreaterThanSignEqualsSign", "'>='");
@@ -2101,12 +2099,6 @@ rule__QualifiedAttributename__Alternatives
 		(rule__QualifiedAttributename__Group_2__0)
 		{ after(grammarAccess.getQualifiedAttributenameAccess().getGroup_2()); }
 	)
-	|
-	(
-		{ before(grammarAccess.getQualifiedAttributenameAccess().getGroup_3()); }
-		(rule__QualifiedAttributename__Group_3__0)
-		{ after(grammarAccess.getQualifiedAttributenameAccess().getGroup_3()); }
-	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -3371,87 +3363,6 @@ rule__QualifiedAttributename__Group_2__2__Impl
 	{ before(grammarAccess.getQualifiedAttributenameAccess().getAsteriskKeyword_2_2()); }
 	Asterisk
 	{ after(grammarAccess.getQualifiedAttributenameAccess().getAsteriskKeyword_2_2()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
-rule__QualifiedAttributename__Group_3__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__QualifiedAttributename__Group_3__0__Impl
-	rule__QualifiedAttributename__Group_3__1
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__QualifiedAttributename__Group_3__0__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getQualifiedAttributenameAccess().getLeftCurlyBracketKeyword_3_0()); }
-	LeftCurlyBracket
-	{ after(grammarAccess.getQualifiedAttributenameAccess().getLeftCurlyBracketKeyword_3_0()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__QualifiedAttributename__Group_3__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__QualifiedAttributename__Group_3__1__Impl
-	rule__QualifiedAttributename__Group_3__2
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__QualifiedAttributename__Group_3__1__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getQualifiedAttributenameAccess().getIDTerminalRuleCall_3_1()); }
-	RULE_ID
-	{ after(grammarAccess.getQualifiedAttributenameAccess().getIDTerminalRuleCall_3_1()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__QualifiedAttributename__Group_3__2
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__QualifiedAttributename__Group_3__2__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__QualifiedAttributename__Group_3__2__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getQualifiedAttributenameAccess().getRightCurlyBracketKeyword_3_2()); }
-	RightCurlyBracket
-	{ after(grammarAccess.getQualifiedAttributenameAccess().getRightCurlyBracketKeyword_3_2()); }
 )
 ;
 finally {

@@ -16,8 +16,7 @@ import de.uniol.inf.is.odysseus.rcp.editor.text.completion.IEditorLanguageProper
 import de.uniol.inf.is.odysseus.rcp.editor.text.completion.Terminal;
 import de.uniol.inf.is.odysseus.rcp.editor.text.editors.formatting.IOdysseusScriptFormattingStrategy;
 
-public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesProvider
-{
+public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesProvider {
 
 	@Override
 	public List<Character> getTokenSplitters() {
@@ -26,8 +25,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 
 	@Override
 	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String[] lastSplitters,
-			IExecutor executor, ISession iSession, IDocument document, int offset, Point selection) 
-	{
+			IExecutor executor, ISession iSession, IDocument document, int offset, Point selection) {
 		return new ArrayList<>();
 	}
 
@@ -37,41 +35,39 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 	}
 
 	@Override
-	public String getSupportedParser() { return "CQL"; }
+	public String getSupportedParser() {
+		return "CQL";
+	}
 
 	@Override
-	public List<Terminal> getTerminals() 
-	{
+	public List<Terminal> getTerminals() {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		// add all parser tokens
 		List<Terminal> tokens = new ArrayList<Terminal>();
-		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);
-		if(values != null && !values.isEmpty())
-		{
-			for (String token : values.get("TOKEN")) 
-			{
-				if (!token.startsWith("<")) 
-				{
+		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor()
+				.getQueryParserTokens(getSupportedParser(), caller);
+		if (values != null && !values.isEmpty()) {
+			for (String token : values.get("TOKEN")) {
+				if (!token.startsWith("<")) {
 					if (token.startsWith("\""))
 						token = token.substring(1, token.length());
-					if (token.endsWith("\"")) 
+					if (token.endsWith("\""))
 						token = token.substring(0, token.length() - 1);
 					if (token.length() > 1 && !token.startsWith("\\"))
 						tokens.add(new Terminal(token, false));
 				}
 			}
 			// then, add also all datatypes
-			for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames()) 
-				if(!tokens.contains(dataType))
+			for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames())
+				if (!tokens.contains(dataType))
 					tokens.add(new Terminal(dataType, false));
 		}
 		return tokens;
 	}
 
 	@Override
-	public IOdysseusScriptFormattingStrategy getFormattingStrategy() 
-	{
-		return null; 
+	public IOdysseusScriptFormattingStrategy getFormattingStrategy() {
+		return null;
 	}
 
 }

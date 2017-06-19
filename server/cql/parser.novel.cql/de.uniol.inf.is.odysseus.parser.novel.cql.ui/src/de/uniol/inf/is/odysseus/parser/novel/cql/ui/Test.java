@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.ui;
 
-import com.google.inject.Injector;
-
-
 public class Test {
 
 	public static void main(String[] args) {
