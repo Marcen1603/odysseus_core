@@ -26,8 +26,8 @@ public class UpdateableSelectPO extends SelectPO {
 		if (punctuation instanceof UpdatePredicatePunctuation) {
 			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
 			String newPredicate = updatePredicatePunctuation.getNewPredicate();		
-			IPredicate pridicate = createPredicate(newPredicate);
-			this.setPredicate(pridicate);
+			IPredicate predicate = createPredicate(newPredicate);
+			this.setPredicate(predicate);
 		} else {
 			super.processPunctuation(punctuation, port);			
 		}

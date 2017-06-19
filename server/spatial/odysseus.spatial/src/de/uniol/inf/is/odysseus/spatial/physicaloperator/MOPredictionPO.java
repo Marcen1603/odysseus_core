@@ -67,8 +67,8 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private void processTrajectoryTuple(T object) {
 		GeometryWrapper geometry = object.getAttribute(this.geometryPosition);
 
-		double latitude = geometry.getGeometry().getCoordinate().y;
-		double longitude = geometry.getGeometry().getCoordinate().x;
+		double latitude = geometry.getGeometry().getCoordinate().x;
+		double longitude = geometry.getGeometry().getCoordinate().y;
 		double courseOverGround = object.getAttribute(this.courseOverGroundPosition);
 		double speedOverGround = object.getAttribute(this.speedOverGroundPosition);
 		String id = object.getAttribute(this.idPosition).toString();
