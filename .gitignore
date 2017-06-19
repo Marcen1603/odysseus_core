@@ -1,7 +1,8 @@
-*.java._trace
-*.xtendbin
 *.project
 *.classpath
 *.prefs
+*.java._trace
+*.xtendbin
+*.xtextbin
 
 

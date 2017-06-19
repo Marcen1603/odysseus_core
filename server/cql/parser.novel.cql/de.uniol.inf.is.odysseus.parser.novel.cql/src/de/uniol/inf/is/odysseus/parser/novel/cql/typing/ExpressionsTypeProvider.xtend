@@ -1,6 +1,10 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.typing
 
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
@@ -14,12 +18,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant
-import java.util.List
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema
 import java.util.Collection
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype
+import java.util.List
 
 class ExpressionsTypeProvider {
 

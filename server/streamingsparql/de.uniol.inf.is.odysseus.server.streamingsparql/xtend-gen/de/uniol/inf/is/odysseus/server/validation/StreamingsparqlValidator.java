@@ -3,11 +3,13 @@
  */
 package de.uniol.inf.is.odysseus.server.validation;
 
+import de.uniol.inf.is.odysseus.server.validation.AbstractStreamingsparqlValidator;
+
 /**
  * This class contains custom validation rules.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 @SuppressWarnings("all")
-public class StreamingsparqlValidator /* implements AbstractStreamingsparqlValidator  */{
+public class StreamingsparqlValidator extends AbstractStreamingsparqlValidator {
 }
