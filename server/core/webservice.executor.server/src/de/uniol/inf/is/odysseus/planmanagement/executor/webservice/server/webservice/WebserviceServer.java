@@ -24,7 +24,6 @@ import java.net.ServerSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,7 +70,8 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.SDFDatatypeInformation;
+import de.uniol.inf.is.odysseus.core.sdf.SDFSchemaInformation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
@@ -113,10 +113,7 @@ import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webser
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.QueryResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.ResourceInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.Response;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFAttributeInformation;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFDatatypeListResponse;
-import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaInformation;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SDFSchemaResponse;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SimpleGraph;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response.SinkInformationWS;
@@ -462,7 +459,7 @@ public class WebserviceServer {
 		IServerExecutor executer = ExecutorServiceBinding.getExecutor();
 		ILogicalQuery logicalQuery = executer.getLogicalQueryById(queryID, session);
 		if (logicalQuery == null) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryID);
 		}
 		ILogicalOperator operator = logicalQuery.getLogicalPlan();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
@@ -561,7 +558,7 @@ public class WebserviceServer {
 		LogicalQuery logicalQuery = (LogicalQuery) ExecutorServiceBinding.getExecutor()
 				.getLogicalQueryById(Integer.valueOf(id), user);
 		if (queryById == null || logicalQuery == null) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+id);
 		}
 		List<String> roots = new ArrayList<String>();
 		for (IPhysicalOperator operator : queryById.getRoots()) {
@@ -796,7 +793,7 @@ public class WebserviceServer {
 	}
 
 	private SDFSchemaResponse createSDFSchemaInformation(SDFSchema schema) {
-		SDFSchemaInformation info = createSchemaInformation(schema);
+		SDFSchemaInformation info = SDFSchemaInformation.createSchemaInformation(schema);
 		return new SDFSchemaResponse(info, true);
 	}
 
@@ -807,7 +804,7 @@ public class WebserviceServer {
 		try {
 			schema = ExecutorServiceBinding.getExecutor().getOutputSchema(queryId, session);
 		} catch (Exception e) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryId, e);
 		}
 		return createSDFSchemaInformation(schema);
 
@@ -823,7 +820,7 @@ public class WebserviceServer {
 					.getRoots().get(port);
 			schema = operator.getOutputSchema();
 		} catch (Exception e) {
-			throw new QueryNotExistsException();
+			throw new QueryNotExistsException("Could not find query with id "+queryId, e);
 		}
 		return createSDFSchemaInformation(schema);
 
@@ -847,7 +844,7 @@ public class WebserviceServer {
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
 		for (Entry<Resource, ILogicalOperator> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();
-			SDFSchemaInformation schemaInfo = createSchemaInformation(schema);
+			SDFSchemaInformation schemaInfo = SDFSchemaInformation.createSchemaInformation(schema);
 			// FIXME: Use Resource
 			sourceInfos.add(
 					new SourceInformation(schemaInfo, source.getKey().toString(), source.getValue().getOwnerIDs()));
@@ -947,7 +944,7 @@ public class WebserviceServer {
 		Set<SDFDatatype> dts = getExecutor().getRegisteredDatatypes(user);
 		SDFDatatypeListResponse resp = new SDFDatatypeListResponse(true);
 		for (SDFDatatype dt : dts) {
-			resp.addResonseValue(createDatatypeInformation(dt));
+			resp.addResonseValue(SDFDatatypeInformation.createDatatypeInformation(dt));
 		}
 		return resp;
 	}
@@ -1014,7 +1011,7 @@ public class WebserviceServer {
 		for (ViewInformation entry : result) {
 			ViewInformationWS vi = new ViewInformationWS();
 			vi.setName(new ResourceInformation(entry.getName()));
-			vi.setSchema(createSchemaInformation(entry.getOutputSchema()));
+			vi.setSchema(SDFSchemaInformation.createSchemaInformation(entry.getOutputSchema()));
 			resp.add(vi);
 		}
 		return resp;
@@ -1028,7 +1025,7 @@ public class WebserviceServer {
 		for (SinkInformation entry : result) {
 			SinkInformationWS vi = new SinkInformationWS();
 			vi.setName(new ResourceInformation(entry.getName()));
-			vi.setSchema(createSchemaInformation(entry.getOutputSchema()));
+			vi.setSchema(SDFSchemaInformation.createSchemaInformation(entry.getOutputSchema()));
 			resp.add(vi);
 		}
 		return resp;
@@ -1147,49 +1144,6 @@ public class WebserviceServer {
 		loginWithSecurityToken(securityToken);
 		Set<String> names = MetadataRegistry.getNames();
 		return new StringListResponse(names, true);
-	}
-
-	// --------------------------------------------------------------------------------------------------
-	// Helper methods
-	// --------------------------------------------------------------------------------------------------
-	static public SDFSchemaInformation createSchemaInformation(SDFSchema schema) {
-		if (schema == null){
-			return null;
-		}
-		Collection<SDFAttribute> attributes = schema.getAttributes();
-		Collection<SDFAttributeInformation> attributeInfos = new ArrayList<SDFAttributeInformation>();
-		for (SDFAttribute attribute : attributes) {
-			attributeInfos.add(createAttributeInformation(attribute));
-		}
-		SDFSchemaInformation schemaInfo = new SDFSchemaInformation(schema.getURI(), attributeInfos, schema.getType());
-		return schemaInfo;
-	}
-
-
-
-	private static SDFAttributeInformation createAttributeInformation(SDFAttribute attribute) {
-		SDFDatatypeInformation dataTypeInformation = createDatatypeInformation(attribute.getDatatype());
-		SDFAttributeInformation attrInfo = new SDFAttributeInformation(attribute.getSourceName(), attribute.getAttributeName(),
-				dataTypeInformation, createSchemaInformation(attribute.getDatatype().getSchema()));
-		return attrInfo;
-	}
-
-	static public SDFDatatypeInformation createDatatypeInformation(SDFDatatype datatype) {
-		if (datatype == null){
-			return null;
-		}
-		SDFDatatypeInformation subtype = null;
-		if (datatype.getSubType() != null) {
-			SDFDatatypeInformation subtypetype = createDatatypeInformation(datatype.getSubType().getSubType());
-			SDFSchemaInformation subschema = createSchemaInformation(datatype.getSubType().getSchema());
-			subtype = new SDFDatatypeInformation(datatype.getSubType().getURI(), datatype.getSubType().getType(),subtypetype,
-					subschema);
-		}
-		SDFSchemaInformation subSchema = null;
-		if (datatype.getSchema() != null) {
-			subSchema = createSchemaInformation(datatype.getSchema());
-		}
-		return new SDFDatatypeInformation(datatype.getURI(), datatype.getType(), subtype, subSchema);
 	}
 
 
