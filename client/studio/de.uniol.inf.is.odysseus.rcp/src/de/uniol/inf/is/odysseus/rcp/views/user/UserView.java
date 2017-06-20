@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +54,7 @@ public class UserView extends ViewPart implements IUpdateEventListener {
 								INFO.warning("Problems with the user management! Did not find any user");
 							}
 						} catch (UnsupportedOperationException e) {
-							INFO.warning("This view is not available on clients. Please close view!");
+							INFO.warning("UserView view is not available on clients. Please close this view!");
 						}
 					} catch (PermissionException e) {
 						// If user has no rights to view all users, only the

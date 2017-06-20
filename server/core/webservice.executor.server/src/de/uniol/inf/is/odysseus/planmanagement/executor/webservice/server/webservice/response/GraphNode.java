@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2012 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,8 +36,10 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import de.uniol.inf.is.odysseus.core.sdf.SDFSchemaInformation;
+
 /**
- * 
+ *
  * @author Dennis Geesen, Thore Stratmann
  * Created at: 12.08.2011
  */
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GraphNode {
 
 	private Map<GraphNode, Integer> childsMap = new HashMap<GraphNode, Integer>();
-	private String name;	
+	private String name;
 	private int id;
 	private Map<String, String> parameterInfos;
 	private SDFSchemaInformation outputSchema;
@@ -56,7 +58,7 @@ public class GraphNode {
 	private String ownerIDs;
 	private int hash;
 	private String className;
-	
+
 	public int getId() {
 		return id;
 	}
@@ -66,7 +68,7 @@ public class GraphNode {
 	}
 
 	public GraphNode(){
-		
+
 	}
 
 	public GraphNode(String name) {
@@ -77,7 +79,7 @@ public class GraphNode {
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -85,23 +87,23 @@ public class GraphNode {
 	public Map<GraphNode, Integer> getChildsMap() {
 		return this.childsMap;
 	}
-	
+
 	public void setChildsMap(Map<GraphNode, Integer> childsMap) {
 		this.childsMap = childsMap;
 	}
-	
+
 	public void addChild(GraphNode child, Integer port){
 		this.childsMap.put(child, port);
 	}
-	
+
 	public void addChild(GraphNode child){
 		this.childsMap.put(child, 0);
 	}
-	
+
 	public void removeChild(GraphNode child){
 		this.childsMap.remove(child);
 	}
-	
+
 	public GraphNode[] getChilds() {
 		return childsMap.keySet().toArray(new GraphNode[0]);
 	}
@@ -112,7 +114,7 @@ public class GraphNode {
 			this.addChild(g);
 		}
 	}
-	
+
 	public void setChilds(ArrayList<GraphNode> childs){
 		this.childsMap.clear();
 		for(GraphNode g : childs){
@@ -123,7 +125,7 @@ public class GraphNode {
 	public void setParameterInfos(Map<String, String> parameterInfos) {
 		this.parameterInfos = parameterInfos;
 	}
-	
+
 	public Map<String, String> getParameterInfos() {
 		return this.parameterInfos;
 	}
@@ -131,7 +133,7 @@ public class GraphNode {
 	public void setOutputSchema(SDFSchemaInformation outputSchema) {
 		this.outputSchema = outputSchema;
 	}
-	
+
 	public SDFSchemaInformation getOutputSchema() {
 		return this.outputSchema;
 	}
@@ -191,6 +193,6 @@ public class GraphNode {
 	public String getClassName() {
 		return className;
 	}
-	
-	
+
+
 }

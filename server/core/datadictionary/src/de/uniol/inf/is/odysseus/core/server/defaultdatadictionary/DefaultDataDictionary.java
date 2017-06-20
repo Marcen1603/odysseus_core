@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.core.server.datadictionary;
+package de.uniol.inf.is.odysseus.core.server.defaultdatadictionary;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,15 +28,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
-public class DataDictionary extends AbstractDataDictionary {
+public class DefaultDataDictionary extends AbstractDataDictionary {
 
-	private static Logger LOG = LoggerFactory.getLogger(DataDictionary.class);
+	private static Logger LOG = LoggerFactory.getLogger(DefaultDataDictionary.class);
 
 	static private boolean useFilestore(){
 		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
@@ -46,17 +48,17 @@ public class DataDictionary extends AbstractDataDictionary {
 		return OdysseusConfiguration.getBoolean("Filestore.StoreQueries");
 	}
 
-	public DataDictionary(){
+	public DefaultDataDictionary(){
 		super(null);
 	}
 
-	public DataDictionary(ITenant t){
+	public DefaultDataDictionary(ITenant t){
 		super(t);
 	}
 
 	@Override
 	public IDataDictionary createInstance(ITenant t) {
-		IDataDictionary dd = new DataDictionary(t);
+		IDataDictionary dd = new DefaultDataDictionary(t);
 		return dd;
 	}
 

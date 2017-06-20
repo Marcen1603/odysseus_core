@@ -6,7 +6,10 @@ import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 import de.uniol.inf.is.odysseus.rest.serverresources.AddQueryServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.CreateMultipleSocketServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.CreateSocketServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.GetAllOperatorInformationServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.GetOperatorInformationServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetQueryIdsServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.GetViewsServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.LoginServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.RemoveQueryServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.RunCommandServerResource;
@@ -31,6 +34,9 @@ public class CoreRestProvider implements IRestProvider{
 		router.attach("/"+RemoveQueryServerResource.PATH, RemoveQueryServerResource.class);
 		router.attach("/"+GetQueryIdsServerResource.PATH, GetQueryIdsServerResource.class);
 		router.attach("/"+RunCommandServerResource.PATH, RunCommandServerResource.class);
+		router.attach("/"+GetAllOperatorInformationServerResource.PATH, GetAllOperatorInformationServerResource.class);
+		router.attach("/"+GetOperatorInformationServerResource.PATH, GetOperatorInformationServerResource.class);
+		router.attach("/"+GetViewsServerResource.PATH, GetViewsServerResource.class);
 	}
 
 }
