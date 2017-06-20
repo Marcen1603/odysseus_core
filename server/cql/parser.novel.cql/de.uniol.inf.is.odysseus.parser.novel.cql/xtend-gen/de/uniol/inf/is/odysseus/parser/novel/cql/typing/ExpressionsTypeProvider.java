@@ -197,12 +197,10 @@ public class ExpressionsTypeProvider {
       List<SDFAttribute> _attributes = s.getAttributes();
       for (final SDFAttribute a : _attributes) {
         {
+          String _string = ExpressionsTypeProvider.aliases.toString();
+          String _plus = ("alises= " + _string);
+          InputOutput.<String>println(_plus);
           String name = a.getAttributeName();
-          boolean _contains = ExpressionsTypeProvider.aliases.contains(name);
-          if (_contains) {
-            InputOutput.<String>println((name + " is an alias"));
-            InputOutput.<String>println(("real name is -> " + name));
-          }
           Attribute _value = e.getValue();
           boolean _equals = name.equals(((Attribute) _value).getName());
           if (_equals) {

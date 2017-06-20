@@ -165,6 +165,8 @@ OR : ('O'|'o')('R'|'r');
 
 TO : ('T'|'t')('O'|'o');
 
+DollarSign : '$';
+
 LeftParenthesis : '(';
 
 RightParenthesis : ')';
@@ -196,6 +198,10 @@ LeftSquareBracket : '[';
 RightSquareBracket : ']';
 
 CircumflexAccent : '^';
+
+LeftCurlyBracket : '{';
+
+RightCurlyBracket : '}';
 
 // Rules duplicated to allow inter-rule references
 

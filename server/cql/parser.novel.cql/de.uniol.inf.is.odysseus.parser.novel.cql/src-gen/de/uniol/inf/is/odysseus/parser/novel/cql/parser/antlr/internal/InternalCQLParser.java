@@ -22,25 +22,25 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "NO_LAZY_CONNECTION_CHECK", "INTERSECTION", "MILLISECONDS", "DATAHANDLER", "MILLISECOND", "CONNECTION", "DIFFERENCE", "IDENTIFIED", "PARTITION", "TRANSPORT", "UNBOUNDED", "DATABASE", "DISTINCT", "PASSWORD", "PROTOCOL", "TRUNCATE", "ADVANCE", "CHANNEL", "CONTEXT", "MINUTES", "OPTIONS", "SECONDS", "WRAPPER", "ATTACH", "CREATE", "EXISTS", "HAVING", "MINUTE", "REVOKE", "SECOND", "SELECT", "SINGLE", "STREAM", "TENANT", "ALTER", "FALSE", "GRANT", "GROUP", "HOURS", "MULTI", "STORE", "TABLE", "TUPLE", "UNION", "WEEKS", "WHERE", "DROP", "EACH", "FILE", "FROM", "HOUR", "JDBC", "ROLE", "SINK", "SIZE", "SOME", "TIME", "TRUE", "USER", "VIEW", "WEEK", "WITH", "ALL", "AND", "ANY", "NOT", "ExclamationMarkEqualsSign", "LessThanSignEqualsSign", "GreaterThanSignEqualsSign", "AS", "AT", "BY", "IF", "IN", "ON", "OR", "TO", "LeftParenthesis", "RightParenthesis", "Asterisk", "PlusSign", "Comma", "HyphenMinus", "FullStop", "Solidus", "Colon", "Semicolon", "LessThanSign", "EqualsSign", "GreaterThanSign", "LeftSquareBracket", "RightSquareBracket", "CircumflexAccent", "RULE_LETTER", "RULE_SPECIAL_CHARS", "RULE_INT", "RULE_ID", "RULE_FLOAT", "RULE_BIT", "RULE_BYTE", "RULE_VECTOR_FLOAT", "RULE_MATRIX_FLOAT", "RULE_PATH", "RULE_STRING", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "NO_LAZY_CONNECTION_CHECK", "INTERSECTION", "MILLISECONDS", "DATAHANDLER", "MILLISECOND", "CONNECTION", "DIFFERENCE", "IDENTIFIED", "PARTITION", "TRANSPORT", "UNBOUNDED", "DATABASE", "DISTINCT", "PASSWORD", "PROTOCOL", "TRUNCATE", "ADVANCE", "CHANNEL", "CONTEXT", "MINUTES", "OPTIONS", "SECONDS", "WRAPPER", "ATTACH", "CREATE", "EXISTS", "HAVING", "MINUTE", "REVOKE", "SECOND", "SELECT", "SINGLE", "STREAM", "TENANT", "ALTER", "FALSE", "GRANT", "GROUP", "HOURS", "MULTI", "STORE", "TABLE", "TUPLE", "UNION", "WEEKS", "WHERE", "DROP", "EACH", "FILE", "FROM", "HOUR", "JDBC", "ROLE", "SINK", "SIZE", "SOME", "TIME", "TRUE", "USER", "VIEW", "WEEK", "WITH", "ALL", "AND", "ANY", "NOT", "ExclamationMarkEqualsSign", "LessThanSignEqualsSign", "GreaterThanSignEqualsSign", "AS", "AT", "BY", "IF", "IN", "ON", "OR", "TO", "DollarSign", "LeftParenthesis", "RightParenthesis", "Asterisk", "PlusSign", "Comma", "HyphenMinus", "FullStop", "Solidus", "Colon", "Semicolon", "LessThanSign", "EqualsSign", "GreaterThanSign", "LeftSquareBracket", "RightSquareBracket", "CircumflexAccent", "LeftCurlyBracket", "RightCurlyBracket", "RULE_LETTER", "RULE_SPECIAL_CHARS", "RULE_INT", "RULE_ID", "RULE_FLOAT", "RULE_BIT", "RULE_BYTE", "RULE_VECTOR_FLOAT", "RULE_MATRIX_FLOAT", "RULE_PATH", "RULE_STRING", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER"
     };
     public static final int CREATE=28;
     public static final int CONTEXT=22;
-    public static final int LessThanSign=91;
+    public static final int LessThanSign=92;
     public static final int TABLE=45;
-    public static final int RULE_BIT=102;
-    public static final int LeftParenthesis=81;
-    public static final int RULE_VECTOR_FLOAT=104;
+    public static final int RULE_BIT=105;
+    public static final int LeftParenthesis=82;
+    public static final int RULE_VECTOR_FLOAT=107;
     public static final int PARTITION=12;
     public static final int IF=76;
     public static final int MILLISECONDS=6;
     public static final int EACH=51;
-    public static final int GreaterThanSign=93;
-    public static final int RULE_ID=100;
+    public static final int GreaterThanSign=94;
+    public static final int RULE_ID=103;
     public static final int IN=77;
     public static final int DISTINCT=16;
     public static final int SIZE=58;
-    public static final int RULE_SPECIAL_CHARS=98;
+    public static final int RULE_SPECIAL_CHARS=101;
     public static final int PROTOCOL=18;
     public static final int OPTIONS=24;
     public static final int WHERE=49;
@@ -50,33 +50,34 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int DATABASE=15;
     public static final int CHANNEL=21;
     public static final int WEEKS=48;
-    public static final int PlusSign=84;
-    public static final int RULE_INT=99;
-    public static final int RULE_ML_COMMENT=108;
-    public static final int LeftSquareBracket=94;
+    public static final int PlusSign=85;
+    public static final int RULE_INT=102;
+    public static final int RULE_ML_COMMENT=111;
+    public static final int LeftSquareBracket=95;
     public static final int ADVANCE=20;
     public static final int ALTER=38;
-    public static final int RULE_BYTE=103;
+    public static final int RULE_BYTE=106;
     public static final int ROLE=56;
     public static final int GROUP=41;
-    public static final int Comma=85;
-    public static final int HyphenMinus=86;
+    public static final int Comma=86;
+    public static final int HyphenMinus=87;
     public static final int BY=75;
     public static final int LessThanSignEqualsSign=71;
-    public static final int Solidus=88;
+    public static final int Solidus=89;
+    public static final int RightCurlyBracket=99;
     public static final int DATAHANDLER=7;
     public static final int FILE=52;
-    public static final int FullStop=87;
+    public static final int FullStop=88;
     public static final int REVOKE=32;
     public static final int SECONDS=25;
     public static final int NO_LAZY_CONNECTION_CHECK=4;
     public static final int SELECT=34;
     public static final int TUPLE=46;
     public static final int CONNECTION=9;
-    public static final int Semicolon=90;
-    public static final int RULE_LETTER=97;
+    public static final int Semicolon=91;
+    public static final int RULE_LETTER=100;
     public static final int STORE=44;
-    public static final int RULE_FLOAT=101;
+    public static final int RULE_FLOAT=104;
     public static final int MILLISECOND=8;
     public static final int ExclamationMarkEqualsSign=70;
     public static final int TO=80;
@@ -90,10 +91,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int UNBOUNDED=14;
     public static final int WRAPPER=26;
     public static final int MINUTE=31;
-    public static final int RightSquareBracket=95;
-    public static final int RightParenthesis=82;
+    public static final int RightSquareBracket=96;
+    public static final int RightParenthesis=83;
     public static final int TRUE=61;
-    public static final int RULE_PATH=106;
+    public static final int RULE_PATH=109;
     public static final int NOT=69;
     public static final int INTERSECTION=5;
     public static final int PASSWORD=17;
@@ -101,37 +102,39 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     public static final int AND=67;
     public static final int HAVING=30;
     public static final int HOUR=54;
-    public static final int RULE_STRING=107;
+    public static final int RULE_STRING=110;
     public static final int ANY=68;
     public static final int DROP=50;
-    public static final int RULE_SL_COMMENT=109;
-    public static final int EqualsSign=92;
+    public static final int RULE_SL_COMMENT=112;
+    public static final int EqualsSign=93;
     public static final int TRANSPORT=13;
     public static final int SOME=59;
     public static final int DIFFERENCE=10;
     public static final int JDBC=55;
-    public static final int Colon=89;
+    public static final int Colon=90;
     public static final int WEEK=64;
     public static final int EOF=-1;
-    public static final int Asterisk=83;
+    public static final int Asterisk=84;
     public static final int ON=78;
     public static final int OR=79;
     public static final int EXISTS=29;
-    public static final int RULE_WS=110;
+    public static final int RULE_WS=113;
     public static final int STREAM=36;
+    public static final int LeftCurlyBracket=98;
     public static final int IDENTIFIED=11;
     public static final int TIME=60;
-    public static final int RULE_ANY_OTHER=111;
+    public static final int RULE_ANY_OTHER=114;
     public static final int USER=62;
     public static final int TENANT=37;
     public static final int WITH=65;
-    public static final int CircumflexAccent=96;
+    public static final int CircumflexAccent=97;
     public static final int GRANT=40;
     public static final int ATTACH=27;
     public static final int HOURS=42;
+    public static final int DollarSign=81;
     public static final int SECOND=33;
     public static final int FALSE=39;
-    public static final int RULE_MATRIX_FLOAT=105;
+    public static final int RULE_MATRIX_FLOAT=108;
     public static final int MINUTES=23;
 
     // delegates
@@ -511,8 +514,106 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleBOOLEAN"
 
 
+    // $ANTLR start "entryRuleSystemVariable"
+    // InternalCQLParser.g:150:1: entryRuleSystemVariable returns [String current=null] : iv_ruleSystemVariable= ruleSystemVariable EOF ;
+    public final String entryRuleSystemVariable() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleSystemVariable = null;
+
+
+        try {
+            // InternalCQLParser.g:150:54: (iv_ruleSystemVariable= ruleSystemVariable EOF )
+            // InternalCQLParser.g:151:2: iv_ruleSystemVariable= ruleSystemVariable EOF
+            {
+             newCompositeNode(grammarAccess.getSystemVariableRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleSystemVariable=ruleSystemVariable();
+
+            state._fsp--;
+
+             current =iv_ruleSystemVariable.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleSystemVariable"
+
+
+    // $ANTLR start "ruleSystemVariable"
+    // InternalCQLParser.g:157:1: ruleSystemVariable returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= DollarSign kw= LeftCurlyBracket this_ID_2= RULE_ID kw= RightCurlyBracket ) ;
+    public final AntlrDatatypeRuleToken ruleSystemVariable() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token kw=null;
+        Token this_ID_2=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalCQLParser.g:163:2: ( (kw= DollarSign kw= LeftCurlyBracket this_ID_2= RULE_ID kw= RightCurlyBracket ) )
+            // InternalCQLParser.g:164:2: (kw= DollarSign kw= LeftCurlyBracket this_ID_2= RULE_ID kw= RightCurlyBracket )
+            {
+            // InternalCQLParser.g:164:2: (kw= DollarSign kw= LeftCurlyBracket this_ID_2= RULE_ID kw= RightCurlyBracket )
+            // InternalCQLParser.g:165:3: kw= DollarSign kw= LeftCurlyBracket this_ID_2= RULE_ID kw= RightCurlyBracket
+            {
+            kw=(Token)match(input,DollarSign,FOLLOW_4); 
+
+            			current.merge(kw);
+            			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getDollarSignKeyword_0());
+            		
+            kw=(Token)match(input,LeftCurlyBracket,FOLLOW_5); 
+
+            			current.merge(kw);
+            			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getLeftCurlyBracketKeyword_1());
+            		
+            this_ID_2=(Token)match(input,RULE_ID,FOLLOW_6); 
+
+            			current.merge(this_ID_2);
+            		
+
+            			newLeafNode(this_ID_2, grammarAccess.getSystemVariableAccess().getIDTerminalRuleCall_2());
+            		
+            kw=(Token)match(input,RightCurlyBracket,FOLLOW_2); 
+
+            			current.merge(kw);
+            			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getRightCurlyBracketKeyword_3());
+            		
+
+            }
+
+
+            }
+
+
+            	leaveRule();
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleSystemVariable"
+
+
     // $ANTLR start "entryRuleQualifiedAttributename"
-    // InternalCQLParser.g:150:1: entryRuleQualifiedAttributename returns [String current=null] : iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF ;
+    // InternalCQLParser.g:191:1: entryRuleQualifiedAttributename returns [String current=null] : iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF ;
     public final String entryRuleQualifiedAttributename() throws RecognitionException {
         String current = null;
 
@@ -520,8 +621,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:150:62: (iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF )
-            // InternalCQLParser.g:151:2: iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF
+            // InternalCQLParser.g:191:62: (iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF )
+            // InternalCQLParser.g:192:2: iv_ruleQualifiedAttributename= ruleQualifiedAttributename EOF
             {
              newCompositeNode(grammarAccess.getQualifiedAttributenameRule()); 
             pushFollow(FOLLOW_1);
@@ -548,7 +649,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedAttributename"
-    // InternalCQLParser.g:157:1: ruleQualifiedAttributename returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) ) ;
+    // InternalCQLParser.g:198:1: ruleQualifiedAttributename returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) | this_SystemVariable_7= ruleSystemVariable ) ;
     public final AntlrDatatypeRuleToken ruleQualifiedAttributename() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -559,38 +660,40 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
         AntlrDatatypeRuleToken this_QualifiedSourcename_4 = null;
 
+        AntlrDatatypeRuleToken this_SystemVariable_7 = null;
+
 
 
         	enterRule();
 
         try {
-            // InternalCQLParser.g:163:2: ( (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) ) )
-            // InternalCQLParser.g:164:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) )
+            // InternalCQLParser.g:204:2: ( (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) | this_SystemVariable_7= ruleSystemVariable ) )
+            // InternalCQLParser.g:205:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) | this_SystemVariable_7= ruleSystemVariable )
             {
-            // InternalCQLParser.g:164:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) )
-            int alt5=3;
+            // InternalCQLParser.g:205:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) | (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk ) | this_SystemVariable_7= ruleSystemVariable )
+            int alt5=4;
             int LA5_0 = input.LA(1);
 
             if ( (LA5_0==RULE_ID) ) {
                 int LA5_1 = input.LA(2);
 
                 if ( (LA5_1==FullStop) ) {
-                    int LA5_2 = input.LA(3);
+                    int LA5_3 = input.LA(3);
 
-                    if ( (LA5_2==RULE_ID) ) {
+                    if ( (LA5_3==RULE_ID) ) {
                         alt5=2;
                     }
-                    else if ( (LA5_2==Asterisk) ) {
+                    else if ( (LA5_3==Asterisk) ) {
                         alt5=3;
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 5, 2, input);
+                            new NoViableAltException("", 5, 3, input);
 
                         throw nvae;
                     }
                 }
-                else if ( (LA5_1==EOF||LA5_1==INTERSECTION||LA5_1==DIFFERENCE||(LA5_1>=ATTACH && LA5_1<=CREATE)||LA5_1==HAVING||LA5_1==REVOKE||LA5_1==SELECT||LA5_1==STREAM||(LA5_1>=ALTER && LA5_1<=GROUP)||LA5_1==UNION||LA5_1==DROP||LA5_1==FROM||LA5_1==TRUE||LA5_1==AND||(LA5_1>=ExclamationMarkEqualsSign && LA5_1<=AS)||LA5_1==IN||LA5_1==OR||(LA5_1>=RightParenthesis && LA5_1<=HyphenMinus)||LA5_1==Solidus||(LA5_1>=Semicolon && LA5_1<=GreaterThanSign)||LA5_1==RightSquareBracket||(LA5_1>=RULE_INT && LA5_1<=RULE_FLOAT)||(LA5_1>=RULE_VECTOR_FLOAT && LA5_1<=RULE_MATRIX_FLOAT)||LA5_1==RULE_STRING) ) {
+                else if ( (LA5_1==EOF||LA5_1==INTERSECTION||LA5_1==DIFFERENCE||(LA5_1>=ATTACH && LA5_1<=CREATE)||LA5_1==HAVING||LA5_1==REVOKE||LA5_1==SELECT||LA5_1==STREAM||(LA5_1>=ALTER && LA5_1<=GROUP)||LA5_1==UNION||LA5_1==DROP||LA5_1==FROM||LA5_1==TRUE||LA5_1==AND||(LA5_1>=ExclamationMarkEqualsSign && LA5_1<=AS)||LA5_1==IN||LA5_1==OR||LA5_1==DollarSign||(LA5_1>=RightParenthesis && LA5_1<=HyphenMinus)||LA5_1==Solidus||(LA5_1>=Semicolon && LA5_1<=GreaterThanSign)||LA5_1==RightSquareBracket||(LA5_1>=RULE_INT && LA5_1<=RULE_FLOAT)||(LA5_1>=RULE_VECTOR_FLOAT && LA5_1<=RULE_MATRIX_FLOAT)||LA5_1==RULE_STRING) ) {
                     alt5=1;
                 }
                 else {
@@ -600,6 +703,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     throw nvae;
                 }
             }
+            else if ( (LA5_0==DollarSign) ) {
+                alt5=4;
+            }
             else {
                 NoViableAltException nvae =
                     new NoViableAltException("", 5, 0, input);
@@ -608,7 +714,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt5) {
                 case 1 :
-                    // InternalCQLParser.g:165:3: this_ID_0= RULE_ID
+                    // InternalCQLParser.g:206:3: this_ID_0= RULE_ID
                     {
                     this_ID_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -621,15 +727,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:173:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
+                    // InternalCQLParser.g:214:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
                     {
-                    // InternalCQLParser.g:173:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
-                    // InternalCQLParser.g:174:4: this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID
+                    // InternalCQLParser.g:214:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
+                    // InternalCQLParser.g:215:4: this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID
                     {
 
                     				newCompositeNode(grammarAccess.getQualifiedAttributenameAccess().getQualifiedSourcenameParserRuleCall_1_0());
                     			
-                    pushFollow(FOLLOW_4);
+                    pushFollow(FOLLOW_7);
                     this_QualifiedSourcename_1=ruleQualifiedSourcename();
 
                     state._fsp--;
@@ -659,15 +765,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:198:3: (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk )
+                    // InternalCQLParser.g:239:3: (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk )
                     {
-                    // InternalCQLParser.g:198:3: (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk )
-                    // InternalCQLParser.g:199:4: this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk
+                    // InternalCQLParser.g:239:3: (this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk )
+                    // InternalCQLParser.g:240:4: this_QualifiedSourcename_4= ruleQualifiedSourcename kw= FullStop kw= Asterisk
                     {
 
                     				newCompositeNode(grammarAccess.getQualifiedAttributenameAccess().getQualifiedSourcenameParserRuleCall_2_0());
                     			
-                    pushFollow(FOLLOW_4);
+                    pushFollow(FOLLOW_7);
                     this_QualifiedSourcename_4=ruleQualifiedSourcename();
 
                     state._fsp--;
@@ -678,7 +784,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				afterParserOrEnumRuleCall();
                     			
-                    kw=(Token)match(input,FullStop,FOLLOW_6); 
+                    kw=(Token)match(input,FullStop,FOLLOW_8); 
 
                     				current.merge(kw);
                     				newLeafNode(kw, grammarAccess.getQualifiedAttributenameAccess().getFullStopKeyword_2_1());
@@ -691,6 +797,26 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
+
+                    }
+                    break;
+                case 4 :
+                    // InternalCQLParser.g:262:3: this_SystemVariable_7= ruleSystemVariable
+                    {
+
+                    			newCompositeNode(grammarAccess.getQualifiedAttributenameAccess().getSystemVariableParserRuleCall_3());
+                    		
+                    pushFollow(FOLLOW_2);
+                    this_SystemVariable_7=ruleSystemVariable();
+
+                    state._fsp--;
+
+
+                    			current.merge(this_SystemVariable_7);
+                    		
+
+                    			afterParserOrEnumRuleCall();
+                    		
 
                     }
                     break;
@@ -717,7 +843,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedAttributenameWithoutSpecialChars"
-    // InternalCQLParser.g:224:1: entryRuleQualifiedAttributenameWithoutSpecialChars returns [String current=null] : iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF ;
+    // InternalCQLParser.g:276:1: entryRuleQualifiedAttributenameWithoutSpecialChars returns [String current=null] : iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF ;
     public final String entryRuleQualifiedAttributenameWithoutSpecialChars() throws RecognitionException {
         String current = null;
 
@@ -725,8 +851,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:224:81: (iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF )
-            // InternalCQLParser.g:225:2: iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF
+            // InternalCQLParser.g:276:81: (iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF )
+            // InternalCQLParser.g:277:2: iv_ruleQualifiedAttributenameWithoutSpecialChars= ruleQualifiedAttributenameWithoutSpecialChars EOF
             {
              newCompositeNode(grammarAccess.getQualifiedAttributenameWithoutSpecialCharsRule()); 
             pushFollow(FOLLOW_1);
@@ -753,7 +879,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedAttributenameWithoutSpecialChars"
-    // InternalCQLParser.g:231:1: ruleQualifiedAttributenameWithoutSpecialChars returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) ) ;
+    // InternalCQLParser.g:283:1: ruleQualifiedAttributenameWithoutSpecialChars returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) ) ;
     public final AntlrDatatypeRuleToken ruleQualifiedAttributenameWithoutSpecialChars() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -767,10 +893,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:237:2: ( (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) ) )
-            // InternalCQLParser.g:238:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) )
+            // InternalCQLParser.g:289:2: ( (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) ) )
+            // InternalCQLParser.g:290:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) )
             {
-            // InternalCQLParser.g:238:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) )
+            // InternalCQLParser.g:290:2: (this_ID_0= RULE_ID | (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID ) )
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -780,7 +906,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 if ( (LA6_1==FullStop) ) {
                     alt6=2;
                 }
-                else if ( (LA6_1==EOF||LA6_1==FALSE||LA6_1==FROM||LA6_1==TRUE||LA6_1==AS||(LA6_1>=RightParenthesis && LA6_1<=HyphenMinus)||LA6_1==Solidus||LA6_1==CircumflexAccent||(LA6_1>=RULE_INT && LA6_1<=RULE_FLOAT)||(LA6_1>=RULE_VECTOR_FLOAT && LA6_1<=RULE_MATRIX_FLOAT)||LA6_1==RULE_STRING) ) {
+                else if ( (LA6_1==EOF||LA6_1==FALSE||LA6_1==FROM||LA6_1==TRUE||LA6_1==AS||LA6_1==DollarSign||(LA6_1>=RightParenthesis && LA6_1<=HyphenMinus)||LA6_1==Solidus||LA6_1==CircumflexAccent||(LA6_1>=RULE_INT && LA6_1<=RULE_FLOAT)||(LA6_1>=RULE_VECTOR_FLOAT && LA6_1<=RULE_MATRIX_FLOAT)||LA6_1==RULE_STRING) ) {
                     alt6=1;
                 }
                 else {
@@ -798,7 +924,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalCQLParser.g:239:3: this_ID_0= RULE_ID
+                    // InternalCQLParser.g:291:3: this_ID_0= RULE_ID
                     {
                     this_ID_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -811,15 +937,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:247:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
+                    // InternalCQLParser.g:299:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
                     {
-                    // InternalCQLParser.g:247:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
-                    // InternalCQLParser.g:248:4: this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID
+                    // InternalCQLParser.g:299:3: (this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID )
+                    // InternalCQLParser.g:300:4: this_QualifiedSourcename_1= ruleQualifiedSourcename kw= FullStop this_ID_3= RULE_ID
                     {
 
                     				newCompositeNode(grammarAccess.getQualifiedAttributenameWithoutSpecialCharsAccess().getQualifiedSourcenameParserRuleCall_1_0());
                     			
-                    pushFollow(FOLLOW_4);
+                    pushFollow(FOLLOW_7);
                     this_QualifiedSourcename_1=ruleQualifiedSourcename();
 
                     state._fsp--;
@@ -871,7 +997,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedSourcename"
-    // InternalCQLParser.g:275:1: entryRuleQualifiedSourcename returns [String current=null] : iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF ;
+    // InternalCQLParser.g:327:1: entryRuleQualifiedSourcename returns [String current=null] : iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF ;
     public final String entryRuleQualifiedSourcename() throws RecognitionException {
         String current = null;
 
@@ -879,8 +1005,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:275:59: (iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF )
-            // InternalCQLParser.g:276:2: iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF
+            // InternalCQLParser.g:327:59: (iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF )
+            // InternalCQLParser.g:328:2: iv_ruleQualifiedSourcename= ruleQualifiedSourcename EOF
             {
              newCompositeNode(grammarAccess.getQualifiedSourcenameRule()); 
             pushFollow(FOLLOW_1);
@@ -907,7 +1033,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedSourcename"
-    // InternalCQLParser.g:282:1: ruleQualifiedSourcename returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_ID_0= RULE_ID ;
+    // InternalCQLParser.g:334:1: ruleQualifiedSourcename returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_ID_0= RULE_ID ;
     public final AntlrDatatypeRuleToken ruleQualifiedSourcename() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -917,8 +1043,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:288:2: (this_ID_0= RULE_ID )
-            // InternalCQLParser.g:289:2: this_ID_0= RULE_ID
+            // InternalCQLParser.g:340:2: (this_ID_0= RULE_ID )
+            // InternalCQLParser.g:341:2: this_ID_0= RULE_ID
             {
             this_ID_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -947,7 +1073,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQuery"
-    // InternalCQLParser.g:299:1: entryRuleQuery returns [EObject current=null] : iv_ruleQuery= ruleQuery EOF ;
+    // InternalCQLParser.g:351:1: entryRuleQuery returns [EObject current=null] : iv_ruleQuery= ruleQuery EOF ;
     public final EObject entryRuleQuery() throws RecognitionException {
         EObject current = null;
 
@@ -955,8 +1081,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:299:46: (iv_ruleQuery= ruleQuery EOF )
-            // InternalCQLParser.g:300:2: iv_ruleQuery= ruleQuery EOF
+            // InternalCQLParser.g:351:46: (iv_ruleQuery= ruleQuery EOF )
+            // InternalCQLParser.g:352:2: iv_ruleQuery= ruleQuery EOF
             {
              newCompositeNode(grammarAccess.getQueryRule()); 
             pushFollow(FOLLOW_1);
@@ -983,7 +1109,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQuery"
-    // InternalCQLParser.g:306:1: ruleQuery returns [EObject current=null] : ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) ;
+    // InternalCQLParser.g:358:1: ruleQuery returns [EObject current=null] : ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) ;
     public final EObject ruleQuery() throws RecognitionException {
         EObject current = null;
 
@@ -998,16 +1124,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:312:2: ( ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) )
-            // InternalCQLParser.g:313:2: ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) )
+            // InternalCQLParser.g:364:2: ( ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) ) )
+            // InternalCQLParser.g:365:2: ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) )
             {
-            // InternalCQLParser.g:313:2: ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) )
-            // InternalCQLParser.g:314:3: ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) )
+            // InternalCQLParser.g:365:2: ( ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) ) )
+            // InternalCQLParser.g:366:3: ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) )
             {
-            // InternalCQLParser.g:314:3: ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) )
-            // InternalCQLParser.g:315:4: (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect )
+            // InternalCQLParser.g:366:3: ( (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect ) )
+            // InternalCQLParser.g:367:4: (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect )
             {
-            // InternalCQLParser.g:315:4: (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect )
+            // InternalCQLParser.g:367:4: (lv_type_0_1= ruleCreate | lv_type_0_2= ruleStreamTo | lv_type_0_3= ruleComplexSelect )
             int alt7=3;
             switch ( input.LA(1) ) {
             case ATTACH:
@@ -1035,7 +1161,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt7) {
                 case 1 :
-                    // InternalCQLParser.g:316:5: lv_type_0_1= ruleCreate
+                    // InternalCQLParser.g:368:5: lv_type_0_1= ruleCreate
                     {
 
                     					newCompositeNode(grammarAccess.getQueryAccess().getTypeCreateParserRuleCall_0_0());
@@ -1060,7 +1186,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:332:5: lv_type_0_2= ruleStreamTo
+                    // InternalCQLParser.g:384:5: lv_type_0_2= ruleStreamTo
                     {
 
                     					newCompositeNode(grammarAccess.getQueryAccess().getTypeStreamToParserRuleCall_0_1());
@@ -1085,7 +1211,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:348:5: lv_type_0_3= ruleComplexSelect
+                    // InternalCQLParser.g:400:5: lv_type_0_3= ruleComplexSelect
                     {
 
                     					newCompositeNode(grammarAccess.getQueryAccess().getTypeComplexSelectParserRuleCall_0_2());
@@ -1138,7 +1264,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCommand"
-    // InternalCQLParser.g:369:1: entryRuleCommand returns [EObject current=null] : iv_ruleCommand= ruleCommand EOF ;
+    // InternalCQLParser.g:421:1: entryRuleCommand returns [EObject current=null] : iv_ruleCommand= ruleCommand EOF ;
     public final EObject entryRuleCommand() throws RecognitionException {
         EObject current = null;
 
@@ -1146,8 +1272,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:369:48: (iv_ruleCommand= ruleCommand EOF )
-            // InternalCQLParser.g:370:2: iv_ruleCommand= ruleCommand EOF
+            // InternalCQLParser.g:421:48: (iv_ruleCommand= ruleCommand EOF )
+            // InternalCQLParser.g:422:2: iv_ruleCommand= ruleCommand EOF
             {
              newCompositeNode(grammarAccess.getCommandRule()); 
             pushFollow(FOLLOW_1);
@@ -1174,7 +1300,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCommand"
-    // InternalCQLParser.g:376:1: ruleCommand returns [EObject current=null] : ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) ) ;
+    // InternalCQLParser.g:428:1: ruleCommand returns [EObject current=null] : ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) ) ;
     public final EObject ruleCommand() throws RecognitionException {
         EObject current = null;
 
@@ -1201,21 +1327,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:382:2: ( ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) ) )
-            // InternalCQLParser.g:383:2: ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) )
+            // InternalCQLParser.g:434:2: ( ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) ) )
+            // InternalCQLParser.g:435:2: ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) )
             {
-            // InternalCQLParser.g:383:2: ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) )
-            // InternalCQLParser.g:384:3: ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) )
+            // InternalCQLParser.g:435:2: ( ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) ) )
+            // InternalCQLParser.g:436:3: ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) )
             {
-            // InternalCQLParser.g:384:3: ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) )
-            // InternalCQLParser.g:385:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )
+            // InternalCQLParser.g:436:3: ( (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore ) )
+            // InternalCQLParser.g:437:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )
             {
-            // InternalCQLParser.g:385:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )
+            // InternalCQLParser.g:437:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )
             int alt8=9;
             alt8 = dfa8.predict(input);
             switch (alt8) {
                 case 1 :
-                    // InternalCQLParser.g:386:5: lv_type_0_1= ruleDropStream
+                    // InternalCQLParser.g:438:5: lv_type_0_1= ruleDropStream
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeDropStreamParserRuleCall_0_0());
@@ -1240,7 +1366,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:402:5: lv_type_0_2= ruleUserManagement
+                    // InternalCQLParser.g:454:5: lv_type_0_2= ruleUserManagement
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeUserManagementParserRuleCall_0_1());
@@ -1265,7 +1391,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:418:5: lv_type_0_3= ruleRightsManagement
+                    // InternalCQLParser.g:470:5: lv_type_0_3= ruleRightsManagement
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeRightsManagementParserRuleCall_0_2());
@@ -1290,7 +1416,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:434:5: lv_type_0_4= ruleRoleManagement
+                    // InternalCQLParser.g:486:5: lv_type_0_4= ruleRoleManagement
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeRoleManagementParserRuleCall_0_3());
@@ -1315,7 +1441,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCQLParser.g:450:5: lv_type_0_5= ruleCreateDataBaseGenericConnection
+                    // InternalCQLParser.g:502:5: lv_type_0_5= ruleCreateDataBaseGenericConnection
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeCreateDataBaseGenericConnectionParserRuleCall_0_4());
@@ -1340,7 +1466,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalCQLParser.g:466:5: lv_type_0_6= ruleCreateDataBaseJDBCConnection
+                    // InternalCQLParser.g:518:5: lv_type_0_6= ruleCreateDataBaseJDBCConnection
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeCreateDataBaseJDBCConnectionParserRuleCall_0_5());
@@ -1365,7 +1491,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalCQLParser.g:482:5: lv_type_0_7= ruleDropDatabaseConnection
+                    // InternalCQLParser.g:534:5: lv_type_0_7= ruleDropDatabaseConnection
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeDropDatabaseConnectionParserRuleCall_0_6());
@@ -1390,7 +1516,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 8 :
-                    // InternalCQLParser.g:498:5: lv_type_0_8= ruleCreateContextStore
+                    // InternalCQLParser.g:550:5: lv_type_0_8= ruleCreateContextStore
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeCreateContextStoreParserRuleCall_0_7());
@@ -1415,7 +1541,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 9 :
-                    // InternalCQLParser.g:514:5: lv_type_0_9= ruleDropContextStore
+                    // InternalCQLParser.g:566:5: lv_type_0_9= ruleDropContextStore
                     {
 
                     					newCompositeNode(grammarAccess.getCommandAccess().getTypeDropContextStoreParserRuleCall_0_8());
@@ -1468,7 +1594,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSimpleSelect"
-    // InternalCQLParser.g:535:1: entryRuleSimpleSelect returns [EObject current=null] : iv_ruleSimpleSelect= ruleSimpleSelect EOF ;
+    // InternalCQLParser.g:587:1: entryRuleSimpleSelect returns [EObject current=null] : iv_ruleSimpleSelect= ruleSimpleSelect EOF ;
     public final EObject entryRuleSimpleSelect() throws RecognitionException {
         EObject current = null;
 
@@ -1476,8 +1602,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:535:53: (iv_ruleSimpleSelect= ruleSimpleSelect EOF )
-            // InternalCQLParser.g:536:2: iv_ruleSimpleSelect= ruleSimpleSelect EOF
+            // InternalCQLParser.g:587:53: (iv_ruleSimpleSelect= ruleSimpleSelect EOF )
+            // InternalCQLParser.g:588:2: iv_ruleSimpleSelect= ruleSimpleSelect EOF
             {
              newCompositeNode(grammarAccess.getSimpleSelectRule()); 
             pushFollow(FOLLOW_1);
@@ -1504,7 +1630,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSimpleSelect"
-    // InternalCQLParser.g:542:1: ruleSimpleSelect returns [EObject current=null] : ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) ) ;
+    // InternalCQLParser.g:594:1: ruleSimpleSelect returns [EObject current=null] : ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) ) ;
     public final EObject ruleSimpleSelect() throws RecognitionException {
         EObject current = null;
 
@@ -1540,14 +1666,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:548:2: ( ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) ) )
-            // InternalCQLParser.g:549:2: ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) )
+            // InternalCQLParser.g:600:2: ( ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) ) )
+            // InternalCQLParser.g:601:2: ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) )
             {
-            // InternalCQLParser.g:549:2: ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) )
-            // InternalCQLParser.g:550:3: () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? )
+            // InternalCQLParser.g:601:2: ( () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? ) )
+            // InternalCQLParser.g:602:3: () (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? )
             {
-            // InternalCQLParser.g:550:3: ()
-            // InternalCQLParser.g:551:4: 
+            // InternalCQLParser.g:602:3: ()
+            // InternalCQLParser.g:603:4: 
             {
 
             				current = forceCreateModelElement(
@@ -1557,14 +1683,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:557:3: (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? )
-            // InternalCQLParser.g:558:4: otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )?
+            // InternalCQLParser.g:609:3: (otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )? )
+            // InternalCQLParser.g:610:4: otherlv_1= SELECT ( (lv_distinct_2_0= DISTINCT ) )? (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) ) (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* ) (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )? (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )? (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )?
             {
-            otherlv_1=(Token)match(input,SELECT,FOLLOW_7); 
+            otherlv_1=(Token)match(input,SELECT,FOLLOW_9); 
 
             				newLeafNode(otherlv_1, grammarAccess.getSimpleSelectAccess().getSELECTKeyword_1_0());
             			
-            // InternalCQLParser.g:562:4: ( (lv_distinct_2_0= DISTINCT ) )?
+            // InternalCQLParser.g:614:4: ( (lv_distinct_2_0= DISTINCT ) )?
             int alt9=2;
             int LA9_0 = input.LA(1);
 
@@ -1573,12 +1699,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt9) {
                 case 1 :
-                    // InternalCQLParser.g:563:5: (lv_distinct_2_0= DISTINCT )
+                    // InternalCQLParser.g:615:5: (lv_distinct_2_0= DISTINCT )
                     {
-                    // InternalCQLParser.g:563:5: (lv_distinct_2_0= DISTINCT )
-                    // InternalCQLParser.g:564:6: lv_distinct_2_0= DISTINCT
+                    // InternalCQLParser.g:615:5: (lv_distinct_2_0= DISTINCT )
+                    // InternalCQLParser.g:616:6: lv_distinct_2_0= DISTINCT
                     {
-                    lv_distinct_2_0=(Token)match(input,DISTINCT,FOLLOW_7); 
+                    lv_distinct_2_0=(Token)match(input,DISTINCT,FOLLOW_9); 
 
                     						newLeafNode(lv_distinct_2_0, grammarAccess.getSimpleSelectAccess().getDistinctDISTINCTKeyword_1_1_0());
                     					
@@ -1597,14 +1723,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:576:4: (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) )
+            // InternalCQLParser.g:628:4: (otherlv_3= Asterisk | ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* ) )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
             if ( (LA12_0==Asterisk) ) {
                 alt12=1;
             }
-            else if ( (LA12_0==FALSE||LA12_0==TRUE||(LA12_0>=RULE_INT && LA12_0<=RULE_FLOAT)||(LA12_0>=RULE_VECTOR_FLOAT && LA12_0<=RULE_MATRIX_FLOAT)||LA12_0==RULE_STRING) ) {
+            else if ( (LA12_0==FALSE||LA12_0==TRUE||LA12_0==DollarSign||(LA12_0>=RULE_INT && LA12_0<=RULE_FLOAT)||(LA12_0>=RULE_VECTOR_FLOAT && LA12_0<=RULE_MATRIX_FLOAT)||LA12_0==RULE_STRING) ) {
                 alt12=2;
             }
             else {
@@ -1615,9 +1741,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt12) {
                 case 1 :
-                    // InternalCQLParser.g:577:5: otherlv_3= Asterisk
+                    // InternalCQLParser.g:629:5: otherlv_3= Asterisk
                     {
-                    otherlv_3=(Token)match(input,Asterisk,FOLLOW_8); 
+                    otherlv_3=(Token)match(input,Asterisk,FOLLOW_10); 
 
                     					newLeafNode(otherlv_3, grammarAccess.getSimpleSelectAccess().getAsteriskKeyword_1_2_0());
                     				
@@ -1625,34 +1751,34 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:582:5: ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* )
+                    // InternalCQLParser.g:634:5: ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* )
                     {
-                    // InternalCQLParser.g:582:5: ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* )
-                    // InternalCQLParser.g:583:6: ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )*
+                    // InternalCQLParser.g:634:5: ( ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )* )
+                    // InternalCQLParser.g:635:6: ( (lv_arguments_4_0= ruleSelectArgument ) )+ (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )*
                     {
-                    // InternalCQLParser.g:583:6: ( (lv_arguments_4_0= ruleSelectArgument ) )+
+                    // InternalCQLParser.g:635:6: ( (lv_arguments_4_0= ruleSelectArgument ) )+
                     int cnt10=0;
                     loop10:
                     do {
                         int alt10=2;
                         int LA10_0 = input.LA(1);
 
-                        if ( (LA10_0==FALSE||LA10_0==TRUE||(LA10_0>=RULE_INT && LA10_0<=RULE_FLOAT)||(LA10_0>=RULE_VECTOR_FLOAT && LA10_0<=RULE_MATRIX_FLOAT)||LA10_0==RULE_STRING) ) {
+                        if ( (LA10_0==FALSE||LA10_0==TRUE||LA10_0==DollarSign||(LA10_0>=RULE_INT && LA10_0<=RULE_FLOAT)||(LA10_0>=RULE_VECTOR_FLOAT && LA10_0<=RULE_MATRIX_FLOAT)||LA10_0==RULE_STRING) ) {
                             alt10=1;
                         }
 
 
                         switch (alt10) {
                     	case 1 :
-                    	    // InternalCQLParser.g:584:7: (lv_arguments_4_0= ruleSelectArgument )
+                    	    // InternalCQLParser.g:636:7: (lv_arguments_4_0= ruleSelectArgument )
                     	    {
-                    	    // InternalCQLParser.g:584:7: (lv_arguments_4_0= ruleSelectArgument )
-                    	    // InternalCQLParser.g:585:8: lv_arguments_4_0= ruleSelectArgument
+                    	    // InternalCQLParser.g:636:7: (lv_arguments_4_0= ruleSelectArgument )
+                    	    // InternalCQLParser.g:637:8: lv_arguments_4_0= ruleSelectArgument
                     	    {
 
                     	    								newCompositeNode(grammarAccess.getSimpleSelectAccess().getArgumentsSelectArgumentParserRuleCall_1_2_1_0_0());
                     	    							
-                    	    pushFollow(FOLLOW_9);
+                    	    pushFollow(FOLLOW_11);
                     	    lv_arguments_4_0=ruleSelectArgument();
 
                     	    state._fsp--;
@@ -1684,7 +1810,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         cnt10++;
                     } while (true);
 
-                    // InternalCQLParser.g:602:6: (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )*
+                    // InternalCQLParser.g:654:6: (otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) ) )*
                     loop11:
                     do {
                         int alt11=2;
@@ -1697,22 +1823,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt11) {
                     	case 1 :
-                    	    // InternalCQLParser.g:603:7: otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) )
+                    	    // InternalCQLParser.g:655:7: otherlv_5= Comma ( (lv_arguments_6_0= ruleSelectArgument ) )
                     	    {
-                    	    otherlv_5=(Token)match(input,Comma,FOLLOW_7); 
+                    	    otherlv_5=(Token)match(input,Comma,FOLLOW_9); 
 
                     	    							newLeafNode(otherlv_5, grammarAccess.getSimpleSelectAccess().getCommaKeyword_1_2_1_1_0());
                     	    						
-                    	    // InternalCQLParser.g:607:7: ( (lv_arguments_6_0= ruleSelectArgument ) )
-                    	    // InternalCQLParser.g:608:8: (lv_arguments_6_0= ruleSelectArgument )
+                    	    // InternalCQLParser.g:659:7: ( (lv_arguments_6_0= ruleSelectArgument ) )
+                    	    // InternalCQLParser.g:660:8: (lv_arguments_6_0= ruleSelectArgument )
                     	    {
-                    	    // InternalCQLParser.g:608:8: (lv_arguments_6_0= ruleSelectArgument )
-                    	    // InternalCQLParser.g:609:9: lv_arguments_6_0= ruleSelectArgument
+                    	    // InternalCQLParser.g:660:8: (lv_arguments_6_0= ruleSelectArgument )
+                    	    // InternalCQLParser.g:661:9: lv_arguments_6_0= ruleSelectArgument
                     	    {
 
                     	    									newCompositeNode(grammarAccess.getSimpleSelectAccess().getArgumentsSelectArgumentParserRuleCall_1_2_1_1_1_0());
                     	    								
-                    	    pushFollow(FOLLOW_10);
+                    	    pushFollow(FOLLOW_12);
                     	    lv_arguments_6_0=ruleSelectArgument();
 
                     	    state._fsp--;
@@ -1752,14 +1878,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:629:4: (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* )
-            // InternalCQLParser.g:630:5: otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )*
+            // InternalCQLParser.g:681:4: (otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )* )
+            // InternalCQLParser.g:682:5: otherlv_7= FROM ( (lv_sources_8_0= ruleSource ) )+ (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )*
             {
-            otherlv_7=(Token)match(input,FROM,FOLLOW_11); 
+            otherlv_7=(Token)match(input,FROM,FOLLOW_13); 
 
             					newLeafNode(otherlv_7, grammarAccess.getSimpleSelectAccess().getFROMKeyword_1_3_0());
             				
-            // InternalCQLParser.g:634:5: ( (lv_sources_8_0= ruleSource ) )+
+            // InternalCQLParser.g:686:5: ( (lv_sources_8_0= ruleSource ) )+
             int cnt13=0;
             loop13:
             do {
@@ -1773,15 +1899,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalCQLParser.g:635:6: (lv_sources_8_0= ruleSource )
+            	    // InternalCQLParser.g:687:6: (lv_sources_8_0= ruleSource )
             	    {
-            	    // InternalCQLParser.g:635:6: (lv_sources_8_0= ruleSource )
-            	    // InternalCQLParser.g:636:7: lv_sources_8_0= ruleSource
+            	    // InternalCQLParser.g:687:6: (lv_sources_8_0= ruleSource )
+            	    // InternalCQLParser.g:688:7: lv_sources_8_0= ruleSource
             	    {
 
             	    							newCompositeNode(grammarAccess.getSimpleSelectAccess().getSourcesSourceParserRuleCall_1_3_1_0());
             	    						
-            	    pushFollow(FOLLOW_12);
+            	    pushFollow(FOLLOW_14);
             	    lv_sources_8_0=ruleSource();
 
             	    state._fsp--;
@@ -1813,7 +1939,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 cnt13++;
             } while (true);
 
-            // InternalCQLParser.g:653:5: (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )*
+            // InternalCQLParser.g:705:5: (otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) ) )*
             loop14:
             do {
                 int alt14=2;
@@ -1826,22 +1952,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt14) {
             	case 1 :
-            	    // InternalCQLParser.g:654:6: otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) )
+            	    // InternalCQLParser.g:706:6: otherlv_9= Comma ( (lv_sources_10_0= ruleSource ) )
             	    {
-            	    otherlv_9=(Token)match(input,Comma,FOLLOW_11); 
+            	    otherlv_9=(Token)match(input,Comma,FOLLOW_13); 
 
             	    						newLeafNode(otherlv_9, grammarAccess.getSimpleSelectAccess().getCommaKeyword_1_3_2_0());
             	    					
-            	    // InternalCQLParser.g:658:6: ( (lv_sources_10_0= ruleSource ) )
-            	    // InternalCQLParser.g:659:7: (lv_sources_10_0= ruleSource )
+            	    // InternalCQLParser.g:710:6: ( (lv_sources_10_0= ruleSource ) )
+            	    // InternalCQLParser.g:711:7: (lv_sources_10_0= ruleSource )
             	    {
-            	    // InternalCQLParser.g:659:7: (lv_sources_10_0= ruleSource )
-            	    // InternalCQLParser.g:660:8: lv_sources_10_0= ruleSource
+            	    // InternalCQLParser.g:711:7: (lv_sources_10_0= ruleSource )
+            	    // InternalCQLParser.g:712:8: lv_sources_10_0= ruleSource
             	    {
 
             	    								newCompositeNode(grammarAccess.getSimpleSelectAccess().getSourcesSourceParserRuleCall_1_3_2_1_0());
             	    							
-            	    pushFollow(FOLLOW_13);
+            	    pushFollow(FOLLOW_15);
             	    lv_sources_10_0=ruleSource();
 
             	    state._fsp--;
@@ -1875,7 +2001,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:679:4: (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )?
+            // InternalCQLParser.g:731:4: (otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) ) )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1884,22 +2010,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalCQLParser.g:680:5: otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) )
+                    // InternalCQLParser.g:732:5: otherlv_11= WHERE ( (lv_predicates_12_0= ruleExpressionsModel ) )
                     {
-                    otherlv_11=(Token)match(input,WHERE,FOLLOW_14); 
+                    otherlv_11=(Token)match(input,WHERE,FOLLOW_16); 
 
                     					newLeafNode(otherlv_11, grammarAccess.getSimpleSelectAccess().getWHEREKeyword_1_4_0());
                     				
-                    // InternalCQLParser.g:684:5: ( (lv_predicates_12_0= ruleExpressionsModel ) )
-                    // InternalCQLParser.g:685:6: (lv_predicates_12_0= ruleExpressionsModel )
+                    // InternalCQLParser.g:736:5: ( (lv_predicates_12_0= ruleExpressionsModel ) )
+                    // InternalCQLParser.g:737:6: (lv_predicates_12_0= ruleExpressionsModel )
                     {
-                    // InternalCQLParser.g:685:6: (lv_predicates_12_0= ruleExpressionsModel )
-                    // InternalCQLParser.g:686:7: lv_predicates_12_0= ruleExpressionsModel
+                    // InternalCQLParser.g:737:6: (lv_predicates_12_0= ruleExpressionsModel )
+                    // InternalCQLParser.g:738:7: lv_predicates_12_0= ruleExpressionsModel
                     {
 
                     							newCompositeNode(grammarAccess.getSimpleSelectAccess().getPredicatesExpressionsModelParserRuleCall_1_4_1_0());
                     						
-                    pushFollow(FOLLOW_15);
+                    pushFollow(FOLLOW_17);
                     lv_predicates_12_0=ruleExpressionsModel();
 
                     state._fsp--;
@@ -1927,7 +2053,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:704:4: (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )?
+            // InternalCQLParser.g:756:4: (otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )* )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -1936,39 +2062,39 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt18) {
                 case 1 :
-                    // InternalCQLParser.g:705:5: otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )*
+                    // InternalCQLParser.g:757:5: otherlv_13= GROUP otherlv_14= BY ( (lv_order_15_0= ruleAttribute ) )+ (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )*
                     {
-                    otherlv_13=(Token)match(input,GROUP,FOLLOW_16); 
+                    otherlv_13=(Token)match(input,GROUP,FOLLOW_18); 
 
                     					newLeafNode(otherlv_13, grammarAccess.getSimpleSelectAccess().getGROUPKeyword_1_5_0());
                     				
-                    otherlv_14=(Token)match(input,BY,FOLLOW_5); 
+                    otherlv_14=(Token)match(input,BY,FOLLOW_19); 
 
                     					newLeafNode(otherlv_14, grammarAccess.getSimpleSelectAccess().getBYKeyword_1_5_1());
                     				
-                    // InternalCQLParser.g:713:5: ( (lv_order_15_0= ruleAttribute ) )+
+                    // InternalCQLParser.g:765:5: ( (lv_order_15_0= ruleAttribute ) )+
                     int cnt16=0;
                     loop16:
                     do {
                         int alt16=2;
                         int LA16_0 = input.LA(1);
 
-                        if ( (LA16_0==RULE_ID) ) {
+                        if ( (LA16_0==DollarSign||LA16_0==RULE_ID) ) {
                             alt16=1;
                         }
 
 
                         switch (alt16) {
                     	case 1 :
-                    	    // InternalCQLParser.g:714:6: (lv_order_15_0= ruleAttribute )
+                    	    // InternalCQLParser.g:766:6: (lv_order_15_0= ruleAttribute )
                     	    {
-                    	    // InternalCQLParser.g:714:6: (lv_order_15_0= ruleAttribute )
-                    	    // InternalCQLParser.g:715:7: lv_order_15_0= ruleAttribute
+                    	    // InternalCQLParser.g:766:6: (lv_order_15_0= ruleAttribute )
+                    	    // InternalCQLParser.g:767:7: lv_order_15_0= ruleAttribute
                     	    {
 
                     	    							newCompositeNode(grammarAccess.getSimpleSelectAccess().getOrderAttributeParserRuleCall_1_5_2_0());
                     	    						
-                    	    pushFollow(FOLLOW_17);
+                    	    pushFollow(FOLLOW_20);
                     	    lv_order_15_0=ruleAttribute();
 
                     	    state._fsp--;
@@ -2000,7 +2126,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         cnt16++;
                     } while (true);
 
-                    // InternalCQLParser.g:732:5: (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )*
+                    // InternalCQLParser.g:784:5: (otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) ) )*
                     loop17:
                     do {
                         int alt17=2;
@@ -2013,22 +2139,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // InternalCQLParser.g:733:6: otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) )
+                    	    // InternalCQLParser.g:785:6: otherlv_16= Comma ( (lv_order_17_0= ruleAttribute ) )
                     	    {
-                    	    otherlv_16=(Token)match(input,Comma,FOLLOW_5); 
+                    	    otherlv_16=(Token)match(input,Comma,FOLLOW_19); 
 
                     	    						newLeafNode(otherlv_16, grammarAccess.getSimpleSelectAccess().getCommaKeyword_1_5_3_0());
                     	    					
-                    	    // InternalCQLParser.g:737:6: ( (lv_order_17_0= ruleAttribute ) )
-                    	    // InternalCQLParser.g:738:7: (lv_order_17_0= ruleAttribute )
+                    	    // InternalCQLParser.g:789:6: ( (lv_order_17_0= ruleAttribute ) )
+                    	    // InternalCQLParser.g:790:7: (lv_order_17_0= ruleAttribute )
                     	    {
-                    	    // InternalCQLParser.g:738:7: (lv_order_17_0= ruleAttribute )
-                    	    // InternalCQLParser.g:739:8: lv_order_17_0= ruleAttribute
+                    	    // InternalCQLParser.g:790:7: (lv_order_17_0= ruleAttribute )
+                    	    // InternalCQLParser.g:791:8: lv_order_17_0= ruleAttribute
                     	    {
 
                     	    								newCompositeNode(grammarAccess.getSimpleSelectAccess().getOrderAttributeParserRuleCall_1_5_3_1_0());
                     	    							
-                    	    pushFollow(FOLLOW_18);
+                    	    pushFollow(FOLLOW_21);
                     	    lv_order_17_0=ruleAttribute();
 
                     	    state._fsp--;
@@ -2065,7 +2191,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:758:4: (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )?
+            // InternalCQLParser.g:810:4: (otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) ) )?
             int alt19=2;
             int LA19_0 = input.LA(1);
 
@@ -2074,17 +2200,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt19) {
                 case 1 :
-                    // InternalCQLParser.g:759:5: otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) )
+                    // InternalCQLParser.g:811:5: otherlv_18= HAVING ( (lv_having_19_0= ruleExpressionsModel ) )
                     {
-                    otherlv_18=(Token)match(input,HAVING,FOLLOW_14); 
+                    otherlv_18=(Token)match(input,HAVING,FOLLOW_16); 
 
                     					newLeafNode(otherlv_18, grammarAccess.getSimpleSelectAccess().getHAVINGKeyword_1_6_0());
                     				
-                    // InternalCQLParser.g:763:5: ( (lv_having_19_0= ruleExpressionsModel ) )
-                    // InternalCQLParser.g:764:6: (lv_having_19_0= ruleExpressionsModel )
+                    // InternalCQLParser.g:815:5: ( (lv_having_19_0= ruleExpressionsModel ) )
+                    // InternalCQLParser.g:816:6: (lv_having_19_0= ruleExpressionsModel )
                     {
-                    // InternalCQLParser.g:764:6: (lv_having_19_0= ruleExpressionsModel )
-                    // InternalCQLParser.g:765:7: lv_having_19_0= ruleExpressionsModel
+                    // InternalCQLParser.g:816:6: (lv_having_19_0= ruleExpressionsModel )
+                    // InternalCQLParser.g:817:7: lv_having_19_0= ruleExpressionsModel
                     {
 
                     							newCompositeNode(grammarAccess.getSimpleSelectAccess().getHavingExpressionsModelParserRuleCall_1_6_1_0());
@@ -2143,7 +2269,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComplexSelect"
-    // InternalCQLParser.g:788:1: entryRuleComplexSelect returns [EObject current=null] : iv_ruleComplexSelect= ruleComplexSelect EOF ;
+    // InternalCQLParser.g:840:1: entryRuleComplexSelect returns [EObject current=null] : iv_ruleComplexSelect= ruleComplexSelect EOF ;
     public final EObject entryRuleComplexSelect() throws RecognitionException {
         EObject current = null;
 
@@ -2151,8 +2277,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:788:54: (iv_ruleComplexSelect= ruleComplexSelect EOF )
-            // InternalCQLParser.g:789:2: iv_ruleComplexSelect= ruleComplexSelect EOF
+            // InternalCQLParser.g:840:54: (iv_ruleComplexSelect= ruleComplexSelect EOF )
+            // InternalCQLParser.g:841:2: iv_ruleComplexSelect= ruleComplexSelect EOF
             {
              newCompositeNode(grammarAccess.getComplexSelectRule()); 
             pushFollow(FOLLOW_1);
@@ -2179,7 +2305,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComplexSelect"
-    // InternalCQLParser.g:795:1: ruleComplexSelect returns [EObject current=null] : ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? ) ;
+    // InternalCQLParser.g:847:1: ruleComplexSelect returns [EObject current=null] : ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? ) ;
     public final EObject ruleComplexSelect() throws RecognitionException {
         EObject current = null;
 
@@ -2195,14 +2321,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:801:2: ( ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? ) )
-            // InternalCQLParser.g:802:2: ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? )
+            // InternalCQLParser.g:853:2: ( ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? ) )
+            // InternalCQLParser.g:854:2: ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? )
             {
-            // InternalCQLParser.g:802:2: ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? )
-            // InternalCQLParser.g:803:3: () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )?
+            // InternalCQLParser.g:854:2: ( () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )? )
+            // InternalCQLParser.g:855:3: () ( (lv_left_1_0= ruleSimpleSelect ) ) ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )?
             {
-            // InternalCQLParser.g:803:3: ()
-            // InternalCQLParser.g:804:4: 
+            // InternalCQLParser.g:855:3: ()
+            // InternalCQLParser.g:856:4: 
             {
 
             				current = forceCreateModelElement(
@@ -2212,16 +2338,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:810:3: ( (lv_left_1_0= ruleSimpleSelect ) )
-            // InternalCQLParser.g:811:4: (lv_left_1_0= ruleSimpleSelect )
+            // InternalCQLParser.g:862:3: ( (lv_left_1_0= ruleSimpleSelect ) )
+            // InternalCQLParser.g:863:4: (lv_left_1_0= ruleSimpleSelect )
             {
-            // InternalCQLParser.g:811:4: (lv_left_1_0= ruleSimpleSelect )
-            // InternalCQLParser.g:812:5: lv_left_1_0= ruleSimpleSelect
+            // InternalCQLParser.g:863:4: (lv_left_1_0= ruleSimpleSelect )
+            // InternalCQLParser.g:864:5: lv_left_1_0= ruleSimpleSelect
             {
 
             					newCompositeNode(grammarAccess.getComplexSelectAccess().getLeftSimpleSelectParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_19);
+            pushFollow(FOLLOW_22);
             lv_left_1_0=ruleSimpleSelect();
 
             state._fsp--;
@@ -2243,7 +2369,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:829:3: ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )?
+            // InternalCQLParser.g:881:3: ( ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) ) )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -2252,15 +2378,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt21) {
                 case 1 :
-                    // InternalCQLParser.g:830:4: ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) )
+                    // InternalCQLParser.g:882:4: ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) ) ( (lv_right_3_0= ruleSimpleSelect ) )
                     {
-                    // InternalCQLParser.g:830:4: ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) )
-                    // InternalCQLParser.g:831:5: ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) )
+                    // InternalCQLParser.g:882:4: ( ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) ) )
+                    // InternalCQLParser.g:883:5: ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) )
                     {
-                    // InternalCQLParser.g:831:5: ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) )
-                    // InternalCQLParser.g:832:6: (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION )
+                    // InternalCQLParser.g:883:5: ( (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION ) )
+                    // InternalCQLParser.g:884:6: (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION )
                     {
-                    // InternalCQLParser.g:832:6: (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION )
+                    // InternalCQLParser.g:884:6: (lv_operation_2_1= UNION | lv_operation_2_2= DIFFERENCE | lv_operation_2_3= INTERSECTION )
                     int alt20=3;
                     switch ( input.LA(1) ) {
                     case UNION:
@@ -2287,9 +2413,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     switch (alt20) {
                         case 1 :
-                            // InternalCQLParser.g:833:7: lv_operation_2_1= UNION
+                            // InternalCQLParser.g:885:7: lv_operation_2_1= UNION
                             {
-                            lv_operation_2_1=(Token)match(input,UNION,FOLLOW_20); 
+                            lv_operation_2_1=(Token)match(input,UNION,FOLLOW_23); 
 
                             							newLeafNode(lv_operation_2_1, grammarAccess.getComplexSelectAccess().getOperationUNIONKeyword_2_0_0_0());
                             						
@@ -2303,9 +2429,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalCQLParser.g:844:7: lv_operation_2_2= DIFFERENCE
+                            // InternalCQLParser.g:896:7: lv_operation_2_2= DIFFERENCE
                             {
-                            lv_operation_2_2=(Token)match(input,DIFFERENCE,FOLLOW_20); 
+                            lv_operation_2_2=(Token)match(input,DIFFERENCE,FOLLOW_23); 
 
                             							newLeafNode(lv_operation_2_2, grammarAccess.getComplexSelectAccess().getOperationDIFFERENCEKeyword_2_0_0_1());
                             						
@@ -2319,9 +2445,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 3 :
-                            // InternalCQLParser.g:855:7: lv_operation_2_3= INTERSECTION
+                            // InternalCQLParser.g:907:7: lv_operation_2_3= INTERSECTION
                             {
-                            lv_operation_2_3=(Token)match(input,INTERSECTION,FOLLOW_20); 
+                            lv_operation_2_3=(Token)match(input,INTERSECTION,FOLLOW_23); 
 
                             							newLeafNode(lv_operation_2_3, grammarAccess.getComplexSelectAccess().getOperationINTERSECTIONKeyword_2_0_0_2());
                             						
@@ -2343,11 +2469,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:868:4: ( (lv_right_3_0= ruleSimpleSelect ) )
-                    // InternalCQLParser.g:869:5: (lv_right_3_0= ruleSimpleSelect )
+                    // InternalCQLParser.g:920:4: ( (lv_right_3_0= ruleSimpleSelect ) )
+                    // InternalCQLParser.g:921:5: (lv_right_3_0= ruleSimpleSelect )
                     {
-                    // InternalCQLParser.g:869:5: (lv_right_3_0= ruleSimpleSelect )
-                    // InternalCQLParser.g:870:6: lv_right_3_0= ruleSimpleSelect
+                    // InternalCQLParser.g:921:5: (lv_right_3_0= ruleSimpleSelect )
+                    // InternalCQLParser.g:922:6: lv_right_3_0= ruleSimpleSelect
                     {
 
                     						newCompositeNode(grammarAccess.getComplexSelectAccess().getRightSimpleSelectParserRuleCall_2_1_0());
@@ -2403,7 +2529,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleInnerSelect"
-    // InternalCQLParser.g:892:1: entryRuleInnerSelect returns [EObject current=null] : iv_ruleInnerSelect= ruleInnerSelect EOF ;
+    // InternalCQLParser.g:944:1: entryRuleInnerSelect returns [EObject current=null] : iv_ruleInnerSelect= ruleInnerSelect EOF ;
     public final EObject entryRuleInnerSelect() throws RecognitionException {
         EObject current = null;
 
@@ -2411,8 +2537,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:892:52: (iv_ruleInnerSelect= ruleInnerSelect EOF )
-            // InternalCQLParser.g:893:2: iv_ruleInnerSelect= ruleInnerSelect EOF
+            // InternalCQLParser.g:944:52: (iv_ruleInnerSelect= ruleInnerSelect EOF )
+            // InternalCQLParser.g:945:2: iv_ruleInnerSelect= ruleInnerSelect EOF
             {
              newCompositeNode(grammarAccess.getInnerSelectRule()); 
             pushFollow(FOLLOW_1);
@@ -2439,7 +2565,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleInnerSelect"
-    // InternalCQLParser.g:899:1: ruleInnerSelect returns [EObject current=null] : (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis ) ;
+    // InternalCQLParser.g:951:1: ruleInnerSelect returns [EObject current=null] : (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis ) ;
     public final EObject ruleInnerSelect() throws RecognitionException {
         EObject current = null;
 
@@ -2452,26 +2578,26 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:905:2: ( (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis ) )
-            // InternalCQLParser.g:906:2: (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis )
+            // InternalCQLParser.g:957:2: ( (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis ) )
+            // InternalCQLParser.g:958:2: (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis )
             {
-            // InternalCQLParser.g:906:2: (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis )
-            // InternalCQLParser.g:907:3: otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis
+            // InternalCQLParser.g:958:2: (otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis )
+            // InternalCQLParser.g:959:3: otherlv_0= LeftParenthesis ( (lv_select_1_0= ruleSimpleSelect ) ) otherlv_2= RightParenthesis
             {
-            otherlv_0=(Token)match(input,LeftParenthesis,FOLLOW_20); 
+            otherlv_0=(Token)match(input,LeftParenthesis,FOLLOW_23); 
 
             			newLeafNode(otherlv_0, grammarAccess.getInnerSelectAccess().getLeftParenthesisKeyword_0());
             		
-            // InternalCQLParser.g:911:3: ( (lv_select_1_0= ruleSimpleSelect ) )
-            // InternalCQLParser.g:912:4: (lv_select_1_0= ruleSimpleSelect )
+            // InternalCQLParser.g:963:3: ( (lv_select_1_0= ruleSimpleSelect ) )
+            // InternalCQLParser.g:964:4: (lv_select_1_0= ruleSimpleSelect )
             {
-            // InternalCQLParser.g:912:4: (lv_select_1_0= ruleSimpleSelect )
-            // InternalCQLParser.g:913:5: lv_select_1_0= ruleSimpleSelect
+            // InternalCQLParser.g:964:4: (lv_select_1_0= ruleSimpleSelect )
+            // InternalCQLParser.g:965:5: lv_select_1_0= ruleSimpleSelect
             {
 
             					newCompositeNode(grammarAccess.getInnerSelectAccess().getSelectSimpleSelectParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_21);
+            pushFollow(FOLLOW_24);
             lv_select_1_0=ruleSimpleSelect();
 
             state._fsp--;
@@ -2520,7 +2646,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleInnerSelect2"
-    // InternalCQLParser.g:938:1: entryRuleInnerSelect2 returns [EObject current=null] : iv_ruleInnerSelect2= ruleInnerSelect2 EOF ;
+    // InternalCQLParser.g:990:1: entryRuleInnerSelect2 returns [EObject current=null] : iv_ruleInnerSelect2= ruleInnerSelect2 EOF ;
     public final EObject entryRuleInnerSelect2() throws RecognitionException {
         EObject current = null;
 
@@ -2528,8 +2654,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:938:53: (iv_ruleInnerSelect2= ruleInnerSelect2 EOF )
-            // InternalCQLParser.g:939:2: iv_ruleInnerSelect2= ruleInnerSelect2 EOF
+            // InternalCQLParser.g:990:53: (iv_ruleInnerSelect2= ruleInnerSelect2 EOF )
+            // InternalCQLParser.g:991:2: iv_ruleInnerSelect2= ruleInnerSelect2 EOF
             {
              newCompositeNode(grammarAccess.getInnerSelect2Rule()); 
             pushFollow(FOLLOW_1);
@@ -2556,7 +2682,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleInnerSelect2"
-    // InternalCQLParser.g:945:1: ruleInnerSelect2 returns [EObject current=null] : ( (lv_select_0_0= ruleSimpleSelect ) ) ;
+    // InternalCQLParser.g:997:1: ruleInnerSelect2 returns [EObject current=null] : ( (lv_select_0_0= ruleSimpleSelect ) ) ;
     public final EObject ruleInnerSelect2() throws RecognitionException {
         EObject current = null;
 
@@ -2567,14 +2693,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:951:2: ( ( (lv_select_0_0= ruleSimpleSelect ) ) )
-            // InternalCQLParser.g:952:2: ( (lv_select_0_0= ruleSimpleSelect ) )
+            // InternalCQLParser.g:1003:2: ( ( (lv_select_0_0= ruleSimpleSelect ) ) )
+            // InternalCQLParser.g:1004:2: ( (lv_select_0_0= ruleSimpleSelect ) )
             {
-            // InternalCQLParser.g:952:2: ( (lv_select_0_0= ruleSimpleSelect ) )
-            // InternalCQLParser.g:953:3: (lv_select_0_0= ruleSimpleSelect )
+            // InternalCQLParser.g:1004:2: ( (lv_select_0_0= ruleSimpleSelect ) )
+            // InternalCQLParser.g:1005:3: (lv_select_0_0= ruleSimpleSelect )
             {
-            // InternalCQLParser.g:953:3: (lv_select_0_0= ruleSimpleSelect )
-            // InternalCQLParser.g:954:4: lv_select_0_0= ruleSimpleSelect
+            // InternalCQLParser.g:1005:3: (lv_select_0_0= ruleSimpleSelect )
+            // InternalCQLParser.g:1006:4: lv_select_0_0= ruleSimpleSelect
             {
 
             				newCompositeNode(grammarAccess.getInnerSelect2Access().getSelectSimpleSelectParserRuleCall_0());
@@ -2621,7 +2747,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSelectArgument"
-    // InternalCQLParser.g:974:1: entryRuleSelectArgument returns [EObject current=null] : iv_ruleSelectArgument= ruleSelectArgument EOF ;
+    // InternalCQLParser.g:1026:1: entryRuleSelectArgument returns [EObject current=null] : iv_ruleSelectArgument= ruleSelectArgument EOF ;
     public final EObject entryRuleSelectArgument() throws RecognitionException {
         EObject current = null;
 
@@ -2629,8 +2755,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:974:55: (iv_ruleSelectArgument= ruleSelectArgument EOF )
-            // InternalCQLParser.g:975:2: iv_ruleSelectArgument= ruleSelectArgument EOF
+            // InternalCQLParser.g:1026:55: (iv_ruleSelectArgument= ruleSelectArgument EOF )
+            // InternalCQLParser.g:1027:2: iv_ruleSelectArgument= ruleSelectArgument EOF
             {
              newCompositeNode(grammarAccess.getSelectArgumentRule()); 
             pushFollow(FOLLOW_1);
@@ -2657,7 +2783,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSelectArgument"
-    // InternalCQLParser.g:981:1: ruleSelectArgument returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) ) ;
+    // InternalCQLParser.g:1033:1: ruleSelectArgument returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) ) ;
     public final EObject ruleSelectArgument() throws RecognitionException {
         EObject current = null;
 
@@ -2670,29 +2796,44 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:987:2: ( ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) ) )
-            // InternalCQLParser.g:988:2: ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) )
+            // InternalCQLParser.g:1039:2: ( ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) ) )
+            // InternalCQLParser.g:1040:2: ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) )
             {
-            // InternalCQLParser.g:988:2: ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) )
+            // InternalCQLParser.g:1040:2: ( ( (lv_attribute_0_0= ruleAttribute ) ) | ( (lv_expression_1_0= ruleSelectExpression ) ) )
             int alt22=2;
-            int LA22_0 = input.LA(1);
-
-            if ( (LA22_0==RULE_ID) ) {
+            switch ( input.LA(1) ) {
+            case RULE_ID:
+                {
                 switch ( input.LA(2) ) {
-                case EOF:
-                case FALSE:
-                case FROM:
-                case TRUE:
-                case AS:
-                case Comma:
-                case RULE_INT:
-                case RULE_ID:
-                case RULE_FLOAT:
-                case RULE_VECTOR_FLOAT:
-                case RULE_MATRIX_FLOAT:
-                case RULE_STRING:
+                case FullStop:
                     {
-                    alt22=1;
+                    int LA22_4 = input.LA(3);
+
+                    if ( (LA22_4==RULE_ID) ) {
+                        int LA22_5 = input.LA(4);
+
+                        if ( ((LA22_5>=Asterisk && LA22_5<=PlusSign)||LA22_5==HyphenMinus||LA22_5==Solidus||LA22_5==CircumflexAccent) ) {
+                            alt22=2;
+                        }
+                        else if ( (LA22_5==EOF||LA22_5==FALSE||LA22_5==FROM||LA22_5==TRUE||LA22_5==AS||LA22_5==DollarSign||LA22_5==Comma||(LA22_5>=RULE_INT && LA22_5<=RULE_FLOAT)||(LA22_5>=RULE_VECTOR_FLOAT && LA22_5<=RULE_MATRIX_FLOAT)||LA22_5==RULE_STRING) ) {
+                            alt22=1;
+                        }
+                        else {
+                            NoViableAltException nvae =
+                                new NoViableAltException("", 22, 5, input);
+
+                            throw nvae;
+                        }
+                    }
+                    else if ( (LA22_4==Asterisk) ) {
+                        alt22=1;
+                    }
+                    else {
+                        NoViableAltException nvae =
+                            new NoViableAltException("", 22, 4, input);
+
+                        throw nvae;
+                    }
                     }
                     break;
                 case LeftParenthesis:
@@ -2705,35 +2846,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     alt22=2;
                     }
                     break;
-                case FullStop:
+                case EOF:
+                case FALSE:
+                case FROM:
+                case TRUE:
+                case AS:
+                case DollarSign:
+                case Comma:
+                case RULE_INT:
+                case RULE_ID:
+                case RULE_FLOAT:
+                case RULE_VECTOR_FLOAT:
+                case RULE_MATRIX_FLOAT:
+                case RULE_STRING:
                     {
-                    int LA22_4 = input.LA(3);
-
-                    if ( (LA22_4==Asterisk) ) {
-                        alt22=1;
-                    }
-                    else if ( (LA22_4==RULE_ID) ) {
-                        int LA22_5 = input.LA(4);
-
-                        if ( (LA22_5==EOF||LA22_5==FALSE||LA22_5==FROM||LA22_5==TRUE||LA22_5==AS||LA22_5==Comma||(LA22_5>=RULE_INT && LA22_5<=RULE_FLOAT)||(LA22_5>=RULE_VECTOR_FLOAT && LA22_5<=RULE_MATRIX_FLOAT)||LA22_5==RULE_STRING) ) {
-                            alt22=1;
-                        }
-                        else if ( ((LA22_5>=Asterisk && LA22_5<=PlusSign)||LA22_5==HyphenMinus||LA22_5==Solidus||LA22_5==CircumflexAccent) ) {
-                            alt22=2;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("", 22, 5, input);
-
-                            throw nvae;
-                        }
-                    }
-                    else {
-                        NoViableAltException nvae =
-                            new NoViableAltException("", 22, 4, input);
-
-                        throw nvae;
-                    }
+                    alt22=1;
                     }
                     break;
                 default:
@@ -2743,25 +2870,40 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     throw nvae;
                 }
 
-            }
-            else if ( (LA22_0==FALSE||LA22_0==TRUE||LA22_0==RULE_INT||LA22_0==RULE_FLOAT||(LA22_0>=RULE_VECTOR_FLOAT && LA22_0<=RULE_MATRIX_FLOAT)||LA22_0==RULE_STRING) ) {
+                }
+                break;
+            case DollarSign:
+                {
+                alt22=1;
+                }
+                break;
+            case FALSE:
+            case TRUE:
+            case RULE_INT:
+            case RULE_FLOAT:
+            case RULE_VECTOR_FLOAT:
+            case RULE_MATRIX_FLOAT:
+            case RULE_STRING:
+                {
                 alt22=2;
-            }
-            else {
+                }
+                break;
+            default:
                 NoViableAltException nvae =
                     new NoViableAltException("", 22, 0, input);
 
                 throw nvae;
             }
+
             switch (alt22) {
                 case 1 :
-                    // InternalCQLParser.g:989:3: ( (lv_attribute_0_0= ruleAttribute ) )
+                    // InternalCQLParser.g:1041:3: ( (lv_attribute_0_0= ruleAttribute ) )
                     {
-                    // InternalCQLParser.g:989:3: ( (lv_attribute_0_0= ruleAttribute ) )
-                    // InternalCQLParser.g:990:4: (lv_attribute_0_0= ruleAttribute )
+                    // InternalCQLParser.g:1041:3: ( (lv_attribute_0_0= ruleAttribute ) )
+                    // InternalCQLParser.g:1042:4: (lv_attribute_0_0= ruleAttribute )
                     {
-                    // InternalCQLParser.g:990:4: (lv_attribute_0_0= ruleAttribute )
-                    // InternalCQLParser.g:991:5: lv_attribute_0_0= ruleAttribute
+                    // InternalCQLParser.g:1042:4: (lv_attribute_0_0= ruleAttribute )
+                    // InternalCQLParser.g:1043:5: lv_attribute_0_0= ruleAttribute
                     {
 
                     					newCompositeNode(grammarAccess.getSelectArgumentAccess().getAttributeAttributeParserRuleCall_0_0());
@@ -2792,13 +2934,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1009:3: ( (lv_expression_1_0= ruleSelectExpression ) )
+                    // InternalCQLParser.g:1061:3: ( (lv_expression_1_0= ruleSelectExpression ) )
                     {
-                    // InternalCQLParser.g:1009:3: ( (lv_expression_1_0= ruleSelectExpression ) )
-                    // InternalCQLParser.g:1010:4: (lv_expression_1_0= ruleSelectExpression )
+                    // InternalCQLParser.g:1061:3: ( (lv_expression_1_0= ruleSelectExpression ) )
+                    // InternalCQLParser.g:1062:4: (lv_expression_1_0= ruleSelectExpression )
                     {
-                    // InternalCQLParser.g:1010:4: (lv_expression_1_0= ruleSelectExpression )
-                    // InternalCQLParser.g:1011:5: lv_expression_1_0= ruleSelectExpression
+                    // InternalCQLParser.g:1062:4: (lv_expression_1_0= ruleSelectExpression )
+                    // InternalCQLParser.g:1063:5: lv_expression_1_0= ruleSelectExpression
                     {
 
                     					newCompositeNode(grammarAccess.getSelectArgumentAccess().getExpressionSelectExpressionParserRuleCall_1_0());
@@ -2851,7 +2993,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSource"
-    // InternalCQLParser.g:1032:1: entryRuleSource returns [EObject current=null] : iv_ruleSource= ruleSource EOF ;
+    // InternalCQLParser.g:1084:1: entryRuleSource returns [EObject current=null] : iv_ruleSource= ruleSource EOF ;
     public final EObject entryRuleSource() throws RecognitionException {
         EObject current = null;
 
@@ -2859,8 +3001,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1032:47: (iv_ruleSource= ruleSource EOF )
-            // InternalCQLParser.g:1033:2: iv_ruleSource= ruleSource EOF
+            // InternalCQLParser.g:1084:47: (iv_ruleSource= ruleSource EOF )
+            // InternalCQLParser.g:1085:2: iv_ruleSource= ruleSource EOF
             {
              newCompositeNode(grammarAccess.getSourceRule()); 
             pushFollow(FOLLOW_1);
@@ -2887,7 +3029,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSource"
-    // InternalCQLParser.g:1039:1: ruleSource returns [EObject current=null] : (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource ) ;
+    // InternalCQLParser.g:1091:1: ruleSource returns [EObject current=null] : (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource ) ;
     public final EObject ruleSource() throws RecognitionException {
         EObject current = null;
 
@@ -2900,10 +3042,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1045:2: ( (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource ) )
-            // InternalCQLParser.g:1046:2: (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource )
+            // InternalCQLParser.g:1097:2: ( (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource ) )
+            // InternalCQLParser.g:1098:2: (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource )
             {
-            // InternalCQLParser.g:1046:2: (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource )
+            // InternalCQLParser.g:1098:2: (this_SimpleSource_0= ruleSimpleSource | this_NestedSource_1= ruleNestedSource )
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -2921,7 +3063,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt23) {
                 case 1 :
-                    // InternalCQLParser.g:1047:3: this_SimpleSource_0= ruleSimpleSource
+                    // InternalCQLParser.g:1099:3: this_SimpleSource_0= ruleSimpleSource
                     {
 
                     			newCompositeNode(grammarAccess.getSourceAccess().getSimpleSourceParserRuleCall_0());
@@ -2939,7 +3081,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1056:3: this_NestedSource_1= ruleNestedSource
+                    // InternalCQLParser.g:1108:3: this_NestedSource_1= ruleNestedSource
                     {
 
                     			newCompositeNode(grammarAccess.getSourceAccess().getNestedSourceParserRuleCall_1());
@@ -2979,7 +3121,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSimpleSource"
-    // InternalCQLParser.g:1068:1: entryRuleSimpleSource returns [EObject current=null] : iv_ruleSimpleSource= ruleSimpleSource EOF ;
+    // InternalCQLParser.g:1120:1: entryRuleSimpleSource returns [EObject current=null] : iv_ruleSimpleSource= ruleSimpleSource EOF ;
     public final EObject entryRuleSimpleSource() throws RecognitionException {
         EObject current = null;
 
@@ -2987,8 +3129,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1068:53: (iv_ruleSimpleSource= ruleSimpleSource EOF )
-            // InternalCQLParser.g:1069:2: iv_ruleSimpleSource= ruleSimpleSource EOF
+            // InternalCQLParser.g:1120:53: (iv_ruleSimpleSource= ruleSimpleSource EOF )
+            // InternalCQLParser.g:1121:2: iv_ruleSimpleSource= ruleSimpleSource EOF
             {
              newCompositeNode(grammarAccess.getSimpleSourceRule()); 
             pushFollow(FOLLOW_1);
@@ -3015,7 +3157,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSimpleSource"
-    // InternalCQLParser.g:1075:1: ruleSimpleSource returns [EObject current=null] : ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? ) ;
+    // InternalCQLParser.g:1127:1: ruleSimpleSource returns [EObject current=null] : ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? ) ;
     public final EObject ruleSimpleSource() throws RecognitionException {
         EObject current = null;
 
@@ -3031,14 +3173,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1081:2: ( ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? ) )
-            // InternalCQLParser.g:1082:2: ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1133:2: ( ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? ) )
+            // InternalCQLParser.g:1134:2: ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? )
             {
-            // InternalCQLParser.g:1082:2: ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? )
-            // InternalCQLParser.g:1083:3: () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:1134:2: ( () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1135:3: () ( (lv_name_1_0= ruleQualifiedSourcename ) ) ( (lv_window_2_0= ruleWindowOperator ) )? (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )?
             {
-            // InternalCQLParser.g:1083:3: ()
-            // InternalCQLParser.g:1084:4: 
+            // InternalCQLParser.g:1135:3: ()
+            // InternalCQLParser.g:1136:4: 
             {
 
             				current = forceCreateModelElement(
@@ -3048,16 +3190,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1090:3: ( (lv_name_1_0= ruleQualifiedSourcename ) )
-            // InternalCQLParser.g:1091:4: (lv_name_1_0= ruleQualifiedSourcename )
+            // InternalCQLParser.g:1142:3: ( (lv_name_1_0= ruleQualifiedSourcename ) )
+            // InternalCQLParser.g:1143:4: (lv_name_1_0= ruleQualifiedSourcename )
             {
-            // InternalCQLParser.g:1091:4: (lv_name_1_0= ruleQualifiedSourcename )
-            // InternalCQLParser.g:1092:5: lv_name_1_0= ruleQualifiedSourcename
+            // InternalCQLParser.g:1143:4: (lv_name_1_0= ruleQualifiedSourcename )
+            // InternalCQLParser.g:1144:5: lv_name_1_0= ruleQualifiedSourcename
             {
 
             					newCompositeNode(grammarAccess.getSimpleSourceAccess().getNameQualifiedSourcenameParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_22);
+            pushFollow(FOLLOW_25);
             lv_name_1_0=ruleQualifiedSourcename();
 
             state._fsp--;
@@ -3079,7 +3221,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1109:3: ( (lv_window_2_0= ruleWindowOperator ) )?
+            // InternalCQLParser.g:1161:3: ( (lv_window_2_0= ruleWindowOperator ) )?
             int alt24=2;
             int LA24_0 = input.LA(1);
 
@@ -3088,15 +3230,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt24) {
                 case 1 :
-                    // InternalCQLParser.g:1110:4: (lv_window_2_0= ruleWindowOperator )
+                    // InternalCQLParser.g:1162:4: (lv_window_2_0= ruleWindowOperator )
                     {
-                    // InternalCQLParser.g:1110:4: (lv_window_2_0= ruleWindowOperator )
-                    // InternalCQLParser.g:1111:5: lv_window_2_0= ruleWindowOperator
+                    // InternalCQLParser.g:1162:4: (lv_window_2_0= ruleWindowOperator )
+                    // InternalCQLParser.g:1163:5: lv_window_2_0= ruleWindowOperator
                     {
 
                     					newCompositeNode(grammarAccess.getSimpleSourceAccess().getWindowWindowOperatorParserRuleCall_2_0());
                     				
-                    pushFollow(FOLLOW_23);
+                    pushFollow(FOLLOW_26);
                     lv_window_2_0=ruleWindowOperator();
 
                     state._fsp--;
@@ -3121,7 +3263,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1128:3: (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:1180:3: (otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) ) )?
             int alt25=2;
             int LA25_0 = input.LA(1);
 
@@ -3130,17 +3272,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt25) {
                 case 1 :
-                    // InternalCQLParser.g:1129:4: otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) )
+                    // InternalCQLParser.g:1181:4: otherlv_3= AS ( (lv_alias_4_0= ruleAlias ) )
                     {
                     otherlv_3=(Token)match(input,AS,FOLLOW_5); 
 
                     				newLeafNode(otherlv_3, grammarAccess.getSimpleSourceAccess().getASKeyword_3_0());
                     			
-                    // InternalCQLParser.g:1133:4: ( (lv_alias_4_0= ruleAlias ) )
-                    // InternalCQLParser.g:1134:5: (lv_alias_4_0= ruleAlias )
+                    // InternalCQLParser.g:1185:4: ( (lv_alias_4_0= ruleAlias ) )
+                    // InternalCQLParser.g:1186:5: (lv_alias_4_0= ruleAlias )
                     {
-                    // InternalCQLParser.g:1134:5: (lv_alias_4_0= ruleAlias )
-                    // InternalCQLParser.g:1135:6: lv_alias_4_0= ruleAlias
+                    // InternalCQLParser.g:1186:5: (lv_alias_4_0= ruleAlias )
+                    // InternalCQLParser.g:1187:6: lv_alias_4_0= ruleAlias
                     {
 
                     						newCompositeNode(grammarAccess.getSimpleSourceAccess().getAliasAliasParserRuleCall_3_1_0());
@@ -3196,7 +3338,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNestedSource"
-    // InternalCQLParser.g:1157:1: entryRuleNestedSource returns [EObject current=null] : iv_ruleNestedSource= ruleNestedSource EOF ;
+    // InternalCQLParser.g:1209:1: entryRuleNestedSource returns [EObject current=null] : iv_ruleNestedSource= ruleNestedSource EOF ;
     public final EObject entryRuleNestedSource() throws RecognitionException {
         EObject current = null;
 
@@ -3204,8 +3346,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1157:53: (iv_ruleNestedSource= ruleNestedSource EOF )
-            // InternalCQLParser.g:1158:2: iv_ruleNestedSource= ruleNestedSource EOF
+            // InternalCQLParser.g:1209:53: (iv_ruleNestedSource= ruleNestedSource EOF )
+            // InternalCQLParser.g:1210:2: iv_ruleNestedSource= ruleNestedSource EOF
             {
              newCompositeNode(grammarAccess.getNestedSourceRule()); 
             pushFollow(FOLLOW_1);
@@ -3232,7 +3374,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNestedSource"
-    // InternalCQLParser.g:1164:1: ruleNestedSource returns [EObject current=null] : ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) ) ;
+    // InternalCQLParser.g:1216:1: ruleNestedSource returns [EObject current=null] : ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) ) ;
     public final EObject ruleNestedSource() throws RecognitionException {
         EObject current = null;
 
@@ -3246,14 +3388,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1170:2: ( ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) ) )
-            // InternalCQLParser.g:1171:2: ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) )
+            // InternalCQLParser.g:1222:2: ( ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) ) )
+            // InternalCQLParser.g:1223:2: ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) )
             {
-            // InternalCQLParser.g:1171:2: ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) )
-            // InternalCQLParser.g:1172:3: () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) )
+            // InternalCQLParser.g:1223:2: ( () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) ) )
+            // InternalCQLParser.g:1224:3: () ( (lv_statement_1_0= ruleInnerSelect ) ) otherlv_2= AS ( (lv_alias_3_0= ruleAlias ) )
             {
-            // InternalCQLParser.g:1172:3: ()
-            // InternalCQLParser.g:1173:4: 
+            // InternalCQLParser.g:1224:3: ()
+            // InternalCQLParser.g:1225:4: 
             {
 
             				current = forceCreateModelElement(
@@ -3263,16 +3405,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1179:3: ( (lv_statement_1_0= ruleInnerSelect ) )
-            // InternalCQLParser.g:1180:4: (lv_statement_1_0= ruleInnerSelect )
+            // InternalCQLParser.g:1231:3: ( (lv_statement_1_0= ruleInnerSelect ) )
+            // InternalCQLParser.g:1232:4: (lv_statement_1_0= ruleInnerSelect )
             {
-            // InternalCQLParser.g:1180:4: (lv_statement_1_0= ruleInnerSelect )
-            // InternalCQLParser.g:1181:5: lv_statement_1_0= ruleInnerSelect
+            // InternalCQLParser.g:1232:4: (lv_statement_1_0= ruleInnerSelect )
+            // InternalCQLParser.g:1233:5: lv_statement_1_0= ruleInnerSelect
             {
 
             					newCompositeNode(grammarAccess.getNestedSourceAccess().getStatementInnerSelectParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_24);
+            pushFollow(FOLLOW_27);
             lv_statement_1_0=ruleInnerSelect();
 
             state._fsp--;
@@ -3298,11 +3440,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_2, grammarAccess.getNestedSourceAccess().getASKeyword_2());
             		
-            // InternalCQLParser.g:1202:3: ( (lv_alias_3_0= ruleAlias ) )
-            // InternalCQLParser.g:1203:4: (lv_alias_3_0= ruleAlias )
+            // InternalCQLParser.g:1254:3: ( (lv_alias_3_0= ruleAlias ) )
+            // InternalCQLParser.g:1255:4: (lv_alias_3_0= ruleAlias )
             {
-            // InternalCQLParser.g:1203:4: (lv_alias_3_0= ruleAlias )
-            // InternalCQLParser.g:1204:5: lv_alias_3_0= ruleAlias
+            // InternalCQLParser.g:1255:4: (lv_alias_3_0= ruleAlias )
+            // InternalCQLParser.g:1256:5: lv_alias_3_0= ruleAlias
             {
 
             					newCompositeNode(grammarAccess.getNestedSourceAccess().getAliasAliasParserRuleCall_3_0());
@@ -3352,7 +3494,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAttribute"
-    // InternalCQLParser.g:1225:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
+    // InternalCQLParser.g:1277:1: entryRuleAttribute returns [EObject current=null] : iv_ruleAttribute= ruleAttribute EOF ;
     public final EObject entryRuleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -3360,8 +3502,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1225:50: (iv_ruleAttribute= ruleAttribute EOF )
-            // InternalCQLParser.g:1226:2: iv_ruleAttribute= ruleAttribute EOF
+            // InternalCQLParser.g:1277:50: (iv_ruleAttribute= ruleAttribute EOF )
+            // InternalCQLParser.g:1278:2: iv_ruleAttribute= ruleAttribute EOF
             {
              newCompositeNode(grammarAccess.getAttributeRule()); 
             pushFollow(FOLLOW_1);
@@ -3388,7 +3530,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAttribute"
-    // InternalCQLParser.g:1232:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? ) ;
+    // InternalCQLParser.g:1284:1: ruleAttribute returns [EObject current=null] : ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? ) ;
     public final EObject ruleAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -3402,22 +3544,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1238:2: ( ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? ) )
-            // InternalCQLParser.g:1239:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1290:2: ( ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? ) )
+            // InternalCQLParser.g:1291:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? )
             {
-            // InternalCQLParser.g:1239:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? )
-            // InternalCQLParser.g:1240:3: ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:1291:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1292:3: ( (lv_name_0_0= ruleQualifiedAttributename ) ) (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )?
             {
-            // InternalCQLParser.g:1240:3: ( (lv_name_0_0= ruleQualifiedAttributename ) )
-            // InternalCQLParser.g:1241:4: (lv_name_0_0= ruleQualifiedAttributename )
+            // InternalCQLParser.g:1292:3: ( (lv_name_0_0= ruleQualifiedAttributename ) )
+            // InternalCQLParser.g:1293:4: (lv_name_0_0= ruleQualifiedAttributename )
             {
-            // InternalCQLParser.g:1241:4: (lv_name_0_0= ruleQualifiedAttributename )
-            // InternalCQLParser.g:1242:5: lv_name_0_0= ruleQualifiedAttributename
+            // InternalCQLParser.g:1293:4: (lv_name_0_0= ruleQualifiedAttributename )
+            // InternalCQLParser.g:1294:5: lv_name_0_0= ruleQualifiedAttributename
             {
 
             					newCompositeNode(grammarAccess.getAttributeAccess().getNameQualifiedAttributenameParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_23);
+            pushFollow(FOLLOW_26);
             lv_name_0_0=ruleQualifiedAttributename();
 
             state._fsp--;
@@ -3439,7 +3581,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1259:3: (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:1311:3: (otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) ) )?
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -3448,17 +3590,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt26) {
                 case 1 :
-                    // InternalCQLParser.g:1260:4: otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) )
+                    // InternalCQLParser.g:1312:4: otherlv_1= AS ( (lv_alias_2_0= ruleAlias ) )
                     {
                     otherlv_1=(Token)match(input,AS,FOLLOW_5); 
 
                     				newLeafNode(otherlv_1, grammarAccess.getAttributeAccess().getASKeyword_1_0());
                     			
-                    // InternalCQLParser.g:1264:4: ( (lv_alias_2_0= ruleAlias ) )
-                    // InternalCQLParser.g:1265:5: (lv_alias_2_0= ruleAlias )
+                    // InternalCQLParser.g:1316:4: ( (lv_alias_2_0= ruleAlias ) )
+                    // InternalCQLParser.g:1317:5: (lv_alias_2_0= ruleAlias )
                     {
-                    // InternalCQLParser.g:1265:5: (lv_alias_2_0= ruleAlias )
-                    // InternalCQLParser.g:1266:6: lv_alias_2_0= ruleAlias
+                    // InternalCQLParser.g:1317:5: (lv_alias_2_0= ruleAlias )
+                    // InternalCQLParser.g:1318:6: lv_alias_2_0= ruleAlias
                     {
 
                     						newCompositeNode(grammarAccess.getAttributeAccess().getAliasAliasParserRuleCall_1_1_0());
@@ -3514,7 +3656,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAttributeWithoutAliasDefinition"
-    // InternalCQLParser.g:1288:1: entryRuleAttributeWithoutAliasDefinition returns [EObject current=null] : iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF ;
+    // InternalCQLParser.g:1340:1: entryRuleAttributeWithoutAliasDefinition returns [EObject current=null] : iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF ;
     public final EObject entryRuleAttributeWithoutAliasDefinition() throws RecognitionException {
         EObject current = null;
 
@@ -3522,8 +3664,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1288:72: (iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF )
-            // InternalCQLParser.g:1289:2: iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF
+            // InternalCQLParser.g:1340:72: (iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF )
+            // InternalCQLParser.g:1341:2: iv_ruleAttributeWithoutAliasDefinition= ruleAttributeWithoutAliasDefinition EOF
             {
              newCompositeNode(grammarAccess.getAttributeWithoutAliasDefinitionRule()); 
             pushFollow(FOLLOW_1);
@@ -3550,7 +3692,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAttributeWithoutAliasDefinition"
-    // InternalCQLParser.g:1295:1: ruleAttributeWithoutAliasDefinition returns [EObject current=null] : ( (lv_name_0_0= ruleQualifiedAttributename ) ) ;
+    // InternalCQLParser.g:1347:1: ruleAttributeWithoutAliasDefinition returns [EObject current=null] : ( (lv_name_0_0= ruleQualifiedAttributename ) ) ;
     public final EObject ruleAttributeWithoutAliasDefinition() throws RecognitionException {
         EObject current = null;
 
@@ -3561,14 +3703,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1301:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) )
-            // InternalCQLParser.g:1302:2: ( (lv_name_0_0= ruleQualifiedAttributename ) )
+            // InternalCQLParser.g:1353:2: ( ( (lv_name_0_0= ruleQualifiedAttributename ) ) )
+            // InternalCQLParser.g:1354:2: ( (lv_name_0_0= ruleQualifiedAttributename ) )
             {
-            // InternalCQLParser.g:1302:2: ( (lv_name_0_0= ruleQualifiedAttributename ) )
-            // InternalCQLParser.g:1303:3: (lv_name_0_0= ruleQualifiedAttributename )
+            // InternalCQLParser.g:1354:2: ( (lv_name_0_0= ruleQualifiedAttributename ) )
+            // InternalCQLParser.g:1355:3: (lv_name_0_0= ruleQualifiedAttributename )
             {
-            // InternalCQLParser.g:1303:3: (lv_name_0_0= ruleQualifiedAttributename )
-            // InternalCQLParser.g:1304:4: lv_name_0_0= ruleQualifiedAttributename
+            // InternalCQLParser.g:1355:3: (lv_name_0_0= ruleQualifiedAttributename )
+            // InternalCQLParser.g:1356:4: lv_name_0_0= ruleQualifiedAttributename
             {
 
             				newCompositeNode(grammarAccess.getAttributeWithoutAliasDefinitionAccess().getNameQualifiedAttributenameParserRuleCall_0());
@@ -3615,7 +3757,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAttributeForSelectExpression"
-    // InternalCQLParser.g:1324:1: entryRuleAttributeForSelectExpression returns [EObject current=null] : iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF ;
+    // InternalCQLParser.g:1376:1: entryRuleAttributeForSelectExpression returns [EObject current=null] : iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF ;
     public final EObject entryRuleAttributeForSelectExpression() throws RecognitionException {
         EObject current = null;
 
@@ -3623,8 +3765,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1324:69: (iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF )
-            // InternalCQLParser.g:1325:2: iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF
+            // InternalCQLParser.g:1376:69: (iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF )
+            // InternalCQLParser.g:1377:2: iv_ruleAttributeForSelectExpression= ruleAttributeForSelectExpression EOF
             {
              newCompositeNode(grammarAccess.getAttributeForSelectExpressionRule()); 
             pushFollow(FOLLOW_1);
@@ -3651,7 +3793,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAttributeForSelectExpression"
-    // InternalCQLParser.g:1331:1: ruleAttributeForSelectExpression returns [EObject current=null] : ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) ) ;
+    // InternalCQLParser.g:1383:1: ruleAttributeForSelectExpression returns [EObject current=null] : ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) ) ;
     public final EObject ruleAttributeForSelectExpression() throws RecognitionException {
         EObject current = null;
 
@@ -3662,14 +3804,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1337:2: ( ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) ) )
-            // InternalCQLParser.g:1338:2: ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) )
+            // InternalCQLParser.g:1389:2: ( ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) ) )
+            // InternalCQLParser.g:1390:2: ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) )
             {
-            // InternalCQLParser.g:1338:2: ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) )
-            // InternalCQLParser.g:1339:3: (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars )
+            // InternalCQLParser.g:1390:2: ( (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars ) )
+            // InternalCQLParser.g:1391:3: (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars )
             {
-            // InternalCQLParser.g:1339:3: (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars )
-            // InternalCQLParser.g:1340:4: lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars
+            // InternalCQLParser.g:1391:3: (lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars )
+            // InternalCQLParser.g:1392:4: lv_name_0_0= ruleQualifiedAttributenameWithoutSpecialChars
             {
 
             				newCompositeNode(grammarAccess.getAttributeForSelectExpressionAccess().getNameQualifiedAttributenameWithoutSpecialCharsParserRuleCall_0());
@@ -3716,7 +3858,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComplexPredicate"
-    // InternalCQLParser.g:1360:1: entryRuleComplexPredicate returns [EObject current=null] : iv_ruleComplexPredicate= ruleComplexPredicate EOF ;
+    // InternalCQLParser.g:1412:1: entryRuleComplexPredicate returns [EObject current=null] : iv_ruleComplexPredicate= ruleComplexPredicate EOF ;
     public final EObject entryRuleComplexPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -3724,8 +3866,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1360:57: (iv_ruleComplexPredicate= ruleComplexPredicate EOF )
-            // InternalCQLParser.g:1361:2: iv_ruleComplexPredicate= ruleComplexPredicate EOF
+            // InternalCQLParser.g:1412:57: (iv_ruleComplexPredicate= ruleComplexPredicate EOF )
+            // InternalCQLParser.g:1413:2: iv_ruleComplexPredicate= ruleComplexPredicate EOF
             {
              newCompositeNode(grammarAccess.getComplexPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -3752,7 +3894,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComplexPredicate"
-    // InternalCQLParser.g:1367:1: ruleComplexPredicate returns [EObject current=null] : ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) ) ;
+    // InternalCQLParser.g:1419:1: ruleComplexPredicate returns [EObject current=null] : ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) ) ;
     public final EObject ruleComplexPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -3769,106 +3911,29 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1373:2: ( ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) ) )
-            // InternalCQLParser.g:1374:2: ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) )
+            // InternalCQLParser.g:1425:2: ( ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) ) )
+            // InternalCQLParser.g:1426:2: ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) )
             {
-            // InternalCQLParser.g:1374:2: ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) )
-            // InternalCQLParser.g:1375:3: ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) )
+            // InternalCQLParser.g:1426:2: ( ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) ) )
+            // InternalCQLParser.g:1427:3: ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) ) ( (lv_select_3_0= ruleInnerSelect ) )
             {
-            // InternalCQLParser.g:1375:3: ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) )
+            // InternalCQLParser.g:1427:3: ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) )
             int alt27=3;
-            int LA27_0 = input.LA(1);
-
-            if ( (LA27_0==RULE_ID) ) {
-                switch ( input.LA(2) ) {
-                case FullStop:
-                    {
-                    int LA27_3 = input.LA(3);
-
-                    if ( (LA27_3==RULE_ID) ) {
-                        int LA27_6 = input.LA(4);
-
-                        if ( (LA27_6==IN) ) {
-                            alt27=3;
-                        }
-                        else if ( ((LA27_6>=LessThanSignEqualsSign && LA27_6<=GreaterThanSignEqualsSign)||LA27_6==LessThanSign||LA27_6==GreaterThanSign) ) {
-                            alt27=1;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("", 27, 6, input);
-
-                            throw nvae;
-                        }
-                    }
-                    else if ( (LA27_3==Asterisk) ) {
-                        int LA27_7 = input.LA(4);
-
-                        if ( ((LA27_7>=LessThanSignEqualsSign && LA27_7<=GreaterThanSignEqualsSign)||LA27_7==LessThanSign||LA27_7==GreaterThanSign) ) {
-                            alt27=1;
-                        }
-                        else if ( (LA27_7==IN) ) {
-                            alt27=3;
-                        }
-                        else {
-                            NoViableAltException nvae =
-                                new NoViableAltException("", 27, 7, input);
-
-                            throw nvae;
-                        }
-                    }
-                    else {
-                        NoViableAltException nvae =
-                            new NoViableAltException("", 27, 3, input);
-
-                        throw nvae;
-                    }
-                    }
-                    break;
-                case IN:
-                    {
-                    alt27=3;
-                    }
-                    break;
-                case LessThanSignEqualsSign:
-                case GreaterThanSignEqualsSign:
-                case LessThanSign:
-                case GreaterThanSign:
-                    {
-                    alt27=1;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 27, 1, input);
-
-                    throw nvae;
-                }
-
-            }
-            else if ( (LA27_0==EXISTS) ) {
-                alt27=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 27, 0, input);
-
-                throw nvae;
-            }
+            alt27 = dfa27.predict(input);
             switch (alt27) {
                 case 1 :
-                    // InternalCQLParser.g:1376:4: ( (lv_quantification_0_0= ruleQuantificationPredicate ) )
+                    // InternalCQLParser.g:1428:4: ( (lv_quantification_0_0= ruleQuantificationPredicate ) )
                     {
-                    // InternalCQLParser.g:1376:4: ( (lv_quantification_0_0= ruleQuantificationPredicate ) )
-                    // InternalCQLParser.g:1377:5: (lv_quantification_0_0= ruleQuantificationPredicate )
+                    // InternalCQLParser.g:1428:4: ( (lv_quantification_0_0= ruleQuantificationPredicate ) )
+                    // InternalCQLParser.g:1429:5: (lv_quantification_0_0= ruleQuantificationPredicate )
                     {
-                    // InternalCQLParser.g:1377:5: (lv_quantification_0_0= ruleQuantificationPredicate )
-                    // InternalCQLParser.g:1378:6: lv_quantification_0_0= ruleQuantificationPredicate
+                    // InternalCQLParser.g:1429:5: (lv_quantification_0_0= ruleQuantificationPredicate )
+                    // InternalCQLParser.g:1430:6: lv_quantification_0_0= ruleQuantificationPredicate
                     {
 
                     						newCompositeNode(grammarAccess.getComplexPredicateAccess().getQuantificationQuantificationPredicateParserRuleCall_0_0_0());
                     					
-                    pushFollow(FOLLOW_11);
+                    pushFollow(FOLLOW_13);
                     lv_quantification_0_0=ruleQuantificationPredicate();
 
                     state._fsp--;
@@ -3894,18 +3959,18 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1396:4: ( (lv_exists_1_0= ruleExistPredicate ) )
+                    // InternalCQLParser.g:1448:4: ( (lv_exists_1_0= ruleExistPredicate ) )
                     {
-                    // InternalCQLParser.g:1396:4: ( (lv_exists_1_0= ruleExistPredicate ) )
-                    // InternalCQLParser.g:1397:5: (lv_exists_1_0= ruleExistPredicate )
+                    // InternalCQLParser.g:1448:4: ( (lv_exists_1_0= ruleExistPredicate ) )
+                    // InternalCQLParser.g:1449:5: (lv_exists_1_0= ruleExistPredicate )
                     {
-                    // InternalCQLParser.g:1397:5: (lv_exists_1_0= ruleExistPredicate )
-                    // InternalCQLParser.g:1398:6: lv_exists_1_0= ruleExistPredicate
+                    // InternalCQLParser.g:1449:5: (lv_exists_1_0= ruleExistPredicate )
+                    // InternalCQLParser.g:1450:6: lv_exists_1_0= ruleExistPredicate
                     {
 
                     						newCompositeNode(grammarAccess.getComplexPredicateAccess().getExistsExistPredicateParserRuleCall_0_1_0());
                     					
-                    pushFollow(FOLLOW_11);
+                    pushFollow(FOLLOW_13);
                     lv_exists_1_0=ruleExistPredicate();
 
                     state._fsp--;
@@ -3931,18 +3996,18 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:1416:4: ( (lv_in_2_0= ruleInPredicate ) )
+                    // InternalCQLParser.g:1468:4: ( (lv_in_2_0= ruleInPredicate ) )
                     {
-                    // InternalCQLParser.g:1416:4: ( (lv_in_2_0= ruleInPredicate ) )
-                    // InternalCQLParser.g:1417:5: (lv_in_2_0= ruleInPredicate )
+                    // InternalCQLParser.g:1468:4: ( (lv_in_2_0= ruleInPredicate ) )
+                    // InternalCQLParser.g:1469:5: (lv_in_2_0= ruleInPredicate )
                     {
-                    // InternalCQLParser.g:1417:5: (lv_in_2_0= ruleInPredicate )
-                    // InternalCQLParser.g:1418:6: lv_in_2_0= ruleInPredicate
+                    // InternalCQLParser.g:1469:5: (lv_in_2_0= ruleInPredicate )
+                    // InternalCQLParser.g:1470:6: lv_in_2_0= ruleInPredicate
                     {
 
                     						newCompositeNode(grammarAccess.getComplexPredicateAccess().getInInPredicateParserRuleCall_0_2_0());
                     					
-                    pushFollow(FOLLOW_11);
+                    pushFollow(FOLLOW_13);
                     lv_in_2_0=ruleInPredicate();
 
                     state._fsp--;
@@ -3970,11 +4035,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1436:3: ( (lv_select_3_0= ruleInnerSelect ) )
-            // InternalCQLParser.g:1437:4: (lv_select_3_0= ruleInnerSelect )
+            // InternalCQLParser.g:1488:3: ( (lv_select_3_0= ruleInnerSelect ) )
+            // InternalCQLParser.g:1489:4: (lv_select_3_0= ruleInnerSelect )
             {
-            // InternalCQLParser.g:1437:4: (lv_select_3_0= ruleInnerSelect )
-            // InternalCQLParser.g:1438:5: lv_select_3_0= ruleInnerSelect
+            // InternalCQLParser.g:1489:4: (lv_select_3_0= ruleInnerSelect )
+            // InternalCQLParser.g:1490:5: lv_select_3_0= ruleInnerSelect
             {
 
             					newCompositeNode(grammarAccess.getComplexPredicateAccess().getSelectInnerSelectParserRuleCall_1_0());
@@ -4024,7 +4089,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQuantificationPredicate"
-    // InternalCQLParser.g:1459:1: entryRuleQuantificationPredicate returns [EObject current=null] : iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF ;
+    // InternalCQLParser.g:1511:1: entryRuleQuantificationPredicate returns [EObject current=null] : iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF ;
     public final EObject entryRuleQuantificationPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4032,8 +4097,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1459:64: (iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF )
-            // InternalCQLParser.g:1460:2: iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF
+            // InternalCQLParser.g:1511:64: (iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF )
+            // InternalCQLParser.g:1512:2: iv_ruleQuantificationPredicate= ruleQuantificationPredicate EOF
             {
              newCompositeNode(grammarAccess.getQuantificationPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -4060,7 +4125,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQuantificationPredicate"
-    // InternalCQLParser.g:1466:1: ruleQuantificationPredicate returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) ) ;
+    // InternalCQLParser.g:1518:1: ruleQuantificationPredicate returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) ) ;
     public final EObject ruleQuantificationPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4076,22 +4141,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1472:2: ( ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) ) )
-            // InternalCQLParser.g:1473:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) )
+            // InternalCQLParser.g:1524:2: ( ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) ) )
+            // InternalCQLParser.g:1525:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) )
             {
-            // InternalCQLParser.g:1473:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) )
-            // InternalCQLParser.g:1474:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) )
+            // InternalCQLParser.g:1525:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) ) )
+            // InternalCQLParser.g:1526:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) ) ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) )
             {
-            // InternalCQLParser.g:1474:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) )
-            // InternalCQLParser.g:1475:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
+            // InternalCQLParser.g:1526:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) )
+            // InternalCQLParser.g:1527:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
             {
-            // InternalCQLParser.g:1475:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
-            // InternalCQLParser.g:1476:5: lv_attribute_0_0= ruleAttributeWithoutAliasDefinition
+            // InternalCQLParser.g:1527:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
+            // InternalCQLParser.g:1528:5: lv_attribute_0_0= ruleAttributeWithoutAliasDefinition
             {
 
             					newCompositeNode(grammarAccess.getQuantificationPredicateAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_25);
+            pushFollow(FOLLOW_28);
             lv_attribute_0_0=ruleAttributeWithoutAliasDefinition();
 
             state._fsp--;
@@ -4113,16 +4178,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1493:3: ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) )
-            // InternalCQLParser.g:1494:4: (lv_operator_1_0= ruleCOMPARE_OPERATOR )
+            // InternalCQLParser.g:1545:3: ( (lv_operator_1_0= ruleCOMPARE_OPERATOR ) )
+            // InternalCQLParser.g:1546:4: (lv_operator_1_0= ruleCOMPARE_OPERATOR )
             {
-            // InternalCQLParser.g:1494:4: (lv_operator_1_0= ruleCOMPARE_OPERATOR )
-            // InternalCQLParser.g:1495:5: lv_operator_1_0= ruleCOMPARE_OPERATOR
+            // InternalCQLParser.g:1546:4: (lv_operator_1_0= ruleCOMPARE_OPERATOR )
+            // InternalCQLParser.g:1547:5: lv_operator_1_0= ruleCOMPARE_OPERATOR
             {
 
             					newCompositeNode(grammarAccess.getQuantificationPredicateAccess().getOperatorCOMPARE_OPERATORParserRuleCall_1_0());
             				
-            pushFollow(FOLLOW_26);
+            pushFollow(FOLLOW_29);
             lv_operator_1_0=ruleCOMPARE_OPERATOR();
 
             state._fsp--;
@@ -4144,13 +4209,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1512:3: ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) )
-            // InternalCQLParser.g:1513:4: ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) )
+            // InternalCQLParser.g:1564:3: ( ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) ) )
+            // InternalCQLParser.g:1565:4: ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) )
             {
-            // InternalCQLParser.g:1513:4: ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) )
-            // InternalCQLParser.g:1514:5: (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME )
+            // InternalCQLParser.g:1565:4: ( (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME ) )
+            // InternalCQLParser.g:1566:5: (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME )
             {
-            // InternalCQLParser.g:1514:5: (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME )
+            // InternalCQLParser.g:1566:5: (lv_predicate_2_1= ALL | lv_predicate_2_2= ANY | lv_predicate_2_3= SOME )
             int alt28=3;
             switch ( input.LA(1) ) {
             case ALL:
@@ -4177,7 +4242,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt28) {
                 case 1 :
-                    // InternalCQLParser.g:1515:6: lv_predicate_2_1= ALL
+                    // InternalCQLParser.g:1567:6: lv_predicate_2_1= ALL
                     {
                     lv_predicate_2_1=(Token)match(input,ALL,FOLLOW_2); 
 
@@ -4193,7 +4258,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1526:6: lv_predicate_2_2= ANY
+                    // InternalCQLParser.g:1578:6: lv_predicate_2_2= ANY
                     {
                     lv_predicate_2_2=(Token)match(input,ANY,FOLLOW_2); 
 
@@ -4209,7 +4274,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:1537:6: lv_predicate_2_3= SOME
+                    // InternalCQLParser.g:1589:6: lv_predicate_2_3= SOME
                     {
                     lv_predicate_2_3=(Token)match(input,SOME,FOLLOW_2); 
 
@@ -4256,7 +4321,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExistPredicate"
-    // InternalCQLParser.g:1554:1: entryRuleExistPredicate returns [EObject current=null] : iv_ruleExistPredicate= ruleExistPredicate EOF ;
+    // InternalCQLParser.g:1606:1: entryRuleExistPredicate returns [EObject current=null] : iv_ruleExistPredicate= ruleExistPredicate EOF ;
     public final EObject entryRuleExistPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4264,8 +4329,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1554:55: (iv_ruleExistPredicate= ruleExistPredicate EOF )
-            // InternalCQLParser.g:1555:2: iv_ruleExistPredicate= ruleExistPredicate EOF
+            // InternalCQLParser.g:1606:55: (iv_ruleExistPredicate= ruleExistPredicate EOF )
+            // InternalCQLParser.g:1607:2: iv_ruleExistPredicate= ruleExistPredicate EOF
             {
              newCompositeNode(grammarAccess.getExistPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -4292,7 +4357,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExistPredicate"
-    // InternalCQLParser.g:1561:1: ruleExistPredicate returns [EObject current=null] : ( (lv_predicate_0_0= EXISTS ) ) ;
+    // InternalCQLParser.g:1613:1: ruleExistPredicate returns [EObject current=null] : ( (lv_predicate_0_0= EXISTS ) ) ;
     public final EObject ruleExistPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4302,14 +4367,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1567:2: ( ( (lv_predicate_0_0= EXISTS ) ) )
-            // InternalCQLParser.g:1568:2: ( (lv_predicate_0_0= EXISTS ) )
+            // InternalCQLParser.g:1619:2: ( ( (lv_predicate_0_0= EXISTS ) ) )
+            // InternalCQLParser.g:1620:2: ( (lv_predicate_0_0= EXISTS ) )
             {
-            // InternalCQLParser.g:1568:2: ( (lv_predicate_0_0= EXISTS ) )
-            // InternalCQLParser.g:1569:3: (lv_predicate_0_0= EXISTS )
+            // InternalCQLParser.g:1620:2: ( (lv_predicate_0_0= EXISTS ) )
+            // InternalCQLParser.g:1621:3: (lv_predicate_0_0= EXISTS )
             {
-            // InternalCQLParser.g:1569:3: (lv_predicate_0_0= EXISTS )
-            // InternalCQLParser.g:1570:4: lv_predicate_0_0= EXISTS
+            // InternalCQLParser.g:1621:3: (lv_predicate_0_0= EXISTS )
+            // InternalCQLParser.g:1622:4: lv_predicate_0_0= EXISTS
             {
             lv_predicate_0_0=(Token)match(input,EXISTS,FOLLOW_2); 
 
@@ -4347,7 +4412,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleInPredicate"
-    // InternalCQLParser.g:1585:1: entryRuleInPredicate returns [EObject current=null] : iv_ruleInPredicate= ruleInPredicate EOF ;
+    // InternalCQLParser.g:1637:1: entryRuleInPredicate returns [EObject current=null] : iv_ruleInPredicate= ruleInPredicate EOF ;
     public final EObject entryRuleInPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4355,8 +4420,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1585:52: (iv_ruleInPredicate= ruleInPredicate EOF )
-            // InternalCQLParser.g:1586:2: iv_ruleInPredicate= ruleInPredicate EOF
+            // InternalCQLParser.g:1637:52: (iv_ruleInPredicate= ruleInPredicate EOF )
+            // InternalCQLParser.g:1638:2: iv_ruleInPredicate= ruleInPredicate EOF
             {
              newCompositeNode(grammarAccess.getInPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -4383,7 +4448,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleInPredicate"
-    // InternalCQLParser.g:1592:1: ruleInPredicate returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) ) ;
+    // InternalCQLParser.g:1644:1: ruleInPredicate returns [EObject current=null] : ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) ) ;
     public final EObject ruleInPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4395,22 +4460,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1598:2: ( ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) ) )
-            // InternalCQLParser.g:1599:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) )
+            // InternalCQLParser.g:1650:2: ( ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) ) )
+            // InternalCQLParser.g:1651:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) )
             {
-            // InternalCQLParser.g:1599:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) )
-            // InternalCQLParser.g:1600:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) )
+            // InternalCQLParser.g:1651:2: ( ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) ) )
+            // InternalCQLParser.g:1652:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) ) ( (lv_predicate_1_0= IN ) )
             {
-            // InternalCQLParser.g:1600:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) )
-            // InternalCQLParser.g:1601:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
+            // InternalCQLParser.g:1652:3: ( (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition ) )
+            // InternalCQLParser.g:1653:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
             {
-            // InternalCQLParser.g:1601:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
-            // InternalCQLParser.g:1602:5: lv_attribute_0_0= ruleAttributeWithoutAliasDefinition
+            // InternalCQLParser.g:1653:4: (lv_attribute_0_0= ruleAttributeWithoutAliasDefinition )
+            // InternalCQLParser.g:1654:5: lv_attribute_0_0= ruleAttributeWithoutAliasDefinition
             {
 
             					newCompositeNode(grammarAccess.getInPredicateAccess().getAttributeAttributeWithoutAliasDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_27);
+            pushFollow(FOLLOW_30);
             lv_attribute_0_0=ruleAttributeWithoutAliasDefinition();
 
             state._fsp--;
@@ -4432,11 +4497,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:1619:3: ( (lv_predicate_1_0= IN ) )
-            // InternalCQLParser.g:1620:4: (lv_predicate_1_0= IN )
+            // InternalCQLParser.g:1671:3: ( (lv_predicate_1_0= IN ) )
+            // InternalCQLParser.g:1672:4: (lv_predicate_1_0= IN )
             {
-            // InternalCQLParser.g:1620:4: (lv_predicate_1_0= IN )
-            // InternalCQLParser.g:1621:5: lv_predicate_1_0= IN
+            // InternalCQLParser.g:1672:4: (lv_predicate_1_0= IN )
+            // InternalCQLParser.g:1673:5: lv_predicate_1_0= IN
             {
             lv_predicate_1_0=(Token)match(input,IN,FOLLOW_2); 
 
@@ -4477,7 +4542,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAndOperator"
-    // InternalCQLParser.g:1637:1: entryRuleAndOperator returns [String current=null] : iv_ruleAndOperator= ruleAndOperator EOF ;
+    // InternalCQLParser.g:1689:1: entryRuleAndOperator returns [String current=null] : iv_ruleAndOperator= ruleAndOperator EOF ;
     public final String entryRuleAndOperator() throws RecognitionException {
         String current = null;
 
@@ -4485,8 +4550,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1637:51: (iv_ruleAndOperator= ruleAndOperator EOF )
-            // InternalCQLParser.g:1638:2: iv_ruleAndOperator= ruleAndOperator EOF
+            // InternalCQLParser.g:1689:51: (iv_ruleAndOperator= ruleAndOperator EOF )
+            // InternalCQLParser.g:1690:2: iv_ruleAndOperator= ruleAndOperator EOF
             {
              newCompositeNode(grammarAccess.getAndOperatorRule()); 
             pushFollow(FOLLOW_1);
@@ -4513,7 +4578,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAndOperator"
-    // InternalCQLParser.g:1644:1: ruleAndOperator returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= AND ;
+    // InternalCQLParser.g:1696:1: ruleAndOperator returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= AND ;
     public final AntlrDatatypeRuleToken ruleAndOperator() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4523,8 +4588,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1650:2: (kw= AND )
-            // InternalCQLParser.g:1651:2: kw= AND
+            // InternalCQLParser.g:1702:2: (kw= AND )
+            // InternalCQLParser.g:1703:2: kw= AND
             {
             kw=(Token)match(input,AND,FOLLOW_2); 
 
@@ -4551,7 +4616,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOrOperator"
-    // InternalCQLParser.g:1659:1: entryRuleOrOperator returns [String current=null] : iv_ruleOrOperator= ruleOrOperator EOF ;
+    // InternalCQLParser.g:1711:1: entryRuleOrOperator returns [String current=null] : iv_ruleOrOperator= ruleOrOperator EOF ;
     public final String entryRuleOrOperator() throws RecognitionException {
         String current = null;
 
@@ -4559,8 +4624,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1659:50: (iv_ruleOrOperator= ruleOrOperator EOF )
-            // InternalCQLParser.g:1660:2: iv_ruleOrOperator= ruleOrOperator EOF
+            // InternalCQLParser.g:1711:50: (iv_ruleOrOperator= ruleOrOperator EOF )
+            // InternalCQLParser.g:1712:2: iv_ruleOrOperator= ruleOrOperator EOF
             {
              newCompositeNode(grammarAccess.getOrOperatorRule()); 
             pushFollow(FOLLOW_1);
@@ -4587,7 +4652,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOrOperator"
-    // InternalCQLParser.g:1666:1: ruleOrOperator returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= OR ;
+    // InternalCQLParser.g:1718:1: ruleOrOperator returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= OR ;
     public final AntlrDatatypeRuleToken ruleOrOperator() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4597,8 +4662,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1672:2: (kw= OR )
-            // InternalCQLParser.g:1673:2: kw= OR
+            // InternalCQLParser.g:1724:2: (kw= OR )
+            // InternalCQLParser.g:1725:2: kw= OR
             {
             kw=(Token)match(input,OR,FOLLOW_2); 
 
@@ -4625,7 +4690,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEQUALITIY_OPERATOR"
-    // InternalCQLParser.g:1681:1: entryRuleEQUALITIY_OPERATOR returns [String current=null] : iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF ;
+    // InternalCQLParser.g:1733:1: entryRuleEQUALITIY_OPERATOR returns [String current=null] : iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF ;
     public final String entryRuleEQUALITIY_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -4633,8 +4698,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1681:58: (iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF )
-            // InternalCQLParser.g:1682:2: iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF
+            // InternalCQLParser.g:1733:58: (iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF )
+            // InternalCQLParser.g:1734:2: iv_ruleEQUALITIY_OPERATOR= ruleEQUALITIY_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getEQUALITIY_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -4661,7 +4726,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEQUALITIY_OPERATOR"
-    // InternalCQLParser.g:1688:1: ruleEQUALITIY_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= EqualsSign | kw= ExclamationMarkEqualsSign ) ;
+    // InternalCQLParser.g:1740:1: ruleEQUALITIY_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= EqualsSign | kw= ExclamationMarkEqualsSign ) ;
     public final AntlrDatatypeRuleToken ruleEQUALITIY_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4671,10 +4736,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1694:2: ( (kw= EqualsSign | kw= ExclamationMarkEqualsSign ) )
-            // InternalCQLParser.g:1695:2: (kw= EqualsSign | kw= ExclamationMarkEqualsSign )
+            // InternalCQLParser.g:1746:2: ( (kw= EqualsSign | kw= ExclamationMarkEqualsSign ) )
+            // InternalCQLParser.g:1747:2: (kw= EqualsSign | kw= ExclamationMarkEqualsSign )
             {
-            // InternalCQLParser.g:1695:2: (kw= EqualsSign | kw= ExclamationMarkEqualsSign )
+            // InternalCQLParser.g:1747:2: (kw= EqualsSign | kw= ExclamationMarkEqualsSign )
             int alt29=2;
             int LA29_0 = input.LA(1);
 
@@ -4692,7 +4757,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt29) {
                 case 1 :
-                    // InternalCQLParser.g:1696:3: kw= EqualsSign
+                    // InternalCQLParser.g:1748:3: kw= EqualsSign
                     {
                     kw=(Token)match(input,EqualsSign,FOLLOW_2); 
 
@@ -4703,7 +4768,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1702:3: kw= ExclamationMarkEqualsSign
+                    // InternalCQLParser.g:1754:3: kw= ExclamationMarkEqualsSign
                     {
                     kw=(Token)match(input,ExclamationMarkEqualsSign,FOLLOW_2); 
 
@@ -4736,7 +4801,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCOMPARE_OPERATOR"
-    // InternalCQLParser.g:1711:1: entryRuleCOMPARE_OPERATOR returns [String current=null] : iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF ;
+    // InternalCQLParser.g:1763:1: entryRuleCOMPARE_OPERATOR returns [String current=null] : iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF ;
     public final String entryRuleCOMPARE_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -4744,8 +4809,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1711:56: (iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF )
-            // InternalCQLParser.g:1712:2: iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF
+            // InternalCQLParser.g:1763:56: (iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF )
+            // InternalCQLParser.g:1764:2: iv_ruleCOMPARE_OPERATOR= ruleCOMPARE_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getCOMPARE_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -4772,7 +4837,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCOMPARE_OPERATOR"
-    // InternalCQLParser.g:1718:1: ruleCOMPARE_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign ) ;
+    // InternalCQLParser.g:1770:1: ruleCOMPARE_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign ) ;
     public final AntlrDatatypeRuleToken ruleCOMPARE_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4782,10 +4847,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1724:2: ( (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign ) )
-            // InternalCQLParser.g:1725:2: (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign )
+            // InternalCQLParser.g:1776:2: ( (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign ) )
+            // InternalCQLParser.g:1777:2: (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign )
             {
-            // InternalCQLParser.g:1725:2: (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign )
+            // InternalCQLParser.g:1777:2: (kw= GreaterThanSignEqualsSign | kw= LessThanSignEqualsSign | kw= LessThanSign | kw= GreaterThanSign )
             int alt30=4;
             switch ( input.LA(1) ) {
             case GreaterThanSignEqualsSign:
@@ -4817,7 +4882,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt30) {
                 case 1 :
-                    // InternalCQLParser.g:1726:3: kw= GreaterThanSignEqualsSign
+                    // InternalCQLParser.g:1778:3: kw= GreaterThanSignEqualsSign
                     {
                     kw=(Token)match(input,GreaterThanSignEqualsSign,FOLLOW_2); 
 
@@ -4828,7 +4893,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1732:3: kw= LessThanSignEqualsSign
+                    // InternalCQLParser.g:1784:3: kw= LessThanSignEqualsSign
                     {
                     kw=(Token)match(input,LessThanSignEqualsSign,FOLLOW_2); 
 
@@ -4839,7 +4904,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:1738:3: kw= LessThanSign
+                    // InternalCQLParser.g:1790:3: kw= LessThanSign
                     {
                     kw=(Token)match(input,LessThanSign,FOLLOW_2); 
 
@@ -4850,7 +4915,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:1744:3: kw= GreaterThanSign
+                    // InternalCQLParser.g:1796:3: kw= GreaterThanSign
                     {
                     kw=(Token)match(input,GreaterThanSign,FOLLOW_2); 
 
@@ -4883,7 +4948,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleARITHMETIC_OPERATOR"
-    // InternalCQLParser.g:1753:1: entryRuleARITHMETIC_OPERATOR returns [String current=null] : iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF ;
+    // InternalCQLParser.g:1805:1: entryRuleARITHMETIC_OPERATOR returns [String current=null] : iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF ;
     public final String entryRuleARITHMETIC_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -4891,8 +4956,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1753:59: (iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF )
-            // InternalCQLParser.g:1754:2: iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF
+            // InternalCQLParser.g:1805:59: (iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF )
+            // InternalCQLParser.g:1806:2: iv_ruleARITHMETIC_OPERATOR= ruleARITHMETIC_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getARITHMETIC_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -4919,7 +4984,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleARITHMETIC_OPERATOR"
-    // InternalCQLParser.g:1760:1: ruleARITHMETIC_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR ) ;
+    // InternalCQLParser.g:1812:1: ruleARITHMETIC_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR ) ;
     public final AntlrDatatypeRuleToken ruleARITHMETIC_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4936,10 +5001,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1766:2: ( (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR ) )
-            // InternalCQLParser.g:1767:2: (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR )
+            // InternalCQLParser.g:1818:2: ( (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR ) )
+            // InternalCQLParser.g:1819:2: (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR )
             {
-            // InternalCQLParser.g:1767:2: (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR )
+            // InternalCQLParser.g:1819:2: (this_ADD_OPERATOR_0= ruleADD_OPERATOR | this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR | this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR | this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR )
             int alt31=4;
             switch ( input.LA(1) ) {
             case PlusSign:
@@ -4972,7 +5037,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt31) {
                 case 1 :
-                    // InternalCQLParser.g:1768:3: this_ADD_OPERATOR_0= ruleADD_OPERATOR
+                    // InternalCQLParser.g:1820:3: this_ADD_OPERATOR_0= ruleADD_OPERATOR
                     {
 
                     			newCompositeNode(grammarAccess.getARITHMETIC_OPERATORAccess().getADD_OPERATORParserRuleCall_0());
@@ -4992,7 +5057,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1779:3: this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR
+                    // InternalCQLParser.g:1831:3: this_MINUS_OPERATOR_1= ruleMINUS_OPERATOR
                     {
 
                     			newCompositeNode(grammarAccess.getARITHMETIC_OPERATORAccess().getMINUS_OPERATORParserRuleCall_1());
@@ -5012,7 +5077,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:1790:3: this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR
+                    // InternalCQLParser.g:1842:3: this_MUL_OR_DIV_OPERATOR_2= ruleMUL_OR_DIV_OPERATOR
                     {
 
                     			newCompositeNode(grammarAccess.getARITHMETIC_OPERATORAccess().getMUL_OR_DIV_OPERATORParserRuleCall_2());
@@ -5032,7 +5097,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:1801:3: this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR
+                    // InternalCQLParser.g:1853:3: this_EXPONENT_OPERATOR_3= ruleEXPONENT_OPERATOR
                     {
 
                     			newCompositeNode(grammarAccess.getARITHMETIC_OPERATORAccess().getEXPONENT_OPERATORParserRuleCall_3());
@@ -5074,7 +5139,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEXPONENT_OPERATOR"
-    // InternalCQLParser.g:1815:1: entryRuleEXPONENT_OPERATOR returns [String current=null] : iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF ;
+    // InternalCQLParser.g:1867:1: entryRuleEXPONENT_OPERATOR returns [String current=null] : iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF ;
     public final String entryRuleEXPONENT_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -5082,8 +5147,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1815:57: (iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF )
-            // InternalCQLParser.g:1816:2: iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF
+            // InternalCQLParser.g:1867:57: (iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF )
+            // InternalCQLParser.g:1868:2: iv_ruleEXPONENT_OPERATOR= ruleEXPONENT_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getEXPONENT_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -5110,7 +5175,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEXPONENT_OPERATOR"
-    // InternalCQLParser.g:1822:1: ruleEXPONENT_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= CircumflexAccent ;
+    // InternalCQLParser.g:1874:1: ruleEXPONENT_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= CircumflexAccent ;
     public final AntlrDatatypeRuleToken ruleEXPONENT_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -5120,8 +5185,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1828:2: (kw= CircumflexAccent )
-            // InternalCQLParser.g:1829:2: kw= CircumflexAccent
+            // InternalCQLParser.g:1880:2: (kw= CircumflexAccent )
+            // InternalCQLParser.g:1881:2: kw= CircumflexAccent
             {
             kw=(Token)match(input,CircumflexAccent,FOLLOW_2); 
 
@@ -5148,7 +5213,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMUL_OR_DIV_OPERATOR"
-    // InternalCQLParser.g:1837:1: entryRuleMUL_OR_DIV_OPERATOR returns [String current=null] : iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF ;
+    // InternalCQLParser.g:1889:1: entryRuleMUL_OR_DIV_OPERATOR returns [String current=null] : iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF ;
     public final String entryRuleMUL_OR_DIV_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -5156,8 +5221,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1837:59: (iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF )
-            // InternalCQLParser.g:1838:2: iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF
+            // InternalCQLParser.g:1889:59: (iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF )
+            // InternalCQLParser.g:1890:2: iv_ruleMUL_OR_DIV_OPERATOR= ruleMUL_OR_DIV_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getMUL_OR_DIV_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -5184,7 +5249,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMUL_OR_DIV_OPERATOR"
-    // InternalCQLParser.g:1844:1: ruleMUL_OR_DIV_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= Solidus | kw= Asterisk ) ;
+    // InternalCQLParser.g:1896:1: ruleMUL_OR_DIV_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= Solidus | kw= Asterisk ) ;
     public final AntlrDatatypeRuleToken ruleMUL_OR_DIV_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -5194,10 +5259,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1850:2: ( (kw= Solidus | kw= Asterisk ) )
-            // InternalCQLParser.g:1851:2: (kw= Solidus | kw= Asterisk )
+            // InternalCQLParser.g:1902:2: ( (kw= Solidus | kw= Asterisk ) )
+            // InternalCQLParser.g:1903:2: (kw= Solidus | kw= Asterisk )
             {
-            // InternalCQLParser.g:1851:2: (kw= Solidus | kw= Asterisk )
+            // InternalCQLParser.g:1903:2: (kw= Solidus | kw= Asterisk )
             int alt32=2;
             int LA32_0 = input.LA(1);
 
@@ -5215,7 +5280,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt32) {
                 case 1 :
-                    // InternalCQLParser.g:1852:3: kw= Solidus
+                    // InternalCQLParser.g:1904:3: kw= Solidus
                     {
                     kw=(Token)match(input,Solidus,FOLLOW_2); 
 
@@ -5226,7 +5291,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:1858:3: kw= Asterisk
+                    // InternalCQLParser.g:1910:3: kw= Asterisk
                     {
                     kw=(Token)match(input,Asterisk,FOLLOW_2); 
 
@@ -5259,7 +5324,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleADD_OPERATOR"
-    // InternalCQLParser.g:1867:1: entryRuleADD_OPERATOR returns [String current=null] : iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF ;
+    // InternalCQLParser.g:1919:1: entryRuleADD_OPERATOR returns [String current=null] : iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF ;
     public final String entryRuleADD_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -5267,8 +5332,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1867:52: (iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF )
-            // InternalCQLParser.g:1868:2: iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF
+            // InternalCQLParser.g:1919:52: (iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF )
+            // InternalCQLParser.g:1920:2: iv_ruleADD_OPERATOR= ruleADD_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getADD_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -5295,7 +5360,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleADD_OPERATOR"
-    // InternalCQLParser.g:1874:1: ruleADD_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= PlusSign ;
+    // InternalCQLParser.g:1926:1: ruleADD_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= PlusSign ;
     public final AntlrDatatypeRuleToken ruleADD_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -5305,8 +5370,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1880:2: (kw= PlusSign )
-            // InternalCQLParser.g:1881:2: kw= PlusSign
+            // InternalCQLParser.g:1932:2: (kw= PlusSign )
+            // InternalCQLParser.g:1933:2: kw= PlusSign
             {
             kw=(Token)match(input,PlusSign,FOLLOW_2); 
 
@@ -5333,7 +5398,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMINUS_OPERATOR"
-    // InternalCQLParser.g:1889:1: entryRuleMINUS_OPERATOR returns [String current=null] : iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF ;
+    // InternalCQLParser.g:1941:1: entryRuleMINUS_OPERATOR returns [String current=null] : iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF ;
     public final String entryRuleMINUS_OPERATOR() throws RecognitionException {
         String current = null;
 
@@ -5341,8 +5406,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1889:54: (iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF )
-            // InternalCQLParser.g:1890:2: iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF
+            // InternalCQLParser.g:1941:54: (iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF )
+            // InternalCQLParser.g:1942:2: iv_ruleMINUS_OPERATOR= ruleMINUS_OPERATOR EOF
             {
              newCompositeNode(grammarAccess.getMINUS_OPERATORRule()); 
             pushFollow(FOLLOW_1);
@@ -5369,7 +5434,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMINUS_OPERATOR"
-    // InternalCQLParser.g:1896:1: ruleMINUS_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= HyphenMinus ;
+    // InternalCQLParser.g:1948:1: ruleMINUS_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : kw= HyphenMinus ;
     public final AntlrDatatypeRuleToken ruleMINUS_OPERATOR() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -5379,8 +5444,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1902:2: (kw= HyphenMinus )
-            // InternalCQLParser.g:1903:2: kw= HyphenMinus
+            // InternalCQLParser.g:1954:2: (kw= HyphenMinus )
+            // InternalCQLParser.g:1955:2: kw= HyphenMinus
             {
             kw=(Token)match(input,HyphenMinus,FOLLOW_2); 
 
@@ -5407,7 +5472,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSelectExpression"
-    // InternalCQLParser.g:1911:1: entryRuleSelectExpression returns [EObject current=null] : iv_ruleSelectExpression= ruleSelectExpression EOF ;
+    // InternalCQLParser.g:1963:1: entryRuleSelectExpression returns [EObject current=null] : iv_ruleSelectExpression= ruleSelectExpression EOF ;
     public final EObject entryRuleSelectExpression() throws RecognitionException {
         EObject current = null;
 
@@ -5415,8 +5480,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:1911:57: (iv_ruleSelectExpression= ruleSelectExpression EOF )
-            // InternalCQLParser.g:1912:2: iv_ruleSelectExpression= ruleSelectExpression EOF
+            // InternalCQLParser.g:1963:57: (iv_ruleSelectExpression= ruleSelectExpression EOF )
+            // InternalCQLParser.g:1964:2: iv_ruleSelectExpression= ruleSelectExpression EOF
             {
              newCompositeNode(grammarAccess.getSelectExpressionRule()); 
             pushFollow(FOLLOW_1);
@@ -5443,7 +5508,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSelectExpression"
-    // InternalCQLParser.g:1918:1: ruleSelectExpression returns [EObject current=null] : ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? ) ;
+    // InternalCQLParser.g:1970:1: ruleSelectExpression returns [EObject current=null] : ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? ) ;
     public final EObject ruleSelectExpression() throws RecognitionException {
         EObject current = null;
 
@@ -5471,13 +5536,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:1924:2: ( ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? ) )
-            // InternalCQLParser.g:1925:2: ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1976:2: ( ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? ) )
+            // InternalCQLParser.g:1977:2: ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? )
             {
-            // InternalCQLParser.g:1925:2: ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? )
-            // InternalCQLParser.g:1926:3: ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:1977:2: ( ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )? )
+            // InternalCQLParser.g:1978:3: ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) ) (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )?
             {
-            // InternalCQLParser.g:1926:3: ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) )
+            // InternalCQLParser.g:1978:3: ( ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* ) | ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) ) )
             int alt36=2;
             int LA36_0 = input.LA(1);
 
@@ -5508,21 +5573,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt36) {
                 case 1 :
-                    // InternalCQLParser.g:1927:4: ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* )
+                    // InternalCQLParser.g:1979:4: ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* )
                     {
-                    // InternalCQLParser.g:1927:4: ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* )
-                    // InternalCQLParser.g:1928:5: ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )*
+                    // InternalCQLParser.g:1979:4: ( ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )* )
+                    // InternalCQLParser.g:1980:5: ( (lv_expressions_0_0= ruleExpressionComponent ) ) ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )*
                     {
-                    // InternalCQLParser.g:1928:5: ( (lv_expressions_0_0= ruleExpressionComponent ) )
-                    // InternalCQLParser.g:1929:6: (lv_expressions_0_0= ruleExpressionComponent )
+                    // InternalCQLParser.g:1980:5: ( (lv_expressions_0_0= ruleExpressionComponent ) )
+                    // InternalCQLParser.g:1981:6: (lv_expressions_0_0= ruleExpressionComponent )
                     {
-                    // InternalCQLParser.g:1929:6: (lv_expressions_0_0= ruleExpressionComponent )
-                    // InternalCQLParser.g:1930:7: lv_expressions_0_0= ruleExpressionComponent
+                    // InternalCQLParser.g:1981:6: (lv_expressions_0_0= ruleExpressionComponent )
+                    // InternalCQLParser.g:1982:7: lv_expressions_0_0= ruleExpressionComponent
                     {
 
                     							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentParserRuleCall_0_0_0_0());
                     						
-                    pushFollow(FOLLOW_28);
+                    pushFollow(FOLLOW_31);
                     lv_expressions_0_0=ruleExpressionComponent();
 
                     state._fsp--;
@@ -5544,7 +5609,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:1947:5: ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )*
+                    // InternalCQLParser.g:1999:5: ( ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) ) )*
                     loop34:
                     do {
                         int alt34=2;
@@ -5557,18 +5622,18 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt34) {
                     	case 1 :
-                    	    // InternalCQLParser.g:1948:6: ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) )
+                    	    // InternalCQLParser.g:2000:6: ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) )
                     	    {
-                    	    // InternalCQLParser.g:1948:6: ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) )
-                    	    // InternalCQLParser.g:1949:7: (lv_operators_1_0= ruleARITHMETIC_OPERATOR )
+                    	    // InternalCQLParser.g:2000:6: ( (lv_operators_1_0= ruleARITHMETIC_OPERATOR ) )
+                    	    // InternalCQLParser.g:2001:7: (lv_operators_1_0= ruleARITHMETIC_OPERATOR )
                     	    {
-                    	    // InternalCQLParser.g:1949:7: (lv_operators_1_0= ruleARITHMETIC_OPERATOR )
-                    	    // InternalCQLParser.g:1950:8: lv_operators_1_0= ruleARITHMETIC_OPERATOR
+                    	    // InternalCQLParser.g:2001:7: (lv_operators_1_0= ruleARITHMETIC_OPERATOR )
+                    	    // InternalCQLParser.g:2002:8: lv_operators_1_0= ruleARITHMETIC_OPERATOR
                     	    {
 
                     	    								newCompositeNode(grammarAccess.getSelectExpressionAccess().getOperatorsARITHMETIC_OPERATORParserRuleCall_0_0_1_0_0());
                     	    							
-                    	    pushFollow(FOLLOW_7);
+                    	    pushFollow(FOLLOW_9);
                     	    lv_operators_1_0=ruleARITHMETIC_OPERATOR();
 
                     	    state._fsp--;
@@ -5590,13 +5655,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     	    }
 
-                    	    // InternalCQLParser.g:1967:6: ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) )
-                    	    // InternalCQLParser.g:1968:7: ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) )
+                    	    // InternalCQLParser.g:2019:6: ( ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) ) )
+                    	    // InternalCQLParser.g:2020:7: ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) )
                     	    {
-                    	    // InternalCQLParser.g:1968:7: ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) )
-                    	    // InternalCQLParser.g:1969:8: (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute )
+                    	    // InternalCQLParser.g:2020:7: ( (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute ) )
+                    	    // InternalCQLParser.g:2021:8: (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute )
                     	    {
-                    	    // InternalCQLParser.g:1969:8: (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute )
+                    	    // InternalCQLParser.g:2021:8: (lv_expressions_2_1= ruleExpressionComponent | lv_expressions_2_2= ruleExpressionComponentAsAttribute )
                     	    int alt33=2;
                     	    int LA33_0 = input.LA(1);
 
@@ -5606,7 +5671,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     	        if ( (LA33_1==LeftParenthesis) ) {
                     	            alt33=1;
                     	        }
-                    	        else if ( (LA33_1==EOF||LA33_1==FALSE||LA33_1==FROM||LA33_1==TRUE||LA33_1==AS||(LA33_1>=RightParenthesis && LA33_1<=Solidus)||LA33_1==CircumflexAccent||(LA33_1>=RULE_INT && LA33_1<=RULE_FLOAT)||(LA33_1>=RULE_VECTOR_FLOAT && LA33_1<=RULE_MATRIX_FLOAT)||LA33_1==RULE_STRING) ) {
+                    	        else if ( (LA33_1==EOF||LA33_1==FALSE||LA33_1==FROM||LA33_1==TRUE||LA33_1==AS||LA33_1==DollarSign||(LA33_1>=RightParenthesis && LA33_1<=Solidus)||LA33_1==CircumflexAccent||(LA33_1>=RULE_INT && LA33_1<=RULE_FLOAT)||(LA33_1>=RULE_VECTOR_FLOAT && LA33_1<=RULE_MATRIX_FLOAT)||LA33_1==RULE_STRING) ) {
                     	            alt33=2;
                     	        }
                     	        else {
@@ -5627,12 +5692,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     	    }
                     	    switch (alt33) {
                     	        case 1 :
-                    	            // InternalCQLParser.g:1970:9: lv_expressions_2_1= ruleExpressionComponent
+                    	            // InternalCQLParser.g:2022:9: lv_expressions_2_1= ruleExpressionComponent
                     	            {
 
                     	            									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentParserRuleCall_0_0_1_1_0_0());
                     	            								
-                    	            pushFollow(FOLLOW_28);
+                    	            pushFollow(FOLLOW_31);
                     	            lv_expressions_2_1=ruleExpressionComponent();
 
                     	            state._fsp--;
@@ -5652,12 +5717,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     	            }
                     	            break;
                     	        case 2 :
-                    	            // InternalCQLParser.g:1986:9: lv_expressions_2_2= ruleExpressionComponentAsAttribute
+                    	            // InternalCQLParser.g:2038:9: lv_expressions_2_2= ruleExpressionComponentAsAttribute
                     	            {
 
                     	            									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentAsAttributeParserRuleCall_0_0_1_1_0_1());
                     	            								
-                    	            pushFollow(FOLLOW_28);
+                    	            pushFollow(FOLLOW_31);
                     	            lv_expressions_2_2=ruleExpressionComponentAsAttribute();
 
                     	            state._fsp--;
@@ -5701,21 +5766,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2007:4: ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) )
+                    // InternalCQLParser.g:2059:4: ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) )
                     {
-                    // InternalCQLParser.g:2007:4: ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) )
-                    // InternalCQLParser.g:2008:5: ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) )
+                    // InternalCQLParser.g:2059:4: ( ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) ) )
+                    // InternalCQLParser.g:2060:5: ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) ) ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) )
                     {
-                    // InternalCQLParser.g:2008:5: ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) )
-                    // InternalCQLParser.g:2009:6: (lv_expressions_3_0= ruleExpressionComponentAsAttribute )
+                    // InternalCQLParser.g:2060:5: ( (lv_expressions_3_0= ruleExpressionComponentAsAttribute ) )
+                    // InternalCQLParser.g:2061:6: (lv_expressions_3_0= ruleExpressionComponentAsAttribute )
                     {
-                    // InternalCQLParser.g:2009:6: (lv_expressions_3_0= ruleExpressionComponentAsAttribute )
-                    // InternalCQLParser.g:2010:7: lv_expressions_3_0= ruleExpressionComponentAsAttribute
+                    // InternalCQLParser.g:2061:6: (lv_expressions_3_0= ruleExpressionComponentAsAttribute )
+                    // InternalCQLParser.g:2062:7: lv_expressions_3_0= ruleExpressionComponentAsAttribute
                     {
 
                     							newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentAsAttributeParserRuleCall_0_1_0_0());
                     						
-                    pushFollow(FOLLOW_29);
+                    pushFollow(FOLLOW_32);
                     lv_expressions_3_0=ruleExpressionComponentAsAttribute();
 
                     state._fsp--;
@@ -5737,19 +5802,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:2027:5: ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) )
-                    // InternalCQLParser.g:2028:6: ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) )
+                    // InternalCQLParser.g:2079:5: ( ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) ) )
+                    // InternalCQLParser.g:2080:6: ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) ) ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) )
                     {
-                    // InternalCQLParser.g:2028:6: ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) )
-                    // InternalCQLParser.g:2029:7: (lv_operators_4_0= ruleARITHMETIC_OPERATOR )
+                    // InternalCQLParser.g:2080:6: ( (lv_operators_4_0= ruleARITHMETIC_OPERATOR ) )
+                    // InternalCQLParser.g:2081:7: (lv_operators_4_0= ruleARITHMETIC_OPERATOR )
                     {
-                    // InternalCQLParser.g:2029:7: (lv_operators_4_0= ruleARITHMETIC_OPERATOR )
-                    // InternalCQLParser.g:2030:8: lv_operators_4_0= ruleARITHMETIC_OPERATOR
+                    // InternalCQLParser.g:2081:7: (lv_operators_4_0= ruleARITHMETIC_OPERATOR )
+                    // InternalCQLParser.g:2082:8: lv_operators_4_0= ruleARITHMETIC_OPERATOR
                     {
 
                     								newCompositeNode(grammarAccess.getSelectExpressionAccess().getOperatorsARITHMETIC_OPERATORParserRuleCall_0_1_1_0_0());
                     							
-                    pushFollow(FOLLOW_7);
+                    pushFollow(FOLLOW_9);
                     lv_operators_4_0=ruleARITHMETIC_OPERATOR();
 
                     state._fsp--;
@@ -5771,24 +5836,24 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:2047:6: ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) )
-                    // InternalCQLParser.g:2048:7: ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) )
+                    // InternalCQLParser.g:2099:6: ( ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) ) )
+                    // InternalCQLParser.g:2100:7: ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) )
                     {
-                    // InternalCQLParser.g:2048:7: ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) )
-                    // InternalCQLParser.g:2049:8: (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute )
+                    // InternalCQLParser.g:2100:7: ( (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute ) )
+                    // InternalCQLParser.g:2101:8: (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute )
                     {
-                    // InternalCQLParser.g:2049:8: (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute )
+                    // InternalCQLParser.g:2101:8: (lv_expressions_5_1= ruleExpressionComponent | lv_expressions_5_2= ruleExpressionComponentAsAttribute )
                     int alt35=2;
                     int LA35_0 = input.LA(1);
 
                     if ( (LA35_0==RULE_ID) ) {
                         int LA35_1 = input.LA(2);
 
-                        if ( (LA35_1==EOF||LA35_1==FALSE||LA35_1==FROM||LA35_1==TRUE||LA35_1==AS||LA35_1==RightParenthesis||LA35_1==Comma||LA35_1==FullStop||(LA35_1>=RULE_INT && LA35_1<=RULE_FLOAT)||(LA35_1>=RULE_VECTOR_FLOAT && LA35_1<=RULE_MATRIX_FLOAT)||LA35_1==RULE_STRING) ) {
-                            alt35=2;
-                        }
-                        else if ( (LA35_1==LeftParenthesis) ) {
+                        if ( (LA35_1==LeftParenthesis) ) {
                             alt35=1;
+                        }
+                        else if ( (LA35_1==EOF||LA35_1==FALSE||LA35_1==FROM||LA35_1==TRUE||LA35_1==AS||LA35_1==DollarSign||LA35_1==RightParenthesis||LA35_1==Comma||LA35_1==FullStop||(LA35_1>=RULE_INT && LA35_1<=RULE_FLOAT)||(LA35_1>=RULE_VECTOR_FLOAT && LA35_1<=RULE_MATRIX_FLOAT)||LA35_1==RULE_STRING) ) {
+                            alt35=2;
                         }
                         else {
                             NoViableAltException nvae =
@@ -5808,12 +5873,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt35) {
                         case 1 :
-                            // InternalCQLParser.g:2050:9: lv_expressions_5_1= ruleExpressionComponent
+                            // InternalCQLParser.g:2102:9: lv_expressions_5_1= ruleExpressionComponent
                             {
 
                             									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentParserRuleCall_0_1_1_1_0_0());
                             								
-                            pushFollow(FOLLOW_23);
+                            pushFollow(FOLLOW_26);
                             lv_expressions_5_1=ruleExpressionComponent();
 
                             state._fsp--;
@@ -5833,12 +5898,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalCQLParser.g:2066:9: lv_expressions_5_2= ruleExpressionComponentAsAttribute
+                            // InternalCQLParser.g:2118:9: lv_expressions_5_2= ruleExpressionComponentAsAttribute
                             {
 
                             									newCompositeNode(grammarAccess.getSelectExpressionAccess().getExpressionsExpressionComponentAsAttributeParserRuleCall_0_1_1_1_0_1());
                             								
-                            pushFollow(FOLLOW_23);
+                            pushFollow(FOLLOW_26);
                             lv_expressions_5_2=ruleExpressionComponentAsAttribute();
 
                             state._fsp--;
@@ -5878,7 +5943,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2087:3: (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )?
+            // InternalCQLParser.g:2139:3: (otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) ) )?
             int alt37=2;
             int LA37_0 = input.LA(1);
 
@@ -5887,17 +5952,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt37) {
                 case 1 :
-                    // InternalCQLParser.g:2088:4: otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) )
+                    // InternalCQLParser.g:2140:4: otherlv_6= AS ( (lv_alias_7_0= ruleAlias ) )
                     {
                     otherlv_6=(Token)match(input,AS,FOLLOW_5); 
 
                     				newLeafNode(otherlv_6, grammarAccess.getSelectExpressionAccess().getASKeyword_1_0());
                     			
-                    // InternalCQLParser.g:2092:4: ( (lv_alias_7_0= ruleAlias ) )
-                    // InternalCQLParser.g:2093:5: (lv_alias_7_0= ruleAlias )
+                    // InternalCQLParser.g:2144:4: ( (lv_alias_7_0= ruleAlias ) )
+                    // InternalCQLParser.g:2145:5: (lv_alias_7_0= ruleAlias )
                     {
-                    // InternalCQLParser.g:2093:5: (lv_alias_7_0= ruleAlias )
-                    // InternalCQLParser.g:2094:6: lv_alias_7_0= ruleAlias
+                    // InternalCQLParser.g:2145:5: (lv_alias_7_0= ruleAlias )
+                    // InternalCQLParser.g:2146:6: lv_alias_7_0= ruleAlias
                     {
 
                     						newCompositeNode(grammarAccess.getSelectExpressionAccess().getAliasAliasParserRuleCall_1_1_0());
@@ -5953,7 +6018,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSelectExpressionOnlyWithAttribute"
-    // InternalCQLParser.g:2116:1: entryRuleSelectExpressionOnlyWithAttribute returns [EObject current=null] : iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF ;
+    // InternalCQLParser.g:2168:1: entryRuleSelectExpressionOnlyWithAttribute returns [EObject current=null] : iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF ;
     public final EObject entryRuleSelectExpressionOnlyWithAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -5961,8 +6026,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2116:74: (iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF )
-            // InternalCQLParser.g:2117:2: iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF
+            // InternalCQLParser.g:2168:74: (iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF )
+            // InternalCQLParser.g:2169:2: iv_ruleSelectExpressionOnlyWithAttribute= ruleSelectExpressionOnlyWithAttribute EOF
             {
              newCompositeNode(grammarAccess.getSelectExpressionOnlyWithAttributeRule()); 
             pushFollow(FOLLOW_1);
@@ -5989,7 +6054,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSelectExpressionOnlyWithAttribute"
-    // InternalCQLParser.g:2123:1: ruleSelectExpressionOnlyWithAttribute returns [EObject current=null] : ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) ) ;
+    // InternalCQLParser.g:2175:1: ruleSelectExpressionOnlyWithAttribute returns [EObject current=null] : ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) ) ;
     public final EObject ruleSelectExpressionOnlyWithAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -6000,14 +6065,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2129:2: ( ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) ) )
-            // InternalCQLParser.g:2130:2: ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) )
+            // InternalCQLParser.g:2181:2: ( ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) ) )
+            // InternalCQLParser.g:2182:2: ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) )
             {
-            // InternalCQLParser.g:2130:2: ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) )
-            // InternalCQLParser.g:2131:3: (lv_expressions_0_0= ruleExpressionComponentAsAttribute )
+            // InternalCQLParser.g:2182:2: ( (lv_expressions_0_0= ruleExpressionComponentAsAttribute ) )
+            // InternalCQLParser.g:2183:3: (lv_expressions_0_0= ruleExpressionComponentAsAttribute )
             {
-            // InternalCQLParser.g:2131:3: (lv_expressions_0_0= ruleExpressionComponentAsAttribute )
-            // InternalCQLParser.g:2132:4: lv_expressions_0_0= ruleExpressionComponentAsAttribute
+            // InternalCQLParser.g:2183:3: (lv_expressions_0_0= ruleExpressionComponentAsAttribute )
+            // InternalCQLParser.g:2184:4: lv_expressions_0_0= ruleExpressionComponentAsAttribute
             {
 
             				newCompositeNode(grammarAccess.getSelectExpressionOnlyWithAttributeAccess().getExpressionsExpressionComponentAsAttributeParserRuleCall_0());
@@ -6054,7 +6119,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFunction"
-    // InternalCQLParser.g:2152:1: entryRuleFunction returns [EObject current=null] : iv_ruleFunction= ruleFunction EOF ;
+    // InternalCQLParser.g:2204:1: entryRuleFunction returns [EObject current=null] : iv_ruleFunction= ruleFunction EOF ;
     public final EObject entryRuleFunction() throws RecognitionException {
         EObject current = null;
 
@@ -6062,8 +6127,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2152:49: (iv_ruleFunction= ruleFunction EOF )
-            // InternalCQLParser.g:2153:2: iv_ruleFunction= ruleFunction EOF
+            // InternalCQLParser.g:2204:49: (iv_ruleFunction= ruleFunction EOF )
+            // InternalCQLParser.g:2205:2: iv_ruleFunction= ruleFunction EOF
             {
              newCompositeNode(grammarAccess.getFunctionRule()); 
             pushFollow(FOLLOW_1);
@@ -6090,7 +6155,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFunction"
-    // InternalCQLParser.g:2159:1: ruleFunction returns [EObject current=null] : ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis ) ;
+    // InternalCQLParser.g:2211:1: ruleFunction returns [EObject current=null] : ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis ) ;
     public final EObject ruleFunction() throws RecognitionException {
         EObject current = null;
 
@@ -6108,14 +6173,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2165:2: ( ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis ) )
-            // InternalCQLParser.g:2166:2: ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis )
+            // InternalCQLParser.g:2217:2: ( ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis ) )
+            // InternalCQLParser.g:2218:2: ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis )
             {
-            // InternalCQLParser.g:2166:2: ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis )
-            // InternalCQLParser.g:2167:3: () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis
+            // InternalCQLParser.g:2218:2: ( () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis )
+            // InternalCQLParser.g:2219:3: () ( (lv_name_1_0= RULE_ID ) ) otherlv_2= LeftParenthesis ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) ) otherlv_4= RightParenthesis
             {
-            // InternalCQLParser.g:2167:3: ()
-            // InternalCQLParser.g:2168:4: 
+            // InternalCQLParser.g:2219:3: ()
+            // InternalCQLParser.g:2220:4: 
             {
 
             				current = forceCreateModelElement(
@@ -6125,13 +6190,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2174:3: ( (lv_name_1_0= RULE_ID ) )
-            // InternalCQLParser.g:2175:4: (lv_name_1_0= RULE_ID )
+            // InternalCQLParser.g:2226:3: ( (lv_name_1_0= RULE_ID ) )
+            // InternalCQLParser.g:2227:4: (lv_name_1_0= RULE_ID )
             {
-            // InternalCQLParser.g:2175:4: (lv_name_1_0= RULE_ID )
-            // InternalCQLParser.g:2176:5: lv_name_1_0= RULE_ID
+            // InternalCQLParser.g:2227:4: (lv_name_1_0= RULE_ID )
+            // InternalCQLParser.g:2228:5: lv_name_1_0= RULE_ID
             {
-            lv_name_1_0=(Token)match(input,RULE_ID,FOLLOW_30); 
+            lv_name_1_0=(Token)match(input,RULE_ID,FOLLOW_33); 
 
             					newLeafNode(lv_name_1_0, grammarAccess.getFunctionAccess().getNameIDTerminalRuleCall_1_0());
             				
@@ -6151,42 +6216,27 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,LeftParenthesis,FOLLOW_7); 
+            otherlv_2=(Token)match(input,LeftParenthesis,FOLLOW_9); 
 
             			newLeafNode(otherlv_2, grammarAccess.getFunctionAccess().getLeftParenthesisKeyword_2());
             		
-            // InternalCQLParser.g:2196:3: ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) )
-            // InternalCQLParser.g:2197:4: ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) )
+            // InternalCQLParser.g:2248:3: ( ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) ) )
+            // InternalCQLParser.g:2249:4: ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) )
             {
-            // InternalCQLParser.g:2197:4: ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) )
-            // InternalCQLParser.g:2198:5: (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression )
+            // InternalCQLParser.g:2249:4: ( (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression ) )
+            // InternalCQLParser.g:2250:5: (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression )
             {
-            // InternalCQLParser.g:2198:5: (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression )
+            // InternalCQLParser.g:2250:5: (lv_value_3_1= ruleSelectExpression | lv_value_3_2= ruleSelectExpressionOnlyWithAttribute | lv_value_3_3= ruleStarExpression )
             int alt38=3;
             switch ( input.LA(1) ) {
             case RULE_ID:
                 {
                 switch ( input.LA(2) ) {
-                case RightParenthesis:
-                    {
-                    alt38=2;
-                    }
-                    break;
-                case LeftParenthesis:
-                case Asterisk:
-                case PlusSign:
-                case HyphenMinus:
-                case Solidus:
-                case CircumflexAccent:
-                    {
-                    alt38=1;
-                    }
-                    break;
                 case FullStop:
                     {
-                    int LA38_5 = input.LA(3);
+                    int LA38_4 = input.LA(3);
 
-                    if ( (LA38_5==RULE_ID) ) {
+                    if ( (LA38_4==RULE_ID) ) {
                         int LA38_6 = input.LA(4);
 
                         if ( (LA38_6==RightParenthesis) ) {
@@ -6204,10 +6254,25 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     else {
                         NoViableAltException nvae =
-                            new NoViableAltException("", 38, 5, input);
+                            new NoViableAltException("", 38, 4, input);
 
                         throw nvae;
                     }
+                    }
+                    break;
+                case RightParenthesis:
+                    {
+                    alt38=2;
+                    }
+                    break;
+                case LeftParenthesis:
+                case Asterisk:
+                case PlusSign:
+                case HyphenMinus:
+                case Solidus:
+                case CircumflexAccent:
+                    {
+                    alt38=1;
                     }
                     break;
                 default:
@@ -6244,12 +6309,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt38) {
                 case 1 :
-                    // InternalCQLParser.g:2199:6: lv_value_3_1= ruleSelectExpression
+                    // InternalCQLParser.g:2251:6: lv_value_3_1= ruleSelectExpression
                     {
 
                     						newCompositeNode(grammarAccess.getFunctionAccess().getValueSelectExpressionParserRuleCall_3_0_0());
                     					
-                    pushFollow(FOLLOW_21);
+                    pushFollow(FOLLOW_24);
                     lv_value_3_1=ruleSelectExpression();
 
                     state._fsp--;
@@ -6269,12 +6334,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2215:6: lv_value_3_2= ruleSelectExpressionOnlyWithAttribute
+                    // InternalCQLParser.g:2267:6: lv_value_3_2= ruleSelectExpressionOnlyWithAttribute
                     {
 
                     						newCompositeNode(grammarAccess.getFunctionAccess().getValueSelectExpressionOnlyWithAttributeParserRuleCall_3_0_1());
                     					
-                    pushFollow(FOLLOW_21);
+                    pushFollow(FOLLOW_24);
                     lv_value_3_2=ruleSelectExpressionOnlyWithAttribute();
 
                     state._fsp--;
@@ -6294,12 +6359,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:2231:6: lv_value_3_3= ruleStarExpression
+                    // InternalCQLParser.g:2283:6: lv_value_3_3= ruleStarExpression
                     {
 
                     						newCompositeNode(grammarAccess.getFunctionAccess().getValueStarExpressionParserRuleCall_3_0_2());
                     					
-                    pushFollow(FOLLOW_21);
+                    pushFollow(FOLLOW_24);
                     lv_value_3_3=ruleStarExpression();
 
                     state._fsp--;
@@ -6354,7 +6419,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpressionComponent"
-    // InternalCQLParser.g:2257:1: entryRuleExpressionComponent returns [EObject current=null] : iv_ruleExpressionComponent= ruleExpressionComponent EOF ;
+    // InternalCQLParser.g:2309:1: entryRuleExpressionComponent returns [EObject current=null] : iv_ruleExpressionComponent= ruleExpressionComponent EOF ;
     public final EObject entryRuleExpressionComponent() throws RecognitionException {
         EObject current = null;
 
@@ -6362,8 +6427,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2257:60: (iv_ruleExpressionComponent= ruleExpressionComponent EOF )
-            // InternalCQLParser.g:2258:2: iv_ruleExpressionComponent= ruleExpressionComponent EOF
+            // InternalCQLParser.g:2309:60: (iv_ruleExpressionComponent= ruleExpressionComponent EOF )
+            // InternalCQLParser.g:2310:2: iv_ruleExpressionComponent= ruleExpressionComponent EOF
             {
              newCompositeNode(grammarAccess.getExpressionComponentRule()); 
             pushFollow(FOLLOW_1);
@@ -6390,7 +6455,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpressionComponent"
-    // InternalCQLParser.g:2264:1: ruleExpressionComponent returns [EObject current=null] : ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) ) ;
+    // InternalCQLParser.g:2316:1: ruleExpressionComponent returns [EObject current=null] : ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) ) ;
     public final EObject ruleExpressionComponent() throws RecognitionException {
         EObject current = null;
 
@@ -6403,16 +6468,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2270:2: ( ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) ) )
-            // InternalCQLParser.g:2271:2: ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) )
+            // InternalCQLParser.g:2322:2: ( ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) ) )
+            // InternalCQLParser.g:2323:2: ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) )
             {
-            // InternalCQLParser.g:2271:2: ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) )
-            // InternalCQLParser.g:2272:3: ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) )
+            // InternalCQLParser.g:2323:2: ( ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) ) )
+            // InternalCQLParser.g:2324:3: ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) )
             {
-            // InternalCQLParser.g:2272:3: ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) )
-            // InternalCQLParser.g:2273:4: (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef )
+            // InternalCQLParser.g:2324:3: ( (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef ) )
+            // InternalCQLParser.g:2325:4: (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef )
             {
-            // InternalCQLParser.g:2273:4: (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef )
+            // InternalCQLParser.g:2325:4: (lv_value_0_1= ruleFunction | lv_value_0_2= ruleAtomicWithoutAttributeRef )
             int alt39=2;
             int LA39_0 = input.LA(1);
 
@@ -6430,7 +6495,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt39) {
                 case 1 :
-                    // InternalCQLParser.g:2274:5: lv_value_0_1= ruleFunction
+                    // InternalCQLParser.g:2326:5: lv_value_0_1= ruleFunction
                     {
 
                     					newCompositeNode(grammarAccess.getExpressionComponentAccess().getValueFunctionParserRuleCall_0_0());
@@ -6455,7 +6520,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2290:5: lv_value_0_2= ruleAtomicWithoutAttributeRef
+                    // InternalCQLParser.g:2342:5: lv_value_0_2= ruleAtomicWithoutAttributeRef
                     {
 
                     					newCompositeNode(grammarAccess.getExpressionComponentAccess().getValueAtomicWithoutAttributeRefParserRuleCall_0_1());
@@ -6508,7 +6573,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStarExpression"
-    // InternalCQLParser.g:2311:1: entryRuleStarExpression returns [EObject current=null] : iv_ruleStarExpression= ruleStarExpression EOF ;
+    // InternalCQLParser.g:2363:1: entryRuleStarExpression returns [EObject current=null] : iv_ruleStarExpression= ruleStarExpression EOF ;
     public final EObject entryRuleStarExpression() throws RecognitionException {
         EObject current = null;
 
@@ -6516,8 +6581,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2311:55: (iv_ruleStarExpression= ruleStarExpression EOF )
-            // InternalCQLParser.g:2312:2: iv_ruleStarExpression= ruleStarExpression EOF
+            // InternalCQLParser.g:2363:55: (iv_ruleStarExpression= ruleStarExpression EOF )
+            // InternalCQLParser.g:2364:2: iv_ruleStarExpression= ruleStarExpression EOF
             {
              newCompositeNode(grammarAccess.getStarExpressionRule()); 
             pushFollow(FOLLOW_1);
@@ -6544,7 +6609,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStarExpression"
-    // InternalCQLParser.g:2318:1: ruleStarExpression returns [EObject current=null] : ( () ( (lv_expressions_1_0= ruleStar ) ) ) ;
+    // InternalCQLParser.g:2370:1: ruleStarExpression returns [EObject current=null] : ( () ( (lv_expressions_1_0= ruleStar ) ) ) ;
     public final EObject ruleStarExpression() throws RecognitionException {
         EObject current = null;
 
@@ -6555,14 +6620,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2324:2: ( ( () ( (lv_expressions_1_0= ruleStar ) ) ) )
-            // InternalCQLParser.g:2325:2: ( () ( (lv_expressions_1_0= ruleStar ) ) )
+            // InternalCQLParser.g:2376:2: ( ( () ( (lv_expressions_1_0= ruleStar ) ) ) )
+            // InternalCQLParser.g:2377:2: ( () ( (lv_expressions_1_0= ruleStar ) ) )
             {
-            // InternalCQLParser.g:2325:2: ( () ( (lv_expressions_1_0= ruleStar ) ) )
-            // InternalCQLParser.g:2326:3: () ( (lv_expressions_1_0= ruleStar ) )
+            // InternalCQLParser.g:2377:2: ( () ( (lv_expressions_1_0= ruleStar ) ) )
+            // InternalCQLParser.g:2378:3: () ( (lv_expressions_1_0= ruleStar ) )
             {
-            // InternalCQLParser.g:2326:3: ()
-            // InternalCQLParser.g:2327:4: 
+            // InternalCQLParser.g:2378:3: ()
+            // InternalCQLParser.g:2379:4: 
             {
 
             				current = forceCreateModelElement(
@@ -6572,11 +6637,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2333:3: ( (lv_expressions_1_0= ruleStar ) )
-            // InternalCQLParser.g:2334:4: (lv_expressions_1_0= ruleStar )
+            // InternalCQLParser.g:2385:3: ( (lv_expressions_1_0= ruleStar ) )
+            // InternalCQLParser.g:2386:4: (lv_expressions_1_0= ruleStar )
             {
-            // InternalCQLParser.g:2334:4: (lv_expressions_1_0= ruleStar )
-            // InternalCQLParser.g:2335:5: lv_expressions_1_0= ruleStar
+            // InternalCQLParser.g:2386:4: (lv_expressions_1_0= ruleStar )
+            // InternalCQLParser.g:2387:5: lv_expressions_1_0= ruleStar
             {
 
             					newCompositeNode(grammarAccess.getStarExpressionAccess().getExpressionsStarParserRuleCall_1_0());
@@ -6626,7 +6691,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStar"
-    // InternalCQLParser.g:2356:1: entryRuleStar returns [EObject current=null] : iv_ruleStar= ruleStar EOF ;
+    // InternalCQLParser.g:2408:1: entryRuleStar returns [EObject current=null] : iv_ruleStar= ruleStar EOF ;
     public final EObject entryRuleStar() throws RecognitionException {
         EObject current = null;
 
@@ -6634,8 +6699,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2356:45: (iv_ruleStar= ruleStar EOF )
-            // InternalCQLParser.g:2357:2: iv_ruleStar= ruleStar EOF
+            // InternalCQLParser.g:2408:45: (iv_ruleStar= ruleStar EOF )
+            // InternalCQLParser.g:2409:2: iv_ruleStar= ruleStar EOF
             {
              newCompositeNode(grammarAccess.getStarRule()); 
             pushFollow(FOLLOW_1);
@@ -6662,7 +6727,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStar"
-    // InternalCQLParser.g:2363:1: ruleStar returns [EObject current=null] : ( () ( (lv_value_1_0= ruleStarthing ) ) ) ;
+    // InternalCQLParser.g:2415:1: ruleStar returns [EObject current=null] : ( () ( (lv_value_1_0= ruleStarthing ) ) ) ;
     public final EObject ruleStar() throws RecognitionException {
         EObject current = null;
 
@@ -6673,14 +6738,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2369:2: ( ( () ( (lv_value_1_0= ruleStarthing ) ) ) )
-            // InternalCQLParser.g:2370:2: ( () ( (lv_value_1_0= ruleStarthing ) ) )
+            // InternalCQLParser.g:2421:2: ( ( () ( (lv_value_1_0= ruleStarthing ) ) ) )
+            // InternalCQLParser.g:2422:2: ( () ( (lv_value_1_0= ruleStarthing ) ) )
             {
-            // InternalCQLParser.g:2370:2: ( () ( (lv_value_1_0= ruleStarthing ) ) )
-            // InternalCQLParser.g:2371:3: () ( (lv_value_1_0= ruleStarthing ) )
+            // InternalCQLParser.g:2422:2: ( () ( (lv_value_1_0= ruleStarthing ) ) )
+            // InternalCQLParser.g:2423:3: () ( (lv_value_1_0= ruleStarthing ) )
             {
-            // InternalCQLParser.g:2371:3: ()
-            // InternalCQLParser.g:2372:4: 
+            // InternalCQLParser.g:2423:3: ()
+            // InternalCQLParser.g:2424:4: 
             {
 
             				current = forceCreateModelElement(
@@ -6690,11 +6755,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2378:3: ( (lv_value_1_0= ruleStarthing ) )
-            // InternalCQLParser.g:2379:4: (lv_value_1_0= ruleStarthing )
+            // InternalCQLParser.g:2430:3: ( (lv_value_1_0= ruleStarthing ) )
+            // InternalCQLParser.g:2431:4: (lv_value_1_0= ruleStarthing )
             {
-            // InternalCQLParser.g:2379:4: (lv_value_1_0= ruleStarthing )
-            // InternalCQLParser.g:2380:5: lv_value_1_0= ruleStarthing
+            // InternalCQLParser.g:2431:4: (lv_value_1_0= ruleStarthing )
+            // InternalCQLParser.g:2432:5: lv_value_1_0= ruleStarthing
             {
 
             					newCompositeNode(grammarAccess.getStarAccess().getValueStarthingParserRuleCall_1_0());
@@ -6744,7 +6809,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStarthing"
-    // InternalCQLParser.g:2401:1: entryRuleStarthing returns [EObject current=null] : iv_ruleStarthing= ruleStarthing EOF ;
+    // InternalCQLParser.g:2453:1: entryRuleStarthing returns [EObject current=null] : iv_ruleStarthing= ruleStarthing EOF ;
     public final EObject entryRuleStarthing() throws RecognitionException {
         EObject current = null;
 
@@ -6752,8 +6817,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2401:50: (iv_ruleStarthing= ruleStarthing EOF )
-            // InternalCQLParser.g:2402:2: iv_ruleStarthing= ruleStarthing EOF
+            // InternalCQLParser.g:2453:50: (iv_ruleStarthing= ruleStarthing EOF )
+            // InternalCQLParser.g:2454:2: iv_ruleStarthing= ruleStarthing EOF
             {
              newCompositeNode(grammarAccess.getStarthingRule()); 
             pushFollow(FOLLOW_1);
@@ -6780,7 +6845,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStarthing"
-    // InternalCQLParser.g:2408:1: ruleStarthing returns [EObject current=null] : ( () otherlv_1= Asterisk ) ;
+    // InternalCQLParser.g:2460:1: ruleStarthing returns [EObject current=null] : ( () otherlv_1= Asterisk ) ;
     public final EObject ruleStarthing() throws RecognitionException {
         EObject current = null;
 
@@ -6790,14 +6855,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2414:2: ( ( () otherlv_1= Asterisk ) )
-            // InternalCQLParser.g:2415:2: ( () otherlv_1= Asterisk )
+            // InternalCQLParser.g:2466:2: ( ( () otherlv_1= Asterisk ) )
+            // InternalCQLParser.g:2467:2: ( () otherlv_1= Asterisk )
             {
-            // InternalCQLParser.g:2415:2: ( () otherlv_1= Asterisk )
-            // InternalCQLParser.g:2416:3: () otherlv_1= Asterisk
+            // InternalCQLParser.g:2467:2: ( () otherlv_1= Asterisk )
+            // InternalCQLParser.g:2468:3: () otherlv_1= Asterisk
             {
-            // InternalCQLParser.g:2416:3: ()
-            // InternalCQLParser.g:2417:4: 
+            // InternalCQLParser.g:2468:3: ()
+            // InternalCQLParser.g:2469:4: 
             {
 
             				current = forceCreateModelElement(
@@ -6834,7 +6899,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpressionComponentAsAttribute"
-    // InternalCQLParser.g:2431:1: entryRuleExpressionComponentAsAttribute returns [EObject current=null] : iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF ;
+    // InternalCQLParser.g:2483:1: entryRuleExpressionComponentAsAttribute returns [EObject current=null] : iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF ;
     public final EObject entryRuleExpressionComponentAsAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -6842,8 +6907,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2431:71: (iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF )
-            // InternalCQLParser.g:2432:2: iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF
+            // InternalCQLParser.g:2483:71: (iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF )
+            // InternalCQLParser.g:2484:2: iv_ruleExpressionComponentAsAttribute= ruleExpressionComponentAsAttribute EOF
             {
              newCompositeNode(grammarAccess.getExpressionComponentAsAttributeRule()); 
             pushFollow(FOLLOW_1);
@@ -6870,7 +6935,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpressionComponentAsAttribute"
-    // InternalCQLParser.g:2438:1: ruleExpressionComponentAsAttribute returns [EObject current=null] : ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) ) ;
+    // InternalCQLParser.g:2490:1: ruleExpressionComponentAsAttribute returns [EObject current=null] : ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) ) ;
     public final EObject ruleExpressionComponentAsAttribute() throws RecognitionException {
         EObject current = null;
 
@@ -6881,14 +6946,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2444:2: ( ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) ) )
-            // InternalCQLParser.g:2445:2: ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) )
+            // InternalCQLParser.g:2496:2: ( ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) ) )
+            // InternalCQLParser.g:2497:2: ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) )
             {
-            // InternalCQLParser.g:2445:2: ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) )
-            // InternalCQLParser.g:2446:3: () ( (lv_value_1_0= ruleAttributeForSelectExpression ) )
+            // InternalCQLParser.g:2497:2: ( () ( (lv_value_1_0= ruleAttributeForSelectExpression ) ) )
+            // InternalCQLParser.g:2498:3: () ( (lv_value_1_0= ruleAttributeForSelectExpression ) )
             {
-            // InternalCQLParser.g:2446:3: ()
-            // InternalCQLParser.g:2447:4: 
+            // InternalCQLParser.g:2498:3: ()
+            // InternalCQLParser.g:2499:4: 
             {
 
             				current = forceCreateModelElement(
@@ -6898,11 +6963,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2453:3: ( (lv_value_1_0= ruleAttributeForSelectExpression ) )
-            // InternalCQLParser.g:2454:4: (lv_value_1_0= ruleAttributeForSelectExpression )
+            // InternalCQLParser.g:2505:3: ( (lv_value_1_0= ruleAttributeForSelectExpression ) )
+            // InternalCQLParser.g:2506:4: (lv_value_1_0= ruleAttributeForSelectExpression )
             {
-            // InternalCQLParser.g:2454:4: (lv_value_1_0= ruleAttributeForSelectExpression )
-            // InternalCQLParser.g:2455:5: lv_value_1_0= ruleAttributeForSelectExpression
+            // InternalCQLParser.g:2506:4: (lv_value_1_0= ruleAttributeForSelectExpression )
+            // InternalCQLParser.g:2507:5: lv_value_1_0= ruleAttributeForSelectExpression
             {
 
             					newCompositeNode(grammarAccess.getExpressionComponentAsAttributeAccess().getValueAttributeForSelectExpressionParserRuleCall_1_0());
@@ -6952,7 +7017,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAlias"
-    // InternalCQLParser.g:2476:1: entryRuleAlias returns [EObject current=null] : iv_ruleAlias= ruleAlias EOF ;
+    // InternalCQLParser.g:2528:1: entryRuleAlias returns [EObject current=null] : iv_ruleAlias= ruleAlias EOF ;
     public final EObject entryRuleAlias() throws RecognitionException {
         EObject current = null;
 
@@ -6960,8 +7025,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2476:46: (iv_ruleAlias= ruleAlias EOF )
-            // InternalCQLParser.g:2477:2: iv_ruleAlias= ruleAlias EOF
+            // InternalCQLParser.g:2528:46: (iv_ruleAlias= ruleAlias EOF )
+            // InternalCQLParser.g:2529:2: iv_ruleAlias= ruleAlias EOF
             {
              newCompositeNode(grammarAccess.getAliasRule()); 
             pushFollow(FOLLOW_1);
@@ -6988,7 +7053,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAlias"
-    // InternalCQLParser.g:2483:1: ruleAlias returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalCQLParser.g:2535:1: ruleAlias returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleAlias() throws RecognitionException {
         EObject current = null;
 
@@ -6998,14 +7063,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2489:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalCQLParser.g:2490:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQLParser.g:2541:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalCQLParser.g:2542:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalCQLParser.g:2490:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalCQLParser.g:2491:3: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:2542:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQLParser.g:2543:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalCQLParser.g:2491:3: (lv_name_0_0= RULE_ID )
-            // InternalCQLParser.g:2492:4: lv_name_0_0= RULE_ID
+            // InternalCQLParser.g:2543:3: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:2544:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -7047,7 +7112,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAccessFramework"
-    // InternalCQLParser.g:2511:1: entryRuleAccessFramework returns [EObject current=null] : iv_ruleAccessFramework= ruleAccessFramework EOF ;
+    // InternalCQLParser.g:2563:1: entryRuleAccessFramework returns [EObject current=null] : iv_ruleAccessFramework= ruleAccessFramework EOF ;
     public final EObject entryRuleAccessFramework() throws RecognitionException {
         EObject current = null;
 
@@ -7055,8 +7120,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2511:56: (iv_ruleAccessFramework= ruleAccessFramework EOF )
-            // InternalCQLParser.g:2512:2: iv_ruleAccessFramework= ruleAccessFramework EOF
+            // InternalCQLParser.g:2563:56: (iv_ruleAccessFramework= ruleAccessFramework EOF )
+            // InternalCQLParser.g:2564:2: iv_ruleAccessFramework= ruleAccessFramework EOF
             {
              newCompositeNode(grammarAccess.getAccessFrameworkRule()); 
             pushFollow(FOLLOW_1);
@@ -7083,7 +7148,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAccessFramework"
-    // InternalCQLParser.g:2518:1: ruleAccessFramework returns [EObject current=null] : (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis ) ;
+    // InternalCQLParser.g:2570:1: ruleAccessFramework returns [EObject current=null] : (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis ) ;
     public final EObject ruleAccessFramework() throws RecognitionException {
         EObject current = null;
 
@@ -7110,23 +7175,23 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2524:2: ( (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis ) )
-            // InternalCQLParser.g:2525:2: (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis )
+            // InternalCQLParser.g:2576:2: ( (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis ) )
+            // InternalCQLParser.g:2577:2: (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis )
             {
-            // InternalCQLParser.g:2525:2: (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis )
-            // InternalCQLParser.g:2526:3: otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis
+            // InternalCQLParser.g:2577:2: (otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis )
+            // InternalCQLParser.g:2578:3: otherlv_0= WRAPPER ( (lv_wrapper_1_0= RULE_STRING ) ) otherlv_2= PROTOCOL ( (lv_protocol_3_0= RULE_STRING ) ) otherlv_4= TRANSPORT ( (lv_transport_5_0= RULE_STRING ) ) otherlv_6= DATAHANDLER ( (lv_datahandler_7_0= RULE_STRING ) ) otherlv_8= OPTIONS otherlv_9= LeftParenthesis ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+ (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )* otherlv_15= RightParenthesis
             {
-            otherlv_0=(Token)match(input,WRAPPER,FOLLOW_31); 
+            otherlv_0=(Token)match(input,WRAPPER,FOLLOW_34); 
 
             			newLeafNode(otherlv_0, grammarAccess.getAccessFrameworkAccess().getWRAPPERKeyword_0());
             		
-            // InternalCQLParser.g:2530:3: ( (lv_wrapper_1_0= RULE_STRING ) )
-            // InternalCQLParser.g:2531:4: (lv_wrapper_1_0= RULE_STRING )
+            // InternalCQLParser.g:2582:3: ( (lv_wrapper_1_0= RULE_STRING ) )
+            // InternalCQLParser.g:2583:4: (lv_wrapper_1_0= RULE_STRING )
             {
-            // InternalCQLParser.g:2531:4: (lv_wrapper_1_0= RULE_STRING )
-            // InternalCQLParser.g:2532:5: lv_wrapper_1_0= RULE_STRING
+            // InternalCQLParser.g:2583:4: (lv_wrapper_1_0= RULE_STRING )
+            // InternalCQLParser.g:2584:5: lv_wrapper_1_0= RULE_STRING
             {
-            lv_wrapper_1_0=(Token)match(input,RULE_STRING,FOLLOW_32); 
+            lv_wrapper_1_0=(Token)match(input,RULE_STRING,FOLLOW_35); 
 
             					newLeafNode(lv_wrapper_1_0, grammarAccess.getAccessFrameworkAccess().getWrapperSTRINGTerminalRuleCall_1_0());
             				
@@ -7146,17 +7211,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,PROTOCOL,FOLLOW_31); 
+            otherlv_2=(Token)match(input,PROTOCOL,FOLLOW_34); 
 
             			newLeafNode(otherlv_2, grammarAccess.getAccessFrameworkAccess().getPROTOCOLKeyword_2());
             		
-            // InternalCQLParser.g:2552:3: ( (lv_protocol_3_0= RULE_STRING ) )
-            // InternalCQLParser.g:2553:4: (lv_protocol_3_0= RULE_STRING )
+            // InternalCQLParser.g:2604:3: ( (lv_protocol_3_0= RULE_STRING ) )
+            // InternalCQLParser.g:2605:4: (lv_protocol_3_0= RULE_STRING )
             {
-            // InternalCQLParser.g:2553:4: (lv_protocol_3_0= RULE_STRING )
-            // InternalCQLParser.g:2554:5: lv_protocol_3_0= RULE_STRING
+            // InternalCQLParser.g:2605:4: (lv_protocol_3_0= RULE_STRING )
+            // InternalCQLParser.g:2606:5: lv_protocol_3_0= RULE_STRING
             {
-            lv_protocol_3_0=(Token)match(input,RULE_STRING,FOLLOW_33); 
+            lv_protocol_3_0=(Token)match(input,RULE_STRING,FOLLOW_36); 
 
             					newLeafNode(lv_protocol_3_0, grammarAccess.getAccessFrameworkAccess().getProtocolSTRINGTerminalRuleCall_3_0());
             				
@@ -7176,17 +7241,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_4=(Token)match(input,TRANSPORT,FOLLOW_31); 
+            otherlv_4=(Token)match(input,TRANSPORT,FOLLOW_34); 
 
             			newLeafNode(otherlv_4, grammarAccess.getAccessFrameworkAccess().getTRANSPORTKeyword_4());
             		
-            // InternalCQLParser.g:2574:3: ( (lv_transport_5_0= RULE_STRING ) )
-            // InternalCQLParser.g:2575:4: (lv_transport_5_0= RULE_STRING )
+            // InternalCQLParser.g:2626:3: ( (lv_transport_5_0= RULE_STRING ) )
+            // InternalCQLParser.g:2627:4: (lv_transport_5_0= RULE_STRING )
             {
-            // InternalCQLParser.g:2575:4: (lv_transport_5_0= RULE_STRING )
-            // InternalCQLParser.g:2576:5: lv_transport_5_0= RULE_STRING
+            // InternalCQLParser.g:2627:4: (lv_transport_5_0= RULE_STRING )
+            // InternalCQLParser.g:2628:5: lv_transport_5_0= RULE_STRING
             {
-            lv_transport_5_0=(Token)match(input,RULE_STRING,FOLLOW_34); 
+            lv_transport_5_0=(Token)match(input,RULE_STRING,FOLLOW_37); 
 
             					newLeafNode(lv_transport_5_0, grammarAccess.getAccessFrameworkAccess().getTransportSTRINGTerminalRuleCall_5_0());
             				
@@ -7206,17 +7271,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_6=(Token)match(input,DATAHANDLER,FOLLOW_31); 
+            otherlv_6=(Token)match(input,DATAHANDLER,FOLLOW_34); 
 
             			newLeafNode(otherlv_6, grammarAccess.getAccessFrameworkAccess().getDATAHANDLERKeyword_6());
             		
-            // InternalCQLParser.g:2596:3: ( (lv_datahandler_7_0= RULE_STRING ) )
-            // InternalCQLParser.g:2597:4: (lv_datahandler_7_0= RULE_STRING )
+            // InternalCQLParser.g:2648:3: ( (lv_datahandler_7_0= RULE_STRING ) )
+            // InternalCQLParser.g:2649:4: (lv_datahandler_7_0= RULE_STRING )
             {
-            // InternalCQLParser.g:2597:4: (lv_datahandler_7_0= RULE_STRING )
-            // InternalCQLParser.g:2598:5: lv_datahandler_7_0= RULE_STRING
+            // InternalCQLParser.g:2649:4: (lv_datahandler_7_0= RULE_STRING )
+            // InternalCQLParser.g:2650:5: lv_datahandler_7_0= RULE_STRING
             {
-            lv_datahandler_7_0=(Token)match(input,RULE_STRING,FOLLOW_35); 
+            lv_datahandler_7_0=(Token)match(input,RULE_STRING,FOLLOW_38); 
 
             					newLeafNode(lv_datahandler_7_0, grammarAccess.getAccessFrameworkAccess().getDatahandlerSTRINGTerminalRuleCall_7_0());
             				
@@ -7236,15 +7301,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_8=(Token)match(input,OPTIONS,FOLLOW_30); 
+            otherlv_8=(Token)match(input,OPTIONS,FOLLOW_33); 
 
             			newLeafNode(otherlv_8, grammarAccess.getAccessFrameworkAccess().getOPTIONSKeyword_8());
             		
-            otherlv_9=(Token)match(input,LeftParenthesis,FOLLOW_31); 
+            otherlv_9=(Token)match(input,LeftParenthesis,FOLLOW_34); 
 
             			newLeafNode(otherlv_9, grammarAccess.getAccessFrameworkAccess().getLeftParenthesisKeyword_9());
             		
-            // InternalCQLParser.g:2622:3: ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+
+            // InternalCQLParser.g:2674:3: ( ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) ) )+
             int cnt41=0;
             loop41:
             do {
@@ -7258,15 +7323,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt41) {
             	case 1 :
-            	    // InternalCQLParser.g:2623:4: ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) )
+            	    // InternalCQLParser.g:2675:4: ( (lv_keys_10_0= RULE_STRING ) ) ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) )
             	    {
-            	    // InternalCQLParser.g:2623:4: ( (lv_keys_10_0= RULE_STRING ) )
-            	    // InternalCQLParser.g:2624:5: (lv_keys_10_0= RULE_STRING )
+            	    // InternalCQLParser.g:2675:4: ( (lv_keys_10_0= RULE_STRING ) )
+            	    // InternalCQLParser.g:2676:5: (lv_keys_10_0= RULE_STRING )
             	    {
-            	    // InternalCQLParser.g:2624:5: (lv_keys_10_0= RULE_STRING )
-            	    // InternalCQLParser.g:2625:6: lv_keys_10_0= RULE_STRING
+            	    // InternalCQLParser.g:2676:5: (lv_keys_10_0= RULE_STRING )
+            	    // InternalCQLParser.g:2677:6: lv_keys_10_0= RULE_STRING
             	    {
-            	    lv_keys_10_0=(Token)match(input,RULE_STRING,FOLLOW_36); 
+            	    lv_keys_10_0=(Token)match(input,RULE_STRING,FOLLOW_39); 
 
             	    						newLeafNode(lv_keys_10_0, grammarAccess.getAccessFrameworkAccess().getKeysSTRINGTerminalRuleCall_10_0_0());
             	    					
@@ -7286,13 +7351,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:2641:4: ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) )
-            	    // InternalCQLParser.g:2642:5: ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) )
+            	    // InternalCQLParser.g:2693:4: ( ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) ) )
+            	    // InternalCQLParser.g:2694:5: ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) )
             	    {
-            	    // InternalCQLParser.g:2642:5: ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) )
-            	    // InternalCQLParser.g:2643:6: (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH )
+            	    // InternalCQLParser.g:2694:5: ( (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH ) )
+            	    // InternalCQLParser.g:2695:6: (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH )
             	    {
-            	    // InternalCQLParser.g:2643:6: (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH )
+            	    // InternalCQLParser.g:2695:6: (lv_values_11_1= RULE_STRING | lv_values_11_2= RULE_PATH )
             	    int alt40=2;
             	    int LA40_0 = input.LA(1);
 
@@ -7310,9 +7375,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt40) {
             	        case 1 :
-            	            // InternalCQLParser.g:2644:7: lv_values_11_1= RULE_STRING
+            	            // InternalCQLParser.g:2696:7: lv_values_11_1= RULE_STRING
             	            {
-            	            lv_values_11_1=(Token)match(input,RULE_STRING,FOLLOW_37); 
+            	            lv_values_11_1=(Token)match(input,RULE_STRING,FOLLOW_40); 
 
             	            							newLeafNode(lv_values_11_1, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_10_1_0_0());
             	            						
@@ -7330,9 +7395,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCQLParser.g:2659:7: lv_values_11_2= RULE_PATH
+            	            // InternalCQLParser.g:2711:7: lv_values_11_2= RULE_PATH
             	            {
-            	            lv_values_11_2=(Token)match(input,RULE_PATH,FOLLOW_37); 
+            	            lv_values_11_2=(Token)match(input,RULE_PATH,FOLLOW_40); 
 
             	            							newLeafNode(lv_values_11_2, grammarAccess.getAccessFrameworkAccess().getValuesPATHTerminalRuleCall_10_1_0_1());
             	            						
@@ -7371,7 +7436,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 cnt41++;
             } while (true);
 
-            // InternalCQLParser.g:2677:3: (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )*
+            // InternalCQLParser.g:2729:3: (otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) ) )*
             loop43:
             do {
                 int alt43=2;
@@ -7384,19 +7449,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt43) {
             	case 1 :
-            	    // InternalCQLParser.g:2678:4: otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) )
+            	    // InternalCQLParser.g:2730:4: otherlv_12= Comma ( (lv_keys_13_0= RULE_STRING ) ) ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) )
             	    {
-            	    otherlv_12=(Token)match(input,Comma,FOLLOW_31); 
+            	    otherlv_12=(Token)match(input,Comma,FOLLOW_34); 
 
             	    				newLeafNode(otherlv_12, grammarAccess.getAccessFrameworkAccess().getCommaKeyword_11_0());
             	    			
-            	    // InternalCQLParser.g:2682:4: ( (lv_keys_13_0= RULE_STRING ) )
-            	    // InternalCQLParser.g:2683:5: (lv_keys_13_0= RULE_STRING )
+            	    // InternalCQLParser.g:2734:4: ( (lv_keys_13_0= RULE_STRING ) )
+            	    // InternalCQLParser.g:2735:5: (lv_keys_13_0= RULE_STRING )
             	    {
-            	    // InternalCQLParser.g:2683:5: (lv_keys_13_0= RULE_STRING )
-            	    // InternalCQLParser.g:2684:6: lv_keys_13_0= RULE_STRING
+            	    // InternalCQLParser.g:2735:5: (lv_keys_13_0= RULE_STRING )
+            	    // InternalCQLParser.g:2736:6: lv_keys_13_0= RULE_STRING
             	    {
-            	    lv_keys_13_0=(Token)match(input,RULE_STRING,FOLLOW_36); 
+            	    lv_keys_13_0=(Token)match(input,RULE_STRING,FOLLOW_39); 
 
             	    						newLeafNode(lv_keys_13_0, grammarAccess.getAccessFrameworkAccess().getKeysSTRINGTerminalRuleCall_11_1_0());
             	    					
@@ -7416,13 +7481,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:2700:4: ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) )
-            	    // InternalCQLParser.g:2701:5: ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) )
+            	    // InternalCQLParser.g:2752:4: ( ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) ) )
+            	    // InternalCQLParser.g:2753:5: ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) )
             	    {
-            	    // InternalCQLParser.g:2701:5: ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) )
-            	    // InternalCQLParser.g:2702:6: (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH )
+            	    // InternalCQLParser.g:2753:5: ( (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH ) )
+            	    // InternalCQLParser.g:2754:6: (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH )
             	    {
-            	    // InternalCQLParser.g:2702:6: (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH )
+            	    // InternalCQLParser.g:2754:6: (lv_values_14_1= RULE_STRING | lv_values_14_2= RULE_PATH )
             	    int alt42=2;
             	    int LA42_0 = input.LA(1);
 
@@ -7440,9 +7505,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt42) {
             	        case 1 :
-            	            // InternalCQLParser.g:2703:7: lv_values_14_1= RULE_STRING
+            	            // InternalCQLParser.g:2755:7: lv_values_14_1= RULE_STRING
             	            {
-            	            lv_values_14_1=(Token)match(input,RULE_STRING,FOLLOW_38); 
+            	            lv_values_14_1=(Token)match(input,RULE_STRING,FOLLOW_41); 
 
             	            							newLeafNode(lv_values_14_1, grammarAccess.getAccessFrameworkAccess().getValuesSTRINGTerminalRuleCall_11_2_0_0());
             	            						
@@ -7460,9 +7525,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCQLParser.g:2718:7: lv_values_14_2= RULE_PATH
+            	            // InternalCQLParser.g:2770:7: lv_values_14_2= RULE_PATH
             	            {
-            	            lv_values_14_2=(Token)match(input,RULE_PATH,FOLLOW_38); 
+            	            lv_values_14_2=(Token)match(input,RULE_PATH,FOLLOW_41); 
 
             	            							newLeafNode(lv_values_14_2, grammarAccess.getAccessFrameworkAccess().getValuesPATHTerminalRuleCall_11_2_0_1());
             	            						
@@ -7524,7 +7589,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSchemaDefinition"
-    // InternalCQLParser.g:2744:1: entryRuleSchemaDefinition returns [EObject current=null] : iv_ruleSchemaDefinition= ruleSchemaDefinition EOF ;
+    // InternalCQLParser.g:2796:1: entryRuleSchemaDefinition returns [EObject current=null] : iv_ruleSchemaDefinition= ruleSchemaDefinition EOF ;
     public final EObject entryRuleSchemaDefinition() throws RecognitionException {
         EObject current = null;
 
@@ -7532,8 +7597,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2744:57: (iv_ruleSchemaDefinition= ruleSchemaDefinition EOF )
-            // InternalCQLParser.g:2745:2: iv_ruleSchemaDefinition= ruleSchemaDefinition EOF
+            // InternalCQLParser.g:2796:57: (iv_ruleSchemaDefinition= ruleSchemaDefinition EOF )
+            // InternalCQLParser.g:2797:2: iv_ruleSchemaDefinition= ruleSchemaDefinition EOF
             {
              newCompositeNode(grammarAccess.getSchemaDefinitionRule()); 
             pushFollow(FOLLOW_1);
@@ -7560,7 +7625,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSchemaDefinition"
-    // InternalCQLParser.g:2751:1: ruleSchemaDefinition returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis ) ;
+    // InternalCQLParser.g:2803:1: ruleSchemaDefinition returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis ) ;
     public final EObject ruleSchemaDefinition() throws RecognitionException {
         EObject current = null;
 
@@ -7577,19 +7642,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2757:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis ) )
-            // InternalCQLParser.g:2758:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis )
+            // InternalCQLParser.g:2809:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis ) )
+            // InternalCQLParser.g:2810:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis )
             {
-            // InternalCQLParser.g:2758:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis )
-            // InternalCQLParser.g:2759:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis
+            // InternalCQLParser.g:2810:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis )
+            // InternalCQLParser.g:2811:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= LeftParenthesis ( (lv_arguments_2_0= RULE_ID ) ) ( (lv_arguments_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )* otherlv_7= RightParenthesis
             {
-            // InternalCQLParser.g:2759:3: ( (lv_name_0_0= RULE_ID ) )
-            // InternalCQLParser.g:2760:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:2811:3: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQLParser.g:2812:4: (lv_name_0_0= RULE_ID )
             {
-            // InternalCQLParser.g:2760:4: (lv_name_0_0= RULE_ID )
-            // InternalCQLParser.g:2761:5: lv_name_0_0= RULE_ID
+            // InternalCQLParser.g:2812:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:2813:5: lv_name_0_0= RULE_ID
             {
-            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_30); 
+            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_33); 
 
             					newLeafNode(lv_name_0_0, grammarAccess.getSchemaDefinitionAccess().getNameIDTerminalRuleCall_0_0());
             				
@@ -7613,11 +7678,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_1, grammarAccess.getSchemaDefinitionAccess().getLeftParenthesisKeyword_1());
             		
-            // InternalCQLParser.g:2781:3: ( (lv_arguments_2_0= RULE_ID ) )
-            // InternalCQLParser.g:2782:4: (lv_arguments_2_0= RULE_ID )
+            // InternalCQLParser.g:2833:3: ( (lv_arguments_2_0= RULE_ID ) )
+            // InternalCQLParser.g:2834:4: (lv_arguments_2_0= RULE_ID )
             {
-            // InternalCQLParser.g:2782:4: (lv_arguments_2_0= RULE_ID )
-            // InternalCQLParser.g:2783:5: lv_arguments_2_0= RULE_ID
+            // InternalCQLParser.g:2834:4: (lv_arguments_2_0= RULE_ID )
+            // InternalCQLParser.g:2835:5: lv_arguments_2_0= RULE_ID
             {
             lv_arguments_2_0=(Token)match(input,RULE_ID,FOLLOW_5); 
 
@@ -7639,13 +7704,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2799:3: ( (lv_arguments_3_0= RULE_ID ) )
-            // InternalCQLParser.g:2800:4: (lv_arguments_3_0= RULE_ID )
+            // InternalCQLParser.g:2851:3: ( (lv_arguments_3_0= RULE_ID ) )
+            // InternalCQLParser.g:2852:4: (lv_arguments_3_0= RULE_ID )
             {
-            // InternalCQLParser.g:2800:4: (lv_arguments_3_0= RULE_ID )
-            // InternalCQLParser.g:2801:5: lv_arguments_3_0= RULE_ID
+            // InternalCQLParser.g:2852:4: (lv_arguments_3_0= RULE_ID )
+            // InternalCQLParser.g:2853:5: lv_arguments_3_0= RULE_ID
             {
-            lv_arguments_3_0=(Token)match(input,RULE_ID,FOLLOW_38); 
+            lv_arguments_3_0=(Token)match(input,RULE_ID,FOLLOW_41); 
 
             					newLeafNode(lv_arguments_3_0, grammarAccess.getSchemaDefinitionAccess().getArgumentsIDTerminalRuleCall_3_0());
             				
@@ -7665,7 +7730,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2817:3: (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )*
+            // InternalCQLParser.g:2869:3: (otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) ) )*
             loop44:
             do {
                 int alt44=2;
@@ -7678,17 +7743,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt44) {
             	case 1 :
-            	    // InternalCQLParser.g:2818:4: otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) )
+            	    // InternalCQLParser.g:2870:4: otherlv_4= Comma ( (lv_arguments_5_0= RULE_ID ) ) ( (lv_arguments_6_0= RULE_ID ) )
             	    {
             	    otherlv_4=(Token)match(input,Comma,FOLLOW_5); 
 
             	    				newLeafNode(otherlv_4, grammarAccess.getSchemaDefinitionAccess().getCommaKeyword_4_0());
             	    			
-            	    // InternalCQLParser.g:2822:4: ( (lv_arguments_5_0= RULE_ID ) )
-            	    // InternalCQLParser.g:2823:5: (lv_arguments_5_0= RULE_ID )
+            	    // InternalCQLParser.g:2874:4: ( (lv_arguments_5_0= RULE_ID ) )
+            	    // InternalCQLParser.g:2875:5: (lv_arguments_5_0= RULE_ID )
             	    {
-            	    // InternalCQLParser.g:2823:5: (lv_arguments_5_0= RULE_ID )
-            	    // InternalCQLParser.g:2824:6: lv_arguments_5_0= RULE_ID
+            	    // InternalCQLParser.g:2875:5: (lv_arguments_5_0= RULE_ID )
+            	    // InternalCQLParser.g:2876:6: lv_arguments_5_0= RULE_ID
             	    {
             	    lv_arguments_5_0=(Token)match(input,RULE_ID,FOLLOW_5); 
 
@@ -7710,13 +7775,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:2840:4: ( (lv_arguments_6_0= RULE_ID ) )
-            	    // InternalCQLParser.g:2841:5: (lv_arguments_6_0= RULE_ID )
+            	    // InternalCQLParser.g:2892:4: ( (lv_arguments_6_0= RULE_ID ) )
+            	    // InternalCQLParser.g:2893:5: (lv_arguments_6_0= RULE_ID )
             	    {
-            	    // InternalCQLParser.g:2841:5: (lv_arguments_6_0= RULE_ID )
-            	    // InternalCQLParser.g:2842:6: lv_arguments_6_0= RULE_ID
+            	    // InternalCQLParser.g:2893:5: (lv_arguments_6_0= RULE_ID )
+            	    // InternalCQLParser.g:2894:6: lv_arguments_6_0= RULE_ID
             	    {
-            	    lv_arguments_6_0=(Token)match(input,RULE_ID,FOLLOW_38); 
+            	    lv_arguments_6_0=(Token)match(input,RULE_ID,FOLLOW_41); 
 
             	    						newLeafNode(lv_arguments_6_0, grammarAccess.getSchemaDefinitionAccess().getArgumentsIDTerminalRuleCall_4_2_0());
             	    					
@@ -7772,7 +7837,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreate"
-    // InternalCQLParser.g:2867:1: entryRuleCreate returns [EObject current=null] : iv_ruleCreate= ruleCreate EOF ;
+    // InternalCQLParser.g:2919:1: entryRuleCreate returns [EObject current=null] : iv_ruleCreate= ruleCreate EOF ;
     public final EObject entryRuleCreate() throws RecognitionException {
         EObject current = null;
 
@@ -7780,8 +7845,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:2867:47: (iv_ruleCreate= ruleCreate EOF )
-            // InternalCQLParser.g:2868:2: iv_ruleCreate= ruleCreate EOF
+            // InternalCQLParser.g:2919:47: (iv_ruleCreate= ruleCreate EOF )
+            // InternalCQLParser.g:2920:2: iv_ruleCreate= ruleCreate EOF
             {
              newCompositeNode(grammarAccess.getCreateRule()); 
             pushFollow(FOLLOW_1);
@@ -7808,7 +7873,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreate"
-    // InternalCQLParser.g:2874:1: ruleCreate returns [EObject current=null] : ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) ) ;
+    // InternalCQLParser.g:2926:1: ruleCreate returns [EObject current=null] : ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) ) ;
     public final EObject ruleCreate() throws RecognitionException {
         EObject current = null;
 
@@ -7834,14 +7899,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:2880:2: ( ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) ) )
-            // InternalCQLParser.g:2881:2: ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) )
+            // InternalCQLParser.g:2932:2: ( ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) ) )
+            // InternalCQLParser.g:2933:2: ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) )
             {
-            // InternalCQLParser.g:2881:2: ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) )
-            // InternalCQLParser.g:2882:3: () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) )
+            // InternalCQLParser.g:2933:2: ( () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) ) )
+            // InternalCQLParser.g:2934:3: () (otherlv_1= CREATE | otherlv_2= ATTACH ) ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) ) ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) )
             {
-            // InternalCQLParser.g:2882:3: ()
-            // InternalCQLParser.g:2883:4: 
+            // InternalCQLParser.g:2934:3: ()
+            // InternalCQLParser.g:2935:4: 
             {
 
             				current = forceCreateModelElement(
@@ -7851,7 +7916,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2889:3: (otherlv_1= CREATE | otherlv_2= ATTACH )
+            // InternalCQLParser.g:2941:3: (otherlv_1= CREATE | otherlv_2= ATTACH )
             int alt45=2;
             int LA45_0 = input.LA(1);
 
@@ -7869,9 +7934,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt45) {
                 case 1 :
-                    // InternalCQLParser.g:2890:4: otherlv_1= CREATE
+                    // InternalCQLParser.g:2942:4: otherlv_1= CREATE
                     {
-                    otherlv_1=(Token)match(input,CREATE,FOLLOW_39); 
+                    otherlv_1=(Token)match(input,CREATE,FOLLOW_42); 
 
                     				newLeafNode(otherlv_1, grammarAccess.getCreateAccess().getCREATEKeyword_1_0());
                     			
@@ -7879,9 +7944,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2895:4: otherlv_2= ATTACH
+                    // InternalCQLParser.g:2947:4: otherlv_2= ATTACH
                     {
-                    otherlv_2=(Token)match(input,ATTACH,FOLLOW_39); 
+                    otherlv_2=(Token)match(input,ATTACH,FOLLOW_42); 
 
                     				newLeafNode(otherlv_2, grammarAccess.getCreateAccess().getATTACHKeyword_1_1());
                     			
@@ -7891,13 +7956,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2900:3: ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) )
-            // InternalCQLParser.g:2901:4: ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) )
+            // InternalCQLParser.g:2952:3: ( ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) ) )
+            // InternalCQLParser.g:2953:4: ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) )
             {
-            // InternalCQLParser.g:2901:4: ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) )
-            // InternalCQLParser.g:2902:5: (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW )
+            // InternalCQLParser.g:2953:4: ( (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW ) )
+            // InternalCQLParser.g:2954:5: (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW )
             {
-            // InternalCQLParser.g:2902:5: (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW )
+            // InternalCQLParser.g:2954:5: (lv_type_3_1= STREAM | lv_type_3_2= SINK | lv_type_3_3= VIEW )
             int alt46=3;
             switch ( input.LA(1) ) {
             case STREAM:
@@ -7924,7 +7989,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt46) {
                 case 1 :
-                    // InternalCQLParser.g:2903:6: lv_type_3_1= STREAM
+                    // InternalCQLParser.g:2955:6: lv_type_3_1= STREAM
                     {
                     lv_type_3_1=(Token)match(input,STREAM,FOLLOW_5); 
 
@@ -7940,7 +8005,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2914:6: lv_type_3_2= SINK
+                    // InternalCQLParser.g:2966:6: lv_type_3_2= SINK
                     {
                     lv_type_3_2=(Token)match(input,SINK,FOLLOW_5); 
 
@@ -7956,7 +8021,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:2925:6: lv_type_3_3= VIEW
+                    // InternalCQLParser.g:2977:6: lv_type_3_3= VIEW
                     {
                     lv_type_3_3=(Token)match(input,VIEW,FOLLOW_5); 
 
@@ -7980,18 +8045,18 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:2938:3: ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) )
-            // InternalCQLParser.g:2939:4: ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) )
+            // InternalCQLParser.g:2990:3: ( ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) ) )
+            // InternalCQLParser.g:2991:4: ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) )
             {
-            // InternalCQLParser.g:2939:4: ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) )
-            // InternalCQLParser.g:2940:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )
+            // InternalCQLParser.g:2991:4: ( (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView ) )
+            // InternalCQLParser.g:2992:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )
             {
-            // InternalCQLParser.g:2940:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )
+            // InternalCQLParser.g:2992:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )
             int alt47=6;
             alt47 = dfa47.predict(input);
             switch (alt47) {
                 case 1 :
-                    // InternalCQLParser.g:2941:6: lv_create_4_1= ruleCreateAccessFramework
+                    // InternalCQLParser.g:2993:6: lv_create_4_1= ruleCreateAccessFramework
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateAccessFrameworkParserRuleCall_3_0_0());
@@ -8016,7 +8081,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:2957:6: lv_create_4_2= ruleCreateChannelFrameworkViaPort
+                    // InternalCQLParser.g:3009:6: lv_create_4_2= ruleCreateChannelFrameworkViaPort
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateChannelFrameworkViaPortParserRuleCall_3_0_1());
@@ -8041,7 +8106,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:2973:6: lv_create_4_3= ruleCreateChannelFormatViaFile
+                    // InternalCQLParser.g:3025:6: lv_create_4_3= ruleCreateChannelFormatViaFile
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateChannelFormatViaFileParserRuleCall_3_0_2());
@@ -8066,7 +8131,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:2989:6: lv_create_4_4= ruleCreateDatabaseStream
+                    // InternalCQLParser.g:3041:6: lv_create_4_4= ruleCreateDatabaseStream
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateDatabaseStreamParserRuleCall_3_0_3());
@@ -8091,7 +8156,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCQLParser.g:3005:6: lv_create_4_5= ruleCreateDatabaseSink
+                    // InternalCQLParser.g:3057:6: lv_create_4_5= ruleCreateDatabaseSink
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateDatabaseSinkParserRuleCall_3_0_4());
@@ -8116,7 +8181,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalCQLParser.g:3021:6: lv_create_4_6= ruleCreateView
+                    // InternalCQLParser.g:3073:6: lv_create_4_6= ruleCreateView
                     {
 
                     						newCompositeNode(grammarAccess.getCreateAccess().getCreateCreateViewParserRuleCall_3_0_5());
@@ -8172,7 +8237,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateAccessFramework"
-    // InternalCQLParser.g:3043:1: entryRuleCreateAccessFramework returns [EObject current=null] : iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF ;
+    // InternalCQLParser.g:3095:1: entryRuleCreateAccessFramework returns [EObject current=null] : iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF ;
     public final EObject entryRuleCreateAccessFramework() throws RecognitionException {
         EObject current = null;
 
@@ -8180,8 +8245,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3043:62: (iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF )
-            // InternalCQLParser.g:3044:2: iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF
+            // InternalCQLParser.g:3095:62: (iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF )
+            // InternalCQLParser.g:3096:2: iv_ruleCreateAccessFramework= ruleCreateAccessFramework EOF
             {
              newCompositeNode(grammarAccess.getCreateAccessFrameworkRule()); 
             pushFollow(FOLLOW_1);
@@ -8208,7 +8273,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateAccessFramework"
-    // InternalCQLParser.g:3050:1: ruleCreateAccessFramework returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) ) ;
+    // InternalCQLParser.g:3102:1: ruleCreateAccessFramework returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) ) ;
     public final EObject ruleCreateAccessFramework() throws RecognitionException {
         EObject current = null;
 
@@ -8221,22 +8286,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3056:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) ) )
-            // InternalCQLParser.g:3057:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) )
+            // InternalCQLParser.g:3108:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) ) )
+            // InternalCQLParser.g:3109:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) )
             {
-            // InternalCQLParser.g:3057:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) )
-            // InternalCQLParser.g:3058:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) )
+            // InternalCQLParser.g:3109:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) ) )
+            // InternalCQLParser.g:3110:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) ( (lv_pars_1_0= ruleAccessFramework ) )
             {
-            // InternalCQLParser.g:3058:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
-            // InternalCQLParser.g:3059:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3110:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
+            // InternalCQLParser.g:3111:4: (lv_attributes_0_0= ruleSchemaDefinition )
             {
-            // InternalCQLParser.g:3059:4: (lv_attributes_0_0= ruleSchemaDefinition )
-            // InternalCQLParser.g:3060:5: lv_attributes_0_0= ruleSchemaDefinition
+            // InternalCQLParser.g:3111:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3112:5: lv_attributes_0_0= ruleSchemaDefinition
             {
 
             					newCompositeNode(grammarAccess.getCreateAccessFrameworkAccess().getAttributesSchemaDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_40);
+            pushFollow(FOLLOW_43);
             lv_attributes_0_0=ruleSchemaDefinition();
 
             state._fsp--;
@@ -8258,11 +8323,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3077:3: ( (lv_pars_1_0= ruleAccessFramework ) )
-            // InternalCQLParser.g:3078:4: (lv_pars_1_0= ruleAccessFramework )
+            // InternalCQLParser.g:3129:3: ( (lv_pars_1_0= ruleAccessFramework ) )
+            // InternalCQLParser.g:3130:4: (lv_pars_1_0= ruleAccessFramework )
             {
-            // InternalCQLParser.g:3078:4: (lv_pars_1_0= ruleAccessFramework )
-            // InternalCQLParser.g:3079:5: lv_pars_1_0= ruleAccessFramework
+            // InternalCQLParser.g:3130:4: (lv_pars_1_0= ruleAccessFramework )
+            // InternalCQLParser.g:3131:5: lv_pars_1_0= ruleAccessFramework
             {
 
             					newCompositeNode(grammarAccess.getCreateAccessFrameworkAccess().getParsAccessFrameworkParserRuleCall_1_0());
@@ -8312,7 +8377,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateChannelFrameworkViaPort"
-    // InternalCQLParser.g:3100:1: entryRuleCreateChannelFrameworkViaPort returns [EObject current=null] : iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF ;
+    // InternalCQLParser.g:3152:1: entryRuleCreateChannelFrameworkViaPort returns [EObject current=null] : iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF ;
     public final EObject entryRuleCreateChannelFrameworkViaPort() throws RecognitionException {
         EObject current = null;
 
@@ -8320,8 +8385,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3100:70: (iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF )
-            // InternalCQLParser.g:3101:2: iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF
+            // InternalCQLParser.g:3152:70: (iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF )
+            // InternalCQLParser.g:3153:2: iv_ruleCreateChannelFrameworkViaPort= ruleCreateChannelFrameworkViaPort EOF
             {
              newCompositeNode(grammarAccess.getCreateChannelFrameworkViaPortRule()); 
             pushFollow(FOLLOW_1);
@@ -8348,7 +8413,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateChannelFrameworkViaPort"
-    // InternalCQLParser.g:3107:1: ruleCreateChannelFrameworkViaPort returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) ) ;
+    // InternalCQLParser.g:3159:1: ruleCreateChannelFrameworkViaPort returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) ) ;
     public final EObject ruleCreateChannelFrameworkViaPort() throws RecognitionException {
         EObject current = null;
 
@@ -8363,22 +8428,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3113:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) ) )
-            // InternalCQLParser.g:3114:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) )
+            // InternalCQLParser.g:3165:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) ) )
+            // InternalCQLParser.g:3166:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) )
             {
-            // InternalCQLParser.g:3114:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) )
-            // InternalCQLParser.g:3115:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) )
+            // InternalCQLParser.g:3166:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) ) )
+            // InternalCQLParser.g:3167:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= CHANNEL ( (lv_host_2_0= RULE_ID ) ) otherlv_3= Colon ( (lv_port_4_0= RULE_INT ) )
             {
-            // InternalCQLParser.g:3115:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
-            // InternalCQLParser.g:3116:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3167:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
+            // InternalCQLParser.g:3168:4: (lv_attributes_0_0= ruleSchemaDefinition )
             {
-            // InternalCQLParser.g:3116:4: (lv_attributes_0_0= ruleSchemaDefinition )
-            // InternalCQLParser.g:3117:5: lv_attributes_0_0= ruleSchemaDefinition
+            // InternalCQLParser.g:3168:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3169:5: lv_attributes_0_0= ruleSchemaDefinition
             {
 
             					newCompositeNode(grammarAccess.getCreateChannelFrameworkViaPortAccess().getAttributesSchemaDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_44);
             lv_attributes_0_0=ruleSchemaDefinition();
 
             state._fsp--;
@@ -8404,13 +8469,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateChannelFrameworkViaPortAccess().getCHANNELKeyword_1());
             		
-            // InternalCQLParser.g:3138:3: ( (lv_host_2_0= RULE_ID ) )
-            // InternalCQLParser.g:3139:4: (lv_host_2_0= RULE_ID )
+            // InternalCQLParser.g:3190:3: ( (lv_host_2_0= RULE_ID ) )
+            // InternalCQLParser.g:3191:4: (lv_host_2_0= RULE_ID )
             {
-            // InternalCQLParser.g:3139:4: (lv_host_2_0= RULE_ID )
-            // InternalCQLParser.g:3140:5: lv_host_2_0= RULE_ID
+            // InternalCQLParser.g:3191:4: (lv_host_2_0= RULE_ID )
+            // InternalCQLParser.g:3192:5: lv_host_2_0= RULE_ID
             {
-            lv_host_2_0=(Token)match(input,RULE_ID,FOLLOW_42); 
+            lv_host_2_0=(Token)match(input,RULE_ID,FOLLOW_45); 
 
             					newLeafNode(lv_host_2_0, grammarAccess.getCreateChannelFrameworkViaPortAccess().getHostIDTerminalRuleCall_2_0());
             				
@@ -8430,15 +8495,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_3=(Token)match(input,Colon,FOLLOW_43); 
+            otherlv_3=(Token)match(input,Colon,FOLLOW_46); 
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateChannelFrameworkViaPortAccess().getColonKeyword_3());
             		
-            // InternalCQLParser.g:3160:3: ( (lv_port_4_0= RULE_INT ) )
-            // InternalCQLParser.g:3161:4: (lv_port_4_0= RULE_INT )
+            // InternalCQLParser.g:3212:3: ( (lv_port_4_0= RULE_INT ) )
+            // InternalCQLParser.g:3213:4: (lv_port_4_0= RULE_INT )
             {
-            // InternalCQLParser.g:3161:4: (lv_port_4_0= RULE_INT )
-            // InternalCQLParser.g:3162:5: lv_port_4_0= RULE_INT
+            // InternalCQLParser.g:3213:4: (lv_port_4_0= RULE_INT )
+            // InternalCQLParser.g:3214:5: lv_port_4_0= RULE_INT
             {
             lv_port_4_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -8483,7 +8548,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateChannelFormatViaFile"
-    // InternalCQLParser.g:3182:1: entryRuleCreateChannelFormatViaFile returns [EObject current=null] : iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF ;
+    // InternalCQLParser.g:3234:1: entryRuleCreateChannelFormatViaFile returns [EObject current=null] : iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF ;
     public final EObject entryRuleCreateChannelFormatViaFile() throws RecognitionException {
         EObject current = null;
 
@@ -8491,8 +8556,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3182:67: (iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF )
-            // InternalCQLParser.g:3183:2: iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF
+            // InternalCQLParser.g:3234:67: (iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF )
+            // InternalCQLParser.g:3235:2: iv_ruleCreateChannelFormatViaFile= ruleCreateChannelFormatViaFile EOF
             {
              newCompositeNode(grammarAccess.getCreateChannelFormatViaFileRule()); 
             pushFollow(FOLLOW_1);
@@ -8519,7 +8584,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateChannelFormatViaFile"
-    // InternalCQLParser.g:3189:1: ruleCreateChannelFormatViaFile returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) ) ;
+    // InternalCQLParser.g:3241:1: ruleCreateChannelFormatViaFile returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) ) ;
     public final EObject ruleCreateChannelFormatViaFile() throws RecognitionException {
         EObject current = null;
 
@@ -8534,22 +8599,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3195:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) ) )
-            // InternalCQLParser.g:3196:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) )
+            // InternalCQLParser.g:3247:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:3248:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) )
             {
-            // InternalCQLParser.g:3196:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) )
-            // InternalCQLParser.g:3197:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3248:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) ) )
+            // InternalCQLParser.g:3249:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= FILE ( (lv_filename_2_0= RULE_STRING ) ) otherlv_3= AS ( (lv_type_4_0= RULE_ID ) )
             {
-            // InternalCQLParser.g:3197:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
-            // InternalCQLParser.g:3198:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3249:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
+            // InternalCQLParser.g:3250:4: (lv_attributes_0_0= ruleSchemaDefinition )
             {
-            // InternalCQLParser.g:3198:4: (lv_attributes_0_0= ruleSchemaDefinition )
-            // InternalCQLParser.g:3199:5: lv_attributes_0_0= ruleSchemaDefinition
+            // InternalCQLParser.g:3250:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3251:5: lv_attributes_0_0= ruleSchemaDefinition
             {
 
             					newCompositeNode(grammarAccess.getCreateChannelFormatViaFileAccess().getAttributesSchemaDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_44);
+            pushFollow(FOLLOW_47);
             lv_attributes_0_0=ruleSchemaDefinition();
 
             state._fsp--;
@@ -8571,17 +8636,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,FILE,FOLLOW_31); 
+            otherlv_1=(Token)match(input,FILE,FOLLOW_34); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateChannelFormatViaFileAccess().getFILEKeyword_1());
             		
-            // InternalCQLParser.g:3220:3: ( (lv_filename_2_0= RULE_STRING ) )
-            // InternalCQLParser.g:3221:4: (lv_filename_2_0= RULE_STRING )
+            // InternalCQLParser.g:3272:3: ( (lv_filename_2_0= RULE_STRING ) )
+            // InternalCQLParser.g:3273:4: (lv_filename_2_0= RULE_STRING )
             {
-            // InternalCQLParser.g:3221:4: (lv_filename_2_0= RULE_STRING )
-            // InternalCQLParser.g:3222:5: lv_filename_2_0= RULE_STRING
+            // InternalCQLParser.g:3273:4: (lv_filename_2_0= RULE_STRING )
+            // InternalCQLParser.g:3274:5: lv_filename_2_0= RULE_STRING
             {
-            lv_filename_2_0=(Token)match(input,RULE_STRING,FOLLOW_24); 
+            lv_filename_2_0=(Token)match(input,RULE_STRING,FOLLOW_27); 
 
             					newLeafNode(lv_filename_2_0, grammarAccess.getCreateChannelFormatViaFileAccess().getFilenameSTRINGTerminalRuleCall_2_0());
             				
@@ -8605,11 +8670,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateChannelFormatViaFileAccess().getASKeyword_3());
             		
-            // InternalCQLParser.g:3242:3: ( (lv_type_4_0= RULE_ID ) )
-            // InternalCQLParser.g:3243:4: (lv_type_4_0= RULE_ID )
+            // InternalCQLParser.g:3294:3: ( (lv_type_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3295:4: (lv_type_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:3243:4: (lv_type_4_0= RULE_ID )
-            // InternalCQLParser.g:3244:5: lv_type_4_0= RULE_ID
+            // InternalCQLParser.g:3295:4: (lv_type_4_0= RULE_ID )
+            // InternalCQLParser.g:3296:5: lv_type_4_0= RULE_ID
             {
             lv_type_4_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -8654,7 +8719,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateDatabaseStream"
-    // InternalCQLParser.g:3264:1: entryRuleCreateDatabaseStream returns [EObject current=null] : iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF ;
+    // InternalCQLParser.g:3316:1: entryRuleCreateDatabaseStream returns [EObject current=null] : iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF ;
     public final EObject entryRuleCreateDatabaseStream() throws RecognitionException {
         EObject current = null;
 
@@ -8662,8 +8727,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3264:61: (iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF )
-            // InternalCQLParser.g:3265:2: iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF
+            // InternalCQLParser.g:3316:61: (iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF )
+            // InternalCQLParser.g:3317:2: iv_ruleCreateDatabaseStream= ruleCreateDatabaseStream EOF
             {
              newCompositeNode(grammarAccess.getCreateDatabaseStreamRule()); 
             pushFollow(FOLLOW_1);
@@ -8690,7 +8755,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateDatabaseStream"
-    // InternalCQLParser.g:3271:1: ruleCreateDatabaseStream returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? ) ;
+    // InternalCQLParser.g:3323:1: ruleCreateDatabaseStream returns [EObject current=null] : ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? ) ;
     public final EObject ruleCreateDatabaseStream() throws RecognitionException {
         EObject current = null;
 
@@ -8709,22 +8774,22 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3277:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? ) )
-            // InternalCQLParser.g:3278:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? )
+            // InternalCQLParser.g:3329:2: ( ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? ) )
+            // InternalCQLParser.g:3330:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? )
             {
-            // InternalCQLParser.g:3278:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? )
-            // InternalCQLParser.g:3279:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )?
+            // InternalCQLParser.g:3330:2: ( ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )? )
+            // InternalCQLParser.g:3331:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) ) otherlv_1= DATABASE ( (lv_database_2_0= RULE_ID ) ) otherlv_3= TABLE ( (lv_table_4_0= RULE_ID ) ) (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )?
             {
-            // InternalCQLParser.g:3279:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
-            // InternalCQLParser.g:3280:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3331:3: ( (lv_attributes_0_0= ruleSchemaDefinition ) )
+            // InternalCQLParser.g:3332:4: (lv_attributes_0_0= ruleSchemaDefinition )
             {
-            // InternalCQLParser.g:3280:4: (lv_attributes_0_0= ruleSchemaDefinition )
-            // InternalCQLParser.g:3281:5: lv_attributes_0_0= ruleSchemaDefinition
+            // InternalCQLParser.g:3332:4: (lv_attributes_0_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:3333:5: lv_attributes_0_0= ruleSchemaDefinition
             {
 
             					newCompositeNode(grammarAccess.getCreateDatabaseStreamAccess().getAttributesSchemaDefinitionParserRuleCall_0_0());
             				
-            pushFollow(FOLLOW_45);
+            pushFollow(FOLLOW_48);
             lv_attributes_0_0=ruleSchemaDefinition();
 
             state._fsp--;
@@ -8750,13 +8815,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateDatabaseStreamAccess().getDATABASEKeyword_1());
             		
-            // InternalCQLParser.g:3302:3: ( (lv_database_2_0= RULE_ID ) )
-            // InternalCQLParser.g:3303:4: (lv_database_2_0= RULE_ID )
+            // InternalCQLParser.g:3354:3: ( (lv_database_2_0= RULE_ID ) )
+            // InternalCQLParser.g:3355:4: (lv_database_2_0= RULE_ID )
             {
-            // InternalCQLParser.g:3303:4: (lv_database_2_0= RULE_ID )
-            // InternalCQLParser.g:3304:5: lv_database_2_0= RULE_ID
+            // InternalCQLParser.g:3355:4: (lv_database_2_0= RULE_ID )
+            // InternalCQLParser.g:3356:5: lv_database_2_0= RULE_ID
             {
-            lv_database_2_0=(Token)match(input,RULE_ID,FOLLOW_46); 
+            lv_database_2_0=(Token)match(input,RULE_ID,FOLLOW_49); 
 
             					newLeafNode(lv_database_2_0, grammarAccess.getCreateDatabaseStreamAccess().getDatabaseIDTerminalRuleCall_2_0());
             				
@@ -8780,13 +8845,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateDatabaseStreamAccess().getTABLEKeyword_3());
             		
-            // InternalCQLParser.g:3324:3: ( (lv_table_4_0= RULE_ID ) )
-            // InternalCQLParser.g:3325:4: (lv_table_4_0= RULE_ID )
+            // InternalCQLParser.g:3376:3: ( (lv_table_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3377:4: (lv_table_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:3325:4: (lv_table_4_0= RULE_ID )
-            // InternalCQLParser.g:3326:5: lv_table_4_0= RULE_ID
+            // InternalCQLParser.g:3377:4: (lv_table_4_0= RULE_ID )
+            // InternalCQLParser.g:3378:5: lv_table_4_0= RULE_ID
             {
-            lv_table_4_0=(Token)match(input,RULE_ID,FOLLOW_47); 
+            lv_table_4_0=(Token)match(input,RULE_ID,FOLLOW_50); 
 
             					newLeafNode(lv_table_4_0, grammarAccess.getCreateDatabaseStreamAccess().getTableIDTerminalRuleCall_4_0());
             				
@@ -8806,7 +8871,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3342:3: (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )?
+            // InternalCQLParser.g:3394:3: (otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) ) )?
             int alt48=2;
             int LA48_0 = input.LA(1);
 
@@ -8815,19 +8880,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt48) {
                 case 1 :
-                    // InternalCQLParser.g:3343:4: otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) )
+                    // InternalCQLParser.g:3395:4: otherlv_5= EACH ( (lv_size_6_0= RULE_INT ) ) ( (lv_unit_7_0= ruleTime ) )
                     {
-                    otherlv_5=(Token)match(input,EACH,FOLLOW_43); 
+                    otherlv_5=(Token)match(input,EACH,FOLLOW_46); 
 
                     				newLeafNode(otherlv_5, grammarAccess.getCreateDatabaseStreamAccess().getEACHKeyword_5_0());
                     			
-                    // InternalCQLParser.g:3347:4: ( (lv_size_6_0= RULE_INT ) )
-                    // InternalCQLParser.g:3348:5: (lv_size_6_0= RULE_INT )
+                    // InternalCQLParser.g:3399:4: ( (lv_size_6_0= RULE_INT ) )
+                    // InternalCQLParser.g:3400:5: (lv_size_6_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:3348:5: (lv_size_6_0= RULE_INT )
-                    // InternalCQLParser.g:3349:6: lv_size_6_0= RULE_INT
+                    // InternalCQLParser.g:3400:5: (lv_size_6_0= RULE_INT )
+                    // InternalCQLParser.g:3401:6: lv_size_6_0= RULE_INT
                     {
-                    lv_size_6_0=(Token)match(input,RULE_INT,FOLLOW_48); 
+                    lv_size_6_0=(Token)match(input,RULE_INT,FOLLOW_51); 
 
                     						newLeafNode(lv_size_6_0, grammarAccess.getCreateDatabaseStreamAccess().getSizeINTTerminalRuleCall_5_1_0());
                     					
@@ -8847,11 +8912,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:3365:4: ( (lv_unit_7_0= ruleTime ) )
-                    // InternalCQLParser.g:3366:5: (lv_unit_7_0= ruleTime )
+                    // InternalCQLParser.g:3417:4: ( (lv_unit_7_0= ruleTime ) )
+                    // InternalCQLParser.g:3418:5: (lv_unit_7_0= ruleTime )
                     {
-                    // InternalCQLParser.g:3366:5: (lv_unit_7_0= ruleTime )
-                    // InternalCQLParser.g:3367:6: lv_unit_7_0= ruleTime
+                    // InternalCQLParser.g:3418:5: (lv_unit_7_0= ruleTime )
+                    // InternalCQLParser.g:3419:6: lv_unit_7_0= ruleTime
                     {
 
                     						newCompositeNode(grammarAccess.getCreateDatabaseStreamAccess().getUnitTimeEnumRuleCall_5_2_0());
@@ -8907,7 +8972,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateDatabaseSink"
-    // InternalCQLParser.g:3389:1: entryRuleCreateDatabaseSink returns [EObject current=null] : iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF ;
+    // InternalCQLParser.g:3441:1: entryRuleCreateDatabaseSink returns [EObject current=null] : iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF ;
     public final EObject entryRuleCreateDatabaseSink() throws RecognitionException {
         EObject current = null;
 
@@ -8915,8 +8980,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3389:59: (iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF )
-            // InternalCQLParser.g:3390:2: iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF
+            // InternalCQLParser.g:3441:59: (iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF )
+            // InternalCQLParser.g:3442:2: iv_ruleCreateDatabaseSink= ruleCreateDatabaseSink EOF
             {
              newCompositeNode(grammarAccess.getCreateDatabaseSinkRule()); 
             pushFollow(FOLLOW_1);
@@ -8943,7 +9008,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateDatabaseSink"
-    // InternalCQLParser.g:3396:1: ruleCreateDatabaseSink returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? ) ;
+    // InternalCQLParser.g:3448:1: ruleCreateDatabaseSink returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? ) ;
     public final EObject ruleCreateDatabaseSink() throws RecognitionException {
         EObject current = null;
 
@@ -8961,19 +9026,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3402:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? ) )
-            // InternalCQLParser.g:3403:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? )
+            // InternalCQLParser.g:3454:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? ) )
+            // InternalCQLParser.g:3455:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? )
             {
-            // InternalCQLParser.g:3403:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? )
-            // InternalCQLParser.g:3404:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )?
+            // InternalCQLParser.g:3455:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )? )
+            // InternalCQLParser.g:3456:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= AS otherlv_2= DATABASE ( (lv_database_3_0= RULE_ID ) ) otherlv_4= TABLE ( (lv_table_5_0= RULE_ID ) ) (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )?
             {
-            // InternalCQLParser.g:3404:3: ( (lv_name_0_0= RULE_ID ) )
-            // InternalCQLParser.g:3405:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:3456:3: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQLParser.g:3457:4: (lv_name_0_0= RULE_ID )
             {
-            // InternalCQLParser.g:3405:4: (lv_name_0_0= RULE_ID )
-            // InternalCQLParser.g:3406:5: lv_name_0_0= RULE_ID
+            // InternalCQLParser.g:3457:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:3458:5: lv_name_0_0= RULE_ID
             {
-            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_24); 
+            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_27); 
 
             					newLeafNode(lv_name_0_0, grammarAccess.getCreateDatabaseSinkAccess().getNameIDTerminalRuleCall_0_0());
             				
@@ -8993,7 +9058,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,AS,FOLLOW_45); 
+            otherlv_1=(Token)match(input,AS,FOLLOW_48); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateDatabaseSinkAccess().getASKeyword_1());
             		
@@ -9001,13 +9066,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_2, grammarAccess.getCreateDatabaseSinkAccess().getDATABASEKeyword_2());
             		
-            // InternalCQLParser.g:3430:3: ( (lv_database_3_0= RULE_ID ) )
-            // InternalCQLParser.g:3431:4: (lv_database_3_0= RULE_ID )
+            // InternalCQLParser.g:3482:3: ( (lv_database_3_0= RULE_ID ) )
+            // InternalCQLParser.g:3483:4: (lv_database_3_0= RULE_ID )
             {
-            // InternalCQLParser.g:3431:4: (lv_database_3_0= RULE_ID )
-            // InternalCQLParser.g:3432:5: lv_database_3_0= RULE_ID
+            // InternalCQLParser.g:3483:4: (lv_database_3_0= RULE_ID )
+            // InternalCQLParser.g:3484:5: lv_database_3_0= RULE_ID
             {
-            lv_database_3_0=(Token)match(input,RULE_ID,FOLLOW_46); 
+            lv_database_3_0=(Token)match(input,RULE_ID,FOLLOW_49); 
 
             					newLeafNode(lv_database_3_0, grammarAccess.getCreateDatabaseSinkAccess().getDatabaseIDTerminalRuleCall_3_0());
             				
@@ -9031,13 +9096,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_4, grammarAccess.getCreateDatabaseSinkAccess().getTABLEKeyword_4());
             		
-            // InternalCQLParser.g:3452:3: ( (lv_table_5_0= RULE_ID ) )
-            // InternalCQLParser.g:3453:4: (lv_table_5_0= RULE_ID )
+            // InternalCQLParser.g:3504:3: ( (lv_table_5_0= RULE_ID ) )
+            // InternalCQLParser.g:3505:4: (lv_table_5_0= RULE_ID )
             {
-            // InternalCQLParser.g:3453:4: (lv_table_5_0= RULE_ID )
-            // InternalCQLParser.g:3454:5: lv_table_5_0= RULE_ID
+            // InternalCQLParser.g:3505:4: (lv_table_5_0= RULE_ID )
+            // InternalCQLParser.g:3506:5: lv_table_5_0= RULE_ID
             {
-            lv_table_5_0=(Token)match(input,RULE_ID,FOLLOW_49); 
+            lv_table_5_0=(Token)match(input,RULE_ID,FOLLOW_52); 
 
             					newLeafNode(lv_table_5_0, grammarAccess.getCreateDatabaseSinkAccess().getTableIDTerminalRuleCall_5_0());
             				
@@ -9057,7 +9122,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3470:3: (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )?
+            // InternalCQLParser.g:3522:3: (otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) ) )?
             int alt50=2;
             int LA50_0 = input.LA(1);
 
@@ -9066,19 +9131,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt50) {
                 case 1 :
-                    // InternalCQLParser.g:3471:4: otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) )
+                    // InternalCQLParser.g:3523:4: otherlv_6= AND ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) )
                     {
-                    otherlv_6=(Token)match(input,AND,FOLLOW_50); 
+                    otherlv_6=(Token)match(input,AND,FOLLOW_53); 
 
                     				newLeafNode(otherlv_6, grammarAccess.getCreateDatabaseSinkAccess().getANDKeyword_6_0());
                     			
-                    // InternalCQLParser.g:3475:4: ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) )
-                    // InternalCQLParser.g:3476:5: ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) )
+                    // InternalCQLParser.g:3527:4: ( ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) ) )
+                    // InternalCQLParser.g:3528:5: ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) )
                     {
-                    // InternalCQLParser.g:3476:5: ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) )
-                    // InternalCQLParser.g:3477:6: (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE )
+                    // InternalCQLParser.g:3528:5: ( (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE ) )
+                    // InternalCQLParser.g:3529:6: (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE )
                     {
-                    // InternalCQLParser.g:3477:6: (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE )
+                    // InternalCQLParser.g:3529:6: (lv_option_7_1= DROP | lv_option_7_2= TRUNCATE )
                     int alt49=2;
                     int LA49_0 = input.LA(1);
 
@@ -9096,7 +9161,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt49) {
                         case 1 :
-                            // InternalCQLParser.g:3478:7: lv_option_7_1= DROP
+                            // InternalCQLParser.g:3530:7: lv_option_7_1= DROP
                             {
                             lv_option_7_1=(Token)match(input,DROP,FOLLOW_2); 
 
@@ -9112,7 +9177,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalCQLParser.g:3489:7: lv_option_7_2= TRUNCATE
+                            // InternalCQLParser.g:3541:7: lv_option_7_2= TRUNCATE
                             {
                             lv_option_7_2=(Token)match(input,TRUNCATE,FOLLOW_2); 
 
@@ -9165,7 +9230,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateView"
-    // InternalCQLParser.g:3507:1: entryRuleCreateView returns [EObject current=null] : iv_ruleCreateView= ruleCreateView EOF ;
+    // InternalCQLParser.g:3559:1: entryRuleCreateView returns [EObject current=null] : iv_ruleCreateView= ruleCreateView EOF ;
     public final EObject entryRuleCreateView() throws RecognitionException {
         EObject current = null;
 
@@ -9173,8 +9238,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3507:51: (iv_ruleCreateView= ruleCreateView EOF )
-            // InternalCQLParser.g:3508:2: iv_ruleCreateView= ruleCreateView EOF
+            // InternalCQLParser.g:3559:51: (iv_ruleCreateView= ruleCreateView EOF )
+            // InternalCQLParser.g:3560:2: iv_ruleCreateView= ruleCreateView EOF
             {
              newCompositeNode(grammarAccess.getCreateViewRule()); 
             pushFollow(FOLLOW_1);
@@ -9201,7 +9266,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateView"
-    // InternalCQLParser.g:3514:1: ruleCreateView returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) ) ;
+    // InternalCQLParser.g:3566:1: ruleCreateView returns [EObject current=null] : ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) ) ;
     public final EObject ruleCreateView() throws RecognitionException {
         EObject current = null;
 
@@ -9214,19 +9279,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3520:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) ) )
-            // InternalCQLParser.g:3521:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) )
+            // InternalCQLParser.g:3572:2: ( ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) ) )
+            // InternalCQLParser.g:3573:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) )
             {
-            // InternalCQLParser.g:3521:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) )
-            // InternalCQLParser.g:3522:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) )
+            // InternalCQLParser.g:3573:2: ( ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) ) )
+            // InternalCQLParser.g:3574:3: ( (lv_name_0_0= RULE_ID ) ) otherlv_1= FROM ( (lv_select_2_0= ruleInnerSelect ) )
             {
-            // InternalCQLParser.g:3522:3: ( (lv_name_0_0= RULE_ID ) )
-            // InternalCQLParser.g:3523:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:3574:3: ( (lv_name_0_0= RULE_ID ) )
+            // InternalCQLParser.g:3575:4: (lv_name_0_0= RULE_ID )
             {
-            // InternalCQLParser.g:3523:4: (lv_name_0_0= RULE_ID )
-            // InternalCQLParser.g:3524:5: lv_name_0_0= RULE_ID
+            // InternalCQLParser.g:3575:4: (lv_name_0_0= RULE_ID )
+            // InternalCQLParser.g:3576:5: lv_name_0_0= RULE_ID
             {
-            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_8); 
+            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_10); 
 
             					newLeafNode(lv_name_0_0, grammarAccess.getCreateViewAccess().getNameIDTerminalRuleCall_0_0());
             				
@@ -9246,15 +9311,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,FROM,FOLLOW_11); 
+            otherlv_1=(Token)match(input,FROM,FOLLOW_13); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateViewAccess().getFROMKeyword_1());
             		
-            // InternalCQLParser.g:3544:3: ( (lv_select_2_0= ruleInnerSelect ) )
-            // InternalCQLParser.g:3545:4: (lv_select_2_0= ruleInnerSelect )
+            // InternalCQLParser.g:3596:3: ( (lv_select_2_0= ruleInnerSelect ) )
+            // InternalCQLParser.g:3597:4: (lv_select_2_0= ruleInnerSelect )
             {
-            // InternalCQLParser.g:3545:4: (lv_select_2_0= ruleInnerSelect )
-            // InternalCQLParser.g:3546:5: lv_select_2_0= ruleInnerSelect
+            // InternalCQLParser.g:3597:4: (lv_select_2_0= ruleInnerSelect )
+            // InternalCQLParser.g:3598:5: lv_select_2_0= ruleInnerSelect
             {
 
             					newCompositeNode(grammarAccess.getCreateViewAccess().getSelectInnerSelectParserRuleCall_2_0());
@@ -9304,7 +9369,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateDataBaseJDBCConnection"
-    // InternalCQLParser.g:3567:1: entryRuleCreateDataBaseJDBCConnection returns [EObject current=null] : iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF ;
+    // InternalCQLParser.g:3619:1: entryRuleCreateDataBaseJDBCConnection returns [EObject current=null] : iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF ;
     public final EObject entryRuleCreateDataBaseJDBCConnection() throws RecognitionException {
         EObject current = null;
 
@@ -9312,8 +9377,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3567:69: (iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF )
-            // InternalCQLParser.g:3568:2: iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF
+            // InternalCQLParser.g:3619:69: (iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF )
+            // InternalCQLParser.g:3620:2: iv_ruleCreateDataBaseJDBCConnection= ruleCreateDataBaseJDBCConnection EOF
             {
              newCompositeNode(grammarAccess.getCreateDataBaseJDBCConnectionRule()); 
             pushFollow(FOLLOW_1);
@@ -9340,7 +9405,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateDataBaseJDBCConnection"
-    // InternalCQLParser.g:3574:1: ruleCreateDataBaseJDBCConnection returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) ;
+    // InternalCQLParser.g:3626:1: ruleCreateDataBaseJDBCConnection returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) ;
     public final EObject ruleCreateDataBaseJDBCConnection() throws RecognitionException {
         EObject current = null;
 
@@ -9361,14 +9426,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3580:2: ( ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) )
-            // InternalCQLParser.g:3581:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
+            // InternalCQLParser.g:3632:2: ( ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) )
+            // InternalCQLParser.g:3633:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
             {
-            // InternalCQLParser.g:3581:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
-            // InternalCQLParser.g:3582:3: () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )?
+            // InternalCQLParser.g:3633:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
+            // InternalCQLParser.g:3634:3: () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= JDBC ( (lv_server_6_0= RULE_ID ) ) (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )?
             {
-            // InternalCQLParser.g:3582:3: ()
-            // InternalCQLParser.g:3583:4: 
+            // InternalCQLParser.g:3634:3: ()
+            // InternalCQLParser.g:3635:4: 
             {
 
             				current = forceCreateModelElement(
@@ -9378,11 +9443,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,CREATE,FOLLOW_45); 
+            otherlv_1=(Token)match(input,CREATE,FOLLOW_48); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getCREATEKeyword_1());
             		
-            otherlv_2=(Token)match(input,DATABASE,FOLLOW_51); 
+            otherlv_2=(Token)match(input,DATABASE,FOLLOW_54); 
 
             			newLeafNode(otherlv_2, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getDATABASEKeyword_2());
             		
@@ -9390,13 +9455,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getCONNECTIONKeyword_3());
             		
-            // InternalCQLParser.g:3601:3: ( (lv_name_4_0= RULE_ID ) )
-            // InternalCQLParser.g:3602:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:3653:3: ( (lv_name_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3654:4: (lv_name_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:3602:4: (lv_name_4_0= RULE_ID )
-            // InternalCQLParser.g:3603:5: lv_name_4_0= RULE_ID
+            // InternalCQLParser.g:3654:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:3655:5: lv_name_4_0= RULE_ID
             {
-            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_52); 
+            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_55); 
 
             					newLeafNode(lv_name_4_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getNameIDTerminalRuleCall_4_0());
             				
@@ -9420,13 +9485,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getJDBCKeyword_5());
             		
-            // InternalCQLParser.g:3623:3: ( (lv_server_6_0= RULE_ID ) )
-            // InternalCQLParser.g:3624:4: (lv_server_6_0= RULE_ID )
+            // InternalCQLParser.g:3675:3: ( (lv_server_6_0= RULE_ID ) )
+            // InternalCQLParser.g:3676:4: (lv_server_6_0= RULE_ID )
             {
-            // InternalCQLParser.g:3624:4: (lv_server_6_0= RULE_ID )
-            // InternalCQLParser.g:3625:5: lv_server_6_0= RULE_ID
+            // InternalCQLParser.g:3676:4: (lv_server_6_0= RULE_ID )
+            // InternalCQLParser.g:3677:5: lv_server_6_0= RULE_ID
             {
-            lv_server_6_0=(Token)match(input,RULE_ID,FOLLOW_53); 
+            lv_server_6_0=(Token)match(input,RULE_ID,FOLLOW_56); 
 
             					newLeafNode(lv_server_6_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getServerIDTerminalRuleCall_6_0());
             				
@@ -9446,7 +9511,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3641:3: (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )?
+            // InternalCQLParser.g:3693:3: (otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )? )?
             int alt52=2;
             int LA52_0 = input.LA(1);
 
@@ -9455,9 +9520,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt52) {
                 case 1 :
-                    // InternalCQLParser.g:3642:4: otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )?
+                    // InternalCQLParser.g:3694:4: otherlv_7= WITH otherlv_8= USER ( (lv_user_9_0= RULE_ID ) ) otherlv_10= PASSWORD ( (lv_password_11_0= RULE_ID ) ) ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )?
                     {
-                    otherlv_7=(Token)match(input,WITH,FOLLOW_54); 
+                    otherlv_7=(Token)match(input,WITH,FOLLOW_57); 
 
                     				newLeafNode(otherlv_7, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getWITHKeyword_7_0());
                     			
@@ -9465,13 +9530,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_8, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUSERKeyword_7_1());
                     			
-                    // InternalCQLParser.g:3650:4: ( (lv_user_9_0= RULE_ID ) )
-                    // InternalCQLParser.g:3651:5: (lv_user_9_0= RULE_ID )
+                    // InternalCQLParser.g:3702:4: ( (lv_user_9_0= RULE_ID ) )
+                    // InternalCQLParser.g:3703:5: (lv_user_9_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:3651:5: (lv_user_9_0= RULE_ID )
-                    // InternalCQLParser.g:3652:6: lv_user_9_0= RULE_ID
+                    // InternalCQLParser.g:3703:5: (lv_user_9_0= RULE_ID )
+                    // InternalCQLParser.g:3704:6: lv_user_9_0= RULE_ID
                     {
-                    lv_user_9_0=(Token)match(input,RULE_ID,FOLLOW_55); 
+                    lv_user_9_0=(Token)match(input,RULE_ID,FOLLOW_58); 
 
                     						newLeafNode(lv_user_9_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getUserIDTerminalRuleCall_7_2_0());
                     					
@@ -9495,13 +9560,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_10, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPASSWORDKeyword_7_3());
                     			
-                    // InternalCQLParser.g:3672:4: ( (lv_password_11_0= RULE_ID ) )
-                    // InternalCQLParser.g:3673:5: (lv_password_11_0= RULE_ID )
+                    // InternalCQLParser.g:3724:4: ( (lv_password_11_0= RULE_ID ) )
+                    // InternalCQLParser.g:3725:5: (lv_password_11_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:3673:5: (lv_password_11_0= RULE_ID )
-                    // InternalCQLParser.g:3674:6: lv_password_11_0= RULE_ID
+                    // InternalCQLParser.g:3725:5: (lv_password_11_0= RULE_ID )
+                    // InternalCQLParser.g:3726:6: lv_password_11_0= RULE_ID
                     {
-                    lv_password_11_0=(Token)match(input,RULE_ID,FOLLOW_56); 
+                    lv_password_11_0=(Token)match(input,RULE_ID,FOLLOW_59); 
 
                     						newLeafNode(lv_password_11_0, grammarAccess.getCreateDataBaseJDBCConnectionAccess().getPasswordIDTerminalRuleCall_7_4_0());
                     					
@@ -9521,7 +9586,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:3690:4: ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )?
+                    // InternalCQLParser.g:3742:4: ( (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK ) )?
                     int alt51=2;
                     int LA51_0 = input.LA(1);
 
@@ -9530,10 +9595,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt51) {
                         case 1 :
-                            // InternalCQLParser.g:3691:5: (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK )
+                            // InternalCQLParser.g:3743:5: (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK )
                             {
-                            // InternalCQLParser.g:3691:5: (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK )
-                            // InternalCQLParser.g:3692:6: lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK
+                            // InternalCQLParser.g:3743:5: (lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK )
+                            // InternalCQLParser.g:3744:6: lv_lazy_12_0= NO_LAZY_CONNECTION_CHECK
                             {
                             lv_lazy_12_0=(Token)match(input,NO_LAZY_CONNECTION_CHECK,FOLLOW_2); 
 
@@ -9583,7 +9648,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateDataBaseGenericConnection"
-    // InternalCQLParser.g:3709:1: entryRuleCreateDataBaseGenericConnection returns [EObject current=null] : iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF ;
+    // InternalCQLParser.g:3761:1: entryRuleCreateDataBaseGenericConnection returns [EObject current=null] : iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF ;
     public final EObject entryRuleCreateDataBaseGenericConnection() throws RecognitionException {
         EObject current = null;
 
@@ -9591,8 +9656,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3709:72: (iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF )
-            // InternalCQLParser.g:3710:2: iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF
+            // InternalCQLParser.g:3761:72: (iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF )
+            // InternalCQLParser.g:3762:2: iv_ruleCreateDataBaseGenericConnection= ruleCreateDataBaseGenericConnection EOF
             {
              newCompositeNode(grammarAccess.getCreateDataBaseGenericConnectionRule()); 
             pushFollow(FOLLOW_1);
@@ -9619,7 +9684,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateDataBaseGenericConnection"
-    // InternalCQLParser.g:3716:1: ruleCreateDataBaseGenericConnection returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) ;
+    // InternalCQLParser.g:3768:1: ruleCreateDataBaseGenericConnection returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) ;
     public final EObject ruleCreateDataBaseGenericConnection() throws RecognitionException {
         EObject current = null;
 
@@ -9646,14 +9711,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3722:2: ( ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) )
-            // InternalCQLParser.g:3723:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
+            // InternalCQLParser.g:3774:2: ( ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? ) )
+            // InternalCQLParser.g:3775:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
             {
-            // InternalCQLParser.g:3723:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
-            // InternalCQLParser.g:3724:3: () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )?
+            // InternalCQLParser.g:3775:2: ( () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )? )
+            // InternalCQLParser.g:3776:3: () otherlv_1= CREATE otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) otherlv_5= AS ( (lv_driver_6_0= RULE_ID ) ) otherlv_7= TO ( (lv_source_8_0= RULE_ID ) ) (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )? (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )?
             {
-            // InternalCQLParser.g:3724:3: ()
-            // InternalCQLParser.g:3725:4: 
+            // InternalCQLParser.g:3776:3: ()
+            // InternalCQLParser.g:3777:4: 
             {
 
             				current = forceCreateModelElement(
@@ -9663,11 +9728,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,CREATE,FOLLOW_45); 
+            otherlv_1=(Token)match(input,CREATE,FOLLOW_48); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateDataBaseGenericConnectionAccess().getCREATEKeyword_1());
             		
-            otherlv_2=(Token)match(input,DATABASE,FOLLOW_51); 
+            otherlv_2=(Token)match(input,DATABASE,FOLLOW_54); 
 
             			newLeafNode(otherlv_2, grammarAccess.getCreateDataBaseGenericConnectionAccess().getDATABASEKeyword_2());
             		
@@ -9675,13 +9740,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateDataBaseGenericConnectionAccess().getCONNECTIONKeyword_3());
             		
-            // InternalCQLParser.g:3743:3: ( (lv_name_4_0= RULE_ID ) )
-            // InternalCQLParser.g:3744:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:3795:3: ( (lv_name_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3796:4: (lv_name_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:3744:4: (lv_name_4_0= RULE_ID )
-            // InternalCQLParser.g:3745:5: lv_name_4_0= RULE_ID
+            // InternalCQLParser.g:3796:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:3797:5: lv_name_4_0= RULE_ID
             {
-            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_24); 
+            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_27); 
 
             					newLeafNode(lv_name_4_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getNameIDTerminalRuleCall_4_0());
             				
@@ -9705,13 +9770,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_5, grammarAccess.getCreateDataBaseGenericConnectionAccess().getASKeyword_5());
             		
-            // InternalCQLParser.g:3765:3: ( (lv_driver_6_0= RULE_ID ) )
-            // InternalCQLParser.g:3766:4: (lv_driver_6_0= RULE_ID )
+            // InternalCQLParser.g:3817:3: ( (lv_driver_6_0= RULE_ID ) )
+            // InternalCQLParser.g:3818:4: (lv_driver_6_0= RULE_ID )
             {
-            // InternalCQLParser.g:3766:4: (lv_driver_6_0= RULE_ID )
-            // InternalCQLParser.g:3767:5: lv_driver_6_0= RULE_ID
+            // InternalCQLParser.g:3818:4: (lv_driver_6_0= RULE_ID )
+            // InternalCQLParser.g:3819:5: lv_driver_6_0= RULE_ID
             {
-            lv_driver_6_0=(Token)match(input,RULE_ID,FOLLOW_57); 
+            lv_driver_6_0=(Token)match(input,RULE_ID,FOLLOW_60); 
 
             					newLeafNode(lv_driver_6_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getDriverIDTerminalRuleCall_6_0());
             				
@@ -9735,13 +9800,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_7, grammarAccess.getCreateDataBaseGenericConnectionAccess().getTOKeyword_7());
             		
-            // InternalCQLParser.g:3787:3: ( (lv_source_8_0= RULE_ID ) )
-            // InternalCQLParser.g:3788:4: (lv_source_8_0= RULE_ID )
+            // InternalCQLParser.g:3839:3: ( (lv_source_8_0= RULE_ID ) )
+            // InternalCQLParser.g:3840:4: (lv_source_8_0= RULE_ID )
             {
-            // InternalCQLParser.g:3788:4: (lv_source_8_0= RULE_ID )
-            // InternalCQLParser.g:3789:5: lv_source_8_0= RULE_ID
+            // InternalCQLParser.g:3840:4: (lv_source_8_0= RULE_ID )
+            // InternalCQLParser.g:3841:5: lv_source_8_0= RULE_ID
             {
-            lv_source_8_0=(Token)match(input,RULE_ID,FOLLOW_58); 
+            lv_source_8_0=(Token)match(input,RULE_ID,FOLLOW_61); 
 
             					newLeafNode(lv_source_8_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getSourceIDTerminalRuleCall_8_0());
             				
@@ -9761,7 +9826,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3805:3: (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )?
+            // InternalCQLParser.g:3857:3: (otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) ) )?
             int alt53=2;
             int LA53_0 = input.LA(1);
 
@@ -9770,19 +9835,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt53) {
                 case 1 :
-                    // InternalCQLParser.g:3806:4: otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) )
+                    // InternalCQLParser.g:3858:4: otherlv_9= AT ( (lv_host_10_0= RULE_ID ) ) otherlv_11= Colon ( (lv_port_12_0= RULE_INT ) )
                     {
                     otherlv_9=(Token)match(input,AT,FOLLOW_5); 
 
                     				newLeafNode(otherlv_9, grammarAccess.getCreateDataBaseGenericConnectionAccess().getATKeyword_9_0());
                     			
-                    // InternalCQLParser.g:3810:4: ( (lv_host_10_0= RULE_ID ) )
-                    // InternalCQLParser.g:3811:5: (lv_host_10_0= RULE_ID )
+                    // InternalCQLParser.g:3862:4: ( (lv_host_10_0= RULE_ID ) )
+                    // InternalCQLParser.g:3863:5: (lv_host_10_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:3811:5: (lv_host_10_0= RULE_ID )
-                    // InternalCQLParser.g:3812:6: lv_host_10_0= RULE_ID
+                    // InternalCQLParser.g:3863:5: (lv_host_10_0= RULE_ID )
+                    // InternalCQLParser.g:3864:6: lv_host_10_0= RULE_ID
                     {
-                    lv_host_10_0=(Token)match(input,RULE_ID,FOLLOW_42); 
+                    lv_host_10_0=(Token)match(input,RULE_ID,FOLLOW_45); 
 
                     						newLeafNode(lv_host_10_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getHostIDTerminalRuleCall_9_1_0());
                     					
@@ -9802,17 +9867,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_11=(Token)match(input,Colon,FOLLOW_43); 
+                    otherlv_11=(Token)match(input,Colon,FOLLOW_46); 
 
                     				newLeafNode(otherlv_11, grammarAccess.getCreateDataBaseGenericConnectionAccess().getColonKeyword_9_2());
                     			
-                    // InternalCQLParser.g:3832:4: ( (lv_port_12_0= RULE_INT ) )
-                    // InternalCQLParser.g:3833:5: (lv_port_12_0= RULE_INT )
+                    // InternalCQLParser.g:3884:4: ( (lv_port_12_0= RULE_INT ) )
+                    // InternalCQLParser.g:3885:5: (lv_port_12_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:3833:5: (lv_port_12_0= RULE_INT )
-                    // InternalCQLParser.g:3834:6: lv_port_12_0= RULE_INT
+                    // InternalCQLParser.g:3885:5: (lv_port_12_0= RULE_INT )
+                    // InternalCQLParser.g:3886:6: lv_port_12_0= RULE_INT
                     {
-                    lv_port_12_0=(Token)match(input,RULE_INT,FOLLOW_53); 
+                    lv_port_12_0=(Token)match(input,RULE_INT,FOLLOW_56); 
 
                     						newLeafNode(lv_port_12_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPortINTTerminalRuleCall_9_3_0());
                     					
@@ -9838,7 +9903,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:3851:3: (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )?
+            // InternalCQLParser.g:3903:3: (otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )? )?
             int alt55=2;
             int LA55_0 = input.LA(1);
 
@@ -9847,9 +9912,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt55) {
                 case 1 :
-                    // InternalCQLParser.g:3852:4: otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )?
+                    // InternalCQLParser.g:3904:4: otherlv_13= WITH otherlv_14= USER ( (lv_user_15_0= RULE_ID ) ) otherlv_16= PASSWORD ( (lv_password_17_0= RULE_ID ) ) ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )?
                     {
-                    otherlv_13=(Token)match(input,WITH,FOLLOW_54); 
+                    otherlv_13=(Token)match(input,WITH,FOLLOW_57); 
 
                     				newLeafNode(otherlv_13, grammarAccess.getCreateDataBaseGenericConnectionAccess().getWITHKeyword_10_0());
                     			
@@ -9857,13 +9922,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_14, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUSERKeyword_10_1());
                     			
-                    // InternalCQLParser.g:3860:4: ( (lv_user_15_0= RULE_ID ) )
-                    // InternalCQLParser.g:3861:5: (lv_user_15_0= RULE_ID )
+                    // InternalCQLParser.g:3912:4: ( (lv_user_15_0= RULE_ID ) )
+                    // InternalCQLParser.g:3913:5: (lv_user_15_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:3861:5: (lv_user_15_0= RULE_ID )
-                    // InternalCQLParser.g:3862:6: lv_user_15_0= RULE_ID
+                    // InternalCQLParser.g:3913:5: (lv_user_15_0= RULE_ID )
+                    // InternalCQLParser.g:3914:6: lv_user_15_0= RULE_ID
                     {
-                    lv_user_15_0=(Token)match(input,RULE_ID,FOLLOW_55); 
+                    lv_user_15_0=(Token)match(input,RULE_ID,FOLLOW_58); 
 
                     						newLeafNode(lv_user_15_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getUserIDTerminalRuleCall_10_2_0());
                     					
@@ -9887,13 +9952,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_16, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPASSWORDKeyword_10_3());
                     			
-                    // InternalCQLParser.g:3882:4: ( (lv_password_17_0= RULE_ID ) )
-                    // InternalCQLParser.g:3883:5: (lv_password_17_0= RULE_ID )
+                    // InternalCQLParser.g:3934:4: ( (lv_password_17_0= RULE_ID ) )
+                    // InternalCQLParser.g:3935:5: (lv_password_17_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:3883:5: (lv_password_17_0= RULE_ID )
-                    // InternalCQLParser.g:3884:6: lv_password_17_0= RULE_ID
+                    // InternalCQLParser.g:3935:5: (lv_password_17_0= RULE_ID )
+                    // InternalCQLParser.g:3936:6: lv_password_17_0= RULE_ID
                     {
-                    lv_password_17_0=(Token)match(input,RULE_ID,FOLLOW_56); 
+                    lv_password_17_0=(Token)match(input,RULE_ID,FOLLOW_59); 
 
                     						newLeafNode(lv_password_17_0, grammarAccess.getCreateDataBaseGenericConnectionAccess().getPasswordIDTerminalRuleCall_10_4_0());
                     					
@@ -9913,7 +9978,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:3900:4: ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )?
+                    // InternalCQLParser.g:3952:4: ( (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK ) )?
                     int alt54=2;
                     int LA54_0 = input.LA(1);
 
@@ -9922,10 +9987,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt54) {
                         case 1 :
-                            // InternalCQLParser.g:3901:5: (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK )
+                            // InternalCQLParser.g:3953:5: (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK )
                             {
-                            // InternalCQLParser.g:3901:5: (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK )
-                            // InternalCQLParser.g:3902:6: lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK
+                            // InternalCQLParser.g:3953:5: (lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK )
+                            // InternalCQLParser.g:3954:6: lv_lazy_18_0= NO_LAZY_CONNECTION_CHECK
                             {
                             lv_lazy_18_0=(Token)match(input,NO_LAZY_CONNECTION_CHECK,FOLLOW_2); 
 
@@ -9975,7 +10040,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDropDatabaseConnection"
-    // InternalCQLParser.g:3919:1: entryRuleDropDatabaseConnection returns [EObject current=null] : iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF ;
+    // InternalCQLParser.g:3971:1: entryRuleDropDatabaseConnection returns [EObject current=null] : iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF ;
     public final EObject entryRuleDropDatabaseConnection() throws RecognitionException {
         EObject current = null;
 
@@ -9983,8 +10048,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3919:63: (iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF )
-            // InternalCQLParser.g:3920:2: iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF
+            // InternalCQLParser.g:3971:63: (iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF )
+            // InternalCQLParser.g:3972:2: iv_ruleDropDatabaseConnection= ruleDropDatabaseConnection EOF
             {
              newCompositeNode(grammarAccess.getDropDatabaseConnectionRule()); 
             pushFollow(FOLLOW_1);
@@ -10011,7 +10076,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDropDatabaseConnection"
-    // InternalCQLParser.g:3926:1: ruleDropDatabaseConnection returns [EObject current=null] : ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) ) ;
+    // InternalCQLParser.g:3978:1: ruleDropDatabaseConnection returns [EObject current=null] : ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) ) ;
     public final EObject ruleDropDatabaseConnection() throws RecognitionException {
         EObject current = null;
 
@@ -10024,14 +10089,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3932:2: ( ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) ) )
-            // InternalCQLParser.g:3933:2: ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) )
+            // InternalCQLParser.g:3984:2: ( ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:3985:2: ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) )
             {
-            // InternalCQLParser.g:3933:2: ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) )
-            // InternalCQLParser.g:3934:3: () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) )
+            // InternalCQLParser.g:3985:2: ( () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) ) )
+            // InternalCQLParser.g:3986:3: () otherlv_1= DROP otherlv_2= DATABASE otherlv_3= CONNECTION ( (lv_name_4_0= RULE_ID ) )
             {
-            // InternalCQLParser.g:3934:3: ()
-            // InternalCQLParser.g:3935:4: 
+            // InternalCQLParser.g:3986:3: ()
+            // InternalCQLParser.g:3987:4: 
             {
 
             				current = forceCreateModelElement(
@@ -10041,11 +10106,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,DROP,FOLLOW_45); 
+            otherlv_1=(Token)match(input,DROP,FOLLOW_48); 
 
             			newLeafNode(otherlv_1, grammarAccess.getDropDatabaseConnectionAccess().getDROPKeyword_1());
             		
-            otherlv_2=(Token)match(input,DATABASE,FOLLOW_51); 
+            otherlv_2=(Token)match(input,DATABASE,FOLLOW_54); 
 
             			newLeafNode(otherlv_2, grammarAccess.getDropDatabaseConnectionAccess().getDATABASEKeyword_2());
             		
@@ -10053,11 +10118,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getDropDatabaseConnectionAccess().getCONNECTIONKeyword_3());
             		
-            // InternalCQLParser.g:3953:3: ( (lv_name_4_0= RULE_ID ) )
-            // InternalCQLParser.g:3954:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:4005:3: ( (lv_name_4_0= RULE_ID ) )
+            // InternalCQLParser.g:4006:4: (lv_name_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:3954:4: (lv_name_4_0= RULE_ID )
-            // InternalCQLParser.g:3955:5: lv_name_4_0= RULE_ID
+            // InternalCQLParser.g:4006:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:4007:5: lv_name_4_0= RULE_ID
             {
             lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -10102,7 +10167,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleContextStoreType"
-    // InternalCQLParser.g:3975:1: entryRuleContextStoreType returns [EObject current=null] : iv_ruleContextStoreType= ruleContextStoreType EOF ;
+    // InternalCQLParser.g:4027:1: entryRuleContextStoreType returns [EObject current=null] : iv_ruleContextStoreType= ruleContextStoreType EOF ;
     public final EObject entryRuleContextStoreType() throws RecognitionException {
         EObject current = null;
 
@@ -10110,8 +10175,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:3975:57: (iv_ruleContextStoreType= ruleContextStoreType EOF )
-            // InternalCQLParser.g:3976:2: iv_ruleContextStoreType= ruleContextStoreType EOF
+            // InternalCQLParser.g:4027:57: (iv_ruleContextStoreType= ruleContextStoreType EOF )
+            // InternalCQLParser.g:4028:2: iv_ruleContextStoreType= ruleContextStoreType EOF
             {
              newCompositeNode(grammarAccess.getContextStoreTypeRule()); 
             pushFollow(FOLLOW_1);
@@ -10138,7 +10203,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleContextStoreType"
-    // InternalCQLParser.g:3982:1: ruleContextStoreType returns [EObject current=null] : ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) ) ;
+    // InternalCQLParser.g:4034:1: ruleContextStoreType returns [EObject current=null] : ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) ) ;
     public final EObject ruleContextStoreType() throws RecognitionException {
         EObject current = null;
 
@@ -10153,10 +10218,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:3988:2: ( ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) ) )
-            // InternalCQLParser.g:3989:2: ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) )
+            // InternalCQLParser.g:4040:2: ( ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) ) )
+            // InternalCQLParser.g:4041:2: ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) )
             {
-            // InternalCQLParser.g:3989:2: ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) )
+            // InternalCQLParser.g:4041:2: ( ( (lv_type_0_0= SINGLE ) ) | ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? ) )
             int alt57=2;
             int LA57_0 = input.LA(1);
 
@@ -10174,13 +10239,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt57) {
                 case 1 :
-                    // InternalCQLParser.g:3990:3: ( (lv_type_0_0= SINGLE ) )
+                    // InternalCQLParser.g:4042:3: ( (lv_type_0_0= SINGLE ) )
                     {
-                    // InternalCQLParser.g:3990:3: ( (lv_type_0_0= SINGLE ) )
-                    // InternalCQLParser.g:3991:4: (lv_type_0_0= SINGLE )
+                    // InternalCQLParser.g:4042:3: ( (lv_type_0_0= SINGLE ) )
+                    // InternalCQLParser.g:4043:4: (lv_type_0_0= SINGLE )
                     {
-                    // InternalCQLParser.g:3991:4: (lv_type_0_0= SINGLE )
-                    // InternalCQLParser.g:3992:5: lv_type_0_0= SINGLE
+                    // InternalCQLParser.g:4043:4: (lv_type_0_0= SINGLE )
+                    // InternalCQLParser.g:4044:5: lv_type_0_0= SINGLE
                     {
                     lv_type_0_0=(Token)match(input,SINGLE,FOLLOW_2); 
 
@@ -10202,18 +10267,18 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4005:3: ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? )
+                    // InternalCQLParser.g:4057:3: ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? )
                     {
-                    // InternalCQLParser.g:4005:3: ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? )
-                    // InternalCQLParser.g:4006:4: ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )?
+                    // InternalCQLParser.g:4057:3: ( ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )? )
+                    // InternalCQLParser.g:4058:4: ( (lv_type_1_0= MULTI ) ) ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )?
                     {
-                    // InternalCQLParser.g:4006:4: ( (lv_type_1_0= MULTI ) )
-                    // InternalCQLParser.g:4007:5: (lv_type_1_0= MULTI )
+                    // InternalCQLParser.g:4058:4: ( (lv_type_1_0= MULTI ) )
+                    // InternalCQLParser.g:4059:5: (lv_type_1_0= MULTI )
                     {
-                    // InternalCQLParser.g:4007:5: (lv_type_1_0= MULTI )
-                    // InternalCQLParser.g:4008:6: lv_type_1_0= MULTI
+                    // InternalCQLParser.g:4059:5: (lv_type_1_0= MULTI )
+                    // InternalCQLParser.g:4060:6: lv_type_1_0= MULTI
                     {
-                    lv_type_1_0=(Token)match(input,MULTI,FOLLOW_43); 
+                    lv_type_1_0=(Token)match(input,MULTI,FOLLOW_46); 
 
                     						newLeafNode(lv_type_1_0, grammarAccess.getContextStoreTypeAccess().getTypeMULTIKeyword_1_0_0());
                     					
@@ -10229,13 +10294,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4020:4: ( (lv_size_2_0= RULE_INT ) )
-                    // InternalCQLParser.g:4021:5: (lv_size_2_0= RULE_INT )
+                    // InternalCQLParser.g:4072:4: ( (lv_size_2_0= RULE_INT ) )
+                    // InternalCQLParser.g:4073:5: (lv_size_2_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:4021:5: (lv_size_2_0= RULE_INT )
-                    // InternalCQLParser.g:4022:6: lv_size_2_0= RULE_INT
+                    // InternalCQLParser.g:4073:5: (lv_size_2_0= RULE_INT )
+                    // InternalCQLParser.g:4074:6: lv_size_2_0= RULE_INT
                     {
-                    lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_59); 
+                    lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_62); 
 
                     						newLeafNode(lv_size_2_0, grammarAccess.getContextStoreTypeAccess().getSizeINTTerminalRuleCall_1_1_0());
                     					
@@ -10255,7 +10320,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4038:4: (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )?
+                    // InternalCQLParser.g:4090:4: (otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) ) )?
                     int alt56=2;
                     int LA56_0 = input.LA(1);
 
@@ -10264,21 +10329,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt56) {
                         case 1 :
-                            // InternalCQLParser.g:4039:5: otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) )
+                            // InternalCQLParser.g:4091:5: otherlv_3= PARTITION otherlv_4= BY ( (lv_partition_5_0= RULE_INT ) )
                             {
-                            otherlv_3=(Token)match(input,PARTITION,FOLLOW_16); 
+                            otherlv_3=(Token)match(input,PARTITION,FOLLOW_18); 
 
                             					newLeafNode(otherlv_3, grammarAccess.getContextStoreTypeAccess().getPARTITIONKeyword_1_2_0());
                             				
-                            otherlv_4=(Token)match(input,BY,FOLLOW_43); 
+                            otherlv_4=(Token)match(input,BY,FOLLOW_46); 
 
                             					newLeafNode(otherlv_4, grammarAccess.getContextStoreTypeAccess().getBYKeyword_1_2_1());
                             				
-                            // InternalCQLParser.g:4047:5: ( (lv_partition_5_0= RULE_INT ) )
-                            // InternalCQLParser.g:4048:6: (lv_partition_5_0= RULE_INT )
+                            // InternalCQLParser.g:4099:5: ( (lv_partition_5_0= RULE_INT ) )
+                            // InternalCQLParser.g:4100:6: (lv_partition_5_0= RULE_INT )
                             {
-                            // InternalCQLParser.g:4048:6: (lv_partition_5_0= RULE_INT )
-                            // InternalCQLParser.g:4049:7: lv_partition_5_0= RULE_INT
+                            // InternalCQLParser.g:4100:6: (lv_partition_5_0= RULE_INT )
+                            // InternalCQLParser.g:4101:7: lv_partition_5_0= RULE_INT
                             {
                             lv_partition_5_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -10335,7 +10400,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCreateContextStore"
-    // InternalCQLParser.g:4071:1: entryRuleCreateContextStore returns [EObject current=null] : iv_ruleCreateContextStore= ruleCreateContextStore EOF ;
+    // InternalCQLParser.g:4123:1: entryRuleCreateContextStore returns [EObject current=null] : iv_ruleCreateContextStore= ruleCreateContextStore EOF ;
     public final EObject entryRuleCreateContextStore() throws RecognitionException {
         EObject current = null;
 
@@ -10343,8 +10408,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4071:59: (iv_ruleCreateContextStore= ruleCreateContextStore EOF )
-            // InternalCQLParser.g:4072:2: iv_ruleCreateContextStore= ruleCreateContextStore EOF
+            // InternalCQLParser.g:4123:59: (iv_ruleCreateContextStore= ruleCreateContextStore EOF )
+            // InternalCQLParser.g:4124:2: iv_ruleCreateContextStore= ruleCreateContextStore EOF
             {
              newCompositeNode(grammarAccess.getCreateContextStoreRule()); 
             pushFollow(FOLLOW_1);
@@ -10371,7 +10436,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCreateContextStore"
-    // InternalCQLParser.g:4078:1: ruleCreateContextStore returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) ) ;
+    // InternalCQLParser.g:4130:1: ruleCreateContextStore returns [EObject current=null] : ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) ) ;
     public final EObject ruleCreateContextStore() throws RecognitionException {
         EObject current = null;
 
@@ -10388,14 +10453,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4084:2: ( ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) ) )
-            // InternalCQLParser.g:4085:2: ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) )
+            // InternalCQLParser.g:4136:2: ( ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) ) )
+            // InternalCQLParser.g:4137:2: ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) )
             {
-            // InternalCQLParser.g:4085:2: ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) )
-            // InternalCQLParser.g:4086:3: () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) )
+            // InternalCQLParser.g:4137:2: ( () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) ) )
+            // InternalCQLParser.g:4138:3: () otherlv_1= CREATE otherlv_2= CONTEXT otherlv_3= STORE ( (lv_attributes_4_0= ruleSchemaDefinition ) ) otherlv_5= AS ( (lv_contextType_6_0= ruleContextStoreType ) )
             {
-            // InternalCQLParser.g:4086:3: ()
-            // InternalCQLParser.g:4087:4: 
+            // InternalCQLParser.g:4138:3: ()
+            // InternalCQLParser.g:4139:4: 
             {
 
             				current = forceCreateModelElement(
@@ -10405,11 +10470,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,CREATE,FOLLOW_60); 
+            otherlv_1=(Token)match(input,CREATE,FOLLOW_63); 
 
             			newLeafNode(otherlv_1, grammarAccess.getCreateContextStoreAccess().getCREATEKeyword_1());
             		
-            otherlv_2=(Token)match(input,CONTEXT,FOLLOW_61); 
+            otherlv_2=(Token)match(input,CONTEXT,FOLLOW_64); 
 
             			newLeafNode(otherlv_2, grammarAccess.getCreateContextStoreAccess().getCONTEXTKeyword_2());
             		
@@ -10417,16 +10482,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getCreateContextStoreAccess().getSTOREKeyword_3());
             		
-            // InternalCQLParser.g:4105:3: ( (lv_attributes_4_0= ruleSchemaDefinition ) )
-            // InternalCQLParser.g:4106:4: (lv_attributes_4_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:4157:3: ( (lv_attributes_4_0= ruleSchemaDefinition ) )
+            // InternalCQLParser.g:4158:4: (lv_attributes_4_0= ruleSchemaDefinition )
             {
-            // InternalCQLParser.g:4106:4: (lv_attributes_4_0= ruleSchemaDefinition )
-            // InternalCQLParser.g:4107:5: lv_attributes_4_0= ruleSchemaDefinition
+            // InternalCQLParser.g:4158:4: (lv_attributes_4_0= ruleSchemaDefinition )
+            // InternalCQLParser.g:4159:5: lv_attributes_4_0= ruleSchemaDefinition
             {
 
             					newCompositeNode(grammarAccess.getCreateContextStoreAccess().getAttributesSchemaDefinitionParserRuleCall_4_0());
             				
-            pushFollow(FOLLOW_24);
+            pushFollow(FOLLOW_27);
             lv_attributes_4_0=ruleSchemaDefinition();
 
             state._fsp--;
@@ -10448,15 +10513,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_5=(Token)match(input,AS,FOLLOW_62); 
+            otherlv_5=(Token)match(input,AS,FOLLOW_65); 
 
             			newLeafNode(otherlv_5, grammarAccess.getCreateContextStoreAccess().getASKeyword_5());
             		
-            // InternalCQLParser.g:4128:3: ( (lv_contextType_6_0= ruleContextStoreType ) )
-            // InternalCQLParser.g:4129:4: (lv_contextType_6_0= ruleContextStoreType )
+            // InternalCQLParser.g:4180:3: ( (lv_contextType_6_0= ruleContextStoreType ) )
+            // InternalCQLParser.g:4181:4: (lv_contextType_6_0= ruleContextStoreType )
             {
-            // InternalCQLParser.g:4129:4: (lv_contextType_6_0= ruleContextStoreType )
-            // InternalCQLParser.g:4130:5: lv_contextType_6_0= ruleContextStoreType
+            // InternalCQLParser.g:4181:4: (lv_contextType_6_0= ruleContextStoreType )
+            // InternalCQLParser.g:4182:5: lv_contextType_6_0= ruleContextStoreType
             {
 
             					newCompositeNode(grammarAccess.getCreateContextStoreAccess().getContextTypeContextStoreTypeParserRuleCall_6_0());
@@ -10506,7 +10571,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDropContextStore"
-    // InternalCQLParser.g:4151:1: entryRuleDropContextStore returns [EObject current=null] : iv_ruleDropContextStore= ruleDropContextStore EOF ;
+    // InternalCQLParser.g:4203:1: entryRuleDropContextStore returns [EObject current=null] : iv_ruleDropContextStore= ruleDropContextStore EOF ;
     public final EObject entryRuleDropContextStore() throws RecognitionException {
         EObject current = null;
 
@@ -10514,8 +10579,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4151:57: (iv_ruleDropContextStore= ruleDropContextStore EOF )
-            // InternalCQLParser.g:4152:2: iv_ruleDropContextStore= ruleDropContextStore EOF
+            // InternalCQLParser.g:4203:57: (iv_ruleDropContextStore= ruleDropContextStore EOF )
+            // InternalCQLParser.g:4204:2: iv_ruleDropContextStore= ruleDropContextStore EOF
             {
              newCompositeNode(grammarAccess.getDropContextStoreRule()); 
             pushFollow(FOLLOW_1);
@@ -10542,7 +10607,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDropContextStore"
-    // InternalCQLParser.g:4158:1: ruleDropContextStore returns [EObject current=null] : ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? ) ;
+    // InternalCQLParser.g:4210:1: ruleDropContextStore returns [EObject current=null] : ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? ) ;
     public final EObject ruleDropContextStore() throws RecognitionException {
         EObject current = null;
 
@@ -10557,14 +10622,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4164:2: ( ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? ) )
-            // InternalCQLParser.g:4165:2: ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? )
+            // InternalCQLParser.g:4216:2: ( ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? ) )
+            // InternalCQLParser.g:4217:2: ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? )
             {
-            // InternalCQLParser.g:4165:2: ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? )
-            // InternalCQLParser.g:4166:3: () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )?
+            // InternalCQLParser.g:4217:2: ( () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )? )
+            // InternalCQLParser.g:4218:3: () otherlv_1= DROP otherlv_2= CONTEXT otherlv_3= STORE ( (lv_name_4_0= RULE_ID ) ) (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )?
             {
-            // InternalCQLParser.g:4166:3: ()
-            // InternalCQLParser.g:4167:4: 
+            // InternalCQLParser.g:4218:3: ()
+            // InternalCQLParser.g:4219:4: 
             {
 
             				current = forceCreateModelElement(
@@ -10574,11 +10639,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,DROP,FOLLOW_60); 
+            otherlv_1=(Token)match(input,DROP,FOLLOW_63); 
 
             			newLeafNode(otherlv_1, grammarAccess.getDropContextStoreAccess().getDROPKeyword_1());
             		
-            otherlv_2=(Token)match(input,CONTEXT,FOLLOW_61); 
+            otherlv_2=(Token)match(input,CONTEXT,FOLLOW_64); 
 
             			newLeafNode(otherlv_2, grammarAccess.getDropContextStoreAccess().getCONTEXTKeyword_2());
             		
@@ -10586,13 +10651,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_3, grammarAccess.getDropContextStoreAccess().getSTOREKeyword_3());
             		
-            // InternalCQLParser.g:4185:3: ( (lv_name_4_0= RULE_ID ) )
-            // InternalCQLParser.g:4186:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:4237:3: ( (lv_name_4_0= RULE_ID ) )
+            // InternalCQLParser.g:4238:4: (lv_name_4_0= RULE_ID )
             {
-            // InternalCQLParser.g:4186:4: (lv_name_4_0= RULE_ID )
-            // InternalCQLParser.g:4187:5: lv_name_4_0= RULE_ID
+            // InternalCQLParser.g:4238:4: (lv_name_4_0= RULE_ID )
+            // InternalCQLParser.g:4239:5: lv_name_4_0= RULE_ID
             {
-            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_63); 
+            lv_name_4_0=(Token)match(input,RULE_ID,FOLLOW_66); 
 
             					newLeafNode(lv_name_4_0, grammarAccess.getDropContextStoreAccess().getNameIDTerminalRuleCall_4_0());
             				
@@ -10612,7 +10677,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4203:3: (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )?
+            // InternalCQLParser.g:4255:3: (otherlv_5= IF ( (lv_exists_6_0= EXISTS ) ) )?
             int alt58=2;
             int LA58_0 = input.LA(1);
 
@@ -10621,17 +10686,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt58) {
                 case 1 :
-                    // InternalCQLParser.g:4204:4: otherlv_5= IF ( (lv_exists_6_0= EXISTS ) )
+                    // InternalCQLParser.g:4256:4: otherlv_5= IF ( (lv_exists_6_0= EXISTS ) )
                     {
-                    otherlv_5=(Token)match(input,IF,FOLLOW_64); 
+                    otherlv_5=(Token)match(input,IF,FOLLOW_67); 
 
                     				newLeafNode(otherlv_5, grammarAccess.getDropContextStoreAccess().getIFKeyword_5_0());
                     			
-                    // InternalCQLParser.g:4208:4: ( (lv_exists_6_0= EXISTS ) )
-                    // InternalCQLParser.g:4209:5: (lv_exists_6_0= EXISTS )
+                    // InternalCQLParser.g:4260:4: ( (lv_exists_6_0= EXISTS ) )
+                    // InternalCQLParser.g:4261:5: (lv_exists_6_0= EXISTS )
                     {
-                    // InternalCQLParser.g:4209:5: (lv_exists_6_0= EXISTS )
-                    // InternalCQLParser.g:4210:6: lv_exists_6_0= EXISTS
+                    // InternalCQLParser.g:4261:5: (lv_exists_6_0= EXISTS )
+                    // InternalCQLParser.g:4262:6: lv_exists_6_0= EXISTS
                     {
                     lv_exists_6_0=(Token)match(input,EXISTS,FOLLOW_2); 
 
@@ -10678,7 +10743,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStreamTo"
-    // InternalCQLParser.g:4227:1: entryRuleStreamTo returns [EObject current=null] : iv_ruleStreamTo= ruleStreamTo EOF ;
+    // InternalCQLParser.g:4279:1: entryRuleStreamTo returns [EObject current=null] : iv_ruleStreamTo= ruleStreamTo EOF ;
     public final EObject entryRuleStreamTo() throws RecognitionException {
         EObject current = null;
 
@@ -10686,8 +10751,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4227:49: (iv_ruleStreamTo= ruleStreamTo EOF )
-            // InternalCQLParser.g:4228:2: iv_ruleStreamTo= ruleStreamTo EOF
+            // InternalCQLParser.g:4279:49: (iv_ruleStreamTo= ruleStreamTo EOF )
+            // InternalCQLParser.g:4280:2: iv_ruleStreamTo= ruleStreamTo EOF
             {
              newCompositeNode(grammarAccess.getStreamToRule()); 
             pushFollow(FOLLOW_1);
@@ -10714,7 +10779,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStreamTo"
-    // InternalCQLParser.g:4234:1: ruleStreamTo returns [EObject current=null] : ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) ) ;
+    // InternalCQLParser.g:4286:1: ruleStreamTo returns [EObject current=null] : ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) ) ;
     public final EObject ruleStreamTo() throws RecognitionException {
         EObject current = null;
 
@@ -10729,14 +10794,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4240:2: ( ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) ) )
-            // InternalCQLParser.g:4241:2: ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4292:2: ( ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) ) )
+            // InternalCQLParser.g:4293:2: ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) )
             {
-            // InternalCQLParser.g:4241:2: ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) )
-            // InternalCQLParser.g:4242:3: () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) )
+            // InternalCQLParser.g:4293:2: ( () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4294:3: () otherlv_1= STREAM otherlv_2= TO ( (lv_name_3_0= RULE_ID ) ) ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) )
             {
-            // InternalCQLParser.g:4242:3: ()
-            // InternalCQLParser.g:4243:4: 
+            // InternalCQLParser.g:4294:3: ()
+            // InternalCQLParser.g:4295:4: 
             {
 
             				current = forceCreateModelElement(
@@ -10746,7 +10811,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,STREAM,FOLLOW_57); 
+            otherlv_1=(Token)match(input,STREAM,FOLLOW_60); 
 
             			newLeafNode(otherlv_1, grammarAccess.getStreamToAccess().getSTREAMKeyword_1());
             		
@@ -10754,13 +10819,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             			newLeafNode(otherlv_2, grammarAccess.getStreamToAccess().getTOKeyword_2());
             		
-            // InternalCQLParser.g:4257:3: ( (lv_name_3_0= RULE_ID ) )
-            // InternalCQLParser.g:4258:4: (lv_name_3_0= RULE_ID )
+            // InternalCQLParser.g:4309:3: ( (lv_name_3_0= RULE_ID ) )
+            // InternalCQLParser.g:4310:4: (lv_name_3_0= RULE_ID )
             {
-            // InternalCQLParser.g:4258:4: (lv_name_3_0= RULE_ID )
-            // InternalCQLParser.g:4259:5: lv_name_3_0= RULE_ID
+            // InternalCQLParser.g:4310:4: (lv_name_3_0= RULE_ID )
+            // InternalCQLParser.g:4311:5: lv_name_3_0= RULE_ID
             {
-            lv_name_3_0=(Token)match(input,RULE_ID,FOLLOW_65); 
+            lv_name_3_0=(Token)match(input,RULE_ID,FOLLOW_68); 
 
             					newLeafNode(lv_name_3_0, grammarAccess.getStreamToAccess().getNameIDTerminalRuleCall_3_0());
             				
@@ -10780,7 +10845,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4275:3: ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) )
+            // InternalCQLParser.g:4327:3: ( ( (lv_statement_4_0= ruleInnerSelect2 ) ) | ( (lv_inputname_5_0= RULE_ID ) ) )
             int alt59=2;
             int LA59_0 = input.LA(1);
 
@@ -10798,13 +10863,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt59) {
                 case 1 :
-                    // InternalCQLParser.g:4276:4: ( (lv_statement_4_0= ruleInnerSelect2 ) )
+                    // InternalCQLParser.g:4328:4: ( (lv_statement_4_0= ruleInnerSelect2 ) )
                     {
-                    // InternalCQLParser.g:4276:4: ( (lv_statement_4_0= ruleInnerSelect2 ) )
-                    // InternalCQLParser.g:4277:5: (lv_statement_4_0= ruleInnerSelect2 )
+                    // InternalCQLParser.g:4328:4: ( (lv_statement_4_0= ruleInnerSelect2 ) )
+                    // InternalCQLParser.g:4329:5: (lv_statement_4_0= ruleInnerSelect2 )
                     {
-                    // InternalCQLParser.g:4277:5: (lv_statement_4_0= ruleInnerSelect2 )
-                    // InternalCQLParser.g:4278:6: lv_statement_4_0= ruleInnerSelect2
+                    // InternalCQLParser.g:4329:5: (lv_statement_4_0= ruleInnerSelect2 )
+                    // InternalCQLParser.g:4330:6: lv_statement_4_0= ruleInnerSelect2
                     {
 
                     						newCompositeNode(grammarAccess.getStreamToAccess().getStatementInnerSelect2ParserRuleCall_4_0_0());
@@ -10835,13 +10900,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4296:4: ( (lv_inputname_5_0= RULE_ID ) )
+                    // InternalCQLParser.g:4348:4: ( (lv_inputname_5_0= RULE_ID ) )
                     {
-                    // InternalCQLParser.g:4296:4: ( (lv_inputname_5_0= RULE_ID ) )
-                    // InternalCQLParser.g:4297:5: (lv_inputname_5_0= RULE_ID )
+                    // InternalCQLParser.g:4348:4: ( (lv_inputname_5_0= RULE_ID ) )
+                    // InternalCQLParser.g:4349:5: (lv_inputname_5_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4297:5: (lv_inputname_5_0= RULE_ID )
-                    // InternalCQLParser.g:4298:6: lv_inputname_5_0= RULE_ID
+                    // InternalCQLParser.g:4349:5: (lv_inputname_5_0= RULE_ID )
+                    // InternalCQLParser.g:4350:6: lv_inputname_5_0= RULE_ID
                     {
                     lv_inputname_5_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -10892,7 +10957,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDropStream"
-    // InternalCQLParser.g:4319:1: entryRuleDropStream returns [EObject current=null] : iv_ruleDropStream= ruleDropStream EOF ;
+    // InternalCQLParser.g:4371:1: entryRuleDropStream returns [EObject current=null] : iv_ruleDropStream= ruleDropStream EOF ;
     public final EObject entryRuleDropStream() throws RecognitionException {
         EObject current = null;
 
@@ -10900,8 +10965,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4319:51: (iv_ruleDropStream= ruleDropStream EOF )
-            // InternalCQLParser.g:4320:2: iv_ruleDropStream= ruleDropStream EOF
+            // InternalCQLParser.g:4371:51: (iv_ruleDropStream= ruleDropStream EOF )
+            // InternalCQLParser.g:4372:2: iv_ruleDropStream= ruleDropStream EOF
             {
              newCompositeNode(grammarAccess.getDropStreamRule()); 
             pushFollow(FOLLOW_1);
@@ -10928,7 +10993,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDropStream"
-    // InternalCQLParser.g:4326:1: ruleDropStream returns [EObject current=null] : ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? ) ;
+    // InternalCQLParser.g:4378:1: ruleDropStream returns [EObject current=null] : ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? ) ;
     public final EObject ruleDropStream() throws RecognitionException {
         EObject current = null;
 
@@ -10944,14 +11009,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4332:2: ( ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? ) )
-            // InternalCQLParser.g:4333:2: ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? )
+            // InternalCQLParser.g:4384:2: ( ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? ) )
+            // InternalCQLParser.g:4385:2: ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? )
             {
-            // InternalCQLParser.g:4333:2: ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? )
-            // InternalCQLParser.g:4334:3: () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )?
+            // InternalCQLParser.g:4385:2: ( () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )? )
+            // InternalCQLParser.g:4386:3: () otherlv_1= DROP ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) ) ( (lv_stream_3_0= RULE_ID ) ) ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )?
             {
-            // InternalCQLParser.g:4334:3: ()
-            // InternalCQLParser.g:4335:4: 
+            // InternalCQLParser.g:4386:3: ()
+            // InternalCQLParser.g:4387:4: 
             {
 
             				current = forceCreateModelElement(
@@ -10961,17 +11026,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,DROP,FOLLOW_39); 
+            otherlv_1=(Token)match(input,DROP,FOLLOW_42); 
 
             			newLeafNode(otherlv_1, grammarAccess.getDropStreamAccess().getDROPKeyword_1());
             		
-            // InternalCQLParser.g:4345:3: ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) )
-            // InternalCQLParser.g:4346:4: ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) )
+            // InternalCQLParser.g:4397:3: ( ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) ) )
+            // InternalCQLParser.g:4398:4: ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) )
             {
-            // InternalCQLParser.g:4346:4: ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) )
-            // InternalCQLParser.g:4347:5: (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW )
+            // InternalCQLParser.g:4398:4: ( (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW ) )
+            // InternalCQLParser.g:4399:5: (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW )
             {
-            // InternalCQLParser.g:4347:5: (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW )
+            // InternalCQLParser.g:4399:5: (lv_name_2_1= SINK | lv_name_2_2= STREAM | lv_name_2_3= VIEW )
             int alt60=3;
             switch ( input.LA(1) ) {
             case SINK:
@@ -10998,7 +11063,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt60) {
                 case 1 :
-                    // InternalCQLParser.g:4348:6: lv_name_2_1= SINK
+                    // InternalCQLParser.g:4400:6: lv_name_2_1= SINK
                     {
                     lv_name_2_1=(Token)match(input,SINK,FOLLOW_5); 
 
@@ -11014,7 +11079,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4359:6: lv_name_2_2= STREAM
+                    // InternalCQLParser.g:4411:6: lv_name_2_2= STREAM
                     {
                     lv_name_2_2=(Token)match(input,STREAM,FOLLOW_5); 
 
@@ -11030,7 +11095,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:4370:6: lv_name_2_3= VIEW
+                    // InternalCQLParser.g:4422:6: lv_name_2_3= VIEW
                     {
                     lv_name_2_3=(Token)match(input,VIEW,FOLLOW_5); 
 
@@ -11054,13 +11119,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4383:3: ( (lv_stream_3_0= RULE_ID ) )
-            // InternalCQLParser.g:4384:4: (lv_stream_3_0= RULE_ID )
+            // InternalCQLParser.g:4435:3: ( (lv_stream_3_0= RULE_ID ) )
+            // InternalCQLParser.g:4436:4: (lv_stream_3_0= RULE_ID )
             {
-            // InternalCQLParser.g:4384:4: (lv_stream_3_0= RULE_ID )
-            // InternalCQLParser.g:4385:5: lv_stream_3_0= RULE_ID
+            // InternalCQLParser.g:4436:4: (lv_stream_3_0= RULE_ID )
+            // InternalCQLParser.g:4437:5: lv_stream_3_0= RULE_ID
             {
-            lv_stream_3_0=(Token)match(input,RULE_ID,FOLLOW_63); 
+            lv_stream_3_0=(Token)match(input,RULE_ID,FOLLOW_66); 
 
             					newLeafNode(lv_stream_3_0, grammarAccess.getDropStreamAccess().getStreamIDTerminalRuleCall_3_0());
             				
@@ -11080,7 +11145,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4401:3: ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )?
+            // InternalCQLParser.g:4453:3: ( ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS )?
             int alt61=2;
             int LA61_0 = input.LA(1);
 
@@ -11089,15 +11154,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt61) {
                 case 1 :
-                    // InternalCQLParser.g:4402:4: ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS
+                    // InternalCQLParser.g:4454:4: ( (lv_exists_4_0= IF ) ) otherlv_5= EXISTS
                     {
-                    // InternalCQLParser.g:4402:4: ( (lv_exists_4_0= IF ) )
-                    // InternalCQLParser.g:4403:5: (lv_exists_4_0= IF )
+                    // InternalCQLParser.g:4454:4: ( (lv_exists_4_0= IF ) )
+                    // InternalCQLParser.g:4455:5: (lv_exists_4_0= IF )
                     {
-                    // InternalCQLParser.g:4403:5: (lv_exists_4_0= IF )
-                    // InternalCQLParser.g:4404:6: lv_exists_4_0= IF
+                    // InternalCQLParser.g:4455:5: (lv_exists_4_0= IF )
+                    // InternalCQLParser.g:4456:6: lv_exists_4_0= IF
                     {
-                    lv_exists_4_0=(Token)match(input,IF,FOLLOW_64); 
+                    lv_exists_4_0=(Token)match(input,IF,FOLLOW_67); 
 
                     						newLeafNode(lv_exists_4_0, grammarAccess.getDropStreamAccess().getExistsIFKeyword_4_0_0());
                     					
@@ -11146,7 +11211,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUserManagement"
-    // InternalCQLParser.g:4425:1: entryRuleUserManagement returns [EObject current=null] : iv_ruleUserManagement= ruleUserManagement EOF ;
+    // InternalCQLParser.g:4477:1: entryRuleUserManagement returns [EObject current=null] : iv_ruleUserManagement= ruleUserManagement EOF ;
     public final EObject entryRuleUserManagement() throws RecognitionException {
         EObject current = null;
 
@@ -11154,8 +11219,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4425:55: (iv_ruleUserManagement= ruleUserManagement EOF )
-            // InternalCQLParser.g:4426:2: iv_ruleUserManagement= ruleUserManagement EOF
+            // InternalCQLParser.g:4477:55: (iv_ruleUserManagement= ruleUserManagement EOF )
+            // InternalCQLParser.g:4478:2: iv_ruleUserManagement= ruleUserManagement EOF
             {
              newCompositeNode(grammarAccess.getUserManagementRule()); 
             pushFollow(FOLLOW_1);
@@ -11182,7 +11247,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUserManagement"
-    // InternalCQLParser.g:4432:1: ruleUserManagement returns [EObject current=null] : ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? ) ;
+    // InternalCQLParser.g:4484:1: ruleUserManagement returns [EObject current=null] : ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? ) ;
     public final EObject ruleUserManagement() throws RecognitionException {
         EObject current = null;
 
@@ -11201,14 +11266,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4438:2: ( ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? ) )
-            // InternalCQLParser.g:4439:2: ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? )
+            // InternalCQLParser.g:4490:2: ( ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? ) )
+            // InternalCQLParser.g:4491:2: ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? )
             {
-            // InternalCQLParser.g:4439:2: ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? )
-            // InternalCQLParser.g:4440:3: () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )?
+            // InternalCQLParser.g:4491:2: ( () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )? )
+            // InternalCQLParser.g:4492:3: () ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) ) ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) ) ( (lv_subjectName_3_0= RULE_ID ) ) (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )?
             {
-            // InternalCQLParser.g:4440:3: ()
-            // InternalCQLParser.g:4441:4: 
+            // InternalCQLParser.g:4492:3: ()
+            // InternalCQLParser.g:4493:4: 
             {
 
             				current = forceCreateModelElement(
@@ -11218,13 +11283,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4447:3: ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) )
-            // InternalCQLParser.g:4448:4: ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) )
+            // InternalCQLParser.g:4499:3: ( ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) ) )
+            // InternalCQLParser.g:4500:4: ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) )
             {
-            // InternalCQLParser.g:4448:4: ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) )
-            // InternalCQLParser.g:4449:5: (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP )
+            // InternalCQLParser.g:4500:4: ( (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP ) )
+            // InternalCQLParser.g:4501:5: (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP )
             {
-            // InternalCQLParser.g:4449:5: (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP )
+            // InternalCQLParser.g:4501:5: (lv_name_1_1= CREATE | lv_name_1_2= ALTER | lv_name_1_3= DROP )
             int alt62=3;
             switch ( input.LA(1) ) {
             case CREATE:
@@ -11251,9 +11316,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt62) {
                 case 1 :
-                    // InternalCQLParser.g:4450:6: lv_name_1_1= CREATE
+                    // InternalCQLParser.g:4502:6: lv_name_1_1= CREATE
                     {
-                    lv_name_1_1=(Token)match(input,CREATE,FOLLOW_66); 
+                    lv_name_1_1=(Token)match(input,CREATE,FOLLOW_69); 
 
                     						newLeafNode(lv_name_1_1, grammarAccess.getUserManagementAccess().getNameCREATEKeyword_1_0_0());
                     					
@@ -11267,9 +11332,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4461:6: lv_name_1_2= ALTER
+                    // InternalCQLParser.g:4513:6: lv_name_1_2= ALTER
                     {
-                    lv_name_1_2=(Token)match(input,ALTER,FOLLOW_66); 
+                    lv_name_1_2=(Token)match(input,ALTER,FOLLOW_69); 
 
                     						newLeafNode(lv_name_1_2, grammarAccess.getUserManagementAccess().getNameALTERKeyword_1_0_1());
                     					
@@ -11283,9 +11348,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:4472:6: lv_name_1_3= DROP
+                    // InternalCQLParser.g:4524:6: lv_name_1_3= DROP
                     {
-                    lv_name_1_3=(Token)match(input,DROP,FOLLOW_66); 
+                    lv_name_1_3=(Token)match(input,DROP,FOLLOW_69); 
 
                     						newLeafNode(lv_name_1_3, grammarAccess.getUserManagementAccess().getNameDROPKeyword_1_0_2());
                     					
@@ -11307,13 +11372,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4485:3: ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) )
-            // InternalCQLParser.g:4486:4: ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) )
+            // InternalCQLParser.g:4537:3: ( ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) ) )
+            // InternalCQLParser.g:4538:4: ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) )
             {
-            // InternalCQLParser.g:4486:4: ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) )
-            // InternalCQLParser.g:4487:5: (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT )
+            // InternalCQLParser.g:4538:4: ( (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT ) )
+            // InternalCQLParser.g:4539:5: (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT )
             {
-            // InternalCQLParser.g:4487:5: (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT )
+            // InternalCQLParser.g:4539:5: (lv_subject_2_1= USER | lv_subject_2_2= ROLE | lv_subject_2_3= TENANT )
             int alt63=3;
             switch ( input.LA(1) ) {
             case USER:
@@ -11340,7 +11405,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt63) {
                 case 1 :
-                    // InternalCQLParser.g:4488:6: lv_subject_2_1= USER
+                    // InternalCQLParser.g:4540:6: lv_subject_2_1= USER
                     {
                     lv_subject_2_1=(Token)match(input,USER,FOLLOW_5); 
 
@@ -11356,7 +11421,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4499:6: lv_subject_2_2= ROLE
+                    // InternalCQLParser.g:4551:6: lv_subject_2_2= ROLE
                     {
                     lv_subject_2_2=(Token)match(input,ROLE,FOLLOW_5); 
 
@@ -11372,7 +11437,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:4510:6: lv_subject_2_3= TENANT
+                    // InternalCQLParser.g:4562:6: lv_subject_2_3= TENANT
                     {
                     lv_subject_2_3=(Token)match(input,TENANT,FOLLOW_5); 
 
@@ -11396,13 +11461,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4523:3: ( (lv_subjectName_3_0= RULE_ID ) )
-            // InternalCQLParser.g:4524:4: (lv_subjectName_3_0= RULE_ID )
+            // InternalCQLParser.g:4575:3: ( (lv_subjectName_3_0= RULE_ID ) )
+            // InternalCQLParser.g:4576:4: (lv_subjectName_3_0= RULE_ID )
             {
-            // InternalCQLParser.g:4524:4: (lv_subjectName_3_0= RULE_ID )
-            // InternalCQLParser.g:4525:5: lv_subjectName_3_0= RULE_ID
+            // InternalCQLParser.g:4576:4: (lv_subjectName_3_0= RULE_ID )
+            // InternalCQLParser.g:4577:5: lv_subjectName_3_0= RULE_ID
             {
-            lv_subjectName_3_0=(Token)match(input,RULE_ID,FOLLOW_67); 
+            lv_subjectName_3_0=(Token)match(input,RULE_ID,FOLLOW_70); 
 
             					newLeafNode(lv_subjectName_3_0, grammarAccess.getUserManagementAccess().getSubjectNameIDTerminalRuleCall_3_0());
             				
@@ -11422,7 +11487,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:4541:3: (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )?
+            // InternalCQLParser.g:4593:3: (otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) ) )?
             int alt64=2;
             int LA64_0 = input.LA(1);
 
@@ -11431,21 +11496,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt64) {
                 case 1 :
-                    // InternalCQLParser.g:4542:4: otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) )
+                    // InternalCQLParser.g:4594:4: otherlv_4= IDENTIFIED otherlv_5= BY ( (lv_password_6_0= RULE_STRING ) )
                     {
-                    otherlv_4=(Token)match(input,IDENTIFIED,FOLLOW_16); 
+                    otherlv_4=(Token)match(input,IDENTIFIED,FOLLOW_18); 
 
                     				newLeafNode(otherlv_4, grammarAccess.getUserManagementAccess().getIDENTIFIEDKeyword_4_0());
                     			
-                    otherlv_5=(Token)match(input,BY,FOLLOW_31); 
+                    otherlv_5=(Token)match(input,BY,FOLLOW_34); 
 
                     				newLeafNode(otherlv_5, grammarAccess.getUserManagementAccess().getBYKeyword_4_1());
                     			
-                    // InternalCQLParser.g:4550:4: ( (lv_password_6_0= RULE_STRING ) )
-                    // InternalCQLParser.g:4551:5: (lv_password_6_0= RULE_STRING )
+                    // InternalCQLParser.g:4602:4: ( (lv_password_6_0= RULE_STRING ) )
+                    // InternalCQLParser.g:4603:5: (lv_password_6_0= RULE_STRING )
                     {
-                    // InternalCQLParser.g:4551:5: (lv_password_6_0= RULE_STRING )
-                    // InternalCQLParser.g:4552:6: lv_password_6_0= RULE_STRING
+                    // InternalCQLParser.g:4603:5: (lv_password_6_0= RULE_STRING )
+                    // InternalCQLParser.g:4604:6: lv_password_6_0= RULE_STRING
                     {
                     lv_password_6_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -11496,7 +11561,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRightsManagement"
-    // InternalCQLParser.g:4573:1: entryRuleRightsManagement returns [EObject current=null] : iv_ruleRightsManagement= ruleRightsManagement EOF ;
+    // InternalCQLParser.g:4625:1: entryRuleRightsManagement returns [EObject current=null] : iv_ruleRightsManagement= ruleRightsManagement EOF ;
     public final EObject entryRuleRightsManagement() throws RecognitionException {
         EObject current = null;
 
@@ -11504,8 +11569,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4573:57: (iv_ruleRightsManagement= ruleRightsManagement EOF )
-            // InternalCQLParser.g:4574:2: iv_ruleRightsManagement= ruleRightsManagement EOF
+            // InternalCQLParser.g:4625:57: (iv_ruleRightsManagement= ruleRightsManagement EOF )
+            // InternalCQLParser.g:4626:2: iv_ruleRightsManagement= ruleRightsManagement EOF
             {
              newCompositeNode(grammarAccess.getRightsManagementRule()); 
             pushFollow(FOLLOW_1);
@@ -11532,7 +11597,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRightsManagement"
-    // InternalCQLParser.g:4580:1: ruleRightsManagement returns [EObject current=null] : ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) ) ;
+    // InternalCQLParser.g:4632:1: ruleRightsManagement returns [EObject current=null] : ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) ) ;
     public final EObject ruleRightsManagement() throws RecognitionException {
         EObject current = null;
 
@@ -11561,10 +11626,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4586:2: ( ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) ) )
-            // InternalCQLParser.g:4587:2: ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4638:2: ( ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) ) )
+            // InternalCQLParser.g:4639:2: ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) )
             {
-            // InternalCQLParser.g:4587:2: ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4639:2: ( ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) ) | ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) ) )
             int alt71=2;
             int LA71_0 = input.LA(1);
 
@@ -11582,13 +11647,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt71) {
                 case 1 :
-                    // InternalCQLParser.g:4588:3: ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4640:3: ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) )
                     {
-                    // InternalCQLParser.g:4588:3: ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) )
-                    // InternalCQLParser.g:4589:4: () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) )
+                    // InternalCQLParser.g:4640:3: ( () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4641:4: () ( (lv_name_1_0= GRANT ) ) ( (lv_operations_2_0= RULE_ID ) ) (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )* (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )? otherlv_9= TO ( (lv_user_10_0= RULE_ID ) )
                     {
-                    // InternalCQLParser.g:4589:4: ()
-                    // InternalCQLParser.g:4590:5: 
+                    // InternalCQLParser.g:4641:4: ()
+                    // InternalCQLParser.g:4642:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -11598,11 +11663,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4596:4: ( (lv_name_1_0= GRANT ) )
-                    // InternalCQLParser.g:4597:5: (lv_name_1_0= GRANT )
+                    // InternalCQLParser.g:4648:4: ( (lv_name_1_0= GRANT ) )
+                    // InternalCQLParser.g:4649:5: (lv_name_1_0= GRANT )
                     {
-                    // InternalCQLParser.g:4597:5: (lv_name_1_0= GRANT )
-                    // InternalCQLParser.g:4598:6: lv_name_1_0= GRANT
+                    // InternalCQLParser.g:4649:5: (lv_name_1_0= GRANT )
+                    // InternalCQLParser.g:4650:6: lv_name_1_0= GRANT
                     {
                     lv_name_1_0=(Token)match(input,GRANT,FOLLOW_5); 
 
@@ -11620,13 +11685,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4610:4: ( (lv_operations_2_0= RULE_ID ) )
-                    // InternalCQLParser.g:4611:5: (lv_operations_2_0= RULE_ID )
+                    // InternalCQLParser.g:4662:4: ( (lv_operations_2_0= RULE_ID ) )
+                    // InternalCQLParser.g:4663:5: (lv_operations_2_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4611:5: (lv_operations_2_0= RULE_ID )
-                    // InternalCQLParser.g:4612:6: lv_operations_2_0= RULE_ID
+                    // InternalCQLParser.g:4663:5: (lv_operations_2_0= RULE_ID )
+                    // InternalCQLParser.g:4664:6: lv_operations_2_0= RULE_ID
                     {
-                    lv_operations_2_0=(Token)match(input,RULE_ID,FOLLOW_68); 
+                    lv_operations_2_0=(Token)match(input,RULE_ID,FOLLOW_71); 
 
                     						newLeafNode(lv_operations_2_0, grammarAccess.getRightsManagementAccess().getOperationsIDTerminalRuleCall_0_2_0());
                     					
@@ -11646,7 +11711,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4628:4: (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )*
+                    // InternalCQLParser.g:4680:4: (otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) ) )*
                     loop65:
                     do {
                         int alt65=2;
@@ -11659,19 +11724,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt65) {
                     	case 1 :
-                    	    // InternalCQLParser.g:4629:5: otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4681:5: otherlv_3= Comma ( (lv_operations_4_0= RULE_ID ) )
                     	    {
                     	    otherlv_3=(Token)match(input,Comma,FOLLOW_5); 
 
                     	    					newLeafNode(otherlv_3, grammarAccess.getRightsManagementAccess().getCommaKeyword_0_3_0());
                     	    				
-                    	    // InternalCQLParser.g:4633:5: ( (lv_operations_4_0= RULE_ID ) )
-                    	    // InternalCQLParser.g:4634:6: (lv_operations_4_0= RULE_ID )
+                    	    // InternalCQLParser.g:4685:5: ( (lv_operations_4_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4686:6: (lv_operations_4_0= RULE_ID )
                     	    {
-                    	    // InternalCQLParser.g:4634:6: (lv_operations_4_0= RULE_ID )
-                    	    // InternalCQLParser.g:4635:7: lv_operations_4_0= RULE_ID
+                    	    // InternalCQLParser.g:4686:6: (lv_operations_4_0= RULE_ID )
+                    	    // InternalCQLParser.g:4687:7: lv_operations_4_0= RULE_ID
                     	    {
-                    	    lv_operations_4_0=(Token)match(input,RULE_ID,FOLLOW_68); 
+                    	    lv_operations_4_0=(Token)match(input,RULE_ID,FOLLOW_71); 
 
                     	    							newLeafNode(lv_operations_4_0, grammarAccess.getRightsManagementAccess().getOperationsIDTerminalRuleCall_0_3_1_0());
                     	    						
@@ -11700,7 +11765,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         }
                     } while (true);
 
-                    // InternalCQLParser.g:4652:4: (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )?
+                    // InternalCQLParser.g:4704:4: (otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )* )?
                     int alt67=2;
                     int LA67_0 = input.LA(1);
 
@@ -11709,19 +11774,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt67) {
                         case 1 :
-                            // InternalCQLParser.g:4653:5: otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )*
+                            // InternalCQLParser.g:4705:5: otherlv_5= ON ( (lv_operations2_6_0= RULE_ID ) ) (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )*
                             {
                             otherlv_5=(Token)match(input,ON,FOLLOW_5); 
 
                             					newLeafNode(otherlv_5, grammarAccess.getRightsManagementAccess().getONKeyword_0_4_0());
                             				
-                            // InternalCQLParser.g:4657:5: ( (lv_operations2_6_0= RULE_ID ) )
-                            // InternalCQLParser.g:4658:6: (lv_operations2_6_0= RULE_ID )
+                            // InternalCQLParser.g:4709:5: ( (lv_operations2_6_0= RULE_ID ) )
+                            // InternalCQLParser.g:4710:6: (lv_operations2_6_0= RULE_ID )
                             {
-                            // InternalCQLParser.g:4658:6: (lv_operations2_6_0= RULE_ID )
-                            // InternalCQLParser.g:4659:7: lv_operations2_6_0= RULE_ID
+                            // InternalCQLParser.g:4710:6: (lv_operations2_6_0= RULE_ID )
+                            // InternalCQLParser.g:4711:7: lv_operations2_6_0= RULE_ID
                             {
-                            lv_operations2_6_0=(Token)match(input,RULE_ID,FOLLOW_69); 
+                            lv_operations2_6_0=(Token)match(input,RULE_ID,FOLLOW_72); 
 
                             							newLeafNode(lv_operations2_6_0, grammarAccess.getRightsManagementAccess().getOperations2IDTerminalRuleCall_0_4_1_0());
                             						
@@ -11741,7 +11806,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                             }
 
-                            // InternalCQLParser.g:4675:5: (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )*
+                            // InternalCQLParser.g:4727:5: (otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) ) )*
                             loop66:
                             do {
                                 int alt66=2;
@@ -11754,19 +11819,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                                 switch (alt66) {
                             	case 1 :
-                            	    // InternalCQLParser.g:4676:6: otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) )
+                            	    // InternalCQLParser.g:4728:6: otherlv_7= Comma ( (lv_operations2_8_0= RULE_ID ) )
                             	    {
                             	    otherlv_7=(Token)match(input,Comma,FOLLOW_5); 
 
                             	    						newLeafNode(otherlv_7, grammarAccess.getRightsManagementAccess().getCommaKeyword_0_4_2_0());
                             	    					
-                            	    // InternalCQLParser.g:4680:6: ( (lv_operations2_8_0= RULE_ID ) )
-                            	    // InternalCQLParser.g:4681:7: (lv_operations2_8_0= RULE_ID )
+                            	    // InternalCQLParser.g:4732:6: ( (lv_operations2_8_0= RULE_ID ) )
+                            	    // InternalCQLParser.g:4733:7: (lv_operations2_8_0= RULE_ID )
                             	    {
-                            	    // InternalCQLParser.g:4681:7: (lv_operations2_8_0= RULE_ID )
-                            	    // InternalCQLParser.g:4682:8: lv_operations2_8_0= RULE_ID
+                            	    // InternalCQLParser.g:4733:7: (lv_operations2_8_0= RULE_ID )
+                            	    // InternalCQLParser.g:4734:8: lv_operations2_8_0= RULE_ID
                             	    {
-                            	    lv_operations2_8_0=(Token)match(input,RULE_ID,FOLLOW_69); 
+                            	    lv_operations2_8_0=(Token)match(input,RULE_ID,FOLLOW_72); 
 
                             	    								newLeafNode(lv_operations2_8_0, grammarAccess.getRightsManagementAccess().getOperations2IDTerminalRuleCall_0_4_2_1_0());
                             	    							
@@ -11805,11 +11870,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_9, grammarAccess.getRightsManagementAccess().getTOKeyword_0_5());
                     			
-                    // InternalCQLParser.g:4704:4: ( (lv_user_10_0= RULE_ID ) )
-                    // InternalCQLParser.g:4705:5: (lv_user_10_0= RULE_ID )
+                    // InternalCQLParser.g:4756:4: ( (lv_user_10_0= RULE_ID ) )
+                    // InternalCQLParser.g:4757:5: (lv_user_10_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4705:5: (lv_user_10_0= RULE_ID )
-                    // InternalCQLParser.g:4706:6: lv_user_10_0= RULE_ID
+                    // InternalCQLParser.g:4757:5: (lv_user_10_0= RULE_ID )
+                    // InternalCQLParser.g:4758:6: lv_user_10_0= RULE_ID
                     {
                     lv_user_10_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -11838,13 +11903,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4724:3: ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4776:3: ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) )
                     {
-                    // InternalCQLParser.g:4724:3: ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) )
-                    // InternalCQLParser.g:4725:4: () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) )
+                    // InternalCQLParser.g:4776:3: ( () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4777:4: () ( (lv_name_12_0= REVOKE ) ) ( (lv_operations_13_0= RULE_ID ) ) (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )* (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )? otherlv_20= FROM ( (lv_user_21_0= RULE_ID ) )
                     {
-                    // InternalCQLParser.g:4725:4: ()
-                    // InternalCQLParser.g:4726:5: 
+                    // InternalCQLParser.g:4777:4: ()
+                    // InternalCQLParser.g:4778:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -11854,11 +11919,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4732:4: ( (lv_name_12_0= REVOKE ) )
-                    // InternalCQLParser.g:4733:5: (lv_name_12_0= REVOKE )
+                    // InternalCQLParser.g:4784:4: ( (lv_name_12_0= REVOKE ) )
+                    // InternalCQLParser.g:4785:5: (lv_name_12_0= REVOKE )
                     {
-                    // InternalCQLParser.g:4733:5: (lv_name_12_0= REVOKE )
-                    // InternalCQLParser.g:4734:6: lv_name_12_0= REVOKE
+                    // InternalCQLParser.g:4785:5: (lv_name_12_0= REVOKE )
+                    // InternalCQLParser.g:4786:6: lv_name_12_0= REVOKE
                     {
                     lv_name_12_0=(Token)match(input,REVOKE,FOLLOW_5); 
 
@@ -11876,13 +11941,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4746:4: ( (lv_operations_13_0= RULE_ID ) )
-                    // InternalCQLParser.g:4747:5: (lv_operations_13_0= RULE_ID )
+                    // InternalCQLParser.g:4798:4: ( (lv_operations_13_0= RULE_ID ) )
+                    // InternalCQLParser.g:4799:5: (lv_operations_13_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4747:5: (lv_operations_13_0= RULE_ID )
-                    // InternalCQLParser.g:4748:6: lv_operations_13_0= RULE_ID
+                    // InternalCQLParser.g:4799:5: (lv_operations_13_0= RULE_ID )
+                    // InternalCQLParser.g:4800:6: lv_operations_13_0= RULE_ID
                     {
-                    lv_operations_13_0=(Token)match(input,RULE_ID,FOLLOW_70); 
+                    lv_operations_13_0=(Token)match(input,RULE_ID,FOLLOW_73); 
 
                     						newLeafNode(lv_operations_13_0, grammarAccess.getRightsManagementAccess().getOperationsIDTerminalRuleCall_1_2_0());
                     					
@@ -11902,7 +11967,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4764:4: (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )*
+                    // InternalCQLParser.g:4816:4: (otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) ) )*
                     loop68:
                     do {
                         int alt68=2;
@@ -11915,19 +11980,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt68) {
                     	case 1 :
-                    	    // InternalCQLParser.g:4765:5: otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4817:5: otherlv_14= Comma ( (lv_operations_15_0= RULE_ID ) )
                     	    {
                     	    otherlv_14=(Token)match(input,Comma,FOLLOW_5); 
 
                     	    					newLeafNode(otherlv_14, grammarAccess.getRightsManagementAccess().getCommaKeyword_1_3_0());
                     	    				
-                    	    // InternalCQLParser.g:4769:5: ( (lv_operations_15_0= RULE_ID ) )
-                    	    // InternalCQLParser.g:4770:6: (lv_operations_15_0= RULE_ID )
+                    	    // InternalCQLParser.g:4821:5: ( (lv_operations_15_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4822:6: (lv_operations_15_0= RULE_ID )
                     	    {
-                    	    // InternalCQLParser.g:4770:6: (lv_operations_15_0= RULE_ID )
-                    	    // InternalCQLParser.g:4771:7: lv_operations_15_0= RULE_ID
+                    	    // InternalCQLParser.g:4822:6: (lv_operations_15_0= RULE_ID )
+                    	    // InternalCQLParser.g:4823:7: lv_operations_15_0= RULE_ID
                     	    {
-                    	    lv_operations_15_0=(Token)match(input,RULE_ID,FOLLOW_70); 
+                    	    lv_operations_15_0=(Token)match(input,RULE_ID,FOLLOW_73); 
 
                     	    							newLeafNode(lv_operations_15_0, grammarAccess.getRightsManagementAccess().getOperationsIDTerminalRuleCall_1_3_1_0());
                     	    						
@@ -11956,7 +12021,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                         }
                     } while (true);
 
-                    // InternalCQLParser.g:4788:4: (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )?
+                    // InternalCQLParser.g:4840:4: (otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )* )?
                     int alt70=2;
                     int LA70_0 = input.LA(1);
 
@@ -11965,19 +12030,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt70) {
                         case 1 :
-                            // InternalCQLParser.g:4789:5: otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )*
+                            // InternalCQLParser.g:4841:5: otherlv_16= ON ( (lv_operations2_17_0= RULE_ID ) ) (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )*
                             {
                             otherlv_16=(Token)match(input,ON,FOLLOW_5); 
 
                             					newLeafNode(otherlv_16, grammarAccess.getRightsManagementAccess().getONKeyword_1_4_0());
                             				
-                            // InternalCQLParser.g:4793:5: ( (lv_operations2_17_0= RULE_ID ) )
-                            // InternalCQLParser.g:4794:6: (lv_operations2_17_0= RULE_ID )
+                            // InternalCQLParser.g:4845:5: ( (lv_operations2_17_0= RULE_ID ) )
+                            // InternalCQLParser.g:4846:6: (lv_operations2_17_0= RULE_ID )
                             {
-                            // InternalCQLParser.g:4794:6: (lv_operations2_17_0= RULE_ID )
-                            // InternalCQLParser.g:4795:7: lv_operations2_17_0= RULE_ID
+                            // InternalCQLParser.g:4846:6: (lv_operations2_17_0= RULE_ID )
+                            // InternalCQLParser.g:4847:7: lv_operations2_17_0= RULE_ID
                             {
-                            lv_operations2_17_0=(Token)match(input,RULE_ID,FOLLOW_10); 
+                            lv_operations2_17_0=(Token)match(input,RULE_ID,FOLLOW_12); 
 
                             							newLeafNode(lv_operations2_17_0, grammarAccess.getRightsManagementAccess().getOperations2IDTerminalRuleCall_1_4_1_0());
                             						
@@ -11997,7 +12062,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                             }
 
-                            // InternalCQLParser.g:4811:5: (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )*
+                            // InternalCQLParser.g:4863:5: (otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) ) )*
                             loop69:
                             do {
                                 int alt69=2;
@@ -12010,19 +12075,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                                 switch (alt69) {
                             	case 1 :
-                            	    // InternalCQLParser.g:4812:6: otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) )
+                            	    // InternalCQLParser.g:4864:6: otherlv_18= Comma ( (lv_operations2_19_0= RULE_ID ) )
                             	    {
                             	    otherlv_18=(Token)match(input,Comma,FOLLOW_5); 
 
                             	    						newLeafNode(otherlv_18, grammarAccess.getRightsManagementAccess().getCommaKeyword_1_4_2_0());
                             	    					
-                            	    // InternalCQLParser.g:4816:6: ( (lv_operations2_19_0= RULE_ID ) )
-                            	    // InternalCQLParser.g:4817:7: (lv_operations2_19_0= RULE_ID )
+                            	    // InternalCQLParser.g:4868:6: ( (lv_operations2_19_0= RULE_ID ) )
+                            	    // InternalCQLParser.g:4869:7: (lv_operations2_19_0= RULE_ID )
                             	    {
-                            	    // InternalCQLParser.g:4817:7: (lv_operations2_19_0= RULE_ID )
-                            	    // InternalCQLParser.g:4818:8: lv_operations2_19_0= RULE_ID
+                            	    // InternalCQLParser.g:4869:7: (lv_operations2_19_0= RULE_ID )
+                            	    // InternalCQLParser.g:4870:8: lv_operations2_19_0= RULE_ID
                             	    {
-                            	    lv_operations2_19_0=(Token)match(input,RULE_ID,FOLLOW_10); 
+                            	    lv_operations2_19_0=(Token)match(input,RULE_ID,FOLLOW_12); 
 
                             	    								newLeafNode(lv_operations2_19_0, grammarAccess.getRightsManagementAccess().getOperations2IDTerminalRuleCall_1_4_2_1_0());
                             	    							
@@ -12061,11 +12126,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_20, grammarAccess.getRightsManagementAccess().getFROMKeyword_1_5());
                     			
-                    // InternalCQLParser.g:4840:4: ( (lv_user_21_0= RULE_ID ) )
-                    // InternalCQLParser.g:4841:5: (lv_user_21_0= RULE_ID )
+                    // InternalCQLParser.g:4892:4: ( (lv_user_21_0= RULE_ID ) )
+                    // InternalCQLParser.g:4893:5: (lv_user_21_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4841:5: (lv_user_21_0= RULE_ID )
-                    // InternalCQLParser.g:4842:6: lv_user_21_0= RULE_ID
+                    // InternalCQLParser.g:4893:5: (lv_user_21_0= RULE_ID )
+                    // InternalCQLParser.g:4894:6: lv_user_21_0= RULE_ID
                     {
                     lv_user_21_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -12116,7 +12181,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRoleManagement"
-    // InternalCQLParser.g:4863:1: entryRuleRoleManagement returns [EObject current=null] : iv_ruleRoleManagement= ruleRoleManagement EOF ;
+    // InternalCQLParser.g:4915:1: entryRuleRoleManagement returns [EObject current=null] : iv_ruleRoleManagement= ruleRoleManagement EOF ;
     public final EObject entryRuleRoleManagement() throws RecognitionException {
         EObject current = null;
 
@@ -12124,8 +12189,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:4863:55: (iv_ruleRoleManagement= ruleRoleManagement EOF )
-            // InternalCQLParser.g:4864:2: iv_ruleRoleManagement= ruleRoleManagement EOF
+            // InternalCQLParser.g:4915:55: (iv_ruleRoleManagement= ruleRoleManagement EOF )
+            // InternalCQLParser.g:4916:2: iv_ruleRoleManagement= ruleRoleManagement EOF
             {
              newCompositeNode(grammarAccess.getRoleManagementRule()); 
             pushFollow(FOLLOW_1);
@@ -12152,7 +12217,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRoleManagement"
-    // InternalCQLParser.g:4870:1: ruleRoleManagement returns [EObject current=null] : ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) ) ;
+    // InternalCQLParser.g:4922:1: ruleRoleManagement returns [EObject current=null] : ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) ) ;
     public final EObject ruleRoleManagement() throws RecognitionException {
         EObject current = null;
 
@@ -12175,10 +12240,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:4876:2: ( ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) ) )
-            // InternalCQLParser.g:4877:2: ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4928:2: ( ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) ) )
+            // InternalCQLParser.g:4929:2: ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) )
             {
-            // InternalCQLParser.g:4877:2: ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) )
+            // InternalCQLParser.g:4929:2: ( ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) ) | ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) ) )
             int alt74=2;
             int LA74_0 = input.LA(1);
 
@@ -12196,13 +12261,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt74) {
                 case 1 :
-                    // InternalCQLParser.g:4878:3: ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4930:3: ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) )
                     {
-                    // InternalCQLParser.g:4878:3: ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) )
-                    // InternalCQLParser.g:4879:4: () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) )
+                    // InternalCQLParser.g:4930:3: ( () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:4931:4: () ( (lv_name_1_0= GRANT ) ) otherlv_2= ROLE ( (lv_operations_3_0= RULE_ID ) ) (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )* otherlv_6= TO ( (lv_user_7_0= RULE_ID ) )
                     {
-                    // InternalCQLParser.g:4879:4: ()
-                    // InternalCQLParser.g:4880:5: 
+                    // InternalCQLParser.g:4931:4: ()
+                    // InternalCQLParser.g:4932:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -12212,13 +12277,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4886:4: ( (lv_name_1_0= GRANT ) )
-                    // InternalCQLParser.g:4887:5: (lv_name_1_0= GRANT )
+                    // InternalCQLParser.g:4938:4: ( (lv_name_1_0= GRANT ) )
+                    // InternalCQLParser.g:4939:5: (lv_name_1_0= GRANT )
                     {
-                    // InternalCQLParser.g:4887:5: (lv_name_1_0= GRANT )
-                    // InternalCQLParser.g:4888:6: lv_name_1_0= GRANT
+                    // InternalCQLParser.g:4939:5: (lv_name_1_0= GRANT )
+                    // InternalCQLParser.g:4940:6: lv_name_1_0= GRANT
                     {
-                    lv_name_1_0=(Token)match(input,GRANT,FOLLOW_71); 
+                    lv_name_1_0=(Token)match(input,GRANT,FOLLOW_74); 
 
                     						newLeafNode(lv_name_1_0, grammarAccess.getRoleManagementAccess().getNameGRANTKeyword_0_1_0());
                     					
@@ -12238,13 +12303,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_2, grammarAccess.getRoleManagementAccess().getROLEKeyword_0_2());
                     			
-                    // InternalCQLParser.g:4904:4: ( (lv_operations_3_0= RULE_ID ) )
-                    // InternalCQLParser.g:4905:5: (lv_operations_3_0= RULE_ID )
+                    // InternalCQLParser.g:4956:4: ( (lv_operations_3_0= RULE_ID ) )
+                    // InternalCQLParser.g:4957:5: (lv_operations_3_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4905:5: (lv_operations_3_0= RULE_ID )
-                    // InternalCQLParser.g:4906:6: lv_operations_3_0= RULE_ID
+                    // InternalCQLParser.g:4957:5: (lv_operations_3_0= RULE_ID )
+                    // InternalCQLParser.g:4958:6: lv_operations_3_0= RULE_ID
                     {
-                    lv_operations_3_0=(Token)match(input,RULE_ID,FOLLOW_69); 
+                    lv_operations_3_0=(Token)match(input,RULE_ID,FOLLOW_72); 
 
                     						newLeafNode(lv_operations_3_0, grammarAccess.getRoleManagementAccess().getOperationsIDTerminalRuleCall_0_3_0());
                     					
@@ -12264,7 +12329,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4922:4: (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )*
+                    // InternalCQLParser.g:4974:4: (otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) ) )*
                     loop72:
                     do {
                         int alt72=2;
@@ -12277,19 +12342,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt72) {
                     	case 1 :
-                    	    // InternalCQLParser.g:4923:5: otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4975:5: otherlv_4= Comma ( (lv_operations_5_0= RULE_ID ) )
                     	    {
                     	    otherlv_4=(Token)match(input,Comma,FOLLOW_5); 
 
                     	    					newLeafNode(otherlv_4, grammarAccess.getRoleManagementAccess().getCommaKeyword_0_4_0());
                     	    				
-                    	    // InternalCQLParser.g:4927:5: ( (lv_operations_5_0= RULE_ID ) )
-                    	    // InternalCQLParser.g:4928:6: (lv_operations_5_0= RULE_ID )
+                    	    // InternalCQLParser.g:4979:5: ( (lv_operations_5_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:4980:6: (lv_operations_5_0= RULE_ID )
                     	    {
-                    	    // InternalCQLParser.g:4928:6: (lv_operations_5_0= RULE_ID )
-                    	    // InternalCQLParser.g:4929:7: lv_operations_5_0= RULE_ID
+                    	    // InternalCQLParser.g:4980:6: (lv_operations_5_0= RULE_ID )
+                    	    // InternalCQLParser.g:4981:7: lv_operations_5_0= RULE_ID
                     	    {
-                    	    lv_operations_5_0=(Token)match(input,RULE_ID,FOLLOW_69); 
+                    	    lv_operations_5_0=(Token)match(input,RULE_ID,FOLLOW_72); 
 
                     	    							newLeafNode(lv_operations_5_0, grammarAccess.getRoleManagementAccess().getOperationsIDTerminalRuleCall_0_4_1_0());
                     	    						
@@ -12322,11 +12387,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_6, grammarAccess.getRoleManagementAccess().getTOKeyword_0_5());
                     			
-                    // InternalCQLParser.g:4950:4: ( (lv_user_7_0= RULE_ID ) )
-                    // InternalCQLParser.g:4951:5: (lv_user_7_0= RULE_ID )
+                    // InternalCQLParser.g:5002:4: ( (lv_user_7_0= RULE_ID ) )
+                    // InternalCQLParser.g:5003:5: (lv_user_7_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4951:5: (lv_user_7_0= RULE_ID )
-                    // InternalCQLParser.g:4952:6: lv_user_7_0= RULE_ID
+                    // InternalCQLParser.g:5003:5: (lv_user_7_0= RULE_ID )
+                    // InternalCQLParser.g:5004:6: lv_user_7_0= RULE_ID
                     {
                     lv_user_7_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -12355,13 +12420,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:4970:3: ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:5022:3: ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) )
                     {
-                    // InternalCQLParser.g:4970:3: ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) )
-                    // InternalCQLParser.g:4971:4: () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) )
+                    // InternalCQLParser.g:5022:3: ( () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) ) )
+                    // InternalCQLParser.g:5023:4: () ( (lv_name_9_0= REVOKE ) ) otherlv_10= ROLE ( (lv_operations_11_0= RULE_ID ) ) (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )* otherlv_14= FROM ( (lv_user_15_0= RULE_ID ) )
                     {
-                    // InternalCQLParser.g:4971:4: ()
-                    // InternalCQLParser.g:4972:5: 
+                    // InternalCQLParser.g:5023:4: ()
+                    // InternalCQLParser.g:5024:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -12371,13 +12436,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:4978:4: ( (lv_name_9_0= REVOKE ) )
-                    // InternalCQLParser.g:4979:5: (lv_name_9_0= REVOKE )
+                    // InternalCQLParser.g:5030:4: ( (lv_name_9_0= REVOKE ) )
+                    // InternalCQLParser.g:5031:5: (lv_name_9_0= REVOKE )
                     {
-                    // InternalCQLParser.g:4979:5: (lv_name_9_0= REVOKE )
-                    // InternalCQLParser.g:4980:6: lv_name_9_0= REVOKE
+                    // InternalCQLParser.g:5031:5: (lv_name_9_0= REVOKE )
+                    // InternalCQLParser.g:5032:6: lv_name_9_0= REVOKE
                     {
-                    lv_name_9_0=(Token)match(input,REVOKE,FOLLOW_71); 
+                    lv_name_9_0=(Token)match(input,REVOKE,FOLLOW_74); 
 
                     						newLeafNode(lv_name_9_0, grammarAccess.getRoleManagementAccess().getNameREVOKEKeyword_1_1_0());
                     					
@@ -12397,13 +12462,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_10, grammarAccess.getRoleManagementAccess().getROLEKeyword_1_2());
                     			
-                    // InternalCQLParser.g:4996:4: ( (lv_operations_11_0= RULE_ID ) )
-                    // InternalCQLParser.g:4997:5: (lv_operations_11_0= RULE_ID )
+                    // InternalCQLParser.g:5048:4: ( (lv_operations_11_0= RULE_ID ) )
+                    // InternalCQLParser.g:5049:5: (lv_operations_11_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:4997:5: (lv_operations_11_0= RULE_ID )
-                    // InternalCQLParser.g:4998:6: lv_operations_11_0= RULE_ID
+                    // InternalCQLParser.g:5049:5: (lv_operations_11_0= RULE_ID )
+                    // InternalCQLParser.g:5050:6: lv_operations_11_0= RULE_ID
                     {
-                    lv_operations_11_0=(Token)match(input,RULE_ID,FOLLOW_10); 
+                    lv_operations_11_0=(Token)match(input,RULE_ID,FOLLOW_12); 
 
                     						newLeafNode(lv_operations_11_0, grammarAccess.getRoleManagementAccess().getOperationsIDTerminalRuleCall_1_3_0());
                     					
@@ -12423,7 +12488,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:5014:4: (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )*
+                    // InternalCQLParser.g:5066:4: (otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) ) )*
                     loop73:
                     do {
                         int alt73=2;
@@ -12436,19 +12501,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                         switch (alt73) {
                     	case 1 :
-                    	    // InternalCQLParser.g:5015:5: otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:5067:5: otherlv_12= Comma ( (lv_operations_13_0= RULE_ID ) )
                     	    {
                     	    otherlv_12=(Token)match(input,Comma,FOLLOW_5); 
 
                     	    					newLeafNode(otherlv_12, grammarAccess.getRoleManagementAccess().getCommaKeyword_1_4_0());
                     	    				
-                    	    // InternalCQLParser.g:5019:5: ( (lv_operations_13_0= RULE_ID ) )
-                    	    // InternalCQLParser.g:5020:6: (lv_operations_13_0= RULE_ID )
+                    	    // InternalCQLParser.g:5071:5: ( (lv_operations_13_0= RULE_ID ) )
+                    	    // InternalCQLParser.g:5072:6: (lv_operations_13_0= RULE_ID )
                     	    {
-                    	    // InternalCQLParser.g:5020:6: (lv_operations_13_0= RULE_ID )
-                    	    // InternalCQLParser.g:5021:7: lv_operations_13_0= RULE_ID
+                    	    // InternalCQLParser.g:5072:6: (lv_operations_13_0= RULE_ID )
+                    	    // InternalCQLParser.g:5073:7: lv_operations_13_0= RULE_ID
                     	    {
-                    	    lv_operations_13_0=(Token)match(input,RULE_ID,FOLLOW_10); 
+                    	    lv_operations_13_0=(Token)match(input,RULE_ID,FOLLOW_12); 
 
                     	    							newLeafNode(lv_operations_13_0, grammarAccess.getRoleManagementAccess().getOperationsIDTerminalRuleCall_1_4_1_0());
                     	    						
@@ -12481,11 +12546,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_14, grammarAccess.getRoleManagementAccess().getFROMKeyword_1_5());
                     			
-                    // InternalCQLParser.g:5042:4: ( (lv_user_15_0= RULE_ID ) )
-                    // InternalCQLParser.g:5043:5: (lv_user_15_0= RULE_ID )
+                    // InternalCQLParser.g:5094:4: ( (lv_user_15_0= RULE_ID ) )
+                    // InternalCQLParser.g:5095:5: (lv_user_15_0= RULE_ID )
                     {
-                    // InternalCQLParser.g:5043:5: (lv_user_15_0= RULE_ID )
-                    // InternalCQLParser.g:5044:6: lv_user_15_0= RULE_ID
+                    // InternalCQLParser.g:5095:5: (lv_user_15_0= RULE_ID )
+                    // InternalCQLParser.g:5096:6: lv_user_15_0= RULE_ID
                     {
                     lv_user_15_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -12536,7 +12601,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleWindowOperator"
-    // InternalCQLParser.g:5065:1: entryRuleWindowOperator returns [EObject current=null] : iv_ruleWindowOperator= ruleWindowOperator EOF ;
+    // InternalCQLParser.g:5117:1: entryRuleWindowOperator returns [EObject current=null] : iv_ruleWindowOperator= ruleWindowOperator EOF ;
     public final EObject entryRuleWindowOperator() throws RecognitionException {
         EObject current = null;
 
@@ -12544,8 +12609,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5065:55: (iv_ruleWindowOperator= ruleWindowOperator EOF )
-            // InternalCQLParser.g:5066:2: iv_ruleWindowOperator= ruleWindowOperator EOF
+            // InternalCQLParser.g:5117:55: (iv_ruleWindowOperator= ruleWindowOperator EOF )
+            // InternalCQLParser.g:5118:2: iv_ruleWindowOperator= ruleWindowOperator EOF
             {
              newCompositeNode(grammarAccess.getWindowOperatorRule()); 
             pushFollow(FOLLOW_1);
@@ -12572,7 +12637,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleWindowOperator"
-    // InternalCQLParser.g:5072:1: ruleWindowOperator returns [EObject current=null] : (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket ) ;
+    // InternalCQLParser.g:5124:1: ruleWindowOperator returns [EObject current=null] : (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket ) ;
     public final EObject ruleWindowOperator() throws RecognitionException {
         EObject current = null;
 
@@ -12589,17 +12654,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5078:2: ( (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket ) )
-            // InternalCQLParser.g:5079:2: (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket )
+            // InternalCQLParser.g:5130:2: ( (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket ) )
+            // InternalCQLParser.g:5131:2: (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket )
             {
-            // InternalCQLParser.g:5079:2: (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket )
-            // InternalCQLParser.g:5080:3: otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket
+            // InternalCQLParser.g:5131:2: (otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket )
+            // InternalCQLParser.g:5132:3: otherlv_0= LeftSquareBracket (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow ) otherlv_4= RightSquareBracket
             {
-            otherlv_0=(Token)match(input,LeftSquareBracket,FOLLOW_72); 
+            otherlv_0=(Token)match(input,LeftSquareBracket,FOLLOW_75); 
 
             			newLeafNode(otherlv_0, grammarAccess.getWindowOperatorAccess().getLeftSquareBracketKeyword_0());
             		
-            // InternalCQLParser.g:5084:3: (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow )
+            // InternalCQLParser.g:5136:3: (this_UnboundedWindow_1= ruleUnboundedWindow | this_TimebasedWindow_2= ruleTimebasedWindow | this_TuplebasedWindow_3= ruleTuplebasedWindow )
             int alt75=3;
             int LA75_0 = input.LA(1);
 
@@ -12612,11 +12677,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                 if ( (LA75_2==RULE_INT) ) {
                     int LA75_3 = input.LA(3);
 
-                    if ( (LA75_3==MILLISECONDS||LA75_3==MILLISECOND||LA75_3==MINUTES||LA75_3==SECONDS||LA75_3==MINUTE||LA75_3==SECOND||LA75_3==HOURS||LA75_3==WEEKS||LA75_3==HOUR||LA75_3==WEEK) ) {
-                        alt75=2;
-                    }
-                    else if ( (LA75_3==ADVANCE||LA75_3==TUPLE) ) {
+                    if ( (LA75_3==ADVANCE||LA75_3==TUPLE) ) {
                         alt75=3;
+                    }
+                    else if ( (LA75_3==MILLISECONDS||LA75_3==MILLISECOND||LA75_3==MINUTES||LA75_3==SECONDS||LA75_3==MINUTE||LA75_3==SECOND||LA75_3==HOURS||LA75_3==WEEKS||LA75_3==HOUR||LA75_3==WEEK) ) {
+                        alt75=2;
                     }
                     else {
                         NoViableAltException nvae =
@@ -12640,12 +12705,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt75) {
                 case 1 :
-                    // InternalCQLParser.g:5085:4: this_UnboundedWindow_1= ruleUnboundedWindow
+                    // InternalCQLParser.g:5137:4: this_UnboundedWindow_1= ruleUnboundedWindow
                     {
 
                     				newCompositeNode(grammarAccess.getWindowOperatorAccess().getUnboundedWindowParserRuleCall_1_0());
                     			
-                    pushFollow(FOLLOW_73);
+                    pushFollow(FOLLOW_76);
                     this_UnboundedWindow_1=ruleUnboundedWindow();
 
                     state._fsp--;
@@ -12658,12 +12723,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:5094:4: this_TimebasedWindow_2= ruleTimebasedWindow
+                    // InternalCQLParser.g:5146:4: this_TimebasedWindow_2= ruleTimebasedWindow
                     {
 
                     				newCompositeNode(grammarAccess.getWindowOperatorAccess().getTimebasedWindowParserRuleCall_1_1());
                     			
-                    pushFollow(FOLLOW_73);
+                    pushFollow(FOLLOW_76);
                     this_TimebasedWindow_2=ruleTimebasedWindow();
 
                     state._fsp--;
@@ -12676,12 +12741,12 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:5103:4: this_TuplebasedWindow_3= ruleTuplebasedWindow
+                    // InternalCQLParser.g:5155:4: this_TuplebasedWindow_3= ruleTuplebasedWindow
                     {
 
                     				newCompositeNode(grammarAccess.getWindowOperatorAccess().getTuplebasedWindowParserRuleCall_1_2());
                     			
-                    pushFollow(FOLLOW_73);
+                    pushFollow(FOLLOW_76);
                     this_TuplebasedWindow_3=ruleTuplebasedWindow();
 
                     state._fsp--;
@@ -12723,7 +12788,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleUnboundedWindow"
-    // InternalCQLParser.g:5120:1: entryRuleUnboundedWindow returns [EObject current=null] : iv_ruleUnboundedWindow= ruleUnboundedWindow EOF ;
+    // InternalCQLParser.g:5172:1: entryRuleUnboundedWindow returns [EObject current=null] : iv_ruleUnboundedWindow= ruleUnboundedWindow EOF ;
     public final EObject entryRuleUnboundedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -12731,8 +12796,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5120:56: (iv_ruleUnboundedWindow= ruleUnboundedWindow EOF )
-            // InternalCQLParser.g:5121:2: iv_ruleUnboundedWindow= ruleUnboundedWindow EOF
+            // InternalCQLParser.g:5172:56: (iv_ruleUnboundedWindow= ruleUnboundedWindow EOF )
+            // InternalCQLParser.g:5173:2: iv_ruleUnboundedWindow= ruleUnboundedWindow EOF
             {
              newCompositeNode(grammarAccess.getUnboundedWindowRule()); 
             pushFollow(FOLLOW_1);
@@ -12759,7 +12824,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnboundedWindow"
-    // InternalCQLParser.g:5127:1: ruleUnboundedWindow returns [EObject current=null] : ( () otherlv_1= UNBOUNDED ) ;
+    // InternalCQLParser.g:5179:1: ruleUnboundedWindow returns [EObject current=null] : ( () otherlv_1= UNBOUNDED ) ;
     public final EObject ruleUnboundedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -12769,14 +12834,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5133:2: ( ( () otherlv_1= UNBOUNDED ) )
-            // InternalCQLParser.g:5134:2: ( () otherlv_1= UNBOUNDED )
+            // InternalCQLParser.g:5185:2: ( ( () otherlv_1= UNBOUNDED ) )
+            // InternalCQLParser.g:5186:2: ( () otherlv_1= UNBOUNDED )
             {
-            // InternalCQLParser.g:5134:2: ( () otherlv_1= UNBOUNDED )
-            // InternalCQLParser.g:5135:3: () otherlv_1= UNBOUNDED
+            // InternalCQLParser.g:5186:2: ( () otherlv_1= UNBOUNDED )
+            // InternalCQLParser.g:5187:3: () otherlv_1= UNBOUNDED
             {
-            // InternalCQLParser.g:5135:3: ()
-            // InternalCQLParser.g:5136:4: 
+            // InternalCQLParser.g:5187:3: ()
+            // InternalCQLParser.g:5188:4: 
             {
 
             				current = forceCreateModelElement(
@@ -12813,7 +12878,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTimebasedWindow"
-    // InternalCQLParser.g:5150:1: entryRuleTimebasedWindow returns [EObject current=null] : iv_ruleTimebasedWindow= ruleTimebasedWindow EOF ;
+    // InternalCQLParser.g:5202:1: entryRuleTimebasedWindow returns [EObject current=null] : iv_ruleTimebasedWindow= ruleTimebasedWindow EOF ;
     public final EObject entryRuleTimebasedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -12821,8 +12886,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5150:56: (iv_ruleTimebasedWindow= ruleTimebasedWindow EOF )
-            // InternalCQLParser.g:5151:2: iv_ruleTimebasedWindow= ruleTimebasedWindow EOF
+            // InternalCQLParser.g:5202:56: (iv_ruleTimebasedWindow= ruleTimebasedWindow EOF )
+            // InternalCQLParser.g:5203:2: iv_ruleTimebasedWindow= ruleTimebasedWindow EOF
             {
              newCompositeNode(grammarAccess.getTimebasedWindowRule()); 
             pushFollow(FOLLOW_1);
@@ -12849,7 +12914,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTimebasedWindow"
-    // InternalCQLParser.g:5157:1: ruleTimebasedWindow returns [EObject current=null] : ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME ) ;
+    // InternalCQLParser.g:5209:1: ruleTimebasedWindow returns [EObject current=null] : ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME ) ;
     public final EObject ruleTimebasedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -12867,14 +12932,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5163:2: ( ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME ) )
-            // InternalCQLParser.g:5164:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME )
+            // InternalCQLParser.g:5215:2: ( ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME ) )
+            // InternalCQLParser.g:5216:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME )
             {
-            // InternalCQLParser.g:5164:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME )
-            // InternalCQLParser.g:5165:3: () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME
+            // InternalCQLParser.g:5216:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME )
+            // InternalCQLParser.g:5217:3: () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) ( (lv_unit_3_0= ruleTime ) ) (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )? otherlv_7= TIME
             {
-            // InternalCQLParser.g:5165:3: ()
-            // InternalCQLParser.g:5166:4: 
+            // InternalCQLParser.g:5217:3: ()
+            // InternalCQLParser.g:5218:4: 
             {
 
             				current = forceCreateModelElement(
@@ -12884,17 +12949,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,SIZE,FOLLOW_43); 
+            otherlv_1=(Token)match(input,SIZE,FOLLOW_46); 
 
             			newLeafNode(otherlv_1, grammarAccess.getTimebasedWindowAccess().getSIZEKeyword_1());
             		
-            // InternalCQLParser.g:5176:3: ( (lv_size_2_0= RULE_INT ) )
-            // InternalCQLParser.g:5177:4: (lv_size_2_0= RULE_INT )
+            // InternalCQLParser.g:5228:3: ( (lv_size_2_0= RULE_INT ) )
+            // InternalCQLParser.g:5229:4: (lv_size_2_0= RULE_INT )
             {
-            // InternalCQLParser.g:5177:4: (lv_size_2_0= RULE_INT )
-            // InternalCQLParser.g:5178:5: lv_size_2_0= RULE_INT
+            // InternalCQLParser.g:5229:4: (lv_size_2_0= RULE_INT )
+            // InternalCQLParser.g:5230:5: lv_size_2_0= RULE_INT
             {
-            lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_48); 
+            lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_51); 
 
             					newLeafNode(lv_size_2_0, grammarAccess.getTimebasedWindowAccess().getSizeINTTerminalRuleCall_2_0());
             				
@@ -12914,16 +12979,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:5194:3: ( (lv_unit_3_0= ruleTime ) )
-            // InternalCQLParser.g:5195:4: (lv_unit_3_0= ruleTime )
+            // InternalCQLParser.g:5246:3: ( (lv_unit_3_0= ruleTime ) )
+            // InternalCQLParser.g:5247:4: (lv_unit_3_0= ruleTime )
             {
-            // InternalCQLParser.g:5195:4: (lv_unit_3_0= ruleTime )
-            // InternalCQLParser.g:5196:5: lv_unit_3_0= ruleTime
+            // InternalCQLParser.g:5247:4: (lv_unit_3_0= ruleTime )
+            // InternalCQLParser.g:5248:5: lv_unit_3_0= ruleTime
             {
 
             					newCompositeNode(grammarAccess.getTimebasedWindowAccess().getUnitTimeEnumRuleCall_3_0());
             				
-            pushFollow(FOLLOW_74);
+            pushFollow(FOLLOW_77);
             lv_unit_3_0=ruleTime();
 
             state._fsp--;
@@ -12945,7 +13010,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:5213:3: (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )?
+            // InternalCQLParser.g:5265:3: (otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) ) )?
             int alt76=2;
             int LA76_0 = input.LA(1);
 
@@ -12954,19 +13019,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt76) {
                 case 1 :
-                    // InternalCQLParser.g:5214:4: otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) )
+                    // InternalCQLParser.g:5266:4: otherlv_4= ADVANCE ( (lv_advance_size_5_0= RULE_INT ) ) ( (lv_advance_unit_6_0= ruleTime ) )
                     {
-                    otherlv_4=(Token)match(input,ADVANCE,FOLLOW_43); 
+                    otherlv_4=(Token)match(input,ADVANCE,FOLLOW_46); 
 
                     				newLeafNode(otherlv_4, grammarAccess.getTimebasedWindowAccess().getADVANCEKeyword_4_0());
                     			
-                    // InternalCQLParser.g:5218:4: ( (lv_advance_size_5_0= RULE_INT ) )
-                    // InternalCQLParser.g:5219:5: (lv_advance_size_5_0= RULE_INT )
+                    // InternalCQLParser.g:5270:4: ( (lv_advance_size_5_0= RULE_INT ) )
+                    // InternalCQLParser.g:5271:5: (lv_advance_size_5_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:5219:5: (lv_advance_size_5_0= RULE_INT )
-                    // InternalCQLParser.g:5220:6: lv_advance_size_5_0= RULE_INT
+                    // InternalCQLParser.g:5271:5: (lv_advance_size_5_0= RULE_INT )
+                    // InternalCQLParser.g:5272:6: lv_advance_size_5_0= RULE_INT
                     {
-                    lv_advance_size_5_0=(Token)match(input,RULE_INT,FOLLOW_48); 
+                    lv_advance_size_5_0=(Token)match(input,RULE_INT,FOLLOW_51); 
 
                     						newLeafNode(lv_advance_size_5_0, grammarAccess.getTimebasedWindowAccess().getAdvance_sizeINTTerminalRuleCall_4_1_0());
                     					
@@ -12986,16 +13051,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:5236:4: ( (lv_advance_unit_6_0= ruleTime ) )
-                    // InternalCQLParser.g:5237:5: (lv_advance_unit_6_0= ruleTime )
+                    // InternalCQLParser.g:5288:4: ( (lv_advance_unit_6_0= ruleTime ) )
+                    // InternalCQLParser.g:5289:5: (lv_advance_unit_6_0= ruleTime )
                     {
-                    // InternalCQLParser.g:5237:5: (lv_advance_unit_6_0= ruleTime )
-                    // InternalCQLParser.g:5238:6: lv_advance_unit_6_0= ruleTime
+                    // InternalCQLParser.g:5289:5: (lv_advance_unit_6_0= ruleTime )
+                    // InternalCQLParser.g:5290:6: lv_advance_unit_6_0= ruleTime
                     {
 
                     						newCompositeNode(grammarAccess.getTimebasedWindowAccess().getAdvance_unitTimeEnumRuleCall_4_2_0());
                     					
-                    pushFollow(FOLLOW_75);
+                    pushFollow(FOLLOW_78);
                     lv_advance_unit_6_0=ruleTime();
 
                     state._fsp--;
@@ -13050,7 +13115,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTuplebasedWindow"
-    // InternalCQLParser.g:5264:1: entryRuleTuplebasedWindow returns [EObject current=null] : iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF ;
+    // InternalCQLParser.g:5316:1: entryRuleTuplebasedWindow returns [EObject current=null] : iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF ;
     public final EObject entryRuleTuplebasedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -13058,8 +13123,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5264:57: (iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF )
-            // InternalCQLParser.g:5265:2: iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF
+            // InternalCQLParser.g:5316:57: (iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF )
+            // InternalCQLParser.g:5317:2: iv_ruleTuplebasedWindow= ruleTuplebasedWindow EOF
             {
              newCompositeNode(grammarAccess.getTuplebasedWindowRule()); 
             pushFollow(FOLLOW_1);
@@ -13086,7 +13151,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTuplebasedWindow"
-    // InternalCQLParser.g:5271:1: ruleTuplebasedWindow returns [EObject current=null] : ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? ) ;
+    // InternalCQLParser.g:5323:1: ruleTuplebasedWindow returns [EObject current=null] : ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? ) ;
     public final EObject ruleTuplebasedWindow() throws RecognitionException {
         EObject current = null;
 
@@ -13104,14 +13169,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5277:2: ( ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? ) )
-            // InternalCQLParser.g:5278:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? )
+            // InternalCQLParser.g:5329:2: ( ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? ) )
+            // InternalCQLParser.g:5330:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? )
             {
-            // InternalCQLParser.g:5278:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? )
-            // InternalCQLParser.g:5279:3: () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )?
+            // InternalCQLParser.g:5330:2: ( () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )? )
+            // InternalCQLParser.g:5331:3: () otherlv_1= SIZE ( (lv_size_2_0= RULE_INT ) ) (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )? otherlv_5= TUPLE (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )?
             {
-            // InternalCQLParser.g:5279:3: ()
-            // InternalCQLParser.g:5280:4: 
+            // InternalCQLParser.g:5331:3: ()
+            // InternalCQLParser.g:5332:4: 
             {
 
             				current = forceCreateModelElement(
@@ -13121,17 +13186,17 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,SIZE,FOLLOW_43); 
+            otherlv_1=(Token)match(input,SIZE,FOLLOW_46); 
 
             			newLeafNode(otherlv_1, grammarAccess.getTuplebasedWindowAccess().getSIZEKeyword_1());
             		
-            // InternalCQLParser.g:5290:3: ( (lv_size_2_0= RULE_INT ) )
-            // InternalCQLParser.g:5291:4: (lv_size_2_0= RULE_INT )
+            // InternalCQLParser.g:5342:3: ( (lv_size_2_0= RULE_INT ) )
+            // InternalCQLParser.g:5343:4: (lv_size_2_0= RULE_INT )
             {
-            // InternalCQLParser.g:5291:4: (lv_size_2_0= RULE_INT )
-            // InternalCQLParser.g:5292:5: lv_size_2_0= RULE_INT
+            // InternalCQLParser.g:5343:4: (lv_size_2_0= RULE_INT )
+            // InternalCQLParser.g:5344:5: lv_size_2_0= RULE_INT
             {
-            lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_76); 
+            lv_size_2_0=(Token)match(input,RULE_INT,FOLLOW_79); 
 
             					newLeafNode(lv_size_2_0, grammarAccess.getTuplebasedWindowAccess().getSizeINTTerminalRuleCall_2_0());
             				
@@ -13151,7 +13216,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:5308:3: (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )?
+            // InternalCQLParser.g:5360:3: (otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) ) )?
             int alt77=2;
             int LA77_0 = input.LA(1);
 
@@ -13160,19 +13225,19 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt77) {
                 case 1 :
-                    // InternalCQLParser.g:5309:4: otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) )
+                    // InternalCQLParser.g:5361:4: otherlv_3= ADVANCE ( (lv_advance_size_4_0= RULE_INT ) )
                     {
-                    otherlv_3=(Token)match(input,ADVANCE,FOLLOW_43); 
+                    otherlv_3=(Token)match(input,ADVANCE,FOLLOW_46); 
 
                     				newLeafNode(otherlv_3, grammarAccess.getTuplebasedWindowAccess().getADVANCEKeyword_3_0());
                     			
-                    // InternalCQLParser.g:5313:4: ( (lv_advance_size_4_0= RULE_INT ) )
-                    // InternalCQLParser.g:5314:5: (lv_advance_size_4_0= RULE_INT )
+                    // InternalCQLParser.g:5365:4: ( (lv_advance_size_4_0= RULE_INT ) )
+                    // InternalCQLParser.g:5366:5: (lv_advance_size_4_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:5314:5: (lv_advance_size_4_0= RULE_INT )
-                    // InternalCQLParser.g:5315:6: lv_advance_size_4_0= RULE_INT
+                    // InternalCQLParser.g:5366:5: (lv_advance_size_4_0= RULE_INT )
+                    // InternalCQLParser.g:5367:6: lv_advance_size_4_0= RULE_INT
                     {
-                    lv_advance_size_4_0=(Token)match(input,RULE_INT,FOLLOW_77); 
+                    lv_advance_size_4_0=(Token)match(input,RULE_INT,FOLLOW_80); 
 
                     						newLeafNode(lv_advance_size_4_0, grammarAccess.getTuplebasedWindowAccess().getAdvance_sizeINTTerminalRuleCall_3_1_0());
                     					
@@ -13198,11 +13263,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_5=(Token)match(input,TUPLE,FOLLOW_59); 
+            otherlv_5=(Token)match(input,TUPLE,FOLLOW_62); 
 
             			newLeafNode(otherlv_5, grammarAccess.getTuplebasedWindowAccess().getTUPLEKeyword_4());
             		
-            // InternalCQLParser.g:5336:3: (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )?
+            // InternalCQLParser.g:5388:3: (otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) ) )?
             int alt78=2;
             int LA78_0 = input.LA(1);
 
@@ -13211,21 +13276,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             }
             switch (alt78) {
                 case 1 :
-                    // InternalCQLParser.g:5337:4: otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) )
+                    // InternalCQLParser.g:5389:4: otherlv_6= PARTITION otherlv_7= BY ( (lv_partition_attribute_8_0= ruleAttribute ) )
                     {
-                    otherlv_6=(Token)match(input,PARTITION,FOLLOW_16); 
+                    otherlv_6=(Token)match(input,PARTITION,FOLLOW_18); 
 
                     				newLeafNode(otherlv_6, grammarAccess.getTuplebasedWindowAccess().getPARTITIONKeyword_5_0());
                     			
-                    otherlv_7=(Token)match(input,BY,FOLLOW_5); 
+                    otherlv_7=(Token)match(input,BY,FOLLOW_19); 
 
                     				newLeafNode(otherlv_7, grammarAccess.getTuplebasedWindowAccess().getBYKeyword_5_1());
                     			
-                    // InternalCQLParser.g:5345:4: ( (lv_partition_attribute_8_0= ruleAttribute ) )
-                    // InternalCQLParser.g:5346:5: (lv_partition_attribute_8_0= ruleAttribute )
+                    // InternalCQLParser.g:5397:4: ( (lv_partition_attribute_8_0= ruleAttribute ) )
+                    // InternalCQLParser.g:5398:5: (lv_partition_attribute_8_0= ruleAttribute )
                     {
-                    // InternalCQLParser.g:5346:5: (lv_partition_attribute_8_0= ruleAttribute )
-                    // InternalCQLParser.g:5347:6: lv_partition_attribute_8_0= ruleAttribute
+                    // InternalCQLParser.g:5398:5: (lv_partition_attribute_8_0= ruleAttribute )
+                    // InternalCQLParser.g:5399:6: lv_partition_attribute_8_0= ruleAttribute
                     {
 
                     						newCompositeNode(grammarAccess.getTuplebasedWindowAccess().getPartition_attributeAttributeParserRuleCall_5_2_0());
@@ -13281,7 +13346,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpressionsModel"
-    // InternalCQLParser.g:5369:1: entryRuleExpressionsModel returns [EObject current=null] : iv_ruleExpressionsModel= ruleExpressionsModel EOF ;
+    // InternalCQLParser.g:5421:1: entryRuleExpressionsModel returns [EObject current=null] : iv_ruleExpressionsModel= ruleExpressionsModel EOF ;
     public final EObject entryRuleExpressionsModel() throws RecognitionException {
         EObject current = null;
 
@@ -13289,8 +13354,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5369:57: (iv_ruleExpressionsModel= ruleExpressionsModel EOF )
-            // InternalCQLParser.g:5370:2: iv_ruleExpressionsModel= ruleExpressionsModel EOF
+            // InternalCQLParser.g:5421:57: (iv_ruleExpressionsModel= ruleExpressionsModel EOF )
+            // InternalCQLParser.g:5422:2: iv_ruleExpressionsModel= ruleExpressionsModel EOF
             {
              newCompositeNode(grammarAccess.getExpressionsModelRule()); 
             pushFollow(FOLLOW_1);
@@ -13317,7 +13382,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpressionsModel"
-    // InternalCQLParser.g:5376:1: ruleExpressionsModel returns [EObject current=null] : ( () ( (lv_elements_1_0= ruleExpression ) ) ) ;
+    // InternalCQLParser.g:5428:1: ruleExpressionsModel returns [EObject current=null] : ( () ( (lv_elements_1_0= ruleExpression ) ) ) ;
     public final EObject ruleExpressionsModel() throws RecognitionException {
         EObject current = null;
 
@@ -13328,14 +13393,14 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5382:2: ( ( () ( (lv_elements_1_0= ruleExpression ) ) ) )
-            // InternalCQLParser.g:5383:2: ( () ( (lv_elements_1_0= ruleExpression ) ) )
+            // InternalCQLParser.g:5434:2: ( ( () ( (lv_elements_1_0= ruleExpression ) ) ) )
+            // InternalCQLParser.g:5435:2: ( () ( (lv_elements_1_0= ruleExpression ) ) )
             {
-            // InternalCQLParser.g:5383:2: ( () ( (lv_elements_1_0= ruleExpression ) ) )
-            // InternalCQLParser.g:5384:3: () ( (lv_elements_1_0= ruleExpression ) )
+            // InternalCQLParser.g:5435:2: ( () ( (lv_elements_1_0= ruleExpression ) ) )
+            // InternalCQLParser.g:5436:3: () ( (lv_elements_1_0= ruleExpression ) )
             {
-            // InternalCQLParser.g:5384:3: ()
-            // InternalCQLParser.g:5385:4: 
+            // InternalCQLParser.g:5436:3: ()
+            // InternalCQLParser.g:5437:4: 
             {
 
             				current = forceCreateModelElement(
@@ -13345,11 +13410,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalCQLParser.g:5391:3: ( (lv_elements_1_0= ruleExpression ) )
-            // InternalCQLParser.g:5392:4: (lv_elements_1_0= ruleExpression )
+            // InternalCQLParser.g:5443:3: ( (lv_elements_1_0= ruleExpression ) )
+            // InternalCQLParser.g:5444:4: (lv_elements_1_0= ruleExpression )
             {
-            // InternalCQLParser.g:5392:4: (lv_elements_1_0= ruleExpression )
-            // InternalCQLParser.g:5393:5: lv_elements_1_0= ruleExpression
+            // InternalCQLParser.g:5444:4: (lv_elements_1_0= ruleExpression )
+            // InternalCQLParser.g:5445:5: lv_elements_1_0= ruleExpression
             {
 
             					newCompositeNode(grammarAccess.getExpressionsModelAccess().getElementsExpressionParserRuleCall_1_0());
@@ -13399,7 +13464,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleExpression"
-    // InternalCQLParser.g:5414:1: entryRuleExpression returns [EObject current=null] : iv_ruleExpression= ruleExpression EOF ;
+    // InternalCQLParser.g:5466:1: entryRuleExpression returns [EObject current=null] : iv_ruleExpression= ruleExpression EOF ;
     public final EObject entryRuleExpression() throws RecognitionException {
         EObject current = null;
 
@@ -13407,8 +13472,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5414:51: (iv_ruleExpression= ruleExpression EOF )
-            // InternalCQLParser.g:5415:2: iv_ruleExpression= ruleExpression EOF
+            // InternalCQLParser.g:5466:51: (iv_ruleExpression= ruleExpression EOF )
+            // InternalCQLParser.g:5467:2: iv_ruleExpression= ruleExpression EOF
             {
              newCompositeNode(grammarAccess.getExpressionRule()); 
             pushFollow(FOLLOW_1);
@@ -13435,7 +13500,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleExpression"
-    // InternalCQLParser.g:5421:1: ruleExpression returns [EObject current=null] : this_OrPredicate_0= ruleOrPredicate ;
+    // InternalCQLParser.g:5473:1: ruleExpression returns [EObject current=null] : this_OrPredicate_0= ruleOrPredicate ;
     public final EObject ruleExpression() throws RecognitionException {
         EObject current = null;
 
@@ -13446,8 +13511,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5427:2: (this_OrPredicate_0= ruleOrPredicate )
-            // InternalCQLParser.g:5428:2: this_OrPredicate_0= ruleOrPredicate
+            // InternalCQLParser.g:5479:2: (this_OrPredicate_0= ruleOrPredicate )
+            // InternalCQLParser.g:5480:2: this_OrPredicate_0= ruleOrPredicate
             {
 
             		newCompositeNode(grammarAccess.getExpressionAccess().getOrPredicateParserRuleCall());
@@ -13481,7 +13546,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOrPredicate"
-    // InternalCQLParser.g:5439:1: entryRuleOrPredicate returns [EObject current=null] : iv_ruleOrPredicate= ruleOrPredicate EOF ;
+    // InternalCQLParser.g:5491:1: entryRuleOrPredicate returns [EObject current=null] : iv_ruleOrPredicate= ruleOrPredicate EOF ;
     public final EObject entryRuleOrPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -13489,8 +13554,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5439:52: (iv_ruleOrPredicate= ruleOrPredicate EOF )
-            // InternalCQLParser.g:5440:2: iv_ruleOrPredicate= ruleOrPredicate EOF
+            // InternalCQLParser.g:5491:52: (iv_ruleOrPredicate= ruleOrPredicate EOF )
+            // InternalCQLParser.g:5492:2: iv_ruleOrPredicate= ruleOrPredicate EOF
             {
              newCompositeNode(grammarAccess.getOrPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -13517,7 +13582,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOrPredicate"
-    // InternalCQLParser.g:5446:1: ruleOrPredicate returns [EObject current=null] : (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* ) ;
+    // InternalCQLParser.g:5498:1: ruleOrPredicate returns [EObject current=null] : (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* ) ;
     public final EObject ruleOrPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -13530,16 +13595,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5452:2: ( (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* ) )
-            // InternalCQLParser.g:5453:2: (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* )
+            // InternalCQLParser.g:5504:2: ( (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* ) )
+            // InternalCQLParser.g:5505:2: (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* )
             {
-            // InternalCQLParser.g:5453:2: (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* )
-            // InternalCQLParser.g:5454:3: this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )*
+            // InternalCQLParser.g:5505:2: (this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )* )
+            // InternalCQLParser.g:5506:3: this_AndPredicate_0= ruleAndPredicate ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getOrPredicateAccess().getAndPredicateParserRuleCall_0());
             		
-            pushFollow(FOLLOW_78);
+            pushFollow(FOLLOW_81);
             this_AndPredicate_0=ruleAndPredicate();
 
             state._fsp--;
@@ -13548,7 +13613,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_AndPredicate_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5462:3: ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )*
+            // InternalCQLParser.g:5514:3: ( () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) ) )*
             loop79:
             do {
                 int alt79=2;
@@ -13561,10 +13626,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt79) {
             	case 1 :
-            	    // InternalCQLParser.g:5463:4: () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) )
+            	    // InternalCQLParser.g:5515:4: () ruleOrOperator ( (lv_right_3_0= ruleAndPredicate ) )
             	    {
-            	    // InternalCQLParser.g:5463:4: ()
-            	    // InternalCQLParser.g:5464:5: 
+            	    // InternalCQLParser.g:5515:4: ()
+            	    // InternalCQLParser.g:5516:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -13577,7 +13642,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    				newCompositeNode(grammarAccess.getOrPredicateAccess().getOrOperatorParserRuleCall_1_1());
             	    			
-            	    pushFollow(FOLLOW_14);
+            	    pushFollow(FOLLOW_16);
             	    ruleOrOperator();
 
             	    state._fsp--;
@@ -13585,16 +13650,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    				afterParserOrEnumRuleCall();
             	    			
-            	    // InternalCQLParser.g:5477:4: ( (lv_right_3_0= ruleAndPredicate ) )
-            	    // InternalCQLParser.g:5478:5: (lv_right_3_0= ruleAndPredicate )
+            	    // InternalCQLParser.g:5529:4: ( (lv_right_3_0= ruleAndPredicate ) )
+            	    // InternalCQLParser.g:5530:5: (lv_right_3_0= ruleAndPredicate )
             	    {
-            	    // InternalCQLParser.g:5478:5: (lv_right_3_0= ruleAndPredicate )
-            	    // InternalCQLParser.g:5479:6: lv_right_3_0= ruleAndPredicate
+            	    // InternalCQLParser.g:5530:5: (lv_right_3_0= ruleAndPredicate )
+            	    // InternalCQLParser.g:5531:6: lv_right_3_0= ruleAndPredicate
             	    {
 
             	    						newCompositeNode(grammarAccess.getOrPredicateAccess().getRightAndPredicateParserRuleCall_1_2_0());
             	    					
-            	    pushFollow(FOLLOW_78);
+            	    pushFollow(FOLLOW_81);
             	    lv_right_3_0=ruleAndPredicate();
 
             	    state._fsp--;
@@ -13648,7 +13713,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAndPredicate"
-    // InternalCQLParser.g:5501:1: entryRuleAndPredicate returns [EObject current=null] : iv_ruleAndPredicate= ruleAndPredicate EOF ;
+    // InternalCQLParser.g:5553:1: entryRuleAndPredicate returns [EObject current=null] : iv_ruleAndPredicate= ruleAndPredicate EOF ;
     public final EObject entryRuleAndPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -13656,8 +13721,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5501:53: (iv_ruleAndPredicate= ruleAndPredicate EOF )
-            // InternalCQLParser.g:5502:2: iv_ruleAndPredicate= ruleAndPredicate EOF
+            // InternalCQLParser.g:5553:53: (iv_ruleAndPredicate= ruleAndPredicate EOF )
+            // InternalCQLParser.g:5554:2: iv_ruleAndPredicate= ruleAndPredicate EOF
             {
              newCompositeNode(grammarAccess.getAndPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -13684,7 +13749,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAndPredicate"
-    // InternalCQLParser.g:5508:1: ruleAndPredicate returns [EObject current=null] : (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* ) ;
+    // InternalCQLParser.g:5560:1: ruleAndPredicate returns [EObject current=null] : (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* ) ;
     public final EObject ruleAndPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -13697,16 +13762,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5514:2: ( (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* ) )
-            // InternalCQLParser.g:5515:2: (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* )
+            // InternalCQLParser.g:5566:2: ( (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* ) )
+            // InternalCQLParser.g:5567:2: (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* )
             {
-            // InternalCQLParser.g:5515:2: (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* )
-            // InternalCQLParser.g:5516:3: this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )*
+            // InternalCQLParser.g:5567:2: (this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )* )
+            // InternalCQLParser.g:5568:3: this_Equalitiy_0= ruleEqualitiy ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getAndPredicateAccess().getEqualitiyParserRuleCall_0());
             		
-            pushFollow(FOLLOW_49);
+            pushFollow(FOLLOW_52);
             this_Equalitiy_0=ruleEqualitiy();
 
             state._fsp--;
@@ -13715,7 +13780,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_Equalitiy_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5524:3: ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )*
+            // InternalCQLParser.g:5576:3: ( () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) ) )*
             loop80:
             do {
                 int alt80=2;
@@ -13728,10 +13793,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt80) {
             	case 1 :
-            	    // InternalCQLParser.g:5525:4: () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) )
+            	    // InternalCQLParser.g:5577:4: () ruleAndOperator ( (lv_right_3_0= ruleEqualitiy ) )
             	    {
-            	    // InternalCQLParser.g:5525:4: ()
-            	    // InternalCQLParser.g:5526:5: 
+            	    // InternalCQLParser.g:5577:4: ()
+            	    // InternalCQLParser.g:5578:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -13744,7 +13809,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    				newCompositeNode(grammarAccess.getAndPredicateAccess().getAndOperatorParserRuleCall_1_1());
             	    			
-            	    pushFollow(FOLLOW_14);
+            	    pushFollow(FOLLOW_16);
             	    ruleAndOperator();
 
             	    state._fsp--;
@@ -13752,16 +13817,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    				afterParserOrEnumRuleCall();
             	    			
-            	    // InternalCQLParser.g:5539:4: ( (lv_right_3_0= ruleEqualitiy ) )
-            	    // InternalCQLParser.g:5540:5: (lv_right_3_0= ruleEqualitiy )
+            	    // InternalCQLParser.g:5591:4: ( (lv_right_3_0= ruleEqualitiy ) )
+            	    // InternalCQLParser.g:5592:5: (lv_right_3_0= ruleEqualitiy )
             	    {
-            	    // InternalCQLParser.g:5540:5: (lv_right_3_0= ruleEqualitiy )
-            	    // InternalCQLParser.g:5541:6: lv_right_3_0= ruleEqualitiy
+            	    // InternalCQLParser.g:5592:5: (lv_right_3_0= ruleEqualitiy )
+            	    // InternalCQLParser.g:5593:6: lv_right_3_0= ruleEqualitiy
             	    {
 
             	    						newCompositeNode(grammarAccess.getAndPredicateAccess().getRightEqualitiyParserRuleCall_1_2_0());
             	    					
-            	    pushFollow(FOLLOW_49);
+            	    pushFollow(FOLLOW_52);
             	    lv_right_3_0=ruleEqualitiy();
 
             	    state._fsp--;
@@ -13815,7 +13880,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleEqualitiy"
-    // InternalCQLParser.g:5563:1: entryRuleEqualitiy returns [EObject current=null] : iv_ruleEqualitiy= ruleEqualitiy EOF ;
+    // InternalCQLParser.g:5615:1: entryRuleEqualitiy returns [EObject current=null] : iv_ruleEqualitiy= ruleEqualitiy EOF ;
     public final EObject entryRuleEqualitiy() throws RecognitionException {
         EObject current = null;
 
@@ -13823,8 +13888,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5563:50: (iv_ruleEqualitiy= ruleEqualitiy EOF )
-            // InternalCQLParser.g:5564:2: iv_ruleEqualitiy= ruleEqualitiy EOF
+            // InternalCQLParser.g:5615:50: (iv_ruleEqualitiy= ruleEqualitiy EOF )
+            // InternalCQLParser.g:5616:2: iv_ruleEqualitiy= ruleEqualitiy EOF
             {
              newCompositeNode(grammarAccess.getEqualitiyRule()); 
             pushFollow(FOLLOW_1);
@@ -13851,7 +13916,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleEqualitiy"
-    // InternalCQLParser.g:5570:1: ruleEqualitiy returns [EObject current=null] : (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) ;
+    // InternalCQLParser.g:5622:1: ruleEqualitiy returns [EObject current=null] : (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) ;
     public final EObject ruleEqualitiy() throws RecognitionException {
         EObject current = null;
 
@@ -13866,16 +13931,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5576:2: ( (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) )
-            // InternalCQLParser.g:5577:2: (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
+            // InternalCQLParser.g:5628:2: ( (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* ) )
+            // InternalCQLParser.g:5629:2: (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
             {
-            // InternalCQLParser.g:5577:2: (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
-            // InternalCQLParser.g:5578:3: this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )*
+            // InternalCQLParser.g:5629:2: (this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )* )
+            // InternalCQLParser.g:5630:3: this_Comparison_0= ruleComparison ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getEqualitiyAccess().getComparisonParserRuleCall_0());
             		
-            pushFollow(FOLLOW_79);
+            pushFollow(FOLLOW_82);
             this_Comparison_0=ruleComparison();
 
             state._fsp--;
@@ -13884,7 +13949,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_Comparison_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5586:3: ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )*
+            // InternalCQLParser.g:5638:3: ( () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) ) )*
             loop81:
             do {
                 int alt81=2;
@@ -13897,10 +13962,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt81) {
             	case 1 :
-            	    // InternalCQLParser.g:5587:4: () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) )
+            	    // InternalCQLParser.g:5639:4: () ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) ) ( (lv_right_3_0= ruleComparison ) )
             	    {
-            	    // InternalCQLParser.g:5587:4: ()
-            	    // InternalCQLParser.g:5588:5: 
+            	    // InternalCQLParser.g:5639:4: ()
+            	    // InternalCQLParser.g:5640:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -13910,16 +13975,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5594:4: ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) )
-            	    // InternalCQLParser.g:5595:5: (lv_op_2_0= ruleEQUALITIY_OPERATOR )
+            	    // InternalCQLParser.g:5646:4: ( (lv_op_2_0= ruleEQUALITIY_OPERATOR ) )
+            	    // InternalCQLParser.g:5647:5: (lv_op_2_0= ruleEQUALITIY_OPERATOR )
             	    {
-            	    // InternalCQLParser.g:5595:5: (lv_op_2_0= ruleEQUALITIY_OPERATOR )
-            	    // InternalCQLParser.g:5596:6: lv_op_2_0= ruleEQUALITIY_OPERATOR
+            	    // InternalCQLParser.g:5647:5: (lv_op_2_0= ruleEQUALITIY_OPERATOR )
+            	    // InternalCQLParser.g:5648:6: lv_op_2_0= ruleEQUALITIY_OPERATOR
             	    {
 
             	    						newCompositeNode(grammarAccess.getEqualitiyAccess().getOpEQUALITIY_OPERATORParserRuleCall_1_1_0());
             	    					
-            	    pushFollow(FOLLOW_14);
+            	    pushFollow(FOLLOW_16);
             	    lv_op_2_0=ruleEQUALITIY_OPERATOR();
 
             	    state._fsp--;
@@ -13941,16 +14006,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5613:4: ( (lv_right_3_0= ruleComparison ) )
-            	    // InternalCQLParser.g:5614:5: (lv_right_3_0= ruleComparison )
+            	    // InternalCQLParser.g:5665:4: ( (lv_right_3_0= ruleComparison ) )
+            	    // InternalCQLParser.g:5666:5: (lv_right_3_0= ruleComparison )
             	    {
-            	    // InternalCQLParser.g:5614:5: (lv_right_3_0= ruleComparison )
-            	    // InternalCQLParser.g:5615:6: lv_right_3_0= ruleComparison
+            	    // InternalCQLParser.g:5666:5: (lv_right_3_0= ruleComparison )
+            	    // InternalCQLParser.g:5667:6: lv_right_3_0= ruleComparison
             	    {
 
             	    						newCompositeNode(grammarAccess.getEqualitiyAccess().getRightComparisonParserRuleCall_1_2_0());
             	    					
-            	    pushFollow(FOLLOW_79);
+            	    pushFollow(FOLLOW_82);
             	    lv_right_3_0=ruleComparison();
 
             	    state._fsp--;
@@ -14004,7 +14069,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleComparison"
-    // InternalCQLParser.g:5637:1: entryRuleComparison returns [EObject current=null] : iv_ruleComparison= ruleComparison EOF ;
+    // InternalCQLParser.g:5689:1: entryRuleComparison returns [EObject current=null] : iv_ruleComparison= ruleComparison EOF ;
     public final EObject entryRuleComparison() throws RecognitionException {
         EObject current = null;
 
@@ -14012,8 +14077,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5637:51: (iv_ruleComparison= ruleComparison EOF )
-            // InternalCQLParser.g:5638:2: iv_ruleComparison= ruleComparison EOF
+            // InternalCQLParser.g:5689:51: (iv_ruleComparison= ruleComparison EOF )
+            // InternalCQLParser.g:5690:2: iv_ruleComparison= ruleComparison EOF
             {
              newCompositeNode(grammarAccess.getComparisonRule()); 
             pushFollow(FOLLOW_1);
@@ -14040,7 +14105,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleComparison"
-    // InternalCQLParser.g:5644:1: ruleComparison returns [EObject current=null] : (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) ;
+    // InternalCQLParser.g:5696:1: ruleComparison returns [EObject current=null] : (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) ;
     public final EObject ruleComparison() throws RecognitionException {
         EObject current = null;
 
@@ -14055,16 +14120,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5650:2: ( (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) )
-            // InternalCQLParser.g:5651:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
+            // InternalCQLParser.g:5702:2: ( (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* ) )
+            // InternalCQLParser.g:5703:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
             {
-            // InternalCQLParser.g:5651:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
-            // InternalCQLParser.g:5652:3: this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
+            // InternalCQLParser.g:5703:2: (this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )* )
+            // InternalCQLParser.g:5704:3: this_PlusOrMinus_0= rulePlusOrMinus ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getComparisonAccess().getPlusOrMinusParserRuleCall_0());
             		
-            pushFollow(FOLLOW_80);
+            pushFollow(FOLLOW_83);
             this_PlusOrMinus_0=rulePlusOrMinus();
 
             state._fsp--;
@@ -14073,7 +14138,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_PlusOrMinus_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5660:3: ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
+            // InternalCQLParser.g:5712:3: ( () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) ) )*
             loop82:
             do {
                 int alt82=2;
@@ -14086,10 +14151,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt82) {
             	case 1 :
-            	    // InternalCQLParser.g:5661:4: () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) )
+            	    // InternalCQLParser.g:5713:4: () ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) ) ( (lv_right_3_0= rulePlusOrMinus ) )
             	    {
-            	    // InternalCQLParser.g:5661:4: ()
-            	    // InternalCQLParser.g:5662:5: 
+            	    // InternalCQLParser.g:5713:4: ()
+            	    // InternalCQLParser.g:5714:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -14099,16 +14164,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5668:4: ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) )
-            	    // InternalCQLParser.g:5669:5: (lv_op_2_0= ruleCOMPARE_OPERATOR )
+            	    // InternalCQLParser.g:5720:4: ( (lv_op_2_0= ruleCOMPARE_OPERATOR ) )
+            	    // InternalCQLParser.g:5721:5: (lv_op_2_0= ruleCOMPARE_OPERATOR )
             	    {
-            	    // InternalCQLParser.g:5669:5: (lv_op_2_0= ruleCOMPARE_OPERATOR )
-            	    // InternalCQLParser.g:5670:6: lv_op_2_0= ruleCOMPARE_OPERATOR
+            	    // InternalCQLParser.g:5721:5: (lv_op_2_0= ruleCOMPARE_OPERATOR )
+            	    // InternalCQLParser.g:5722:6: lv_op_2_0= ruleCOMPARE_OPERATOR
             	    {
 
             	    						newCompositeNode(grammarAccess.getComparisonAccess().getOpCOMPARE_OPERATORParserRuleCall_1_1_0());
             	    					
-            	    pushFollow(FOLLOW_14);
+            	    pushFollow(FOLLOW_16);
             	    lv_op_2_0=ruleCOMPARE_OPERATOR();
 
             	    state._fsp--;
@@ -14130,16 +14195,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5687:4: ( (lv_right_3_0= rulePlusOrMinus ) )
-            	    // InternalCQLParser.g:5688:5: (lv_right_3_0= rulePlusOrMinus )
+            	    // InternalCQLParser.g:5739:4: ( (lv_right_3_0= rulePlusOrMinus ) )
+            	    // InternalCQLParser.g:5740:5: (lv_right_3_0= rulePlusOrMinus )
             	    {
-            	    // InternalCQLParser.g:5688:5: (lv_right_3_0= rulePlusOrMinus )
-            	    // InternalCQLParser.g:5689:6: lv_right_3_0= rulePlusOrMinus
+            	    // InternalCQLParser.g:5740:5: (lv_right_3_0= rulePlusOrMinus )
+            	    // InternalCQLParser.g:5741:6: lv_right_3_0= rulePlusOrMinus
             	    {
 
             	    						newCompositeNode(grammarAccess.getComparisonAccess().getRightPlusOrMinusParserRuleCall_1_2_0());
             	    					
-            	    pushFollow(FOLLOW_80);
+            	    pushFollow(FOLLOW_83);
             	    lv_right_3_0=rulePlusOrMinus();
 
             	    state._fsp--;
@@ -14193,7 +14258,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePlusOrMinus"
-    // InternalCQLParser.g:5711:1: entryRulePlusOrMinus returns [EObject current=null] : iv_rulePlusOrMinus= rulePlusOrMinus EOF ;
+    // InternalCQLParser.g:5763:1: entryRulePlusOrMinus returns [EObject current=null] : iv_rulePlusOrMinus= rulePlusOrMinus EOF ;
     public final EObject entryRulePlusOrMinus() throws RecognitionException {
         EObject current = null;
 
@@ -14201,8 +14266,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5711:52: (iv_rulePlusOrMinus= rulePlusOrMinus EOF )
-            // InternalCQLParser.g:5712:2: iv_rulePlusOrMinus= rulePlusOrMinus EOF
+            // InternalCQLParser.g:5763:52: (iv_rulePlusOrMinus= rulePlusOrMinus EOF )
+            // InternalCQLParser.g:5764:2: iv_rulePlusOrMinus= rulePlusOrMinus EOF
             {
              newCompositeNode(grammarAccess.getPlusOrMinusRule()); 
             pushFollow(FOLLOW_1);
@@ -14229,7 +14294,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePlusOrMinus"
-    // InternalCQLParser.g:5718:1: rulePlusOrMinus returns [EObject current=null] : (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) ;
+    // InternalCQLParser.g:5770:1: rulePlusOrMinus returns [EObject current=null] : (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) ;
     public final EObject rulePlusOrMinus() throws RecognitionException {
         EObject current = null;
 
@@ -14244,16 +14309,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5724:2: ( (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) )
-            // InternalCQLParser.g:5725:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
+            // InternalCQLParser.g:5776:2: ( (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* ) )
+            // InternalCQLParser.g:5777:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
             {
-            // InternalCQLParser.g:5725:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
-            // InternalCQLParser.g:5726:3: this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
+            // InternalCQLParser.g:5777:2: (this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )* )
+            // InternalCQLParser.g:5778:3: this_MulOrDiv_0= ruleMulOrDiv ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getPlusOrMinusAccess().getMulOrDivParserRuleCall_0());
             		
-            pushFollow(FOLLOW_81);
+            pushFollow(FOLLOW_84);
             this_MulOrDiv_0=ruleMulOrDiv();
 
             state._fsp--;
@@ -14262,7 +14327,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_MulOrDiv_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5734:3: ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
+            // InternalCQLParser.g:5786:3: ( ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) ) )*
             loop84:
             do {
                 int alt84=2;
@@ -14275,9 +14340,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt84) {
             	case 1 :
-            	    // InternalCQLParser.g:5735:4: ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) )
+            	    // InternalCQLParser.g:5787:4: ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) ) ( (lv_right_5_0= ruleMulOrDiv ) )
             	    {
-            	    // InternalCQLParser.g:5735:4: ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) )
+            	    // InternalCQLParser.g:5787:4: ( ( () otherlv_2= PlusSign ) | ( () otherlv_4= HyphenMinus ) )
             	    int alt83=2;
             	    int LA83_0 = input.LA(1);
 
@@ -14295,13 +14360,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt83) {
             	        case 1 :
-            	            // InternalCQLParser.g:5736:5: ( () otherlv_2= PlusSign )
+            	            // InternalCQLParser.g:5788:5: ( () otherlv_2= PlusSign )
             	            {
-            	            // InternalCQLParser.g:5736:5: ( () otherlv_2= PlusSign )
-            	            // InternalCQLParser.g:5737:6: () otherlv_2= PlusSign
+            	            // InternalCQLParser.g:5788:5: ( () otherlv_2= PlusSign )
+            	            // InternalCQLParser.g:5789:6: () otherlv_2= PlusSign
             	            {
-            	            // InternalCQLParser.g:5737:6: ()
-            	            // InternalCQLParser.g:5738:7: 
+            	            // InternalCQLParser.g:5789:6: ()
+            	            // InternalCQLParser.g:5790:7: 
             	            {
 
             	            							current = forceCreateModelElementAndSet(
@@ -14311,7 +14376,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	            }
 
-            	            otherlv_2=(Token)match(input,PlusSign,FOLLOW_14); 
+            	            otherlv_2=(Token)match(input,PlusSign,FOLLOW_16); 
 
             	            						newLeafNode(otherlv_2, grammarAccess.getPlusOrMinusAccess().getPlusSignKeyword_1_0_0_1());
             	            					
@@ -14322,13 +14387,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCQLParser.g:5750:5: ( () otherlv_4= HyphenMinus )
+            	            // InternalCQLParser.g:5802:5: ( () otherlv_4= HyphenMinus )
             	            {
-            	            // InternalCQLParser.g:5750:5: ( () otherlv_4= HyphenMinus )
-            	            // InternalCQLParser.g:5751:6: () otherlv_4= HyphenMinus
+            	            // InternalCQLParser.g:5802:5: ( () otherlv_4= HyphenMinus )
+            	            // InternalCQLParser.g:5803:6: () otherlv_4= HyphenMinus
             	            {
-            	            // InternalCQLParser.g:5751:6: ()
-            	            // InternalCQLParser.g:5752:7: 
+            	            // InternalCQLParser.g:5803:6: ()
+            	            // InternalCQLParser.g:5804:7: 
             	            {
 
             	            							current = forceCreateModelElementAndSet(
@@ -14338,7 +14403,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	            }
 
-            	            otherlv_4=(Token)match(input,HyphenMinus,FOLLOW_14); 
+            	            otherlv_4=(Token)match(input,HyphenMinus,FOLLOW_16); 
 
             	            						newLeafNode(otherlv_4, grammarAccess.getPlusOrMinusAccess().getHyphenMinusKeyword_1_0_1_1());
             	            					
@@ -14351,16 +14416,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5764:4: ( (lv_right_5_0= ruleMulOrDiv ) )
-            	    // InternalCQLParser.g:5765:5: (lv_right_5_0= ruleMulOrDiv )
+            	    // InternalCQLParser.g:5816:4: ( (lv_right_5_0= ruleMulOrDiv ) )
+            	    // InternalCQLParser.g:5817:5: (lv_right_5_0= ruleMulOrDiv )
             	    {
-            	    // InternalCQLParser.g:5765:5: (lv_right_5_0= ruleMulOrDiv )
-            	    // InternalCQLParser.g:5766:6: lv_right_5_0= ruleMulOrDiv
+            	    // InternalCQLParser.g:5817:5: (lv_right_5_0= ruleMulOrDiv )
+            	    // InternalCQLParser.g:5818:6: lv_right_5_0= ruleMulOrDiv
             	    {
 
             	    						newCompositeNode(grammarAccess.getPlusOrMinusAccess().getRightMulOrDivParserRuleCall_1_1_0());
             	    					
-            	    pushFollow(FOLLOW_81);
+            	    pushFollow(FOLLOW_84);
             	    lv_right_5_0=ruleMulOrDiv();
 
             	    state._fsp--;
@@ -14414,7 +14479,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleMulOrDiv"
-    // InternalCQLParser.g:5788:1: entryRuleMulOrDiv returns [EObject current=null] : iv_ruleMulOrDiv= ruleMulOrDiv EOF ;
+    // InternalCQLParser.g:5840:1: entryRuleMulOrDiv returns [EObject current=null] : iv_ruleMulOrDiv= ruleMulOrDiv EOF ;
     public final EObject entryRuleMulOrDiv() throws RecognitionException {
         EObject current = null;
 
@@ -14422,8 +14487,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5788:49: (iv_ruleMulOrDiv= ruleMulOrDiv EOF )
-            // InternalCQLParser.g:5789:2: iv_ruleMulOrDiv= ruleMulOrDiv EOF
+            // InternalCQLParser.g:5840:49: (iv_ruleMulOrDiv= ruleMulOrDiv EOF )
+            // InternalCQLParser.g:5841:2: iv_ruleMulOrDiv= ruleMulOrDiv EOF
             {
              newCompositeNode(grammarAccess.getMulOrDivRule()); 
             pushFollow(FOLLOW_1);
@@ -14450,7 +14515,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMulOrDiv"
-    // InternalCQLParser.g:5795:1: ruleMulOrDiv returns [EObject current=null] : (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) ;
+    // InternalCQLParser.g:5847:1: ruleMulOrDiv returns [EObject current=null] : (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) ;
     public final EObject ruleMulOrDiv() throws RecognitionException {
         EObject current = null;
 
@@ -14465,16 +14530,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5801:2: ( (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) )
-            // InternalCQLParser.g:5802:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
+            // InternalCQLParser.g:5853:2: ( (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* ) )
+            // InternalCQLParser.g:5854:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
             {
-            // InternalCQLParser.g:5802:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
-            // InternalCQLParser.g:5803:3: this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
+            // InternalCQLParser.g:5854:2: (this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )* )
+            // InternalCQLParser.g:5855:3: this_Primary_0= rulePrimary ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
             {
 
             			newCompositeNode(grammarAccess.getMulOrDivAccess().getPrimaryParserRuleCall_0());
             		
-            pushFollow(FOLLOW_82);
+            pushFollow(FOLLOW_85);
             this_Primary_0=rulePrimary();
 
             state._fsp--;
@@ -14483,7 +14548,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             			current = this_Primary_0;
             			afterParserOrEnumRuleCall();
             		
-            // InternalCQLParser.g:5811:3: ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
+            // InternalCQLParser.g:5863:3: ( () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) ) )*
             loop86:
             do {
                 int alt86=2;
@@ -14496,10 +14561,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                 switch (alt86) {
             	case 1 :
-            	    // InternalCQLParser.g:5812:4: () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) )
+            	    // InternalCQLParser.g:5864:4: () ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) ) ( (lv_right_3_0= rulePrimary ) )
             	    {
-            	    // InternalCQLParser.g:5812:4: ()
-            	    // InternalCQLParser.g:5813:5: 
+            	    // InternalCQLParser.g:5864:4: ()
+            	    // InternalCQLParser.g:5865:5: 
             	    {
 
             	    					current = forceCreateModelElementAndSet(
@@ -14509,13 +14574,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5819:4: ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) )
-            	    // InternalCQLParser.g:5820:5: ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) )
+            	    // InternalCQLParser.g:5871:4: ( ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) ) )
+            	    // InternalCQLParser.g:5872:5: ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) )
             	    {
-            	    // InternalCQLParser.g:5820:5: ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) )
-            	    // InternalCQLParser.g:5821:6: (lv_op_2_1= Solidus | lv_op_2_2= Asterisk )
+            	    // InternalCQLParser.g:5872:5: ( (lv_op_2_1= Solidus | lv_op_2_2= Asterisk ) )
+            	    // InternalCQLParser.g:5873:6: (lv_op_2_1= Solidus | lv_op_2_2= Asterisk )
             	    {
-            	    // InternalCQLParser.g:5821:6: (lv_op_2_1= Solidus | lv_op_2_2= Asterisk )
+            	    // InternalCQLParser.g:5873:6: (lv_op_2_1= Solidus | lv_op_2_2= Asterisk )
             	    int alt85=2;
             	    int LA85_0 = input.LA(1);
 
@@ -14533,9 +14598,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt85) {
             	        case 1 :
-            	            // InternalCQLParser.g:5822:7: lv_op_2_1= Solidus
+            	            // InternalCQLParser.g:5874:7: lv_op_2_1= Solidus
             	            {
-            	            lv_op_2_1=(Token)match(input,Solidus,FOLLOW_14); 
+            	            lv_op_2_1=(Token)match(input,Solidus,FOLLOW_16); 
 
             	            							newLeafNode(lv_op_2_1, grammarAccess.getMulOrDivAccess().getOpSolidusKeyword_1_1_0_0());
             	            						
@@ -14549,9 +14614,9 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalCQLParser.g:5833:7: lv_op_2_2= Asterisk
+            	            // InternalCQLParser.g:5885:7: lv_op_2_2= Asterisk
             	            {
-            	            lv_op_2_2=(Token)match(input,Asterisk,FOLLOW_14); 
+            	            lv_op_2_2=(Token)match(input,Asterisk,FOLLOW_16); 
 
             	            							newLeafNode(lv_op_2_2, grammarAccess.getMulOrDivAccess().getOpAsteriskKeyword_1_1_0_1());
             	            						
@@ -14573,16 +14638,16 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalCQLParser.g:5846:4: ( (lv_right_3_0= rulePrimary ) )
-            	    // InternalCQLParser.g:5847:5: (lv_right_3_0= rulePrimary )
+            	    // InternalCQLParser.g:5898:4: ( (lv_right_3_0= rulePrimary ) )
+            	    // InternalCQLParser.g:5899:5: (lv_right_3_0= rulePrimary )
             	    {
-            	    // InternalCQLParser.g:5847:5: (lv_right_3_0= rulePrimary )
-            	    // InternalCQLParser.g:5848:6: lv_right_3_0= rulePrimary
+            	    // InternalCQLParser.g:5899:5: (lv_right_3_0= rulePrimary )
+            	    // InternalCQLParser.g:5900:6: lv_right_3_0= rulePrimary
             	    {
 
             	    						newCompositeNode(grammarAccess.getMulOrDivAccess().getRightPrimaryParserRuleCall_1_2_0());
             	    					
-            	    pushFollow(FOLLOW_82);
+            	    pushFollow(FOLLOW_85);
             	    lv_right_3_0=rulePrimary();
 
             	    state._fsp--;
@@ -14636,7 +14701,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePrimary"
-    // InternalCQLParser.g:5870:1: entryRulePrimary returns [EObject current=null] : iv_rulePrimary= rulePrimary EOF ;
+    // InternalCQLParser.g:5922:1: entryRulePrimary returns [EObject current=null] : iv_rulePrimary= rulePrimary EOF ;
     public final EObject entryRulePrimary() throws RecognitionException {
         EObject current = null;
 
@@ -14644,8 +14709,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5870:48: (iv_rulePrimary= rulePrimary EOF )
-            // InternalCQLParser.g:5871:2: iv_rulePrimary= rulePrimary EOF
+            // InternalCQLParser.g:5922:48: (iv_rulePrimary= rulePrimary EOF )
+            // InternalCQLParser.g:5923:2: iv_rulePrimary= rulePrimary EOF
             {
              newCompositeNode(grammarAccess.getPrimaryRule()); 
             pushFollow(FOLLOW_1);
@@ -14672,7 +14737,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePrimary"
-    // InternalCQLParser.g:5877:1: rulePrimary returns [EObject current=null] : ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) ;
+    // InternalCQLParser.g:5929:1: rulePrimary returns [EObject current=null] : ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) ;
     public final EObject rulePrimary() throws RecognitionException {
         EObject current = null;
 
@@ -14690,10 +14755,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5883:2: ( ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) )
-            // InternalCQLParser.g:5884:2: ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
+            // InternalCQLParser.g:5935:2: ( ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic ) )
+            // InternalCQLParser.g:5936:2: ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
             {
-            // InternalCQLParser.g:5884:2: ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
+            // InternalCQLParser.g:5936:2: ( ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis ) | ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) ) | this_Atomic_7= ruleAtomic )
             int alt87=3;
             switch ( input.LA(1) ) {
             case LeftParenthesis:
@@ -14709,6 +14774,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             case EXISTS:
             case FALSE:
             case TRUE:
+            case DollarSign:
             case RULE_INT:
             case RULE_ID:
             case RULE_FLOAT:
@@ -14726,13 +14792,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt87) {
                 case 1 :
-                    // InternalCQLParser.g:5885:3: ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis )
+                    // InternalCQLParser.g:5937:3: ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis )
                     {
-                    // InternalCQLParser.g:5885:3: ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis )
-                    // InternalCQLParser.g:5886:4: () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis
+                    // InternalCQLParser.g:5937:3: ( () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis )
+                    // InternalCQLParser.g:5938:4: () otherlv_1= LeftParenthesis ( (lv_inner_2_0= ruleExpression ) ) otherlv_3= RightParenthesis
                     {
-                    // InternalCQLParser.g:5886:4: ()
-                    // InternalCQLParser.g:5887:5: 
+                    // InternalCQLParser.g:5938:4: ()
+                    // InternalCQLParser.g:5939:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -14742,20 +14808,20 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_1=(Token)match(input,LeftParenthesis,FOLLOW_14); 
+                    otherlv_1=(Token)match(input,LeftParenthesis,FOLLOW_16); 
 
                     				newLeafNode(otherlv_1, grammarAccess.getPrimaryAccess().getLeftParenthesisKeyword_0_1());
                     			
-                    // InternalCQLParser.g:5897:4: ( (lv_inner_2_0= ruleExpression ) )
-                    // InternalCQLParser.g:5898:5: (lv_inner_2_0= ruleExpression )
+                    // InternalCQLParser.g:5949:4: ( (lv_inner_2_0= ruleExpression ) )
+                    // InternalCQLParser.g:5950:5: (lv_inner_2_0= ruleExpression )
                     {
-                    // InternalCQLParser.g:5898:5: (lv_inner_2_0= ruleExpression )
-                    // InternalCQLParser.g:5899:6: lv_inner_2_0= ruleExpression
+                    // InternalCQLParser.g:5950:5: (lv_inner_2_0= ruleExpression )
+                    // InternalCQLParser.g:5951:6: lv_inner_2_0= ruleExpression
                     {
 
                     						newCompositeNode(grammarAccess.getPrimaryAccess().getInnerExpressionParserRuleCall_0_2_0());
                     					
-                    pushFollow(FOLLOW_21);
+                    pushFollow(FOLLOW_24);
                     lv_inner_2_0=ruleExpression();
 
                     state._fsp--;
@@ -14788,13 +14854,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:5922:3: ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) )
+                    // InternalCQLParser.g:5974:3: ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) )
                     {
-                    // InternalCQLParser.g:5922:3: ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) )
-                    // InternalCQLParser.g:5923:4: () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) )
+                    // InternalCQLParser.g:5974:3: ( () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) ) )
+                    // InternalCQLParser.g:5975:4: () otherlv_5= NOT ( (lv_expression_6_0= rulePrimary ) )
                     {
-                    // InternalCQLParser.g:5923:4: ()
-                    // InternalCQLParser.g:5924:5: 
+                    // InternalCQLParser.g:5975:4: ()
+                    // InternalCQLParser.g:5976:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -14804,15 +14870,15 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    otherlv_5=(Token)match(input,NOT,FOLLOW_14); 
+                    otherlv_5=(Token)match(input,NOT,FOLLOW_16); 
 
                     				newLeafNode(otherlv_5, grammarAccess.getPrimaryAccess().getNOTKeyword_1_1());
                     			
-                    // InternalCQLParser.g:5934:4: ( (lv_expression_6_0= rulePrimary ) )
-                    // InternalCQLParser.g:5935:5: (lv_expression_6_0= rulePrimary )
+                    // InternalCQLParser.g:5986:4: ( (lv_expression_6_0= rulePrimary ) )
+                    // InternalCQLParser.g:5987:5: (lv_expression_6_0= rulePrimary )
                     {
-                    // InternalCQLParser.g:5935:5: (lv_expression_6_0= rulePrimary )
-                    // InternalCQLParser.g:5936:6: lv_expression_6_0= rulePrimary
+                    // InternalCQLParser.g:5987:5: (lv_expression_6_0= rulePrimary )
+                    // InternalCQLParser.g:5988:6: lv_expression_6_0= rulePrimary
                     {
 
                     						newCompositeNode(grammarAccess.getPrimaryAccess().getExpressionPrimaryParserRuleCall_1_2_0());
@@ -14846,7 +14912,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:5955:3: this_Atomic_7= ruleAtomic
+                    // InternalCQLParser.g:6007:3: this_Atomic_7= ruleAtomic
                     {
 
                     			newCompositeNode(grammarAccess.getPrimaryAccess().getAtomicParserRuleCall_2());
@@ -14886,7 +14952,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAtomic"
-    // InternalCQLParser.g:5967:1: entryRuleAtomic returns [EObject current=null] : iv_ruleAtomic= ruleAtomic EOF ;
+    // InternalCQLParser.g:6019:1: entryRuleAtomic returns [EObject current=null] : iv_ruleAtomic= ruleAtomic EOF ;
     public final EObject entryRuleAtomic() throws RecognitionException {
         EObject current = null;
 
@@ -14894,8 +14960,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:5967:47: (iv_ruleAtomic= ruleAtomic EOF )
-            // InternalCQLParser.g:5968:2: iv_ruleAtomic= ruleAtomic EOF
+            // InternalCQLParser.g:6019:47: (iv_ruleAtomic= ruleAtomic EOF )
+            // InternalCQLParser.g:6020:2: iv_ruleAtomic= ruleAtomic EOF
             {
              newCompositeNode(grammarAccess.getAtomicRule()); 
             pushFollow(FOLLOW_1);
@@ -14922,7 +14988,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAtomic"
-    // InternalCQLParser.g:5974:1: ruleAtomic returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) ) ;
+    // InternalCQLParser.g:6026:1: ruleAtomic returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) ) ;
     public final EObject ruleAtomic() throws RecognitionException {
         EObject current = null;
 
@@ -14940,21 +15006,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:5980:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) ) )
-            // InternalCQLParser.g:5981:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )
+            // InternalCQLParser.g:6032:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) ) )
+            // InternalCQLParser.g:6033:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )
             {
-            // InternalCQLParser.g:5981:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )
+            // InternalCQLParser.g:6033:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )
             int alt88=6;
             alt88 = dfa88.predict(input);
             switch (alt88) {
                 case 1 :
-                    // InternalCQLParser.g:5982:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQLParser.g:6034:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
                     {
-                    // InternalCQLParser.g:5982:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
-                    // InternalCQLParser.g:5983:4: () ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQLParser.g:6034:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQLParser.g:6035:4: () ( (lv_value_1_0= RULE_INT ) )
                     {
-                    // InternalCQLParser.g:5983:4: ()
-                    // InternalCQLParser.g:5984:5: 
+                    // InternalCQLParser.g:6035:4: ()
+                    // InternalCQLParser.g:6036:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -14964,11 +15030,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:5990:4: ( (lv_value_1_0= RULE_INT ) )
-                    // InternalCQLParser.g:5991:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQLParser.g:6042:4: ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQLParser.g:6043:5: (lv_value_1_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:5991:5: (lv_value_1_0= RULE_INT )
-                    // InternalCQLParser.g:5992:6: lv_value_1_0= RULE_INT
+                    // InternalCQLParser.g:6043:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQLParser.g:6044:6: lv_value_1_0= RULE_INT
                     {
                     lv_value_1_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -14997,13 +15063,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:6010:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
+                    // InternalCQLParser.g:6062:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
                     {
-                    // InternalCQLParser.g:6010:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
-                    // InternalCQLParser.g:6011:4: () ( (lv_value_3_0= RULE_FLOAT ) )
+                    // InternalCQLParser.g:6062:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
+                    // InternalCQLParser.g:6063:4: () ( (lv_value_3_0= RULE_FLOAT ) )
                     {
-                    // InternalCQLParser.g:6011:4: ()
-                    // InternalCQLParser.g:6012:5: 
+                    // InternalCQLParser.g:6063:4: ()
+                    // InternalCQLParser.g:6064:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15013,11 +15079,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6018:4: ( (lv_value_3_0= RULE_FLOAT ) )
-                    // InternalCQLParser.g:6019:5: (lv_value_3_0= RULE_FLOAT )
+                    // InternalCQLParser.g:6070:4: ( (lv_value_3_0= RULE_FLOAT ) )
+                    // InternalCQLParser.g:6071:5: (lv_value_3_0= RULE_FLOAT )
                     {
-                    // InternalCQLParser.g:6019:5: (lv_value_3_0= RULE_FLOAT )
-                    // InternalCQLParser.g:6020:6: lv_value_3_0= RULE_FLOAT
+                    // InternalCQLParser.g:6071:5: (lv_value_3_0= RULE_FLOAT )
+                    // InternalCQLParser.g:6072:6: lv_value_3_0= RULE_FLOAT
                     {
                     lv_value_3_0=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
 
@@ -15046,13 +15112,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:6038:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQLParser.g:6090:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
                     {
-                    // InternalCQLParser.g:6038:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
-                    // InternalCQLParser.g:6039:4: () ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQLParser.g:6090:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQLParser.g:6091:4: () ( (lv_value_5_0= RULE_STRING ) )
                     {
-                    // InternalCQLParser.g:6039:4: ()
-                    // InternalCQLParser.g:6040:5: 
+                    // InternalCQLParser.g:6091:4: ()
+                    // InternalCQLParser.g:6092:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15062,11 +15128,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6046:4: ( (lv_value_5_0= RULE_STRING ) )
-                    // InternalCQLParser.g:6047:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQLParser.g:6098:4: ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQLParser.g:6099:5: (lv_value_5_0= RULE_STRING )
                     {
-                    // InternalCQLParser.g:6047:5: (lv_value_5_0= RULE_STRING )
-                    // InternalCQLParser.g:6048:6: lv_value_5_0= RULE_STRING
+                    // InternalCQLParser.g:6099:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQLParser.g:6100:6: lv_value_5_0= RULE_STRING
                     {
                     lv_value_5_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -15095,13 +15161,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:6066:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
+                    // InternalCQLParser.g:6118:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
                     {
-                    // InternalCQLParser.g:6066:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
-                    // InternalCQLParser.g:6067:4: () ( (lv_value_7_0= ruleBOOLEAN ) )
+                    // InternalCQLParser.g:6118:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
+                    // InternalCQLParser.g:6119:4: () ( (lv_value_7_0= ruleBOOLEAN ) )
                     {
-                    // InternalCQLParser.g:6067:4: ()
-                    // InternalCQLParser.g:6068:5: 
+                    // InternalCQLParser.g:6119:4: ()
+                    // InternalCQLParser.g:6120:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15111,11 +15177,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6074:4: ( (lv_value_7_0= ruleBOOLEAN ) )
-                    // InternalCQLParser.g:6075:5: (lv_value_7_0= ruleBOOLEAN )
+                    // InternalCQLParser.g:6126:4: ( (lv_value_7_0= ruleBOOLEAN ) )
+                    // InternalCQLParser.g:6127:5: (lv_value_7_0= ruleBOOLEAN )
                     {
-                    // InternalCQLParser.g:6075:5: (lv_value_7_0= ruleBOOLEAN )
-                    // InternalCQLParser.g:6076:6: lv_value_7_0= ruleBOOLEAN
+                    // InternalCQLParser.g:6127:5: (lv_value_7_0= ruleBOOLEAN )
+                    // InternalCQLParser.g:6128:6: lv_value_7_0= ruleBOOLEAN
                     {
 
                     						newCompositeNode(grammarAccess.getAtomicAccess().getValueBOOLEANParserRuleCall_3_1_0());
@@ -15149,13 +15215,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCQLParser.g:6095:3: ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) )
+                    // InternalCQLParser.g:6147:3: ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) )
                     {
-                    // InternalCQLParser.g:6095:3: ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) )
-                    // InternalCQLParser.g:6096:4: () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) )
+                    // InternalCQLParser.g:6147:3: ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) )
+                    // InternalCQLParser.g:6148:4: () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) )
                     {
-                    // InternalCQLParser.g:6096:4: ()
-                    // InternalCQLParser.g:6097:5: 
+                    // InternalCQLParser.g:6148:4: ()
+                    // InternalCQLParser.g:6149:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15165,11 +15231,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6103:4: ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) )
-                    // InternalCQLParser.g:6104:5: (lv_value_9_0= ruleAttributeWithoutAliasDefinition )
+                    // InternalCQLParser.g:6155:4: ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) )
+                    // InternalCQLParser.g:6156:5: (lv_value_9_0= ruleAttributeWithoutAliasDefinition )
                     {
-                    // InternalCQLParser.g:6104:5: (lv_value_9_0= ruleAttributeWithoutAliasDefinition )
-                    // InternalCQLParser.g:6105:6: lv_value_9_0= ruleAttributeWithoutAliasDefinition
+                    // InternalCQLParser.g:6156:5: (lv_value_9_0= ruleAttributeWithoutAliasDefinition )
+                    // InternalCQLParser.g:6157:6: lv_value_9_0= ruleAttributeWithoutAliasDefinition
                     {
 
                     						newCompositeNode(grammarAccess.getAtomicAccess().getValueAttributeWithoutAliasDefinitionParserRuleCall_4_1_0());
@@ -15203,13 +15269,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalCQLParser.g:6124:3: ( () ( (lv_value_11_0= ruleComplexPredicate ) ) )
+                    // InternalCQLParser.g:6176:3: ( () ( (lv_value_11_0= ruleComplexPredicate ) ) )
                     {
-                    // InternalCQLParser.g:6124:3: ( () ( (lv_value_11_0= ruleComplexPredicate ) ) )
-                    // InternalCQLParser.g:6125:4: () ( (lv_value_11_0= ruleComplexPredicate ) )
+                    // InternalCQLParser.g:6176:3: ( () ( (lv_value_11_0= ruleComplexPredicate ) ) )
+                    // InternalCQLParser.g:6177:4: () ( (lv_value_11_0= ruleComplexPredicate ) )
                     {
-                    // InternalCQLParser.g:6125:4: ()
-                    // InternalCQLParser.g:6126:5: 
+                    // InternalCQLParser.g:6177:4: ()
+                    // InternalCQLParser.g:6178:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15219,11 +15285,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6132:4: ( (lv_value_11_0= ruleComplexPredicate ) )
-                    // InternalCQLParser.g:6133:5: (lv_value_11_0= ruleComplexPredicate )
+                    // InternalCQLParser.g:6184:4: ( (lv_value_11_0= ruleComplexPredicate ) )
+                    // InternalCQLParser.g:6185:5: (lv_value_11_0= ruleComplexPredicate )
                     {
-                    // InternalCQLParser.g:6133:5: (lv_value_11_0= ruleComplexPredicate )
-                    // InternalCQLParser.g:6134:6: lv_value_11_0= ruleComplexPredicate
+                    // InternalCQLParser.g:6185:5: (lv_value_11_0= ruleComplexPredicate )
+                    // InternalCQLParser.g:6186:6: lv_value_11_0= ruleComplexPredicate
                     {
 
                     						newCompositeNode(grammarAccess.getAtomicAccess().getValueComplexPredicateParserRuleCall_5_1_0());
@@ -15279,7 +15345,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAtomicWithoutAttributeRef"
-    // InternalCQLParser.g:6156:1: entryRuleAtomicWithoutAttributeRef returns [EObject current=null] : iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF ;
+    // InternalCQLParser.g:6208:1: entryRuleAtomicWithoutAttributeRef returns [EObject current=null] : iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF ;
     public final EObject entryRuleAtomicWithoutAttributeRef() throws RecognitionException {
         EObject current = null;
 
@@ -15287,8 +15353,8 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalCQLParser.g:6156:66: (iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF )
-            // InternalCQLParser.g:6157:2: iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF
+            // InternalCQLParser.g:6208:66: (iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF )
+            // InternalCQLParser.g:6209:2: iv_ruleAtomicWithoutAttributeRef= ruleAtomicWithoutAttributeRef EOF
             {
              newCompositeNode(grammarAccess.getAtomicWithoutAttributeRefRule()); 
             pushFollow(FOLLOW_1);
@@ -15315,7 +15381,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAtomicWithoutAttributeRef"
-    // InternalCQLParser.g:6163:1: ruleAtomicWithoutAttributeRef returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) ;
+    // InternalCQLParser.g:6215:1: ruleAtomicWithoutAttributeRef returns [EObject current=null] : ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) ;
     public final EObject ruleAtomicWithoutAttributeRef() throws RecognitionException {
         EObject current = null;
 
@@ -15331,10 +15397,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:6169:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) )
-            // InternalCQLParser.g:6170:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
+            // InternalCQLParser.g:6221:2: ( ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) ) )
+            // InternalCQLParser.g:6222:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
             {
-            // InternalCQLParser.g:6170:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
+            // InternalCQLParser.g:6222:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) ) | ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) ) )
             int alt89=6;
             switch ( input.LA(1) ) {
             case RULE_INT:
@@ -15377,13 +15443,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt89) {
                 case 1 :
-                    // InternalCQLParser.g:6171:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQLParser.g:6223:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
                     {
-                    // InternalCQLParser.g:6171:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
-                    // InternalCQLParser.g:6172:4: () ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQLParser.g:6223:3: ( () ( (lv_value_1_0= RULE_INT ) ) )
+                    // InternalCQLParser.g:6224:4: () ( (lv_value_1_0= RULE_INT ) )
                     {
-                    // InternalCQLParser.g:6172:4: ()
-                    // InternalCQLParser.g:6173:5: 
+                    // InternalCQLParser.g:6224:4: ()
+                    // InternalCQLParser.g:6225:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15393,11 +15459,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6179:4: ( (lv_value_1_0= RULE_INT ) )
-                    // InternalCQLParser.g:6180:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQLParser.g:6231:4: ( (lv_value_1_0= RULE_INT ) )
+                    // InternalCQLParser.g:6232:5: (lv_value_1_0= RULE_INT )
                     {
-                    // InternalCQLParser.g:6180:5: (lv_value_1_0= RULE_INT )
-                    // InternalCQLParser.g:6181:6: lv_value_1_0= RULE_INT
+                    // InternalCQLParser.g:6232:5: (lv_value_1_0= RULE_INT )
+                    // InternalCQLParser.g:6233:6: lv_value_1_0= RULE_INT
                     {
                     lv_value_1_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -15426,13 +15492,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:6199:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
+                    // InternalCQLParser.g:6251:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
                     {
-                    // InternalCQLParser.g:6199:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
-                    // InternalCQLParser.g:6200:4: () ( (lv_value_3_0= RULE_FLOAT ) )
+                    // InternalCQLParser.g:6251:3: ( () ( (lv_value_3_0= RULE_FLOAT ) ) )
+                    // InternalCQLParser.g:6252:4: () ( (lv_value_3_0= RULE_FLOAT ) )
                     {
-                    // InternalCQLParser.g:6200:4: ()
-                    // InternalCQLParser.g:6201:5: 
+                    // InternalCQLParser.g:6252:4: ()
+                    // InternalCQLParser.g:6253:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15442,11 +15508,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6207:4: ( (lv_value_3_0= RULE_FLOAT ) )
-                    // InternalCQLParser.g:6208:5: (lv_value_3_0= RULE_FLOAT )
+                    // InternalCQLParser.g:6259:4: ( (lv_value_3_0= RULE_FLOAT ) )
+                    // InternalCQLParser.g:6260:5: (lv_value_3_0= RULE_FLOAT )
                     {
-                    // InternalCQLParser.g:6208:5: (lv_value_3_0= RULE_FLOAT )
-                    // InternalCQLParser.g:6209:6: lv_value_3_0= RULE_FLOAT
+                    // InternalCQLParser.g:6260:5: (lv_value_3_0= RULE_FLOAT )
+                    // InternalCQLParser.g:6261:6: lv_value_3_0= RULE_FLOAT
                     {
                     lv_value_3_0=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
 
@@ -15475,13 +15541,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:6227:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQLParser.g:6279:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
                     {
-                    // InternalCQLParser.g:6227:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
-                    // InternalCQLParser.g:6228:4: () ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQLParser.g:6279:3: ( () ( (lv_value_5_0= RULE_STRING ) ) )
+                    // InternalCQLParser.g:6280:4: () ( (lv_value_5_0= RULE_STRING ) )
                     {
-                    // InternalCQLParser.g:6228:4: ()
-                    // InternalCQLParser.g:6229:5: 
+                    // InternalCQLParser.g:6280:4: ()
+                    // InternalCQLParser.g:6281:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15491,11 +15557,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6235:4: ( (lv_value_5_0= RULE_STRING ) )
-                    // InternalCQLParser.g:6236:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQLParser.g:6287:4: ( (lv_value_5_0= RULE_STRING ) )
+                    // InternalCQLParser.g:6288:5: (lv_value_5_0= RULE_STRING )
                     {
-                    // InternalCQLParser.g:6236:5: (lv_value_5_0= RULE_STRING )
-                    // InternalCQLParser.g:6237:6: lv_value_5_0= RULE_STRING
+                    // InternalCQLParser.g:6288:5: (lv_value_5_0= RULE_STRING )
+                    // InternalCQLParser.g:6289:6: lv_value_5_0= RULE_STRING
                     {
                     lv_value_5_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -15524,13 +15590,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:6255:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
+                    // InternalCQLParser.g:6307:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
                     {
-                    // InternalCQLParser.g:6255:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
-                    // InternalCQLParser.g:6256:4: () ( (lv_value_7_0= ruleBOOLEAN ) )
+                    // InternalCQLParser.g:6307:3: ( () ( (lv_value_7_0= ruleBOOLEAN ) ) )
+                    // InternalCQLParser.g:6308:4: () ( (lv_value_7_0= ruleBOOLEAN ) )
                     {
-                    // InternalCQLParser.g:6256:4: ()
-                    // InternalCQLParser.g:6257:5: 
+                    // InternalCQLParser.g:6308:4: ()
+                    // InternalCQLParser.g:6309:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15540,11 +15606,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6263:4: ( (lv_value_7_0= ruleBOOLEAN ) )
-                    // InternalCQLParser.g:6264:5: (lv_value_7_0= ruleBOOLEAN )
+                    // InternalCQLParser.g:6315:4: ( (lv_value_7_0= ruleBOOLEAN ) )
+                    // InternalCQLParser.g:6316:5: (lv_value_7_0= ruleBOOLEAN )
                     {
-                    // InternalCQLParser.g:6264:5: (lv_value_7_0= ruleBOOLEAN )
-                    // InternalCQLParser.g:6265:6: lv_value_7_0= ruleBOOLEAN
+                    // InternalCQLParser.g:6316:5: (lv_value_7_0= ruleBOOLEAN )
+                    // InternalCQLParser.g:6317:6: lv_value_7_0= ruleBOOLEAN
                     {
 
                     						newCompositeNode(grammarAccess.getAtomicWithoutAttributeRefAccess().getValueBOOLEANParserRuleCall_3_1_0());
@@ -15578,13 +15644,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCQLParser.g:6284:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
+                    // InternalCQLParser.g:6336:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
                     {
-                    // InternalCQLParser.g:6284:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
-                    // InternalCQLParser.g:6285:4: () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
+                    // InternalCQLParser.g:6336:3: ( () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) ) )
+                    // InternalCQLParser.g:6337:4: () ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
                     {
-                    // InternalCQLParser.g:6285:4: ()
-                    // InternalCQLParser.g:6286:5: 
+                    // InternalCQLParser.g:6337:4: ()
+                    // InternalCQLParser.g:6338:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15594,11 +15660,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6292:4: ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
-                    // InternalCQLParser.g:6293:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
+                    // InternalCQLParser.g:6344:4: ( (lv_value_9_0= RULE_MATRIX_FLOAT ) )
+                    // InternalCQLParser.g:6345:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
                     {
-                    // InternalCQLParser.g:6293:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
-                    // InternalCQLParser.g:6294:6: lv_value_9_0= RULE_MATRIX_FLOAT
+                    // InternalCQLParser.g:6345:5: (lv_value_9_0= RULE_MATRIX_FLOAT )
+                    // InternalCQLParser.g:6346:6: lv_value_9_0= RULE_MATRIX_FLOAT
                     {
                     lv_value_9_0=(Token)match(input,RULE_MATRIX_FLOAT,FOLLOW_2); 
 
@@ -15627,13 +15693,13 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalCQLParser.g:6312:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
+                    // InternalCQLParser.g:6364:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
                     {
-                    // InternalCQLParser.g:6312:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
-                    // InternalCQLParser.g:6313:4: () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
+                    // InternalCQLParser.g:6364:3: ( () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) ) )
+                    // InternalCQLParser.g:6365:4: () ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
                     {
-                    // InternalCQLParser.g:6313:4: ()
-                    // InternalCQLParser.g:6314:5: 
+                    // InternalCQLParser.g:6365:4: ()
+                    // InternalCQLParser.g:6366:5: 
                     {
 
                     					current = forceCreateModelElement(
@@ -15643,11 +15709,11 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalCQLParser.g:6320:4: ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
-                    // InternalCQLParser.g:6321:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
+                    // InternalCQLParser.g:6372:4: ( (lv_value_11_0= RULE_VECTOR_FLOAT ) )
+                    // InternalCQLParser.g:6373:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
                     {
-                    // InternalCQLParser.g:6321:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
-                    // InternalCQLParser.g:6322:6: lv_value_11_0= RULE_VECTOR_FLOAT
+                    // InternalCQLParser.g:6373:5: (lv_value_11_0= RULE_VECTOR_FLOAT )
+                    // InternalCQLParser.g:6374:6: lv_value_11_0= RULE_VECTOR_FLOAT
                     {
                     lv_value_11_0=(Token)match(input,RULE_VECTOR_FLOAT,FOLLOW_2); 
 
@@ -15698,7 +15764,7 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTime"
-    // InternalCQLParser.g:6343:1: ruleTime returns [Enumerator current=null] : ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) ) ;
+    // InternalCQLParser.g:6395:1: ruleTime returns [Enumerator current=null] : ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) ) ;
     public final Enumerator ruleTime() throws RecognitionException {
         Enumerator current = null;
 
@@ -15717,10 +15783,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalCQLParser.g:6349:2: ( ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) ) )
-            // InternalCQLParser.g:6350:2: ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) )
+            // InternalCQLParser.g:6401:2: ( ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) ) )
+            // InternalCQLParser.g:6402:2: ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) )
             {
-            // InternalCQLParser.g:6350:2: ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) )
+            // InternalCQLParser.g:6402:2: ( (enumLiteral_0= MILLISECOND ) | (enumLiteral_1= SECOND ) | (enumLiteral_2= MINUTE ) | (enumLiteral_3= HOUR ) | (enumLiteral_4= WEEK ) | (enumLiteral_5= MILLISECONDS ) | (enumLiteral_6= SECONDS ) | (enumLiteral_7= MINUTES ) | (enumLiteral_8= HOURS ) | (enumLiteral_9= WEEKS ) )
             int alt90=10;
             switch ( input.LA(1) ) {
             case MILLISECOND:
@@ -15782,10 +15848,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
             switch (alt90) {
                 case 1 :
-                    // InternalCQLParser.g:6351:3: (enumLiteral_0= MILLISECOND )
+                    // InternalCQLParser.g:6403:3: (enumLiteral_0= MILLISECOND )
                     {
-                    // InternalCQLParser.g:6351:3: (enumLiteral_0= MILLISECOND )
-                    // InternalCQLParser.g:6352:4: enumLiteral_0= MILLISECOND
+                    // InternalCQLParser.g:6403:3: (enumLiteral_0= MILLISECOND )
+                    // InternalCQLParser.g:6404:4: enumLiteral_0= MILLISECOND
                     {
                     enumLiteral_0=(Token)match(input,MILLISECOND,FOLLOW_2); 
 
@@ -15799,10 +15865,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalCQLParser.g:6359:3: (enumLiteral_1= SECOND )
+                    // InternalCQLParser.g:6411:3: (enumLiteral_1= SECOND )
                     {
-                    // InternalCQLParser.g:6359:3: (enumLiteral_1= SECOND )
-                    // InternalCQLParser.g:6360:4: enumLiteral_1= SECOND
+                    // InternalCQLParser.g:6411:3: (enumLiteral_1= SECOND )
+                    // InternalCQLParser.g:6412:4: enumLiteral_1= SECOND
                     {
                     enumLiteral_1=(Token)match(input,SECOND,FOLLOW_2); 
 
@@ -15816,10 +15882,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalCQLParser.g:6367:3: (enumLiteral_2= MINUTE )
+                    // InternalCQLParser.g:6419:3: (enumLiteral_2= MINUTE )
                     {
-                    // InternalCQLParser.g:6367:3: (enumLiteral_2= MINUTE )
-                    // InternalCQLParser.g:6368:4: enumLiteral_2= MINUTE
+                    // InternalCQLParser.g:6419:3: (enumLiteral_2= MINUTE )
+                    // InternalCQLParser.g:6420:4: enumLiteral_2= MINUTE
                     {
                     enumLiteral_2=(Token)match(input,MINUTE,FOLLOW_2); 
 
@@ -15833,10 +15899,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalCQLParser.g:6375:3: (enumLiteral_3= HOUR )
+                    // InternalCQLParser.g:6427:3: (enumLiteral_3= HOUR )
                     {
-                    // InternalCQLParser.g:6375:3: (enumLiteral_3= HOUR )
-                    // InternalCQLParser.g:6376:4: enumLiteral_3= HOUR
+                    // InternalCQLParser.g:6427:3: (enumLiteral_3= HOUR )
+                    // InternalCQLParser.g:6428:4: enumLiteral_3= HOUR
                     {
                     enumLiteral_3=(Token)match(input,HOUR,FOLLOW_2); 
 
@@ -15850,10 +15916,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalCQLParser.g:6383:3: (enumLiteral_4= WEEK )
+                    // InternalCQLParser.g:6435:3: (enumLiteral_4= WEEK )
                     {
-                    // InternalCQLParser.g:6383:3: (enumLiteral_4= WEEK )
-                    // InternalCQLParser.g:6384:4: enumLiteral_4= WEEK
+                    // InternalCQLParser.g:6435:3: (enumLiteral_4= WEEK )
+                    // InternalCQLParser.g:6436:4: enumLiteral_4= WEEK
                     {
                     enumLiteral_4=(Token)match(input,WEEK,FOLLOW_2); 
 
@@ -15867,10 +15933,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalCQLParser.g:6391:3: (enumLiteral_5= MILLISECONDS )
+                    // InternalCQLParser.g:6443:3: (enumLiteral_5= MILLISECONDS )
                     {
-                    // InternalCQLParser.g:6391:3: (enumLiteral_5= MILLISECONDS )
-                    // InternalCQLParser.g:6392:4: enumLiteral_5= MILLISECONDS
+                    // InternalCQLParser.g:6443:3: (enumLiteral_5= MILLISECONDS )
+                    // InternalCQLParser.g:6444:4: enumLiteral_5= MILLISECONDS
                     {
                     enumLiteral_5=(Token)match(input,MILLISECONDS,FOLLOW_2); 
 
@@ -15884,10 +15950,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalCQLParser.g:6399:3: (enumLiteral_6= SECONDS )
+                    // InternalCQLParser.g:6451:3: (enumLiteral_6= SECONDS )
                     {
-                    // InternalCQLParser.g:6399:3: (enumLiteral_6= SECONDS )
-                    // InternalCQLParser.g:6400:4: enumLiteral_6= SECONDS
+                    // InternalCQLParser.g:6451:3: (enumLiteral_6= SECONDS )
+                    // InternalCQLParser.g:6452:4: enumLiteral_6= SECONDS
                     {
                     enumLiteral_6=(Token)match(input,SECONDS,FOLLOW_2); 
 
@@ -15901,10 +15967,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 8 :
-                    // InternalCQLParser.g:6407:3: (enumLiteral_7= MINUTES )
+                    // InternalCQLParser.g:6459:3: (enumLiteral_7= MINUTES )
                     {
-                    // InternalCQLParser.g:6407:3: (enumLiteral_7= MINUTES )
-                    // InternalCQLParser.g:6408:4: enumLiteral_7= MINUTES
+                    // InternalCQLParser.g:6459:3: (enumLiteral_7= MINUTES )
+                    // InternalCQLParser.g:6460:4: enumLiteral_7= MINUTES
                     {
                     enumLiteral_7=(Token)match(input,MINUTES,FOLLOW_2); 
 
@@ -15918,10 +15984,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 9 :
-                    // InternalCQLParser.g:6415:3: (enumLiteral_8= HOURS )
+                    // InternalCQLParser.g:6467:3: (enumLiteral_8= HOURS )
                     {
-                    // InternalCQLParser.g:6415:3: (enumLiteral_8= HOURS )
-                    // InternalCQLParser.g:6416:4: enumLiteral_8= HOURS
+                    // InternalCQLParser.g:6467:3: (enumLiteral_8= HOURS )
+                    // InternalCQLParser.g:6468:4: enumLiteral_8= HOURS
                     {
                     enumLiteral_8=(Token)match(input,HOURS,FOLLOW_2); 
 
@@ -15935,10 +16001,10 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 10 :
-                    // InternalCQLParser.g:6423:3: (enumLiteral_9= WEEKS )
+                    // InternalCQLParser.g:6475:3: (enumLiteral_9= WEEKS )
                     {
-                    // InternalCQLParser.g:6423:3: (enumLiteral_9= WEEKS )
-                    // InternalCQLParser.g:6424:4: enumLiteral_9= WEEKS
+                    // InternalCQLParser.g:6475:3: (enumLiteral_9= WEEKS )
+                    // InternalCQLParser.g:6476:4: enumLiteral_9= WEEKS
                     {
                     enumLiteral_9=(Token)match(input,WEEKS,FOLLOW_2); 
 
@@ -15976,20 +16042,21 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
 
 
     protected DFA8 dfa8 = new DFA8(this);
+    protected DFA27 dfa27 = new DFA27(this);
     protected DFA47 dfa47 = new DFA47(this);
     protected DFA88 dfa88 = new DFA88(this);
     static final String dfa_1s = "\21\uffff";
-    static final String dfa_2s = "\1\34\2\17\1\uffff\2\70\3\uffff\1\11\3\uffff\1\144\1\67\2\uffff";
-    static final String dfa_3s = "\1\62\1\77\1\76\1\uffff\2\144\3\uffff\1\11\3\uffff\1\144\1\111\2\uffff";
-    static final String dfa_4s = "\3\uffff\1\2\2\uffff\1\7\1\1\1\11\1\uffff\1\10\1\3\1\4\2\uffff\1\6\1\5";
+    static final String dfa_2s = "\1\34\2\17\1\uffff\2\70\3\uffff\1\11\3\uffff\1\147\1\67\2\uffff";
+    static final String dfa_3s = "\1\62\1\77\1\76\1\uffff\2\147\3\uffff\1\11\3\uffff\1\147\1\111\2\uffff";
+    static final String dfa_4s = "\3\uffff\1\2\2\uffff\1\1\1\11\1\7\1\uffff\1\10\1\3\1\4\2\uffff\1\6\1\5";
     static final String dfa_5s = "\21\uffff}>";
     static final String[] dfa_6s = {
             "\1\2\3\uffff\1\5\5\uffff\1\3\1\uffff\1\4\11\uffff\1\1",
-            "\1\6\6\uffff\1\10\15\uffff\1\7\1\3\22\uffff\1\3\1\7\4\uffff\1\3\1\7",
+            "\1\10\6\uffff\1\7\15\uffff\1\6\1\3\22\uffff\1\3\1\6\4\uffff\1\3\1\6",
             "\1\11\6\uffff\1\12\16\uffff\1\3\22\uffff\1\3\5\uffff\1\3",
             "",
-            "\1\14\53\uffff\1\13",
-            "\1\14\53\uffff\1\13",
+            "\1\14\56\uffff\1\13",
+            "\1\14\56\uffff\1\13",
             "",
             "",
             "",
@@ -16024,19 +16091,63 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             this.transition = dfa_6;
         }
         public String getDescription() {
-            return "385:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )";
+            return "437:4: (lv_type_0_1= ruleDropStream | lv_type_0_2= ruleUserManagement | lv_type_0_3= ruleRightsManagement | lv_type_0_4= ruleRoleManagement | lv_type_0_5= ruleCreateDataBaseGenericConnection | lv_type_0_6= ruleCreateDataBaseJDBCConnection | lv_type_0_7= ruleDropDatabaseConnection | lv_type_0_8= ruleCreateContextStore | lv_type_0_9= ruleDropContextStore )";
         }
     }
-    static final String dfa_7s = "\17\uffff";
-    static final String dfa_8s = "\1\144\1\65\1\uffff\1\144\1\uffff\1\144\1\122\1\144\1\17\1\144\4\uffff\1\122";
-    static final String dfa_9s = "\1\144\1\121\1\uffff\1\144\1\uffff\1\144\1\125\1\144\1\64\1\144\4\uffff\1\125";
-    static final String dfa_10s = "\2\uffff\1\5\1\uffff\1\6\5\uffff\1\3\1\4\1\1\1\2\1\uffff";
-    static final String dfa_11s = "\17\uffff}>";
+    static final String dfa_7s = "\14\uffff";
+    static final String dfa_8s = "\1\35\1\107\1\142\1\uffff\1\124\2\uffff\1\147\2\107\1\143\1\107";
+    static final String dfa_9s = "\1\147\1\136\1\142\1\uffff\1\147\2\uffff\1\147\2\136\1\143\1\136";
+    static final String dfa_10s = "\3\uffff\1\2\1\uffff\1\3\1\1\5\uffff";
+    static final String dfa_11s = "\14\uffff}>";
     static final String[] dfa_12s = {
-            "\1\1",
-            "\1\4\23\uffff\1\2\7\uffff\1\3",
+            "\1\3\63\uffff\1\2\25\uffff\1\1",
+            "\2\6\4\uffff\1\5\12\uffff\1\4\3\uffff\1\6\1\uffff\1\6",
+            "\1\7",
             "",
+            "\1\10\22\uffff\1\11",
+            "",
+            "",
+            "\1\12",
+            "\2\6\4\uffff\1\5\16\uffff\1\6\1\uffff\1\6",
+            "\2\6\4\uffff\1\5\16\uffff\1\6\1\uffff\1\6",
+            "\1\13",
+            "\2\6\4\uffff\1\5\16\uffff\1\6\1\uffff\1\6"
+    };
+
+    static final short[] dfa_7 = DFA.unpackEncodedString(dfa_7s);
+    static final char[] dfa_8 = DFA.unpackEncodedStringToUnsignedChars(dfa_8s);
+    static final char[] dfa_9 = DFA.unpackEncodedStringToUnsignedChars(dfa_9s);
+    static final short[] dfa_10 = DFA.unpackEncodedString(dfa_10s);
+    static final short[] dfa_11 = DFA.unpackEncodedString(dfa_11s);
+    static final short[][] dfa_12 = unpackEncodedStringArray(dfa_12s);
+
+    class DFA27 extends DFA {
+
+        public DFA27(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 27;
+            this.eot = dfa_7;
+            this.eof = dfa_7;
+            this.min = dfa_8;
+            this.max = dfa_9;
+            this.accept = dfa_10;
+            this.special = dfa_11;
+            this.transition = dfa_12;
+        }
+        public String getDescription() {
+            return "1427:3: ( ( (lv_quantification_0_0= ruleQuantificationPredicate ) ) | ( (lv_exists_1_0= ruleExistPredicate ) ) | ( (lv_in_2_0= ruleInPredicate ) ) )";
+        }
+    }
+    static final String dfa_13s = "\17\uffff";
+    static final String dfa_14s = "\1\147\1\65\1\147\2\uffff\1\147\1\123\1\147\1\17\1\147\4\uffff\1\123";
+    static final String dfa_15s = "\1\147\1\122\1\147\2\uffff\1\147\1\126\1\147\1\64\1\147\4\uffff\1\126";
+    static final String dfa_16s = "\3\uffff\1\6\1\5\5\uffff\1\3\1\4\1\1\1\2\1\uffff";
+    static final String dfa_17s = "\17\uffff}>";
+    static final String[] dfa_18s = {
+            "\1\1",
+            "\1\3\23\uffff\1\4\10\uffff\1\2",
             "\1\5",
+            "",
             "",
             "\1\6",
             "\1\10\2\uffff\1\7",
@@ -16050,157 +16161,169 @@ public class InternalCQLParser extends AbstractInternalAntlrParser {
             "\1\10\2\uffff\1\7"
     };
 
-    static final short[] dfa_7 = DFA.unpackEncodedString(dfa_7s);
-    static final char[] dfa_8 = DFA.unpackEncodedStringToUnsignedChars(dfa_8s);
-    static final char[] dfa_9 = DFA.unpackEncodedStringToUnsignedChars(dfa_9s);
-    static final short[] dfa_10 = DFA.unpackEncodedString(dfa_10s);
-    static final short[] dfa_11 = DFA.unpackEncodedString(dfa_11s);
-    static final short[][] dfa_12 = unpackEncodedStringArray(dfa_12s);
+    static final short[] dfa_13 = DFA.unpackEncodedString(dfa_13s);
+    static final char[] dfa_14 = DFA.unpackEncodedStringToUnsignedChars(dfa_14s);
+    static final char[] dfa_15 = DFA.unpackEncodedStringToUnsignedChars(dfa_15s);
+    static final short[] dfa_16 = DFA.unpackEncodedString(dfa_16s);
+    static final short[] dfa_17 = DFA.unpackEncodedString(dfa_17s);
+    static final short[][] dfa_18 = unpackEncodedStringArray(dfa_18s);
 
     class DFA47 extends DFA {
 
         public DFA47(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 47;
-            this.eot = dfa_7;
-            this.eof = dfa_7;
-            this.min = dfa_8;
-            this.max = dfa_9;
-            this.accept = dfa_10;
-            this.special = dfa_11;
-            this.transition = dfa_12;
+            this.eot = dfa_13;
+            this.eof = dfa_13;
+            this.min = dfa_14;
+            this.max = dfa_15;
+            this.accept = dfa_16;
+            this.special = dfa_17;
+            this.transition = dfa_18;
         }
         public String getDescription() {
-            return "2940:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )";
+            return "2992:5: (lv_create_4_1= ruleCreateAccessFramework | lv_create_4_2= ruleCreateChannelFrameworkViaPort | lv_create_4_3= ruleCreateChannelFormatViaFile | lv_create_4_4= ruleCreateDatabaseStream | lv_create_4_5= ruleCreateDatabaseSink | lv_create_4_6= ruleCreateView )";
         }
     }
-    static final String dfa_13s = "\5\uffff\1\7\7\uffff\2\7";
-    static final String dfa_14s = "\1\35\4\uffff\1\5\2\uffff\4\35\1\123\2\5";
-    static final String dfa_15s = "\1\153\4\uffff\1\135\2\uffff\4\153\1\144\2\135";
-    static final String dfa_16s = "\1\uffff\1\1\1\2\1\3\1\4\1\uffff\1\6\1\5\7\uffff";
-    static final String[] dfa_17s = {
-            "\1\6\11\uffff\1\4\25\uffff\1\4\45\uffff\1\1\1\5\1\2\5\uffff\1\3",
+    static final String dfa_19s = "\23\uffff";
+    static final String dfa_20s = "\5\uffff\1\11\11\uffff\2\11\1\uffff\1\11";
+    static final String dfa_21s = "\1\35\4\uffff\1\5\1\142\1\uffff\1\124\1\uffff\4\35\1\147\2\5\1\143\1\5";
+    static final String dfa_22s = "\1\156\4\uffff\1\136\1\142\1\uffff\1\147\1\uffff\4\156\1\147\2\136\1\143\1\136";
+    static final String dfa_23s = "\1\uffff\1\1\1\2\1\3\1\4\2\uffff\1\6\1\uffff\1\5\11\uffff";
+    static final String dfa_24s = "\23\uffff}>";
+    static final String[] dfa_25s = {
+            "\1\7\11\uffff\1\4\25\uffff\1\4\23\uffff\1\6\24\uffff\1\1\1\5\1\2\5\uffff\1\3",
             "",
             "",
             "",
             "",
-            "\1\7\4\uffff\1\7\20\uffff\2\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\2\7\5\uffff\1\7\2\uffff\1\7\20\uffff\1\7\2\uffff\1\7\1\11\1\10\4\uffff\1\6\1\uffff\1\7\2\uffff\3\7\1\uffff\1\7\1\14\1\7\1\uffff\1\7\1\12\1\7\1\13",
+            "\1\11\4\uffff\1\11\20\uffff\2\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\2\11\5\uffff\1\11\2\uffff\1\11\20\uffff\1\11\2\uffff\1\11\1\13\1\12\4\uffff\1\7\1\uffff\1\11\3\uffff\3\11\1\uffff\1\11\1\10\1\11\1\uffff\1\11\1\14\1\11\1\15",
+            "\1\16",
             "",
+            "\1\20\22\uffff\1\17",
             "",
-            "\1\7\11\uffff\1\7\23\uffff\1\6\1\uffff\1\7\4\uffff\1\6\1\uffff\1\6\1\7\13\uffff\1\7\21\uffff\3\7\5\uffff\1\7",
-            "\1\7\11\uffff\1\7\23\uffff\1\6\1\uffff\1\7\4\uffff\1\6\1\uffff\1\6\1\7\13\uffff\1\7\21\uffff\3\7\5\uffff\1\7",
-            "\1\7\11\uffff\1\7\23\uffff\1\6\1\uffff\1\7\4\uffff\1\6\1\uffff\1\6\1\7\13\uffff\1\7\21\uffff\3\7\5\uffff\1\7",
-            "\1\7\11\uffff\1\7\23\uffff\1\6\1\uffff\1\7\4\uffff\1\6\1\uffff\1\6\1\7\13\uffff\1\7\21\uffff\3\7\5\uffff\1\7",
-            "\1\15\20\uffff\1\16",
-            "\1\7\4\uffff\1\7\20\uffff\2\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\2\7\5\uffff\1\7\2\uffff\1\7\20\uffff\1\7\2\uffff\1\7\1\11\1\10\4\uffff\1\6\1\uffff\1\7\2\uffff\3\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\12\1\7\1\13",
-            "\1\7\4\uffff\1\7\20\uffff\2\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\uffff\2\7\5\uffff\1\7\2\uffff\1\7\20\uffff\1\7\2\uffff\1\7\1\11\1\10\4\uffff\1\6\1\uffff\1\7\2\uffff\3\7\1\uffff\1\7\1\uffff\1\7\1\uffff\1\7\1\12\1\7\1\13"
+            "\1\11\11\uffff\1\11\23\uffff\1\7\1\uffff\1\11\4\uffff\1\7\1\uffff\1\7\1\11\13\uffff\2\11\23\uffff\3\11\5\uffff\1\11",
+            "\1\11\11\uffff\1\11\23\uffff\1\7\1\uffff\1\11\4\uffff\1\7\1\uffff\1\7\1\11\13\uffff\2\11\23\uffff\3\11\5\uffff\1\11",
+            "\1\11\11\uffff\1\11\23\uffff\1\7\1\uffff\1\11\4\uffff\1\7\1\uffff\1\7\1\11\13\uffff\2\11\23\uffff\3\11\5\uffff\1\11",
+            "\1\11\11\uffff\1\11\23\uffff\1\7\1\uffff\1\11\4\uffff\1\7\1\uffff\1\7\1\11\13\uffff\2\11\23\uffff\3\11\5\uffff\1\11",
+            "\1\21",
+            "\1\11\4\uffff\1\11\20\uffff\2\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\2\11\5\uffff\1\11\2\uffff\1\11\20\uffff\1\11\2\uffff\1\11\1\13\1\12\4\uffff\1\7\1\uffff\1\11\3\uffff\3\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\14\1\11\1\15",
+            "\1\11\4\uffff\1\11\20\uffff\2\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\2\11\5\uffff\1\11\2\uffff\1\11\20\uffff\1\11\2\uffff\1\11\1\13\1\12\4\uffff\1\7\1\uffff\1\11\3\uffff\3\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\14\1\11\1\15",
+            "\1\22",
+            "\1\11\4\uffff\1\11\20\uffff\2\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\uffff\2\11\5\uffff\1\11\2\uffff\1\11\20\uffff\1\11\2\uffff\1\11\1\13\1\12\4\uffff\1\7\1\uffff\1\11\3\uffff\3\11\1\uffff\1\11\1\uffff\1\11\1\uffff\1\11\1\14\1\11\1\15"
     };
-    static final short[] dfa_13 = DFA.unpackEncodedString(dfa_13s);
-    static final char[] dfa_14 = DFA.unpackEncodedStringToUnsignedChars(dfa_14s);
-    static final char[] dfa_15 = DFA.unpackEncodedStringToUnsignedChars(dfa_15s);
-    static final short[] dfa_16 = DFA.unpackEncodedString(dfa_16s);
-    static final short[][] dfa_17 = unpackEncodedStringArray(dfa_17s);
+
+    static final short[] dfa_19 = DFA.unpackEncodedString(dfa_19s);
+    static final short[] dfa_20 = DFA.unpackEncodedString(dfa_20s);
+    static final char[] dfa_21 = DFA.unpackEncodedStringToUnsignedChars(dfa_21s);
+    static final char[] dfa_22 = DFA.unpackEncodedStringToUnsignedChars(dfa_22s);
+    static final short[] dfa_23 = DFA.unpackEncodedString(dfa_23s);
+    static final short[] dfa_24 = DFA.unpackEncodedString(dfa_24s);
+    static final short[][] dfa_25 = unpackEncodedStringArray(dfa_25s);
 
     class DFA88 extends DFA {
 
         public DFA88(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
             this.decisionNumber = 88;
-            this.eot = dfa_7;
-            this.eof = dfa_13;
-            this.min = dfa_14;
-            this.max = dfa_15;
-            this.accept = dfa_16;
-            this.special = dfa_11;
-            this.transition = dfa_17;
+            this.eot = dfa_19;
+            this.eof = dfa_20;
+            this.min = dfa_21;
+            this.max = dfa_22;
+            this.accept = dfa_23;
+            this.special = dfa_24;
+            this.transition = dfa_25;
         }
         public String getDescription() {
-            return "5981:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )";
+            return "6033:2: ( ( () ( (lv_value_1_0= RULE_INT ) ) ) | ( () ( (lv_value_3_0= RULE_FLOAT ) ) ) | ( () ( (lv_value_5_0= RULE_STRING ) ) ) | ( () ( (lv_value_7_0= ruleBOOLEAN ) ) ) | ( () ( (lv_value_9_0= ruleAttributeWithoutAliasDefinition ) ) ) | ( () ( (lv_value_11_0= ruleComplexPredicate ) ) ) )";
         }
     }
  
 
     public static final BitSet FOLLOW_1 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_2 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0004015518000002L,0x0000000004000000L});
-    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000000000L,0x0000000000800000L});
-    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
-    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x2000008000010000L,0x00000B3800080000L});
-    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0020000000000000L});
-    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x2020008000010000L,0x00000B3800280000L});
-    public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0020000000000000L,0x0000000000200000L});
-    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x0000000000000000L,0x0000001000020000L});
-    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0002020040000002L,0x0000001000220000L});
-    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0002020040000002L,0x0000000000200000L});
-    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x2000008020000000L,0x0000083800020020L});
-    public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0000020040000002L});
-    public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000800L});
-    public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000040000002L,0x0000001000200000L});
-    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x0000000040000002L,0x0000000000200000L});
-    public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000800000000422L});
-    public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x0000001418000000L});
-    public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
-    public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x0000000000000002L,0x0000000040000200L});
-    public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000200L});
-    public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000200L});
-    public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000000000L,0x0000000028000180L});
-    public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0800000000000000L,0x0000000000000014L});
-    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
-    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000000000002L,0x0000000101580200L});
-    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000000000000L,0x0000000101580000L});
-    public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000000000000000L,0x0000000000020000L});
-    public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000000000000000L,0x0000080000000000L});
-    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000000000040000L});
-    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000000001000000L});
-    public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000000000000000L,0x00000C0000000000L});
-    public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000000000000000L,0x0000080000240000L});
-    public static final BitSet FOLLOW_38 = new BitSet(new long[]{0x0000000000000000L,0x0000000000240000L});
-    public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x8200001000000000L});
-    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000000000200000L});
-    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000000000000000L,0x0000000002000000L});
-    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000000000000000L,0x0000000800000000L});
-    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0010000000000000L});
-    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0000200000000000L});
-    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0008000000000002L});
-    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0041040282800140L,0x0000000000000001L});
-    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000008L});
-    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0004000000080000L});
-    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x0080000000000000L});
-    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000002L});
-    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x4000000000000000L});
-    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0000000000020000L});
-    public static final BitSet FOLLOW_56 = new BitSet(new long[]{0x0000000000000012L});
-    public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0000000000000000L,0x0000000000010000L});
-    public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000402L});
-    public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x0000000000001002L});
-    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000000400000L});
-    public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000100000000000L});
-    public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000080800000000L});
-    public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000000000002L,0x0000000000001000L});
-    public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_65 = new BitSet(new long[]{0x0000001418000000L,0x0000001000000000L});
-    public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x4100002000000000L});
-    public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000000000802L});
-    public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000000000000000L,0x0000000000214000L});
-    public static final BitSet FOLLOW_69 = new BitSet(new long[]{0x0000000000000000L,0x0000000000210000L});
-    public static final BitSet FOLLOW_70 = new BitSet(new long[]{0x0020000000000000L,0x0000000000204000L});
-    public static final BitSet FOLLOW_71 = new BitSet(new long[]{0x0100000000000000L});
-    public static final BitSet FOLLOW_72 = new BitSet(new long[]{0x0400000000004000L});
-    public static final BitSet FOLLOW_73 = new BitSet(new long[]{0x0000000000000000L,0x0000000080000000L});
-    public static final BitSet FOLLOW_74 = new BitSet(new long[]{0x1000000000100000L});
-    public static final BitSet FOLLOW_75 = new BitSet(new long[]{0x1000000000000000L});
-    public static final BitSet FOLLOW_76 = new BitSet(new long[]{0x0000400000100000L});
-    public static final BitSet FOLLOW_77 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x0000000000000002L,0x0000000000008000L});
-    public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x0000000000000002L,0x0000000010000040L});
-    public static final BitSet FOLLOW_80 = new BitSet(new long[]{0x0000000000000002L,0x0000000028000180L});
-    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0000000000000002L,0x0000000000500000L});
-    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0000000000000002L,0x0000000001080000L});
+    public static final BitSet FOLLOW_3 = new BitSet(new long[]{0x0004015518000002L,0x0000000008000000L});
+    public static final BitSet FOLLOW_4 = new BitSet(new long[]{0x0000000000000000L,0x0000000400000000L});
+    public static final BitSet FOLLOW_5 = new BitSet(new long[]{0x0000000000000000L,0x0000008000000000L});
+    public static final BitSet FOLLOW_6 = new BitSet(new long[]{0x0000000000000000L,0x0000000800000000L});
+    public static final BitSet FOLLOW_7 = new BitSet(new long[]{0x0000000000000000L,0x0000000001000000L});
+    public static final BitSet FOLLOW_8 = new BitSet(new long[]{0x0000000000000000L,0x0000000000100000L});
+    public static final BitSet FOLLOW_9 = new BitSet(new long[]{0x2000008000010000L,0x000059C000120000L});
+    public static final BitSet FOLLOW_10 = new BitSet(new long[]{0x0020000000000000L});
+    public static final BitSet FOLLOW_11 = new BitSet(new long[]{0x2020008000010000L,0x000059C000520000L});
+    public static final BitSet FOLLOW_12 = new BitSet(new long[]{0x0020000000000000L,0x0000000000400000L});
+    public static final BitSet FOLLOW_13 = new BitSet(new long[]{0x0000000000000000L,0x0000008000040000L});
+    public static final BitSet FOLLOW_14 = new BitSet(new long[]{0x0002020040000002L,0x0000008000440000L});
+    public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0002020040000002L,0x0000000000400000L});
+    public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x2000008020000000L,0x000041C000060020L});
+    public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000020040000002L});
+    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000800L});
+    public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000000000000L,0x0000008000020000L});
+    public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x0000000040000002L,0x0000008000420000L});
+    public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000000040000002L,0x0000000000400000L});
+    public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x0000800000000422L});
+    public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000001418000000L});
+    public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000000000000L,0x0000000000080000L});
+    public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000000002L,0x0000000080000200L});
+    public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000200L});
+    public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000200L});
+    public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000000000000L,0x0000000050000180L});
+    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0800000000000000L,0x0000000000000014L});
+    public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000000000000000L,0x0000000000002000L});
+    public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000000000000002L,0x0000000202B00200L});
+    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000000000000000L,0x0000000202B00000L});
+    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000000000000000L,0x0000000000040000L});
+    public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000000L,0x0000400000000000L});
+    public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000000000040000L});
+    public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000000000002000L});
+    public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_38 = new BitSet(new long[]{0x0000000001000000L});
+    public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x0000000000000000L,0x0000600000000000L});
+    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000000000000000L,0x0000400000480000L});
+    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000000000000000L,0x0000000000480000L});
+    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x8200001000000000L});
+    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000000004000000L});
+    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0000000000200000L});
+    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0000000000000000L,0x0000000004000000L});
+    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0000000000000000L,0x0000004000000000L});
+    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0010000000000000L});
+    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0000000000008000L});
+    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0000200000000000L});
+    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0008000000000002L});
+    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0041040282800140L,0x0000000000000001L});
+    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000008L});
+    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0004000000080000L});
+    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0080000000000000L});
+    public static final BitSet FOLLOW_56 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000002L});
+    public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x4000000000000000L});
+    public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0000000000020000L});
+    public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x0000000000000012L});
+    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x0000000000000000L,0x0000000000010000L});
+    public static final BitSet FOLLOW_61 = new BitSet(new long[]{0x0000000000000002L,0x0000000000000402L});
+    public static final BitSet FOLLOW_62 = new BitSet(new long[]{0x0000000000001002L});
+    public static final BitSet FOLLOW_63 = new BitSet(new long[]{0x0000000000400000L});
+    public static final BitSet FOLLOW_64 = new BitSet(new long[]{0x0000100000000000L});
+    public static final BitSet FOLLOW_65 = new BitSet(new long[]{0x0000080800000000L});
+    public static final BitSet FOLLOW_66 = new BitSet(new long[]{0x0000000000000002L,0x0000000000001000L});
+    public static final BitSet FOLLOW_67 = new BitSet(new long[]{0x0000000020000000L});
+    public static final BitSet FOLLOW_68 = new BitSet(new long[]{0x0000001418000000L,0x0000008000000000L});
+    public static final BitSet FOLLOW_69 = new BitSet(new long[]{0x4100002000000000L});
+    public static final BitSet FOLLOW_70 = new BitSet(new long[]{0x0000000000000802L});
+    public static final BitSet FOLLOW_71 = new BitSet(new long[]{0x0000000000000000L,0x0000000000414000L});
+    public static final BitSet FOLLOW_72 = new BitSet(new long[]{0x0000000000000000L,0x0000000000410000L});
+    public static final BitSet FOLLOW_73 = new BitSet(new long[]{0x0020000000000000L,0x0000000000404000L});
+    public static final BitSet FOLLOW_74 = new BitSet(new long[]{0x0100000000000000L});
+    public static final BitSet FOLLOW_75 = new BitSet(new long[]{0x0400000000004000L});
+    public static final BitSet FOLLOW_76 = new BitSet(new long[]{0x0000000000000000L,0x0000000100000000L});
+    public static final BitSet FOLLOW_77 = new BitSet(new long[]{0x1000000000100000L});
+    public static final BitSet FOLLOW_78 = new BitSet(new long[]{0x1000000000000000L});
+    public static final BitSet FOLLOW_79 = new BitSet(new long[]{0x0000400000100000L});
+    public static final BitSet FOLLOW_80 = new BitSet(new long[]{0x0000400000000000L});
+    public static final BitSet FOLLOW_81 = new BitSet(new long[]{0x0000000000000002L,0x0000000000008000L});
+    public static final BitSet FOLLOW_82 = new BitSet(new long[]{0x0000000000000002L,0x0000000020000040L});
+    public static final BitSet FOLLOW_83 = new BitSet(new long[]{0x0000000000000002L,0x0000000050000180L});
+    public static final BitSet FOLLOW_84 = new BitSet(new long[]{0x0000000000000002L,0x0000000000A00000L});
+    public static final BitSet FOLLOW_85 = new BitSet(new long[]{0x0000000000000002L,0x0000000002100000L});
 
 }

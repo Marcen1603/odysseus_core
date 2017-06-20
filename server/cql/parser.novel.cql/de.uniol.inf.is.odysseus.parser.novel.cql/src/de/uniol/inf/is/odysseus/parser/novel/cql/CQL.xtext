@@ -32,6 +32,10 @@ terminal VECTOR_FLOAT:
 terminal MATRIX_FLOAT:
 	'[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
 
+SystemVariable:
+	'$' '{' ID '}'
+;
+
 enum Time:
 	MILLISECOND
 	| SECOND
@@ -47,7 +51,8 @@ enum Time:
 QualifiedAttributename:
 	(ID
 	| (QualifiedSourcename '.' ID)
-	| (QualifiedSourcename '.' '*'));
+	| (QualifiedSourcename '.' '*')
+	| SystemVariable);
 
 QualifiedAttributenameWithoutSpecialChars:
 	(ID | (QualifiedSourcename '.' ID));

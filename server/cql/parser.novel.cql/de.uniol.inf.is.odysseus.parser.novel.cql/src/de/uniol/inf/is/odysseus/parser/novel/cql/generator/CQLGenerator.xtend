@@ -79,22 +79,26 @@ class CQLGenerator implements IGenerator2 {
 	var private Map<String, String> registryBackUp_Operators = newHashMap
 	var private Map<String, List<String>> registry_NestedSelects = newHashMap
 	var private Map<String, List<String>> registry_RenamedAttributes = newHashMap
+	////remove
 	var private List<SourceStruct> registry_Sources = newArrayList
 	var private List<String> registryBackUp_OperatorNames = newArrayList
 	var private List<String> registry_OperatorNames = newArrayList
+	/////remove
 	var private Map<String, String> registry_Expressions = newHashMap
+	////remove 
 	var private List<String> registry_AggregationAttributes = newArrayList
 	var private Map<String, String> registry_AttributeAliases = newHashMap
 
 	var Map<SimpleSelect, List<SelectExpression>> queryAggregations = newHashMap
 	var Map<SimpleSelect, List<SelectExpression>> queryExpressions = newHashMap
 	/** Contains string representations of all attributes (inclusivley aggregations and expressions) mapped by their corresponding sources.*/
-	var Map<SimpleSelect, Map<String, List<String>>> queryAttributes = newHashMap
+	var public Map<SimpleSelect, Map<String, List<String>>> queryAttributes = newHashMap
 
 	/** Contains all selected attributes for each registered query */
-	var Map<SimpleSelect, List<String>> projectionAttributes = newHashMap
+	var public Map<SimpleSelect, List<String>> projectionAttributes = newHashMap
 	/** Contains the corresponding sources to the attributes in projectionAttributes */
 	var Map<SimpleSelect, List<String>> projectionSources = newHashMap
+	/////remove
 	var Map<String, Set<String>> registry_SubQuerySources = newHashMap
 
 	// Counters to keep track of identifiers for operators, aggregations, expressions
@@ -119,11 +123,15 @@ class CQLGenerator implements IGenerator2 {
 	val private String ASSIG1 = "="
 	val private String ASSIG2 = ":="
 
-	var List<String> predicateStringList = newArrayList
+//	var List<String> predicateStringList = newArrayList
+	
+	
+	var CQLPredicateParser predicateParser = new CQLPredicateParser(this)
 
 	def void clear() {
 //		registry_StreamTo.clear()
 //		registry_Sinks.clear()
+		predicateParser.clear()
 		registry_OperatorNames.clear()
 		registry_Operators.clear()
 		registry_NestedSelects.clear()
@@ -217,7 +225,7 @@ class CQLGenerator implements IGenerator2 {
 		return model
 	}
 
-	def private prepareParsingSelect(SimpleSelect select) {
+	def public prepareParsingSelect(SimpleSelect select) {
 		if (!registry_SimpleSelect.contains(select)) {
 			var subQueries = registerAllSource(select)
 			for (NestedSource subQuery : subQueries) {
@@ -323,7 +331,7 @@ class CQLGenerator implements IGenerator2 {
 	}
 
 	// TODO buildJoin() immer bauen und entspechend an builder-Methoden übergeben!
-	def private CharSequence parseSelectWithoutPredicate(SimpleSelect select) {
+	def public CharSequence parseSelectWithoutPredicate(SimpleSelect select) {
 		var String projectInput
 		// Build additional operators for aggregatations, expressions, ...
 		var String operator1 = parseAdditionalOperator(Operator.MAP, select)
@@ -346,7 +354,7 @@ class CQLGenerator implements IGenerator2 {
 		}
 	}
 
-	def private CharSequence parseSelectWithPredicate(SimpleSelect stmt) {
+	def public CharSequence parseSelectWithPredicate(SimpleSelect stmt) {
 		// Check if query contains ComplexPredicates like EXISTS, ALL, ANY
 		var List<Expression> predicates = newArrayList
 		var List<Source> sources = newArrayList
@@ -364,10 +372,10 @@ class CQLGenerator implements IGenerator2 {
 		var String operator1 = parseAdditionalOperator(Operator.MAP, stmt)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, stmt)
 
-		predicateStringList.clear()
-		parsePredicate(predicates)
+		predicateParser.clear()//predicateStringList.clear()
+		predicateParser.parse(predicates)
 		var selectInput = buildInput2(stmt, operator1, operator2).toString
-		var predicate = parsePredicateString(predicateStringList)
+		var predicate = predicateParser.parsePredicateString(predicateParser.getPredicateStringList())
 		var select = ''
 		if (!predicate.equals(''))
 			select = registerOperator(
@@ -415,279 +423,8 @@ class CQLGenerator implements IGenerator2 {
 		}
 	}
 
-	def String parsePredicateString(List<String> predicateString) {
-		if (predicateString.size > 0) {
-			if (predicateString.get(0).equals('&&') || predicateString.get(0).equals('||'))
-				predicateString.remove(0)
-			if (predicateString.get(predicateString.size - 1).equals('&&') ||
-				predicateString.get(predicateString.size - 1).equals('||'))
-				predicateString.remove(predicateString.size - 1)
-		}
-		var predicate = ''
-		for (String pred : predicateString)
-			predicate += pred
-		return predicate
-	}
+	public var List<Map<String, String>> registry_existenceOperators = newArrayList
 
-	def private CharSequence buildPredicateString(CharSequence sequence) {
-		lastPredicateElement = sequence
-		predicateStringList.add(sequence.toString())
-		return predicateString += sequence
-	}
-
-	var CharSequence lastPredicateElement = ''
-
-	/**Builds a predicate string from a given {@link Expression}. */
-	def private CharSequence parsePredicate(Expression e) {
-		if (!e.eContents.empty) {
-			switch e {
-				OrPredicate: {
-					parsePredicate(e.left)
-					buildPredicateString('||')
-					parsePredicate(e.right)
-
-				}
-				AndPredicate: {
-					parsePredicate(e.left)
-					buildPredicateString('&&')
-					parsePredicate(e.right)
-				}
-				Equality: {
-					parsePredicate(e.left)
-					if (e.op.equals("="))
-						buildPredicateString('==')
-					else
-						buildPredicateString(e.op)
-					parsePredicate(e.right)
-				}
-				Comparision: {
-					parsePredicate(e.left)
-					buildPredicateString(e.op)
-					parsePredicate(e.right)
-				}
-				Plus: {
-					parsePredicate(e.left)
-					buildPredicateString('+')
-					parsePredicate(e.right)
-				}
-				Minus: {
-					parsePredicate(e.left)
-					buildPredicateString('-')
-					parsePredicate(e.right)
-				}
-				MulOrDiv: {
-					parsePredicate(e.left)
-					buildPredicateString(e.op)
-					parsePredicate(e.right)
-				}
-				NOT: {
-					buildPredicateString('!')
-					parsePredicate(e.expression)
-				}
-				Bracket: {
-					buildPredicateString('(')
-					parsePredicate(e.inner)
-					buildPredicateString(')')
-				}
-				AttributeRef: {
-					buildPredicateString(getAttributename(e.value as Attribute))
-				}
-				ComplexPredicateRef: {
-					var complexPredicate = e.value as ComplexPredicate
-					var QuantificationPredicate quantification = null
-					var ExistPredicate exists = null
-					var InPredicate in = null
-					if ((quantification = complexPredicate.quantification) !== null) {
-						var type = 'EXISTS'
-						var operator = quantification.operator
-						if (quantification.predicate.equalsIgnoreCase('ALL')) {
-							type = 'NOT_EXISTS'
-							if (operator.equals('>='))
-								operator = '<'
-							else if (operator.equals('>'))
-								operator = '<='
-							else if (operator.equals('<='))
-								operator = '>'
-							else if (operator.equals('<'))
-								operator = '>='
-						}
-						// save the current predicate
-						var predicateStringListBackup = new ArrayList(predicateStringList)
-						predicateStringList = newArrayList
-						var predicateBackup = predicateString
-						predicateString = ''
-//						var attributeAliasesBackup = registry_AttributeAliases
-//						registry_AttributeAliases = newHashMap
-						var select = complexPredicate.select.select
-						prepareParsingSelect(select)
-						var predicate = ''
-						if (select.predicates === null) {
-							parseSelectWithoutPredicate(select)
-							for (String attribute : projectionAttributes.get(select))
-								predicate += quantification.attribute.name + operator + attribute + '&&'
-							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
-						} else {
-							parseSelectWithPredicate(select)
-							for (String attribute : projectionAttributes.get(select))
-								predicate += quantification.attribute.name + operator + attribute + '&&'
-							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
-						}
-
-						var Map<String, String> args = newHashMap
-						args.put('type', type)
-						args.put('input', getLastOperator())
-
-						for (Entry<String ,List<String>> l : queryAttributes.get(select).entrySet)
-							for (String s : l.value) {
-								var attributename = s
-								if (!attributename.contains('.')) {
-									attributename = l.key + '.' + attributename
-								}
-								println(attributename)
-								predicate = predicate.replace(attributename, attributename.replace('.', '_'))
-							}
-
-						args.put('predicate', predicate)
-						registry_existenceOperators.add(args)
-
-						// restore predicate
-						predicateString = predicateBackup
-						predicateStringList = new ArrayList(predicateStringListBackup)
-//						registry_AttributeAliases = attributeAliasesBackup
-					} else if ((exists = complexPredicate.exists) !== null) {
-						var type = 'EXISTS'
-						if (lastPredicateElement.equals('!')) {
-							type = 'NOT_EXISTS'
-							predicateStringList.remove(predicateStringList.size() - 1)
-							if (predicateStringList.size() - 1 > 0) {
-								var index = predicateStringList.size() - 2
-								var element = predicateStringList.get(index)
-								if (element.equals('&&') || element.equals('||'))
-									predicateStringList.remove(index)
-							}
-						} else if (lastPredicateElement.equals('&&') || lastPredicateElement.equals('||')) {
-							if (predicateStringList.size > 0)
-								predicateStringList.remove(predicateStringList.size() - 1)
-						}
-						parseComplexPredicate(complexPredicate, type)
-					} else if ((in = complexPredicate.in) !== null) {
-						var type = 'EXISTS'
-						var operator = '=='
-						// save the current predicate
-						var predicateStringListBackup = new ArrayList(predicateStringList)
-						predicateStringList = newArrayList
-						var predicateBackup = predicateString
-						predicateString = ''
-
-						var select = complexPredicate.select.select
-						prepareParsingSelect(select)
-						var predicate = ''
-						if (select.predicates === null) {
-							parseSelectWithoutPredicate(select)
-							println(projectionAttributes.get(select).toString)
-							for (String attribute : projectionAttributes.get(select))
-								predicate += in.attribute.name + operator + attribute + '&&'
-							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
-						} else {
-							parseSelectWithPredicate(select)
-							println(projectionAttributes.get(select).toString)
-							for (String attribute : projectionAttributes.get(select))
-								predicate += in.attribute.name + operator + attribute + '&&'
-							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
-						}
-
-						for (Entry<String ,List<String>> l : queryAttributes.get(select).entrySet)
-							for (String s : l.value) {
-								var attributename = s
-								if (!attributename.contains('.')) {
-									attributename = l.key + '.' + attributename
-								}
-								println(attributename)
-								predicate = predicate.replace(attributename, attributename.replace('.', '_'))
-							}
-
-//						predicate = predicate.replace('\\.', '_')
-						var Map<String, String> args = newHashMap
-						args.put('type', type)
-						args.put('input', getLastOperator())
-						args.put('predicate', predicate)
-						registry_existenceOperators.add(args)
-
-						// restore predicate
-						predicateString = predicateBackup
-						predicateStringList = new ArrayList(predicateStringListBackup)
-					}
-				}
-			}
-		} else {
-			var str = ''
-			switch e {
-				IntConstant: str = e.value + ''
-				FloatConstant: str = e.value + ''
-				StringConstant: str = '"' + e.value + '"'
-				BoolConstant: str = e.value + ''
-			}
-			buildPredicateString(str)
-		}
-		println(predicateString)
-		return predicateString
-	}
-
-	private var List<Map<String, String>> registry_existenceOperators = newArrayList
-
-	def private parseComplexPredicate(ComplexPredicate complexPredicate, String type) {
-		// save the current predicate
-		var predicateStringListBackup = new ArrayList(predicateStringList)
-		predicateStringList = newArrayList
-		var predicateBackup = predicateString
-		predicateString = ''
-
-		var Map<String, String> args = newHashMap
-		args.put('type', type)
-
-		var subQuery = complexPredicate.select.select as SimpleSelect
-		prepareParsingSelect(subQuery)
-		parseSelectWithoutPredicate(subQuery)
-		parsePredicate(complexPredicate.select.select.predicates.elements.get(0))
-
-		println("exists() -> " + predicateString)
-
-		for (Entry<String ,List<String>> l : queryAttributes.get(subQuery).entrySet)
-			for (String s : l.value) {
-				var attributename = s
-				if (!attributename.contains('.')) {
-					attributename = l.key + '.' + attributename
-				}
-				println(attributename)
-				predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
-			}
-
-		println("exists() -> " + predicateString)
-		args.put('predicate', predicateString)
-		args.put('input', getLastOperator())
-		registry_existenceOperators.add(args)
-
-		// restore predicate
-		predicateString = predicateBackup
-		predicateStringList = new ArrayList(predicateStringListBackup)
-	}
-
-	def private CharSequence parsePredicate(List<Expression> expressions) // TODO something is wrong here
-	{
-		println('parsePredicate(List<Expressions>)')
-		predicateString = ''
-		for (var i = 0; i < expressions.size - 1; i++) {
-			if (expressions.get(i) instanceof AttributeRef) {
-			} else {
-				predicateString = parsePredicate(expressions.get(i)).toString
-				buildPredicateString('&&')
-				println('parsePredicate()x -> ' + predicateString)
-			}
-		}
-		predicateString = parsePredicate(expressions.get(expressions.size - 1)).toString
-		println('parsePredicate() -> ' + predicateString)
-		return predicateString
-	}
 
 	def private CharSequence parseSelectExpression(SelectExpression e) {
 		println('parseSelectExpression() -> expression= ' + e)
@@ -695,15 +432,22 @@ class CQLGenerator implements IGenerator2 {
 		for (var i = 0; i < e.expressions.size; i++) {
 			var component = (e.expressions.get(i) as ExpressionComponent).value
 			switch (component) {
-				Function: str +=
-					component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
-				Attribute: str += getAttributename(component.name)
-				IntConstant: str += component.value + ''
-				FloatConstant: str += component.value + ''
-				BoolConstant: str += component.value + '' // TODO Is a bool value feasible?
-				StringConstant: str += '\"' + component.value + '\"'
-				Vector: str += component.value
-				Matrix: str += component.value
+				Function:
+					str += component.name + '(' + parseSelectExpression((component.value as SelectExpression)) + ')'
+				Attribute:
+					str += getAttributename(component.name)
+				IntConstant:
+					str += component.value + ''
+				FloatConstant:
+					str += component.value + ''
+				BoolConstant:
+					str += component.value + '' // TODO Is a bool value feasible?
+				StringConstant:
+					str += '\"' + component.value + '\"'
+				Vector:
+					str += component.value
+				Matrix:
+					str += component.value
 			}
 			if (i != e.expressions.size - 1)
 				str += e.operators.get(i)
@@ -877,45 +621,47 @@ class CQLGenerator implements IGenerator2 {
 
 	def private String buildInput2(SimpleSelect select, String ... operators) {
 
-		if(operators !== null) {
-			var String mapOperator 	     = if(operators.size > 0) operators.get(0) else null
+		if (operators !== null) {
+			var String mapOperator = if(operators.size > 0) operators.get(0) else null
 			var String aggregateOperator = if(operators.size > 1) operators.get(1) else null
-	
+
 			if (mapOperator !== null && aggregateOperator !== null) {
 				println('buildInput() -> aggregate & map')
-				return checkForGroupAttributes(aggregateOperator, select, buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
+				return checkForGroupAttributes(aggregateOperator, select,
+					buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 			} else if (mapOperator !== null) {
 				println('buildInput() -> map')
 				return buildJoin(select.sources)
 			} else if (aggregateOperator !== null) {
 				// Get all names of the attributes in the predicate clause
-				var List<String> predicateAttributes = 
-					if (select.predicates !== null) {
+				var List<String> predicateAttributes = if (select.predicates !== null) {
 						EcoreUtil2.getAllContentsOfType(select.predicates, Attribute).stream.map(e|e.name).collect(
 							Collectors.toList)
 					} else {
 						null
 					}
 				println('buildInput() -> aggregate ')
-				//If the aggregate operator outputs the same attributes that are selected in the select clause
+				// If the aggregate operator outputs the same attributes that are selected in the select clause
 				if (registry_AggregationAttributes.containsAll(projectionAttributes.get(select))) {
 					println('buildInput() -> aggregate : contains all project attributes')
-					//If the aggregate operator outputs the same attributes that
-					if (predicateAttributes !== null && !predicateAttributes.empty && registry_AggregationAttributes.containsAll(predicateAttributes)) {
+					// If the aggregate operator outputs the same attributes that
+					if (predicateAttributes !== null && !predicateAttributes.empty &&
+						registry_AggregationAttributes.containsAll(predicateAttributes)) {
 						return aggregateOperator
 					} else {
-						return checkForGroupAttributes(aggregateOperator, select, buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
+						return checkForGroupAttributes(aggregateOperator, select,
+							buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 					}
 				} else {
 					println('buildInput() -> aggregate : !(contains all project attributes)')
-					return checkForGroupAttributes(aggregateOperator, select, buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
+					return checkForGroupAttributes(aggregateOperator, select,
+						buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 				}
 			}
 		}
 		println("buildInput() -> skip")
 		return buildJoin(select.sources)
 	}
-
 
 	def private String checkForGroupAttributes(String aggregateOperator, SimpleSelect select, String output) {
 		if (registry_Operators.get(aggregateOperator).contains('group_by')) {
@@ -938,163 +684,6 @@ class CQLGenerator implements IGenerator2 {
 		return output
 	}
 
-//	def private String buildInput(SimpleSelect select, String ... operators) {
-//		var String map = null
-//		var String aggregate = null
-//		var sources = select.sources
-//		var String input = null
-//
-//		if (operators !== null && operators.length > 0) {
-//			map = operators.get(0)
-//			if (operators.length > 1)
-//				aggregate = operators.get(1)
-//		}
-//
-//		println('buildSelectInput() --> mapOperator= ' + map + ', aggregateOperator= ' + aggregate)
-//
-//		if (map !== null && aggregate !== null) {
-//			input = buildJoin(sources).toString // buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
-//			println('groupByyy')
-//			//Check if aggreagte operator contains group_by clause
-//			if (registry_Operators.get(aggregate).contains('group_by')) {
-//				//Compute group by attributes 
-//				var groupAttributes = newArrayList
-//				for (var i = 0; i < select.order.size; i++) {
-//					var groupAttribute = select.order.get(i).name
-//					groupAttributes.add(groupAttribute)
-//					groupAttributes.add(groupAttribute + '_groupAttribute#' + i)
-//				}
-//				input = buildJoin(
-//					#[
-//						builder.buildOperator('RENAME',
-//							newHashMap('pairs' -> 'true', 'aliases' -> generateListString(groupAttributes),
-//								'input' -> aggregate)), input]).toString
-//			} else
-//				input = buildJoin(#[aggregate, buildJoin(sources).toString]).toString
-//		} else if (map !== null) {
-//			input = buildJoin(sources).toString
-//		} else if (aggregate !== null) {
-//			var List<String> predicateAttributes = newArrayList
-//			if (select.predicates !== null)
-//				predicateAttributes = EcoreUtil2.getAllContentsOfType(select.predicates, Attribute).stream.
-//					map(e|e.name).collect(Collectors.toList)
-//			println(predicateAttributes)
-//			println(projectionAttributes.get(select).toString)
-//			println(registry_AggregationAttributes.toString)
-//			// if(registry_Aggregations.containsAll(projectionAttributes.get(select)))
-//			if (registry_AggregationAttributes.equals(projectionAttributes.get(select))) {
-//				if (!predicateAttributes.empty && registry_AggregationAttributes.equals(predicateAttributes))
-//					input = aggregate
-//				else
-//					input = buildJoin(#[aggregate, buildJoin(sources).toString]).toString // rename if group by attribute
-//			} else {
-//				input = buildJoin(sources).toString // buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
-//				println('groupByyy')
-//				if (registry_Operators.get(aggregate).contains('group_by')) {
-//					var groupAttributes = newArrayList
-//					var j = 0
-//					for (var i = 0; i < select.order.size; i++) {
-//						var groupAttribute = select.order.get(i).name
-//						groupAttributes.add(groupAttribute)
-//						groupAttributes.add(groupAttribute + '_groupAttribute#' + j)
-//						j++
-//					}
-//					input = buildJoin(
-//						#[
-//							builder.buildOperator('RENAME',
-//								newHashMap('aliases' -> generateListString(groupAttributes), 'pairs' -> 'true',
-//									'input' -> aggregate)), input]).toString
-//				} else
-//					input = buildJoin(#[aggregate, input]).toString
-//			}
-//		} else
-//			input = buildJoin(sources).toString
-//		return input
-//	}
-
-	/*
-	 * 	def private String buildInput(SimpleSelect select, String ... operators)
-	 * 	{
-	 * 		var String map = null
-	 * 		var String aggregate = null
-	 * 		var sources = select.sources
-	 * 		var String input = null
-	 * 		
-	 * 		if(operators !== null && operators.length > 0)
-	 * 		{
-	 * 			map = operators.get(0)
-	 * 			if(operators.length > 1)
-	 * 				aggregate = operators.get(1)
-	 * 		}			
-	 * 		
-	 * 		println('buildSelectInput() --> mapOperator= ' + map + ', aggregateOperator= ' + aggregate)
-	 * 		
-	 * 		if(map !== null && aggregate !== null)
-	 * 		{
-	 * 			input = buildJoin(sources).toString//buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
-	 * 			println('groupByyy')
-	 * 			if(registry_Operators.get(aggregate).contains('group_by'))
-	 * 			{
-	 * 				var groupAttributes = newArrayList
-	 * 				var j = 0
-	 * 				for(var i = 0; i < select.order.size; i++)
-	 * 				{
-	 * 					var groupAttribute = select.order.get(i).name
-	 * 					groupAttributes.add(groupAttribute)
-	 * 					groupAttributes.add(groupAttribute + '_groupAttribute#' + j)
-	 * 					j++
-	 * 				}
-	 * 				input = buildJoin(#[builder.buildOperator('RENAME', newHashMap('pairs' -> 'true', 'aliases' -> generateListString(groupAttributes), 'input' -> aggregate)), input]).toString
-	 * 			}
-	 * 			else
-	 * 				input = buildJoin(#[aggregate, buildJoin(sources).toString]).toString
-	 * 		}
-	 * 		else if(map !== null)
-	 * 		{
-	 * 			input = buildJoin(sources).toString
-	 * 		}
-	 * 		else if(aggregate !== null)
-	 * 		{
-	 * 			var List<String> predicateAttributes = newArrayList
-	 * 			if(select.predicates !== null)
-	 * 				predicateAttributes = EcoreUtil2.getAllContentsOfType(select.predicates, Attribute).stream.map(e|e.name).collect(Collectors.toList)
-	 * 			println(predicateAttributes)
-	 * 			println(projectionAttributes.get(select).toString)
-	 * 			println(registry_Aggregations.toString)
-	 * 			//if(registry_Aggregations.containsAll(projectionAttributes.get(select)))
-	 * 			if(registry_Aggregations.equals(projectionAttributes.get(select)))
-	 * 			{
-	 * 				if(!predicateAttributes.empty && registry_Aggregations.equals(predicateAttributes)) 
-	 * 					input = aggregate
-	 * 				else 
-	 * 					input = buildJoin(#[aggregate, buildJoin(sources).toString]).toString//rename if group by attribute
-	 * 			}
-	 * 			else
-	 * 			{
-	 * 				input = buildJoin(sources).toString//buildJoin(sources.stream.filter(e|e instanceof SimpleSource).map(e|(e as SimpleSource).name).collect(Collectors.toList)).toString
-	 * 				println('groupByyy')
-	 * 				if(registry_Operators.get(aggregate).contains('group_by'))
-	 * 				{
-	 * 					var groupAttributes = newArrayList
-	 * 					var j = 0
-	 * 					for(var i = 0; i < select.order.size; i++)
-	 * 					{
-	 * 						var groupAttribute = select.order.get(i).name
-	 * 						groupAttributes.add(groupAttribute)
-	 * 						groupAttributes.add(groupAttribute + '_groupAttribute#' + j)
-	 * 						j++
-	 * 					}
-	 * 					input = buildJoin(#[builder.buildOperator('RENAME', newHashMap('aliases' -> generateListString(groupAttributes), 'pairs' -> 'true', 'input' -> aggregate)), input]).toString
-	 * 				}
-	 * 				else
-	 * 					input = buildJoin(#[aggregate, input]).toString
-	 * 			}
-	 * 		}
-	 * 		else
-	 * 			input = buildJoin(sources).toString
-	 * 		return input
-	 * 	}
-	 */
 	def private CharSequence buildWindowOP(SimpleSource source) {
 		if(source.window === null) return source.name
 		var Map<String, String> args = newHashMap
@@ -1495,7 +1084,7 @@ class CQLGenerator implements IGenerator2 {
 		return true
 	}
 
-	def private String getLastOperator() {
+	def public String getLastOperator() {
 		return if(registry_OperatorNames.size > 0) registry_OperatorNames.get(registry_OperatorNames.size - 1) else null
 	}
 
@@ -1509,10 +1098,12 @@ class CQLGenerator implements IGenerator2 {
 		return newArrayList
 	}
 
+///// remove
 	def public List<String> getSourceNames() {
 		return registry_Sources.stream.map(e|e.sourcename).collect(Collectors.toList)
 	}
 
+///// remove
 	def public List<String> getSourceAliasesAsList() {
 		var list = newArrayList
 		for (List<String> l : getSourceAliases().values)
@@ -1531,6 +1122,7 @@ class CQLGenerator implements IGenerator2 {
 		return map
 	}
 
+/////remove
 	def private Object[] parseAttribute(Attribute attribute) {
 		var String sourcename
 		var String sourcealias
@@ -1672,6 +1264,7 @@ class CQLGenerator implements IGenerator2 {
 		return false
 	}
 
+//////remove
 	/** Returns all attributes with its corresponding sources from a select statement. */
 	def private Map<String, List<String>> getSelectedAttributes(SimpleSelect select, Map<String, List<String>> var2) {
 		var map = var2
@@ -2077,6 +1670,7 @@ class CQLGenerator implements IGenerator2 {
 				return list
 			}
 
+/////////remove
 			def public Map<AttributeStruct, List<String>> getAttributeAliases() {
 				var map = newHashMap
 				for (SourceStruct source : registry_Sources)
@@ -2094,6 +1688,8 @@ class CQLGenerator implements IGenerator2 {
 				return list
 			}
 
+
+////////remove
 			def public Map<SourceStruct, List<String>> getSourceAliases() {
 				var map = newHashMap
 				for (SourceStruct source : registry_Sources)
@@ -2148,6 +1744,7 @@ class CQLGenerator implements IGenerator2 {
 				return null
 			}
 
+//////rrmove
 			def public String getSourcenameFromAlias(String sourcealias) {
 				for (Entry<SourceStruct, List<String>> source : getSourceAliases().entrySet)
 					if (source.value.contains(sourcealias))
@@ -2167,22 +1764,23 @@ class CQLGenerator implements IGenerator2 {
 				var attribute = getAttributeFromAlias(alias)
 				if (attribute !== null)
 					return attribute.attributename
-				if (this.registry_AggregationAttributes.contains(alias) || this.registry_Expressions.keySet.contains(alias))
+				if (this.registry_AggregationAttributes.contains(alias) ||
+					this.registry_Expressions.keySet.contains(alias))
 					return alias
 			}
+/////////////
 
 			def public String getAttributename(String attributename, String sourcename) {
 				println("getAttributename() -> attributename=" + attributename + ", sourcename= " + sourcename)
 				var String attribute
 				var String source
-				//If attribute is a system variable like ${Now} //TODO system variable not recognized				
+				// If attribute is a system variable like ${Now} //TODO system variable not recognized				
 //				var charArray = attributename.toCharArray
 //				if (charArray.get(0) == '$' 
 //					&& charArray.get(1) == '{' 
 //					&& charArray.get(charArray.size - 1) == '}'
 //				)
 //					return attributename
-					
 				if (sourcename !== null && !sourcename.equals("")) {
 					var SourceStruct tmp
 					attribute = attributename
@@ -2262,6 +1860,7 @@ class CQLGenerator implements IGenerator2 {
 				return getSource(source).findbyName(name).aliases
 			}
 
+////////////remove
 			/** Returns all {@link Attribute} elements from the corresponding source. */
 			def public List<String> getAttributeNamesFrom(String srcname) {
 				for (SourceStruct source : registry_Sources)

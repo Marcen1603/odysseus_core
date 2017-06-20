@@ -146,6 +146,47 @@ ruleBOOLEAN returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()
 	)
 ;
 
+// Entry rule entryRuleSystemVariable
+entryRuleSystemVariable returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getSystemVariableRule()); }
+	iv_ruleSystemVariable=ruleSystemVariable
+	{ $current=$iv_ruleSystemVariable.current.getText(); }
+	EOF;
+
+// Rule SystemVariable
+ruleSystemVariable returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw=DollarSign
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getDollarSignKeyword_0());
+		}
+		kw=LeftCurlyBracket
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getLeftCurlyBracketKeyword_1());
+		}
+		this_ID_2=RULE_ID
+		{
+			$current.merge(this_ID_2);
+		}
+		{
+			newLeafNode(this_ID_2, grammarAccess.getSystemVariableAccess().getIDTerminalRuleCall_2());
+		}
+		kw=RightCurlyBracket
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getSystemVariableAccess().getRightCurlyBracketKeyword_3());
+		}
+	)
+;
+
 // Entry rule entryRuleQualifiedAttributename
 entryRuleQualifiedAttributename returns [String current=null]:
 	{ newCompositeNode(grammarAccess.getQualifiedAttributenameRule()); }
@@ -217,6 +258,17 @@ ruleQualifiedAttributename returns [AntlrDatatypeRuleToken current=new AntlrData
 				newLeafNode(kw, grammarAccess.getQualifiedAttributenameAccess().getAsteriskKeyword_2_2());
 			}
 		)
+		    |
+		{
+			newCompositeNode(grammarAccess.getQualifiedAttributenameAccess().getSystemVariableParserRuleCall_3());
+		}
+		this_SystemVariable_7=ruleSystemVariable
+		{
+			$current.merge(this_SystemVariable_7);
+		}
+		{
+			afterParserOrEnumRuleCall();
+		}
 	)
 ;
 

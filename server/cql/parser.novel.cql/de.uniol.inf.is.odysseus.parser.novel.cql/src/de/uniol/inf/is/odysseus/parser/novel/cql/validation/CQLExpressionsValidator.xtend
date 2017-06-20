@@ -108,17 +108,16 @@ class CQLExpressionsValidator extends AbstractCQLValidator {
 		checkNotBoolean(left, CQLPackage.Literals::COMPARISION__RIGHT)
 	}
 
-	static var List<String> aliases = newArrayList
-
-	@Check def checkType(Attribute type) {
-		println('beep') // TODO ...
-		if (type.alias !== null)
-			aliases.add(type.alias.name)
-		ExpressionsTypeProvider.aliases = aliases
-	}
+//	static var List<String> aliases = newArrayList
+//
+//	@Check def checkType(Attribute type) {
+//		if (type.alias !== null) {
+//			aliases.add(type.alias.name)
+//			ExpressionsTypeProvider.aliases = aliases
+//		}
+//	}
 
 	@Check def checkType(AttributeRef type) {
-		println('hello')
 		type?.typeFor
 	}
 

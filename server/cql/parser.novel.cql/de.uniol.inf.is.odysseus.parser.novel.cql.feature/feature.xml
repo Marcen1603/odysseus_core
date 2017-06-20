@@ -32,22 +32,6 @@
          id="org.eclipse.emf.mwe.core.feature"
          version="0.0.0"/>
 
-   <requires>
-      <import plugin="org.eclipse.equinox.common" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="de.uniol.inf.is.odysseus.core.server" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi" version="3.11.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore"/>
-      <import plugin="com.google.guava"/>
-      <import plugin="org.eclipse.emf.ecore.xmi" version="2.10.2" match="greaterOrEqual"/>
-      <import plugin="org.antlr.runtime" version="3.2.0" match="perfect"/>
-      <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext.util" version="2.10.0" match="compatible"/>
-      <import plugin="org.eclipse.xtext.smap" version="2.10.0" match="compatible"/>
-      <import plugin="org.eclipse.xtext" version="2.10.0" match="compatible"/>
-      <import plugin="org.objectweb.asm" version="5.0.1" match="compatible"/>
-   </requires>
-
    <plugin
          id="de.uniol.inf.is.odysseus.parser.novel.cql"
          download-size="0"
@@ -210,13 +194,6 @@
          unpack="false"/>
 
    <plugin
-         id="javax.inject"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.builder.standalone"
          download-size="0"
          install-size="0"
@@ -301,6 +278,13 @@
 
    <plugin
          id="de.uniol.inf.is.odysseus.parser.novel.cql.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="javax.inject"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -76,6 +76,33 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		//'TRUE'
 		public Keyword getTRUEKeyword_1() { return cTRUEKeyword_1; }
 	}
+	public class SystemVariableElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.SystemVariable");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cDollarSignKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final RuleCall cIDTerminalRuleCall_2 = (RuleCall)cGroup.eContents().get(2);
+		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		
+		//SystemVariable:
+		//	'$' '{' ID '}';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'$' '{' ID '}'
+		public Group getGroup() { return cGroup; }
+		
+		//'$'
+		public Keyword getDollarSignKeyword_0() { return cDollarSignKeyword_0; }
+		
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
+		
+		//ID
+		public RuleCall getIDTerminalRuleCall_2() { return cIDTerminalRuleCall_2; }
+		
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
+	}
 	public class QualifiedAttributenameElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributename");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -88,13 +115,14 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedSourcenameParserRuleCall_2_0 = (RuleCall)cGroup_2.eContents().get(0);
 		private final Keyword cFullStopKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Keyword cAsteriskKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
+		private final RuleCall cSystemVariableParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
 		//QualifiedAttributename:
 		//	ID
-		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+		//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | SystemVariable;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*'
+		//ID | QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | SystemVariable
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//ID
@@ -123,6 +151,9 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'*'
 		public Keyword getAsteriskKeyword_2_2() { return cAsteriskKeyword_2_2; }
+		
+		//SystemVariable
+		public RuleCall getSystemVariableParserRuleCall_3() { return cSystemVariableParserRuleCall_3; }
 	}
 	public class QualifiedAttributenameWithoutSpecialCharsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.QualifiedAttributenameWithoutSpecialChars");
@@ -3769,6 +3800,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	private final BOOLEANElements pBOOLEAN;
 	private final TerminalRule tVECTOR_FLOAT;
 	private final TerminalRule tMATRIX_FLOAT;
+	private final SystemVariableElements pSystemVariable;
 	private final TimeElements eTime;
 	private final QualifiedAttributenameElements pQualifiedAttributename;
 	private final QualifiedAttributenameWithoutSpecialCharsElements pQualifiedAttributenameWithoutSpecialChars;
@@ -3864,6 +3896,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		this.pBOOLEAN = new BOOLEANElements();
 		this.tVECTOR_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.VECTOR_FLOAT");
 		this.tMATRIX_FLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.uniol.inf.is.odysseus.parser.novel.cql.CQL.MATRIX_FLOAT");
+		this.pSystemVariable = new SystemVariableElements();
 		this.eTime = new TimeElements();
 		this.pQualifiedAttributename = new QualifiedAttributenameElements();
 		this.pQualifiedAttributenameWithoutSpecialChars = new QualifiedAttributenameWithoutSpecialCharsElements();
@@ -4036,6 +4069,16 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return tMATRIX_FLOAT;
 	}
 	
+	//SystemVariable:
+	//	'$' '{' ID '}';
+	public SystemVariableElements getSystemVariableAccess() {
+		return pSystemVariable;
+	}
+	
+	public ParserRule getSystemVariableRule() {
+		return getSystemVariableAccess().getRule();
+	}
+	
 	//enum Time:
 	//	MILLISECOND
 	//	| SECOND
@@ -4057,7 +4100,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//QualifiedAttributename:
 	//	ID
-	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*';
+	//	| QualifiedSourcename '.' ID | QualifiedSourcename '.' '*' | SystemVariable;
 	public QualifiedAttributenameElements getQualifiedAttributenameAccess() {
 		return pQualifiedAttributename;
 	}

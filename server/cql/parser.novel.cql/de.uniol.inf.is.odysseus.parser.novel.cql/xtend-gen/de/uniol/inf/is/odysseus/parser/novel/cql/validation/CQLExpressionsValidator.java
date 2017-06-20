@@ -5,9 +5,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.validation;
 
 import com.google.common.base.Objects;
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate;
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CQLPackage;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision;
@@ -25,10 +23,8 @@ import java.util.List;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
-import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 /**
  * This class contains custom validation rules.
@@ -128,35 +124,13 @@ public class CQLExpressionsValidator extends AbstractCQLValidator {
     this.checkNotBoolean(left, CQLPackage.Literals.COMPARISION__RIGHT);
   }
   
-  private static List<String> aliases = CollectionLiterals.<String>newArrayList();
-  
-  @Check
-  public List<String> checkType(final Attribute type) {
-    List<String> _xblockexpression = null;
-    {
-      InputOutput.<String>println("beep");
-      Alias _alias = type.getAlias();
-      boolean _tripleNotEquals = (_alias != null);
-      if (_tripleNotEquals) {
-        CQLExpressionsValidator.aliases.add(type.getAlias().getName());
-      }
-      _xblockexpression = ExpressionsTypeProvider.aliases = CQLExpressionsValidator.aliases;
-    }
-    return _xblockexpression;
-  }
-  
   @Check
   public ExpressionsType checkType(final AttributeRef type) {
-    ExpressionsType _xblockexpression = null;
-    {
-      InputOutput.<String>println("hello");
-      ExpressionsType _typeFor = null;
-      if (type!=null) {
-        _typeFor=this._expressionsTypeProvider.typeFor(type);
-      }
-      _xblockexpression = _typeFor;
+    ExpressionsType _typeFor = null;
+    if (type!=null) {
+      _typeFor=this._expressionsTypeProvider.typeFor(type);
     }
-    return _xblockexpression;
+    return _typeFor;
   }
   
   public void checkExpectedSame(final ExpressionsType left, final ExpressionsType right) {

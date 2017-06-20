@@ -82,11 +82,13 @@ class ExpressionsTypeProvider {
 		if(outputschemas === null) return null
 		for (SDFSchema s : outputschemas)
 			for (SDFAttribute a : s.attributes) {
+				println("alises= " + aliases.toString)
 				var name = a.attributeName
-				if (aliases.contains(name)) { // TODO does not detect an alias
-					println(name + ' is an alias')
-					println('real name is -> ' + name)
-				}
+//				println("name= " + name)
+//				if (aliases.contains(name)) { // TODO does not detect an alias
+//					println(name + ' is an alias')
+//					println('real name is -> ' + name)
+//				}
 				if (name.equals((e.value as Attribute).name))
 					return typeFor(a.datatype)
 			}

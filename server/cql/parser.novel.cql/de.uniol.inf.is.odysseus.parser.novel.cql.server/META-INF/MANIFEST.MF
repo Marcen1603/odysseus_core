@@ -18,14 +18,13 @@ Require-Bundle: org.eclipse.equinox.common,
  org.eclipse.xtext.builder.standalone,
  de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.parser.pql,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.sweeparea,
  de.uniol.inf.is.odysseus.intervalapproach,
  de.uniol.inf.is.odysseus.parser.novel.cql,
  com.google.guava,
  org.eclipse.xtext,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime;bundle-version="3.11.1"
 Import-Package: org.slf4j,
  org.apache.log4j
 Bundle-ActivationPolicy: lazy

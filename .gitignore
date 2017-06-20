@@ -4,5 +4,6 @@
 *.java._trace
 *.xtendbin
 *.xtextbin
+*.class
 
 

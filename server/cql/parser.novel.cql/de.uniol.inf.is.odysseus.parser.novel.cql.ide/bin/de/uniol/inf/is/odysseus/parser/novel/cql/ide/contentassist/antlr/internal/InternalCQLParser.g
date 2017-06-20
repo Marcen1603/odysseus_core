@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 	private final Map<String, String> tokenNameToValue = new HashMap<String, String>();
 	
 	{
+		tokenNameToValue.put("DollarSign", "'\\u0024'");
 		tokenNameToValue.put("LeftParenthesis", "'('");
 		tokenNameToValue.put("RightParenthesis", "')'");
 		tokenNameToValue.put("Asterisk", "'*'");
@@ -47,6 +48,8 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.services.CQLGrammarAccess;
 		tokenNameToValue.put("LeftSquareBracket", "'['");
 		tokenNameToValue.put("RightSquareBracket", "']'");
 		tokenNameToValue.put("CircumflexAccent", "'^'");
+		tokenNameToValue.put("LeftCurlyBracket", "'{'");
+		tokenNameToValue.put("RightCurlyBracket", "'}'");
 		tokenNameToValue.put("ExclamationMarkEqualsSign", "'!='");
 		tokenNameToValue.put("LessThanSignEqualsSign", "'<='");
 		tokenNameToValue.put("GreaterThanSignEqualsSign", "'>='");
@@ -188,6 +191,31 @@ ruleBOOLEAN
 		{ before(grammarAccess.getBOOLEANAccess().getAlternatives()); }
 		(rule__BOOLEAN__Alternatives)
 		{ after(grammarAccess.getBOOLEANAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+// Entry rule entryRuleSystemVariable
+entryRuleSystemVariable
+:
+{ before(grammarAccess.getSystemVariableRule()); }
+	 ruleSystemVariable
+{ after(grammarAccess.getSystemVariableRule()); } 
+	 EOF 
+;
+
+// Rule SystemVariable
+ruleSystemVariable 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getSystemVariableAccess().getGroup()); }
+		(rule__SystemVariable__Group__0)
+		{ after(grammarAccess.getSystemVariableAccess().getGroup()); }
 	)
 ;
 finally {
@@ -2099,6 +2127,12 @@ rule__QualifiedAttributename__Alternatives
 		(rule__QualifiedAttributename__Group_2__0)
 		{ after(grammarAccess.getQualifiedAttributenameAccess().getGroup_2()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getQualifiedAttributenameAccess().getSystemVariableParserRuleCall_3()); }
+		ruleSystemVariable
+		{ after(grammarAccess.getQualifiedAttributenameAccess().getSystemVariableParserRuleCall_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -3201,6 +3235,114 @@ rule__Model__Group__1__Impl
 	{ before(grammarAccess.getModelAccess().getSemicolonKeyword_1()); }
 	(Semicolon)?
 	{ after(grammarAccess.getModelAccess().getSemicolonKeyword_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__SystemVariable__Group__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__SystemVariable__Group__0__Impl
+	rule__SystemVariable__Group__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getSystemVariableAccess().getDollarSignKeyword_0()); }
+	DollarSign
+	{ after(grammarAccess.getSystemVariableAccess().getDollarSignKeyword_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__SystemVariable__Group__1__Impl
+	rule__SystemVariable__Group__2
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getSystemVariableAccess().getLeftCurlyBracketKeyword_1()); }
+	LeftCurlyBracket
+	{ after(grammarAccess.getSystemVariableAccess().getLeftCurlyBracketKeyword_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__SystemVariable__Group__2__Impl
+	rule__SystemVariable__Group__3
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__2__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getSystemVariableAccess().getIDTerminalRuleCall_2()); }
+	RULE_ID
+	{ after(grammarAccess.getSystemVariableAccess().getIDTerminalRuleCall_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__SystemVariable__Group__3__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SystemVariable__Group__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getSystemVariableAccess().getRightCurlyBracketKeyword_3()); }
+	RightCurlyBracket
+	{ after(grammarAccess.getSystemVariableAccess().getRightCurlyBracketKeyword_3()); }
 )
 ;
 finally {
