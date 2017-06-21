@@ -6,14 +6,12 @@ import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLClass;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLInterface;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJava;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMember;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLJavaMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethod;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMethodDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLNewExpression;
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableDeclaration;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableStatement;
@@ -25,7 +23,6 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 import de.uniol.inf.is.odysseus.iql.basic.typing.dictionary.IIQLTypeDictionary;
 import de.uniol.inf.is.odysseus.iql.basic.typing.utils.IIQLTypeUtils;
 import java.util.Collection;
-import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -65,8 +62,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       StringBuilder builder = new StringBuilder();
       EObject _eContainer = c.eContainer();
       IQLModelElement element = ((IQLModelElement) _eContainer);
-      String _compileClass = this.compileClass(element, c, context);
-      builder.append(_compileClass);
+      builder.append(this.compileClass(element, c, context));
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
         String _lineSeparator = System.lineSeparator();
@@ -91,23 +87,22 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         EList<IQLJavaMetadata> _javametadata = element.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
-          IQLJava _java = j.getJava();
-          String text = _java.getText();
+          String text = j.getJava().getText();
           _builder.newLineIfNotEmpty();
-          _builder.append(text, "");
+          _builder.append(text);
           _builder.newLineIfNotEmpty();
         }
       }
       _builder.append("@SuppressWarnings(\"all\")");
       _builder.newLine();
       _builder.append("public class ");
-      _builder.append(name, "");
+      _builder.append(name);
       {
         boolean _notEquals = (!Objects.equal(superClass, null));
         if (_notEquals) {
           _builder.append(" extends ");
           String _compile = this.typeCompiler.compile(superClass, context, true);
-          _builder.append(_compile, "");
+          _builder.append(_compile);
         }
       }
       {
@@ -118,9 +113,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
           final Function1<JvmTypeReference, String> _function = (JvmTypeReference el) -> {
             return this.typeCompiler.compile(el, context, true);
           };
-          List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
-          String _join = IterableExtensions.join(_map, ",");
-          _builder.append(_join, "");
+          String _join = IterableExtensions.join(ListExtensions.<JvmTypeReference, String>map(interfaces, _function), ",");
+          _builder.append(_join);
         }
       }
       _builder.append(" {");
@@ -139,23 +133,9 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            boolean _and = false;
-            IQLArgumentsMap _argsMap = e.getArgsMap();
-            boolean _notEquals_1 = (!Objects.equal(_argsMap, null));
-            if (!_notEquals_1) {
-              _and = false;
-            } else {
-              IQLArgumentsMap _argsMap_1 = e.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements = _argsMap_1.getElements();
-              int _size_1 = _elements.size();
-              boolean _greaterThan_1 = (_size_1 > 0);
-              _and = _greaterThan_1;
-            }
-            if (_and) {
+            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
-              JvmTypeReference _ref = e.getRef();
-              IQLArgumentsMap _argsMap_2 = e.getArgsMap();
-              CharSequence _createGetterMethod = this.createGetterMethod(_ref, _argsMap_2, context);
+              CharSequence _createGetterMethod = this.createGetterMethod(e.getRef(), e.getArgsMap(), context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -167,34 +147,9 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLAttribute a : attributes) {
           {
-            boolean _and_1 = false;
-            boolean _and_2 = false;
-            IQLVariableInitialization _init = a.getInit();
-            boolean _notEquals_2 = (!Objects.equal(_init, null));
-            if (!_notEquals_2) {
-              _and_2 = false;
-            } else {
-              IQLVariableInitialization _init_1 = a.getInit();
-              IQLArgumentsMap _argsMap_3 = _init_1.getArgsMap();
-              boolean _notEquals_3 = (!Objects.equal(_argsMap_3, null));
-              _and_2 = _notEquals_3;
-            }
-            if (!_and_2) {
-              _and_1 = false;
-            } else {
-              IQLVariableInitialization _init_2 = a.getInit();
-              IQLArgumentsMap _argsMap_4 = _init_2.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_1 = _argsMap_4.getElements();
-              int _size_2 = _elements_1.size();
-              boolean _greaterThan_2 = (_size_2 > 0);
-              _and_1 = _greaterThan_2;
-            }
-            if (_and_1) {
+            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
-              JvmTypeReference _type = a.getType();
-              IQLVariableInitialization _init_3 = a.getInit();
-              IQLArgumentsMap _argsMap_5 = _init_3.getArgsMap();
-              CharSequence _createGetterMethod_1 = this.createGetterMethod(_type, _argsMap_5, context);
+              CharSequence _createGetterMethod_1 = this.createGetterMethod(a.getType(), a.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod_1, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -206,29 +161,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            boolean _and_3 = false;
-            boolean _and_4 = false;
-            IQLVariableInitialization _init_4 = a_1.getInit();
-            boolean _notEquals_4 = (!Objects.equal(_init_4, null));
-            if (!_notEquals_4) {
-              _and_4 = false;
-            } else {
-              IQLVariableInitialization _init_5 = a_1.getInit();
-              IQLArgumentsMap _argsMap_6 = _init_5.getArgsMap();
-              boolean _notEquals_5 = (!Objects.equal(_argsMap_6, null));
-              _and_4 = _notEquals_5;
-            }
-            if (!_and_4) {
-              _and_3 = false;
-            } else {
-              IQLVariableInitialization _init_6 = a_1.getInit();
-              IQLArgumentsMap _argsMap_7 = _init_6.getArgsMap();
-              EList<IQLArgumentsMapKeyValue> _elements_2 = _argsMap_7.getElements();
-              int _size_3 = _elements_2.size();
-              boolean _greaterThan_3 = (_size_3 > 0);
-              _and_3 = _greaterThan_3;
-            }
-            if (_and_3) {
+            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -237,9 +170,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
               JvmTypeReference type = decl.getRef();
               _builder.newLineIfNotEmpty();
               _builder.append("\t");
-              IQLVariableInitialization _init_7 = a_1.getInit();
-              IQLArgumentsMap _argsMap_8 = _init_7.getArgsMap();
-              CharSequence _createGetterMethod_2 = this.createGetterMethod(type, _argsMap_8, context);
+              CharSequence _createGetterMethod_2 = this.createGetterMethod(type, a_1.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod_2, "\t");
               _builder.newLineIfNotEmpty();
             }
@@ -262,8 +193,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       StringBuilder builder = new StringBuilder();
       EObject _eContainer = interf.eContainer();
       IQLModelElement element = ((IQLModelElement) _eContainer);
-      String _compileInterface = this.compileInterface(element, interf, context);
-      builder.append(_compileInterface);
+      builder.append(this.compileInterface(element, interf, context));
       Collection<String> _imports = context.getImports();
       for (final String i : _imports) {
         builder.insert(0, (("import " + i) + ";"));
@@ -283,17 +213,16 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         EList<IQLJavaMetadata> _javametadata = element.getJavametadata();
         for(final IQLJavaMetadata j : _javametadata) {
-          IQLJava _java = j.getJava();
-          String text = _java.getText();
+          String text = j.getJava().getText();
           _builder.newLineIfNotEmpty();
-          _builder.append(text, "");
+          _builder.append(text);
           _builder.newLineIfNotEmpty();
         }
       }
       _builder.append("@SuppressWarnings(\"all\")");
       _builder.newLine();
       _builder.append("public interface ");
-      _builder.append(name, "");
+      _builder.append(name);
       {
         int _size = interfaces.size();
         boolean _greaterThan = (_size > 0);
@@ -302,9 +231,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
           final Function1<JvmTypeReference, String> _function = (JvmTypeReference el) -> {
             return this.typeCompiler.compile(el, context, true);
           };
-          List<String> _map = ListExtensions.<JvmTypeReference, String>map(interfaces, _function);
-          String _join = IterableExtensions.join(_map, ",");
-          _builder.append(_join, "");
+          String _join = IterableExtensions.join(ListExtensions.<JvmTypeReference, String>map(interfaces, _function), ",");
+          _builder.append(_join);
         }
       }
       _builder.append(" {");
@@ -357,10 +285,9 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   public String compile(final IQLJavaMember m, final G context) {
     String _xblockexpression = null;
     {
-      IQLJava _java = m.getJava();
-      String text = _java.getText();
+      String text = m.getJava().getText();
       StringConcatenation _builder = new StringConcatenation();
-      _builder.append(text, "");
+      _builder.append(text);
       _xblockexpression = _builder.toString();
     }
     return _xblockexpression;
@@ -369,21 +296,18 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   public String compile(final IQLAttribute a, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public ");
-    JvmTypeReference _type = a.getType();
-    String _compile = this.typeCompiler.compile(_type, context, false);
-    _builder.append(_compile, "");
+    String _compile = this.typeCompiler.compile(a.getType(), context, false);
+    _builder.append(_compile);
     _builder.append(" ");
     String _simpleName = a.getSimpleName();
-    _builder.append(_simpleName, "");
+    _builder.append(_simpleName);
     {
       IQLVariableInitialization _init = a.getInit();
       boolean _notEquals = (!Objects.equal(_init, null));
       if (_notEquals) {
         _builder.append(" = ");
-        IQLVariableInitialization _init_1 = a.getInit();
-        JvmTypeReference _type_1 = a.getType();
-        String _compile_1 = this.stmtCompiler.compile(_init_1, _type_1, context);
-        _builder.append(_compile_1, "");
+        String _compile_1 = this.stmtCompiler.compile(a.getInit(), a.getType(), context);
+        _builder.append(_compile_1);
       }
     }
     _builder.append(";");
@@ -397,34 +321,10 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     {
       String className = this.helper.getClassName(m);
       String returnT = "";
-      boolean _and = false;
-      JvmTypeReference _returnType = m.getReturnType();
-      boolean _notEquals = (!Objects.equal(_returnType, null));
-      if (!_notEquals) {
-        _and = false;
+      if (((!Objects.equal(m.getReturnType(), null)) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+        returnT = this.typeCompiler.compile(m.getReturnType(), context, false);
       } else {
-        String _simpleName = m.getSimpleName();
-        boolean _equalsIgnoreCase = _simpleName.equalsIgnoreCase(className);
-        boolean _not = (!_equalsIgnoreCase);
-        _and = _not;
-      }
-      if (_and) {
-        JvmTypeReference _returnType_1 = m.getReturnType();
-        String _compile = this.typeCompiler.compile(_returnType_1, context, false);
-        returnT = _compile;
-      } else {
-        boolean _and_1 = false;
-        JvmTypeReference _returnType_2 = m.getReturnType();
-        boolean _equals = Objects.equal(_returnType_2, null);
-        if (!_equals) {
-          _and_1 = false;
-        } else {
-          String _simpleName_1 = m.getSimpleName();
-          boolean _equalsIgnoreCase_1 = _simpleName_1.equalsIgnoreCase(className);
-          boolean _not_1 = (!_equalsIgnoreCase_1);
-          _and_1 = _not_1;
-        }
-        if (_and_1) {
+        if ((Objects.equal(m.getReturnType(), null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
           returnT = "void";
         }
       }
@@ -437,29 +337,26 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       }
       _builder.newLineIfNotEmpty();
       _builder.append("public ");
-      _builder.append(returnT, "");
+      _builder.append(returnT);
       _builder.append(" ");
-      String _simpleName_2 = m.getSimpleName();
-      _builder.append(_simpleName_2, "");
+      String _simpleName = m.getSimpleName();
+      _builder.append(_simpleName);
       _builder.append("(");
       {
         EList<JvmFormalParameter> _parameters = m.getParameters();
-        boolean _notEquals_1 = (!Objects.equal(_parameters, null));
-        if (_notEquals_1) {
-          EList<JvmFormalParameter> _parameters_1 = m.getParameters();
+        boolean _notEquals = (!Objects.equal(_parameters, null));
+        if (_notEquals) {
           final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
             return this.compile(p, context);
           };
-          List<String> _map = ListExtensions.<JvmFormalParameter, String>map(_parameters_1, _function);
-          String _join = IterableExtensions.join(_map, ", ");
-          _builder.append(_join, "");
+          String _join = IterableExtensions.join(ListExtensions.<JvmFormalParameter, String>map(m.getParameters(), _function), ", ");
+          _builder.append(_join);
         }
       }
       _builder.append(")");
       _builder.newLineIfNotEmpty();
-      IQLStatement _body = m.getBody();
-      String _compile_1 = this.stmtCompiler.compile(_body, context);
-      _builder.append(_compile_1, "");
+      String _compile = this.stmtCompiler.compile(m.getBody(), context);
+      _builder.append(_compile);
       _builder.newLineIfNotEmpty();
       _builder.newLine();
       _xblockexpression = _builder.toString();
@@ -469,32 +366,28 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   
   public String compile(final JvmFormalParameter p, final G context) {
     StringConcatenation _builder = new StringConcatenation();
-    JvmTypeReference _parameterType = p.getParameterType();
-    String _compile = this.typeCompiler.compile(_parameterType, context, false);
-    _builder.append(_compile, "");
+    String _compile = this.typeCompiler.compile(p.getParameterType(), context, false);
+    _builder.append(_compile);
     _builder.append(" ");
     String _name = p.getName();
-    _builder.append(_name, "");
+    _builder.append(_name);
     return _builder.toString();
   }
   
   public String compile(final IQLMethodDeclaration m, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("public ");
-    JvmTypeReference _returnType = m.getReturnType();
-    String _compile = this.typeCompiler.compile(_returnType, context, false);
-    _builder.append(_compile, "");
+    String _compile = this.typeCompiler.compile(m.getReturnType(), context, false);
+    _builder.append(_compile);
     _builder.append(" ");
     String _simpleName = m.getSimpleName();
-    _builder.append(_simpleName, "");
+    _builder.append(_simpleName);
     _builder.append("(");
-    EList<JvmFormalParameter> _parameters = m.getParameters();
     final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
       return this.compile(p, context);
     };
-    List<String> _map = ListExtensions.<JvmFormalParameter, String>map(_parameters, _function);
-    String _join = IterableExtensions.join(_map, ", ");
-    _builder.append(_join, "");
+    String _join = IterableExtensions.join(ListExtensions.<JvmFormalParameter, String>map(m.getParameters(), _function), ", ");
+    _builder.append(_join);
     _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -506,51 +399,45 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     _builder.newLine();
     _builder.append("private ");
     String _compile = this.typeCompiler.compile(typeRef, context, false);
-    _builder.append(_compile, "");
+    _builder.append(_compile);
     _builder.append(" get");
     String _shortName = this.typeUtils.getShortName(typeRef, false);
-    _builder.append(_shortName, "");
+    _builder.append(_shortName);
     int _hashCode = typeRef.hashCode();
-    _builder.append(_hashCode, "");
+    _builder.append(_hashCode);
     _builder.append("(");
     String _compile_1 = this.typeCompiler.compile(typeRef, context, false);
-    _builder.append(_compile_1, "");
+    _builder.append(_compile_1);
     _builder.append(" type, ");
-    EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
     final Function1<IQLArgumentsMapKeyValue, String> _function = (IQLArgumentsMapKeyValue el) -> {
       return this.compile(el, typeRef, context);
     };
-    List<String> _map = ListExtensions.<IQLArgumentsMapKeyValue, String>map(_elements, _function);
-    String _join = IterableExtensions.join(_map, ", ");
-    _builder.append(_join, "");
+    String _join = IterableExtensions.join(ListExtensions.<IQLArgumentsMapKeyValue, String>map(map.getElements(), _function), ", ");
+    _builder.append(_join);
     _builder.append(") {");
     _builder.newLineIfNotEmpty();
     {
-      EList<IQLArgumentsMapKeyValue> _elements_1 = map.getElements();
-      for(final IQLArgumentsMapKeyValue el : _elements_1) {
+      EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
+      for(final IQLArgumentsMapKeyValue el : _elements) {
         {
           JvmIdentifiableElement _key = el.getKey();
           if ((_key instanceof JvmOperation)) {
             _builder.append("\t");
             _builder.append("type.");
-            JvmIdentifiableElement _key_1 = el.getKey();
-            String _simpleName = _key_1.getSimpleName();
+            String _simpleName = el.getKey().getSimpleName();
             _builder.append(_simpleName, "\t");
             _builder.append("(");
-            JvmIdentifiableElement _key_2 = el.getKey();
-            String _simpleName_1 = _key_2.getSimpleName();
+            String _simpleName_1 = el.getKey().getSimpleName();
             _builder.append(_simpleName_1, "\t");
             _builder.append(");\t\t\t\t");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("\t");
             _builder.append("type.");
-            JvmIdentifiableElement _key_3 = el.getKey();
-            String _simpleName_2 = _key_3.getSimpleName();
+            String _simpleName_2 = el.getKey().getSimpleName();
             _builder.append(_simpleName_2, "\t");
             _builder.append(" = ");
-            JvmIdentifiableElement _key_4 = el.getKey();
-            String _simpleName_3 = _key_4.getSimpleName();
+            String _simpleName_3 = el.getKey().getSimpleName();
             _builder.append(_simpleName_3, "\t");
             _builder.append(";");
             _builder.newLineIfNotEmpty();
@@ -569,18 +456,16 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
   public String compile(final IQLArgumentsMapKeyValue e, final JvmTypeReference typeRef, final G context) {
     String _xblockexpression = null;
     {
-      JvmIdentifiableElement _key = e.getKey();
-      JvmTypeReference type = this.helper.getPropertyType(_key, typeRef);
+      JvmTypeReference type = this.helper.getPropertyType(e.getKey(), typeRef);
       String _xifexpression = null;
       boolean _notEquals = (!Objects.equal(type, null));
       if (_notEquals) {
         StringConcatenation _builder = new StringConcatenation();
         String _compile = this.typeCompiler.compile(type, context, false);
-        _builder.append(_compile, "");
+        _builder.append(_compile);
         _builder.append(" ");
-        JvmIdentifiableElement _key_1 = e.getKey();
-        String _simpleName = _key_1.getSimpleName();
-        _builder.append(_simpleName, "");
+        String _simpleName = e.getKey().getSimpleName();
+        _builder.append(_simpleName);
         _xifexpression = _builder.toString();
       } else {
         StringConcatenation _builder_1 = new StringConcatenation();
