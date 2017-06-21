@@ -1,19 +1,17 @@
-package de.uniol.inf.is.odysseus.spatial.punctuation;
+package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-public class UpdatePredicatePunctuation extends AbstractPunctuation {
-
-	private static final long serialVersionUID = -1814579527166963151L;
+public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 
 	public static final SDFSchema schema;
 
@@ -23,12 +21,14 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 		schema = SDFSchemaFactory.createNewSchema("UpdatePredicatePunctuation", Tuple.class, attributes);
 	}
 
-	private String newPredicate;
+	private RelationalExpression[] expressions;
 
-	public UpdatePredicatePunctuation(PointInTime p, String newPredicate) {
+	public UpdateExpressionsPunctuation(PointInTime p, RelationalExpression[] expressions) {
 		super(p);
-		this.newPredicate = newPredicate;
+		this.expressions = expressions;
 	}
+
+	private static final long serialVersionUID = -5806607266505236307L;
 
 	@Override
 	public SDFSchema getSchema() {
@@ -38,27 +38,22 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 	@Override
 	public Tuple<?> getValue() {
 		Tuple<?> ret = new Tuple(1, false);
-		ret.setAttribute(0, newPredicate);
+		ret.setAttribute(0, expressions);
 		return ret;
 	}
 
 	@Override
 	public AbstractPunctuation clone() {
-		return new UpdatePredicatePunctuation(getTime(), getNewPredicate());
+		return new UpdateExpressionsPunctuation(getTime(), this.expressions);
 	}
 
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
-		return new UpdatePredicatePunctuation(newTime, getNewPredicate());
+		return new UpdateExpressionsPunctuation(newTime, this.expressions);
 	}
 
-	public String getNewPredicate() {
-		return newPredicate;
-	}
-	
-	@Override
-	public String toString() {
-		return "UpdatePredicatePunctuation - new predicate: " + this.getNewPredicate() + "  " + this.getTime();
+	public RelationalExpression[] getExpressions() {
+		return expressions;
 	}
 
 }

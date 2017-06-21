@@ -13,35 +13,35 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "CreateUpdatePredicatePunctuation", maxInputPorts = 1, minInputPorts = 1, doc = "Creates a punctuation with which a predicate can be updates of the receiving operator support it.", category = {
+@LogicalOperator(name = "CreateUpdatePredicatePunctuation", maxInputPorts = 1, minInputPorts = 1, doc = "Creates a punctuation with which a predicate can be updated if the receiving operator support it.", category = {
 		LogicalOperatorCategory.PROCESSING })
-public class UpdatePredicatePunctuationAO extends UnaryLogicalOp {
+public class CreateUpdatePredicatePunctuationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -3716840502527149014L;
 
 	private String predicateTemplate;
 
-	public UpdatePredicatePunctuationAO() {
+	public CreateUpdatePredicatePunctuationAO() {
 		super();
 	}
 
-	public UpdatePredicatePunctuationAO(UpdatePredicatePunctuationAO ao) {
+	public CreateUpdatePredicatePunctuationAO(CreateUpdatePredicatePunctuationAO ao) {
 		super(ao);
 		this.predicateTemplate = ao.getPredicateTemplate();
 	}
-
+	
+	@Parameter(name = "predicateTemplate", optional = false, type = StringParameter.class, isList = false, doc = "The new predicate.")
+	public void setPredicateTemplate(String newPredicate) {
+		this.predicateTemplate = newPredicate;
+	}
+	
 	public String getPredicateTemplate() {
 		return this.predicateTemplate;
 	}
 
-	@Parameter(name = "predicateTemplate", optional = false, type = StringParameter.class, isList = false, doc = "Template of the predicate.")
-	public void setPredicateTemplate(String predicateTemplate) {
-		this.predicateTemplate = predicateTemplate;
-	}
-
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new UpdatePredicatePunctuationAO(this);
+		return new CreateUpdatePredicatePunctuationAO(this);
 	}
 
 	@Override

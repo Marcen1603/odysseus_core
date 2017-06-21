@@ -3,20 +3,26 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.UpdatePredicatePunctuation;
+import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
+import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.logicaloperator.UpdatePredicatePunctuationAO;
-import de.uniol.inf.is.odysseus.spatial.punctuation.UpdatePredicatePunctuation;
+import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.CreateUpdatePredicatePunctuationAO;
 
-public class UpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private String predicateTemplate;
 	private SDFSchema inputSchema;
+	private IAttributeResolver attributeResolver;
 
-	public UpdatePredicatePunctuationPO(UpdatePredicatePunctuationAO ao) {
+	public CreateUpdatePredicatePunctuationPO(CreateUpdatePredicatePunctuationAO ao) {
 		this.predicateTemplate = ao.getPredicateTemplate();
 		this.inputSchema = ao.getInputSchema();
+		this.attributeResolver = new DirectAttributeResolver(this.inputSchema);
 	}
 
 	@Override
@@ -39,9 +45,16 @@ public class UpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterva
 			attributePosition++;
 		}
 
+		IPredicate predicate = createPredicate(newPredicate);
 		UpdatePredicatePunctuation punctuation = new UpdatePredicatePunctuation(object.getMetadata().getStart(),
-				newPredicate);
+				predicate);
 		this.sendPunctuation(punctuation);
+	}
+
+	private IPredicate createPredicate(String rawPredicate) {
+		RelationalPredicateBuilder builder = new RelationalPredicateBuilder();
+		IPredicate predicate = builder.createPredicate(attributeResolver, rawPredicate);
+		return predicate;
 	}
 
 	@Override

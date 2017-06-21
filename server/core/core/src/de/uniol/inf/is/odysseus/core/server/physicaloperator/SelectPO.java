@@ -15,10 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.UpdatePredicatePunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
@@ -26,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>implements IHasPredicate {
+public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IHasPredicate {
 
 	private IPredicate<? super T> predicate;
 	private int heartbeatRate;
@@ -87,8 +89,22 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		IPunctuation puncToSend = predicate.processPunctuation(punctuation);
-		sendPunctuation(puncToSend);
+		if (punctuation instanceof UpdatePredicatePunctuation) {
+			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
+			IPredicate<?> newPredicate = updatePredicatePunctuation.getNewPredicate();
+
+			if (newPredicate instanceof AbstractRelationalExpression) {
+				AbstractRelationalExpression newExpression = (AbstractRelationalExpression) newPredicate;
+
+				// Re-initialize, cause the original expression was created
+				// without knowing the actual schema
+				newExpression.initVars(getOutputSchema());
+				this.setPredicate(newExpression);
+			}
+		} else {
+			IPunctuation puncToSend = predicate.processPunctuation(punctuation);
+			sendPunctuation(puncToSend);
+		}
 	}
 
 	@Override

@@ -54,6 +54,7 @@ public class MapAO extends UnaryLogicalOp {
 
 	private boolean keepInput = false;
 	private List<SDFAttribute> removeAttributes;
+	private boolean expressionsUpdateable;
 
 	public MapAO() {
 		super();
@@ -303,6 +304,15 @@ public class MapAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, name = "suppressErrors", optional = true, doc = "If set to true calculation errors will not appear in log or console. Could be helpful in scenarios where null values are allowed.")
 	public void setSuppressErrors(boolean suppressErrors) {
 		this.suppressErrors = suppressErrors;
+	}
+	
+	public boolean isExpressionsUpdateable() {
+		return expressionsUpdateable;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "expressionsUpdateable", optional = true, doc = "If set to true, the expressions can be updated with punctuations.")
+	public void setExpressionsUpdateable(boolean expressionsUpdateable) {
+		this.expressionsUpdateable = expressionsUpdateable;
 	}
 
 	@Override

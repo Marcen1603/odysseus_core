@@ -38,6 +38,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallelizableOperator {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;
+	
+	private boolean predicateIsUpdateable;
+	private boolean catchUpdatePredicatePunctuation;
 
 	private IPredicate<?> predicate;
 
