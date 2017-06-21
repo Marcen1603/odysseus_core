@@ -288,7 +288,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 		for (SDFAttribute attribute : this.elements) {
 
-			String[] attributeParts = splitIfNeeded(attribute.getSourceName()
+			String[] attributeParts = splitIfNeeded(this.getURI()
 					+ "." + attribute.getAttributeName());
 
 			if (compareBackwards(attributeToFindParts, attributeParts)) {
