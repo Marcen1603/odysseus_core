@@ -39,8 +39,9 @@ import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SecurityShie
  */
 
 public class SecurityPunctuationPreTransformationHandler extends AbstractPreTransformationHandler {
-	public final static String NAME = "SecurityPunctuationPreTransformationHandler";
+	public final static String NAME = "SPPreTransformationHandler";
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityPunctuationPreTransformationHandler.class);
+	String tupleRangeAttribute=null;
 
 	@Override
 	public String getName() {
@@ -57,7 +58,16 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 
 		// add the Operatorclasses that are supposed to be replaced with their
 		// security aware counterpart
-		
+		if (!handlerParameters.isEmpty()) {
+			for (Pair p : handlerParameters) {
+				if (p.getE1().equals("TupleRangeAttribute")) {
+					tupleRangeAttribute =(String) p.getE2();
+					LOG.info((String)p.getE2());
+					break;
+				}
+			}
+		}
+
 		operatorClasses.add(SelectAO.class);
 		operatorClasses.add(ProjectAO.class);
 		operatorClasses.add(JoinAO.class);
@@ -78,29 +88,28 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 			RestructHelper.insertOperatorBefore2(toInsert, s);
 
 		}
-		
-		//places a Security Shield Operator at the top of the logical query plan
-				if (logicalOp instanceof TopAO) {
-					CopyOnWriteArrayList<LogicalSubscription> sourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
-							logicalOp.getSubscribedToSource());
-					for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
-						// unsibscribe the topAO from all source subscriptions
-						ILogicalOperator sourceOperator = logicalSubscription
-								.getTarget();
-						logicalOp.unsubscribeFromSource(logicalSubscription);
 
-						// create ObserverBenchmark operator and connect to all existing sources
-						SecurityShieldAO observerBenchmarkAO = new SecurityShieldAO();
-						sourceOperator.subscribeSink(observerBenchmarkAO, 0,
-								logicalSubscription.getSourceOutPort(),
-								logicalSubscription.getSchema());
+		// places a Security Shield Operator at the top of the logical query
+		// plan
+		if (logicalOp instanceof TopAO) {
+			CopyOnWriteArrayList<LogicalSubscription> sourceSubscriptions = new CopyOnWriteArrayList<LogicalSubscription>(
+					logicalOp.getSubscribedToSource());
+			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
+				// unsibscribe the topAO from all source subscriptions
+				ILogicalOperator sourceOperator = logicalSubscription.getTarget();
+				logicalOp.unsubscribeFromSource(logicalSubscription);
 
-						// reconnect existing topAO
-						observerBenchmarkAO.subscribeSink(logicalOp,
-								logicalSubscription.getSinkInPort(), 0,
-								logicalSubscription.getSchema());
-					}
-				}
+				// create SecurityShieldAO operator and connect to all existing
+				// sources
+				SecurityShieldAO securityShieldAO = new SecurityShieldAO(tupleRangeAttribute);
+				sourceOperator.subscribeSink(securityShieldAO, 0, logicalSubscription.getSourceOutPort(),
+						logicalSubscription.getSchema());
+
+				// reconnect existing topAO
+				securityShieldAO.subscribeSink(logicalOp, logicalSubscription.getSinkInPort(), 0,
+						logicalSubscription.getSchema());
+			}
+		}
 
 	}
 
@@ -115,7 +124,7 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 			} else if (ao instanceof ProjectAO) {
 				RestructHelper.replace((ProjectAO) ao, new SAProjectAO((ProjectAO) ao));
 			} else if (ao instanceof JoinAO) {
-				RestructHelper.replace((JoinAO) ao, new SAJoinAO());
+				RestructHelper.replace((JoinAO) ao, new SAJoinAO(tupleRangeAttribute));
 			}
 		}
 	}

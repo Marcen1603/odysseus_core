@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
+  package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +45,12 @@ public class SPAnalyzerPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>
 							&& (punctuation.getDDP().getTupleRange()[0] == sp.getDDP().getTupleRange()[0]
 									&& punctuation.getDDP().getTupleRange()[1] == sp.getDDP().getTupleRange()[1])) {
 						
-						punctuation=punctuation.intersect(sp);
+						punctuation=punctuation.intersect(sp,sp.getTime());
 						punctuation.setDDP(new DataDescriptionPart(
 								String.valueOf(sp.getDDP().getTupleRange()[0]) + ","
 										+ String.valueOf(sp.getDDP().getTupleRange()[1]),
 								punctuation.getDDP().getAttributes()));
-						LOG.info("SP: " + punctuation.toString());
+					
 						this.buffer.add(punctuation);
 						this.buffer.remove(sp);
 						return;

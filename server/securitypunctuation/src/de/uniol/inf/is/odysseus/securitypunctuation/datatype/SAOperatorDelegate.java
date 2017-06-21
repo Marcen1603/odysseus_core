@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class SAOperatorDelegate<T extends IStreamObject<?>> {
@@ -38,8 +39,32 @@ public class SAOperatorDelegate<T extends IStreamObject<?>> {
 		return this.recentSPs;
 	}
 
+//TODO: verschieben, da nur für diese Art von SPs benötigt
+	public <M extends ITimeInterval, T extends Tuple<M>> T restrictObject(T object, SDFSchema schema,
+			ArrayList<ISecurityPunctuation> sps,String tupleRangeAttribute) {
+		LOG.info("0");
+		List<String> attributes = new ArrayList<String>();
+		for (ISecurityPunctuation sp : sps) {
+			for (String str : sp.getDDP().getAttributes()) {
+				if (str.equals("*")) {
+					LOG.info("1");
+					return object;
+				} else if (!attributes.contains(str)) {
+					attributes.add(str);
+					LOG.info("2");
+				}
+			}
+		}
+		for (int i = 0; i < object.getMetadata().getSchema().size(); i++) {
+			String attribute=object.getMetadata().getSchema().get(i).getURI();
+			if (!attributes.contains(attribute)&&attribute!=tupleRangeAttribute) {
+				object.setAttribute(i, null);
+				LOG.info("3");
+			}
+		}
 
-
+		return object;
+	}
 //	public boolean match(T object, SDFSchema schema) {
 //		if (!recentSPs.isEmpty()) {
 //			for (ISecurityPunctuation sp : this.recentSPs) {

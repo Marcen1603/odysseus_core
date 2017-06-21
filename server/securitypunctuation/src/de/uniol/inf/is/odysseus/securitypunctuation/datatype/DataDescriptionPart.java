@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DataDescriptionPart implements IDataDescriptionPart {
@@ -24,7 +27,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 	// [0] is the start of the tupleRange, [1] is the end
 	// if tuple ranges=-1 access to all tuples is allowed if tuple ranges=-2
 	// access to no tuples is allowed
-	private int[] tupleRange;
+	private long[] tupleRange;
 	private List<String> attributes;
 
 	public DataDescriptionPart(String tupleRange, List<String> attributes) {
@@ -45,7 +48,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 		Collections.sort(this.attributes);
 	}
 
-	public DataDescriptionPart(int[] tupleRange, String attributes) {
+	public DataDescriptionPart(long[] tupleRange, String attributes) {
 		this.tupleRange = tupleRange;
 		this.attributes = new ArrayList<String>(Arrays.asList(attributes.split(",")));
 		Collections.sort(this.attributes);
@@ -55,7 +58,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 		return this.attributes;
 	}
 
-	public int[] getTupleRange() {
+	public long[] getTupleRange() {
 		return this.tupleRange;
 	}
 
@@ -85,7 +88,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 		if (tupleRange == null) {
 			if (other.tupleRange != null)
 				return false;
-		} else if (tupleRange[0] != other.getTupleRange()[0] && tupleRange[1] != other.getTupleRange()[1])
+		} else if (tupleRange[0] != other.getTupleRange()[0] || tupleRange[1] != other.getTupleRange()[1])
 			return false;
 		return true;
 	}
@@ -125,16 +128,16 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 
 	// writes the tupleRange into an int array if range=-2 no access to the
 	// tuples is allowed if range=-1 access to all tuples is allowed
-	private int[] tupleRangeToInt(String tupleRange) {
-		int[] range = new int[2];
+	private long[] tupleRangeToInt(String tupleRange) {
+		long[] range = new long[2];
 		if (StringUtils.isBlank(tupleRange)) {
 			range[0] = -2;
 			range[1] = -2;
 			return range;
 		} else if (!tupleRange.equals("*")) {
 			String[] str = tupleRange.split(",");
-			range[0] = Integer.parseInt(str[0]);
-			range[1] = Integer.parseInt(str[1]);
+			range[0] = Long.valueOf(str[0]);
+			range[1] = Long.valueOf(str[1]);
 
 		} else if (tupleRange.equals("*")) {
 			range[0] = -1;
@@ -148,43 +151,35 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 	 * @param schema
 	 * @return
 	 */
-	public boolean match(IStreamObject<?> object, SDFSchema schema) {
-		boolean match = false;
-		if (StringUtils.isBlank(this.getAttributes().get(0))) {
-			return false;
-		}
-		Tuple<?> obj = (Tuple<?>) object;
+	public boolean match(IStreamObject<? extends ITimeInterval> object, SDFSchema schema, String tupleRangeAttribute) {
+
+		 // checks if the TupleID is within the tupleRange of the SP
 		
-		if (this.attributes.get(0).equals("*")) {
-			match = true;
+		Tuple<?> obj = (Tuple<?>) object;
+		if (tupleRange[0] == -1L && tupleRange[1] == -1L) {
+			return true;
+		} else if (tupleRange[0] == -2L || tupleRange[1] == -2L) {
+			return false;
 		}
-		if (!match) {
-			for (int i = 0; i < schema.size(); i++) {
+		if (tupleRangeAttribute == null) {
+			if ((object.getMetadata().getStart()).afterOrEquals(new PointInTime(tupleRange[0]))
+					&& (object.getMetadata().getStart()).beforeOrEquals(new PointInTime(tupleRange[1]))) {
 
-				if (!schema.get(i).getAttributeName().equals("id") && !schema.get(i).getAttributeName().equals("TS")
-						&& !schema.getAttribute(i).getAttributeName().equals("start")
-						&& !schema.getAttribute(i).getAttributeName().equals("end")) {
-					if (!this.attributes.contains(schema.get(i).getAttributeName())) {
-						return false;
-					}
-				}
+				return true;
+			} else
+				return false;
+		} else {
+			int index = schema.findAttributeIndex(tupleRangeAttribute);
+			long tupleID = obj.getAttribute(index).getClass().equals(Integer.class)
+					? ((Integer) obj.getAttribute(index)).longValue() : (long) obj.getAttribute(index);
+
+			if (tupleID >= tupleRange[0] && tupleID <= tupleRange[1]) {
+				return true;
 			}
+
+			return false;
+			
 		}
-		match = true;
-
-		// checks if the TupleID is within the tupleRange of the SP
-		int idIndex = schema.findAttributeIndex("id");
-		if (tupleRange[0] == -1 && tupleRange[1] == -1 && match == true) {
-			return true;
-		} else if (tupleRange[0] == -2 || tupleRange[1] == -2) {
-			return false;
-		} else if (((long) obj.getAttribute(idIndex)) >= (long) tupleRange[0]
-				&& ((long) obj.getAttribute(idIndex)) <= (long) tupleRange[1] && match == true) {
-
-			return true;
-
-		} else
-			return false;
 
 	}
 }

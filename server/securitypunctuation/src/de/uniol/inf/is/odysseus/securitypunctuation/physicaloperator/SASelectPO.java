@@ -31,7 +31,7 @@ public class SASelectPO<T extends IStreamObject<?>> extends SelectPO<T> implemen
 
 	}
 
-
+	//only transfers the SPs if the object fulfills the Select predicate
 	@Override
 	protected void process_next(T object, int port) {
 		if (super.getPredicate().evaluate(object)) {
@@ -40,6 +40,7 @@ public class SASelectPO<T extends IStreamObject<?>> extends SelectPO<T> implemen
 		super.process_next(object, port);
 	}
 
+	//transfers all the currently active SPs in the SAOperatorDelegate
 	private void transferPunctuation() {
 		if (!saOpDel.getRecentSPs().isEmpty()) {
 			for (ISecurityPunctuation sp : saOpDel.getRecentSPs()) {

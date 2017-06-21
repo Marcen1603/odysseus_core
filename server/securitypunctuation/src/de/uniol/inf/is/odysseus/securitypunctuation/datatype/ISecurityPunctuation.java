@@ -19,12 +19,13 @@ public interface ISecurityPunctuation extends IPunctuation {
 
 	void setImmutable(boolean immutable);
 
-
+	ISecurityPunctuation createEmptySP();
+	
 	void setSign(boolean sign);
 
 	void setTime(PointInTime timestamp);
 	
-	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation);
+	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation, PointInTime pointInTime);
 
 	public boolean isEmpty();
 

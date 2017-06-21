@@ -15,7 +15,7 @@ public class TSecurityShieldAORule extends AbstractTransformationRule<SecuritySh
 	@Override
 	public void execute(SecurityShieldAO securityShieldAO, TransformationConfiguration config) throws RuleException {
 		@SuppressWarnings("rawtypes")
-		SecurityShieldPO<?> securityShieldPO=new SecurityShieldPO();
+		SecurityShieldPO<?,?> securityShieldPO=new SecurityShieldPO(securityShieldAO.getTupleRangeAttribute());
 		defaultExecute(securityShieldAO, securityShieldPO, config, true, true);
 		
 	}

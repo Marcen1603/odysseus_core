@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -16,13 +18,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 
-public class SecurityPunctuation implements ISecurityPunctuation {
+public class SecurityPunctuation extends AbstractPunctuation implements ISecurityPunctuation{
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7436458563105118060L;
-
+	
 	private DataDescriptionPart ddp;
 	private SecurityRestrictionPart srp;
 	private boolean sign;
@@ -30,6 +32,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 	private PointInTime timestamp;
 
 	public SecurityPunctuation(SecurityPunctuation securityPunctuation) {
+		super(securityPunctuation);
 		this.ddp = securityPunctuation.getDDP();
 		this.srp = securityPunctuation.getSRP();
 		this.immutable = securityPunctuation.getImmutable();
@@ -39,6 +42,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 
 	public SecurityPunctuation(DataDescriptionPart ddp, SecurityRestrictionPart srp, boolean sign, boolean immutable,
 			long timestamp) {
+		super(timestamp);
 		this.ddp = ddp;
 		this.srp = srp;
 		this.immutable = immutable;
@@ -48,6 +52,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 
 	public SecurityPunctuation(String tupleRange, String attributes, String roles, boolean sign, boolean immutable,
 			long timestamp) {
+		super(timestamp);
 		this.ddp = new DataDescriptionPart(tupleRange, attributes);
 		this.srp = new SecurityRestrictionPart(roles);
 		this.immutable = immutable;
@@ -57,6 +62,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 
 	public SecurityPunctuation(String tupleRange, List<String> attributes, List<String> roles, boolean sign,
 			boolean immutable, PointInTime timestamp) {
+		super(timestamp);
 		this.ddp = new DataDescriptionPart(tupleRange, attributes);
 		this.srp = new SecurityRestrictionPart(roles);
 		this.immutable = immutable;
@@ -66,7 +72,17 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 
 	public SecurityPunctuation(String tupleRange, String attributes, String roles, boolean sign, boolean immutable,
 			PointInTime timestamp) {
+		super(timestamp);
 		this.ddp = new DataDescriptionPart(tupleRange, attributes);
+		this.srp = new SecurityRestrictionPart(roles);
+		this.immutable = immutable;
+		this.sign = sign;
+		this.timestamp = timestamp;
+	}
+
+	public SecurityPunctuation(long[] ts, String attributes, String roles, boolean sign, boolean immutable, PointInTime timestamp) {
+		super(timestamp);
+		this.ddp=new DataDescriptionPart(ts,attributes);
 		this.srp = new SecurityRestrictionPart(roles);
 		this.immutable = immutable;
 		this.sign = sign;
@@ -139,11 +155,11 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 				+ timestamp;
 	}
 
-	public SecurityPunctuation intersect(ISecurityPunctuation punctuation) {
+	public SecurityPunctuation intersect(ISecurityPunctuation punctuation,PointInTime ts) {
 		List<String> attributes = new ArrayList<>();
 		List<String> roles = new ArrayList<>();
 
-		SecurityPunctuation newSP = new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
+		SecurityPunctuation newSP = new SecurityPunctuation("-2,-2", "", "", false, false, ts);
 
 		if (this.sign != punctuation.getSign()) {
 			return newSP;
@@ -160,37 +176,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 			return newSP;
 		}
 
-		// intersect tupleRange
-		// if (this.ddp.getTupleRange()[0] == -2 && this.ddp.getTupleRange()[1]
-		// == -2
-		// || punctuation.getDDP().getTupleRange()[0] == -2 &&
-		// punctuation.getDDP().getTupleRange()[1] == -2
-		// || this.ddp.getTupleRange()[0] >
-		// punctuation.getDDP().getTupleRange()[1]
-		// || this.ddp.getTupleRange()[1] <
-		// punctuation.getDDP().getTupleRange()[0]) {
-		// return newSP;
-		//
-		// } else if (this.ddp.getTupleRange()[0] != -1 &&
-		// punctuation.getDDP().getTupleRange()[0] != -1) {
-		//
-		// if (this.ddp.getTupleRange()[0] >=
-		// punctuation.getDDP().getTupleRange()[0]) {
-		// tupleRange[0] = this.ddp.getTupleRange()[0];
-		// } else
-		// tupleRange[0] = punctuation.getDDP().getTupleRange()[0];
-		// if (this.ddp.getTupleRange()[1] <=
-		// punctuation.getDDP().getTupleRange()[1]) {
-		// tupleRange[1] = this.ddp.getTupleRange()[1];
-		// } else
-		// tupleRange[1] = punctuation.getDDP().getTupleRange()[1];
-		// } else if (this.ddp.getTupleRange()[0] == -1) {
-		// tupleRange = punctuation.getDDP().getTupleRange();
-		// } else if (punctuation.getDDP().getTupleRange()[0] == -1) {
-		// tupleRange = this.ddp.getTupleRange();
-		// }
-
-		return newSP = new SecurityPunctuation("*", attributes, roles, this.sign, this.immutable, new PointInTime(this.timestamp));
+		return newSP = new SecurityPunctuation("*", attributes, roles, this.sign, this.immutable, ts);
 
 	}
 
@@ -207,7 +193,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 			attributes = new ArrayList<>(ddp.getAttributes());
 			return attributes;
 		} else
-			attributes = new ArrayList(this.ddp.getAttributes());
+			attributes = new ArrayList<>(this.ddp.getAttributes());
 		for (String inputAttribute : ddp.getAttributes()) {
 			if (!attributes.contains(inputAttribute)) {
 				attributes.add(inputAttribute);
@@ -222,29 +208,15 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 			return output;
 
 		} else if (inputOne.get(0).equals("*")) {
-//			for (String inputAttributeTwo : inputTwo) {
-//				output.add(inputAttributeTwo);
-//			}#
-			output=new ArrayList(inputTwo);
+			output=new ArrayList<>(inputTwo);
 			return output;
 		} else if (inputTwo.get(0).equals("*")) {
-			output=new ArrayList(inputTwo);
-//			for (String inputAttributeOne : inputOne) {
-//				output.add(inputAttributeOne);
-//			}
+			output=new ArrayList<>(inputTwo);
 			return output;
 		} else {
-			output=new ArrayList(inputOne);
+			output=new ArrayList<>(inputOne);
 			output.retainAll(inputTwo);
 			
-//			for (String inputAttributeOne : inputOne) {
-//				for (String inputAttributeTwo : inputTwo) {
-//					if (inputAttributeOne.equals(inputAttributeTwo)) {
-//						output.add(inputAttributeOne);
-//					}
-//
-//				}
-//			}
 		}
 
 		return output;
@@ -269,6 +241,8 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 		return result;
 	}
 
+	
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -292,6 +266,7 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 				return false;
 		} else if (!srp.equals(other.srp))
 			return false;
+		//ignore the timestamp
 		// if (timestamp == null) {
 		// if (other.timestamp != null)
 		// return false;
@@ -300,22 +275,18 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 		return true;
 	}
 
-	@Override
-	public boolean isHeartbeat() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-	@Override
-	public byte getNumber() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 	@Override
 	public SDFSchema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		attributes.add(new SDFAttribute("SecurityPunctuation", "tupleRange", SDFDatatype.MATRIX_INTEGER));
+		attributes.add(new SDFAttribute("SecurityPunctuation", "attributes", SDFDatatype.LIST_STRING));
+		attributes.add(new SDFAttribute("SecurityPunctuation", "roles", SDFDatatype.LIST_STRING));
+		attributes.add(new SDFAttribute("SecurityPunctuation", "sign", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("SecurityPunctuation", "immutable", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("SecurityPunctuation", "point", SDFDatatype.TIMESTAMP));
+		return SDFSchemaFactory.createNewSchema("SecurityPunctuation", SecurityPunctuation.class, attributes);
 	}
 
 	@Override
@@ -324,40 +295,15 @@ public class SecurityPunctuation implements ISecurityPunctuation {
 		return null;
 	}
 
+
 	@Override
-	public IPunctuation clone(PointInTime p_start) {
-		// TODO Auto-generated method stub
-		return null;
+	public ISecurityPunctuation createEmptySP() {
+		return new SecurityPunctuation("-2,-2","","",false,false,-1L);
 	}
 
 	@Override
-	public boolean before(PointInTime time) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean beforeOrEquals(PointInTime time) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean after(PointInTime time) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean afterOrEquals(PointInTime time) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isPunctuation() {
-		// TODO Auto-generated method stub
-		return true;
+	public AbstractPunctuation clone(PointInTime newTime) {
+		return new SecurityPunctuation(this);
 	}
 
 	

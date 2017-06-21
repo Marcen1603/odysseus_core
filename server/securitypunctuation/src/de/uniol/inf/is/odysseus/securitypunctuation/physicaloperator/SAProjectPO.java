@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuatio
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
 public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T> {
-
+//vllt mit object.restrict unpassende Attribute aus der SP entfernen
 	private List<String> restrictedAttributes;
 	private static final Logger LOG = LoggerFactory.getLogger(SAProjectPO.class);
 
@@ -47,38 +47,12 @@ public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T
 
 	}
 
-	// return new SecurityPunctuation überarbeiten
-	public ISecurityPunctuation checkSP(ISecurityPunctuation punctuation) {
-		ISecurityPunctuation copy=punctuation;
-		for (String attribute : restrictedAttributes) {
-			for (String SPattribute : ((ISecurityPunctuation) punctuation).getDDP().getAttributes()) {
-				if ((attribute).equals(SPattribute)) {
-					((ISecurityPunctuation) copy).getDDP().getAttributes().remove(SPattribute);
-					if (((ISecurityPunctuation) copy).getDDP().getAttributes().isEmpty()) {
-						return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
-					}
-				}
-			}
-		}
-		punctuation.setTime(new PointInTime(33333));
-		return punctuation;
-
-	}
 	
 	public ISecurityPunctuation checkSP2(ISecurityPunctuation punctuation) {
 		if(restrictedAttributes.containsAll(punctuation.getDDP().getAttributes())){
-			return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
+			return punctuation.createEmptySP();
 		}
-//		for (String attribute : restrictedAttributes) {
-//			for (String SPattribute : ((ISecurityPunctuation) punctuation).getDDP().getAttributes()) {
-//				if ((attribute).equals(SPattribute)) {
-//					((ISecurityPunctuation) copy).getDDP().getAttributes().remove(SPattribute);
-//					if (((ISecurityPunctuation) copy).getDDP().getAttributes().isEmpty()) {
-//						return new SecurityPunctuation("-2,-2", "", "", false, false, -1L);
-//					}
-//				}
-//			}
-//		}
+
 		return punctuation;
 
 	}
@@ -104,6 +78,7 @@ public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T
 					&& rppo.getRestrictedAttributes().containsAll(this.restrictedAttributes)) && equal == true) {
 				return false;
 			}
+			
 			return true;
 		}
 		return false;

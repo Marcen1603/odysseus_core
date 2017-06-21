@@ -27,12 +27,12 @@ public class SAProjectAO extends ProjectAO {
 	
 	public SAProjectAO() {
 		super();
-		LOG.info("SAProjectAO aufgerufen");
+	
 	}
 
 	public SAProjectAO(SAProjectAO saProjectAO) {
 		super(saProjectAO);
-		LOG.info("SAProjectAO aufgerufen");
+		
 	}
 	
 	public SAProjectAO(ProjectAO projectAO) {
