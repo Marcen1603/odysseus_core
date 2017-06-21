@@ -7,6 +7,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.eclipse.osgi,
  org.openmuc.jdlms,
- org.openmuc.j60870,
  org.apache.commons.lang
 Import-Package: org.slf4j
+Service-Component: OSGI-INF/IEC62056TransportHandler.xml
+Bundle-ActivationPolicy: lazy
