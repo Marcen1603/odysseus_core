@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
+package de.uniol.inf.is.odysseus.core.planmanagement;
 
 import de.uniol.inf.is.odysseus.core.sdf.SDFSchemaInformation;
 
-public class SinkInformationWS {
+public class ViewInformationWS {
 
 	ResourceInformation name;
 	SDFSchemaInformation schema;
 
-	public SinkInformationWS() {
+	public ViewInformationWS() {
 	}
 
 	public void setName(ResourceInformation name) {

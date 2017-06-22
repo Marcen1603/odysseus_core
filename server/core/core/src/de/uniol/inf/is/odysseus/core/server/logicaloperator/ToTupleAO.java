@@ -77,6 +77,10 @@ public class ToTupleAO extends UnaryLogicalOp {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
+		StringBuffer inputSourceName = new StringBuffer();
+		for (String name: getInputSchema().getBaseSourceNames()){
+			inputSourceName.append(name);
+		}
 		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
 		for (RenameAttribute att : attributes) {
 			SDFAttribute sdfAtt = att.getAttribute();
@@ -87,7 +91,12 @@ public class ToTupleAO extends UnaryLogicalOp {
 				name = att.getAttribute().getQualName();
 			}
 			name = SDFAttribute.replaceSpecialChars(name);
-			attributeList.add(new SDFAttribute(sdfAtt.getSourceName(), name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
+
+			String sourceName = sdfAtt.getSourceName();
+			if (Strings.isNullOrEmpty(sourceName)){
+				sourceName = inputSourceName.toString();
+			}
+			attributeList.add(new SDFAttribute(sourceName, name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
 					sdfAtt.getDtConstraints()));
 		}
 		final List<SDFMetaSchema> metaSchema;

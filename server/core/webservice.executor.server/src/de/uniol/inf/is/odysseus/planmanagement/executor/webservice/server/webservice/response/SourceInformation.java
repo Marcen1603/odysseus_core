@@ -1,16 +1,17 @@
 package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.response;
 
+import de.uniol.inf.is.odysseus.core.sdf.SDFSchemaInformation;
 
 public class SourceInformation {
-	
+
 	private SDFSchemaInformation schema;
 	private String name;
 	private String ownerId;
 
 	public SourceInformation() {
-		
+
 	}
-	
+
 	public SourceInformation(SDFSchemaInformation schema, String name, String ownerId) {
 		this.schema = schema;
 		this.name = name;
