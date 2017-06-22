@@ -34,12 +34,17 @@ public class ToTupleAO extends UnaryLogicalOp {
 	private List<RenameAttribute> attributes;
 	private String dateFormat;
 
+	private SDFSchema outputSchemaCached;
+
 	public ToTupleAO() {
 	}
 
 	public ToTupleAO(ToTupleAO keyValueToTuple) {
 		super(keyValueToTuple);
 		this.attributes = keyValueToTuple.attributes;
+		this.dateFormat = keyValueToTuple.dateFormat;
+		this.outputSchemaCached = keyValueToTuple.outputSchemaCached;
+		this.type = keyValueToTuple.type;
 	}
 
 	@Parameter(name = "Schema", type = CreateAndRenameSDFAttributeParameter.class, optional = false, isList = true)
@@ -77,35 +82,41 @@ public class ToTupleAO extends UnaryLogicalOp {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		StringBuffer inputSourceName = new StringBuffer();
-		for (String name: getInputSchema().getBaseSourceNames()){
-			inputSourceName.append(name);
-		}
-		List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
-		for (RenameAttribute att : attributes) {
-			SDFAttribute sdfAtt = att.getAttribute();
-			String name;
-			if (!att.getNewName().equals("")) {
-				name = att.getNewName();
-			} else {
-				name = att.getAttribute().getQualName();
+		if (outputSchemaCached == null) {
+			StringBuffer inputSourceName = new StringBuffer();
+			for (String name : getInputSchema().getBaseSourceNames()) {
+				inputSourceName.append(name);
 			}
-			name = SDFAttribute.replaceSpecialChars(name);
+			List<SDFAttribute> attributeList = new ArrayList<SDFAttribute>();
+			for (RenameAttribute att : attributes) {
+				SDFAttribute sdfAtt = att.getAttribute();
+				String name;
+				if (!att.getNewName().equals("")) {
+					name = att.getNewName();
+				} else {
+					name = att.getAttribute().getQualName();
+				}
+				name = SDFAttribute.replaceSpecialChars(name);
 
-			String sourceName = sdfAtt.getSourceName();
-			if (Strings.isNullOrEmpty(sourceName)){
-				sourceName = inputSourceName.toString();
+				String sourceName = getType();
+				if (Strings.isNullOrEmpty(sourceName)) {
+					sourceName = sdfAtt.getSourceName();
+				}
+				if (Strings.isNullOrEmpty(sourceName)) {
+					sourceName = inputSourceName.toString();
+				}
+				attributeList.add(new SDFAttribute(sourceName, name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
+						sdfAtt.getDtConstraints()));
 			}
-			attributeList.add(new SDFAttribute(sourceName, name, sdfAtt.getDatatype(), sdfAtt.getUnit(),
-					sdfAtt.getDtConstraints()));
+			final List<SDFMetaSchema> metaSchema;
+			metaSchema = getInputSchema().getMetaschema();
+			@SuppressWarnings("unchecked")
+			SDFSchema schema = SDFSchemaFactory.createNewSchema(Strings.isNullOrEmpty(getType())?inputSourceName.toString():getType(), (Class<? extends IStreamObject<?>>) Tuple.class,
+					attributeList, getInputSchema());
+			SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
+			outputSchemaCached = outputSchema;
 		}
-		final List<SDFMetaSchema> metaSchema;
-		metaSchema = getInputSchema().getMetaschema();
-		@SuppressWarnings("unchecked")
-		SDFSchema schema = SDFSchemaFactory.createNewSchema(type, (Class<? extends IStreamObject<?>>) Tuple.class,
-				attributeList, getInputSchema());
-		SDFSchema outputSchema = SDFSchemaFactory.createNewWithMetaSchema(schema, metaSchema);
-		return outputSchema;
+		return outputSchemaCached;
 	}
 
 	@Override
