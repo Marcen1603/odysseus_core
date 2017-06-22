@@ -37,7 +37,7 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 
 	@Override
 	public Tuple<?> getValue() {
-		Tuple<?> ret = new Tuple(1, false);
+		Tuple<?> ret = new Tuple<>(1, false);
 		ret.setAttribute(0, this.predicate);
 		return ret;
 	}

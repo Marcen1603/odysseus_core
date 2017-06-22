@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -77,6 +78,24 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
+	}
+	
+	public boolean isPredicateIsUpdateable() {
+		return predicateIsUpdateable;
+	}
+	
+	@Parameter(name = "predicateIsUpdateable", optional = false, type = BooleanParameter.class, isList = false, doc = "If set to true, the predicate of the select can be updated with punctuations.")
+	public void setPredicateIsUpdateable(boolean predicateIsUpdateable) {
+		this.predicateIsUpdateable = predicateIsUpdateable;
+	}
+	
+	public boolean isCatchUpdatePredicatePunctuation() {
+		return catchUpdatePredicatePunctuation;
+	}
+	
+	@Parameter(name = "catchUpdatePredicatePunctuation", optional = false, type = BooleanParameter.class, isList = false, doc = "If set to true, punctuations that update the predicate are catchted and not send to the next operator.")
+	public void setCatchUpdatePredicatePunctuation(boolean catchUpdatePredicatePunctuation) {
+		this.catchUpdatePredicatePunctuation = catchUpdatePredicatePunctuation;
 	}
 
 	@Override

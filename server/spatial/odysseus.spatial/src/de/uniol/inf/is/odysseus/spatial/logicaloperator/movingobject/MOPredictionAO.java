@@ -110,10 +110,10 @@ public class MOPredictionAO extends BinaryLogicalOp {
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute("", "movingObjectId", SDFDatatype.STRING);
-		SDFAttribute attribute2 = new SDFAttribute("", "location", SDFSpatialDatatype.SPATIAL_POINT);
-		SDFAttribute attribute3 = new SDFAttribute("", "speedMetersPerSecond", SDFDatatype.STRING);
-		SDFAttribute attribute4 = new SDFAttribute("", "direction", SDFDatatype.STRING);
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.STRING);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location", SDFSpatialDatatype.SPATIAL_POINT);
+		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "speedMetersPerSecond", SDFDatatype.STRING);
+		SDFAttribute attribute4 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "direction", SDFDatatype.STRING);
 		
 		attributes.add(attribute1);
 		attributes.add(attribute2);

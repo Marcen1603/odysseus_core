@@ -34,8 +34,20 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	private int heartbeatRate;
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
 
+	private boolean predicateIsUpdateable;
+	private boolean catchUpdatePredicatePunctuation;
+
 	public SelectPO(IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
+		this.predicateIsUpdateable = false;
+		this.catchUpdatePredicatePunctuation = false;
+	}
+
+	public SelectPO(boolean predicateIsUpdateable, boolean catchUpdatePredicatePunctuation,
+			IPredicate<? super T> predicate) {
+		this.predicate = predicate.clone();
+		this.predicateIsUpdateable = predicateIsUpdateable;
+		this.catchUpdatePredicatePunctuation = catchUpdatePredicatePunctuation;
 	}
 
 	@Override
@@ -89,21 +101,39 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		if (punctuation instanceof UpdatePredicatePunctuation) {
+		if (this.predicateIsUpdateable && punctuation instanceof UpdatePredicatePunctuation) {
 			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
-			IPredicate<?> newPredicate = updatePredicatePunctuation.getNewPredicate();
-
-			if (newPredicate instanceof AbstractRelationalExpression) {
-				AbstractRelationalExpression newExpression = (AbstractRelationalExpression) newPredicate;
-
-				// Re-initialize, cause the original expression was created
-				// without knowing the actual schema
-				newExpression.initVars(getOutputSchema());
-				this.setPredicate(newExpression);
+			this.updatePredicate(updatePredicatePunctuation);
+			if (!this.catchUpdatePredicatePunctuation) {
+				sendPunctuation(punctuation);
 			}
 		} else {
 			IPunctuation puncToSend = predicate.processPunctuation(punctuation);
 			sendPunctuation(puncToSend);
+		}
+	}
+
+	/**
+	 * Updates the predicate of the operator via a punctuation
+	 * 
+	 * @param updatePredicatePunctuation
+	 *            the punctuation which has the new predicate
+	 */
+	private void updatePredicate(UpdatePredicatePunctuation updatePredicatePunctuation) {
+		IPredicate<?> newPredicate = updatePredicatePunctuation.getNewPredicate();
+
+		if (newPredicate instanceof AbstractRelationalExpression) {
+			@SuppressWarnings("unchecked")
+			AbstractRelationalExpression<? super T> newExpression = (AbstractRelationalExpression<? super T>) newPredicate;
+
+			// Re-initialize, cause the original expression was created
+			// without knowing the actual schema
+			newExpression.initVars(getOutputSchema());
+			this.setPredicate(newExpression);
+		} else {
+			// Maybe it's not relational but keyValue. In this case, the
+			// expressions does not need to be re-initialized.
+			this.setPredicate(newPredicate);
 		}
 	}
 

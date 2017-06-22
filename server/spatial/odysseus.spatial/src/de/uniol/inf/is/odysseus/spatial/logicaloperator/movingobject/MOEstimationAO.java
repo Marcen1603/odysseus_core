@@ -74,8 +74,8 @@ public class MOEstimationAO extends BinaryLogicalOp {
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute("", "PointInTime", SDFDatatype.TIMESTAMP);
-		SDFAttribute attribute2 = new SDFAttribute("", "movingObjectIds", SDFDatatype.LIST);
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "PointInTime", SDFDatatype.TIMESTAMP);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectIds", SDFDatatype.LIST);
 
 		attributes.add(attribute1);
 		attributes.add(attribute2);

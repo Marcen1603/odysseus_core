@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class CreateUpdatePredicatePunctuationAOTransformRule
 		extends AbstractTransformationRule<CreateUpdatePredicatePunctuationAO> {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(CreateUpdatePredicatePunctuationAO operator, TransformationConfiguration config)
 			throws RuleException {

@@ -27,6 +27,8 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 
 	@Override
 	protected void process_next(T object, int port) {
+		
+		// TODO build replacement map
 
 		String newPredicate = this.predicateTemplate;
 
@@ -45,15 +47,15 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 			attributePosition++;
 		}
 
-		IPredicate predicate = createPredicate(newPredicate);
+		IPredicate<?> predicate = createPredicate(newPredicate);
 		UpdatePredicatePunctuation punctuation = new UpdatePredicatePunctuation(object.getMetadata().getStart(),
 				predicate);
 		this.sendPunctuation(punctuation);
 	}
 
-	private IPredicate createPredicate(String rawPredicate) {
+	private IPredicate<?> createPredicate(String rawPredicate) {
 		RelationalPredicateBuilder builder = new RelationalPredicateBuilder();
-		IPredicate predicate = builder.createPredicate(attributeResolver, rawPredicate);
+		IPredicate<?> predicate = builder.createPredicate(attributeResolver, rawPredicate);
 		return predicate;
 	}
 
