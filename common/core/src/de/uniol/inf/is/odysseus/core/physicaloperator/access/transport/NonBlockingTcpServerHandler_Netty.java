@@ -33,6 +33,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -47,10 +49,11 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 	boolean isWebSocket = false;
 	// TODO:
 	boolean SSL;
-	String path;
+	String path = "/websocket";
 
 
-	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
+
+	private List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
 	private MyTCPServer tcpServer = null;
 	static private MyTCPServer tcpServerStatic = null;
 	boolean shareTCPServer = true;
@@ -127,7 +130,11 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 				}
 			}
 		}
-		ctx.writeAndFlush(send);
+		if (isWebSocket){
+			ctx.writeAndFlush(new BinaryWebSocketFrame(send));
+		}else{
+			ctx.writeAndFlush(send);
+		}
 	}
 
 	@Override
@@ -258,6 +265,14 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	}
 
+	public void addChannel(ChannelHandlerContext ctx){
+		channels.add(ctx);
+	}
+
+	public void removeChannel(ChannelHandlerContext ctx){
+		channels.remove(ctx);
+	}
+
 }
 
 class MyTCPServer {
@@ -316,7 +331,7 @@ class MyTCPServer {
 
 		if (caller.isWebSocket) {
 			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-					.childHandler(new NettyWebSocketServerInitializer(sslCtx, caller.path));
+					.childHandler(new NettyWebSocketServerInitializer(sslCtx, caller.path, caller)).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		} else {
 			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
@@ -401,14 +416,14 @@ class ServerHandler extends ByteToMessageDecoder {
 			}
 		}
 
-		handler.channels.add(ctx);
+		handler.addChannel(ctx);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		// System.err.println("Channel inactive " +
 		// ctx.channel().localAddress());
-		handler.channels.remove(ctx);
+		handler.removeChannel(ctx);
 	}
 
 	@Override

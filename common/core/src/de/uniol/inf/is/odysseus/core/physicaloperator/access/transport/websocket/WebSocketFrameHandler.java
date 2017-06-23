@@ -26,14 +26,25 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpServerHandler_Netty;
+
 /**
  * Echoes uppercase content of text frames.
  */
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketFrameHandler.class);
+	private NonBlockingTcpServerHandler_Netty handler;
 
-    @Override
+
+
+    public WebSocketFrameHandler(NonBlockingTcpServerHandler_Netty handler) {
+    	this.handler = handler;
+    }
+
+
+
+	@Override
     protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame frame) throws Exception {
         // ping and pong frames already handled
 
@@ -46,5 +57,6 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
         }
+        handler.addChannel(ctx);
     }
 }

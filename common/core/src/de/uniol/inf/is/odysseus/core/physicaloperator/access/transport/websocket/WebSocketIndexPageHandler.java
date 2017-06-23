@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.CharsetUtil;
@@ -67,10 +68,11 @@ public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullH
         if ("/".equals(req.uri()) || "/index.html".equals(req.uri())) {
             String webSocketLocation = getWebSocketLocation(ctx.pipeline(), req, websocketPath);
             ByteBuf content = WebSocketServerIndexPage.getContent(webSocketLocation);
-            FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, OK, content);
+            FullHttpResponse res = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK, content);
 
             res.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html; charset=UTF-8");
             HttpUtil.setContentLength(res, content.readableBytes());
+
 
             sendHttpResponse(ctx, req, res);
         } else {
