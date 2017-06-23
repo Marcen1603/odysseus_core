@@ -42,8 +42,10 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	private static final String PORT = "port";
 	private static final String MAX_BUFFER_SIZE = "maxbuffersize";
+	private static final String WEBSOCKET = "websocket";
 	private int port;
 	boolean isWebSocket = false;
+	// TODO:
 	boolean SSL;
 	String path;
 
@@ -81,8 +83,9 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	public NonBlockingTcpServerHandler_Netty(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT)) : 8080;
-		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
+		port = options.getInt(PORT, 8080);
+		maxBufferSize = options.getInt(MAX_BUFFER_SIZE, 0);
+		isWebSocket = options.getBoolean(WEBSOCKET, false);
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
