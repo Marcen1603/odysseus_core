@@ -15,18 +15,20 @@ public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITim
 	private RelationalExpression[] expressions;
 
 	public CreateUpdateExpressionsPunctuationPO(CreateUpdateExpressionsPunctuationAO ao) {
-		SDFExpression[] expr = new SDFExpression[ao.getExpressions().size()];
+		SDFExpression[] expr = new SDFExpression[ao.getNamedStrings().size()];
 
-		int counter = 0;
-		for (SDFExpression expression : ao.getExpressions()) {
-			expr[counter] = ao.getExpressions().get(counter);
-			counter++;
-		}
-
-		this.expressions = new RelationalExpression[expr.length];
-		for (int i = 0; i < expr.length; ++i) {
-			this.expressions[i] = new RelationalExpression(expr[i]);
-		}
+		// TODO Convert strings to experessions after replacing <...>
+		
+//		int counter = 0;
+//		for (SDFExpression expression : ao.getExpressions()) {
+//			expr[counter] = ao.getExpressions().get(counter);
+//			counter++;
+//		}
+//
+//		this.expressions = new RelationalExpression[expr.length];
+//		for (int i = 0; i < expr.length; ++i) {
+//			this.expressions[i] = new RelationalExpression(expr[i]);
+//		}
 	}
 
 	@Override

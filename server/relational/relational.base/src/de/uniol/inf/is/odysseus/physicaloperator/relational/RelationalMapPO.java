@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.UpdateExpressionsPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -35,11 +36,9 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
+public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	static private Logger logger = LoggerFactory
-			.getLogger(RelationalMapPO.class);
+	static private Logger logger = LoggerFactory.getLogger(RelationalMapPO.class);
 
 	protected RelationalExpression<T>[] expressions;
 	final private SDFSchema inputSchema;
@@ -53,16 +52,15 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 	private boolean requiresDeepClone;
 
-	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean allowNullInOutput, boolean evaluateOnPunctuation,
-			boolean suppressErrors, boolean keepInput, int[] restrictList) {
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
+			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 		this.suppressErrors = suppressErrors;
 		init(inputSchema, expressions);
 		requiresDeepClone = false;
-		for (int i=0;i<expressions.length;i++){
+		for (int i = 0; i < expressions.length; i++) {
 			if (this.expressions[i].getType().requiresDeepClone()) {
 				requiresDeepClone = true;
 			}
@@ -71,8 +69,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		this.restrictList = restrictList;
 	}
 
-	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
+	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput, boolean evaluateOnPunctuation,
+			boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
@@ -95,7 +93,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@Override public boolean deliversStoredElement(int outputPort) {
+	@Override
+	public boolean deliversStoredElement(int outputPort) {
 		return false;
 	}
 
@@ -112,15 +111,15 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		synchronized (this.expressions) {
 
 			final int offset;
-			if (keepInput){
-				if (restrictList == null){
+			if (keepInput) {
+				if (restrictList == null) {
 					offset = getInputSchema().size();
 					outputVal.setAttributes(object);
-				}else{
+				} else {
 					offset = restrictList.length;
 					outputVal.setAttributes(object.restrict(restrictList, true));
 				}
-			}else{
+			} else {
 				offset = 0;
 			}
 
@@ -129,22 +128,19 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 				try {
 					Object expr = this.expressions[i].evaluate(object, getSessions(), preProcessResult);
 
-					outputVal.setAttribute(offset+i, expr);
+					outputVal.setAttribute(offset + i, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
-
 
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!suppressErrors) {
 						if (!(e instanceof NullPointerException)) {
-							logger.warn("Cannot calc result for " + object
-									+ " with expression " + expressions[i], e);
+							logger.warn("Cannot calc result for " + object + " with expression " + expressions[i], e);
 							// Not needed. Value is null, if not set!
 							// outputVal.setAttribute(i, null);
-							sendWarning("Cannot calc result for " + object
-									+ " with expression " + expressions[i], e);
+							sendWarning("Cannot calc result for " + object + " with expression " + expressions[i], e);
 						}
 					}
 				}
@@ -162,20 +158,26 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO: By this, we make it implicit interval approach...
-		// Maybe we should move this to another bundle?
-		if (evaluateOnPunctuation) {
-			if (lastTuple == null) {
-				lastTuple = new Tuple(expressions.length, false);
-				lastTuple.setMetadata((T) new TimeInterval(punctuation
-						.getTime()));
-			} else {
-				((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(
-						punctuation.getTime(), PointInTime.getInfinityTime());
+
+		if (punctuation instanceof UpdateExpressionsPunctuation) {
+			// Set new expressions
+			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
+			this.expressions = updateExpressionsPuctuation.getExpressions();
+		} else {
+			// TODO: By this, we make it implicit interval approach...
+			// Maybe we should move this to another bundle?
+			if (evaluateOnPunctuation) {
+				if (lastTuple == null) {
+					lastTuple = new Tuple(expressions.length, false);
+					lastTuple.setMetadata((T) new TimeInterval(punctuation.getTime()));
+				} else {
+					((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(punctuation.getTime(),
+							PointInTime.getInfinityTime());
+				}
+				process_next(lastTuple, port);
 			}
-			process_next(lastTuple, port);
+			sendPunctuation(punctuation, port);
 		}
-		sendPunctuation(punctuation, port);
 	}
 
 	@Override
