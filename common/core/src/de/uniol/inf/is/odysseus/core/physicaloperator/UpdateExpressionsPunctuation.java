@@ -21,9 +21,9 @@ public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 		schema = SDFSchemaFactory.createNewSchema("UpdatePredicatePunctuation", Tuple.class, attributes);
 	}
 
-	private RelationalExpression[] expressions;
+	private RelationalExpression<?>[] expressions;
 
-	public UpdateExpressionsPunctuation(PointInTime p, RelationalExpression[] expressions) {
+	public UpdateExpressionsPunctuation(PointInTime p, RelationalExpression<?>[] expressions) {
 		super(p);
 		this.expressions = expressions;
 	}
@@ -37,6 +37,7 @@ public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 
 	@Override
 	public Tuple<?> getValue() {
+		@SuppressWarnings("rawtypes")
 		Tuple<?> ret = new Tuple(1, false);
 		ret.setAttribute(0, expressions);
 		return ret;
@@ -52,6 +53,7 @@ public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 		return new UpdateExpressionsPunctuation(newTime, this.expressions);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public RelationalExpression[] getExpressions() {
 		return expressions;
 	}

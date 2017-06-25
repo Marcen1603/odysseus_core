@@ -48,15 +48,24 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	final private boolean suppressErrors;
 
 	final private boolean evaluateOnPunctuation;
+	final private boolean expressionsUpdateable;
+	final private boolean catchUpdateExpressionsPunctuation;
+
 	private Tuple<T> lastTuple;
 
 	private boolean requiresDeepClone;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
+			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean catchUpdateExpressionsPunctuation,
+			boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+
+		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.expressionsUpdateable = expressionsUpdateable;
+		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
+
 		this.suppressErrors = suppressErrors;
 		init(inputSchema, expressions);
 		requiresDeepClone = false;
@@ -70,10 +79,16 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	}
 
 	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput, boolean evaluateOnPunctuation,
-			boolean suppressErrors, boolean keepInput, int[] restrictList) {
+			boolean expressionsUpdateable, boolean catchUpdateExpressionsPunctuation, boolean suppressErrors,
+			boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+
+		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.expressionsUpdateable = expressionsUpdateable;
+		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
+
 		this.suppressErrors = suppressErrors;
 		this.keepInput = keepInput;
 		this.restrictList = restrictList;
@@ -159,10 +174,13 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		if (punctuation instanceof UpdateExpressionsPunctuation) {
+		if (this.expressionsUpdateable && punctuation instanceof UpdateExpressionsPunctuation) {
 			// Set new expressions
 			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
 			this.expressions = updateExpressionsPuctuation.getExpressions();
+			if (!this.catchUpdateExpressionsPunctuation) {
+				sendPunctuation(punctuation, port);
+			}
 		} else {
 			// TODO: By this, we make it implicit interval approach...
 			// Maybe we should move this to another bundle?

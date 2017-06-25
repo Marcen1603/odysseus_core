@@ -58,7 +58,9 @@ public class TStateMapAORule extends AbstractTransformationRule<StateMapAO> {
 		@SuppressWarnings("unchecked")
 		RelationalMapPO<?> mapPO = new RelationalStateMapPO<IMetaAttribute>(mapAO.getInputSchema(),
 				mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullInOutput(), gp,
-				mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(), restrictList);
+				mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(),
+				mapAO.isCatchUpdateExpressionsPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(),
+				restrictList);
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 

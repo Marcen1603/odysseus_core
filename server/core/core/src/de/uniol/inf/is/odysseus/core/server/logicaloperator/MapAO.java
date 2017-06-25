@@ -40,7 +40,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationExcepti
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Map+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Map+operator", category = {
+		LogicalOperatorCategory.BASE })
 public class MapAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -2120387285754464451L;
@@ -54,7 +55,9 @@ public class MapAO extends UnaryLogicalOp {
 
 	private boolean keepInput = false;
 	private List<SDFAttribute> removeAttributes;
-	private boolean expressionsUpdateable;
+
+	private boolean expressionsUpdateable = false;
+	private boolean catchUpdateExpressionsPunctuation = false;
 
 	public MapAO() {
 		super();
@@ -78,18 +81,17 @@ public class MapAO extends UnaryLogicalOp {
 	private void calcOutputSchema() {
 
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-		if (keepInput){
-			if (removeAttributes == null || removeAttributes.size() == 0){
+		if (keepInput) {
+			if (removeAttributes == null || removeAttributes.size() == 0) {
 				attrs.addAll(getInputSchema().getAttributes());
-			}else{
-				for (SDFAttribute keepAttribute: getInputSchema().getAttributes()){
-					if (!removeAttributes.contains(keepAttribute)){
+			} else {
+				for (SDFAttribute keepAttribute : getInputSchema().getAttributes()) {
+					if (!removeAttributes.contains(keepAttribute)) {
 						attrs.add(keepAttribute);
 					}
 				}
 			}
 		}
-
 
 		if (namedExpressions != null) {
 			for (NamedExpression expr : namedExpressions) {
@@ -97,8 +99,7 @@ public class MapAO extends UnaryLogicalOp {
 				// TODO: Maybe here should an attribute resolver be used?
 
 				SDFAttribute attr = null;
-				IExpression<?> mepExpression = expr.expression
-						.getMEPExpression();
+				IExpression<?> mepExpression = expr.expression.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;
 
@@ -124,42 +125,30 @@ public class MapAO extends UnaryLogicalOp {
 				}
 
 				// If expression is an attribute use this data type
-				List<SDFAttribute> inAttribs = expr.expression
-						.getAllAttributes();
+				List<SDFAttribute> inAttribs = expr.expression.getAllAttributes();
 				for (SDFAttribute attributeToCheck : inAttribs) {
 					SDFAttribute attribute;
 					String attributeURI = attributeToCheck.getURI();
 					if (attributeURI.startsWith("__")) {
-						String realAttributeName = attributeURI
-								.substring(attributeURI.indexOf(".") + 1);
+						String realAttributeName = attributeURI.substring(attributeURI.indexOf(".") + 1);
 						split = SDFElement.splitURI(realAttributeName);
 						if (split.length > 1) {
-							attribute = new SDFAttribute(split[0], split[1],
-									attributeToCheck);
+							attribute = new SDFAttribute(split[0], split[1], attributeToCheck);
 						} else {
-							attribute = new SDFAttribute(null, split[0],
-									attributeToCheck);
+							attribute = new SDFAttribute(null, split[0], attributeToCheck);
 						}
 					} else {
 						attribute = attributeToCheck;
 					}
 					if (attribute.equalsCQL(elem)) {
 						if (lastString != null) {
-							String attrName = elem.getURIWithoutQualName() != null ? elem
-									.getURIWithoutQualName()
-									+ "."
-									+ elem.getQualName() : elem.getQualName();
-							attr = new SDFAttribute(lastString, attrName,
-									attribute.getDatatype(),
-									attribute.getUnit(),
+							String attrName = elem.getURIWithoutQualName() != null
+									? elem.getURIWithoutQualName() + "." + elem.getQualName() : elem.getQualName();
+							attr = new SDFAttribute(lastString, attrName, attribute.getDatatype(), attribute.getUnit(),
 									attribute.getDtConstraints());
 						} else {
-							attr = new SDFAttribute(
-									elem.getURIWithoutQualName(),
-									elem.getQualName(),
-									attribute.getDatatype(),
-									attribute.getUnit(),
-									attribute.getDtConstraints());
+							attr = new SDFAttribute(elem.getURIWithoutQualName(), elem.getQualName(),
+									attribute.getDatatype(), attribute.getUnit(), attribute.getDtConstraints());
 						}
 						isOnlyAttribute = true;
 					}
@@ -169,10 +158,8 @@ public class MapAO extends UnaryLogicalOp {
 				// type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
-						if (attr != null && attr.getSourceName() != null
-								&& !attr.getSourceName().startsWith("__")) {
-							attr = new SDFAttribute(attr.getSourceName(),
-									expr.name, attr);
+						if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
+							attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
 						} else {
 							attr = new SDFAttribute(null, expr.name, attr);
 						}
@@ -185,19 +172,16 @@ public class MapAO extends UnaryLogicalOp {
 					if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
 						int card = mepExpression.getReturnTypeCard();
 						for (int i = 0; i < card; i++) {
-							String name = !"".equals(expr.name) ? expr.name
-									: exprString;
-							attr = new SDFAttribute(null, name + "_" + i,
-									mepExpression.getReturnType(i), null, null,
+							String name = !"".equals(expr.name) ? expr.name : exprString;
+							attr = new SDFAttribute(null, name + "_" + i, mepExpression.getReturnType(i), null, null,
 									null);
 							attrs.add(attr);
 						}
 
 					} else {
-						SDFDatatype retType = expr.datatype!=null?expr.datatype:mepExpression.getReturnType();
-						attr = new SDFAttribute(null,
-								!"".equals(expr.name) ? expr.name : exprString,
-								retType, null, null, null);
+						SDFDatatype retType = expr.datatype != null ? expr.datatype : mepExpression.getReturnType();
+						attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
+								null, null);
 						attrs.add(attr);
 					}
 				} else {
@@ -206,21 +190,20 @@ public class MapAO extends UnaryLogicalOp {
 
 			}
 
-
-			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory
-					.createNewWithAttributes(attrs, getInputSchema()),
+			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory.createNewWithAttributes(attrs, getInputSchema()),
 					getInputSchema().getURI(), false);
 			// check if all attributes are distinct
 			Set<String> amNames = s.checkNames();
-			if (amNames.size() > 0){
-				throw new TransformationException("Output schema of "+this.getName()+" contains multiple occurences of attributes "+amNames);
+			if (amNames.size() > 0) {
+				throw new TransformationException("Output schema of " + this.getName()
+						+ " contains multiple occurences of attributes " + amNames);
 			}
 
 			setOutputSchema(s);
 		}
 	}
 
-	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname="kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
+	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname = "kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
 	public void setExpressions(List<NamedExpression> namedExpressions) {
 		this.namedExpressions = namedExpressions;
 		expressions = new ArrayList<>();
@@ -236,8 +219,7 @@ public class MapAO extends UnaryLogicalOp {
 		return this.namedExpressions;
 	}
 
-
-	@Parameter(type=BooleanParameter.class, name="keepInput", optional = true, doc="If set to true, all attributes of the input are also part of the output, so there is no need to repeat all attributes.")
+	@Parameter(type = BooleanParameter.class, name = "keepInput", optional = true, doc = "If set to true, all attributes of the input are also part of the output, so there is no need to repeat all attributes.")
 	public void setKeepInput(boolean keepInput) {
 		this.keepInput = keepInput;
 	}
@@ -246,8 +228,8 @@ public class MapAO extends UnaryLogicalOp {
 		return keepInput;
 	}
 
-	@Parameter(type=ResolvedSDFAttributeParameter.class, name="removeAttributes", optional=true, isList = true, doc="If keepInput is set to true, you can here provides attributes that should not be part of the output.")
-	public void setRemoveAttributes(List<SDFAttribute> removeAttributes){
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "removeAttributes", optional = true, isList = true, doc = "If keepInput is set to true, you can here provides attributes that should not be part of the output.")
+	public void setRemoveAttributes(List<SDFAttribute> removeAttributes) {
 		this.removeAttributes = removeAttributes;
 	}
 
@@ -305,14 +287,23 @@ public class MapAO extends UnaryLogicalOp {
 	public void setSuppressErrors(boolean suppressErrors) {
 		this.suppressErrors = suppressErrors;
 	}
-	
+
 	public boolean isExpressionsUpdateable() {
 		return expressionsUpdateable;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "expressionsUpdateable", optional = true, doc = "If set to true, the expressions can be updated with punctuations.")
+	@Parameter(type = BooleanParameter.class, name = "expressionsUpdateable", optional = true, doc = "If set to true, the expressions can be updated with punctuations Does not work in threaded mode.")
 	public void setExpressionsUpdateable(boolean expressionsUpdateable) {
 		this.expressionsUpdateable = expressionsUpdateable;
+	}
+
+	public boolean isCatchUpdateExpressionsPunctuation() {
+		return catchUpdateExpressionsPunctuation;
+	}
+
+	@Parameter(type = BooleanParameter.class, name = "catchUpdateExpressionsPunctuation", optional = true, doc = "If set to true, puctuations to update the expressions are catchted and not send further.")
+	public void setCatchUpdateExpressionsPunctuation(boolean catchUpdateExpressionsPunctuation) {
+		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
 	}
 
 	@Override
@@ -334,7 +325,7 @@ public class MapAO extends UnaryLogicalOp {
 	@Override
 	public boolean isValid() {
 		boolean valid = true;
-		if (removeAttributes != null &&	removeAttributes.size()>0 && !keepInput){
+		if (removeAttributes != null && removeAttributes.size() > 0 && !keepInput) {
 			addError("When using removeAttributes, keepInput must be set to true!");
 			valid = false;
 		}

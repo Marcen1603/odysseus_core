@@ -37,28 +37,27 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 	}
 
 	@Override
-	public void execute(MapAO mapAO, TransformationConfiguration transformConfig)
-			throws RuleException {
+	public void execute(MapAO mapAO, TransformationConfiguration transformConfig) throws RuleException {
 		IPhysicalOperator mapPO;
 		if ((mapAO.getThreads() >= 0) && (mapAO.getThreads() <= 1)) {
 
 			int[] restrictList = SDFSchema.calcRestrictList(mapAO.getInputSchema(), mapAO.getRemoveAttributes());
 
 			mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(),
-					mapAO.getExpressionList().toArray(new SDFExpression[0]),
-					mapAO.isAllowNullValue(), mapAO.isEvaluateOnPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(), restrictList);
+					mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),
+					mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(),
+					mapAO.isCatchUpdateExpressionsPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(),
+					restrictList);
 		} else {
-			mapPO = new RelationalThreadedMapPO<IMetaAttribute>(
-					mapAO.getInputSchema(), mapAO.getExpressionList().toArray(
-							new SDFExpression[0]), mapAO.isAllowNullValue(), mapAO.isEvaluateOnPunctuation(),
-					mapAO.getThreads());
+			mapPO = new RelationalThreadedMapPO<IMetaAttribute>(mapAO.getInputSchema(),
+					mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),
+					mapAO.isEvaluateOnPunctuation(), mapAO.getThreads());
 		}
 		defaultExecute(mapAO, mapPO, transformConfig, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(MapAO operator,
-			TransformationConfiguration transformConfig) {
+	public boolean isExecutable(MapAO operator, TransformationConfiguration transformConfig) {
 		if (operator.getInputSchema().getType() == Tuple.class) {
 			if (operator.getPhysSubscriptionTo() != null) {
 				return true;

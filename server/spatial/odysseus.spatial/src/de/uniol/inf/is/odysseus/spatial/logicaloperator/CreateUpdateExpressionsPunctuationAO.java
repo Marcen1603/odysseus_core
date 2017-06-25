@@ -16,7 +16,6 @@ public class CreateUpdateExpressionsPunctuationAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6224831223141503939L;
 	private List<NamedString> namedStrings;
-//	private List<SDFExpression> expressions;
 
 	public CreateUpdateExpressionsPunctuationAO() {
 
@@ -24,7 +23,6 @@ public class CreateUpdateExpressionsPunctuationAO extends UnaryLogicalOp {
 
 	public CreateUpdateExpressionsPunctuationAO(CreateUpdateExpressionsPunctuationAO ao) {
 		this.namedStrings = ao.getNamedStrings();
-//		this.expressions = ao.getExpressions();
 	}
 
 	@Override
