@@ -178,6 +178,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			// Set new expressions
 			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
 			this.expressions = updateExpressionsPuctuation.getExpressions();
+
+			// Initialize all expressions
+			for (int i = 0; i < this.expressions.length; i++) {
+				this.expressions[i].initVars(this.getOutputSchema());
+			}
 			if (!this.catchUpdateExpressionsPunctuation) {
 				sendPunctuation(punctuation, port);
 			}

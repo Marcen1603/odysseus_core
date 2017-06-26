@@ -53,6 +53,8 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 		super(po);
 		this.rate = po.rate;
 		this.predicate = po.predicate.clone();
+		this.predicateIsUpdateable = po.isPredicateIsUpdateable();
+		this.catchUpdatePredicatePunctuation = po.isCatchUpdatePredicatePunctuation();
 	}
 
 	public SelectAO(IPredicate<?> predicate) {

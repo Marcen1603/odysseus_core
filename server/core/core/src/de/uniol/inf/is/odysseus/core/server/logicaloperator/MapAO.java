@@ -68,6 +68,8 @@ public class MapAO extends UnaryLogicalOp {
 		this.setExpressions(ao.namedExpressions);
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
+		this.expressionsUpdateable = ao.isExpressionsUpdateable();
+		this.catchUpdateExpressionsPunctuation = ao.isCatchUpdateExpressionsPunctuation();
 		this.allowNullValue = ao.allowNullValue;
 		this.suppressErrors = ao.suppressErrors;
 		this.keepInput = ao.keepInput;
