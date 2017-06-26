@@ -49,13 +49,14 @@ public class MapAO extends UnaryLogicalOp {
 	private List<SDFExpression> expressions;
 	/** The number of threads used for processing the expressions. */
 	private int threads = 0;
-	private boolean evaluateOnPunctuation = false;
 	private boolean allowNullValue = true;
 	private boolean suppressErrors = false;
 
 	private boolean keepInput = false;
 	private List<SDFAttribute> removeAttributes;
 
+	// Punctuation handling
+	private boolean evaluateOnPunctuation = false;
 	private boolean expressionsUpdateable = false;
 	private boolean catchUpdateExpressionsPunctuation = false;
 

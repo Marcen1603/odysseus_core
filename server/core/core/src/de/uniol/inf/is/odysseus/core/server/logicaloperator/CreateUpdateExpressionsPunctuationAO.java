@@ -1,10 +1,8 @@
-package de.uniol.inf.is.odysseus.spatial.logicaloperator;
+package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedString;
@@ -30,7 +28,7 @@ public class CreateUpdateExpressionsPunctuationAO extends UnaryLogicalOp {
 		return new CreateUpdateExpressionsPunctuationAO(this);
 	}
 
-	@Parameter(type = NamedStringParameter.class, name = "ExpressionTemplates", isList = true, optional = false, doc = "A list of expressionTemplates.")
+	@Parameter(type = NamedStringParameter.class, name = "ExpressionTemplates", isList = true, optional = false, doc = "A list of expressionTemplates. A template can include an attribute name in <>-brackets (<attribute>) which is replaced by the value of the attribute.")
 	public void setNamedStrings(List<NamedString> namedStrings) {
 		this.namedStrings = namedStrings;
 	}

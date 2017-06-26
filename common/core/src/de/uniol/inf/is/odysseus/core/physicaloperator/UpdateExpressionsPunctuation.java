@@ -11,14 +11,26 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
+/**
+ * This punctuation can be used to update expressions, e.g., from a
+ * MAP-operator. It does not contain expressions directly, but the strings that
+ * can be parsed to expressions. The strings are templates: they can contain
+ * attribute-names in <>-brackets (e.g., <attributeName>). These parts are
+ * replaced by the actual content of that attribute of the incoming tuples in
+ * the respective operator that created the punctuations
+ * {@see CreateUpdateExpressionsPunctuationPO}.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 
 	public static final SDFSchema schema;
 
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("UpdatePredicatePunctuation", "predicate", SDFDatatype.STRING));
-		schema = SDFSchemaFactory.createNewSchema("UpdatePredicatePunctuation", Tuple.class, attributes);
+		attributes.add(new SDFAttribute("UpdateExpressionsPunctuation", "expressions", SDFDatatype.STRING));
+		schema = SDFSchemaFactory.createNewSchema("UpdateExpressionsPunctuation", Tuple.class, attributes);
 	}
 
 	private RelationalExpression<?>[] expressions;

@@ -174,6 +174,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
+		// Expressions can be updated with punctuations
 		if (this.expressionsUpdateable && punctuation instanceof UpdateExpressionsPunctuation) {
 			// Set new expressions
 			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
@@ -183,6 +184,11 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			for (int i = 0; i < this.expressions.length; i++) {
 				this.expressions[i].initVars(this.getOutputSchema());
 			}
+			
+			/*
+			 * These punctuations can be catched to not influence other
+			 * MAP-operators later in the graph
+			 */
 			if (!this.catchUpdateExpressionsPunctuation) {
 				sendPunctuation(punctuation, port);
 			}

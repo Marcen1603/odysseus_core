@@ -101,9 +101,13 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+		// The predicate can be updated with a punctuation
 		if (this.predicateIsUpdateable && punctuation instanceof UpdatePredicatePunctuation) {
 			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
 			this.updatePredicate(updatePredicatePunctuation);
+
+			// Such punctuations can be catched to prevent that other
+			// (select)operators are influenced by this punctuation
 			if (!this.catchUpdatePredicatePunctuation) {
 				sendPunctuation(punctuation);
 			}
