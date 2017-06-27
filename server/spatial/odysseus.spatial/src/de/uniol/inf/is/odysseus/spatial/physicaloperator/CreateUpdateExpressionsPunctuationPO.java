@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -13,7 +14,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdateExpressionsPunctuationAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedString;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private SDFSchema inputSchema;
-	private List<NamedString> namedStrings;
+	private List<Option> namedStrings;
 	private IAttributeResolver attributeResolver;
 
 	public CreateUpdateExpressionsPunctuationPO(CreateUpdateExpressionsPunctuationAO ao) {
@@ -41,8 +41,8 @@ public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITim
 
 		// Convert strings to expressions after replacing <...>
 		int counter = 0;
-		for (NamedString namedString : this.namedStrings) {
-			String expressionString = this.replaceTemplatePlaceholders(namedString.getContent(), object);
+		for (Option namedString : this.namedStrings) {
+			String expressionString = this.replaceTemplatePlaceholders(namedString.getValue(), object);
 			SDFExpression sdfExpression = new SDFExpression("", expressionString, this.attributeResolver,
 					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 			expressions[counter] = new RelationalExpression<>(sdfExpression);
