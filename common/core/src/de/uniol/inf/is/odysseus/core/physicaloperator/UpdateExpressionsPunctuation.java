@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -23,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Tobias Brandt
  *
  */
-public class UpdateExpressionsPunctuation extends AbstractPunctuation {
+public class UpdateExpressionsPunctuation<T extends ITimeInterval> extends AbstractPunctuation {
 
 	public static final SDFSchema schema;
 
@@ -33,11 +35,11 @@ public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 		schema = SDFSchemaFactory.createNewSchema("UpdateExpressionsPunctuation", Tuple.class, attributes);
 	}
 
-	private RelationalExpression<?>[] expressions;
+	private Map<String, RelationalExpression<T>> expressionsMap;
 
-	public UpdateExpressionsPunctuation(PointInTime p, RelationalExpression<?>[] expressions) {
+	public UpdateExpressionsPunctuation(PointInTime p, Map<String, RelationalExpression<T>> expressionsMap) {
 		super(p);
-		this.expressions = expressions;
+		this.expressionsMap = expressionsMap;
 	}
 
 	private static final long serialVersionUID = -5806607266505236307L;
@@ -51,23 +53,22 @@ public class UpdateExpressionsPunctuation extends AbstractPunctuation {
 	public Tuple<?> getValue() {
 		@SuppressWarnings("rawtypes")
 		Tuple<?> ret = new Tuple(1, false);
-		ret.setAttribute(0, expressions);
+		ret.setAttribute(0, expressionsMap);
 		return ret;
 	}
 
 	@Override
 	public AbstractPunctuation clone() {
-		return new UpdateExpressionsPunctuation(getTime(), this.expressions);
+		return new UpdateExpressionsPunctuation<T>(getTime(), this.expressionsMap);
 	}
 
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
-		return new UpdateExpressionsPunctuation(newTime, this.expressions);
+		return new UpdateExpressionsPunctuation<T>(newTime, this.expressionsMap);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public RelationalExpression[] getExpressions() {
-		return expressions;
+	public Map<String, RelationalExpression<T>> getExpressions() {
+		return expressionsMap;
 	}
 
 }

@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -18,14 +20,14 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
-public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<M>, M extends ITimeInterval> extends AbstractPipe<T, T> {
 
 	private SDFSchema inputSchema;
-	private List<Option> namedStrings;
+	private List<Option> expressionTemplates;
 	private IAttributeResolver attributeResolver;
 
 	public CreateUpdateExpressionsPunctuationPO(CreateUpdateExpressionsPunctuationAO ao) {
-		namedStrings = ao.getNamedStrings();
+		this.expressionTemplates = ao.getNamedStrings();
 		this.inputSchema = ao.getInputSchema();
 		this.attributeResolver = new DirectAttributeResolver(this.inputSchema);
 	}
@@ -37,21 +39,20 @@ public class CreateUpdateExpressionsPunctuationPO<T extends Tuple<? extends ITim
 	@Override
 	protected void process_next(T object, int port) {
 
-		RelationalExpression<?>[] expressions = new RelationalExpression[this.namedStrings.size()];
+		Map<String, RelationalExpression<?>> expressionsMap = new HashMap<>(this.expressionTemplates.size());
 
 		// Convert strings to expressions after replacing <...>
-		int counter = 0;
-		for (Option namedString : this.namedStrings) {
+		for (Option namedString : this.expressionTemplates) {
 			String expressionString = this.replaceTemplatePlaceholders(namedString.getValue(), object);
 			SDFExpression sdfExpression = new SDFExpression("", expressionString, this.attributeResolver,
 					MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-			expressions[counter] = new RelationalExpression<>(sdfExpression);
-			counter++;
+			RelationalExpression<?> expression = new RelationalExpression<>(sdfExpression);
+			expressionsMap.put(namedString.getName(), expression);
 		}
 
 		// Send the punctuation with the new expressions
-		UpdateExpressionsPunctuation punctuation = new UpdateExpressionsPunctuation(object.getMetadata().getStart(),
-				expressions);
+		UpdateExpressionsPunctuation<M> punctuation = new UpdateExpressionsPunctuation(object.getMetadata().getStart(),
+				expressionsMap);
 		this.sendPunctuation(punctuation);
 	}
 
