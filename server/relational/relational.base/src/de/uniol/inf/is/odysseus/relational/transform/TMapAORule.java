@@ -45,9 +45,8 @@ public class TMapAORule extends AbstractTransformationRule<MapAO> {
 
 			mapPO = new RelationalMapPO<IMetaAttribute>(mapAO.getInputSchema(),
 					mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),
-					mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(),
-					mapAO.isCatchUpdateExpressionsPunctuation(), mapAO.isSuppressErrors(), mapAO.isKeepInput(),
-					restrictList);
+					mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(), mapAO.isSuppressErrors(),
+					mapAO.isKeepInput(), restrictList);
 		} else {
 			mapPO = new RelationalThreadedMapPO<IMetaAttribute>(mapAO.getInputSchema(),
 					mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),

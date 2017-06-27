@@ -1,4 +1,6 @@
-package de.uniol.inf.is.odysseus.spatial.physicaloperator;
+package de.uniol.inf.is.odysseus.core.server.physicaloperator;
+
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -10,19 +12,21 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdatePredicatePunctuationAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.parser.pql.relational.RelationalPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 
 public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private String predicateTemplate;
 	private SDFSchema inputSchema;
+	private List<String> targetOperatorNames;
 	private IAttributeResolver attributeResolver;
 
 	public CreateUpdatePredicatePunctuationPO(CreateUpdatePredicatePunctuationAO ao) {
 		this.predicateTemplate = ao.getPredicateTemplate();
 		this.inputSchema = ao.getInputSchema();
 		this.attributeResolver = new DirectAttributeResolver(this.inputSchema);
+		this.targetOperatorNames = ao.getTargetOperatorNames();
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 
 		IPredicate<?> predicate = createPredicate(newPredicate);
 		UpdatePredicatePunctuation punctuation = new UpdatePredicatePunctuation(object.getMetadata().getStart(),
-				predicate);
+				predicate, this.targetOperatorNames);
 		this.sendPunctuation(punctuation);
 	}
 
@@ -61,8 +65,8 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 	 * @return The predicate as a Predicate object
 	 */
 	private IPredicate<?> createPredicate(String rawPredicate) {
-		RelationalPredicateBuilder builder = new RelationalPredicateBuilder();
-		IPredicate<?> predicate = builder.createPredicate(attributeResolver, rawPredicate);
+		IPredicateBuilder pBuilder = OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE");
+		IPredicate<?> predicate = pBuilder.createPredicate(attributeResolver, rawPredicate);
 		return predicate;
 	}
 

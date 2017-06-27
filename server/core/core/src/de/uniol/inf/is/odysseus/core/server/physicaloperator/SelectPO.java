@@ -35,19 +35,16 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
 
 	private boolean predicateIsUpdateable;
-	private boolean catchUpdatePredicatePunctuation;
 
 	public SelectPO(IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
 		this.predicateIsUpdateable = false;
-		this.catchUpdatePredicatePunctuation = false;
 	}
 
-	public SelectPO(boolean predicateIsUpdateable, boolean catchUpdatePredicatePunctuation,
+	public SelectPO(boolean predicateIsUpdateable,
 			IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
 		this.predicateIsUpdateable = predicateIsUpdateable;
-		this.catchUpdatePredicatePunctuation = catchUpdatePredicatePunctuation;
 	}
 
 	@Override
@@ -101,20 +98,19 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> imp
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
-		// The predicate can be updated with a punctuation
-		if (this.predicateIsUpdateable && punctuation instanceof UpdatePredicatePunctuation) {
+		/*
+		 * (1) Expressions can be updated with punctuations, (2) this is a
+		 * punctuation to update the expressions and (3) this operator is in the
+		 * list with the targets for this punctuation
+		 */
+		if (this.predicateIsUpdateable && punctuation instanceof UpdatePredicatePunctuation
+				&& ((UpdatePredicatePunctuation) punctuation).getTargetOperatorNames().contains(this.getName())) {
 			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
 			this.updatePredicate(updatePredicatePunctuation);
-
-			// Such punctuations can be catched to prevent that other
-			// (select)operators are influenced by this punctuation
-			if (!this.catchUpdatePredicatePunctuation) {
-				sendPunctuation(punctuation);
-			}
-		} else {
-			IPunctuation puncToSend = predicate.processPunctuation(punctuation);
-			sendPunctuation(puncToSend);
 		}
+
+		IPunctuation puncToSend = predicate.processPunctuation(punctuation);
+		sendPunctuation(puncToSend);
 	}
 
 	/**

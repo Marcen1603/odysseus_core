@@ -54,22 +54,20 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 
 	final private boolean evaluateOnPunctuation;
 	final private boolean expressionsUpdateable;
-	final private boolean catchUpdateExpressionsPunctuation;
 
 	private Tuple<T> lastTuple;
 
 	private boolean requiresDeepClone;
 
 	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean catchUpdateExpressionsPunctuation,
-			boolean suppressErrors, boolean keepInput, int[] keepList) {
+			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput,
+			int[] keepList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 
 		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 		this.expressionsUpdateable = expressionsUpdateable;
-		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
 
 		this.suppressErrors = suppressErrors;
 		init(inputSchema, expressions);
@@ -93,15 +91,13 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	}
 
 	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput, boolean evaluateOnPunctuation,
-			boolean expressionsUpdateable, boolean catchUpdateExpressionsPunctuation, boolean suppressErrors,
-			boolean keepInput, int[] restrictList) {
+			boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
 
 		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
 		this.expressionsUpdateable = expressionsUpdateable;
-		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
 
 		this.suppressErrors = suppressErrors;
 		this.keepInput = keepInput;
@@ -193,8 +189,13 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 
-		// Expressions can be updated with punctuations
-		if (this.expressionsUpdateable && punctuation instanceof UpdateExpressionsPunctuation) {
+		/*
+		 * (1) Expressions can be updated with punctuations, (2) this is a
+		 * punctuation to update the expressions and (3) this operator is in the
+		 * list with the targets for this punctuation
+		 */
+		if (this.expressionsUpdateable && punctuation instanceof UpdateExpressionsPunctuation
+				&& ((UpdateExpressionsPunctuation) punctuation).getTargetOperatorNames().contains(this.getName())) {
 			// Set new expressions
 			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
 			setNewExpressions(updateExpressionsPuctuation.getExpressions());
@@ -203,29 +204,23 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 			for (int i = 0; i < this.expressions.length; i++) {
 				this.expressions[i].initVars(this.getOutputSchema());
 			}
-
-			/*
-			 * These punctuations can be caught to not influence other
-			 * MAP-operators later in the graph
-			 */
-			if (!this.catchUpdateExpressionsPunctuation) {
-				sendPunctuation(punctuation, port);
-			}
-		} else {
-			// TODO: By this, we make it implicit interval approach...
-			// Maybe we should move this to another bundle?
-			if (evaluateOnPunctuation) {
-				if (lastTuple == null) {
-					lastTuple = new Tuple(expressions.length, false);
-					lastTuple.setMetadata((T) new TimeInterval(punctuation.getTime()));
-				} else {
-					((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(punctuation.getTime(),
-							PointInTime.getInfinityTime());
-				}
-				process_next(lastTuple, port);
-			}
-			sendPunctuation(punctuation, port);
 		}
+
+		// TODO: By this, we make it implicit interval approach...
+		// Maybe we should move this to another bundle?
+		if (evaluateOnPunctuation) {
+			if (lastTuple == null) {
+				lastTuple = new Tuple(expressions.length, false);
+				lastTuple.setMetadata((T) new TimeInterval(punctuation.getTime()));
+			} else {
+				((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(punctuation.getTime(),
+						PointInTime.getInfinityTime());
+			}
+			process_next(lastTuple, port);
+		}
+
+		// Always send the punctuation to the next operator(s)
+		sendPunctuation(punctuation, port);
 	}
 
 	/**

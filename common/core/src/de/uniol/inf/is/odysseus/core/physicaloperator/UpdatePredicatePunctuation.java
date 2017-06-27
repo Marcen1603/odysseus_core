@@ -24,10 +24,12 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 	}
 
 	private IPredicate<?> predicate;
+	private List<String> targetOperatorNames;
 	
-	public UpdatePredicatePunctuation(PointInTime p, IPredicate<?> predicate) {
+	public UpdatePredicatePunctuation(PointInTime p, IPredicate<?> predicate, List<String> targetOperatorNames) {
 		super(p);
 		this.predicate = predicate;
+		this.targetOperatorNames = targetOperatorNames;
 	}
 
 	@Override
@@ -44,12 +46,12 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 
 	@Override
 	public AbstractPunctuation clone() {
-		return new UpdatePredicatePunctuation(getTime(), getNewPredicate());
+		return new UpdatePredicatePunctuation(getTime(), getNewPredicate(), this.getTargetOperatorNames());
 	}
 
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
-		return new UpdatePredicatePunctuation(newTime, getNewPredicate());
+		return new UpdatePredicatePunctuation(newTime, getNewPredicate(), this.getTargetOperatorNames());
 	}
 
 	public IPredicate<?> getNewPredicate() {
@@ -59,6 +61,14 @@ public class UpdatePredicatePunctuation extends AbstractPunctuation {
 	@Override
 	public String toString() {
 		return "UpdatePredicatePunctuation - new predicate: " + this.getNewPredicate() + "  " + this.getTime();
+	}
+	
+	/**
+	 * 
+	 * @return A list of operators for which these punctuations are for.
+	 */
+	public List<String> getTargetOperatorNames() {
+		return new ArrayList<String>(this.targetOperatorNames);
 	}
 
 }

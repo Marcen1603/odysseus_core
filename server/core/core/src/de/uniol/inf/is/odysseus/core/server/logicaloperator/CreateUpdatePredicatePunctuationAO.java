@@ -18,6 +18,7 @@ public class CreateUpdatePredicatePunctuationAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = -3716840502527149014L;
 
 	private String predicateTemplate;
+	private List<String> targetOperatorNames;
 
 	public CreateUpdatePredicatePunctuationAO() {
 		super();
@@ -26,6 +27,7 @@ public class CreateUpdatePredicatePunctuationAO extends UnaryLogicalOp {
 	public CreateUpdatePredicatePunctuationAO(CreateUpdatePredicatePunctuationAO ao) {
 		super(ao);
 		this.predicateTemplate = ao.getPredicateTemplate();
+		this.targetOperatorNames = ao.getTargetOperatorNames();
 	}
 	
 	@Parameter(name = "predicateTemplate", optional = false, type = StringParameter.class, isList = false, doc = "The new predicate.")
@@ -35,6 +37,15 @@ public class CreateUpdatePredicatePunctuationAO extends UnaryLogicalOp {
 	
 	public String getPredicateTemplate() {
 		return this.predicateTemplate;
+	}
+	
+	public List<String> getTargetOperatorNames() {
+		return targetOperatorNames;
+	}
+
+	@Parameter(type = StringParameter.class, name = "targetOperatorNames", isList = true, optional = false, doc = "A list of operators for which these punctuations are for.")
+	public void setTargetOperatorNames(List<String> targetOperatorNames) {
+		this.targetOperatorNames = targetOperatorNames;
 	}
 
 	@Override

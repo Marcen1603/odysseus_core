@@ -36,10 +36,13 @@ public class UpdateExpressionsPunctuation<T extends ITimeInterval> extends Abstr
 	}
 
 	private Map<String, RelationalExpression<T>> expressionsMap;
+	private List<String> targetOperatorNames;
 
-	public UpdateExpressionsPunctuation(PointInTime p, Map<String, RelationalExpression<T>> expressionsMap) {
+	public UpdateExpressionsPunctuation(PointInTime p, Map<String, RelationalExpression<T>> expressionsMap,
+			List<String> targetOperatorNames) {
 		super(p);
 		this.expressionsMap = expressionsMap;
+		this.targetOperatorNames = targetOperatorNames;
 	}
 
 	private static final long serialVersionUID = -5806607266505236307L;
@@ -59,16 +62,28 @@ public class UpdateExpressionsPunctuation<T extends ITimeInterval> extends Abstr
 
 	@Override
 	public AbstractPunctuation clone() {
-		return new UpdateExpressionsPunctuation<T>(getTime(), this.expressionsMap);
+		return new UpdateExpressionsPunctuation<T>(getTime(), this.expressionsMap, this.targetOperatorNames);
 	}
 
 	@Override
 	public AbstractPunctuation clone(PointInTime newTime) {
-		return new UpdateExpressionsPunctuation<T>(newTime, this.expressionsMap);
+		return new UpdateExpressionsPunctuation<T>(newTime, this.expressionsMap, this.targetOperatorNames);
 	}
 
+	/**
+	 * 
+	 * @return The expressions with their respective attributeName
+	 */
 	public Map<String, RelationalExpression<T>> getExpressions() {
 		return expressionsMap;
+	}
+
+	/**
+	 * 
+	 * @return A list of operators for which these punctuations are for.
+	 */
+	public List<String> getTargetOperatorNames() {
+		return new ArrayList<String>(this.targetOperatorNames);
 	}
 
 }

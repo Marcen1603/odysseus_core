@@ -26,11 +26,11 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends RelationalMa
 
 	public RelationalStateMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
 			IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor, boolean evaluateOnPunctuation,
-			boolean expressionsUpdateable, boolean catchUpdateExpressionsPunctuation, boolean suppressErrors,
+			boolean expressionsUpdateable, boolean suppressErrors,
 			boolean keepInput, int[] restrictList) {
 		// MUST USE THIS WAY, else maxHistoryElements is always 0 :-)
-		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, expressionsUpdateable,
-				catchUpdateExpressionsPunctuation, suppressErrors, keepInput, restrictList);
+		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, expressionsUpdateable, suppressErrors, keepInput,
+				restrictList);
 		history = new GroupedHistoryStore<Tuple<T>>(groupProcessor);
 		init(inputSchema, expressions);
 	}

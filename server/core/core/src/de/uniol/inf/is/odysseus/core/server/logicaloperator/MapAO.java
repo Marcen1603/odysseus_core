@@ -58,7 +58,6 @@ public class MapAO extends UnaryLogicalOp {
 	// Punctuation handling
 	private boolean evaluateOnPunctuation = false;
 	private boolean expressionsUpdateable = false;
-	private boolean catchUpdateExpressionsPunctuation = false;
 
 	public MapAO() {
 		super();
@@ -70,7 +69,6 @@ public class MapAO extends UnaryLogicalOp {
 		this.threads = ao.threads;
 		this.evaluateOnPunctuation = ao.evaluateOnPunctuation;
 		this.expressionsUpdateable = ao.isExpressionsUpdateable();
-		this.catchUpdateExpressionsPunctuation = ao.isCatchUpdateExpressionsPunctuation();
 		this.allowNullValue = ao.allowNullValue;
 		this.suppressErrors = ao.suppressErrors;
 		this.keepInput = ao.keepInput;
@@ -298,15 +296,6 @@ public class MapAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, name = "expressionsUpdateable", optional = true, doc = "If set to true, the expressions can be updated with punctuations Does not work in threaded mode.")
 	public void setExpressionsUpdateable(boolean expressionsUpdateable) {
 		this.expressionsUpdateable = expressionsUpdateable;
-	}
-
-	public boolean isCatchUpdateExpressionsPunctuation() {
-		return catchUpdateExpressionsPunctuation;
-	}
-
-	@Parameter(type = BooleanParameter.class, name = "catchUpdateExpressionsPunctuation", optional = true, doc = "If set to true, puctuations to update the expressions are catchted and not send further.")
-	public void setCatchUpdateExpressionsPunctuation(boolean catchUpdateExpressionsPunctuation) {
-		this.catchUpdateExpressionsPunctuation = catchUpdateExpressionsPunctuation;
 	}
 
 	@Override

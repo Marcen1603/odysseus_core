@@ -41,7 +41,6 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 	private int rate;
 	
 	private boolean predicateIsUpdateable = false;
-	private boolean catchUpdatePredicatePunctuation = false;
 
 	private IPredicate<?> predicate;
 
@@ -54,7 +53,6 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 		this.rate = po.rate;
 		this.predicate = po.predicate.clone();
 		this.predicateIsUpdateable = po.isPredicateIsUpdateable();
-		this.catchUpdatePredicatePunctuation = po.isCatchUpdatePredicatePunctuation();
 	}
 
 	public SelectAO(IPredicate<?> predicate) {
@@ -89,15 +87,6 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 	@Parameter(name = "predicateIsUpdateable", optional = true, type = BooleanParameter.class, isList = false, doc = "If set to true, the predicate of the select can be updated with punctuations.")
 	public void setPredicateIsUpdateable(boolean predicateIsUpdateable) {
 		this.predicateIsUpdateable = predicateIsUpdateable;
-	}
-	
-	public boolean isCatchUpdatePredicatePunctuation() {
-		return catchUpdatePredicatePunctuation;
-	}
-	
-	@Parameter(name = "catchUpdatePredicatePunctuation", optional = true, type = BooleanParameter.class, isList = false, doc = "If set to true, punctuations that update the predicate are catchted and not send to the next operator.")
-	public void setCatchUpdatePredicatePunctuation(boolean catchUpdatePredicatePunctuation) {
-		this.catchUpdatePredicatePunctuation = catchUpdatePredicatePunctuation;
 	}
 
 	@Override
