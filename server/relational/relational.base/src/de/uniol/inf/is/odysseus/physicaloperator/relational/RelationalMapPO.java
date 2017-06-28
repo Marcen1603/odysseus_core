@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.physicaloperator.relational;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.physicaloperator.UpdateExpressionsPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -35,50 +37,80 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class RelationalMapPO<T extends IMetaAttribute> extends
-		AbstractPipe<Tuple<T>, Tuple<T>> {
+public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, Tuple<T>> {
 
-	static private Logger logger = LoggerFactory
-			.getLogger(RelationalMapPO.class);
+	static private Logger logger = LoggerFactory.getLogger(RelationalMapPO.class);
 
 	protected RelationalExpression<T>[] expressions;
 	final private SDFSchema inputSchema;
 	final private boolean keepInput;
-	final private int[] restrictList;
+	// The attributes that are kept in the output
+	final private int[] keepList;
+	// The number of attributes that are kept - used as the offset for the
+	// expressions
+	final private int keepInputLength;
 	final private boolean allowNull;
 	final private boolean suppressErrors;
 
 	final private boolean evaluateOnPunctuation;
+	final private boolean expressionsUpdateable;
+
 	private Tuple<T> lastTuple;
 
 	private boolean requiresDeepClone;
 
-	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions,
-			boolean allowNullInOutput, boolean evaluateOnPunctuation,
-			boolean suppressErrors, boolean keepInput, int[] restrictList) {
+	public RelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
+			boolean evaluateOnPunctuation, boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput,
+			int[] keepList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+
+		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.expressionsUpdateable = expressionsUpdateable;
+
 		this.suppressErrors = suppressErrors;
 		init(inputSchema, expressions);
 		requiresDeepClone = false;
-		for (int i=0;i<expressions.length;i++){
+		for (int i = 0; i < expressions.length; i++) {
 			if (this.expressions[i].getType().requiresDeepClone()) {
 				requiresDeepClone = true;
 			}
 		}
 		this.keepInput = keepInput;
-		this.restrictList = restrictList;
+		this.keepList = keepList;
+
+		/*
+		 * If we want to keep the input, the length is the length of the
+		 * keepList. But in case the keepList is null, we want to keep
+		 * everything -> then the length is defined by the length of the input
+		 * schema
+		 */
+		this.keepInputLength = this.keepInput ? this.keepList != null ? this.keepList.length : this.inputSchema.size()
+				: 0;
 	}
 
-	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput,
-			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
+	protected RelationalMapPO(SDFSchema inputSchema, boolean allowNullInOutput, boolean evaluateOnPunctuation,
+			boolean expressionsUpdateable, boolean suppressErrors, boolean keepInput, int[] restrictList) {
 		this.inputSchema = inputSchema;
 		this.allowNull = allowNullInOutput;
+
+		// Punctuation handling
 		this.evaluateOnPunctuation = evaluateOnPunctuation;
+		this.expressionsUpdateable = expressionsUpdateable;
+
 		this.suppressErrors = suppressErrors;
 		this.keepInput = keepInput;
-		this.restrictList = restrictList;
+		this.keepList = restrictList;
+
+		/*
+		 * If we want to keep the input, the length is the length of the
+		 * keepList. But in case the keepList is null, we want to keep
+		 * everything -> then the length is defined by the length of the input
+		 * schema
+		 */
+		this.keepInputLength = this.keepInput ? this.keepList != null ? this.keepList.length : this.inputSchema.size()
+				: 0;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,7 +127,8 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@Override public boolean deliversStoredElement(int outputPort) {
+	@Override
+	public boolean deliversStoredElement(int outputPort) {
 		return false;
 	}
 
@@ -111,40 +144,33 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 
 		synchronized (this.expressions) {
 
-			final int offset;
-			if (keepInput){
-				if (restrictList == null){
-					offset = getInputSchema().size();
+			if (this.keepInput) {
+				// If we want to keep all input values, the keepList is null
+				if (this.keepList == null) {
 					outputVal.setAttributes(object);
-				}else{
-					offset = restrictList.length;
-					outputVal.setAttributes(object.restrict(restrictList, true));
+				} else {
+					outputVal.setAttributes(object.restrict(this.keepList, true));
 				}
-			}else{
-				offset = 0;
 			}
 
+			// Evaluate all expressions and add the results to the output tuple
 			for (int i = 0; i < this.expressions.length; ++i) {
 
 				try {
 					Object expr = this.expressions[i].evaluate(object, getSessions(), preProcessResult);
 
-					outputVal.setAttribute(offset+i, expr);
+					outputVal.setAttribute(this.keepInputLength + i, expr);
 					if (expr == null) {
 						nullValueOccured = true;
 					}
-
-
 				} catch (Exception e) {
 					nullValueOccured = true;
 					if (!suppressErrors) {
 						if (!(e instanceof NullPointerException)) {
-							logger.warn("Cannot calc result for " + object
-									+ " with expression " + expressions[i], e);
+							logger.warn("Cannot calc result for " + object + " with expression " + expressions[i], e);
 							// Not needed. Value is null, if not set!
 							// outputVal.setAttribute(i, null);
-							sendWarning("Cannot calc result for " + object
-									+ " with expression " + expressions[i], e);
+							sendWarning("Cannot calc result for " + object + " with expression " + expressions[i], e);
 						}
 					}
 				}
@@ -162,20 +188,60 @@ public class RelationalMapPO<T extends IMetaAttribute> extends
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+
+		/*
+		 * (1) Expressions can be updated with punctuations, (2) this is a
+		 * punctuation to update the expressions and (3) this operator is in the
+		 * list with the targets for this punctuation
+		 */
+		if (this.expressionsUpdateable && punctuation instanceof UpdateExpressionsPunctuation
+				&& ((UpdateExpressionsPunctuation) punctuation).getTargetOperatorNames().contains(this.getName())) {
+			// Set new expressions
+			UpdateExpressionsPunctuation updateExpressionsPuctuation = (UpdateExpressionsPunctuation) punctuation;
+			setNewExpressions(updateExpressionsPuctuation.getExpressions());
+
+			// Initialize all expressions
+			for (int i = 0; i < this.expressions.length; i++) {
+				this.expressions[i].initVars(this.getOutputSchema());
+			}
+		}
+
 		// TODO: By this, we make it implicit interval approach...
 		// Maybe we should move this to another bundle?
 		if (evaluateOnPunctuation) {
 			if (lastTuple == null) {
 				lastTuple = new Tuple(expressions.length, false);
-				lastTuple.setMetadata((T) new TimeInterval(punctuation
-						.getTime()));
+				lastTuple.setMetadata((T) new TimeInterval(punctuation.getTime()));
 			} else {
-				((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(
-						punctuation.getTime(), PointInTime.getInfinityTime());
+				((ITimeInterval) lastTuple.getMetadata()).setStartAndEnd(punctuation.getTime(),
+						PointInTime.getInfinityTime());
 			}
 			process_next(lastTuple, port);
 		}
+
+		// Always send the punctuation to the next operator(s)
 		sendPunctuation(punctuation, port);
+	}
+
+	/**
+	 * Sets all expressions which are given in the punctuation and have a name
+	 * that also existed in the previous output-schema.
+	 * 
+	 * @param newExpressions
+	 *            The map with the new expressions that are given by the
+	 *            punctuation
+	 */
+	private void setNewExpressions(Map<String, RelationalExpression<T>> newExpressions) {
+		for (String key : newExpressions.keySet()) {
+			// Check, if this attribute already exists
+			int index = this.getOutputSchema().findAttributeIndex(key);
+			if (index >= 0) {
+				// The attribute exists
+				this.expressions[index - this.keepInputLength] = newExpressions.get(key);
+				// The new expression needs to be initialized
+				this.expressions[index - this.keepInputLength].initVars(this.inputSchema);
+			}
+		}
 	}
 
 	@Override
