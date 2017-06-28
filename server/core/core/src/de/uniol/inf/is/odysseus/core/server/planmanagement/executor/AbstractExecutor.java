@@ -1293,7 +1293,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		ITenant tenantObj = UserManagementProvider.getDefaultTenant();
+		ITenant tenantObj = UserManagementProvider.instance.getDefaultTenant();
 		return UserManagementProvider.getSessionmanagement().login(username, password, tenantObj);
 	}
 

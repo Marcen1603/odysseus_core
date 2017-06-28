@@ -35,7 +35,7 @@ public class UsageStatisticCollector {
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

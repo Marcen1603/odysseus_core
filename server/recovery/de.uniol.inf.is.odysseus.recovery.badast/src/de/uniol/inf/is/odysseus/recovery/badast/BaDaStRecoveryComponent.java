@@ -107,7 +107,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 			}
 		} else if (operator instanceof StreamAO) {
 			List<ILogicalOperator> operators = OperatorCollector
-					.collect(DataDictionaryProvider.getDataDictionary(UserManagementProvider.getDefaultTenant())
+					.collect(DataDictionaryProvider.getDataDictionary(UserManagementProvider.instance.getDefaultTenant())
 							.getStreamForTransformation(((StreamAO) operator).getStreamname(), getSession()));
 			new LogicalGraphWalker(operators).walk(op -> walkingStep(op, recordedSources, recovery));
 		}

@@ -88,7 +88,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 
 	@Override
 	public ISession loginSuperUser(Object secret) {
-		return loginSuperUser(secret, UserManagementProvider.getDefaultTenant().getName());
+		return loginSuperUser(secret, UserManagementProvider.instance.getDefaultTenant().getName());
 	}
 	
 

@@ -114,7 +114,7 @@ public class DistributedDataSourceManager
 
 	@Override
 	public void distributedDataManagerStarted(IDistributedDataManager sender) {
-		ITenant tenant = UserManagementProvider.getDefaultTenant();
+		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
 		DataDictionaryProvider.subscribe(tenant, this);
 
 		IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
@@ -327,7 +327,7 @@ public class DistributedDataSourceManager
 	private static ISession getActiveSession() {
 		if (currentSession == null || !currentSession.isValid()) {
 			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
-					UserManagementProvider.getDefaultTenant().getName());
+					UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

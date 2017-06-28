@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class UserManagementProvider {
 
-	private static UserManagementProvider instance;
+	public static UserManagementProvider instance;
 
 	static Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);
 
@@ -39,6 +39,7 @@ public class UserManagementProvider {
 
 	private static String defaultTenantName = "";
 	
+	// by OSGI
 	public UserManagementProvider() {
 		instance = this;
 	}
@@ -46,7 +47,7 @@ public class UserManagementProvider {
 	private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 	
 
-	static synchronized public ITenant getDefaultTenant() {
+	synchronized public ITenant getDefaultTenant() {
 		return getTenant(defaultTenantName);
 	}
 
