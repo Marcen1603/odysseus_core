@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2014 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +15,19 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
+import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public class ProbabilisticRelationalPredicateBuilder implements IPredicateBuilder {
+public class ProbabilisticRelationalPredicateBuilder implements IExpressionBuilder {
 
     @Override
     public IPredicate<?> createPredicate(final IAttributeResolver resolver, final String predicate) {
@@ -35,4 +36,9 @@ public class ProbabilisticRelationalPredicateBuilder implements IPredicateBuilde
         return pred;
     }
 
+	@Override
+	public IExpression createExpression(IAttributeResolver resolver, String expression) {
+		// FIXME: Implement method
+		throw new UnsupportedOperationException();
+	}
 }

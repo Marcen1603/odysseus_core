@@ -13,26 +13,16 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
   */
-package de.uniol.inf.is.odysseus.parser.pql.priority;
+package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
 
-public class PriorityPredicateBuilder implements IExpressionBuilder {
+public interface IExpressionBuilder {
+	public IExpression createExpression(IAttributeResolver resolver,
+			String expression);
 
-	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,
-			String predicate) {
-		return new PriorityPredicate();
-	}
-
-	@Override
-	public IExpression createExpression(IAttributeResolver resolver, String expression) {
-		// FIXME: Implement method
-		throw new UnsupportedOperationException();
-	}
-
-
+			String predicate);
 }

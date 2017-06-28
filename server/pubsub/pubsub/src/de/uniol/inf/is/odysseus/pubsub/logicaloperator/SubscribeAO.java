@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicates;
@@ -100,7 +100,7 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		// Convert Predicate strings to predicates
 		IAttributeResolver attributeResolver = new DirectAttributeResolver(
 				getOutputSchemaIntern(0));
-		IPredicateBuilder predicateBuilder = OperatorBuilderFactory
+		IExpressionBuilder predicateBuilder = OperatorBuilderFactory
 				.getPredicateBuilder(predicateType);
 
 		if (predicateBuilder == null) {

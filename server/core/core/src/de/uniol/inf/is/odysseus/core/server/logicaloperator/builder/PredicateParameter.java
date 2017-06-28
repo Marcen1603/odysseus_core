@@ -50,7 +50,7 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 			setValue((IPredicate<?>)inputValue);
 			return;
 		}
-		IPredicateBuilder pBuilder = OperatorBuilderFactory
+		IExpressionBuilder pBuilder = OperatorBuilderFactory
 				.getPredicateBuilder(predicateType);
 
 		if (pBuilder == null) {

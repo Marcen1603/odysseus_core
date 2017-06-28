@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
-	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
+	private static Map<String, IExpressionBuilder> predicateBuilders = new HashMap<String, IExpressionBuilder>();
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
@@ -67,7 +67,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	}
 
 	public static void putPredicateBuilder(String identifier,
-			IPredicateBuilder builder) {
+			IExpressionBuilder builder) {
 		identifier = identifier.toUpperCase();
 		if (predicateBuilders.containsKey(identifier)) {
 			throw new IllegalArgumentException(
@@ -82,7 +82,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		predicateBuilders.remove(identifier);
 	}
 
-	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
+	public static IExpressionBuilder getPredicateBuilder(String predicateType) {
 		predicateType = predicateType.toUpperCase();
 		return predicateBuilders.get(predicateType);
 	}

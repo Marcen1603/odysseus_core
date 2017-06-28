@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,21 +15,27 @@
  */
 package de.uniol.inf.is.odysseus.parser.pql.relational;
 
+import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
-public class RelationalPredicateBuilder implements IPredicateBuilder {
+public class RelationalPredicateBuilder implements IExpressionBuilder {
 
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,
 			String predicate) {
-		SDFExpression expression = new SDFExpression("", predicate, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		RelationalExpression<?> pred = new RelationalExpression<>(expression);
+		return (IPredicate<?>) createExpression(resolver, predicate);
+	}
+
+	@Override
+	public IExpression createExpression(IAttributeResolver resolver, String expression) {
+		SDFExpression expression1 = new SDFExpression("", expression, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
+		RelationalExpression<?> pred = new RelationalExpression<>(expression1);
 		pred.initVars(resolver.getSchema());
 		return pred;
 	}
