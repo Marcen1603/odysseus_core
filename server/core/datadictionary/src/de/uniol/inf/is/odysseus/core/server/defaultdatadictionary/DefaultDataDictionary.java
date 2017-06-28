@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
@@ -49,16 +51,16 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	}
 
 	public DefaultDataDictionary(){
-		super(null);
+		super(null, null);
 	}
 
-	public DefaultDataDictionary(ITenant t){
-		super(t);
+	public DefaultDataDictionary(ITenant t, UserManagementProvider ump){
+		super(t, ump);
 	}
 
 	@Override
 	public IDataDictionary createInstance(ITenant t) {
-		IDataDictionary dd = new DefaultDataDictionary(t);
+		IDataDictionary dd = new DefaultDataDictionary(t, OSGI.get(UserManagementProvider.class));
 		return dd;
 	}
 
