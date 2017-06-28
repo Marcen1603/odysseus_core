@@ -35,7 +35,7 @@ public class Session extends AbstractSession implements ISession {
 
 
 	@SuppressWarnings("unused")
-	private final static long SESSION_TIMEOUT = OdysseusConfiguration.getLong(
+	private final static long SESSION_TIMEOUT = OdysseusConfiguration.instance.getLong(
 			"sessionTimeout", 10 * 60000);
 	
 	

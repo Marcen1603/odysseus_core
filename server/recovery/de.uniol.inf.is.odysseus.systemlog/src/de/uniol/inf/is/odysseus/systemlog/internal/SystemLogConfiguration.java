@@ -84,7 +84,7 @@ public class SystemLogConfiguration {
 	 *         value.
 	 */
 	public static long getThreshold() {
-		String property = OdysseusConfiguration.get("systemlogThresholdMilliseconds");
+		String property = OdysseusConfiguration.instance.get("systemlogThresholdMilliseconds");
 		if (property != null) {
 			return Long.parseLong(property);
 		}

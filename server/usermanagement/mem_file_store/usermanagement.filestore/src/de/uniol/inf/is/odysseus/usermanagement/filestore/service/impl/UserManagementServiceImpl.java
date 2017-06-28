@@ -90,7 +90,7 @@ public class UserManagementServiceImpl extends
 
 	@Override
 	public String getType() {
-		if (OdysseusConfiguration.get("StoretypeUserMgmt").equalsIgnoreCase(
+		if (OdysseusConfiguration.instance.get("StoretypeUserMgmt").equalsIgnoreCase(
 				"Filestore")) {
 			return "Filestore";
 		} else {

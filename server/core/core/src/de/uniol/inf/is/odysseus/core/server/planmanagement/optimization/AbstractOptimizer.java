@@ -211,7 +211,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 
 	protected IElementCloningUpdater getElementCloningUpdater() {
-		String updater = OdysseusConfiguration.get(OdysseusConfiguration.CLONING_UPDATER).toLowerCase();
+		String updater = OdysseusConfiguration.instance.get(OdysseusConfiguration.CLONING_UPDATER).toLowerCase();
 		
 		IElementCloningUpdater ret = cloningUpdater.get(updater);
 		

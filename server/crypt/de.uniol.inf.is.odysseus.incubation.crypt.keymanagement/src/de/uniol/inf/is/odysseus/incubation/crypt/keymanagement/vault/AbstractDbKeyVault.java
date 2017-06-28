@@ -58,16 +58,16 @@ public abstract class AbstractDbKeyVault {
 			break;
 		}
 		IDatabaseConnectionFactory factory = DatabaseConnectionDictionary.getFactory(type);
-		IDatabaseConnection dbconn = factory.createConnection(OdysseusConfiguration.get(vault + "server"),
-				Integer.parseInt(OdysseusConfiguration.get(vault + "port")),
-				OdysseusConfiguration.get(vault + "database"), OdysseusConfiguration.get(vault + "user"),
-				OdysseusConfiguration.get(vault + "password"));
+		IDatabaseConnection dbconn = factory.createConnection(OdysseusConfiguration.instance.get(vault + "server"),
+				Integer.parseInt(OdysseusConfiguration.instance.get(vault + "port")),
+				OdysseusConfiguration.instance.get(vault + "database"), OdysseusConfiguration.instance.get(vault + "user"),
+				OdysseusConfiguration.instance.get(vault + "password"));
 		try {
 			this.conn = dbconn.getConnection();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.keyTableName = OdysseusConfiguration.get(vault + "keyTableName");
+		this.keyTableName = OdysseusConfiguration.instance.get(vault + "keyTableName");
 
 	}
 }

@@ -105,7 +105,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = FileUtils.openOrCreateFile(OdysseusConfiguration
+				File f = FileUtils.openOrCreateFile(OdysseusConfiguration.instance
 						.get("schedulingConfigFile"));
 				FileInputStream in;
 				in = new FileInputStream(f);
@@ -122,7 +122,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					FileOutputStream out;
 					try {
 						out = new FileOutputStream(
-								OdysseusConfiguration
+								OdysseusConfiguration.instance
 										.get("schedulingConfigFile"));
 						props.store(out,
 								"--- Scheduling Property File edit only if you know what you are doing ---");

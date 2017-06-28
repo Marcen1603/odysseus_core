@@ -80,17 +80,17 @@ public class UserManagementProvider {
 		if (wait) {
 			return waitForUsermanagement();
 		} else {
-			return instance.usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
+			return instance.usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
 		}
 	}
 
 	synchronized private IUserManagement waitForUsermanagement() {
-		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
+		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
 		while (ret == null) {
 			try {
 				UserManagementProvider.class.wait(1000);
-				logger.debug("Waiting for UserManagement " + OdysseusConfiguration.get("StoretypeUserMgmt"));
-				ret = usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
+				logger.debug("Waiting for UserManagement " + OdysseusConfiguration.instance.get("StoretypeUserMgmt"));
+				ret = usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
 			} catch (InterruptedException e) {
 			}
 		}

@@ -315,7 +315,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 				.get(schedulingStrategy);
 		if (sf != null && ssf != null) {
 			// create the new scheduler
-			int executorThreadsCount = (int) OdysseusConfiguration.getLong(
+			int executorThreadsCount = (int) OdysseusConfiguration.instance.getLong(
 					"scheduler_simpleThreadScheduler_executorThreadsCount", -1);
 			if (executorThreadsCount <= 0) {
 				executorThreadsCount = Runtime.getRuntime()

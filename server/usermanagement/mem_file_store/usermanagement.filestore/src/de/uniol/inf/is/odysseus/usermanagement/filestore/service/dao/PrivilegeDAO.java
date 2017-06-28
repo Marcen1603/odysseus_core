@@ -36,10 +36,10 @@ public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {
 			throws IOException {
 		PrivilegeDAO dao = daos.get(tenant);
 		if (dao == null) {
-			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+			if (OdysseusConfiguration.instance.get("StoretypeUserMgmt")
 					.equalsIgnoreCase("Filestore")) {
 				dao = new PrivilegeDAO(new FileStore<String, Privilege>(
-						OdysseusConfiguration.getFileProperty(
+						OdysseusConfiguration.instance.getFileProperty(
 								"privilegStoreFilename", tenant.getName())),
 						new ArrayList<Privilege>());
 			} else {

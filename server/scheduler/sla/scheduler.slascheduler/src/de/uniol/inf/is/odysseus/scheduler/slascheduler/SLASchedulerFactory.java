@@ -71,14 +71,14 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			@SuppressWarnings("rawtypes")
 			Dictionary properties = context.getProperties();
 			// get settings
-			this.starvationFreedomFuncName = OdysseusConfiguration.get("sla_starvationFreedomFuncName");
+			this.starvationFreedomFuncName = OdysseusConfiguration.instance.get("sla_starvationFreedomFuncName");
 			this.prio = new PriorityFunctionFactory()
-					.buildPriorityFunction(OdysseusConfiguration
+					.buildPriorityFunction(OdysseusConfiguration.instance
 							.get("sla_prioFuncName"));
-			this.decaySF = Float.parseFloat(OdysseusConfiguration.get("sla_starvationFreedomDecay"));
-			this.querySharing = Boolean.parseBoolean(OdysseusConfiguration.get("sla_querySharing"));
-			this.querySharingCostModelName = OdysseusConfiguration.get("sla_querySharingCostModel");
-			this.costFunctionName = OdysseusConfiguration.get("sla_costFunctionName");
+			this.decaySF = Float.parseFloat(OdysseusConfiguration.instance.get("sla_starvationFreedomDecay"));
+			this.querySharing = Boolean.parseBoolean(OdysseusConfiguration.instance.get("sla_querySharing"));
+			this.querySharingCostModelName = OdysseusConfiguration.instance.get("sla_querySharingCostModel");
+			this.costFunctionName = OdysseusConfiguration.instance.get("sla_costFunctionName");
 			super.setName(properties);
 		} catch (Exception e) {
 			e.printStackTrace();

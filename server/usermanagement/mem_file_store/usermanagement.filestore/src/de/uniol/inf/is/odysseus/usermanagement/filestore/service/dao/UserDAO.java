@@ -35,10 +35,10 @@ public class UserDAO extends AbstractStoreDAO<User>{
 	static synchronized public UserDAO getInstance(ITenant tenant) throws IOException{
 		UserDAO dao = userDAOs.get(tenant);
 		if (dao == null){
-			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+			if (OdysseusConfiguration.instance.get("StoretypeUserMgmt")
 					.equalsIgnoreCase("Filestore")) {
 				dao = new UserDAO(new FileStore<String, User>(
-						OdysseusConfiguration.getFileProperty(
+						OdysseusConfiguration.instance.getFileProperty(
 								"userStoreFilename", tenant.getName())),
 						new ArrayList<User>());
 			} else {

@@ -51,7 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.IScheduli
  */
 abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler implements UncaughtExceptionHandler, IPlanModificationListener {
 
-	private volatile int trainSize = (int) OdysseusConfiguration.getLong("scheduler_trainSize", 1);
+	private volatile int trainSize = (int) OdysseusConfiguration.instance.getLong("scheduler_trainSize", 1);
 
 	Logger logger = LoggerFactory.getLogger(AbstractSimpleThreadScheduler.class);
 	final IPhysicalQueryScheduling[] planScheduling;

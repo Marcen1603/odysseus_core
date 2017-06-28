@@ -32,6 +32,11 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class OdysseusConfiguration {
+	/**
+	 * use osgi injection instead
+	 */
+	@Deprecated
+	public static OdysseusConfiguration instance;
 
 	public static final String CLONING_UPDATER = "CloningUpdater";
 	public static final String DEFAULT_UPDATE_SITE = "Update.DefaultUpdateSite";
@@ -45,9 +50,9 @@ public class OdysseusConfiguration {
 		return _logger;
 	}
 
-	static Properties props = new Properties();
+	private final Properties props = new Properties();
 
-	static {
+	public OdysseusConfiguration() {
 		try {
 			loadProperties(OdysseusBaseConfiguration.getHomeDir(), "odysseus.conf", props);
 		} catch (FileNotFoundException e) {
@@ -57,7 +62,7 @@ public class OdysseusConfiguration {
 		}
 	}
 
-	private static void loadProperties(String odysseusHome, String filename, Properties properties)
+	private void loadProperties(String odysseusHome, String filename, Properties properties)
 			throws IOException, FileNotFoundException {
 		// If there are new properties, load defaults and overwrite with
 		// file-properties
@@ -88,7 +93,7 @@ public class OdysseusConfiguration {
 		savePropertyFile(odysseusHome);
 	}
 
-	private static void setDefaults(String odysseusHome) {
+	private void setDefaults(String odysseusHome) {
 		props.setProperty("odysseusHome", odysseusHome);
 
 		props.setProperty("StoretypeUserMgmt", "Memorystore");
@@ -117,12 +122,10 @@ public class OdysseusConfiguration {
 		props.setProperty("queriesBuildParamFilename", "queriesBuildParam.store");
 
 		props.setProperty("storedProceduresFilename", "procedures.store");
-		props.setProperty("storedProceduresFromUserFilename",
-				"proceduresUser.store");
+		props.setProperty("storedProceduresFromUserFilename", "proceduresUser.store");
 
 		props.setProperty("storesFilename", "stores.store");
-		props.setProperty("storesFromUserFilename",
-				"storesUser.store");
+		props.setProperty("storesFromUserFilename", "storesUser.store");
 
 		props.setProperty("datatypesFromDatatypesFilename", "datatypes.store");
 
@@ -252,7 +255,7 @@ public class OdysseusConfiguration {
 		props.setProperty("crypt.symKeyVault.keyTableName", "SYMKEYS");
 	}
 
-	private static void savePropertyFile(String odysseusHome) {
+	private void savePropertyFile(String odysseusHome) {
 		FileOutputStream out;
 		try {
 			out = new FileOutputStream(odysseusHome + "odysseus.conf");
@@ -264,11 +267,11 @@ public class OdysseusConfiguration {
 		}
 	}
 
-	public static boolean exists(String key) {
+	public boolean exists(String key) {
 		return props.getProperty(key) != null;
 	}
 
-	public static String get(String key) {
+	public String get(String key) {
 		String ret = props.getProperty(key);
 		if (ret == null) {
 			getLogger().warn("Try to get a property that is not registered " + key);
@@ -276,7 +279,7 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
-	public static String get(String key, String defaultValue) {
+	public String get(String key, String defaultValue) {
 		String ret = props.getProperty(key);
 		if (ret == null) {
 			return defaultValue;
@@ -284,19 +287,18 @@ public class OdysseusConfiguration {
 		return ret;
 	}
 
-	public static String getFileProperty(String key, String tenantName) {
+	public String getFileProperty(String key, String tenantName) {
 		String home = getHomeDir();
 		if (!home.endsWith(File.separator)) {
 			home = home + File.separator;
 		}
 		if (tenantName != null && tenantName.length() > 0) {
-			return home + "store"
-					+ File.separator + tenantName + File.separator + get(key);
+			return home + "store" + File.separator + tenantName + File.separator + get(key);
 		}
-		return home + "store" + File.separator +"_default"+ File.separator+ get(key);
+		return home + "store" + File.separator + "_default" + File.separator + get(key);
 	}
 
-	public static String getFileProperty(String key) {
+	public String getFileProperty(String key) {
 		String home = getHomeDir();
 		if (!home.endsWith(File.separator)) {
 			home = home + File.separator;
@@ -304,17 +306,17 @@ public class OdysseusConfiguration {
 		return home + "store" + File.separator + get(key);
 	}
 
-	public static long getLong(String key, long defaultValue) {
+	public long getLong(String key, long defaultValue) {
 		String val = props.getProperty(key);
 		return val != null ? Long.parseLong(val) : defaultValue;
 	}
 
-	public static double getDouble(String key, double defaultValue) {
+	public double getDouble(String key, double defaultValue) {
 		String val = props.getProperty(key);
 		return val != null ? Double.parseDouble(val) : defaultValue;
 	}
 
-	public static int getInt(String key, int defaultValue) {
+	public int getInt(String key, int defaultValue) {
 		String val = props.getProperty(key);
 		try {
 			return val != null ? Integer.parseInt(val) : defaultValue;
@@ -324,7 +326,7 @@ public class OdysseusConfiguration {
 		}
 	}
 
-	public static boolean getBoolean(String key) {
+	public boolean getBoolean(String key) {
 		String val = props.getProperty(key);
 		if (val != null) {
 			return Boolean.parseBoolean(val);
@@ -332,7 +334,7 @@ public class OdysseusConfiguration {
 		return false;
 	}
 
-	public static boolean getBoolean(String key, boolean defaultValue) {
+	public boolean getBoolean(String key, boolean defaultValue) {
 		try {
 			String val = props.getProperty(key);
 			if (val != null) {
@@ -343,13 +345,13 @@ public class OdysseusConfiguration {
 		return defaultValue;
 	}
 
-	public static void set(String key, String value, boolean permanent, ISession caller) {
+	public void set(String key, String value, boolean permanent, ISession caller) {
 
-		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
+		if (userManagementProvider.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
 				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
+				if (userManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
 						ConfigurationPermission.SAVE_PARAM, ConfigurationPermission.objectURI)) {
 					savePropertyFile(getHomeDir());
 				} else {
@@ -364,6 +366,16 @@ public class OdysseusConfiguration {
 
 	public static String getHomeDir() {
 		return OdysseusBaseConfiguration.getHomeDir();
+	}
+
+	public void setInstance() {
+		instance = this;
+	}
+
+	private UserManagementProvider userManagementProvider;
+
+	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
+		this.userManagementProvider = userManagementProvider;
 	}
 
 }

@@ -41,11 +41,11 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	private static Logger LOG = LoggerFactory.getLogger(DefaultDataDictionary.class);
 
 	static private boolean useFilestore(){
-		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
+		return OdysseusConfiguration.instance.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
 	}
 
 	static private boolean saveQueries(){
-		return OdysseusConfiguration.getBoolean("Filestore.StoreQueries");
+		return OdysseusConfiguration.instance.getBoolean("Filestore.StoreQueries");
 	}
 
 	public DefaultDataDictionary(){
@@ -158,7 +158,7 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key, ITenant tenant){
 		try {
-			return new FileStore<T, U>(OdysseusConfiguration.getFileProperty(key,tenant.getName()));
+			return new FileStore<T, U>(OdysseusConfiguration.instance.getFileProperty(key,tenant.getName()));
 		} catch (IOException e) {
 			LOG.error("Could not create fileStore-Instance for key " + key, e);
 			return null;

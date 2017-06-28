@@ -60,7 +60,7 @@ public class FeatureUpdateUtility {
 
 	static {
 		try {
-			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
+			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.instance.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
 					"http://odysseus.informatik.uni-oldenburg.de/update/"));
 		} catch (final URISyntaxException e) {
 			LOG.error("URI invalid: " + e.getMessage());

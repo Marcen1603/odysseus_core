@@ -66,7 +66,7 @@ public class STSchedulerFactoryMS_RR_LimitSourcesPThread extends
 		for (int i = 0; i < scheduling.length; i++) {
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
-		long sourcesPerThread = OdysseusConfiguration.getLong(
+		long sourcesPerThread = OdysseusConfiguration.instance.getLong(
 				"Scheduler.Simplethreaded.SourcesPerThread", -1);
 		return new SimpleThreadSchedulerMSLimitSourcesPerThread(
 				schedulingStrategy, scheduling, sourcesPerThread);

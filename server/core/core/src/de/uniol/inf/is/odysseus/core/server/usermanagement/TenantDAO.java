@@ -23,7 +23,7 @@ public class TenantDAO extends AbstractStoreDAO<ITenant> {
 				dao = new TenantDAO();
 				if (dao.findAll().isEmpty()){
 					ITenant t = new Tenant();
-					t.setName(OdysseusConfiguration.get("Tenant.DefaultName"));
+					t.setName(OdysseusConfiguration.instance.get("Tenant.DefaultName"));
 					dao.create(t);
 					
 					//TODO: REMOVE ME (Only for Debugging)
@@ -52,7 +52,7 @@ public class TenantDAO extends AbstractStoreDAO<ITenant> {
 	}
 	
 	TenantDAO() throws IOException {
-		super(new FileStore<String, ITenant>(OdysseusConfiguration.getFileProperty("tenantStoreFilename")), new ArrayList<ITenant>());
+		super(new FileStore<String, ITenant>(OdysseusConfiguration.instance.getFileProperty("tenantStoreFilename")), new ArrayList<ITenant>());
 	}
 
 }

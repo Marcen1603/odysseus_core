@@ -120,7 +120,7 @@ public class OdysseusNetConfiguration {
 		Object value = properties.get(key);
 		if( value == null ) {
 			// backwards compatible
-			value = OdysseusConfiguration.get(key);
+			value = OdysseusConfiguration.instance.get(key);
 
 			if( value != null ) {
 				set(key, (String)value);

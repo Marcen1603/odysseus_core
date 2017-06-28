@@ -57,7 +57,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.getLong("scheduler_TimeSlicePerStrategy", 10);
+	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.instance.getLong("scheduler_TimeSlicePerStrategy", 10);
 
 	/**
 	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
@@ -76,10 +76,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	private SchedulingEvent schedulingStopped = new SchedulingEvent(this, SchedulingEventType.SCHEDULING_STOPPED, "");
 
 	// ---- Evaluations ----
-	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration.get("debug_Scheduler"));
+	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration.instance.get("debug_Scheduler"));
 
 	FileWriter file;
-	final long limitDebug = OdysseusConfiguration.getLong("debug_Scheduler_maxLines", 1048476);
+	final long limitDebug = OdysseusConfiguration.instance.getLong("debug_Scheduler_maxLines", 1048476);
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
@@ -188,7 +188,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		if (outputDebug) {
 			try {
 				file = new FileWriter(
-						OdysseusConfiguration.getHomeDir() + OdysseusConfiguration.get("scheduler_DebugFileName") + "_"
+						OdysseusConfiguration.getHomeDir() + OdysseusConfiguration.instance.get("scheduler_DebugFileName") + "_"
 								+ System.currentTimeMillis() + ".csv");
 				file.write(
 						"Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");

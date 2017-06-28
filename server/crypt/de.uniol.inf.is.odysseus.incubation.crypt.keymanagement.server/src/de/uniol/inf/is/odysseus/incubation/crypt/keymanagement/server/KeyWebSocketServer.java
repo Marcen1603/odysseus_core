@@ -58,8 +58,8 @@ public class KeyWebSocketServer extends WebSocketServer {
 	 */
 	public static KeyWebSocketServer getInstance() {
 		if (instance == null) {
-			instance = new KeyWebSocketServer(new InetSocketAddress(OdysseusConfiguration.get("crypt.server.hostname"),
-					Integer.parseInt(OdysseusConfiguration.get("crypt.server.port"))));
+			instance = new KeyWebSocketServer(new InetSocketAddress(OdysseusConfiguration.instance.get("crypt.server.hostname"),
+					Integer.parseInt(OdysseusConfiguration.instance.get("crypt.server.port"))));
 		}
 		return instance;
 	}

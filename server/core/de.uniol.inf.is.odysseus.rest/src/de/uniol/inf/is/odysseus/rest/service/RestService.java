@@ -50,8 +50,8 @@ public class RestService {
 	}
 
 	public static void start() throws Exception {
-		int webServicePort = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"))+10;
-		int maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
+		int webServicePort = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.Port"))+10;
+		int maxPort = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.MaxPort"));
 		while (webServicePort <= maxPort ){
 			try {
 				component.getServers().clear();

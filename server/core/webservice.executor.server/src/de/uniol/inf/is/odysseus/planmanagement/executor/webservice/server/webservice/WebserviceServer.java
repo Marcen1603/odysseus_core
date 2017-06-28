@@ -142,9 +142,9 @@ public class WebserviceServer {
 
 	static final private Logger logger = LoggerFactory.getLogger(WebserviceServer.class);
 
-	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.minport",
+	private static final int SINK_MIN_PORT = OdysseusConfiguration.instance.getInt("webservice.queryconnect.sink.minport",
 			10000);
-	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.maxport",
+	private static final int SINK_MAX_PORT = OdysseusConfiguration.instance.getInt("webservice.queryconnect.sink.maxport",
 			20000);;
 
 	/**
@@ -594,8 +594,8 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues) throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true,
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true,
 				sslClientAuthentication, true);
 	}
 
@@ -604,8 +604,8 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues) throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
 	}
 
 	public ConnectionInformationResponse getConnectionInformationWithMetadata(
@@ -614,8 +614,8 @@ public class WebserviceServer {
 					throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, false, false,
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, false, false,
 				withMetadata);
 	}
 
