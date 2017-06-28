@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
@@ -347,11 +348,13 @@ public class OdysseusConfiguration {
 
 	public void set(String key, String value, boolean permanent, ISession caller) {
 
+		UserManagementProvider userManagementProvider = OSGI.get(UserManagementProvider.class);
+
 		if (userManagementProvider.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
 				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (userManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
+				if (userManagementProvider.getUsermanagement(true).hasPermission(caller,
 						ConfigurationPermission.SAVE_PARAM, ConfigurationPermission.objectURI)) {
 					savePropertyFile(getHomeDir());
 				} else {
@@ -370,12 +373,6 @@ public class OdysseusConfiguration {
 
 	public void setInstance() {
 		instance = this;
-	}
-
-	private UserManagementProvider userManagementProvider;
-
-	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
-		this.userManagementProvider = userManagementProvider;
 	}
 
 }

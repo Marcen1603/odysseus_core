@@ -36,10 +36,7 @@ public class UserManagementProvider {
 
 	static Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);
 
-	// Preload daos
-	@SuppressWarnings("unused")
-	static private TenantDAO dao = TenantDAO.getInstance();
-
+	
 	private static String defaultTenantName = "";
 
 	private Map<String, IUserManagement> usrMgmt = new HashMap<>();

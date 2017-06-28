@@ -19,5 +19,4 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration"/>
    </service>
-   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="static"/>
 </scr:component>

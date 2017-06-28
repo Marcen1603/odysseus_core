@@ -31,10 +31,10 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privileg
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
-public class UserManagementServiceImpl extends
-		AbstractUserManagement<User, Role, Privilege> {
+public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
 
 	ISessionManagement sessionMgmt;
+	private OdysseusConfiguration config;
 
 	@Override
 	protected Role createEmptyRole() {
@@ -90,8 +90,7 @@ public class UserManagementServiceImpl extends
 
 	@Override
 	public String getType() {
-		if (OdysseusConfiguration.instance.get("StoretypeUserMgmt").equalsIgnoreCase(
-				"Filestore")) {
+		if (config.get("StoretypeUserMgmt").equalsIgnoreCase("Filestore")) {
 			return "Filestore";
 		} else {
 			return "Memorystore";
@@ -109,6 +108,10 @@ public class UserManagementServiceImpl extends
 			sessionMgmt = new SessionManagementServiceImpl();
 		}
 		return sessionMgmt;
+	}
+
+	void setConfig(OdysseusConfiguration config) {
+		this.config = config;
 	}
 
 }
