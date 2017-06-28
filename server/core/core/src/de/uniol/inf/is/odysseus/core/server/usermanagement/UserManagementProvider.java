@@ -28,6 +28,9 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class UserManagementProvider {
+	/**
+	 * use OSGI injection instead
+	 */
 	@Deprecated
 	public static UserManagementProvider instance;
 
@@ -38,11 +41,6 @@ public class UserManagementProvider {
 	static private TenantDAO dao = TenantDAO.getInstance();
 
 	private static String defaultTenantName = "";
-
-	// by OSGI
-	public UserManagementProvider() {
-		instance = this;
-	}
 
 	private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 
@@ -132,4 +130,7 @@ public class UserManagementProvider {
 		}
 	}
 
+	public void setInstance() {
+		instance = this;
+	}
 }
