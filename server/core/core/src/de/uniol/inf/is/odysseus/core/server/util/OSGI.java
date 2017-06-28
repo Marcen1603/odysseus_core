@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.Activator;
 
 public class OSGI {
 
-	static <T> T get(Class<T> service) {
+	public static <T> T get(Class<T> service) {
 		ServiceReference<T> reference = context().getServiceReference(service);
 		return checkNotNull(context().getService(reference));
 	}

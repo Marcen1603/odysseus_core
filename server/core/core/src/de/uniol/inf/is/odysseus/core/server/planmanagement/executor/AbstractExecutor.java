@@ -128,8 +128,8 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
  * AbstractExecutor bietet eine abstrakte Implementierung der
- * Ausf�hrungumgebung. Sie �bernimmt die Aufgabe zum einbinden von
- * OSGi-Services innerhalb des Odysseus-Frameworks.
+ * Ausf�hrungumgebung. Sie �bernimmt die Aufgabe zum einbinden von OSGi-Services
+ * innerhalb des Odysseus-Frameworks.
  *
  * @author wolf
  *
@@ -229,6 +229,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 */
 	protected ISystemMonitorFactory systemMonitorFactory = null;
 
+	protected UserManagementProvider userManagementProvider;
+
+	protected DataDictionaryProvider dataDictionaryProvider;
+
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
 	// --------------------------------------------------------------------------------------
@@ -247,9 +251,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	/**
 	 * initializeIntern Innerhalb dieser Funktion können spezifische
-	 * Initialisierungen vorgenommen werden. Dies wird von initialize
-	 * aufgerufen. Hier m�ssen ein Plan und Ausf�hrungsplan-Objekt erstellt
-	 * werden.
+	 * Initialisierungen vorgenommen werden. Dies wird von initialize aufgerufen.
+	 * Hier m�ssen ein Plan und Ausf�hrungsplan-Objekt erstellt werden.
 	 *
 	 * @param configuration
 	 *            Konfiguration der Ausf�hrungsumgebung.
@@ -496,8 +499,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	// Getter/Setter
 	// ----------------------------------------------------------------------------------------
 	/**
-	 * optimizer liefert der aktuelle Optimierer zur�ck. Sollte keiner
-	 * vorhanden sein, wird eine Exception geworfen.
+	 * optimizer liefert der aktuelle Optimierer zur�ck. Sollte keiner vorhanden
+	 * sein, wird eine Exception geworfen.
 	 *
 	 * @return aktueller Optimierer
 	 * @throws NoOptimizerLoadedException
@@ -588,7 +591,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		schedulerManager.getActiveScheduler().unSubscribeFromAll(caller);
 	};
 
-
 	// ----------------------------------------------------------------------------------------
 	// Run Commands
 	// ----------------------------------------------------------------------------------------
@@ -660,9 +662,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			}
 		} else if (targetOperator instanceof SenderPO) {
 			SenderPO sender = (SenderPO) targetOperator;
-			if (isProtocol){
+			if (isProtocol) {
 				return sender.getProtocolHandler();
-			}else{
+			} else {
 				return ((AbstractProtocolHandler) sender.getProtocolHandler()).getTransportHandler();
 			}
 
@@ -721,8 +723,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	/**
-	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle
-	 * registrierten Listener.
+	 * firePlanExecutionEvent sendet ein Plan-Scheduling-Event an alle registrierten
+	 * Listener.
 	 *
 	 * @param eventArgs
 	 *            zu sendendes Event
@@ -877,7 +879,6 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		return lq;
 	}
 
-
 	@Override
 	public QueryState getQueryState(int queryID, ISession session) {
 		IPhysicalQuery pq = executionPlan.getQueryById(queryID, session);
@@ -904,9 +905,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 	}
 
-
 	@Override
-	public List<QueryState> getQueryStates(List<Integer> id,  List<ISession> session) {
+	public List<QueryState> getQueryStates(List<Integer> id, List<ISession> session) {
 		List<QueryState> ret = new ArrayList<QueryState>();
 		Iterator<ISession> sessionIter = session.iterator();
 		for (Integer qid : id) {
@@ -937,8 +937,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 *
 	 * @seede.uniol.inf.is.odysseus.planmanagement.executor.eventhandling.
-	 * planmodification
-	 * .IPlanModificationHandler#removePlanModificationListener(de
+	 * planmodification .IPlanModificationHandler#removePlanModificationListener(de
 	 * .uniol.inf.is.odysseus
 	 * .planmanagement.executor.eventhandling.planmodification
 	 * .IPlanModificationListener)
@@ -1007,8 +1006,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * eventhandling .planexecution .
 	 * IPlanExecutionHandler#removePlanExecutionListener(de.uniol
 	 * .inf.is.odysseus.core.server .
-	 * planmanagement.executor.eventhandling.planexecution
-	 * .IPlanExecutionListener )
+	 * planmanagement.executor.eventhandling.planexecution .IPlanExecutionListener )
 	 */
 	@Override
 	public void removePlanExecutionListener(IPlanExecutionListener listener) {
@@ -1056,10 +1054,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Is already listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.instance.getSessionmanagement().subscribe(this);
+					userManagementProvider.getSessionmanagement().subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
-					UserManagementProvider.instance.getUsermanagement(true).addUserManagementListener(this);
+					userManagementProvider.getUsermanagement(true).addUserManagementListener(this);
 					break;
 				}
 			}
@@ -1098,7 +1096,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Stays listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.instance.getSessionmanagement().unsubscribe(this);
+					userManagementProvider.getSessionmanagement().unsubscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1181,8 +1179,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
-	 * #
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler #
 	 * addErrorEventListener(de.uniol.inf.is.odysseus.core.server.planmanagement
 	 * .event. error.IErrorEventListener)
 	 */
@@ -1198,9 +1195,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler
-	 * # removeErrorEventListener(de.uniol.inf.is.odysseus.core.server.
-	 * planmanagement .event .error.IErrorEventListener)
+	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventHandler #
+	 * removeErrorEventListener(de.uniol.inf.is.odysseus.core.server. planmanagement
+	 * .event .error.IErrorEventListener)
 	 */
 	@Override
 	public void removeErrorEventListener(IErrorEventListener errorEventListener) {
@@ -1213,8 +1210,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	 * (non-Javadoc)
 	 *
 	 * @see de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener
-	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error.
-	 * ErrorEvent)
+	 * #sendErrorEvent(de.uniol.inf.is.odysseus.core.server.event.error. ErrorEvent)
 	 */
 	@Override
 	public synchronized void errorEventOccured(ErrorEvent eventArgs) {
@@ -1249,12 +1245,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ITenant tenant) {
-		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(tenant);
+		return (IDataDictionaryWritable) dataDictionaryProvider.getDataDictionary(tenant);
 	}
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ISession session) {
-		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(session.getTenant());
+		return (IDataDictionaryWritable) dataDictionaryProvider.getDataDictionary(session.getTenant());
 	}
 
 	@Override
@@ -1287,24 +1283,24 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
-		ITenant tenantObj = UserManagementProvider.instance.getTenant(tenant);
-		return UserManagementProvider.instance.getSessionmanagement().login(username, password, tenantObj);
+		ITenant tenantObj = userManagementProvider.getTenant(tenant);
+		return userManagementProvider.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
-		ITenant tenantObj = UserManagementProvider.instance.getDefaultTenant();
-		return UserManagementProvider.instance.getSessionmanagement().login(username, password, tenantObj);
+		ITenant tenantObj = userManagementProvider.getDefaultTenant();
+		return userManagementProvider.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		UserManagementProvider.instance.getSessionmanagement().logout(caller);
+		userManagementProvider.getSessionmanagement().logout(caller);
 	}
 
 	@Override
 	public boolean isValid(ISession session) {
-		return UserManagementProvider.instance.getSessionmanagement().isValid(session);
+		return userManagementProvider.getSessionmanagement().isValid(session);
 	}
 
 	// Compiler Facade
@@ -1356,7 +1352,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		// Add accessAos also
 		Set<Entry<Resource, IAccessAO>> accessAO = getDataDictionary(caller).getAccessAOs(caller);
-		for (Entry<Resource, IAccessAO> a:accessAO){
+		for (Entry<Resource, IAccessAO> a : accessAO) {
 			ViewInformation vi = new ViewInformation();
 			vi.setName(a.getKey());
 			vi.setOutputSchema(a.getValue().getOutputSchema());
@@ -1577,12 +1573,20 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		return (List<IUser>) UserManagementProvider.instance.getUsermanagement(true).getUsers(caller);
+		return (List<IUser>) userManagementProvider.getUsermanagement(true).getUsers(caller);
 	}
 
 	@Override
 	public Collection<String> getUdfs() {
 		return OperatorBuilderFactory.getUdfs();
+	}
+
+	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
+		this.userManagementProvider = userManagementProvider;
+	}
+
+	public void setDataDictionaryProvider(DataDictionaryProvider dataDictionaryProvider) {
+		this.dataDictionaryProvider = dataDictionaryProvider;
 	}
 
 }
