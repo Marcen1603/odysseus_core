@@ -14,9 +14,11 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -43,6 +45,8 @@ public class ParallelizationOptimizer {
 	private static final Logger LOG = LoggerFactory.getLogger(ParallelizationOptimizer.class);
 
 	private static final String MIGRATION_STRATEGY = "GeneralizedParallelTracksMigrationStrategy";
+
+	private StandardExecutor executor;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void reoptimizeQuery(IPhysicalQuery physicalQuery, ISession caller) {
@@ -94,28 +98,28 @@ public class ParallelizationOptimizer {
 		// parallelize (change BuildConfiguration and perform preTransformation)
 		List<ILogicalQuery> logicalQueryList = new ArrayList<>();
 		logicalQueryList.add(logicalQuery);
-		StandardExecutor.getInstance().executePreTransformationHandlers(caller,
-				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery), logicalQueryList, Context.empty());
+		executor.executePreTransformationHandlers(caller,
+				executor.getBuildConfigForQuery(logicalQuery), logicalQueryList, Context.empty());
 		// rewrite
 		ParameterDoRewrite restruct = (new OptimizationConfiguration(
-				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery))).getParameterDoRewrite();
+				executor.getBuildConfigForQuery(logicalQuery))).getParameterDoRewrite();
 		if (restruct != null && restruct == ParameterDoRewrite.TRUE) {
 			RewriteConfiguration rewriteConfig = (new OptimizationConfiguration(
-					StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery))).getRewriteConfiguration();
+					executor.getBuildConfigForQuery(logicalQuery))).getRewriteConfiguration();
 			rewriteConfig
-					.setQueryBuildConfiguration(StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery));
+					.setQueryBuildConfiguration(executor.getBuildConfigForQuery(logicalQuery));
 			logicalQuery
 					.setLogicalPlan(
-							StandardExecutor.getInstance().getCompiler().rewritePlan(logicalQuery.getLogicalPlan(),
-									rewriteConfig, caller, StandardExecutor.getInstance().getDataDictionary(caller)),
+							executor.getCompiler().rewritePlan(logicalQuery.getLogicalPlan(),
+									rewriteConfig, caller, executor.getDataDictionary(caller)),
 							false);
 			LOG.debug("Plan rewritten");
 		} else {
 			LOG.debug("Rewritung of plan disabled.");
 		}
 		// transform
-		IPhysicalQuery newPhysicalQuery = StandardExecutor.getInstance().transform(logicalQuery,
-				StandardExecutor.getInstance().getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
+		IPhysicalQuery newPhysicalQuery = executor.transform(logicalQuery,
+				executor.getBuildConfigForQuery(logicalQuery).getTransformationConfiguration(),
 				caller);
 		// load migration strategy
 		IMigrationStrategy planMigrationStrategy = null;
@@ -143,14 +147,18 @@ public class ParallelizationOptimizer {
 
 	public void reoptimizeQuery(String queryName, ISession caller) {
 		Resource queryResource = new Resource(caller.getUser(), queryName);
-		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryByName(queryResource,
+		IPhysicalQuery query = executor.getExecutionPlan(caller).getQueryByName(queryResource,
 				caller);
 		this.reoptimizeQuery(query, caller);
 	}
 
 	public void reoptimizeQuery(int queryId, ISession caller) {
-		IPhysicalQuery query = StandardExecutor.getInstance().getExecutionPlan(caller).getQueryById(queryId, caller);
+		IPhysicalQuery query = executor.getExecutionPlan(caller).getQueryById(queryId, caller);
 		this.reoptimizeQuery(query, caller);
+	}
+	
+	public void setExecutor(IExecutor executor) {
+		this.executor = (StandardExecutor) executor;
 	}
 
 }
