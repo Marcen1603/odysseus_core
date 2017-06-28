@@ -18,12 +18,14 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
  *
  */
 
-public class StandardElementCloningUpdater extends
-		AbstractElementCloningUpdater {
+public class StandardElementCloningUpdater extends AbstractElementCloningUpdater {
+	/**
+	 * use OSGi instead
+	 */
+	@Deprecated
+	static StandardElementCloningUpdater instance;
 
-	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
-
-	static final StandardElementCloningUpdater instance = new StandardElementCloningUpdater();
+	private ISession superUser;
 
 	public static IElementCloningUpdater getInstance() {
 		return instance;
@@ -32,6 +34,7 @@ public class StandardElementCloningUpdater extends
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateCloning(IExecutionPlan currentExecPlan) {
+
 		Collection<IPhysicalQuery> queries = currentExecPlan.getQueries(superUser);
 		GenericGraphWalker walker = new GenericGraphWalker();
 
@@ -44,5 +47,13 @@ public class StandardElementCloningUpdater extends
 				walker.prefixWalkPhysical(r, visitor);
 			}
 		}
+	}
+
+	public void setUserManagementProvider(UserManagementProvider ump) {
+		this.superUser = ump.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	}
+
+	void setInstance() {
+		instance = this;
 	}
 }
