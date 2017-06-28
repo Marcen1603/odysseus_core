@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.transform.rules;
+package de.uniol.inf.is.odysseus.transform.rules;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdatePredicatePunctuationAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.CreateUpdatePredicatePunctuationPO;

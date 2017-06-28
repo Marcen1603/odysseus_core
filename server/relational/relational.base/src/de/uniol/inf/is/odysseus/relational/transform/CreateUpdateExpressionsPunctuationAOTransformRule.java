@@ -1,8 +1,8 @@
-package de.uniol.inf.is.odysseus.spatial.transform.rules;
+package de.uniol.inf.is.odysseus.relational.transform;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdateExpressionsPunctuationAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.CreateUpdateExpressionsPunctuationPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.physicaloperator.relational.CreateUpdateExpressionsPunctuationPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;

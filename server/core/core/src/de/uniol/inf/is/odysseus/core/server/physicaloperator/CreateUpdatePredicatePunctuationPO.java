@@ -63,6 +63,8 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 	 * 
 	 * @param rawPredicate
 	 *            The predicate as a string
+	 * @param predicateType
+	 *            The identifier for the type of the predicate
 	 * @return The predicate as a Predicate object
 	 */
 	private IPredicate<?> createPredicate(String rawPredicate, String predicateType) {
