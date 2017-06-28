@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.IPermission;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
@@ -40,8 +41,8 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	/**
-	 * returns whether the given action (permission) operates with an objecturi
-	 * or the action class alias.
+	 * returns whether the given action (permission) operates with an objecturi or
+	 * the action class alias.
 	 *
 	 * @param action
 	 * @return
@@ -62,18 +63,17 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	public static boolean hasUserRight(IPhysicalQuery query, ISession caller, ExecutorPermission executorAction) {
-		if (query == null){
+		if (query == null) {
 			return false;
 		}
-
+		UserManagementProvider userMangementProvider = OSGI.get(UserManagementProvider.class);
 		return
 		// User has right
-		UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
-				||
-				// User is owner
+		userMangementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID()) ||
+		// User is owner
 				query.isOwner(caller) ||
 				// User has higher right
-				UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
+				userMangementProvider.getUsermanagement(true).hasPermission(caller,
 						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
 	}
 
@@ -86,11 +86,12 @@ public enum ExecutorPermission implements IPermission {
 	}
 
 	public static boolean hasUserRight(ISession caller, ExecutorPermission executorAction) {
+		UserManagementProvider userMangementProvider = OSGI.get(UserManagementProvider.class);
 		return // User has right
-		UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, executorAction,
+		userMangementProvider.getUsermanagement(true).hasPermission(caller, executorAction,
 				ExecutorPermission.objectURI) ||
 		// User has higher right
-				UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
+				userMangementProvider.getUsermanagement(true).hasPermission(caller,
 						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
 	}
 
