@@ -69,7 +69,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
-import sun.usagetracker.UsageTrackerClient;
 
 abstract public class AbstractDataDictionary implements IDataDictionary, IDataDictionaryWritable {
 
