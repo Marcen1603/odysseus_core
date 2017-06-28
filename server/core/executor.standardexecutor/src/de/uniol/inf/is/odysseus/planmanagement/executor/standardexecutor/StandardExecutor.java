@@ -120,8 +120,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 
 	private static final Logger LOG = LoggerFactory.getLogger(StandardExecutor.class);
 
-	private static StandardExecutor instance;
-
+	
 	private Map<ILogicalQuery, QueryBuildConfiguration> queryBuildParameter = new HashMap<ILogicalQuery, QueryBuildConfiguration>();
 
 	// ----------------------------------------------------------------------------------------
@@ -144,7 +143,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// } else {
 		// this.configuration.set(new ParameterBufferPlacementStrategy());
 		// }
-		instance = this;
+	
 	}
 
 	public void deactivate() {
@@ -152,12 +151,9 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		LOG.debug("Removing all queries before shutdown");
 		// TODO: What if queries are stored persistently?
 		this.removeAllQueries(UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null));
-		instance = null;
+	
 	}
 
-	public static StandardExecutor getInstance() {
-		return instance;
-	}
 
 	/*
 	 * (non-Javadoc)
