@@ -15,10 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
-import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpression;
@@ -27,7 +26,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ProbabilisticRelationalPredicateBuilder implements IExpressionBuilder {
+public class ProbabilisticRelationalPredicateBuilder extends AbstractExpressionBuilder {
 
     @Override
     public IPredicate<?> createPredicate(final IAttributeResolver resolver, final String predicate) {
@@ -36,9 +35,4 @@ public class ProbabilisticRelationalPredicateBuilder implements IExpressionBuild
         return pred;
     }
 
-	@Override
-	public IExpression createExpression(IAttributeResolver resolver, String expression) {
-		// FIXME: Implement method
-		throw new UnsupportedOperationException();
-	}
 }

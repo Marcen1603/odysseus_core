@@ -15,23 +15,16 @@
   */
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
-import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpressionBuilder;
 
-public class PriorityPredicateBuilder implements IExpressionBuilder {
+public class PriorityPredicateBuilder extends AbstractExpressionBuilder {
 
 	@Override
 	public IPredicate<?> createPredicate(IAttributeResolver resolver,
 			String predicate) {
 		return new PriorityPredicate();
-	}
-
-	@Override
-	public IExpression createExpression(IAttributeResolver resolver, String expression) {
-		// FIXME: Implement method
-		throw new UnsupportedOperationException();
 	}
 
 
