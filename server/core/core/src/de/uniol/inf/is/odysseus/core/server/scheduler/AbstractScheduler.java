@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 
 /**
  * Base class for scheduler. Contains Methodes for setting the scheduling state
@@ -57,7 +58,8 @@ public abstract class AbstractScheduler implements IScheduler {
 	/**
 	 * Maximum time each strategy can use (no garantee if strategy)
 	 */
-	protected volatile long timeSlicePerStrategy = OdysseusConfiguration.instance.getLong("scheduler_TimeSlicePerStrategy", 10);
+	protected volatile long timeSlicePerStrategy = OSGI.get(OdysseusConfiguration.class)
+			.getLong("scheduler_TimeSlicePerStrategy", 10);
 
 	/**
 	 * The {@link ISchedulingFactory} which will be used for scheduling. Each
@@ -76,10 +78,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	private SchedulingEvent schedulingStopped = new SchedulingEvent(this, SchedulingEventType.SCHEDULING_STOPPED, "");
 
 	// ---- Evaluations ----
-	final boolean outputDebug = Boolean.parseBoolean(OdysseusConfiguration.instance.get("debug_Scheduler"));
+	final boolean outputDebug = OSGI.get(OdysseusConfiguration.class).getBoolean("debug_Scheduler");
 
 	FileWriter file;
-	final long limitDebug = OdysseusConfiguration.instance.getLong("debug_Scheduler_maxLines", 1048476);
+	final long limitDebug = OSGI.get(OdysseusConfiguration.class).getLong("debug_Scheduler_maxLines", 1048476);
 	long linesWritten;
 	StringBuffer toPrint = new StringBuffer();
 
@@ -96,9 +98,8 @@ public abstract class AbstractScheduler implements IScheduler {
 	 * Creates a new scheduler.
 	 * 
 	 * @param schedulingFactory
-	 *            {@link ISchedulingFactory} which will be used for scheduling.
-	 *            Each PartialPlan will be initialized with a new strategy
-	 *            instance.
+	 *            {@link ISchedulingFactory} which will be used for scheduling. Each
+	 *            PartialPlan will be initialized with a new strategy instance.
 	 */
 	public AbstractScheduler(ISchedulingFactory schedulingFactory) {
 		eventHandler = EventHandler.getInstance(this);
@@ -146,10 +147,6 @@ public abstract class AbstractScheduler implements IScheduler {
 		}
 	}
 
-	public boolean isOutputDebug() {
-		return outputDebug;
-	}
-
 	public long getLimitDebug() {
 		return limitDebug;
 	}
@@ -179,17 +176,16 @@ public abstract class AbstractScheduler implements IScheduler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#startScheduling
-	 * ()
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#startScheduling ()
 	 */
 	@Override
 	public void startScheduling() {
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(
-						OdysseusConfiguration.getHomeDir() + OdysseusConfiguration.instance.get("scheduler_DebugFileName") + "_"
-								+ System.currentTimeMillis() + ".csv");
+				file = new FileWriter(OdysseusConfiguration.getHomeDir()
+						+ OSGI.get(OdysseusConfiguration.class).get("scheduler_DebugFileName") + "_"
+						+ System.currentTimeMillis() + ".csv");
 				file.write(
 						"Timestamp;PartialPlan;Query;Priority;Penalty;ObjectsWritten;DiffToLastCall;InTimeCalls;AllCalls;Factor;HistorySize\n");
 				linesWritten = 1; // Header!
@@ -208,8 +204,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#stopScheduling(
-	 * )
+	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#stopScheduling( )
 	 */
 	@Override
 	public void stopScheduling() {
@@ -229,8 +224,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#isRunning()
+	 * @see de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler#isRunning()
 	 */
 	@Override
 	public boolean isRunning() {
