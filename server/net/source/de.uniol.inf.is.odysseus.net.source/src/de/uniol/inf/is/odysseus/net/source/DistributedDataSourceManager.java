@@ -69,6 +69,8 @@ public class DistributedDataSourceManager
 
 	private final Map<String, UUID> createdSourcesMap = Maps.newHashMap();
 	private final BiMap<UUID, String> importedSourcesBiMap = HashBiMap.create();
+	private DataDictionaryProvider dataDictionaryProvider;
+	private UserManagementProvider userManagementProvider;
 
 	// called by OSGi-DS
 	public void bindDistributedDataManager(IDistributedDataManager serv) {
@@ -133,21 +135,21 @@ public class DistributedDataSourceManager
 				String userName = data.getString("user");
 				String pqlStatement = data.getString("pql");
 				boolean isStream = data.getBoolean("isStream");
-				
-				if(!getDataDictionary().containsViewOrStream(sourceName, getActiveSession())) {
+
+				if (!getDataDictionary().containsViewOrStream(sourceName, getActiveSession())) {
 					Optional<ILogicalOperator> optTopAO = parsePQLStatement(sourceName, pqlStatement);
 					if (optTopAO.isPresent()) {
 						synchronized (importedSourcesBiMap) {
 							importedSourcesBiMap.put(addedData.getUUID(), userName + "." + sourceName);
 						}
-	
+
 						ILogicalOperator streamOrViewAO = determineStreamOrViewAO(optTopAO.get());
 						if (isStream) {
 							getDataDictionary().setStream(sourceName, streamOrViewAO, getActiveSession());
 						} else {
 							getDataDictionary().setView(sourceName, streamOrViewAO, getActiveSession());
 						}
-	
+
 					} else {
 						LOG.error("No data source from distributed data created");
 					}
@@ -159,10 +161,10 @@ public class DistributedDataSourceManager
 	}
 
 	/**
-	 * PQL parser generates TopAO on top of stream or view. This method returns
-	 * the operator subscribed to the TopAO. If there are more than one
-	 * subscriptions, it returns the first found target. If there is no
-	 * subscription, it returns <code>topAO</code>.
+	 * PQL parser generates TopAO on top of stream or view. This method returns the
+	 * operator subscribed to the TopAO. If there are more than one subscriptions,
+	 * it returns the first found target. If there is no subscription, it returns
+	 * <code>topAO</code>.
 	 */
 	private ILogicalOperator determineStreamOrViewAO(ILogicalOperator topAO) {
 		if (topAO.getSubscribedToSource().isEmpty()) {
@@ -252,7 +254,7 @@ public class DistributedDataSourceManager
 	private void createDistributedData(String name, ILogicalOperator op, String username, boolean isStream,
 			boolean isPersistent) {
 		new Thread("SourceDistributionThread") {
-			
+
 			@Override
 			public void run() {
 				String realSourceName = removeUserFromName(name);
@@ -264,10 +266,10 @@ public class DistributedDataSourceManager
 					json.put("user", username);
 					json.put("pql", pqlStatement);
 					json.put("isStream", isStream);
-					
+
 					long lifetime = determineLifetime();
-					IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME, isPersistent,
-							lifetime);
+					IDistributedData distributedData = dataManager.create(json, DATA_SOURCE_DISTRIBUTION_NAME,
+							isPersistent, lifetime);
 					synchronized (createdSourcesMap) {
 						createdSourcesMap.put(username + "." + realSourceName, distributedData.getUUID());
 					}
@@ -313,7 +315,8 @@ public class DistributedDataSourceManager
 	}
 
 	private static IDataDictionaryWritable getDataDictionary() {
-		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(getActiveSession().getTenant());
+		return (IDataDictionaryWritable) DataDictionaryProvider.instance
+				.getDataDictionary(getActiveSession().getTenant());
 	}
 
 	private static String removeUserFromName(String streamName) {
@@ -344,8 +347,9 @@ public class DistributedDataSourceManager
 			// Get metadata
 			List<IQueryBuildSetting<?>> settings = new StandardQueryBuildConfigurationTemplate().getConfiguration();
 			QueryBuildConfiguration buildCfg = new QueryBuildConfiguration(settings, "Standard");
-			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(buildCfg.getTransformationConfiguration().getDefaultMetaTypeSet());
-			
+			IMetaAttribute metaAttribute = MetadataRegistry
+					.getMetadataType(buildCfg.getTransformationConfiguration().getDefaultMetaTypeSet());
+
 			List<IExecutorCommand> commands = pqlParser.parse(pqlStatement, getActiveSession(), getDataDictionary(),
 					Context.empty(), metaAttribute, null);
 			ILogicalQuery query = null;
@@ -431,5 +435,13 @@ public class DistributedDataSourceManager
 				collectOperatorsImpl(subscription.getTarget(), list);
 			}
 		}
+	}
+
+	void setDataDictionaryProvider(DataDictionaryProvider ddp) {
+		this.dataDictionaryProvider = ddp;
+	}
+
+	void setUserManagementProvider(UserManagementProvider ump) {
+		this.userManagementProvider = ump;
 	}
 }
