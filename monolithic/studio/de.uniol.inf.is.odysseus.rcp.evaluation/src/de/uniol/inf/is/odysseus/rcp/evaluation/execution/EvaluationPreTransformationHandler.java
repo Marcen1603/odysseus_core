@@ -199,7 +199,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				fileAO.setFilename(run.createLatencyResultPath(root));
 				fileAO.createDir(true);
 				fileAO.subscribeToSource(latencyOnly, 0, 0, latencyOnly.getOutputSchema());
-				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String sinkName = createSinkName(run.createLatencyResultPath(root));
 				dd.addSink(sinkName, fileAO, caller);
@@ -269,7 +269,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				fileCPU.setFilename(run.createCPUResultPath(fileCPU));
 				fileCPU.createDir(true);
 				fileCPU.subscribeToSource(cpuOnly, 0, 0, cpuOnly.getOutputSchema());
-				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String cpuSinkName = createSinkName(run.createCPUResultPath(root));
 				dd.addSink(cpuSinkName, fileCPU, caller);

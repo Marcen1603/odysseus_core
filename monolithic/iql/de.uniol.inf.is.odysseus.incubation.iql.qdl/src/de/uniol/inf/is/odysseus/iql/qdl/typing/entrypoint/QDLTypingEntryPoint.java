@@ -60,8 +60,8 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 
 	private void initSources() {
 		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
-		DataDictionaryProvider.subscribe(tenant, this);	
-		IDataDictionary dataDictionary = DataDictionaryProvider.getDataDictionary(tenant);
+		DataDictionaryProvider.instance.subscribe(tenant, this);	
+		IDataDictionary dataDictionary = DataDictionaryProvider.instance.getDataDictionary(tenant);
 		dataDictionary.addListener(this);
 		OperatorsObservable.addListener(this);
 						

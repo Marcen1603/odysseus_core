@@ -1249,12 +1249,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ITenant tenant) {
-		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(tenant);
+		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(tenant);
 	}
 
 	@Override
 	public IDataDictionaryWritable getDataDictionary(ISession session) {
-		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(session.getTenant());
+		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(session.getTenant());
 	}
 
 	@Override

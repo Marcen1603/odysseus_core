@@ -115,9 +115,9 @@ public class DistributedDataSourceManager
 	@Override
 	public void distributedDataManagerStarted(IDistributedDataManager sender) {
 		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
-		DataDictionaryProvider.subscribe(tenant, this);
+		DataDictionaryProvider.instance.subscribe(tenant, this);
 
-		IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
+		IDataDictionary dd = DataDictionaryProvider.instance.getDataDictionary(tenant);
 		if (dd != null) {
 			newDatadictionary(dd);
 		}
@@ -195,7 +195,7 @@ public class DistributedDataSourceManager
 	public void distributedDataManagerStopped(IDistributedDataManager sender) {
 		getDataDictionary().removeListener(this);
 
-		DataDictionaryProvider.unsubscribe(this);
+		DataDictionaryProvider.instance.unsubscribe(this);
 	}
 
 	@Override
@@ -313,7 +313,7 @@ public class DistributedDataSourceManager
 	}
 
 	private static IDataDictionaryWritable getDataDictionary() {
-		return (IDataDictionaryWritable) DataDictionaryProvider.getDataDictionary(getActiveSession().getTenant());
+		return (IDataDictionaryWritable) DataDictionaryProvider.instance.getDataDictionary(getActiveSession().getTenant());
 	}
 
 	private static String removeUserFromName(String streamName) {
