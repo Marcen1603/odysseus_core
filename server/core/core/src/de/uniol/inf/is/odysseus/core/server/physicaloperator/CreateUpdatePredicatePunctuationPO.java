@@ -51,7 +51,8 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 			attributePosition++;
 		}
 
-		IPredicate<?> predicate = createPredicate(newPredicate);
+		String predicateType = getInputSchema(port).getType().getName();
+		IPredicate<?> predicate = createPredicate(newPredicate, predicateType);
 		UpdatePredicatePunctuation punctuation = new UpdatePredicatePunctuation(object.getMetadata().getStart(),
 				predicate, this.targetOperatorNames);
 		this.sendPunctuation(punctuation);
@@ -64,8 +65,8 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 	 *            The predicate as a string
 	 * @return The predicate as a Predicate object
 	 */
-	private IPredicate<?> createPredicate(String rawPredicate) {
-		IPredicateBuilder pBuilder = OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE");
+	private IPredicate<?> createPredicate(String rawPredicate, String predicateType) {
+		IPredicateBuilder pBuilder = OperatorBuilderFactory.getPredicateBuilder(predicateType);
 		IPredicate<?> predicate = pBuilder.createPredicate(attributeResolver, rawPredicate);
 		return predicate;
 	}
