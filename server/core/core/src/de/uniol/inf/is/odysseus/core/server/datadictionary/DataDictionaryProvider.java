@@ -21,10 +21,11 @@ public class DataDictionaryProvider {
 	static private Map<ITenant, IDataDictionary> datadictionary = new HashMap<ITenant, IDataDictionary>();
 	static private List<String> allDatatypeNames = new LinkedList<>();
 	static private Map<IDatadictionaryProviderListener, ITenant> ddPlistener = new HashMap<>();
+	private UserManagementProvider userManagementProvider;
 
 	public synchronized void bindDataDictionary(IDataDictionary bindDD) {
 		// Is dd the right type
-		List<ITenant> tenants = UserManagementProvider.instance.getTenants();
+		List<ITenant> tenants = userManagementProvider.getTenants();
 		for (ITenant t : tenants) {
 			IDataDictionary dd = bindDD.createInstance(t);
 			// Default Datatypes
@@ -120,6 +121,10 @@ public class DataDictionaryProvider {
 			}
 			allDatatypeNames.remove(dt.getURI());
 		}
+	}
+	
+	void setUserManagementProvider(UserManagementProvider provider) {
+		this.userManagementProvider = provider;
 	}
 
 }

@@ -59,8 +59,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider, IPlanModificationListener {
 
-	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
-
 	static Logger logger = LoggerFactory
 			.getLogger(SingleSchedulerManager.class);
 
@@ -87,6 +85,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	private Map<IIterableSource<?>, Integer> sourceUsage = new HashMap<>();
 
 	private boolean shouldRun;
+
+	private UserManagementProvider userManagementProvider;
 
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -158,9 +158,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	public void setActiveScheduler(String schedulerToSet,
 			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
 		List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan
-				.getLeafSources(superUser) : null;
+				.getLeafSources(superUser()) : null;
 		Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan
-				.getQueries(superUser) : null;
+				.getQueries(superUser()) : null;
 		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
 				leafSources, partialPlans);
 	}
@@ -319,10 +319,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			throws NoSchedulerLoadedException {
 		// Update Source/Query assignment
 		sourceUsage.clear();
-		for (IPhysicalQuery p : execPlan.getQueries(superUser)) {
+		for (IPhysicalQuery p : execPlan.getQueries(superUser())) {
 			increaseSourceUsage(p);
 		}
-		refreshScheduling(execPlan.getLeafSources(superUser), execPlan.getQueries(superUser));
+		refreshScheduling(execPlan.getLeafSources(superUser()), execPlan.getQueries(superUser()));
 	}
 
 	private void refreshScheduling(List<IIterableSource<?>> leafSources,
@@ -499,5 +499,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					.planModificationEvent(eventArgs);
 		}
 	}
+	
+	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
+		this.userManagementProvider = userManagementProvider;
+	}
 
+	private ISession superUser() {
+		return userManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	}
 }
