@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,24 +20,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
- * This Interface represents all expressions in MEP. Could be 
+ * This Interface represents all expressions in MEP. Could be
  * a function, a variable or a constant
- * 
+ *
  * @author Jonas Jacobi
  *
  * @param <T>
  */
-public interface IMepExpression<T> extends Serializable{
-	
+public interface IMepExpression<T> extends Serializable, IExpression{
+
 	/**
 	 * Returns the value of this expression
 	 * @return
 	 */
 	public T getValue();
-	
+
 	/**
 	 * Method for optimization purposes (walk through the expression)
 	 * @param visitor TODO
@@ -45,7 +46,7 @@ public interface IMepExpression<T> extends Serializable{
 	 * @return TODO
 	 */
 	public Object acceptVisitor(IMepExpressionVisitor visitor, Object data);
-	
+
 	/**
 	 * Returns the set of Variables of this expression
 	 * @return
@@ -53,12 +54,12 @@ public interface IMepExpression<T> extends Serializable{
 	public Set<IMepVariable> getVariables();
 
 	/**
-	 * Return variable with name 
+	 * Return variable with name
 	 * @param name The name of the variable
 	 * @return The Variable
 	 */
 	public IMepVariable getVariable(String name);
-	
+
 	/**
 	 * Delivers the return type of this expression
 	 * @return The SDFExpression
@@ -78,7 +79,7 @@ public interface IMepExpression<T> extends Serializable{
 	 */
 	public SDFDatatype getReturnType(int pos);
 
-	
+
 	/**
 	 * To avoid instanceof
 	 * @return true if this expression is a variable
@@ -96,19 +97,19 @@ public interface IMepExpression<T> extends Serializable{
 	 * @return true if this expression is a constant
 	 */
 	public boolean isConstant();
-	
+
 	/**
 	 * Conversion function
 	 * @return the variable if this expression is a variable, runtime exception else
 	 */
 	public IMepVariable toVariable();
-	
+
 	/**
 	 * Conversion function
 	 * @return the function if this expression is a function, runtime exception else
-	 */	
+	 */
 	public IMepFunction<T> toFunction();
-	
+
 	/**
 	 * Conversion function
 	 * @return the constant if this expression is a constant, runtime exception else
@@ -116,16 +117,16 @@ public interface IMepExpression<T> extends Serializable{
 	public IMepConstant<T> toConstant();
 
 	public boolean determineTypeFromInput();
-	
+
 	public SDFDatatype determineType(IMepExpression<?>[] args);
 
 	public IMepExpression<T> clone(Map<IMepVariable,IMepVariable> vars);
 
 	public List<IMepExpression<T>> conjunctiveSplit();
-	
+
 	IMepFunction<?> and(IMepExpression<?> expression);
 	IMepFunction<?> or(IMepExpression<?> expression);
 	IMepFunction<?> not();
 
-	
+
 }
