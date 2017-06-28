@@ -150,7 +150,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// Remove all queries
 		LOG.debug("Removing all queries before shutdown");
 		// TODO: What if queries are stored persistently?
-		this.removeAllQueries(UserManagementProvider.getSessionmanagement().loginSuperUser(null));
+		this.removeAllQueries(UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null));
 		instance = null;
 	}
 
@@ -478,7 +478,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 				// These ids must be returned to the first caller (i.e. calling
 				// odysseus script)
 				cmd.execute(getDataDictionary(cmd.getCaller()),
-						(IUserManagementWritable) UserManagementProvider.getUsermanagement(true), this);
+						(IUserManagementWritable) UserManagementProvider.instance.getUsermanagement(true), this);
 				Collection<Integer> result = cmd.getCreatedQueryIds();
 				if (result != null) {
 					for (Integer qId : result) {

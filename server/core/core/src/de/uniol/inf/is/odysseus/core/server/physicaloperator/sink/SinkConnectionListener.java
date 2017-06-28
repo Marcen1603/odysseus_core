@@ -133,7 +133,7 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 							String tenantName = in.readLine();
 							ITenant tenant = UserManagementProvider.instance
 									.getTenant(tenantName);
-							ISession user = UserManagementProvider
+							ISession user = UserManagementProvider.instance
 									.getSessionmanagement().login(username,
 											password.getBytes(), tenant);
 

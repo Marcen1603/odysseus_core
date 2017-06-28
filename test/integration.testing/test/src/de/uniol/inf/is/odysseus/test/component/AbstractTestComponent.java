@@ -52,7 +52,7 @@ public abstract class AbstractTestComponent<T extends ITestContext, S extends IT
 	@Override
 	public void setupTest(T context) {
 		executor = ExecutorProvider.getExeuctor();
-		session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
+		session = UserManagementProvider.instance.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
 		if (context.getDataRootPath() == null){
 			LOG.error("Error in context "+context);
 		}

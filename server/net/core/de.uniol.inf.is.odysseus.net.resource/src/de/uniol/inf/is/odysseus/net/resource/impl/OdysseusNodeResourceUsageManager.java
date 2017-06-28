@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
 
 public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeResourceUsageManager, IOdysseusNodeCommunicatorListener {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeResourceUsageManager.class);
 

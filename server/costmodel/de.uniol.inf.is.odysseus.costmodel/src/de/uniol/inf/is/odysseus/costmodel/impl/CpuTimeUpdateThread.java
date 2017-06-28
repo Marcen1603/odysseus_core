@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public abstract class CpuTimeUpdateThread extends Thread {
 
 	private final IServerExecutor executor;
-	private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private boolean isRunning = true;
 

@@ -22,7 +22,7 @@ public class CreateTenantCommand extends AbstractExecutorCommand {
 	@Override
 	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
-		UserManagementProvider.createNewTenant(tenantname, getCaller());
+		UserManagementProvider.instance.createNewTenant(tenantname, getCaller());
 	}
 
 }

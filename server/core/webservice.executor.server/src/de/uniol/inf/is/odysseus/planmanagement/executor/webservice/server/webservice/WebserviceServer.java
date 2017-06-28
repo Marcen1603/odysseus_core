@@ -168,7 +168,7 @@ public class WebserviceServer {
 	public StringResponse login(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password, @WebParam(name = "tenantname") String tenantname) {
 		ITenant tenant = UserManagementProvider.instance.getTenant(tenantname);
-		ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ISession user = UserManagementProvider.instance.getSessionmanagement().login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -182,7 +182,7 @@ public class WebserviceServer {
 	public StringResponse login2(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password) {
 		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
-		ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ISession user = UserManagementProvider.instance.getSessionmanagement().login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -193,9 +193,9 @@ public class WebserviceServer {
 	}
 
 	public Response logout(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
 		if (session != null) {
-			UserManagementProvider.getSessionmanagement().logout(session);
+			UserManagementProvider.instance.getSessionmanagement().logout(session);
 			for (Map<Integer, SocketSinkPO> entry : socketSinkMap.values()) {
 				for (SocketSinkPO po : entry.values()) {
 					po.removeAllowedSessionId(securityToken);
@@ -207,7 +207,7 @@ public class WebserviceServer {
 	}
 
 	public Response isValidSession(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
 		if (session != null) {
 			return new Response(getExecutor().isValid(session));
 		}
@@ -267,20 +267,20 @@ public class WebserviceServer {
 	}
 
 	public QueryState getQueryState(int queryID, String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
 		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, session);
 	}
 
 	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<String> securityTokens) {
 		List<ISession> sessions = new ArrayList<>();
 		for (String securityToken:securityTokens){
-			sessions.add(UserManagementProvider.getSessionmanagement().login(securityToken));
+			sessions.add(UserManagementProvider.instance.getSessionmanagement().login(securityToken));
 		}
 		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
 		if (session != null) {
 			return session;
 		}

@@ -1150,16 +1150,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission, Resource objectURI) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission, objectURI.toString());
+		return UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, permission, objectURI.toString());
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission,
+		return UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, permission,
 				DataDictionaryPermission.objectURI);
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission, String uri) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission, uri);
+		return UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, permission, uri);
 	}
 
 	/**

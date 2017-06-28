@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointManager;
  */
 public class SystemTimeCheckpointManager implements ICheckpointManager {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 
 	/**

@@ -29,7 +29,7 @@ public class QueryDistributionPlugIn implements BundleActivator {
 
 	public static ISession getActiveSession() {
 		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
+			activeSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 
 		return activeSession;

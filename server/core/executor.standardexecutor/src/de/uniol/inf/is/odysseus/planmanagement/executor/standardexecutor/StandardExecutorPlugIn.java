@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class StandardExecutorPlugIn implements BundleActivator {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	@Override
 	public void start(BundleContext context) throws Exception {

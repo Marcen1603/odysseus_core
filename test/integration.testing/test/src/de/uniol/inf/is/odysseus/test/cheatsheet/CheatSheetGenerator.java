@@ -195,7 +195,7 @@ public class CheatSheetGenerator {
             final BasicTestContext context = new BasicTestContext();
             context.setPassword("manager");
             context.setUsername("System");
-            final ISession session = UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
+            final ISession session = UserManagementProvider.instance.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
 
             final List<LogicalOperatorInformation> operators = ExecutorProvider.getExeuctor().getOperatorInformations(session);
             Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();

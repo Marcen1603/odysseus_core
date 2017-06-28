@@ -63,7 +63,7 @@ import de.uniol.inf.is.odysseus.net.update.OdysseusNodeUpdater;
 
 public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommunicatorListener {
 
-	static private final ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();

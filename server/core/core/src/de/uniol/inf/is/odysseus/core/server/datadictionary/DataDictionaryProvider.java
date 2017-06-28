@@ -24,7 +24,7 @@ public class DataDictionaryProvider {
 
 	public synchronized void bindDataDictionary(IDataDictionary bindDD) {
 		// Is dd the right type
-		List<ITenant> tenants = UserManagementProvider.getTenants();
+		List<ITenant> tenants = UserManagementProvider.instance.getTenants();
 		for (ITenant t : tenants) {
 			IDataDictionary dd = bindDD.createInstance(t);
 			// Default Datatypes

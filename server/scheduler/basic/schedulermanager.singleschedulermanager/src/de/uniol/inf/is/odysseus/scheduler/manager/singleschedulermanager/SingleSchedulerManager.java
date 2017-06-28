@@ -59,7 +59,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider, IPlanModificationListener {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	static Logger logger = LoggerFactory
 			.getLogger(SingleSchedulerManager.class);

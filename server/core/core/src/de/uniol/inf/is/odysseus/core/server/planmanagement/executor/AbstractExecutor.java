@@ -1056,10 +1056,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Is already listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.getSessionmanagement().subscribe(this);
+					UserManagementProvider.instance.getSessionmanagement().subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
-					UserManagementProvider.getUsermanagement(true).addUserManagementListener(this);
+					UserManagementProvider.instance.getUsermanagement(true).addUserManagementListener(this);
 					break;
 				}
 			}
@@ -1098,7 +1098,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Stays listener
 					break;
 				case IUpdateEventListener.SESSION:
-					UserManagementProvider.getSessionmanagement().unsubscribe(this);
+					UserManagementProvider.instance.getSessionmanagement().unsubscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1288,23 +1288,23 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
 		ITenant tenantObj = UserManagementProvider.instance.getTenant(tenant);
-		return UserManagementProvider.getSessionmanagement().login(username, password, tenantObj);
+		return UserManagementProvider.instance.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
 		ITenant tenantObj = UserManagementProvider.instance.getDefaultTenant();
-		return UserManagementProvider.getSessionmanagement().login(username, password, tenantObj);
+		return UserManagementProvider.instance.getSessionmanagement().login(username, password, tenantObj);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		UserManagementProvider.getSessionmanagement().logout(caller);
+		UserManagementProvider.instance.getSessionmanagement().logout(caller);
 	}
 
 	@Override
 	public boolean isValid(ISession session) {
-		return UserManagementProvider.getSessionmanagement().isValid(session);
+		return UserManagementProvider.instance.getSessionmanagement().isValid(session);
 	}
 
 	// Compiler Facade
@@ -1577,7 +1577,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<IUser> getUsers(ISession caller) {
-		return (List<IUser>) UserManagementProvider.getUsermanagement(true).getUsers(caller);
+		return (List<IUser>) UserManagementProvider.instance.getUsermanagement(true).getUsers(caller);
 	}
 
 	@Override

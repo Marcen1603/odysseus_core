@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public class StandardOptimizer extends AbstractOptimizer {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	protected static Logger LOG = LoggerFactory.getLogger(StandardOptimizer.class);;
 

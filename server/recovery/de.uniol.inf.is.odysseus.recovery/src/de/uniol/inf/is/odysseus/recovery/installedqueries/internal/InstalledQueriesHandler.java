@@ -99,7 +99,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	 * new source).
 	 */
 	private void subscribeForDataDictionaries() {
-		for (ITenant tenant : UserManagementProvider.getTenants()) {
+		for (ITenant tenant : UserManagementProvider.instance.getTenants()) {
 			Optional<IDataDictionary> dd = Optional.fromNullable(DataDictionaryProvider.getDataDictionary(tenant));
 			DataDictionaryProviderListener listener = new DataDictionaryProviderListener(this);
 			if (dd.isPresent()) {
@@ -350,7 +350,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 			return;
 		}
 		for (IExecutorCommand command : commands) {
-			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider
+			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider.instance
 					.getUsermanagement(true);
 			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
 					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));

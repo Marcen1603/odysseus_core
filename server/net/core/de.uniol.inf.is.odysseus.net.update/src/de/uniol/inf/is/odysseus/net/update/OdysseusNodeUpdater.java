@@ -155,7 +155,7 @@ public class OdysseusNodeUpdater implements IOdysseusNodeCommunicatorListener {
 	
 	private static ISession getActiveSession() {
 		if( activeSession == null || !activeSession.isValid() ) {
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
+			activeSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return activeSession;
 	}

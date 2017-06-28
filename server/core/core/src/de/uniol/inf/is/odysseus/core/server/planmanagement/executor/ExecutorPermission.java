@@ -68,12 +68,12 @@ public enum ExecutorPermission implements IPermission {
 
 		return
 		// User has right
-		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
+		UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, executorAction, "Query " + query.getID())
 				||
 				// User is owner
 				query.isOwner(caller) ||
 				// User has higher right
-				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
+				UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
 						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
 	}
 
@@ -87,10 +87,10 @@ public enum ExecutorPermission implements IPermission {
 
 	public static boolean hasUserRight(ISession caller, ExecutorPermission executorAction) {
 		return // User has right
-		UserManagementProvider.getUsermanagement(true).hasPermission(caller, executorAction,
+		UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, executorAction,
 				ExecutorPermission.objectURI) ||
 		// User has higher right
-				UserManagementProvider.getUsermanagement(true).hasPermission(caller,
+				UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
 						ExecutorPermission.hasSuperAction(executorAction), ExecutorPermission.objectURI);
 	}
 

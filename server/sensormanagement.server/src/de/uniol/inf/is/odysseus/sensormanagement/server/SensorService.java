@@ -58,7 +58,7 @@ public class SensorService
 	// Duplicated from de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebServiceServer
 	private ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException 
 	{
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
 		if (session == null) 
 			throw new InvalidUserDataException("Security token unknown! You have to login first to obtain a security token!");
 		

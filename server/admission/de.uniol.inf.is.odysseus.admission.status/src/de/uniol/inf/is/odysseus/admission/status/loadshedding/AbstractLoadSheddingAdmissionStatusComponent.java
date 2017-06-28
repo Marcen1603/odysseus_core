@@ -23,7 +23,7 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 	/**
 	 * The ISession superUser is used to get access to the execution plan of the queries.
 	 */
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement()
 			.loginSuperUser(null);
 
 	/**

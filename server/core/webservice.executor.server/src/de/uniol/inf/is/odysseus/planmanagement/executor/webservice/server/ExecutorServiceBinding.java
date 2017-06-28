@@ -51,7 +51,7 @@ public class ExecutorServiceBinding {
 	public void bindExecutor(IExecutor ex) {
 		if (ex instanceof IServerExecutor) {
 			executor = (IServerExecutor) ex;
-			superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+			superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 			executor.startExecution(superUser);
 		} else {
 			throw new IllegalArgumentException("Only serverbased Executor can be bound!");

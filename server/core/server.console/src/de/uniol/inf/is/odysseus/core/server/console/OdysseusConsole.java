@@ -255,7 +255,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -303,13 +303,13 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		// } catch (Exception e) {
 		// ci.println(e.getMessage());
 		// }
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 	}
 
 	@Help(parameter = "<logout>", description = "Logout current user.")
 	public void _logout(CommandInterpreter ci) {
 		try {
-			UserManagementProvider.getSessionmanagement().logout(currentUser);
+			UserManagementProvider.instance.getSessionmanagement().logout(currentUser);
 			currentUser = null;
 			ci.println("Current user logged out ");
 		} catch (Exception e) {

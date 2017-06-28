@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.net.querydistribute.activator.QueryDistributionP
 // TODO javaDoc M.B.
 public class QueryPartController implements IPlanModificationListener, IOdysseusNodeCommunicatorListener, IQueryPartController {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(QueryPartController.class);
 

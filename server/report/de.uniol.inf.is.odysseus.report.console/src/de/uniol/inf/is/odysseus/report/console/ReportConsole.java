@@ -30,7 +30,7 @@ public class ReportConsole implements CommandProvider {
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
+			currentSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

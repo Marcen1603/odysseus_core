@@ -35,7 +35,7 @@ public class ReoptimzeParallelizationOsgiConsoleCommand implements CommandProvid
 		if (queryId == null) {
 			throw new IllegalArgumentException("No queryId given.");
 		}
-		ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
+		ISession currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement()
 				.loginSuperUser(null);
 		try {
 			new Thread(() -> {

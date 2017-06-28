@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.impl.OperatorEstimatorRegistr
 
 public class PhysicalCostModelConsole implements CommandProvider {
 
-	static private final ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 
 	private static IPhysicalCostModel physicalCostModel;

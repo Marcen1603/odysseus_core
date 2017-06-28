@@ -27,7 +27,7 @@ public class EcaPlugin {
 	 */
 	public EcaPlugin() {
 		if (currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
+			currentSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null,
 					UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		context = new Context();

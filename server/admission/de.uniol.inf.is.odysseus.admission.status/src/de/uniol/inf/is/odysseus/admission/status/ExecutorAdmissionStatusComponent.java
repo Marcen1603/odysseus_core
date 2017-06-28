@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ExecutorAdmissionStatusComponent implements IAdmissionStatusComponent {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	public int getQueryCount() {
 		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser).size();

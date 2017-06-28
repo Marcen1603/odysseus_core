@@ -90,6 +90,6 @@ public class Activator extends AbstractUIPlugin {
 
     public static ISession getSession() {
         final SessionContext context = new SessionContext("System", "manager");
-        return UserManagementProvider.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
+        return UserManagementProvider.instance.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
     }
 }

@@ -42,7 +42,7 @@ public class LogoutUserPreParserKeyword extends AbstractPreParserKeyword {
 	public List<IExecutorCommand> execute(Map<String, Object> variables, String parameter, ISession caller, Context context, IServerExecutor executor) throws OdysseusScriptException {
 
 		try {
-			UserManagementProvider.getSessionmanagement().logout(caller);
+			UserManagementProvider.instance.getSessionmanagement().logout(caller);
 			variables.remove("USER");
 
 		} catch( Exception ex ) {

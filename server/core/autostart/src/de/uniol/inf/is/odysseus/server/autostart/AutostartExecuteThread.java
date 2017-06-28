@@ -22,7 +22,7 @@ public class AutostartExecuteThread extends Thread {
 	public AutostartExecuteThread(IExecutor executor, String queryText) {
 		this.executor = executor;
 		this.queryText = queryText;
-		this.user = UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+		this.user = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null);
 
 		setDaemon(true);
 		setName("Autostart execution thread");

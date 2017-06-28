@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>> {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlanModificationActionPO.class);
 

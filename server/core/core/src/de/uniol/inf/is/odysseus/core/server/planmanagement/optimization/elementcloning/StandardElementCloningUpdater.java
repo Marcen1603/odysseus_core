@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
 public class StandardElementCloningUpdater extends
 		AbstractElementCloningUpdater {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	static final StandardElementCloningUpdater instance = new StandardElementCloningUpdater();
 

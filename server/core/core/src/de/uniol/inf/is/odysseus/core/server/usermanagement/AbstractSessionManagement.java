@@ -47,7 +47,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 	
 	@Override
 	public ISession loginAs(final String username, ITenant tenant, ISession caller) {
-		if(UserManagementProvider.getUsermanagement(false).hasPermission(caller, UserManagementPermission.SUDO_LOGIN, UserManagementPermission.objectURI)) {
+		if(UserManagementProvider.instance.getUsermanagement(false).hasPermission(caller, UserManagementPermission.SUDO_LOGIN, UserManagementPermission.objectURI)) {
 			return login(username, null, tenant, false);
 		}
 		return null;

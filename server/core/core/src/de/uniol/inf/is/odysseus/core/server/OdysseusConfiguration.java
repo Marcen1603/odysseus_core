@@ -345,11 +345,11 @@ public class OdysseusConfiguration {
 
 	public static void set(String key, String value, boolean permanent, ISession caller) {
 
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, ConfigurationPermission.SET_PARAM,
 				ConfigurationPermission.objectURI)) {
 			props.setProperty(key, value);
 			if (permanent) {
-				if (UserManagementProvider.getUsermanagement(true).hasPermission(caller,
+				if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller,
 						ConfigurationPermission.SAVE_PARAM, ConfigurationPermission.objectURI)) {
 					savePropertyFile(getHomeDir());
 				} else {

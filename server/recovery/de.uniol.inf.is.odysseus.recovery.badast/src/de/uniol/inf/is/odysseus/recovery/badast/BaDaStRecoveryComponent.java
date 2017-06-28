@@ -115,7 +115,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 
 	protected ISession getSession() {
 		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+			activeSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null);
 		}
 		return activeSession;
 	}

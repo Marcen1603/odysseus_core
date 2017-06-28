@@ -92,7 +92,7 @@ public class UserManager {
 	 * @return the manager
 	 */
 	protected IUserManagement getManager() {
-		return UserManagementProvider.getUsermanagement(true);
+		return UserManagementProvider.instance.getUsermanagement(true);
 	}
 
 	/**
@@ -101,6 +101,6 @@ public class UserManager {
 	 * @return the admin session
 	 */
 	protected ISession getAdminSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+		return UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null);
 	}
 }

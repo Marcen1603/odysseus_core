@@ -37,7 +37,7 @@ public class ProcessingImageRecoveryComponent
 		implements IRecoveryComponent, IPlanModificationListener, ICheckpointListener {
 
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	/**
 	 * The version of this class for serialization.

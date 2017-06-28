@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.costmodel.logical.impl.OperatorEstimatorRegistry
 
 public class LogicalCostModelConsole implements CommandProvider {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static ILogicalCostModel logicalCostModel;
 	private static IServerExecutor serverExecutor;
