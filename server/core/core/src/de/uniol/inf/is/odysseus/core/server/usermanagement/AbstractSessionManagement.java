@@ -82,7 +82,7 @@ abstract public class AbstractSessionManagement<USER extends IUser> implements
 	@Override
 	public ISession loginSuperUser(Object secret, String tenantname) {
 		// TODO: check secret
-		ITenant tenant = UserManagementProvider.getTenant(tenantname);
+		ITenant tenant = UserManagementProvider.instance.getTenant(tenantname);
 		return login("System", null, tenant, false);
 	}
 

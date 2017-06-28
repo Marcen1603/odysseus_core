@@ -38,20 +38,19 @@ public class UserManagementProvider {
 	static private TenantDAO dao = TenantDAO.getInstance();
 
 	private static String defaultTenantName = "";
-	
+
 	// by OSGI
 	public UserManagementProvider() {
 		instance = this;
 	}
 
 	private Map<String, IUserManagement> usrMgmt = new HashMap<>();
-	
 
 	synchronized public ITenant getDefaultTenant() {
 		return getTenant(defaultTenantName);
 	}
 
-	static public synchronized ITenant getTenant(String name) {
+	public synchronized ITenant getTenant(String name) {
 		return TenantDAO.getInstance().findByName(name);
 	}
 

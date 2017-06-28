@@ -16,7 +16,7 @@ public class LoginServerResource extends AbstractServerResource {
 
 	@Post
 	public GenericResponseDTO<String> login(LoginRequestDTO loginRequestDTO) {
-		ITenant tenant = UserManagementProvider.getTenant(loginRequestDTO.getTenant());
+		ITenant tenant = UserManagementProvider.instance.getTenant(loginRequestDTO.getTenant());
 		ISession user = UserManagementProvider.getSessionmanagement().login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword().getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
