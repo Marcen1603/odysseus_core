@@ -25,6 +25,11 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
+/**
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class NamedExpressionParameter extends AbstractParameter<NamedExpression> {
 
 	private static final long serialVersionUID = -3129785072529123574L;
