@@ -29,16 +29,22 @@ import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
 public class UserManagementProvider {
 
-	static final UserManagementProvider instance = new UserManagementProvider();
-	
-	static Logger logger = LoggerFactory
-			.getLogger(UserManagementProvider.class);
+	private static UserManagementProvider instance;
 
-	static private Map<String, IUserManagement> usrMgmt = new HashMap<>();
-	static private String defaultTenantName = "";
+	static Logger logger = LoggerFactory.getLogger(UserManagementProvider.class);
+
 	// Preload daos
 	@SuppressWarnings("unused")
 	static private TenantDAO dao = TenantDAO.getInstance();
+
+	private static String defaultTenantName = "";
+	
+	public UserManagementProvider() {
+		instance = this;
+	}
+
+	private Map<String, IUserManagement> usrMgmt = new HashMap<>();
+	
 
 	static synchronized public ITenant getDefaultTenant() {
 		return getTenant(defaultTenantName);
@@ -48,10 +54,8 @@ public class UserManagementProvider {
 		return TenantDAO.getInstance().findByName(name);
 	}
 
-	static public synchronized ITenant createNewTenant(String name,
-			ISession caller) {
-		if (waitForUsermanagement().hasPermission(caller,
-				UserManagementPermission.CREATE_TENANT,
+	static public synchronized ITenant createNewTenant(String name, ISession caller) {
+		if (waitForUsermanagement().hasPermission(caller, UserManagementPermission.CREATE_TENANT,
 				UserManagementPermission.objectURI)) {
 
 			ITenant t = new Tenant();
@@ -62,40 +66,38 @@ public class UserManagementProvider {
 		throw new PermissionException("Not right to create tenant");
 
 	}
-	
+
 	static public synchronized List<ITenant> getTenants() {
 		return TenantDAO.getInstance().findAll();
 	}
 
 	/**
 	 * Get the current user management.
-	 * @param wait if not bound, wait for user management
+	 * 
+	 * @param wait
+	 *            if not bound, wait for user management
 	 * @return the user management, could be null if wait is false
 	 */
 	static public IUserManagement getUsermanagement(boolean wait) {
 		if (wait) {
 			return waitForUsermanagement();
 		} else {
-			return usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt")
-					.toLowerCase());
+			return instance.usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
 		}
 	}
-	
+
 	@Deprecated
-	static public IUserManagement getUsermanagent(){
+	static public IUserManagement getUsermanagent() {
 		return getUsermanagement(true);
 	}
 
 	static synchronized private IUserManagement waitForUsermanagement() {
-		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.get(
-				"StoretypeUserMgmt").toLowerCase());
+		IUserManagement ret = instance.usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
 		while (ret == null) {
 			try {
 				UserManagementProvider.class.wait(1000);
-				logger.debug("Waiting for UserManagement "
-						+ OdysseusConfiguration.get("StoretypeUserMgmt"));
-				ret = usrMgmt.get(OdysseusConfiguration
-						.get("StoretypeUserMgmt").toLowerCase());
+				logger.debug("Waiting for UserManagement " + OdysseusConfiguration.get("StoretypeUserMgmt"));
+				ret = instance.usrMgmt.get(OdysseusConfiguration.get("StoretypeUserMgmt").toLowerCase());
 			} catch (InterruptedException e) {
 			}
 		}
@@ -117,11 +119,9 @@ public class UserManagementProvider {
 	protected void bindUserManagement(IUserManagement usermanagement) {
 		if (usrMgmt.get(usermanagement.getType().toLowerCase()) == null) {
 			usrMgmt.put(usermanagement.getType().toLowerCase(), usermanagement);
-			logger.debug("Bound UserManagementService "
-					+ usermanagement.getType());
+			logger.debug("Bound UserManagementService " + usermanagement.getType());
 		} else {
-			throw new RuntimeException("UserManagement "
-					+ usermanagement.getType() + " already bound!");
+			throw new RuntimeException("UserManagement " + usermanagement.getType() + " already bound!");
 		}
 		synchronized (UserManagementProvider.class) {
 			UserManagementProvider.class.notifyAll();
@@ -131,14 +131,10 @@ public class UserManagementProvider {
 	protected void unbindUserManagement(IUserManagement usermanagement) {
 		if (usrMgmt.get(usermanagement.getType().toLowerCase()) != null) {
 			usrMgmt.remove(usermanagement.getType().toLowerCase());
-			logger.debug("User management " + usermanagement.getType()
-					+ " removed");
+			logger.debug("User management " + usermanagement.getType() + " removed");
 		} else {
-			throw new RuntimeException("UserManagement "
-					+ usermanagement.getType() + " not bound!");
+			throw new RuntimeException("UserManagement " + usermanagement.getType() + " not bound!");
 		}
 	}
-
-
 
 }
