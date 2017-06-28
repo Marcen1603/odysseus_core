@@ -28,10 +28,10 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
@@ -39,12 +39,12 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
 
-public abstract class AbstractFunction<T> extends AbstractExpression<T> implements IFunction<T> {
+public abstract class AbstractFunction<T> extends AbstractExpression<T> implements IMepFunction<T> {
 
 	static final Logger LOG = LoggerFactory.getLogger(AbstractFunction.class);
 
 	private static final long serialVersionUID = 3805396798229438499L;
-	private IExpression<?>[] arguments;
+	private IMepExpression<?>[] arguments;
 	private TimeUnit baseTimeUnit = TimeUnit.MILLISECONDS;
 	private final String symbol;
 	private final int arity;
@@ -205,24 +205,24 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	final public void setArguments(IExpression<?>... arguments) {
+	final public void setArguments(IMepExpression<?>... arguments) {
 		if (arguments.length != getArity()) {
 			throw new IllegalArgumentException("illegal number of arguments for function " + getSymbol());
 		}
 
-		this.arguments = new IExpression<?>[getArity()];
+		this.arguments = new IMepExpression<?>[getArity()];
 		for (int i = 0; i < arguments.length; i++) {
 			setArgument(i, arguments[i]);
 		}
 	}
 
 	@Override
-	public void setArgument(int argumentPosition, IExpression<?> argument) {
+	public void setArgument(int argumentPosition, IMepExpression<?> argument) {
 		this.arguments[argumentPosition] = argument;
 	}
 
 	@Override
-	public IExpression<?>[] getArguments() {
+	public IMepExpression<?>[] getArguments() {
 		return arguments;
 	}
 
@@ -242,7 +242,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	final protected int getInputPosition(int argumentPos) {
-		return ((IVariable) arguments[argumentPos]).getPosition();
+		return ((IMepVariable) arguments[argumentPos]).getPosition();
 	}
 
 	final protected Double getNumericalInputValue(int argumentPos) {
@@ -259,8 +259,8 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	@Override
 	public void propagateSessionReference(final List<ISession> sessions) {
 		this.sessions = sessions;
-		final IExpression<?>[] arguments = this.getArguments();
-		for (final IExpression<?> arg : arguments) {
+		final IMepExpression<?>[] arguments = this.getArguments();
+		for (final IMepExpression<?> arg : arguments) {
 			if (arg instanceof AbstractFunction) {
 				((AbstractFunction<?>) arg).propagateSessionReference(sessions);
 			}
@@ -268,13 +268,13 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
+	public Object acceptVisitor(IMepExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
 
 	@Override
-	public Set<IVariable> getVariables() {
-		Set<IVariable> variables = new HashSet<IVariable>();
+	public Set<IMepVariable> getVariables() {
+		Set<IMepVariable> variables = new HashSet<IMepVariable>();
 		for (int i = 0; i < getArity(); ++i) {
 			variables.addAll(getArguments()[i].getVariables());
 		}
@@ -282,9 +282,9 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public IVariable getVariable(String name) {
-		Set<IVariable> variables = getVariables();
-		for (IVariable curVar : variables) {
+	public IMepVariable getVariable(String name) {
+		Set<IMepVariable> variables = getVariables();
+		for (IMepVariable curVar : variables) {
 			if (curVar.getIdentifier().equals(name)) {
 				return curVar;
 			}
@@ -327,7 +327,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public IExpression<?> getArgument(int argumentPosition) {
+	public IMepExpression<?> getArgument(int argumentPosition) {
 		return this.arguments[argumentPosition];
 	}
 
@@ -338,7 +338,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public IFunction<T> toFunction() {
+	public IMepFunction<T> toFunction() {
 		return this;
 	}
 
@@ -367,21 +367,21 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		throw new RuntimeException("Function " + this + " must implement determineType function");
 	}
 
-	private void initSubTypes(IExpression<?>[] args) {
+	private void initSubTypes(IMepExpression<?>[] args) {
 		// Must be called to init subtypes that are potentially created when
 		// calling determine subtype
-		for (IExpression<?> arg : args) {
+		for (IMepExpression<?> arg : args) {
 			arg.getReturnType();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IExpression<T> clone(Map<IVariable, IVariable> vars) {
+	public IMepExpression<T> clone(Map<IMepVariable, IMepVariable> vars) {
 		// Remark: stateful functions must override this method!
 		try {
 			AbstractFunction<T> newFunction = null;
@@ -405,7 +405,7 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 			// Important: Arguments cannot be set in constructor else there is
 			// no chance, that each occurrence of the same variable is the
 			// same Java instance in this expression
-			newFunction.arguments = new IExpression<?>[this.arguments.length];
+			newFunction.arguments = new IMepExpression<?>[this.arguments.length];
 			for (int i = 0; i < arguments.length; i++) {
 				newFunction.arguments[i] = arguments[i].clone(vars);
 			}
@@ -418,10 +418,10 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public boolean cnfEquals(IExpression<?> otherExpression) {
-		IExpression<?> cnf1 = BooleanExpressionOptimizer
+	public boolean cnfEquals(IMepExpression<?> otherExpression) {
+		IMepExpression<?> cnf1 = BooleanExpressionOptimizer
 				.sortByStringExpressions(BooleanExpressionOptimizer.toConjunctiveNormalForm(this));
-		IExpression<?> cnf2 = BooleanExpressionOptimizer
+		IMepExpression<?> cnf2 = BooleanExpressionOptimizer
 				.sortByStringExpressions(BooleanExpressionOptimizer.toConjunctiveNormalForm(otherExpression));
 		return cnf1.toString().equals(cnf2.toString());
 	}
@@ -442,11 +442,11 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 	}
 
 	@Override
-	public boolean isContainedIn(IExpression<?> otherExpression) {
-		if (!(otherExpression instanceof IFunction)) {
+	public boolean isContainedIn(IMepExpression<?> otherExpression) {
+		if (!(otherExpression instanceof IMepFunction)) {
 			return false;
 		}
-		IFunction<?> otherFunction = (IFunction<?>) otherExpression;
+		IMepFunction<?> otherFunction = (IMepFunction<?>) otherExpression;
 
 		if (this.isAndPredicate()) {
 			// TODO: FIX IS CONTAINED IN
@@ -485,19 +485,19 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 		if (this.getArguments().length != otherFunction.getArguments().length) {
 			return false;
 		}
-		IExpression<?> ex1 = this;
-		IExpression<?> ex2 = otherFunction;
+		IMepExpression<?> ex1 = this;
+		IMepExpression<?> ex2 = otherFunction;
 		if (ex1.getReturnType().equals(ex2.getReturnType()) && ex1.isFunction()) {
-			IFunction<?> if1 = (IFunction<?>) ex1;
-			IFunction<?> if2 = (IFunction<?>) ex2;
+			IMepFunction<?> if1 = (IMepFunction<?>) ex1;
+			IMepFunction<?> if2 = (IMepFunction<?>) ex2;
 			if (if1.getArity() != 2) {
 				return false;
 			}
 
-			IExpression<?> firstArgument1 = if1.getArgument(0);
-			IExpression<?> secondArgument1 = if1.getArgument(1);
-			IExpression<?> firstArgument2 = if2.getArgument(0);
-			IExpression<?> secondArgument2 = if2.getArgument(1);
+			IMepExpression<?> firstArgument1 = if1.getArgument(0);
+			IMepExpression<?> secondArgument1 = if1.getArgument(1);
+			IMepExpression<?> firstArgument2 = if2.getArgument(0);
+			IMepExpression<?> secondArgument2 = if2.getArgument(1);
 
 			String symbol1 = if1.getSymbol();
 			String symbol2 = if2.getSymbol();
@@ -672,10 +672,10 @@ public abstract class AbstractFunction<T> extends AbstractExpression<T> implemen
 				// Funktionen sind Vergleiche zwischen zwei Attributen
 			} else if (getArguments().length == 2 && firstArgument1.isVariable() && secondArgument1.isVariable()
 					&& firstArgument2.isVariable() && secondArgument2.isVariable()) {
-				IVariable v11 = firstArgument1.toVariable();
-				IVariable v12 = secondArgument1.toVariable();
-				IVariable v21 = firstArgument2.toVariable();
-				IVariable v22 = secondArgument2.toVariable();
+				IMepVariable v11 = firstArgument1.toVariable();
+				IMepVariable v12 = secondArgument1.toVariable();
+				IMepVariable v21 = firstArgument2.toVariable();
+				IMepVariable v22 = secondArgument2.toVariable();
 
 				// Attribute sind links und rechts gleich
 				if (v11.equals(v21) && v12.equals(v22)) {

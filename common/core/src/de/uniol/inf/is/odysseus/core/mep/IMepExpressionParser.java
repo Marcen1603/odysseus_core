@@ -13,24 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.core.server.sourcedescription.sdf.function;
+package de.uniol.inf.is.odysseus.core.mep;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
-import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class SDFFunctionProvider implements IFunctionProvider{
+/**
+ * This interface encapsulates different expression parsers
+ * 
+ * @author Marco Grawunder
+ *
+ */
+public interface IMepExpressionParser {
 
-	@Override
-	public List<IMepFunction<?>> getFunctions() {
-		List<IMepFunction<?>> funcs = new ArrayList<IMepFunction<?>>();
-		
-		funcs.add(new DolToEur());		
-		return funcs;
-	}
+	/**
+	 * Parse a String expression
+	 * 
+	 * @param expressionStr The expression to parse
+	 * @param schema The {@link SDFSchema schema} of the expression
+	 * @return an IExpression object that contains the parsed expression
+	 * @throws ParseException 
+	 */
+	IMepExpression<?> parse(String expressionStr, List<SDFSchema> schema) throws ParseException;
 
-	
-	
+	IMepExpression<?> parse(String expressionStr, SDFSchema schema) throws ParseException;
+
+	IMepExpression<?> parse(String expressionStr) throws ParseException;
+
 }

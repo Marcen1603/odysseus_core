@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -58,8 +58,8 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
             throw new IllegalArgumentException("Function  \"" + symbol
                     + "\" cannot be found.");
         }
-        final List<IFunction<?>> functions = MEP.getFunctions(symbol);
-        IFunction<?> selectedFunction = null;
+        final List<IMepFunction<?>> functions = MEP.getFunctions(symbol);
+        IMepFunction<?> selectedFunction = null;
 
         final int arity = node.jjtGetNumChildren();
 
@@ -110,24 +110,24 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
         } else if (functions.size() == 1) {
             selectedFunction = functions.get(0);
             if (selectedFunction.getClass() == MatrixLine.class) {
-                selectedFunction = new MatrixLine(new IExpression[arity]);
+                selectedFunction = new MatrixLine(new IMepExpression[arity]);
             }
-            final IExpression<?>[] expressions = new IExpression[arity];
+            final IMepExpression<?>[] expressions = new IMepExpression[arity];
             for (int i = 0; i < arity; ++i) {
                 // pass the accepted types of this function for the current
                 // argument
-                expressions[i] = (IExpression<?>) node.jjtGetChild(i)
+                expressions[i] = (IMepExpression<?>) node.jjtGetChild(i)
                         .jjtAccept(this, selectedFunction.getAcceptedTypes(i));
             }
             selectedFunction.setArguments(expressions);
         } else {
-            final IExpression<?>[] expressions = new IExpression[arity];
+            final IMepExpression<?>[] expressions = new IMepExpression[arity];
 
-            for (final IFunction<?> function : functions) {
+            for (final IMepFunction<?> function : functions) {
                 if (arity == function.getArity()) {
                     final List<SDFDatatype> parameters = new ArrayList<>();
                     for (int i = 0; i < arity; ++i) {
-                        expressions[i] = (IExpression<?>) node.jjtGetChild(i)
+                        expressions[i] = (IMepExpression<?>) node.jjtGetChild(i)
                                 .jjtAccept(this, function.getAcceptedTypes(i));
                     }
                     for (int i = 0; i < arity; ++i) {
@@ -150,7 +150,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
                 final StringBuffer exprStr = new StringBuffer();
                 for (int i = 0; i < node.children.length; i++) {
                     // params.append(((IExpression<?>)n).getReturnType());
-                    final IExpression<?> expr = (IExpression<?>) node.jjtGetChild(i)
+                    final IMepExpression<?> expr = (IMepExpression<?>) node.jjtGetChild(i)
                             .jjtAccept(this, null);
                     exprStr.append(expr+"("+expr.getReturnType()+") ");
                 }
@@ -249,7 +249,7 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
     @Override
     public Object visit(final ASTMatrix node, final Object data) {
         final int childCount = node.jjtGetNumChildren();
-        final IExpression<?>[] values = new IExpression<?>[childCount];
+        final IMepExpression<?>[] values = new IMepExpression<?>[childCount];
         int valuesPerLine = 0;
         for (int i = 0; i < childCount; ++i) {
             values[i] = (MatrixLine) node.jjtGetChild(i).jjtAccept(this, data);
@@ -269,9 +269,9 @@ public class ExpressionBuilderVisitor implements MEPImplVisitor {
     @Override
     public Object visit(final ASTMatrixLine node, final Object data) {
         final int childCount = node.jjtGetNumChildren();
-        final IExpression<?>[] values = new IExpression<?>[childCount];
+        final IMepExpression<?>[] values = new IMepExpression<?>[childCount];
         for (int i = 0; i < childCount; ++i) {
-            values[i] = (IExpression<?>) node.jjtGetChild(i).jjtAccept(this,
+            values[i] = (IMepExpression<?>) node.jjtGetChild(i).jjtAccept(this,
                     data);
         }
         return new MatrixLine(values);

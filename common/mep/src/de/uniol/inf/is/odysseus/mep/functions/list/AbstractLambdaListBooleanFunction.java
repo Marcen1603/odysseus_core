@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
@@ -56,7 +56,7 @@ abstract public class AbstractLambdaListBooleanFunction extends
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args != null && args.length == 2) {
 			String expr = getInputValue(1);
 			init(expr);

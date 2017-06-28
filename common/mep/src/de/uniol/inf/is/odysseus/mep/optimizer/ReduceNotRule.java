@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 
 /**
@@ -35,8 +35,8 @@ public class ReduceNotRule extends AbstractExpressionOptimizerRule<NotOperator> 
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(NotOperator expression) {
-        IExpression<?> child = expression.toFunction().getArgument(0);
+    public IMepExpression<?> execute(NotOperator expression) {
+        IMepExpression<?> child = expression.toFunction().getArgument(0);
         if (child instanceof NotOperator) {
             return child.toFunction().getArgument(0);
         }
@@ -47,7 +47,7 @@ public class ReduceNotRule extends AbstractExpressionOptimizerRule<NotOperator> 
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return expression instanceof NotOperator;
     }
 }

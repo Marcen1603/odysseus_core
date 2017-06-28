@@ -15,8 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
@@ -32,14 +32,14 @@ import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
  *          | DisjunctiveNormalFormRule.java $
  *
  */
-public class DisjunctiveNormalFormRule extends AbstractExpressionOptimizerRule<IExpression<?>> {
+public class DisjunctiveNormalFormRule extends AbstractExpressionOptimizerRule<IMepExpression<?>> {
     private final DeMorganRule deMorganRule = new DeMorganRule();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(IExpression<?> expression) {
+    public IMepExpression<?> execute(IMepExpression<?> expression) {
         return toDisjunctiveNormalForm(expression);
 
     }
@@ -48,97 +48,97 @@ public class DisjunctiveNormalFormRule extends AbstractExpressionOptimizerRule<I
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return true;
     }
 
-    private IExpression<?> toDisjunctiveNormalForm(IExpression<?> expression) {
+    private IMepExpression<?> toDisjunctiveNormalForm(IMepExpression<?> expression) {
         if (!isBooleanOperator(expression)) {
             return expression;
         }
         if (expression instanceof NotOperator) {
-            IExpression<?> leaf = expression.toFunction().getArgument(0);
+            IMepExpression<?> leaf = expression.toFunction().getArgument(0);
             if (!isBooleanOperator(leaf)) {
                 return expression;
             }
             if (leaf instanceof NotOperator) {
                 return toDisjunctiveNormalForm(leaf.toFunction().getArgument(0));
             }
-            IExpression<?> deMorgan = this.deMorganRule.executeRule(expression);
+            IMepExpression<?> deMorgan = this.deMorganRule.executeRule(expression);
             return toDisjunctiveNormalForm(deMorgan);
         }
 
-        IExpression<?> left = expression.toFunction().getArgument(0);
+        IMepExpression<?> left = expression.toFunction().getArgument(0);
         if (left != null) {
             left = toDisjunctiveNormalForm(left);
         }
-        IExpression<?> right = expression.toFunction().getArgument(1);
+        IMepExpression<?> right = expression.toFunction().getArgument(1);
         if (right != null) {
             right = toDisjunctiveNormalForm(right);
         }
         if (expression instanceof OrOperator) {
             OrOperator or = new OrOperator();
-            or.setArguments(new IExpression<?>[] { left, right });
+            or.setArguments(new IMepExpression<?>[] { left, right });
             return or;
         }
         if (expression instanceof AndOperator) {
             // (A v B) ∧ (C v D) => (A ∧ C) v (B ∧ C) v (A ∧ D) v (B ∧ D)
             if ((left != null) && (left instanceof OrOperator) && (right != null) && (right instanceof OrOperator)) {
-                IFunction<?> tmpLeft = left.toFunction();
-                IFunction<?> tmpRight = right.toFunction();
+                IMepFunction<?> tmpLeft = left.toFunction();
+                IMepFunction<?> tmpRight = right.toFunction();
 
                 AndOperator leftLeftNode = new AndOperator();
-                leftLeftNode.setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight.toFunction().getArgument(0) });
+                leftLeftNode.setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight.toFunction().getArgument(0) });
                 AndOperator leftRightNode = new AndOperator();
-                leftRightNode.setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight.toFunction().getArgument(0) });
+                leftRightNode.setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight.toFunction().getArgument(0) });
                 left = new OrOperator();
-                left.toFunction().setArguments(new IExpression<?>[] { leftLeftNode, leftRightNode });
+                left.toFunction().setArguments(new IMepExpression<?>[] { leftLeftNode, leftRightNode });
 
                 AndOperator rightLeftNode = new AndOperator();
-                rightLeftNode.setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight.toFunction().getArgument(1) });
+                rightLeftNode.setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight.toFunction().getArgument(1) });
                 AndOperator rightRightNode = new AndOperator();
-                rightRightNode.setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight.toFunction().getArgument(1) });
+                rightRightNode.setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight.toFunction().getArgument(1) });
                 right = new OrOperator();
-                right.toFunction().setArguments(new IExpression<?>[] { rightLeftNode, rightRightNode });
+                right.toFunction().setArguments(new IMepExpression<?>[] { rightLeftNode, rightRightNode });
 
                 OrOperator or = new OrOperator();
-                or.setArguments(new IExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
+                or.setArguments(new IMepExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
                 return or;
 
             }
             // ? ∧ (C v D) => (? ∧ D) v (? ∧ C)
             if ((right != null) && (right instanceof OrOperator)) {
-                IFunction<?> tmpRight = right.toFunction();
-                IExpression<?> tmpLeft = left;
+                IMepFunction<?> tmpRight = right.toFunction();
+                IMepExpression<?> tmpLeft = left;
 
                 left = new AndOperator();
-                left.toFunction().setArguments(new IExpression<?>[] { tmpLeft, tmpRight.toFunction().getArgument(1) });
+                left.toFunction().setArguments(new IMepExpression<?>[] { tmpLeft, tmpRight.toFunction().getArgument(1) });
 
                 right = new AndOperator();
-                right.toFunction().setArguments(new IExpression<?>[] { tmpLeft, tmpRight.toFunction().getArgument(0) });
+                right.toFunction().setArguments(new IMepExpression<?>[] { tmpLeft, tmpRight.toFunction().getArgument(0) });
 
                 OrOperator or = new OrOperator();
-                or.setArguments(new IExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
+                or.setArguments(new IMepExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
                 return or;
             }
             // (A v B) ∧ ? => (A ∧ ?) v (B ∧ ?)
             if ((left != null) && (left instanceof OrOperator)) {
-                IFunction<?> tmpLeft = left.toFunction();
-                IExpression<?> tmpRight = right;
+                IMepFunction<?> tmpLeft = left.toFunction();
+                IMepExpression<?> tmpRight = right;
 
                 left = new AndOperator();
-                left.toFunction().setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight });
+                left.toFunction().setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(0), tmpRight });
 
                 right = new AndOperator();
-                right.toFunction().setArguments(new IExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight });
+                right.toFunction().setArguments(new IMepExpression<?>[] { tmpLeft.toFunction().getArgument(1), tmpRight });
 
                 OrOperator or = new OrOperator();
-                or.setArguments(new IExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
+                or.setArguments(new IMepExpression<?>[] { toDisjunctiveNormalForm(left), toDisjunctiveNormalForm(right) });
                 return or;
 
             }
             AndOperator and = new AndOperator();
-            and.setArguments(new IExpression<?>[] { left, right });
+            and.setArguments(new IMepExpression<?>[] { left, right });
             return and;
         }
         return expression;

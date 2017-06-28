@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
@@ -40,25 +40,25 @@ public class DeMorganRule extends AbstractExpressionOptimizerRule<NotOperator> {
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(NotOperator expression) {
-        IExpression<?> leaf = expression.toFunction().getArgument(0);
+    public IMepExpression<?> execute(NotOperator expression) {
+        IMepExpression<?> leaf = expression.toFunction().getArgument(0);
 
         if (leaf instanceof AndOperator) {
-            Set<IExpression<?>> split = getConjunctiveSplit(leaf);
-            List<IExpression<?>> clauses = new ArrayList<>();
-            for (IExpression<?> literal : split) {
+            Set<IMepExpression<?>> split = getConjunctiveSplit(leaf);
+            List<IMepExpression<?>> clauses = new ArrayList<>();
+            for (IMepExpression<?> literal : split) {
                 NotOperator operator = new NotOperator();
-                operator.setArguments(new IExpression<?>[] { literal });
+                operator.setArguments(new IMepExpression<?>[] { literal });
                 clauses.add(operator);
             }
             return disjunction(clauses);
         }
         if (leaf instanceof OrOperator) {
-            Set<IExpression<?>> split = getDisjunctiveSplit(leaf);
-            List<IExpression<?>> clauses = new ArrayList<>();
-            for (IExpression<?> literal : split) {
+            Set<IMepExpression<?>> split = getDisjunctiveSplit(leaf);
+            List<IMepExpression<?>> clauses = new ArrayList<>();
+            for (IMepExpression<?> literal : split) {
                 NotOperator operator = new NotOperator();
-                operator.setArguments(new IExpression<?>[] { literal });
+                operator.setArguments(new IMepExpression<?>[] { literal });
                 clauses.add(operator);
             }
             return conjunction(clauses);
@@ -70,7 +70,7 @@ public class DeMorganRule extends AbstractExpressionOptimizerRule<NotOperator> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return expression instanceof NotOperator;
     }
 

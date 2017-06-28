@@ -20,7 +20,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -54,10 +54,10 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 						if (operator.getPredicate() instanceof IRelationalExpression) {
 							RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) operator
 									.getPredicate();
-							IExpression<?> expression = ((RelationalExpression<?>) operator.getPredicate())
+							IMepExpression<?> expression = ((RelationalExpression<?>) operator.getPredicate())
 									.getMEPExpression();
 							expression = BooleanExpressionOptimizer.optimize(expression);
-							IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
+							IMepExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
 							SDFExpression sdfExpression = new SDFExpression(cnf.toString(),relationalPredicate.getAttributeResolver(),
 									relationalPredicate.getExpressionParser());
 							operator.setPredicate(new RelationalExpression(sdfExpression));

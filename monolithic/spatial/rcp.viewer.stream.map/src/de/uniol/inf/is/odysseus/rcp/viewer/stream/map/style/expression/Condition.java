@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -18,14 +18,14 @@ public abstract class Condition<T>{
 
 	private String expressionStr = null;
 	private T defaultValue = null;
-	private IExpression<?> exp = null;
-	private Set<Entry<Integer, IVariable>> variables = null;
+	private IMepExpression<?> exp = null;
+	private Set<Entry<Integer, IMepVariable>> variables = null;
 	public Condition(PersistentCondition condition) {
 		this.defaultValue = getValue(condition.defaultValue);
 		this.expressionStr = condition.expression;
 		if (this.defaultValue == null){
 			try {
-				IExpression<?> exp = MEP.getInstance().parse(expressionStr, (List<SDFSchema>)null);
+				IMepExpression<?> exp = MEP.getInstance().parse(expressionStr, (List<SDFSchema>)null);
 				if (exp.isConstant()){
 					this.defaultValue = getValue(exp.getValue());
 				}					
@@ -44,9 +44,9 @@ public abstract class Condition<T>{
 		if (expressionStr != null && expressionStr.length() != 0){
 			try {
 				exp = MEP.getInstance().parse(expressionStr, schema);
-				Set<IVariable> vars = exp.getVariables();
-				TreeMap<Integer, IVariable> variables = new TreeMap<Integer, IVariable>();
-				for (IVariable variable : vars) {
+				Set<IMepVariable> vars = exp.getVariables();
+				TreeMap<Integer, IMepVariable> variables = new TreeMap<Integer, IMepVariable>();
+				for (IMepVariable variable : vars) {
 					SDFAttribute attr = schema.findAttribute(variable.getIdentifier());
 					int index = schema.indexOf(attr);
 					variables.put(index, variable);
@@ -65,7 +65,7 @@ public abstract class Condition<T>{
 	public T eval(Tuple<?> tuple) {
 		T eval = null;
 		if (tuple != null && exp != null){
-			for (Entry<Integer,IVariable> element : this.variables) {
+			for (Entry<Integer,IMepVariable> element : this.variables) {
 				element.getValue().bind(tuple.getAttribute(element.getKey()), element.getKey());
 			}
 			eval = getValue(this.exp.getValue());

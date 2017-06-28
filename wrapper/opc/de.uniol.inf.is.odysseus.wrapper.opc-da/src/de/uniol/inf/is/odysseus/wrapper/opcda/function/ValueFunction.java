@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcda.function;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.datatype.OPCValue;
@@ -49,7 +49,7 @@ public class ValueFunction<T> extends AbstractFunction<T> {
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args.length == 1) {
 			return args[0].getReturnType().getSubType();
 		}
