@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 The Odysseus Team
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a joinPlan of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 /**
  * Logical Subscribe Operator. The Operator provides the subscribe functionality
  * in publish/Subscribe systems.
- * 
+ *
  * @author ChrisToenjesDeye
  *
  */
@@ -50,7 +50,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4060380514816738851L;
 	private List<SDFAttribute> sdfAttributes;
@@ -101,7 +101,7 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		IAttributeResolver attributeResolver = new DirectAttributeResolver(
 				getOutputSchemaIntern(0));
 		IExpressionBuilder predicateBuilder = OperatorBuilderFactory
-				.getPredicateBuilder(predicateType);
+				.getExpressionBuilder(predicateType);
 
 		if (predicateBuilder == null) {
 			throw new IllegalArgumentException("unkown type of predicate: "

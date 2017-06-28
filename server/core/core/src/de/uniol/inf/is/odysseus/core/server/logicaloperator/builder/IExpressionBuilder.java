@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
 public interface IExpressionBuilder {
+
 	public IExpression createExpression(IAttributeResolver resolver,
 			String expression);
 

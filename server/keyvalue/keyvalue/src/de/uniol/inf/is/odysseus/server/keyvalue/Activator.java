@@ -13,13 +13,13 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putPredicateBuilder(KEYVALUE_PREDICATE, new KeyValuePredicateBuilder<>());
-		OperatorBuilderFactory.putPredicateBuilder(KeyValueObject.class.getName(), new KeyValuePredicateBuilder<KeyValueObject<?>>());
+		OperatorBuilderFactory.putExpressionBuilder(KEYVALUE_PREDICATE, new KeyValuePredicateBuilder<>());
+		OperatorBuilderFactory.putExpressionBuilder(KeyValueObject.class.getName(), new KeyValuePredicateBuilder<KeyValueObject<?>>());
 			}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removePredicateBuilder(KEYVALUE_PREDICATE);
-		OperatorBuilderFactory.removePredicateBuilder(KeyValueObject.class.getName());
+		OperatorBuilderFactory.removeExpressionBuilder(KEYVALUE_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(KeyValueObject.class.getName());
 	}
 }
