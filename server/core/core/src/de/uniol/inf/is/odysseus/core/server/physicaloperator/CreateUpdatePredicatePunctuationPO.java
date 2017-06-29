@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdatePredicatePunctuationAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 
 public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {

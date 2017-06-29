@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.server.keyvalue.expression;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -9,12 +10,12 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.server.keyvalue.predicate.KeyValuePredicate;
 
-public class KeyValuePredicateBuilder<T extends KeyValueObject<?>> extends AbstractExpressionBuilder {
+public class KeyValuePredicateBuilder<M extends IMetaAttribute> extends AbstractExpressionBuilder<KeyValueObject<M>, M> {
 
 	@Override
-	public IPredicate<?> createPredicate(IAttributeResolver resolver, String predicate) {
+	public IPredicate<KeyValueObject<M>> createPredicate(IAttributeResolver resolver, String predicate) {
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		KeyValuePredicate<T> pred = new KeyValuePredicate<>(expression, resolver.getSchema());
+		KeyValuePredicate<KeyValueObject<M>> pred = new KeyValuePredicate<>(expression, resolver.getSchema());
 		return pred;
 	}
 

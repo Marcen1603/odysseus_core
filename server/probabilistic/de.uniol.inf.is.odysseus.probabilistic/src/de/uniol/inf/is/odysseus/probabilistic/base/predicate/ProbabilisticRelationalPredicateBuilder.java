@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.base.predicate;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpressionBuilder;
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ProbabilisticRelationalPredicateBuilder extends AbstractExpressionBuilder {
+public class ProbabilisticRelationalPredicateBuilder<M extends IMetaAttribute> extends AbstractExpressionBuilder {
 
     @Override
     public IPredicate<?> createPredicate(final IAttributeResolver resolver, final String predicate) {
