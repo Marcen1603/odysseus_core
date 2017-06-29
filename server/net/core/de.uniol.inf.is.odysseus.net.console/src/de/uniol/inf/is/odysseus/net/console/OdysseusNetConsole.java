@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.streamconnection.DefaultStreamConnection;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNetComponent;
@@ -63,7 +63,7 @@ import de.uniol.inf.is.odysseus.net.update.OdysseusNodeUpdater;
 
 public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommunicatorListener {
 
-	static private final ISession currentUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession currentUser = SessionManagement.instance.loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNetConsole.class);
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat();

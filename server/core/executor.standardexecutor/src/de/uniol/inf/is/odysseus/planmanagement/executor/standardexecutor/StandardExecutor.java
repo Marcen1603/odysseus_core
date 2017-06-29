@@ -50,7 +50,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryFunction;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -99,9 +98,9 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.sla.SLA;
 import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -150,7 +149,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		// Remove all queries
 		LOG.debug("Removing all queries before shutdown");
 		// TODO: What if queries are stored persistently?
-		this.removeAllQueries(UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null));
+		this.removeAllQueries(SessionManagement.instance.loginSuperUser(null));
 	
 	}
 

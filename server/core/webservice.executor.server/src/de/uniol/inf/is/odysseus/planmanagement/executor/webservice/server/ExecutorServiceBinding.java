@@ -32,7 +32,7 @@ package de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -51,7 +51,7 @@ public class ExecutorServiceBinding {
 	public void bindExecutor(IExecutor ex) {
 		if (ex instanceof IServerExecutor) {
 			executor = (IServerExecutor) ex;
-			superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+			superUser = SessionManagement.instance.loginSuperUser(null);
 			executor.startExecution(superUser);
 		} else {
 			throw new IllegalArgumentException("Only serverbased Executor can be bound!");

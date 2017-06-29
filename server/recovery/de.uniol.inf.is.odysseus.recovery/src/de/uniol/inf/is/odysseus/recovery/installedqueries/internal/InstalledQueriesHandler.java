@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -352,8 +353,8 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 		for (IExecutorCommand command : commands) {
 			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider.instance
 					.getUsermanagement(true);
-			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
-					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));
+			ISession newSession = SessionManagement.instance.loginAs(command.getCaller().getUser().getName(),
+					command.getCaller().getTenant(), SessionManagement.instance.loginSuperUser(null));
 			if (command instanceof AddQueryCommand) {
 				AddQueryCommand addCommand = (AddQueryCommand) command;
 				executor.addQuery(addCommand.getQueryText(), addCommand.getParserId(), newSession,

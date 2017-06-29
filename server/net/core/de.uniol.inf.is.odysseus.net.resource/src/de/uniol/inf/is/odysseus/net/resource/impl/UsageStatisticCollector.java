@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
@@ -35,7 +36,7 @@ public class UsageStatisticCollector {
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
+			currentSession = SessionManagement.instance.loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

@@ -7,13 +7,14 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class StandardExecutorPlugIn implements BundleActivator {
 
-	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser =  SessionManagement.instance.loginSuperUser(null);
 
 	@Override
 	public void start(BundleContext context) throws Exception {

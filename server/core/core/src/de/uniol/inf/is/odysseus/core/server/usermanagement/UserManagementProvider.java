@@ -101,11 +101,7 @@ public class UserManagementProvider {
 		return ret;
 	}
 
-	public ISessionManagement getSessionmanagement() {
-		ISessionManagement ret = waitForUsermanagement().getSessionManagement();
-		return ret;
-	}
-
+	
 	protected void bindUserManagement(IUserManagement usermanagement) {
 		if (usrMgmt.get(usermanagement.getType().toLowerCase()) == null) {
 			usrMgmt.put(usermanagement.getType().toLowerCase(), usermanagement);

@@ -6,6 +6,7 @@ import org.osgi.framework.BundleContext;
 import de.uniol.inf.is.odysseus.admission.IAdmissionControl;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -42,7 +43,7 @@ public class AdmissionActionPlugIn implements BundleActivator {
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
+			currentSession = SessionManagement.instance.loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

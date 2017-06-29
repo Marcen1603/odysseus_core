@@ -4,5 +4,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementcloning.StandardElementCloningUpdater"/>
    </service>
-   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="static"/>
+   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
 </scr:component>

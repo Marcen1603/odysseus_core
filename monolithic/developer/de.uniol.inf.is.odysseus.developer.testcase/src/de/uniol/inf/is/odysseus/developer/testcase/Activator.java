@@ -21,6 +21,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.developer.testcase.model.TestModel.SessionContext;
@@ -90,6 +91,6 @@ public class Activator extends AbstractUIPlugin {
 
     public static ISession getSession() {
         final SessionContext context = new SessionContext("System", "manager");
-        return UserManagementProvider.instance.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
+        return SessionManagement.instance.login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
     }
 }

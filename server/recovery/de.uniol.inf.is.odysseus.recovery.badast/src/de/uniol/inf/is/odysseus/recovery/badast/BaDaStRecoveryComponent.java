@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.server.recovery.IRecoveryComponent;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.LogicalGraphWalker;
@@ -115,7 +116,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 
 	protected ISession getSession() {
 		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider.instance.getSessionmanagement().loginSuperUser(null);
+			activeSession = SessionManagement.instance.loginSuperUser(null);
 		}
 		return activeSession;
 	}

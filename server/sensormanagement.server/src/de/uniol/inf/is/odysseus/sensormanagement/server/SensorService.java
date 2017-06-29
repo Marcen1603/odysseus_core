@@ -41,6 +41,7 @@ import javax.jws.soap.SOAPBinding.Style;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.exception.InvalidUserDataException;
@@ -58,7 +59,7 @@ public class SensorService
 	// Duplicated from de.uniol.inf.is.odysseus.planmanagement.executor.webservice.server.webservice.WebServiceServer
 	private ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException 
 	{
-		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session == null) 
 			throw new InvalidUserDataException("Security token unknown! You have to login first to obtain a security token!");
 		

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.sink.ISinkStreamHandler;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -128,8 +129,7 @@ class SinkConnectionListener extends Thread implements ISinkConnection {
 							String password = in.readLine();
 							String tenantName = in.readLine();
 							ITenant tenant = OSGI.get(UserManagementProvider.class).getTenant(tenantName);
-							ISession user = OSGI.get(UserManagementProvider.class).getSessionmanagement()
-									.login(username, password.getBytes(), tenant);
+							ISession user = OSGI.get(SessionManagement.class).login(username, password.getBytes(), tenant);
 
 							if (user != null) {
 								// TODO: Test if User has right to access sink

@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagemen
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.RoleDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
@@ -33,7 +34,6 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
 public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
 
-	ISessionManagement sessionMgmt;
 	private OdysseusConfiguration config;
 
 	@Override
@@ -102,16 +102,19 @@ public class UserManagementServiceImpl extends AbstractUserManagement<User, Role
 		initDefaultUsers(tenant);
 	}
 
-	@Override
-	public ISessionManagement getSessionManagement() {
-		if (sessionMgmt == null) {
-			sessionMgmt = new SessionManagementServiceImpl();
-		}
-		return sessionMgmt;
-	}
-
+	
 	void setConfig(OdysseusConfiguration config) {
 		this.config = config;
+	}
+
+	@Override
+	public IUser findUser(ITenant tenant, String username) {
+		try {
+			return UserDAO.getInstance(tenant).findByName(username);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

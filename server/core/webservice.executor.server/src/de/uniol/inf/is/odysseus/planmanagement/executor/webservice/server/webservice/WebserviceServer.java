@@ -89,6 +89,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -168,7 +169,7 @@ public class WebserviceServer {
 	public StringResponse login(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password, @WebParam(name = "tenantname") String tenantname) {
 		ITenant tenant = UserManagementProvider.instance.getTenant(tenantname);
-		ISession user = UserManagementProvider.instance.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ISession user = SessionManagement.instance.login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -182,7 +183,7 @@ public class WebserviceServer {
 	public StringResponse login2(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password) {
 		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
-		ISession user = UserManagementProvider.instance.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ISession user = SessionManagement.instance.login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -193,9 +194,9 @@ public class WebserviceServer {
 	}
 
 	public Response logout(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
-			UserManagementProvider.instance.getSessionmanagement().logout(session);
+			SessionManagement.instance.logout(session);
 			for (Map<Integer, SocketSinkPO> entry : socketSinkMap.values()) {
 				for (SocketSinkPO po : entry.values()) {
 					po.removeAllowedSessionId(securityToken);
@@ -207,7 +208,7 @@ public class WebserviceServer {
 	}
 
 	public Response isValidSession(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
 			return new Response(getExecutor().isValid(session));
 		}
@@ -267,20 +268,20 @@ public class WebserviceServer {
 	}
 
 	public QueryState getQueryState(int queryID, String securityToken) {
-		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, session);
 	}
 
 	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<String> securityTokens) {
 		List<ISession> sessions = new ArrayList<>();
 		for (String securityToken:securityTokens){
-			sessions.add(UserManagementProvider.instance.getSessionmanagement().login(securityToken));
+			sessions.add(SessionManagement.instance.login(securityToken));
 		}
 		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException {
-		ISession session = UserManagementProvider.instance.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
 			return session;
 		}

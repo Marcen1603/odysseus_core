@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
@@ -195,7 +196,7 @@ public class CheatSheetGenerator {
             final BasicTestContext context = new BasicTestContext();
             context.setPassword("manager");
             context.setUsername("System");
-            final ISession session = UserManagementProvider.instance.getSessionmanagement().login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
+            final ISession session = SessionManagement.instance.login(context.getUsername(), context.getPassword().getBytes(), UserManagementProvider.instance.getDefaultTenant());
 
             final List<LogicalOperatorInformation> operators = ExecutorProvider.getExeuctor().getOperatorInformations(session);
             Map<String, List<LogicalOperatorInformation>> categories = new HashMap<>();

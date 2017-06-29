@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -505,6 +506,6 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	}
 
 	private ISession superUser() {
-		return userManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		return SessionManagement.instance.loginSuperUser(null);
 	}
 }

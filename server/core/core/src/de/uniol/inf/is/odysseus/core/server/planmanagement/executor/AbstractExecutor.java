@@ -120,6 +120,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementListener;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -1054,7 +1055,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Is already listener
 					break;
 				case IUpdateEventListener.SESSION:
-					userManagementProvider.getSessionmanagement().subscribe(this);
+					SessionManagement.instance.subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					userManagementProvider.getUsermanagement(true).addUserManagementListener(this);
@@ -1096,7 +1097,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Stays listener
 					break;
 				case IUpdateEventListener.SESSION:
-					userManagementProvider.getSessionmanagement().unsubscribe(this);
+					SessionManagement.instance.unsubscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1284,23 +1285,23 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
 		ITenant tenantObj = userManagementProvider.getTenant(tenant);
-		return userManagementProvider.getSessionmanagement().login(username, password, tenantObj);
+		return SessionManagement.instance.login(username, password, tenantObj);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
 		ITenant tenantObj = userManagementProvider.getDefaultTenant();
-		return userManagementProvider.getSessionmanagement().login(username, password, tenantObj);
+		return SessionManagement.instance.login(username, password, tenantObj);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		userManagementProvider.getSessionmanagement().logout(caller);
+		SessionManagement.instance.logout(caller);
 	}
 
 	@Override
 	public boolean isValid(ISession session) {
-		return userManagementProvider.getSessionmanagement().isValid(session);
+		return SessionManagement.instance.isValid(session);
 	}
 
 	// Compiler Facade

@@ -8,12 +8,12 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.admission.IAdmissionStatusComponent;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class ExecutorAdmissionStatusComponent implements IAdmissionStatusComponent {
 
-	static private final ISession superUser = UserManagementProvider.instance.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = SessionManagement.instance.loginSuperUser(null);
 
 	public int getQueryCount() {
 		return AdmissionStatusPlugIn.getServerExecutor().getExecutionPlan(superUser).getQueries(superUser).size();
