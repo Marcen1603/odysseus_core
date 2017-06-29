@@ -65,7 +65,7 @@ public class FaceDectionFunction extends AbstractFunction<BufferedImage> {
 
         {// Load face cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(FaceDectionFunction.FACE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), FaceDectionFunction.FACE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), FaceDectionFunction.FACE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];

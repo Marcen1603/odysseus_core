@@ -34,7 +34,7 @@ public class OdysseusNetConfiguration {
 	}
 
 	private static String determineOdysseusHomeDir() {
-		return OdysseusConfiguration.getHomeDir();
+		return OdysseusConfiguration.instance.getHomeDir();
 	}
 
 	private static void loadConfiguration() {

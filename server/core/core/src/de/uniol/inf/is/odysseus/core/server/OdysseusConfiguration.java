@@ -367,7 +367,7 @@ public class OdysseusConfiguration {
 		}
 	}
 
-	public static String getHomeDir() {
+	public String getHomeDir() {
 		return OdysseusBaseConfiguration.getHomeDir();
 	}
 

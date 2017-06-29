@@ -86,7 +86,7 @@ public class EyeTrackerPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
         this.pos = operator.getInputSchema(0).indexOf(operator.getAttribute());
         {// Load face cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(EyeTrackerPO.FACE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), EyeTrackerPO.FACE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), EyeTrackerPO.FACE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];
@@ -104,7 +104,7 @@ public class EyeTrackerPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
         }
         {// Load right eye cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(EyeTrackerPO.RIGHT_EYE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), EyeTrackerPO.RIGHT_EYE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), EyeTrackerPO.RIGHT_EYE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];
@@ -122,7 +122,7 @@ public class EyeTrackerPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
         }
         {// Load left eye cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(EyeTrackerPO.LEFT_EYE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), EyeTrackerPO.LEFT_EYE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), EyeTrackerPO.LEFT_EYE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];

@@ -89,7 +89,7 @@ public class BasicIQLUiTypeUtils extends BasicIQLTypeUtils {
 				}
 			} 
 		} else {
-			File iqlFile = new File(OdysseusConfiguration.getHomeDir()+IQL_DIR);			
+			File iqlFile = new File(OdysseusConfiguration.instance.getHomeDir()+IQL_DIR);			
 			URI iqlUri = iqlFile.toURI();
 			URI resUri = URI.create(eResource.getURI().toString());
 			URI uri = iqlUri.relativize(resUri);

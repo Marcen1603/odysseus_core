@@ -183,7 +183,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(OdysseusConfiguration.getHomeDir()
+				file = new FileWriter(OdysseusConfiguration.instance.getHomeDir()
 						+ OSGI.get(OdysseusConfiguration.class).get("scheduler_DebugFileName") + "_"
 						+ System.currentTimeMillis() + ".csv");
 				file.write(
