@@ -14,7 +14,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		OperatorBuilderFactory.putExpressionBuilder(KEYVALUE_PREDICATE, new KeyValuePredicateBuilder<>());
-		OperatorBuilderFactory.putExpressionBuilder(KeyValueObject.class.getName(), new KeyValuePredicateBuilder<KeyValueObject<?>>());
+		OperatorBuilderFactory.putExpressionBuilder(KeyValueObject.class.getName(), new KeyValuePredicateBuilder<>());
 			}
 
 	@Override
