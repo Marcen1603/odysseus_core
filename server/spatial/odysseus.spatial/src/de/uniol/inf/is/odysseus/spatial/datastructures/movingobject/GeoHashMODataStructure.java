@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -294,6 +295,11 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	@Override
 	public int getGeometryPosition() {
 		return this.geometryAttributePosition;
+	}
+
+	@Override
+	public Set<String> getAllMovingObjectIds() {
+		return this.latestTrajectoryElementMap.keySet();
 	}
 
 }

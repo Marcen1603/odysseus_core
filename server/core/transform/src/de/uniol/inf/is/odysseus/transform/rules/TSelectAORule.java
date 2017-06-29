@@ -26,16 +26,16 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 
 	@Override
-	public int getPriority() {		
+	public int getPriority() {
 		return 0;
 	}
 
 	@Override
-	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {		
+	public void execute(SelectAO selectAO, TransformationConfiguration transformConfig) throws RuleException {
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		SelectPO<?> selectPO = new SelectPO(selectAO.getPredicate());
-        selectPO.setHeartbeatRate(selectAO.getHeartbeatRate());
-		defaultExecute(selectAO, selectPO, transformConfig, true, true);		
+		SelectPO<?> selectPO = new SelectPO(selectAO.isPredicateIsUpdateable(), selectAO.getPredicate());
+		selectPO.setHeartbeatRate(selectAO.getHeartbeatRate());
+		defaultExecute(selectAO, selectPO, transformConfig, true, true);
 	}
 
 	@Override
@@ -47,14 +47,14 @@ public class TSelectAORule extends AbstractTransformationRule<SelectAO> {
 	public String getName() {
 		return "SelectAO -> SelectPO";
 	}
-	
+
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
 		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
-	
+
 	@Override
-	public Class<? super SelectAO> getConditionClass() {	
+	public Class<? super SelectAO> getConditionClass() {
 		return SelectAO.class;
 	}
 
