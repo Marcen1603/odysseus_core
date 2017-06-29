@@ -36,6 +36,7 @@ public class STSchedulerFactoryMS_RR_LimitSourcesPThread extends
 
 	final static Logger LOG = LoggerFactory
 			.getLogger(STSchedulerFactoryMS_RR_LimitSourcesPThread.class);
+	private OdysseusConfiguration config;
 
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -66,10 +67,12 @@ public class STSchedulerFactoryMS_RR_LimitSourcesPThread extends
 		for (int i = 0; i < scheduling.length; i++) {
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
-		long sourcesPerThread = OdysseusConfiguration.instance.getLong(
-				"Scheduler.Simplethreaded.SourcesPerThread", -1);
+		long sourcesPerThread = config.getLong("Scheduler.Simplethreaded.SourcesPerThread", -1);
 		return new SimpleThreadSchedulerMSLimitSourcesPerThread(
-				schedulingStrategy, scheduling, sourcesPerThread);
+				schedulingStrategy, scheduling, sourcesPerThread, config);
+	}
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
 	}
 
 }

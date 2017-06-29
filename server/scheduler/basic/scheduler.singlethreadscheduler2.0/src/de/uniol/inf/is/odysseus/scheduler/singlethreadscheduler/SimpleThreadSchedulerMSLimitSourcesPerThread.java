@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
 public class SimpleThreadSchedulerMSLimitSourcesPerThread extends
@@ -9,8 +10,9 @@ public class SimpleThreadSchedulerMSLimitSourcesPerThread extends
 	
 	public SimpleThreadSchedulerMSLimitSourcesPerThread(
 			ISchedulingFactory schedulingStrategieFactory,
-			IPhysicalQueryScheduling[] planScheduling, long sourcesPerThread) {
-		super(schedulingStrategieFactory, planScheduling);
+			IPhysicalQueryScheduling[] planScheduling, long sourcesPerThread,
+			OdysseusConfiguration config) {
+		super(schedulingStrategieFactory, planScheduling, config);
 		this.sourcesPerThread = sourcesPerThread;
 	}
 	

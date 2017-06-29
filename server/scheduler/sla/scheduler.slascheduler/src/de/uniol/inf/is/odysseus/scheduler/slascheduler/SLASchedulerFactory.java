@@ -60,6 +60,7 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 	 * name of cost function
 	 */
 	private String costFunctionName;
+	private OdysseusConfiguration config;
 
 	/**
 	 * initializes and configures the schedulerfactory. will be called by osgi.
@@ -71,14 +72,12 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 			@SuppressWarnings("rawtypes")
 			Dictionary properties = context.getProperties();
 			// get settings
-			this.starvationFreedomFuncName = OdysseusConfiguration.instance.get("sla_starvationFreedomFuncName");
-			this.prio = new PriorityFunctionFactory()
-					.buildPriorityFunction(OdysseusConfiguration.instance
-							.get("sla_prioFuncName"));
-			this.decaySF = Float.parseFloat(OdysseusConfiguration.instance.get("sla_starvationFreedomDecay"));
-			this.querySharing = Boolean.parseBoolean(OdysseusConfiguration.instance.get("sla_querySharing"));
-			this.querySharingCostModelName = OdysseusConfiguration.instance.get("sla_querySharingCostModel");
-			this.costFunctionName = OdysseusConfiguration.instance.get("sla_costFunctionName");
+			this.starvationFreedomFuncName = config.get("sla_starvationFreedomFuncName");
+			this.prio = new PriorityFunctionFactory().buildPriorityFunction(config.get("sla_prioFuncName"));
+			this.decaySF = Float.parseFloat(config.get("sla_starvationFreedomDecay"));
+			this.querySharing = config.getBoolean("sla_querySharing");
+			this.querySharingCostModelName = config.get("sla_querySharingCostModel");
+			this.costFunctionName = config.get("sla_costFunctionName");
 			super.setName(properties);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,7 +97,10 @@ public class SLASchedulerFactory extends AbstractSchedulerFactory {
 					costFunctionName);
 		}
 		
-		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring,scheduling);
+		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring,scheduling, config);
 	}
-
+	
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
+	}
 }

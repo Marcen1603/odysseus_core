@@ -94,6 +94,8 @@ public abstract class AbstractScheduler implements IScheduler {
 
 	private final EventHandler eventHandler;
 
+	private final OdysseusConfiguration config;
+
 	/**
 	 * Creates a new scheduler.
 	 * 
@@ -101,9 +103,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	 *            {@link ISchedulingFactory} which will be used for scheduling. Each
 	 *            PartialPlan will be initialized with a new strategy instance.
 	 */
-	public AbstractScheduler(ISchedulingFactory schedulingFactory) {
+	public AbstractScheduler(ISchedulingFactory schedulingFactory, OdysseusConfiguration config) {
 		eventHandler = EventHandler.getInstance(this);
 		this.schedulingFactory = schedulingFactory;
+		this.config = config;
 	}
 
 	// @SuppressWarnings("rawtypes")
@@ -183,7 +186,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		this.isRunning = true;
 		if (outputDebug) {
 			try {
-				file = new FileWriter(OdysseusConfiguration.instance.getHomeDir()
+				file = new FileWriter(config.getHomeDir()
 						+ OSGI.get(OdysseusConfiguration.class).get("scheduler_DebugFileName") + "_"
 						+ System.currentTimeMillis() + ".csv");
 				file.write(
@@ -337,5 +340,5 @@ public abstract class AbstractScheduler implements IScheduler {
 	public final void fire(IEvent<?, ?> event) {
 		eventHandler.fire(this, event);
 	}
-
+	
 }

@@ -79,8 +79,8 @@ abstract public class AbstractSimpleThreadScheduler extends AbstractScheduler im
 	 *            Factory for creating new scheduling strategies for each partial plan which should be scheduled.
 	 * @throws IOException
 	 */
-	public AbstractSimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory, IPhysicalQueryScheduling[] planScheduling) {
-		super(schedulingStrategieFactory);
+	public AbstractSimpleThreadScheduler(ISchedulingFactory schedulingStrategieFactory, IPhysicalQueryScheduling[] planScheduling, OdysseusConfiguration config) {
+		super(schedulingStrategieFactory, config);
 		this.planScheduling = planScheduling;
 	}
 
