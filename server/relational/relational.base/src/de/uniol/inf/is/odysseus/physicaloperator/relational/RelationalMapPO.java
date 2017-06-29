@@ -202,7 +202,7 @@ public class RelationalMapPO<T extends IMetaAttribute> extends AbstractPipe<Tupl
 
 			// Initialize all expressions
 			for (int i = 0; i < this.expressions.length; i++) {
-				this.expressions[i].initVars(this.getOutputSchema());
+				this.expressions[i].initVars(this.getInputSchema());
 			}
 		}
 
