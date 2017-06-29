@@ -234,6 +234,8 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	protected DataDictionaryProvider dataDictionaryProvider;
 
+	private SessionManagement sessionManagement;
+
 	// --------------------------------------------------------------------------------------
 	// Constructors/Initialization
 	// --------------------------------------------------------------------------------------
@@ -1055,7 +1057,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Is already listener
 					break;
 				case IUpdateEventListener.SESSION:
-					SessionManagement.instance.subscribe(this);
+					sessionManagement.subscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					userManagementProvider.getUsermanagement(true).addUserManagementListener(this);
@@ -1097,7 +1099,7 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 					// Nothing to do. Stays listener
 					break;
 				case IUpdateEventListener.SESSION:
-					SessionManagement.instance.unsubscribe(this);
+					sessionManagement.unsubscribe(this);
 					break;
 				case IUpdateEventListener.USER:
 					break;
@@ -1285,23 +1287,23 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	@Override
 	public ISession login(String username, byte[] password, String tenant) {
 		ITenant tenantObj = userManagementProvider.getTenant(tenant);
-		return SessionManagement.instance.login(username, password, tenantObj);
+		return sessionManagement.login(username, password, tenantObj);
 	}
 
 	@Override
 	public ISession login(String username, byte[] password) {
 		ITenant tenantObj = userManagementProvider.getDefaultTenant();
-		return SessionManagement.instance.login(username, password, tenantObj);
+		return sessionManagement.login(username, password, tenantObj);
 	}
 
 	@Override
 	public void logout(ISession caller) {
-		SessionManagement.instance.logout(caller);
+		sessionManagement.logout(caller);
 	}
 
 	@Override
 	public boolean isValid(ISession session) {
-		return SessionManagement.instance.isValid(session);
+		return sessionManagement.isValid(session);
 	}
 
 	// Compiler Facade
@@ -1588,6 +1590,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	public void setDataDictionaryProvider(DataDictionaryProvider dataDictionaryProvider) {
 		this.dataDictionaryProvider = dataDictionaryProvider;
+	}
+	
+	public void setSessionManagement(SessionManagement sessionManagement) {
+		this.sessionManagement = sessionManagement;
 	}
 
 }
