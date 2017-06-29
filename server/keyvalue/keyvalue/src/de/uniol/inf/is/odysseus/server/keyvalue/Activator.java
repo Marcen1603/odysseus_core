@@ -5,7 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
-import de.uniol.inf.is.odysseus.server.keyvalue.predicate.KeyValuePredicateBuilder;
+import de.uniol.inf.is.odysseus.server.keyvalue.expression.KeyValuePredicateBuilder;
 
 public class Activator implements BundleActivator {
 

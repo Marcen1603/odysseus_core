@@ -13,9 +13,9 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 
 	private static final long serialVersionUID = 6578575151834596318L;
 
-	protected final SDFExpression expression;
-	final private List<SDFAttribute> neededAttributes;
-	protected final List<SDFSchema> inputSchema;
+	final protected SDFExpression expression;
+	final protected List<SDFAttribute> neededAttributes;
+	final protected List<SDFSchema> inputSchema;
 
 	public NamedAttributePredicate(SDFExpression expression, List<SDFSchema> inputSchema) {
 		this.expression = expression;

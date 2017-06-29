@@ -16,14 +16,16 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import de.uniol.inf.is.odysseus.core.expression.IExpression;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 
-public interface IExpressionBuilder {
+public interface IExpressionBuilder<T extends IStreamObject<M>, M extends IMetaAttribute> {
 
-	public IExpression createExpression(IAttributeResolver resolver,
+	public IExpression<T, M> createExpression(IAttributeResolver resolver,
 			String expression);
 
-	public IPredicate<?> createPredicate(IAttributeResolver resolver,
+	public IPredicate<T> createPredicate(IAttributeResolver resolver,
 			String predicate);
 }

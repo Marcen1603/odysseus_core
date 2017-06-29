@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -31,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
  *
  * @param <T>
  */
-public interface IMepExpression<T> extends Serializable, IExpression{
+public interface IMepExpression<T> extends Serializable{
 
 	/**
 	 * Returns the value of this expression
