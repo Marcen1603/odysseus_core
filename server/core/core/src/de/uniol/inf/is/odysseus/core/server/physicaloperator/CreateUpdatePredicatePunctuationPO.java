@@ -68,7 +68,7 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 	 * @return The predicate as a Predicate object
 	 */
 	private IPredicate<?> createPredicate(String rawPredicate, String predicateType) {
-		IExpressionBuilder pBuilder = OperatorBuilderFactory.getExpressionBuilder(predicateType);
+		IExpressionBuilder<?,?> pBuilder = OperatorBuilderFactory.getExpressionBuilder(predicateType);
 		IPredicate<?> predicate = pBuilder.createPredicate(attributeResolver, rawPredicate);
 		return predicate;
 	}

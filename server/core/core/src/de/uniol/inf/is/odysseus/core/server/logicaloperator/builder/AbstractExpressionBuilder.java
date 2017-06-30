@@ -10,7 +10,6 @@ public abstract class AbstractExpressionBuilder<T extends IStreamObject<M>, M ex
 
 	@Override
 	public IExpression<T, M> createExpression(IAttributeResolver resolver, String expression) {
-		// FIXME: Implement method
 		throw new UnsupportedOperationException();
 	}
 

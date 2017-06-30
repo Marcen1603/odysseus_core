@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> extends AbstractPredicate<T> {
 
@@ -35,6 +36,19 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 
 	@Override
 	public Boolean evaluate(T input) {
+		Object[] values = determineInputValues(input);
+		this.expression.bindVariables(values);
+		return (Boolean) this.expression.getValue();
+	}
+
+	protected Object evaluate_internal(T input, List<ISession> sessions, List<T> history) {
+		Object[] values = determineInputValues(input);
+		this.expression.setSessions(sessions);
+		this.expression.bindVariables(values);
+		return this.expression.getValue();
+	}
+
+	private Object[] determineInputValues(T input) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
 			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
@@ -47,8 +61,7 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 				}
 			}
 		}
-		this.expression.bindVariables(values);
-		return (Boolean) this.expression.getValue();
+		return values;
 	}
 
 	@Override
