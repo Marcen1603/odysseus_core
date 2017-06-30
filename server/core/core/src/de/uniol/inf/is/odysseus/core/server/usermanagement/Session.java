@@ -15,7 +15,6 @@
  */
 package de.uniol.inf.is.odysseus.core.server.usermanagement;
 
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.AbstractSession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -33,12 +32,6 @@ public class Session extends AbstractSession implements ISession {
 		super(user, tenant);
 	}
 
-
-	@SuppressWarnings("unused")
-	private final static long SESSION_TIMEOUT = OdysseusConfiguration.instance.getLong(
-			"sessionTimeout", 10 * 60000);
-	
-	
 	
 	@Override
 	protected long getSessionTimeout() {
