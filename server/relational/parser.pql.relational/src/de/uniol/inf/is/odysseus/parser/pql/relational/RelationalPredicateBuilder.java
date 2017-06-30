@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.parser.pql.relational;
 
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.IExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -25,18 +26,19 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpr
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
-public class RelationalPredicateBuilder<M extends IMetaAttribute> extends AbstractExpressionBuilder {
+public class RelationalPredicateBuilder<M extends IMetaAttribute> extends AbstractExpressionBuilder<Tuple<M>, M> {
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IPredicate<?> createPredicate(IAttributeResolver resolver,
+	public IPredicate<Tuple<M>> createPredicate(IAttributeResolver resolver,
 			String predicate) {
-		return (IPredicate<?>) createExpression(resolver, predicate);
+		return (IPredicate<Tuple<M>>) createExpression(resolver, predicate);
 	}
 
 	@Override
-	public IExpression createExpression(IAttributeResolver resolver, String expression) {
+	public IExpression<Tuple<M>,M> createExpression(IAttributeResolver resolver, String expression) {
 		SDFExpression expression1 = new SDFExpression("", expression, resolver, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
-		RelationalExpression<?> pred = new RelationalExpression<>(expression1);
+		RelationalExpression<M> pred = new RelationalExpression<>(expression1);
 		pred.initVars(resolver.getSchema());
 		return pred;
 	}
