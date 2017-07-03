@@ -70,7 +70,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	private Map<Integer, List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
-	private boolean newAccessFramework = false;
 
 	private IMetaAttribute localMetaAttribute;
 
@@ -86,26 +85,25 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		super();
 	}
 
-	public AbstractAccessAO(AbstractAccessAO po) {
-		super(po);
-		wrapper = po.wrapper;
-		optionsMap.addAll(po.optionsMap);
-		if (po.optionsList != null) {
-			this.optionsList = new ArrayList<>(po.optionsList);
+	public AbstractAccessAO(AbstractAccessAO ao) {
+		super(ao);
+		wrapper = ao.wrapper;
+		optionsMap.addAll(ao.optionsMap);
+		if (ao.optionsList != null) {
+			this.optionsList = new ArrayList<>(ao.optionsList);
 		}
-		inputSchema = po.inputSchema;
-		dataHandler = po.dataHandler;
-		protocolHandler = po.protocolHandler;
-		transportHandler = po.transportHandler;
-		accessAOResource = po.accessAOResource;
-		this.outputSchema.putAll(po.outputSchema);
-		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
-		this.dateFormat = po.dateFormat;
-		this.newAccessFramework = po.newAccessFramework;
-		this.localMetaAttribute = po.localMetaAttribute;
-		this.readMetaData = po.readMetaData;
-		this.overWriteSchemaSourceName = po.overWriteSchemaSourceName;
-		this.overWrittenSchema = po.overWrittenSchema;
+		inputSchema = ao.inputSchema;
+		dataHandler = ao.dataHandler;
+		protocolHandler = ao.protocolHandler;
+		transportHandler = ao.transportHandler;
+		accessAOResource = ao.accessAOResource;
+		this.outputSchema.putAll(ao.outputSchema);
+		this.maxTimeToWaitForNewEventMS = ao.maxTimeToWaitForNewEventMS;
+		this.dateFormat = ao.dateFormat;
+		this.localMetaAttribute = ao.localMetaAttribute;
+		this.readMetaData = ao.readMetaData;
+		this.overWriteSchemaSourceName = ao.overWriteSchemaSourceName;
+		this.overWrittenSchema = ao.overWrittenSchema;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
@@ -174,15 +172,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 
 	public long getMaxTimeToWaitForNewEventMS() {
 		return maxTimeToWaitForNewEventMS;
-	}
-
-	@Parameter(type = BooleanParameter.class, name = "naf", optional = true, isList = false, doc = "Enable or disable new access framework")
-	public void setNewAccessFramework(boolean newAccessFramework) {
-		this.newAccessFramework = newAccessFramework;
-	}
-
-	public boolean getNewAccessFramework() {
-		return this.newAccessFramework;
 	}
 
 	public boolean isOverWriteSchemaSourceName() {
@@ -298,6 +287,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	public boolean readMetaData() {
 		return readMetaData;
 	}
+	
+	
+	@Parameter(type = BooleanParameter.class, name = "outOfOrder", optional = true, isList = false, doc = "The system needs to know if the input is ordered by timestamps. Set to true if this is not the case!")
+	public void setOutOfOrder(boolean outOfOrder){
+		optionsMap.setOption(SDFConstraint.STRICT_ORDER, outOfOrder);
+	}
 
 	@Override
 	public boolean isSemanticallyEqual(IAccessAO operator) {
@@ -344,9 +339,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		if (!Objects.equals(this.maxTimeToWaitForNewEventMS, other.maxTimeToWaitForNewEventMS)) {
 			return false;
 		}
-		if (!Objects.equals(this.newAccessFramework, other.newAccessFramework)) {
-			return false;
-		}
+
 		if (!Objects.equals(this.localMetaAttribute, other.localMetaAttribute)) {
 			return false;
 		}
@@ -359,8 +352,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)) {
 			return false;
-		}
-
+		}		
 		return true;
 	}
 
