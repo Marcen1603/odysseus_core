@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	SUBSTITUTION,
 	INIT,
+	OUTOFORDER,
 	ACCESS,
 	CREATE_METADATA,
 	TRANSFORMATION,
