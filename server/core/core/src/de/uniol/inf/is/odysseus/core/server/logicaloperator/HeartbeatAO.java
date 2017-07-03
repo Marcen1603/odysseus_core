@@ -149,11 +149,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 
 	@Override
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
-		if (!allowOutOfOrder){
-			return InputOrderRequirement.STRICT;
-		}else{
-			return InputOrderRequirement.NONE;
-		}
+		return InputOrderRequirement.NONE;
 	}
 
 }

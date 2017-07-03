@@ -24,7 +24,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 				heartbeat.setRealTimeDelay(1000);
 				heartbeat.setApplicationTimeDelay(1000);
 				heartbeat.setSendAlwaysHeartbeat(true);
-				heartbeat.setAllowOutOfOrder(true);
+				heartbeat.setAllowOutOfOrder(false);
 				
 				Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperatorBefore(heartbeat, operator,
 						subscription.getSinkInPort(), subscription.getSourceOutPort());
