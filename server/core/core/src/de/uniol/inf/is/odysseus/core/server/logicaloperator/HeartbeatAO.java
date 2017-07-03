@@ -1,8 +1,9 @@
-package de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator;
+package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -27,13 +28,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(minInputPorts = 0, maxInputPorts = 1, name = "Heartbeat", category = { LogicalOperatorCategory.PROCESSING }, doc = "This operator assures that every n time elements there will be a heartbeat on "
-		+ " the garantees, that no element (heartbeat or streamobject) is send, that is"
-		+ " older than the last send hearbeat (i.e. the generated heartbeats are in order"
-		+ " and indicate time progress). Heartbeats can be send periodically"
-		+ " (sendAlwaysHeartbeats = true) or only if no other stream elements indicate"
-		+ " time progess (e.g. in out of order scenarios) independent if a new "
-		+ " element has been received or not. ")
+@LogicalOperator(minInputPorts = 0, maxInputPorts = 1, name = "Heartbeat", category = {
+		LogicalOperatorCategory.PROCESSING }, doc = "This operator assures that every n time elements there will be a heartbeat on "
+				+ " the garantees, that no element (heartbeat or streamobject) is send, that is"
+				+ " older than the last send hearbeat (i.e. the generated heartbeats are in order"
+				+ " and indicate time progress). Heartbeats can be send periodically"
+				+ " (sendAlwaysHeartbeats = true) or only if no other stream elements indicate"
+				+ " time progess (e.g. in out of order scenarios) independent if a new "
+				+ " element has been received or not. ")
 public class HeartbeatAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = -5715561730592890314L;
@@ -115,8 +117,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	 *            the startTimeAfterFirstElement to set
 	 */
 	@Parameter(type = BooleanParameter.class, name = "startTimerAfterFirstElement", optional = true)
-	public void setStartTimerAfterFirstElement(
-			boolean startTimerAfterFirstElement) {
+	public void setStartTimerAfterFirstElement(boolean startTimerAfterFirstElement) {
 		this.startTimerAfterFirstElement = startTimerAfterFirstElement;
 	}
 
@@ -136,8 +137,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		if (getInputSchema() != null) {
 			return super.getOutputSchemaIntern(pos);
 		} else {
-			return SDFSchemaFactory.createNewTupleSchema("_created",
-					new LinkedList<SDFAttribute>());
+			return SDFSchemaFactory.createNewTupleSchema("_created", new LinkedList<SDFAttribute>());
 		}
 
 	}
@@ -145,6 +145,15 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new HeartbeatAO(this);
+	}
+
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		if (!allowOutOfOrder){
+			return InputOrderRequirement.STRICT;
+		}else{
+			return InputOrderRequirement.NONE;
+		}
 	}
 
 }
