@@ -98,7 +98,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		this.sendAlwaysHeartbeat = sendAlwaysHeartbeat;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "AllowOutOfOrder", optional = true)
+	@Parameter(type = BooleanParameter.class, name = "AllowOutOfOrderCreation", aliasname="AllowOutOfOrder", optional = true, doc="Default: Suppress elements after a heartbeat with a given timestamp is send. Set this flag to true, to allow also elements to send, that are older than the last send heartbeat.")
 	public void setAllowOutOfOrder(boolean allowOutOfOrder) {
 		this.allowOutOfOrder = allowOutOfOrder;
 	}
