@@ -21,6 +21,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -111,4 +112,13 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 		return true;
 	}
 
+	/**
+	 * There should be no restriction for stateless operators
+	 */
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
+	}
+
+	
 }
