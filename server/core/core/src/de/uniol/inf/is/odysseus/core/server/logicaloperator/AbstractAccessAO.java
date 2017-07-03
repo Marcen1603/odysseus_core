@@ -291,7 +291,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	
 	@Parameter(type = BooleanParameter.class, name = "outOfOrder", optional = true, isList = false, doc = "The system needs to know if the input is ordered by timestamps. Set to true if this is not the case!")
 	public void setOutOfOrder(boolean outOfOrder){
-		optionsMap.setOption(SDFConstraint.STRICT_ORDER, outOfOrder);
+		optionsMap.setOption(SDFConstraint.STRICT_ORDER, !outOfOrder);
 	}
 
 	@Override
@@ -435,7 +435,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		schema = SDFSchemaFactory.createNewSchema(getName(), type, s2);
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
-		schema = SDFSchemaFactory.createNewWithOutOfOrder(strictOrder, schema);
+		schema = SDFSchemaFactory.createNewWithOutOfOrder(!strictOrder, schema);
 
 		// Add meta attributes. If is set in operator, this overwrites other
 		// options

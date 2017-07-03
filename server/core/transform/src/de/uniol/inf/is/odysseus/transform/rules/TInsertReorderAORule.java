@@ -34,9 +34,6 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 				Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperator(reorder, operator,
 						subscription.getSinkInPort(), 0, subscription.getSourceOutPort());
 				
-				
-				
-
 				insert(reorder);
 
 				for (ILogicalOperator o : toUpdate) {
