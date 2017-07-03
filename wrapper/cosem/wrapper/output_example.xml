@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ldevs count="1">
+<ldev id ="1">
+	<objects count="2" >
+	<object class-id="3" version="0" id="0100010801ff" >
+	  <attributes>
+	   <attribute id ="1">
+	   <octet-string>0100010800ff</octet-string>
+	   </attribute>
+	</attributes>
+	</object>
+	<object class-id="3" version="0" id="0100010802ff" >
+	  <attributes>
+	   <attribute id="1">
+	   <octet-string>0100030800ff</octet-string>
+	   </attribute>
+	  </attributes>
+	 </object>
+	 </objects>
+ </ldev>
+</ldevs>
