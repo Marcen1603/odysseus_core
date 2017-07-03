@@ -1,20 +1,16 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DataDescriptionPart implements IDataDescriptionPart {
@@ -22,7 +18,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 	 * 
 	 */
 	private static final long serialVersionUID = 8776732310776468142L;
-	private static final Logger LOG = LoggerFactory.getLogger(DataDescriptionPart.class);
+
 
 	// [0] is the start of the tupleRange, [1] is the end
 	// if tuple ranges=-1 access to all tuples is allowed if tuple ranges=-2
@@ -114,15 +110,6 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 		}
 		return true;
 
-		// if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty()
-		// && !inputTwo.isEmpty()) {
-		// return false;
-		//
-		// } else if (inputTwo.containsAll(inputOne) &&
-		// inputOne.containsAll(inputTwo)) {
-		// return true;
-		// } else
-		// return false;
 
 	}
 
@@ -146,11 +133,7 @@ public class DataDescriptionPart implements IDataDescriptionPart {
 		return range;
 	}
 
-	/**
-	 * @param object
-	 * @param schema
-	 * @return
-	 */
+
 	public boolean match(IStreamObject<? extends ITimeInterval> object, SDFSchema schema, String tupleRangeAttribute) {
 
 		 // checks if the TupleID is within the tupleRange of the SP

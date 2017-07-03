@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.transformationhandler;
 
 import java.util.HashSet;
-
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -26,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAAggregationAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAJoinAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAProjectAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SASelectAO;
@@ -40,7 +38,6 @@ import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SecurityShie
 
 public class SecurityPunctuationPreTransformationHandler extends AbstractPreTransformationHandler {
 	public final static String NAME = "SPPreTransformationHandler";
-	private static final Logger LOG = LoggerFactory.getLogger(SecurityPunctuationPreTransformationHandler.class);
 	String tupleRangeAttribute=null;
 
 	@Override
@@ -62,7 +59,6 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 			for (Pair p : handlerParameters) {
 				if (p.getE1().equals("TupleRangeAttribute")) {
 					tupleRangeAttribute =(String) p.getE2();
-					LOG.info((String)p.getE2());
 					break;
 				}
 			}
@@ -71,6 +67,7 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 		operatorClasses.add(SelectAO.class);
 		operatorClasses.add(ProjectAO.class);
 		operatorClasses.add(JoinAO.class);
+		operatorClasses.add(AggregationAO.class);
 
 		CollectOperatorLogicalGraphVisitor visitor = new CollectOperatorLogicalGraphVisitor(operatorClasses, false);
 		GenericGraphWalker copyWalker = new GenericGraphWalker();
@@ -125,6 +122,8 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 				RestructHelper.replace((ProjectAO) ao, new SAProjectAO((ProjectAO) ao));
 			} else if (ao instanceof JoinAO) {
 				RestructHelper.replace((JoinAO) ao, new SAJoinAO(tupleRangeAttribute));
+			}else if (ao instanceof AggregationAO) {
+				RestructHelper.replace((AggregationAO) ao, new SAAggregationAO((AggregationAO)ao,tupleRangeAttribute));
 			}
 		}
 	}

@@ -2,95 +2,81 @@ package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
 
-public abstract class AbstractSecurityPunctuation implements ISecurityPunctuation {
+@SuppressWarnings("serial")
+public abstract class AbstractSecurityPunctuation extends AbstractPunctuation implements ISecurityPunctuation {
 
-	DataDescriptionPart ddp;
-	SecurityRestrictionPart srp;
+	public AbstractSecurityPunctuation(AbstractPunctuation punct) {
+		super(punct);
+	}
+
+	public AbstractSecurityPunctuation(long timestamp) {
+		super(timestamp);
+	}
+
+	public AbstractSecurityPunctuation(PointInTime timestamp) {
+		super(timestamp);
+	}
+
+	IDataDescriptionPart ddp;
+	ISecurityRestrictionPart srp;
 	boolean sign;
 	boolean immutable;
 	PointInTime timestamp;
-	
-	
-	
-
 
 	@Override
-	public IPunctuation clone() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-
-	@Override
-	public DataDescriptionPart getDDP() {
-		// TODO Auto-generated method stub
+	public Tuple<?> getValue() {
 		return null;
 	}
 
 	@Override
-	public SecurityRestrictionPart getSRP() {
-		// TODO Auto-generated method stub
-		return null;
+	public IDataDescriptionPart getDDP() {
+		return ddp;
+	}
+
+	@Override
+	public ISecurityRestrictionPart getSRP() {
+		return srp;
 	}
 
 	@Override
 	public boolean getSign() {
-		// TODO Auto-generated method stub
-		return false;
+		return sign;
 	}
 
 	@Override
 	public boolean getImmutable() {
-		// TODO Auto-generated method stub
-		return false;
+		return immutable;
 	}
 
 	@Override
-	public void setDDP(DataDescriptionPart ddp) {
-		// TODO Auto-generated method stub
+	public void setDDP(IDataDescriptionPart ddp) {
+		this.ddp = ddp;
 
 	}
 
 	@Override
-	public void setSRP(SecurityRestrictionPart srp) {
-		// TODO Auto-generated method stub
+	public void setSRP(ISecurityRestrictionPart srp) {
+		this.srp = srp;
 
 	}
 
 	@Override
 	public void setImmutable(boolean immutable) {
-		// TODO Auto-generated method stub
+		this.immutable = immutable;
 
 	}
 
 	@Override
 	public void setSign(boolean sign) {
-		// TODO Auto-generated method stub
+		this.sign = sign;
 
 	}
 
 	@Override
 	public void setTime(PointInTime timestamp) {
-		// TODO Auto-generated method stub
-
+		this.timestamp = timestamp;
 	}
-
-	@Override
-	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation,PointInTime ts) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	
 
 }

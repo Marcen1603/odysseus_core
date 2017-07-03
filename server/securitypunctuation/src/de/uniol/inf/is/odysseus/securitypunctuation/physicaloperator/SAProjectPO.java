@@ -2,21 +2,16 @@ package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
 
 public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T> {
-//vllt mit object.restrict unpassende Attribute aus der SP entfernen
+
 	private List<String> restrictedAttributes;
-	private static final Logger LOG = LoggerFactory.getLogger(SAProjectPO.class);
+	
 
 	public SAProjectPO(int[] restrictList) {
 		super(restrictList);
@@ -50,7 +45,7 @@ public class SAProjectPO<T extends IMetaAttribute> extends RelationalProjectPO<T
 	
 	public ISecurityPunctuation checkSP2(ISecurityPunctuation punctuation) {
 		if(restrictedAttributes.containsAll(punctuation.getDDP().getAttributes())){
-			return punctuation.createEmptySP();
+			return (ISecurityPunctuation) punctuation.createEmptySP(punctuation.getTime());
 		}
 
 		return punctuation;

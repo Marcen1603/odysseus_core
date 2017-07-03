@@ -1,15 +1,10 @@
 package de.uniol.inf.is.odysseus.generator.securitypunctuations;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.generator.AbstractDataGenerator;
 import de.uniol.inf.is.odysseus.generator.DataTuple;
-import de.uniol.inf.is.odysseus.generator.IDataGenerator;
-//import de.uniol.inf.is.odysseus.securitypunctuation.datatype.DataDescriptionPart;
-//import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityPunctuation;
-//import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SecurityRestrictionPart;
 
 public class SPProvider extends AbstractDataGenerator {
 	private long timestamp;

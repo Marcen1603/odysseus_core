@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.datatype;
 
 import java.io.Serializable;
+import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -20,4 +21,8 @@ public interface IDataDescriptionPart extends Serializable {
 	 *         if this DDP doesn't relate to the object
 	 */
 	public boolean match(IStreamObject<? extends ITimeInterval> object, SDFSchema schema,String tupleRangeAttribute);
+
+	public List<String> getAttributes();
+	
+	public long[] getTupleRange();
 }

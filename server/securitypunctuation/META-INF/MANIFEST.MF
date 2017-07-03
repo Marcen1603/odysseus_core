@@ -5,7 +5,11 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.securitypunctuation
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.uniol.inf.is.odysseus.securitypunctuation.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: de.uniol.inf.is.odysseus.core.metadata,
+Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
+ de.uniol.inf.is.odysseus.aggregation.logicaloperator,
+ de.uniol.inf.is.odysseus.aggregation.physicaloperator,
+ de.uniol.inf.is.odysseus.aggregation.transform,
+ de.uniol.inf.is.odysseus.core.metadata,
  de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
  de.uniol.inf.is.odysseus.core.server.physicaloperator,

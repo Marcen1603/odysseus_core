@@ -4,32 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPunctuation;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 
-public class SecurityPunctuation extends AbstractPunctuation implements ISecurityPunctuation{
-	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
-	/**
-	 * 
-	 */
+public class SecurityPunctuation extends AbstractSecurityPunctuation{
+
+
 	private static final long serialVersionUID = 7436458563105118060L;
-	
-	private DataDescriptionPart ddp;
-	private SecurityRestrictionPart srp;
-	private boolean sign;
-	private boolean immutable;
-	private PointInTime timestamp;
 
 	public SecurityPunctuation(SecurityPunctuation securityPunctuation) {
 		super(securityPunctuation);
@@ -80,68 +67,14 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 		this.timestamp = timestamp;
 	}
 
-	public SecurityPunctuation(long[] ts, String attributes, String roles, boolean sign, boolean immutable, PointInTime timestamp) {
+	public SecurityPunctuation(long[] ts, String attributes, String roles, boolean sign, boolean immutable,
+			PointInTime timestamp) {
 		super(timestamp);
-		this.ddp=new DataDescriptionPart(ts,attributes);
+		this.ddp = new DataDescriptionPart(ts, attributes);
 		this.srp = new SecurityRestrictionPart(roles);
 		this.immutable = immutable;
 		this.sign = sign;
 		this.timestamp = timestamp;
-	}
-
-	@Override
-	public DataDescriptionPart getDDP() {
-		return this.ddp;
-	}
-
-	@Override
-	public SecurityRestrictionPart getSRP() {
-		return this.srp;
-	}
-
-	@Override
-	public boolean getSign() {
-		return this.sign;
-	}
-
-	@Override
-	public boolean getImmutable() {
-		return this.immutable;
-	}
-
-	@Override
-	public PointInTime getTime() {
-		return timestamp;
-	}
-
-	@Override
-	public void setDDP(DataDescriptionPart ddp) {
-		this.ddp = new DataDescriptionPart(ddp);
-
-	}
-
-	@Override
-	public void setSRP(SecurityRestrictionPart srp) {
-		this.srp = new SecurityRestrictionPart(srp);
-
-	}
-
-	@Override
-	public void setImmutable(boolean immutable) {
-		this.immutable = immutable;
-
-	}
-
-	@Override
-	public void setSign(boolean sign) {
-		this.sign = sign;
-
-	}
-
-	@Override
-	public void setTime(PointInTime timestamp) {
-		this.timestamp = timestamp;
-
 	}
 
 	@Override
@@ -155,7 +88,20 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 				+ timestamp;
 	}
 
-	public SecurityPunctuation intersect(ISecurityPunctuation punctuation,PointInTime ts) {
+	// checks if an element out of the given list of roles is contained in this
+	// sp
+	public boolean checkRole(List<String> roles) {
+		for (String role : roles) {
+			if (this.srp.getRoles().get(0).equals("*")) {
+				return true;
+			} else if (this.srp.getRoles().contains(role)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public SecurityPunctuation intersect(ISecurityPunctuation punctuation, PointInTime ts) {
 		List<String> attributes = new ArrayList<>();
 		List<String> roles = new ArrayList<>();
 
@@ -169,7 +115,7 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 		}
 
 		// union attributes
-		attributes=unionAttributes(punctuation.getDDP());
+		attributes = unionAttributes(punctuation.getDDP());
 		// intersect roles
 		roles = mergeStrings(this.getSRP().getRoles(), punctuation.getSRP().getRoles());
 		if (roles.isEmpty()) {
@@ -180,7 +126,7 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 
 	}
 
-	public List<String> unionAttributes(DataDescriptionPart ddp) {
+	public List<String> unionAttributes(IDataDescriptionPart ddp) {
 		List<String> attributes = new ArrayList<>();
 
 		if (this.ddp.getAttributes().get(0).equals("*") || ddp.getAttributes().get(0).equals("*")) {
@@ -208,15 +154,15 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 			return output;
 
 		} else if (inputOne.get(0).equals("*")) {
-			output=new ArrayList<>(inputTwo);
+			output = new ArrayList<>(inputTwo);
 			return output;
 		} else if (inputTwo.get(0).equals("*")) {
-			output=new ArrayList<>(inputTwo);
+			output = new ArrayList<>(inputTwo);
 			return output;
 		} else {
-			output=new ArrayList<>(inputOne);
+			output = new ArrayList<>(inputOne);
 			output.retainAll(inputTwo);
-			
+
 		}
 
 		return output;
@@ -237,12 +183,11 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 		result = prime * result + (immutable ? 1231 : 1237);
 		result = prime * result + (sign ? 1231 : 1237);
 		result = prime * result + ((srp == null) ? 0 : srp.hashCode());
-		//result = prime * result + ((timestamp == null) ? 0 : timestamp.hashCode());
+		// result = prime * result + ((timestamp == null) ? 0 :
+		// timestamp.hashCode());
 		return result;
 	}
 
-	
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -266,7 +211,7 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 				return false;
 		} else if (!srp.equals(other.srp))
 			return false;
-		//ignore the timestamp
+		// ignore the timestamp
 		// if (timestamp == null) {
 		// if (other.timestamp != null)
 		// return false;
@@ -274,8 +219,6 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 		// return false;
 		return true;
 	}
-
-
 
 	@Override
 	public SDFSchema getSchema() {
@@ -290,15 +233,8 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 	}
 
 	@Override
-	public Tuple<?> getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public ISecurityPunctuation createEmptySP() {
-		return new SecurityPunctuation("-2,-2","","",false,false,-1L);
+	public AbstractSecurityPunctuation createEmptySP(PointInTime timestamp) {
+		return new SecurityPunctuation("-2,-2", "", "", false, false, timestamp);
 	}
 
 	@Override
@@ -306,7 +242,66 @@ public class SecurityPunctuation extends AbstractPunctuation implements ISecurit
 		return new SecurityPunctuation(this);
 	}
 
-	
-	
+	@Override
+	public Tuple<?> restrictObject(Tuple<?> object, SDFSchema schema, List<ISecurityPunctuation> matchingSPs,
+			String tupleRangeAttribute) {
+		List<String> attributes = new ArrayList<String>();
+		attributes.add(tupleRangeAttribute);
+		for (ISecurityPunctuation sp : matchingSPs) {
+			for (String str : sp.getDDP().getAttributes()) {
+				if (str.equals("*")) {
+					return object;
+				} else if (!attributes.contains(str)) {
+					attributes.add(str);
+				}
+			}
+		}
+		for (int i = 0; i < schema.size(); i++) {
+			String attribute = schema.get(i).getAttributeName();
+			if (!attributes.contains(attribute) && !attribute.equals(tupleRangeAttribute)) {
+				object.setAttribute(i, null);
+			}
+
+		}
+		return object;
+	}
+
+	@Override
+	public List<ISecurityPunctuation> union(List<ISecurityPunctuation> buffer) {
+		for (ISecurityPunctuation sp : buffer) {
+
+			if (sp.getImmutable() == this.getImmutable() && sp.getSign() == this.getSign()) {
+				// if the DDPs of the SPs are the same, they get unioned,
+				// i.e. the Roles in their SRP are unioned
+				if (this.getDDP().equals(sp.getDDP())) {
+					sp.getSRP().unionRoles(this.getSRP());
+					return buffer;
+				}
+				// if the roles of the SPs are the same and the tupleRange
+				// are the same, the SPs are intersected, resulting in a
+				// union of the attributes in the DDP
+				else if (this.getSRP().equals(sp.getSRP())
+						&& (this.getDDP().getTupleRange()[0] == sp.getDDP().getTupleRange()[0]
+								&& this.getDDP().getTupleRange()[1] == sp.getDDP().getTupleRange()[1])) {
+					SecurityPunctuation punctuation = new SecurityPunctuation(this.intersect(sp, sp.getTime()));
+					punctuation.setDDP(new DataDescriptionPart(
+							String.valueOf(sp.getDDP().getTupleRange()[0]) + ","
+									+ String.valueOf(sp.getDDP().getTupleRange()[1]),
+							punctuation.getDDP().getAttributes()));
+
+					buffer.add(punctuation);
+
+					buffer.remove(sp);		
+					return buffer;
+				}
+
+			}
+
+		}
+		buffer.add(this);
+
+		return buffer;
+
+	}
 
 }

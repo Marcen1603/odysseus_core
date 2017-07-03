@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -17,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 
 	List<Map<ISecurityPunctuation, List<T>>> spMap;
-	private static final Logger LOG = LoggerFactory.getLogger(SPMap.class);
+
 
 	public SPMap() {
 		this.spMap = new ArrayList<Map<ISecurityPunctuation, List<T>>>();
@@ -38,6 +33,7 @@ public class SPMap<K extends ITimeInterval, T extends IStreamObject<K>> {
 		}
 	}
 
+	
 	public ISecurityPunctuation invalidate(ISecurityPunctuation sp, PointInTime ts, int port) {
 		ISecurityPunctuation removedSPs = null;
 		List<T> objectsToRemove = new ArrayList<>();

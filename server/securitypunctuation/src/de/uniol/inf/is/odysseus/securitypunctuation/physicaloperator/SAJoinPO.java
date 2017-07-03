@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -16,9 +13,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
-import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.ISecurityPunctuation;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
 import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SPMap;
@@ -26,7 +20,7 @@ import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
-	private static final Logger LOG = LoggerFactory.getLogger(SAJoinPO.class);
+
 
 	// Contains a Map of the Objects with the SPs referring to them as a key
 	SPMap<K, T> spMap;
@@ -182,7 +176,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		} else if (intersectedSPs.size() != lastSentPunctuation.size()) {
 			return false;
 		}
-		// TODO: optimieren
+		
 		else if (lastSentPunctuation.containsAll(intersectedSPs) && intersectedSPs.containsAll(lastSentPunctuation)) {
 			return true;
 		}
@@ -199,7 +193,6 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			this.spList.add(new ArrayList<ISecurityPunctuation>());
 			this.saOpDelPo.add(new SAOperatorDelegate<T>());
 		}
-
 	}
 
 	public void setTupleRangeAttribute(String tupleRangeAttribute) {

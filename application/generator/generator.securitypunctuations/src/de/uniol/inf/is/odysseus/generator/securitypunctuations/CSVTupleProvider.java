@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.generator.securitypunctuations;
 
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,7 +21,7 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 	URL fileURL;
 	BufferedReader br = null;
 	String line = "";
-	long counter = 0L;
+	int counter = 0;
 	private long timestamp;
 	int iterator = 0;
 	int amount = 0;
@@ -70,7 +68,8 @@ public class CSVTupleProvider extends AbstractDataGenerator {
 			// }
 			// } else {
 
-			tuple.addAttribute(new Long(counter));// TupelID
+//			tuple.addAttribute(counter);// TupelID
+			
 			tuple.addAttribute(Integer.parseInt(temp[0]));// patientenID
 			tuple.addAttribute(Integer.parseInt(temp[1]));// Puls oder
 															// Atemfrequenz

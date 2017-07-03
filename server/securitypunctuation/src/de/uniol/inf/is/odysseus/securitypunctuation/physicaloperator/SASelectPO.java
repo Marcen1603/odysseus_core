@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
@@ -14,7 +11,7 @@ import de.uniol.inf.is.odysseus.securitypunctuation.datatype.SAOperatorDelegate;
 
 public class SASelectPO<T extends IStreamObject<?>> extends SelectPO<T> implements IHasPredicate {
 	private SAOperatorDelegate<T> saOpDel = new SAOperatorDelegate<T>();;
-	private static final Logger LOG = LoggerFactory.getLogger(SecurityShieldPO.class);
+
 
 	public SASelectPO(IPredicate<? super T> predicate) {
 		super(predicate);

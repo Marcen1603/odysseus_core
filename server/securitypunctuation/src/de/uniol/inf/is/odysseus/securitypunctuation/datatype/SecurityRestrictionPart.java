@@ -5,17 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6650668868603118657L;
 	private List<String> roles;
-	// private static final Logger LOG =
-	// LoggerFactory.getLogger(SecurityRestrictionPart.class);
+
 
 	public SecurityRestrictionPart(List<String> roles) {
 		this.roles = roles;
@@ -42,7 +38,7 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 	
 	// Merges two SRPs
 	@Override
-	public void union(ISecurityRestrictionPart srp) {
+	public void unionRoles(ISecurityRestrictionPart srp) {
 		if (this.roles.get(0).equals("*") || srp.getRoles().get(0).equals("")) {
 			return;
 		} else if (srp.getRoles().get(0).equals("*")) {
@@ -105,15 +101,6 @@ public class SecurityRestrictionPart implements ISecurityRestrictionPart{
 		}return true;
 		
 		
-//		if (!inputOne.isEmpty() && inputTwo.isEmpty() || inputOne.isEmpty() && !inputTwo.isEmpty()) {
-//			return false;
-//
-//		} else if (inputTwo.containsAll(inputOne) && inputOne.containsAll(inputTwo)) {
-//			return true;
-//		} else
-//			return false;
-//
-	}
-//	
+	}	
 
 }

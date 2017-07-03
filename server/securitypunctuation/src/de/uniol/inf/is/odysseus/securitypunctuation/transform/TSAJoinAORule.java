@@ -2,9 +2,6 @@ package de.uniol.inf.is.odysseus.securitypunctuation.transform;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -17,7 +14,6 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAJoinAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SAJoinPO;
-import de.uniol.inf.is.odysseus.securitypunctuation.physicaloperator.SecurityShieldPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.DefaultTIDummyDataCreation;
 import de.uniol.inf.is.odysseus.server.intervalapproach.JoinTIPO;
 import de.uniol.inf.is.odysseus.server.intervalapproach.transform.AbstractIntervalTransformationRule;
@@ -25,7 +21,6 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class TSAJoinAORule extends AbstractIntervalTransformationRule<SAJoinAO> {
-	private static final Logger LOG = LoggerFactory.getLogger(TSAJoinAORule.class);
 	@Override
 	public int getPriority() {
 		return 5;
@@ -56,7 +51,6 @@ public class TSAJoinAORule extends AbstractIntervalTransformationRule<SAJoinAO> 
 		SAjoinPO.setCardinalities(SAjoinAO.getCard());
 		SAjoinPO.setSweepAreaName(SAjoinAO.getSweepAreaName());
 		SAjoinPO.setTupleRangeAttribute(SAjoinAO.getTupleRangeAttribute());
-		LOG.info(SAjoinAO.getTupleRangeAttribute());
 		if (SAjoinAO.isAssureOrder()) {
 			SAjoinPO.setTransferFunction(new TITransferArea());
 		} else {
