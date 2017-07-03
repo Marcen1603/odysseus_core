@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.transform.rules;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -25,7 +26,10 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 
 	@Override
 	public void execute(ILogicalOperator operator, TransformationConfiguration config) throws RuleException {
-		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
+		// Avoid concurrent modification exceptions
+		Collection<LogicalSubscription> subscriptions = new ArrayList<>(operator.getSubscribedToSource());
+		
+		for (LogicalSubscription subscription : subscriptions) {
 
 			if (operator.getInputOrderRequirement(subscription.getSinkInPort()) == InputOrderRequirement.STRICT
 					&& !subscription.getSchema().isInOrder()) {
