@@ -226,7 +226,7 @@ public class SDFSchemaFactory {
 	 *            the input schema from which the new schema should be derived
 	 * @return
 	 */
-	static public SDFSchema createNewWithStrictOrder(boolean strictOrder,
+	static public SDFSchema createNewWithOutOfOrder(boolean strictOrder,
 			SDFSchema inputSchema) {
 		SDFSchema output = new SDFSchema(inputSchema, strictOrder);
 		return output;

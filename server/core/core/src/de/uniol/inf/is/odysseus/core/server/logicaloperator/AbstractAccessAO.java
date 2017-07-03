@@ -435,7 +435,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		schema = SDFSchemaFactory.createNewSchema(getName(), type, s2);
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
-		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
+		schema = SDFSchemaFactory.createNewWithOutOfOrder(strictOrder, schema);
 
 		// Add meta attributes. If is set in operator, this overwrites other
 		// options
