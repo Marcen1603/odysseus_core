@@ -41,12 +41,16 @@ public class UserManagementProvider {
 
 	private Map<String, IUserManagement> usrMgmt = new HashMap<>();
 
+	private OdysseusConfiguration config;
+
+	private TenantDAO tenantDao;
+
 	synchronized public ITenant getDefaultTenant() {
 		return getTenant(defaultTenantName);
 	}
 
 	public synchronized ITenant getTenant(String name) {
-		return TenantDAO.getInstance().findByName(name);
+		return tenantDao.findByName(name);
 	}
 
 	public synchronized ITenant createNewTenant(String name, ISession caller) {
@@ -55,7 +59,7 @@ public class UserManagementProvider {
 
 			ITenant t = new Tenant();
 			t.setName(name);
-			t = TenantDAO.getInstance().create(t);
+			t = tenantDao.create(t);
 			return t;
 		}
 		throw new PermissionException("Not right to create tenant");
@@ -63,7 +67,7 @@ public class UserManagementProvider {
 	}
 
 	public synchronized List<ITenant> getTenants() {
-		return TenantDAO.getInstance().findAll();
+		return tenantDao.findAll();
 	}
 
 	/**
@@ -77,22 +81,22 @@ public class UserManagementProvider {
 		if (wait) {
 			return waitForUsermanagement();
 		} else {
-			return instance.usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
+			return usrMgmt.get(config.get("StoretypeUserMgmt").toLowerCase());
 		}
 	}
 
 	synchronized private IUserManagement waitForUsermanagement() {
-		IUserManagement ret = usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
+		IUserManagement ret = usrMgmt.get(config.get("StoretypeUserMgmt").toLowerCase());
 		while (ret == null) {
 			try {
 				UserManagementProvider.class.wait(1000);
-				logger.debug("Waiting for UserManagement " + OdysseusConfiguration.instance.get("StoretypeUserMgmt"));
-				ret = usrMgmt.get(OdysseusConfiguration.instance.get("StoretypeUserMgmt").toLowerCase());
+				logger.debug("Waiting for UserManagement " + config.get("StoretypeUserMgmt"));
+				ret = usrMgmt.get(config.get("StoretypeUserMgmt").toLowerCase());
 			} catch (InterruptedException e) {
 			}
 		}
 
-		for (ITenant t : TenantDAO.getInstance().allEntities) {
+		for (ITenant t : tenantDao.allEntities) {
 
 			if (!ret.isInitialized(t)) {
 				ret.initialize(t);
@@ -125,5 +129,11 @@ public class UserManagementProvider {
 
 	public void setInstance() {
 		instance = this;
+	}
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
+	}
+	public void setTenantDao(TenantDAO tenantDao) {
+		this.tenantDao = tenantDao;
 	}
 }
