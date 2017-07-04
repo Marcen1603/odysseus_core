@@ -54,7 +54,7 @@ public class PrivilegeDAO extends AbstractStoreDAO<Privilege> {
 
 	public PrivilegeDAO(IStore<String, Privilege> store,
 			ArrayList<Privilege> arrayList) {
-		super(store, arrayList);
+		init(store, arrayList);
 	}
 
 }

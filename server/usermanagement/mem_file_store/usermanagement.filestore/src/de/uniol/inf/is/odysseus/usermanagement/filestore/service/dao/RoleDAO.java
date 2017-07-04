@@ -52,7 +52,7 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 
 	public RoleDAO(IStore<String, Role> store,
 			ArrayList<Role> arrayList) {
-		super(store, arrayList);
+		init(store, arrayList);
 	}
 
 

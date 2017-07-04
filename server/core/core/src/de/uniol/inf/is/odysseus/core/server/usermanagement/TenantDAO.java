@@ -14,45 +14,48 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 public class TenantDAO extends AbstractStoreDAO<ITenant> {
 
 	static Logger logger = LoggerFactory.getLogger(TenantDAO.class);
-	
-	static TenantDAO dao = null;
-	
-	static synchronized public TenantDAO getInstance(){
-		if (dao == null){
-			try {
-				dao = new TenantDAO();
-				if (dao.findAll().isEmpty()){
-					ITenant t = new Tenant();
-					t.setName(OdysseusConfiguration.instance.get("Tenant.DefaultName"));
-					dao.create(t);
-					
-					//TODO: REMOVE ME (Only for Debugging)
-					
-					t = new Tenant();
-					t.setName("Marco1");
-					dao.create(t);
-					t = new Tenant();
-					t.setName("Marco2");
-					dao.create(t);
-					t = new Tenant();
-					t.setName("Marco3");
-					dao.create(t);
-					
-				}else{
-					if (logger.isDebugEnabled()){
-						List<ITenant> all = dao.findAll();
-						logger.trace("Tenants loaded "+all);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+	/** use osgi injection instead */
+	@Deprecated
+	static TenantDAO instance = null;
+
+	@Deprecated
+	static synchronized public TenantDAO getInstance() {
+		return instance;
+	}
+
+	private OdysseusConfiguration config;
+
+	public void setInstance() throws IOException {
+		instance = this;
+		init(new FileStore<String, ITenant>(config.getFileProperty("tenantStoreFilename")), new ArrayList<ITenant>());
+		if (findAll().isEmpty()) {
+			ITenant t = new Tenant();
+			t.setName(config.get("Tenant.DefaultName"));
+			create(t);
+
+			// TODO: REMOVE ME (Only for Debugging)
+
+			t = new Tenant();
+			t.setName("Marco1");
+			create(t);
+			t = new Tenant();
+			t.setName("Marco2");
+			create(t);
+			t = new Tenant();
+			t.setName("Marco3");
+			create(t);
+
+		} else {
+			if (logger.isDebugEnabled()) {
+				List<ITenant> all = findAll();
+				logger.trace("Tenants loaded " + all);
 			}
 		}
-		return dao;
+
 	}
-	
-	TenantDAO() throws IOException {
-		super(new FileStore<String, ITenant>(OdysseusConfiguration.instance.getFileProperty("tenantStoreFilename")), new ArrayList<ITenant>());
+
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
 	}
 
 }

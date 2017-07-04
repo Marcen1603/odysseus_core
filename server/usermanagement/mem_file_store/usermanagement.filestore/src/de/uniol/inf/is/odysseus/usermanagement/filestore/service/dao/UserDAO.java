@@ -52,7 +52,7 @@ public class UserDAO extends AbstractStoreDAO<User>{
 	}
 	
 	public UserDAO(IStore<String, User> store, ArrayList<User> arrayList) {
-		super(store, arrayList);
+		init(store, arrayList);
 	}	
 		
 }
