@@ -80,7 +80,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 
 	final EventHandler eventHandler;
 
-	private OdysseusConfiguration config;
+	protected OdysseusConfiguration config;
 
 	/**
 	 * Creates a new manager and initializes the logger. Used by OSGi (no

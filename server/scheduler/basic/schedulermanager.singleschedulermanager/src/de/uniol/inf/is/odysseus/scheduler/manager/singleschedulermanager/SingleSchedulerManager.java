@@ -45,7 +45,6 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoade
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -87,7 +86,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	private boolean shouldRun;
 
-	private UserManagementProvider userManagementProvider;
+	private SessionManagement sessionManagement;
 
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
@@ -106,8 +105,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = FileUtils.openOrCreateFile(OdysseusConfiguration.instance
-						.get("schedulingConfigFile"));
+				File f = FileUtils.openOrCreateFile(config.get("schedulingConfigFile"));
 				FileInputStream in;
 				in = new FileInputStream(f);
 				props.load(in);
@@ -122,9 +120,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 							.hasNext() ? strats.iterator().next() : null);
 					FileOutputStream out;
 					try {
-						out = new FileOutputStream(
-								OdysseusConfiguration.instance
-										.get("schedulingConfigFile"));
+						out = new FileOutputStream(config.get("schedulingConfigFile"));
 						props.store(out,
 								"--- Scheduling Property File edit only if you know what you are doing ---");
 						out.close();
@@ -501,11 +497,11 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		}
 	}
 	
-	public void setUserManagementProvider(UserManagementProvider userManagementProvider) {
-		this.userManagementProvider = userManagementProvider;
-	}
-
+	
 	private ISession superUser() {
-		return SessionManagement.instance.loginSuperUser(null);
+		return sessionManagement.loginSuperUser(null);
+	}
+	public void setSessionManagement(SessionManagement sessionManagement) {
+		this.sessionManagement = sessionManagement;
 	}
 }
