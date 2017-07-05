@@ -47,6 +47,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	private boolean allowOutOfOrder = false;
 	private boolean startAtCurrentTime = false;
 	private boolean startTimerAfterFirstElement = false;
+	private boolean restartTimerForEveryInput = false;
 
 	public HeartbeatAO() {
 	}
@@ -121,6 +122,8 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		this.startTimerAfterFirstElement = startTimerAfterFirstElement;
 	}
 
+	
+	
 	/**
 	 * @return the startTimerAfterFirstElement
 	 */
@@ -130,6 +133,15 @@ public class HeartbeatAO extends UnaryLogicalOp {
 
 	public boolean isAllowOutOfOrder() {
 		return allowOutOfOrder;
+	}
+	
+	public boolean isRestartTimerForEveryInput() {
+		return restartTimerForEveryInput;
+	}
+	
+	@Parameter(type = BooleanParameter.class, name = "restartTimerForEveryInput", optional = true)
+	public void setRestartTimerForEveryInput(boolean restartTimerForEveryInput) {
+		this.restartTimerForEveryInput = restartTimerForEveryInput;
 	}
 
 	@Override
@@ -151,5 +163,7 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
 	}
+
+
 
 }

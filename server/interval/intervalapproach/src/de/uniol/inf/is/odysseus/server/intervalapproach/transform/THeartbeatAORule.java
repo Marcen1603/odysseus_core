@@ -21,6 +21,7 @@ public class THeartbeatAORule extends
 		physical.setSendAlwaysHeartbeat(operator.isSendAlwaysHeartbeat());
 		physical.setAllowOutOfOrder(operator.isAllowOutOfOrder());
 		physical.setStartTimerAfterFirstElement(operator.isStartTimerAfterFirstElement());
+		physical.setRestartTimerForEveryInput(operator.isRestartTimerForEveryInput());
 		defaultExecute(operator, physical, config, true, true);
 	}
 
