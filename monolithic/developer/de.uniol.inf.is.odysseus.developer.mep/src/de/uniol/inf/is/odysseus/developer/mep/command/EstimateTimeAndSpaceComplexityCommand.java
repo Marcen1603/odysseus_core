@@ -59,8 +59,8 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
@@ -122,26 +122,26 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 
 		});
 
-		final Map<String, List<IFunction<?>>> functions = new HashMap<>();
+		final Map<String, List<IMepFunction<?>>> functions = new HashMap<>();
 		SubMonitor subMonitor = SubMonitor.convert(monitor, functionSignatures.size());
 		subMonitor.setTaskName("Collecting functions"); //$NON-NLS-1$
 
 		for (final FunctionSignature functionSignature : functionSignatures) {
-			final IFunction<?> function = MEP.getFunction(functionSignature);
+			final IMepFunction<?> function = MEP.getFunction(functionSignature);
 			final String packageName = function.getClass().getPackage().getName();
 			if (!functions.containsKey(packageName)) {
-				functions.put(packageName, new ArrayList<IFunction<?>>());
+				functions.put(packageName, new ArrayList<IMepFunction<?>>());
 			}
 			functions.get(packageName).add(function);
 		}
 		final List<String> packages = new ArrayList<>(functions.keySet());
 		Collections.sort(packages);
 
-		Map<IFunction<?>, double[]> timeAndSpace = new HashMap<>();
+		Map<IMepFunction<?>, double[]> timeAndSpace = new HashMap<>();
 		int work = 0;
 		for (final String packageName : packages) {
 			if (packageName.startsWith(filter)) {
-				for (final IFunction<?> function : functions.get(packageName)) {
+				for (final IMepFunction<?> function : functions.get(packageName)) {
 					subMonitor.setTaskName("Function: " + function.getSymbol() + "()"); //$NON-NLS-1$ //$NON-NLS-2$
 					final Object[][] testValues = ParameterGenerator.getFunctionValues(function);
 					timeAndSpace.put(function,
@@ -180,7 +180,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 		output.createNewFile();
 		try (BufferedWriter out = new BufferedWriter(new FileWriter(output))) {
 			out.write("Symbol, Class, Time Score, Space Score, Time (ns), Space (byte)\n"); //$NON-NLS-1$
-			for (Entry<IFunction<?>, double[]> entry : timeAndSpace.entrySet()) {
+			for (Entry<IMepFunction<?>, double[]> entry : timeAndSpace.entrySet()) {
 				try {
 					int time;
 					if (!Double.isNaN(entry.getValue()[0])) {
@@ -217,7 +217,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 		return 0;
 	}
 
-	private static double[] generateFunctionResults(final IFunction<?> function, final Object[][] values) {
+	private static double[] generateFunctionResults(final IMepFunction<?> function, final Object[][] values) {
 		EstimateTimeAndSpaceComplexityCommand.LOG.info("Generated cases for {}", function.getSymbol()); //$NON-NLS-1$
 		// RUNTIME.gc();
 		try {
@@ -231,7 +231,7 @@ public class EstimateTimeAndSpaceComplexityCommand extends AbstractHandler {
 			long free = RUNTIME.freeMemory();
 			for (final Object[] value : values) {
 				@SuppressWarnings("rawtypes")
-				final IExpression[] arguments = new IExpression[function.getArity()];
+				final IMepExpression[] arguments = new IMepExpression[function.getArity()];
 				for (int i = 0; i < function.getArity(); i++) {
 					arguments[i] = MEP.createConstant(value[i], function.getAcceptedTypes(i)[0]);
 				}

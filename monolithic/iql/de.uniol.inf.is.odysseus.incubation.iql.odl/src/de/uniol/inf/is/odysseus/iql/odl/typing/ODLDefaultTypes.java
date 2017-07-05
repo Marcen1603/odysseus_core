@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.PairMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -67,7 +67,7 @@ public class ODLDefaultTypes {
 		types.add(IPunctuation.class);
 		types.add(IStreamObject.class);
 		types.add(Tuple.class);
-		types.add(IExpression.class);
+		types.add(IMepExpression.class);
 		types.add(SDFSchema.class);
 		types.add(Subscription.class);	
 		types.add(ITimeIntervalSweepArea.class);	
@@ -118,7 +118,7 @@ public class ODLDefaultTypes {
 		Collection<String> implicitImports = new HashSet<>();
 		implicitImports.add("java.util.*");
 		implicitImports.add("java.lang.*");
-		implicitImports.add(IExpression.class.getCanonicalName());
+		implicitImports.add(IMepExpression.class.getCanonicalName());
 		implicitImports.add(IPunctuation.class.getCanonicalName());
 		implicitImports.add(Tuple.class.getCanonicalName());
 		implicitImports.add(IStreamObject.class.getCanonicalName());

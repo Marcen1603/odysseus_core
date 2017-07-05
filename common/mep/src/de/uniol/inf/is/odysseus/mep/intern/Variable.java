@@ -25,10 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractExpression;
 
@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractExpression;
  * @author Marco Grawunder
  *
  */
-public class Variable extends AbstractExpression<Object> implements IVariable {
+public class Variable extends AbstractExpression<Object> implements IMepVariable {
 
 	Logger LOG = LoggerFactory.getLogger(Variable.class);
 
@@ -140,7 +140,7 @@ public class Variable extends AbstractExpression<Object> implements IVariable {
 	}
 
 	@Override
-	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
+	public Object acceptVisitor(IMepExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
 
@@ -163,7 +163,7 @@ public class Variable extends AbstractExpression<Object> implements IVariable {
 	}
 
 	@Override
-	public Set<IVariable> getVariables() {
+	public Set<IMepVariable> getVariables() {
 		return Collections.singleton(this);
 	}
 
@@ -198,7 +198,7 @@ public class Variable extends AbstractExpression<Object> implements IVariable {
 	}
 
 	@Override
-	public IFunction<Object> toFunction() {
+	public IMepFunction<Object> toFunction() {
 		throw new RuntimeException("cannot convert Variable to IFunction");
 	}
 
@@ -268,7 +268,7 @@ public class Variable extends AbstractExpression<Object> implements IVariable {
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		throw new RuntimeException("cannot determine type");
 	}
 
@@ -278,17 +278,17 @@ public class Variable extends AbstractExpression<Object> implements IVariable {
 	}
 
 	@Override
-	public List<IExpression<Object>> conjunctiveSplit() {
-		List<IExpression<Object>> ret = new ArrayList<>();
+	public List<IMepExpression<Object>> conjunctiveSplit() {
+		List<IMepExpression<Object>> ret = new ArrayList<>();
 		ret.add(this);
 		return ret;
 	}
 	
 	@Override
-	public IExpression<Object> clone(Map<IVariable, IVariable> vars) {
+	public IMepExpression<Object> clone(Map<IMepVariable, IMepVariable> vars) {
 		// Variables are unique, so if the variable is cloned onces, it must
 		// not be cloned again in the same expression
-		IVariable ret = vars.get(this);
+		IMepVariable ret = vars.get(this);
 		if (ret == null){
 			ret = new Variable(this);
 			vars.put(this,ret);

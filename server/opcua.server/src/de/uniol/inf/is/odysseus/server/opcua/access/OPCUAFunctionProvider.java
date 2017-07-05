@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.server.opcua.access;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.server.opcua.func.ToErrorValFunction;
 import de.uniol.inf.is.odysseus.server.opcua.func.ToOPCValueFunction;
@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.server.opcua.func.ToOPCValueFunction;
 public class OPCUAFunctionProvider implements IFunctionProvider {
 
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public List<IMepFunction<?>> getFunctions() {
 		return Arrays.asList(new ToErrorValFunction(), new ToOPCValueFunction());
 	}
 }

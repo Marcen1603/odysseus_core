@@ -25,10 +25,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionParser;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -40,10 +40,10 @@ public class SDFExpression implements Serializable, IClone {
 
 	private static final long serialVersionUID = 8658794141096208317L;
 	// Für P2P als transient gekennzeichnet
-	transient ArrayList<IVariable> variableArrayList = new ArrayList<IVariable>();
+	transient ArrayList<IMepVariable> variableArrayList = new ArrayList<IMepVariable>();
 
 	private int varCounter;
-	private IExpression<?> expression;
+	private IMepExpression<?> expression;
 
 	private String expressionString;
 
@@ -60,7 +60,7 @@ public class SDFExpression implements Serializable, IClone {
 	 */
 	private List<ISession> sessions;
 
-	private transient IExpressionParser expressionParser;
+	private transient IMepExpressionParser expressionParser;
 
 	Pattern pattern = null;
 
@@ -71,7 +71,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @throws ParseException
 	 */
 	public SDFExpression(String URI, String value, IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser, Pattern aggregatePattern) throws SDFExpressionParseException {
+			IMepExpressionParser expressionParser, Pattern aggregatePattern) throws SDFExpressionParseException {
 		this.pattern = aggregatePattern;
 		init(null, value, attributeResolver, expressionParser);
 	}
@@ -81,7 +81,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param value
 	 * @throws ParseException
 	 */
-	protected SDFExpression(String value, IExpressionParser expressionParser) throws SDFExpressionParseException {
+	protected SDFExpression(String value, IMepExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, null, expressionParser);
 	}
 
@@ -91,7 +91,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * @param attributeResolver
 	 * @throws ParseException
 	 */
-	public SDFExpression(String value, IAttributeResolver attributeResolver, IExpressionParser expressionParser) throws SDFExpressionParseException {
+	public SDFExpression(String value, IAttributeResolver attributeResolver, IMepExpressionParser expressionParser) throws SDFExpressionParseException {
 		init(null, value, attributeResolver, expressionParser);
 	}
 
@@ -100,28 +100,28 @@ public class SDFExpression implements Serializable, IClone {
 				expression.expressionParser);
 	}
 
-	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser) {
+	public SDFExpression(IMepExpression<?> expression, IAttributeResolver attributeResolver,
+			IMepExpressionParser expressionParser) {
 		init(expression, null, attributeResolver, expressionParser);
 	}
 
-	public SDFExpression(IExpression<?> expression, IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser, String expressionString) {
+	public SDFExpression(IMepExpression<?> expression, IAttributeResolver attributeResolver,
+			IMepExpressionParser expressionParser, String expressionString) {
 		init(expression, null, attributeResolver, expressionParser);
 		this.expressionString = expressionString;
 	}
 
-	private void init(IExpression<?> expre, String value, IAttributeResolver attributeResolver,
-			IExpressionParser expressionParser) {
+	private void init(IMepExpression<?> expre, String value, IAttributeResolver attributeResolver,
+			IMepExpressionParser expressionParser) {
 		this.expressionParser = expressionParser;
 		if (expre != null) {
-			this.expression = expre.clone(new HashMap<IVariable, IVariable>());
+			this.expression = expre.clone(new HashMap<IMepVariable, IMepVariable>());
 			this.expressionString = expression.toString();
 		} else {
 			expressionString = value.trim();
 		}
 		this.varCounter = 0;
-		this.variableArrayList = new ArrayList<IVariable>();
+		this.variableArrayList = new ArrayList<IMepVariable>();
 		this.attributes = new ArrayList<SDFAttribute>();
 		if (attributeResolver != null) {
 			this.attributeResolver = attributeResolver.clone();
@@ -129,7 +129,7 @@ public class SDFExpression implements Serializable, IClone {
 		} else {
 			// Try to determine own attribute resolver from expression
 			try {
-				IExpression<?> tmpExpression = expressionParser.parse(expressionString);
+				IMepExpression<?> tmpExpression = expressionParser.parse(expressionString);
 				this.attributeResolver = new DirectAttributeResolver(tmpExpression.getVariables());
 				this.schema = this.attributeResolver.getSchema();
 
@@ -157,8 +157,8 @@ public class SDFExpression implements Serializable, IClone {
 		if (this.expression.isConstant()) {
 			setValue(expression.getValue());
 		}
-		if (this.expression instanceof IFunction) {
-			IFunction<?> function = (IFunction<?>) expression;
+		if (this.expression instanceof IMepFunction) {
+			IMepFunction<?> function = (IMepFunction<?>) expression;
 			function.propagateSessionReference(sessions);
 			setSessions(function.getSessions());
 		}
@@ -211,8 +211,8 @@ public class SDFExpression implements Serializable, IClone {
 		return result;
 	}
 
-	private void initVariables(Set<IVariable> variables2, Map<String, String> inverseAliasMappings) {
-		for (IVariable var : variables2) {
+	private void initVariables(Set<IMepVariable> variables2, Map<String, String> inverseAliasMappings) {
+		for (IMepVariable var : variables2) {
 			String name = var.getIdentifier();
 			if (inverseAliasMappings.containsKey(name)) {
 				name = inverseAliasMappings.get(name);
@@ -265,7 +265,7 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			IVariable variable = variableArrayList.get(i);
+			IMepVariable variable = variableArrayList.get(i);
 			variable.bind(values[i], variable.getPosition());
 		}
 
@@ -282,14 +282,14 @@ public class SDFExpression implements Serializable, IClone {
 		}
 
 		for (int i = 0; i < values.length; ++i) {
-			IVariable variable = variableArrayList.get(i);
+			IMepVariable variable = variableArrayList.get(i);
 			variable.bind(values[i], positions[i]);
 		}
 
 		setValue(expression.getValue());
 	}
 
-	public ArrayList<IVariable> getVariables() {
+	public ArrayList<IMepVariable> getVariables() {
 		return this.variableArrayList;
 	}
 
@@ -328,7 +328,7 @@ public class SDFExpression implements Serializable, IClone {
 	 * to be used in a join. For this, we check whether this expression contains
 	 * other operators than == or not.
 	 */
-	public IExpression<?> getMEPExpression() {
+	public IMepExpression<?> getMEPExpression() {
 		return this.expression;
 	}
 
@@ -344,7 +344,7 @@ public class SDFExpression implements Serializable, IClone {
 	 *
 	 * @return The expression parser
 	 */
-	public IExpressionParser getExpressionParser() {
+	public IMepExpressionParser getExpressionParser() {
 		return expressionParser;
 	}
 
@@ -379,7 +379,7 @@ public class SDFExpression implements Serializable, IClone {
 	public void setSessions(List<ISession> sessions) {
 		this.sessions = sessions;
 		if (expression.isFunction()) {
-			((IFunction<?>) expression).setSessions(sessions);
+			((IMepFunction<?>) expression).setSessions(sessions);
 		}
 	}
 

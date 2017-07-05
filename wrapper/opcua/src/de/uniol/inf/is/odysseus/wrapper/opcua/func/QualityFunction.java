@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcua.func;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.opcua.common.core.OPCValue;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype;
 /**
  * A function to get the quality of an OPC value.
  */
-public class QualityFunction extends AbstractFunction<Integer> implements IFunction<Integer> {
+public class QualityFunction extends AbstractFunction<Integer> implements IMepFunction<Integer> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -5815276686533770744L;

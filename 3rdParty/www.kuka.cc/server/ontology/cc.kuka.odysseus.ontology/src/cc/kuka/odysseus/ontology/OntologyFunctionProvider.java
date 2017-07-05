@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cc.kuka.odysseus.ontology.function.quality.TimelinessFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -47,8 +47,8 @@ public class OntologyFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public final List<IFunction<?>> getFunctions() {
-        final List<IFunction<?>> functions = new ArrayList<>();
+    public final List<IMepFunction<?>> getFunctions() {
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         try {
 
             functions.add(new TimelinessFunction());

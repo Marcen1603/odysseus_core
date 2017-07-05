@@ -39,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -282,17 +282,17 @@ public class CheatSheetGenerator {
 
         });
 
-        final List<IFunction<?>> symbols = new ArrayList<>();
-        final Map<String, List<IFunction<?>>> functions = new HashMap<>();
+        final List<IMepFunction<?>> symbols = new ArrayList<>();
+        final Map<String, List<IMepFunction<?>>> functions = new HashMap<>();
 
         for (final FunctionSignature functionSignature : functionSignatures) {
-            final IFunction<?> function = MEP.getFunction(functionSignature);
+            final IMepFunction<?> function = MEP.getFunction(functionSignature);
             if (((function.getSymbol().charAt(0) >= 'A') && (function.getSymbol().charAt(0) <= 'Z')) || ((function.getSymbol().charAt(0) >= 'a') && (function.getSymbol().charAt(0) <= 'z'))) {
                 String packageName = function.getClass().getPackage().getName();
                 final int index = packageName.lastIndexOf(".");
                 packageName = packageName.substring(index + 1, index + 2).toUpperCase() + packageName.substring(index + 2);
                 if (!functions.containsKey(packageName)) {
-                    functions.put(packageName, new ArrayList<IFunction<?>>());
+                    functions.put(packageName, new ArrayList<IMepFunction<?>>());
                 }
                 functions.get(packageName).add(function);
             }
@@ -308,13 +308,13 @@ public class CheatSheetGenerator {
         for (final String packageName : packages) {
             builder.append("\\subsection{").append(packageName).append("}\n");
             String len = "";
-            for (final IFunction<?> function : functions.get(packageName)) {
+            for (final IMepFunction<?> function : functions.get(packageName)) {
                 if (function.getSymbol().length() > len.length()) {
                     len = CheatSheetGenerator.sanitize(function.getSymbol());
                 }
             }
             // builder.append("\\begin{multicols}{2}\n");
-            for (final IFunction<?> function : functions.get(packageName)) {
+            for (final IMepFunction<?> function : functions.get(packageName)) {
                 final String name = function.getSymbol();
                 final String returnType = function.getReturnType().getQualName();
                 final StringBuilder sb = new StringBuilder();
@@ -338,7 +338,7 @@ public class CheatSheetGenerator {
         }
 
         builder.append("\\section{Symbols}\n");
-        for (final IFunction<?> symbol : symbols) {
+        for (final IMepFunction<?> symbol : symbols) {
             final String name = symbol.getSymbol();
             final String returnType = symbol.getReturnType().getQualName();
             final StringBuilder sb = new StringBuilder();

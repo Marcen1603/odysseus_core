@@ -33,7 +33,7 @@ package de.uniol.inf.is.odysseus.context.store;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -44,8 +44,8 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 public class ContextStoreFunctionProvider implements IFunctionProvider {
 
 	@Override
-	public List<IFunction<?>> getFunctions() {		
-		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+	public List<IMepFunction<?>> getFunctions() {		
+		List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		functions.add(new ContextStoreFunction());
 		return functions;
 	}

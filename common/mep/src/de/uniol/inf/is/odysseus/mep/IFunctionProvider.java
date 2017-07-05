@@ -17,9 +17,9 @@ package de.uniol.inf.is.odysseus.mep;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 
 public interface IFunctionProvider {
 
-	public List<IFunction<?>> getFunctions();
+	public List<IMepFunction<?>> getFunctions();
 }

@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.wrapper.opcua.func;
 
 import java.util.Map.Entry;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.opcua.common.utilities.StatusMapping;
@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.opcua.common.utilities.StatusMapping.Kind;
 /**
  * A function to retrieve the name of a status code.
  */
-public class ToErrorStrFunction extends AbstractFunction<String> implements IFunction<String> {
+public class ToErrorStrFunction extends AbstractFunction<String> implements IMepFunction<String> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -1144254816036709722L;

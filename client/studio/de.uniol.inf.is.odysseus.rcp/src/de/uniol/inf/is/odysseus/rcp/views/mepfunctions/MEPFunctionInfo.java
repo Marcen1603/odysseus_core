@@ -22,7 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
@@ -51,7 +51,7 @@ public class MEPFunctionInfo {
 		this.deprecated = deprecated;
 	}
 
-	public static MEPFunctionInfo fromMEPFunction( IFunction<?> function ) {
+	public static MEPFunctionInfo fromMEPFunction( IMepFunction<?> function ) {
 		Preconditions.checkNotNull(function, "Function must not be null!");
 		
 		boolean dep = false;
@@ -79,7 +79,7 @@ public class MEPFunctionInfo {
 		}
 	}
 
-	private static String tryGetReturnType(IFunction<?> function) {
+	private static String tryGetReturnType(IMepFunction<?> function) {
 		try {
 			return function.getReturnType().getQualName();
 		} catch( Throwable t ) {

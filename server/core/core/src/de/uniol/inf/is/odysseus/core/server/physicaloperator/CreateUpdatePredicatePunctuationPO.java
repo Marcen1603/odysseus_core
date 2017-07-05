@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CreateUpdatePredicatePunctuationAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IExpressionBuilder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OperatorBuilderFactory;
 
 public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
@@ -60,7 +60,7 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 
 	/**
 	 * Takes a string and converts it to a predicate
-	 * 
+	 *
 	 * @param rawPredicate
 	 *            The predicate as a string
 	 * @param predicateType
@@ -68,7 +68,7 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 	 * @return The predicate as a Predicate object
 	 */
 	private IPredicate<?> createPredicate(String rawPredicate, String predicateType) {
-		IPredicateBuilder pBuilder = OperatorBuilderFactory.getPredicateBuilder(predicateType);
+		IExpressionBuilder<?,?> pBuilder = OperatorBuilderFactory.getExpressionBuilder(predicateType);
 		IPredicate<?> predicate = pBuilder.createPredicate(attributeResolver, rawPredicate);
 		return predicate;
 	}

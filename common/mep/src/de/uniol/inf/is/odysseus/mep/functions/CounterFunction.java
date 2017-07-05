@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import java.io.Serializable;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.mep.IStatefulFunction;
@@ -37,7 +37,7 @@ public class CounterFunction extends AbstractFunction<Long> implements IStateful
 	}
 
 	@Override
-	public IExpression<Long> clone() {
+	public IMepExpression<Long> clone() {
 		return new CounterFunction(this);
 	}
 	

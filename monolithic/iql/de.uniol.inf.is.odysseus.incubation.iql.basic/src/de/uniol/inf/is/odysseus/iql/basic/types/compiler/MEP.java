@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.iql.basic.types.compiler;
 
 
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 
 public class MEP {
 
@@ -17,7 +17,7 @@ public class MEP {
 			builder.append(args[i]);
 		}
 		builder.append(")");
-		IExpression<?> expression = de.uniol.inf.is.odysseus.mep.MEP.getInstance().parse(builder.toString());
+		IMepExpression<?> expression = de.uniol.inf.is.odysseus.mep.MEP.getInstance().parse(builder.toString());
 		return expression.getValue();
 	}
 

@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 
 /**
@@ -36,16 +36,16 @@ public class SortByStringExpressionRule extends AbstractExpressionOptimizerRule<
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(AndOperator expression) {
-        List<IExpression<?>> split = new ArrayList<>();
+    public IMepExpression<?> execute(AndOperator expression) {
+        List<IMepExpression<?>> split = new ArrayList<>();
         split.addAll(getConjunctiveSplit(expression));
-        Collections.sort(split, new Comparator<IExpression<?>>() {
+        Collections.sort(split, new Comparator<IMepExpression<?>>() {
             /**
              * 
              * {@inheritDoc}
              */
             @Override
-            public int compare(IExpression<?> o1, IExpression<?> o2) {
+            public int compare(IMepExpression<?> o1, IMepExpression<?> o2) {
                 return o1.toString().compareTo(o2.toString());
             }
         });
@@ -57,7 +57,7 @@ public class SortByStringExpressionRule extends AbstractExpressionOptimizerRule<
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return expression instanceof AndOperator;
     }
 }
