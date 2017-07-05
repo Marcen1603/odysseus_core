@@ -1,0 +1,46 @@
+package de.uniol.inf.is.odysseus.transform.rules;
+
+import java.util.Collection;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
+import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
+import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
+
+/**
+ * Cleanup case where a Reorder operator is added to the plan that is not longer
+ * used, because the order has changed because of other reorder operators before
+ * 
+ * @author Marco Grawunder
+ *
+ */
+
+public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> {
+
+	@Override
+	public void execute(ReOrderAO operator, TransformationConfiguration config) throws RuleException {
+		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+		for (ILogicalOperator o : toUpdate) {
+			update(o);
+		}
+		retract(operator);
+	}
+
+	@Override
+	public boolean isExecutable(ReOrderAO operator, TransformationConfiguration config) {
+		if (operator.getInputSchema().isInOrder()) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.OUTOFORDER_CLEANUP;
+	}
+
+}

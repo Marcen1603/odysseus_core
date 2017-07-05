@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -119,8 +120,12 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		SDFSchema left = iter.next().getSchema();
 		SDFSchema right = iter.next().getSchema();
 		SDFSchema outputSchema = SDFSchema.join(left, right);
-		setOutputSchema(outputSchema);
-		return outputSchema;
+		
+		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()); 
+		
+		SDFSchema outputSchemaWithOrder = SDFSchemaFactory.createNewWithOutOfOrder(outOfOrder, outputSchema);
+		
+		return outputSchemaWithOrder;
 	}
 	
 	@Override

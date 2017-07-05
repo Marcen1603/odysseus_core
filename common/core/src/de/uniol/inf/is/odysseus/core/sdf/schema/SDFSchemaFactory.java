@@ -217,8 +217,8 @@ public class SDFSchemaFactory {
 	 * This method creates a new SDFSchema with the special flag strictOrder set
 	 * (to true or false)
 	 *
-	 * @param strictOrder
-	 *            If set to true, the order for every case where two elements
+	 * @param outOfOrder
+	 *            If set to false, the order for every case where two elements
 	 *            have the same order key (e.g. a time stamp) an additional
 	 *            parameter (e.g. hashCode) is used to guarantee the same order
 	 *            in every case
@@ -226,9 +226,9 @@ public class SDFSchemaFactory {
 	 *            the input schema from which the new schema should be derived
 	 * @return
 	 */
-	static public SDFSchema createNewWithOutOfOrder(boolean strictOrder,
+	static public SDFSchema createNewWithOutOfOrder(boolean outOfOrder,
 			SDFSchema inputSchema) {
-		SDFSchema output = new SDFSchema(inputSchema, strictOrder);
+		SDFSchema output = new SDFSchema(inputSchema, outOfOrder);
 		return output;
 	}
 

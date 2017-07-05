@@ -22,6 +22,7 @@ public enum TransformRuleFlowGroup implements IRuleFlowGroup{
 	SUBSTITUTION,
 	INIT,
 	OUTOFORDER,
+	OUTOFORDER_CLEANUP,
 	ACCESS,
 	CREATE_METADATA,
 	TRANSFORMATION,
