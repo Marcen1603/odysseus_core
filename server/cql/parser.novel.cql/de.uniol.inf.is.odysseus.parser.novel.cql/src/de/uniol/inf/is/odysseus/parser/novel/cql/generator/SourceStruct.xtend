@@ -40,7 +40,7 @@ class SourceStruct {
 
 	def AttributeStruct findbyName(String name) {
 		if (name.contains(".")) {
-			println("findbyName::" + name)
+//			println("findbyName::" + name)
 			var split = name.split("\\.")
 			if (split.get(0).equals(this.sourcename)) {
 				for (AttributeStruct attribute : attributes)
@@ -50,7 +50,6 @@ class SourceStruct {
 						return attribute
 
 			} else if (this.aliases.contains(split.get(0))) {
-				println("alias!")
 				for (AttributeStruct attribute2 : attributes)
 					if (attribute2.attributename.equals(split.get(1)))
 						return attribute2

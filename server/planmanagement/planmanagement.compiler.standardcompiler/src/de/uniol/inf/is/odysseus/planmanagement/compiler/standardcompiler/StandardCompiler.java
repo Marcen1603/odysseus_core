@@ -119,6 +119,9 @@ public class StandardCompiler implements ICompiler {
 	 */
 	public void bindParser(IQueryParser parser) {
 		synchronized (this.parserList) {
+			
+			System.out.println("binded paser= " + parser.getLanguage());
+			
 			this.parserList.put(parser.getLanguage(), parser);
 		}
 		for (ICompilerListener l : listener) {

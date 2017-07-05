@@ -3,9 +3,7 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.tests;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.novel.cql.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.novel.cql.tests.CQLInjectorProvider;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +11,6 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
-import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Assert;
@@ -123,14 +120,9 @@ public class CQLGeneratorMethodTest {
   
   @Test
   public void getAttributenamesFromSource() {
-    List<String> _attributeNamesFrom = this._cQLGenerator.getAttributeNamesFrom(this.source);
-    for (final String attribute : _attributeNamesFrom) {
-      Assert.assertTrue(this.attributes.contains(attribute));
-    }
-    List<String> _attributeNamesFrom_1 = this._cQLGenerator.getAttributeNamesFrom(this.source2);
-    for (final String attribute_1 : _attributeNamesFrom_1) {
-      Assert.assertTrue(this.attributes2.contains(attribute_1));
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method getAttributeNamesFrom(String) is undefined"
+      + "\nThe method getAttributeNamesFrom(String) is undefined");
   }
   
   @Test
@@ -141,22 +133,15 @@ public class CQLGeneratorMethodTest {
   
   @Test
   public void getSourceAliasesTest() {
-    ArrayList<String> aliases = CollectionLiterals.<String>newArrayList();
-    Set<Map.Entry<SourceStruct, List<String>>> _entrySet = this._cQLGenerator.getSourceAliases().entrySet();
-    for (final Map.Entry<SourceStruct, List<String>> str : _entrySet) {
-      aliases.addAll(str.getValue());
-    }
-    Assert.assertTrue(aliases.contains(this.source1Alias));
-    Assert.assertTrue(aliases.contains(this.source2Alias));
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method or field sourceAliases is undefined"
+      + "\nentrySet cannot be resolved");
   }
   
   @Test
   public void getAttributeAliasesTest() {
-    ArrayList<String> aliases = CollectionLiterals.<String>newArrayList();
-    aliases.addAll(this.aliases);
-    aliases.addAll(this.aliases2);
-    for (final String alias : aliases) {
-      Assert.assertTrue(this._cQLGenerator.getAttributeAliasesAsList().contains(alias));
-    }
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method or field getAttributeAliasesAsList is undefined"
+      + "\ncontains cannot be resolved");
   }
 }

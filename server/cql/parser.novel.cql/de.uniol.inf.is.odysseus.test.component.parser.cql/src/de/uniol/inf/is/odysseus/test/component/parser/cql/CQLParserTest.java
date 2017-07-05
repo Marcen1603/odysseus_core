@@ -15,67 +15,56 @@ import de.uniol.inf.is.odysseus.test.set.TestSetFactory;
 
 public class CQLParserTest extends AbstractQueryTestComponent<BasicTestContext, QueryTestSet> {
 
-	public CQLParserTest() 
-	{
+	public CQLParserTest() {
 		super(false);
 	}
-	
+
 	@Override
-	public List<QueryTestSet> createTestSets(BasicTestContext context) 
-	{
+	public List<QueryTestSet> createTestSets(BasicTestContext context) {
 		File dir;
 		List<File> queryFiles = new ArrayList<>();
 		List<File> pqlFiles = new ArrayList<>();
 		List<QueryTestSet> testsets = new ArrayList<>();
-		try 
-		{
+		try {
 			URL bundleroot = context.getDataRootPath();
 			dir = new File(bundleroot.toURI());
 			CQLParserUtil.searchQueryFilesRecursive(dir, queryFiles, pqlFiles);
-			for (File qf : queryFiles) 
-			{
-				
+			for (File qf : queryFiles) {
+
 				QueryTestSet set = TestSetFactory.createQueryTestSetFromFile(qf.toURI().toURL(), bundleroot);
 				if (set != null)
 					testsets.add(set);
 			}
-		} 
-		catch (URISyntaxException e) 
-		{
+		} catch (URISyntaxException e) {
 			e.printStackTrace();
-		} 
-		catch (MalformedURLException e) 
-		{
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		
-//		CQLGenerator generator = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration().getInstance(CQLGenerator.class);
-		
-		//
+
 		return testsets;
 	}
-	
+
 	@Override
-	protected StatusCode executeTestSet(QueryTestSet set) 
-	{
-		
-		
-		StatusCode status= super.executeTestSet(set);
-		switch(status)
-		{
+	protected StatusCode executeTestSet(QueryTestSet set) {
+
+		StatusCode status = super.executeTestSet(set);
+		switch (status) {
 		case ERROR_QUERY_NOT_INSTALLABLE:
 		case ERROR_EXCEPTION_DURING_TEST:
-			
-		break;
+			break;
 		default:
 		}
 		return status;
 	}
-	
+
 	@Override
-	public String getName() { return "CQL Parser Test"; }
-	
+	public String getName() {
+		return "CQL Parser Test";
+	}
+
 	@Override
-	public boolean isActivated() {	return true; }
-	
+	public boolean isActivated() {
+		return true;
+	}
+
 }

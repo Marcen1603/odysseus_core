@@ -16,22 +16,6 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="org.eclipse.emf.ecore"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.codegen"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.codegen.ecore"
-         version="0.0.0"/>
-
-   <includes
-         id="org.eclipse.emf.mwe.core.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.parser.novel.cql"
          download-size="0"
@@ -277,6 +261,13 @@
          unpack="false"/>
 
    <plugin
+         id="javax.inject"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="de.uniol.inf.is.odysseus.parser.novel.cql.server"
          download-size="0"
          install-size="0"
@@ -284,7 +275,14 @@
          unpack="false"/>
 
    <plugin
-         id="javax.inject"
+         id="org.eclipse.emf.ecore"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.emf.ecore.xmi"
          download-size="0"
          install-size="0"
          version="0.0.0"

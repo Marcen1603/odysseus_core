@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class ExpressionsTypeProvider {
@@ -197,9 +196,6 @@ public class ExpressionsTypeProvider {
       List<SDFAttribute> _attributes = s.getAttributes();
       for (final SDFAttribute a : _attributes) {
         {
-          String _string = ExpressionsTypeProvider.aliases.toString();
-          String _plus = ("alises= " + _string);
-          InputOutput.<String>println(_plus);
           String name = a.getAttributeName();
           Attribute _value = e.getValue();
           boolean _equals = name.equals(((Attribute) _value).getName());

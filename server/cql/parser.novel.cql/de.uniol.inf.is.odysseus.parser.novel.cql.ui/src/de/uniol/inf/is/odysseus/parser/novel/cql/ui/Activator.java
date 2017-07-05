@@ -31,7 +31,6 @@ public class Activator extends CqlActivator {
 	public static void registerDataDictionaryListener() {
 		final ISession session;
 		if ((session = OdysseusRCPPlugIn.getActiveSession()) != null) {
-			System.out.println("datadictionaery updaed");
 			OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(DataDictionaryListener.getInstance(),
 					IUpdateEventListener.DATADICTIONARY, session);
 		}

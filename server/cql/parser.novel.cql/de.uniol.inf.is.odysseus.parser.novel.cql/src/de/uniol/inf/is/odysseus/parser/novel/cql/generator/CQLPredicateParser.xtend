@@ -126,12 +126,12 @@ class CQLPredicateParser {
 						var predicate = ''
 						if (select.predicates === null) {
 							generator.parseSelectWithoutPredicate(select)
-							for (String attribute : generator.projectionAttributes.get(select))
+							for (String attribute : CQLGeneratorUtil.getProjectionAttributes().get(select))
 								predicate += quantification.attribute.name + operator + attribute + '&&'
 							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 						} else {
 							generator.parseSelectWithPredicate(select)
-							for (String attribute : generator.projectionAttributes.get(select))
+							for (String attribute : CQLGeneratorUtil.getProjectionAttributes().get(select))
 								predicate += quantification.attribute.name + operator + attribute + '&&'
 							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 						}
@@ -146,7 +146,7 @@ class CQLPredicateParser {
 								if (!attributename.contains('.')) {
 									attributename = l.key + '.' + attributename
 								}
-								println(attributename)
+//								println(attributename)
 								predicate = predicate.replace(attributename, attributename.replace('.', '_'))
 							}
 
@@ -187,12 +187,12 @@ class CQLPredicateParser {
 						var predicate = ''
 						if (select.predicates === null) {
 							generator.parseSelectWithoutPredicate(select)
-							for (String attribute :generator. projectionAttributes.get(select))
+							for (String attribute :CQLGeneratorUtil.getProjectionAttributes().get(select))
 								predicate += in.attribute.name + operator + attribute + '&&'
 							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 						} else {
 							generator.parseSelectWithPredicate(select)
-							for (String attribute : generator.projectionAttributes.get(select))
+							for (String attribute : CQLGeneratorUtil.getProjectionAttributes().get(select))
 								predicate += in.attribute.name + operator + attribute + '&&'
 							predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 						}
@@ -203,7 +203,7 @@ class CQLPredicateParser {
 								if (!attributename.contains('.')) {
 									attributename = l.key + '.' + attributename
 								}
-								println(attributename)
+//								println(attributename)
 								predicate = predicate.replace(attributename, attributename.replace('.', '_'))
 							}
 
@@ -277,7 +277,7 @@ class CQLPredicateParser {
 		generator.parseSelectWithoutPredicate(subQuery)
 		parse(complexPredicate.select.select.predicates.elements.get(0))
 
-		println("exists() -> " + predicateString)
+//		println("exists() -> " + predicateString)
 
 		for (Entry<String ,List<String>> l : generator.queryAttributes.get(subQuery).entrySet)
 			for (String s : l.value) {
@@ -285,11 +285,11 @@ class CQLPredicateParser {
 				if (!attributename.contains('.')) {
 					attributename = l.key + '.' + attributename
 				}
-				println(attributename)
+//				println(attributename)
 				predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
 			}
 
-		println("exists() -> " + predicateString)
+//		println("exists() -> " + predicateString)
 		args.put('predicate', predicateString)
 		args.put('input', generator.getLastOperator())
 		generator.registry_existenceOperators.add(args)

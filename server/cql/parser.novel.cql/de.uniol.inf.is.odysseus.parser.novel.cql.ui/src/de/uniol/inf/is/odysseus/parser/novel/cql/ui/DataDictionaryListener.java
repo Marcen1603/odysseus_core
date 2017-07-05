@@ -17,6 +17,8 @@ public class DataDictionaryListener implements IUpdateEventListener {
 		return instance == null ? (instance = new DataDictionaryListener()) : instance;
 	}
 
+	
+	
 	private DataDictionaryListener() {}
 
 	@Override

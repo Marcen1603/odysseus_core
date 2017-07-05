@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class SourceStruct {
@@ -59,7 +58,6 @@ public class SourceStruct {
   public AttributeStruct findbyName(final String name) {
     boolean _contains = name.contains(".");
     if (_contains) {
-      InputOutput.<String>println(("findbyName::" + name));
       String[] split = name.split("\\.");
       boolean _equals = split[0].equals(this.sourcename);
       if (_equals) {
@@ -77,7 +75,6 @@ public class SourceStruct {
       } else {
         boolean _contains_2 = this.aliases.contains(split[0]);
         if (_contains_2) {
-          InputOutput.<String>println("alias!");
           for (final AttributeStruct attribute2 : this.attributes) {
             boolean _equals_2 = attribute2.attributename.equals(split[1]);
             if (_equals_2) {

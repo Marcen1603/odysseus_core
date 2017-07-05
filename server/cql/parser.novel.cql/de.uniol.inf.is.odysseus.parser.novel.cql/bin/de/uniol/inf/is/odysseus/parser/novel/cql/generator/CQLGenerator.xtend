@@ -3,16 +3,13 @@
  */
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator
 
+import de.uniol.inf.is.odysseus.mep.FunctionStore
+import de.uniol.inf.is.odysseus.mep.MEP
 import de.uniol.inf.is.odysseus.parser.novel.cql.builder.PQLStringBuilder
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AccessFramework
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AndPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.AttributeRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.BoolConstant
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Bracket
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Comparision
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicate
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexPredicateRef
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ComplexSelect
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Create
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateAccessFramework
@@ -21,22 +18,13 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateChannelFrameworkViaPo
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseSink
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateDatabaseStream
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.CreateView
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Equality
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExistPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionComponent
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.FloatConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.InPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Matrix
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Minus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.MulOrDiv
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.OrPredicate
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Plus
-import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Query
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SchemaDefinition
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument
@@ -52,21 +40,16 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector
 import java.util.ArrayList
 import java.util.Arrays
-import java.util.Collection
 import java.util.List
 import java.util.Map
 import java.util.Map.Entry
-import java.util.Set
+import java.util.regex.Pattern
 import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.uniol.inf.is.odysseus.mep.FunctionStore
-import java.util.regex.Pattern
-import de.uniol.inf.is.odysseus.mep.MEP
-import de.uniol.inf.is.odysseus.core.mep.IFunction
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -79,29 +62,12 @@ class CQLGenerator implements IGenerator2 {
 	var private Map<String, String> registryBackUp_Operators = newHashMap
 	var private Map<String, List<String>> registry_NestedSelects = newHashMap
 	var private Map<String, List<String>> registry_RenamedAttributes = newHashMap
-	////remove
-	var private List<SourceStruct> registry_Sources = newArrayList
 	var private List<String> registryBackUp_OperatorNames = newArrayList
 	var private List<String> registry_OperatorNames = newArrayList
-	/////remove
-	var private Map<String, String> registry_Expressions = newHashMap
-	////remove 
-	var private List<String> registry_AggregationAttributes = newArrayList
-	var private Map<String, String> registry_AttributeAliases = newHashMap
-
 	var Map<SimpleSelect, List<SelectExpression>> queryAggregations = newHashMap
-	var Map<SimpleSelect, List<SelectExpression>> queryExpressions = newHashMap
 	/** Contains string representations of all attributes (inclusivley aggregations and expressions) mapped by their corresponding sources.*/
 	var public Map<SimpleSelect, Map<String, List<String>>> queryAttributes = newHashMap
 
-	/** Contains all selected attributes for each registered query */
-	var public Map<SimpleSelect, List<String>> projectionAttributes = newHashMap
-	/** Contains the corresponding sources to the attributes in projectionAttributes */
-	var Map<SimpleSelect, List<String>> projectionSources = newHashMap
-	/////remove
-	var Map<String, Set<String>> registry_SubQuerySources = newHashMap
-
-	// Counters to keep track of identifiers for operators, aggregations, expressions
 	var private operatorCounter = 0
 	var private aggregationCounter = 0
 	var private expressionCounter = 0
@@ -116,34 +82,23 @@ class CQLGenerator implements IGenerator2 {
 	var Map<String, String> databaseConnections = newHashMap
 
 	var private List<String> querySources = newArrayList
-	//
 	var private List<SimpleSelect> registry_SimpleSelect = newArrayList
 
 	val private String OP = "operator_"
 	val private String ASSIG1 = "="
 	val private String ASSIG2 = ":="
 
-//	var List<String> predicateStringList = newArrayList
-	
-	
 	var CQLPredicateParser predicateParser = new CQLPredicateParser(this)
 
 	def void clear() {
-//		registry_StreamTo.clear()
-//		registry_Sinks.clear()
 		predicateParser.clear()
 		registry_OperatorNames.clear()
 		registry_Operators.clear()
 		registry_NestedSelects.clear()
-		registry_Sources.clear()
-		registry_Expressions.clear()
-		registry_AggregationAttributes.clear()
 		registry_RenamedAttributes.clear()
 		queryAggregations.clear()
 		queryAttributes.clear()
-		queryExpressions.clear()
 		registry_SubQueries.clear()
-		registry_SubQuerySources.clear()
 		registry_SimpleSelect.clear()
 		registry_existenceOperators.clear()
 		renameAliases.clear()
@@ -155,6 +110,7 @@ class CQLGenerator implements IGenerator2 {
 		expressionString = null
 		firstJoinInQuery = true
 		querySources = newArrayList
+		CQLGeneratorUtil.clear()
 	}
 
 	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) { clear() }
@@ -162,6 +118,7 @@ class CQLGenerator implements IGenerator2 {
 	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) { clear() }
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		CQLGeneratorUtil.getInstance(this);
 		var i = 0;
 		for (e : resource.allContents.toIterable.filter(typeof(Query))) {
 			fsa.generateFile(
@@ -230,17 +187,18 @@ class CQLGenerator implements IGenerator2 {
 			var subQueries = registerAllSource(select)
 			for (NestedSource subQuery : subQueries) {
 				prepareParsingSelect(subQuery.statement.select)
-				registry_SubQuerySources.put(subQuery.alias.name, queryAttributes.get(subQuery.statement.select).keySet)
+				CQLGeneratorUtil.getSubQuerySources().put(subQuery.alias.name,
+					queryAttributes.get(subQuery.statement.select).keySet)
 			}
 
 			var Map<String, List<String>> attributes2 = newHashMap
-			attributes2 = getSelectedAttributes(select, attributes2)
+			attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2)
 			var aggregations = extractAggregationsFromArgument(select.arguments)
 			var expressions = extractSelectExpressionsFromArgument(select.arguments)
 			if (aggregations !== null)
 				queryAggregations.put(select, aggregations)
 			if (expressions !== null)
-				queryExpressions.put(select, expressions)
+				CQLGeneratorUtil.getQueryExpressions().put(select, expressions)
 			if (attributes2 !== null)
 				queryAttributes.put(select, attributes2)
 
@@ -255,7 +213,7 @@ class CQLGenerator implements IGenerator2 {
 			if (source instanceof SimpleSource) {
 				if (!querySources.contains(name = (source as SimpleSource).name))
 					querySources.add(name)
-				if (source.alias !== null && !getSource(source).aliases.contains(source.alias.name))
+				if (source.alias !== null && !CQLGeneratorUtil.getSource(source).aliases.contains(source.alias.name))
 					registerSourceAlias(source)
 			} else if (source instanceof NestedSource)
 				list.add(source)
@@ -313,7 +271,7 @@ class CQLGenerator implements IGenerator2 {
 		var String operatorName = null
 		switch (operator) {
 			case MAP: {
-				var expressions = queryExpressions.get(select)
+				var expressions = CQLGeneratorUtil.getQueryExpressions().get(select)
 				if (expressions !== null && !expressions.empty) {
 					result = buildMapOperator(expressions)
 					operatorName = result.get(1).toString
@@ -372,7 +330,7 @@ class CQLGenerator implements IGenerator2 {
 		var String operator1 = parseAdditionalOperator(Operator.MAP, stmt)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, stmt)
 
-		predicateParser.clear()//predicateStringList.clear()
+		predicateParser.clear() // predicateStringList.clear()
 		predicateParser.parse(predicates)
 		var selectInput = buildInput2(stmt, operator1, operator2).toString
 		var predicate = predicateParser.parsePredicateString(predicateParser.getPredicateStringList())
@@ -393,14 +351,14 @@ class CQLGenerator implements IGenerator2 {
 			if (arg.attribute !== null)
 				attributes.add(arg.attribute)
 
-		if (!checkIfSelectAll(attributes) || !queryAggregations.get(stmt).empty || !queryExpressions.get(stmt).empty)
+		if (!checkIfSelectAll(attributes) || !queryAggregations.get(stmt).empty ||
+			!CQLGeneratorUtil.getQueryExpressions().get(stmt).empty)
 			return registerOperator(buildProjection(stmt, select))
 		return select
 	}
 
 	private def registerExistenceOperator(String selectInput, String select) {
 		if (!registry_existenceOperators.empty) {
-			println('registerExistenceOperator() -> selectInput= ' + selectInput)
 			if (!select.equals('')) {
 				for (Map<String, String> args : registry_existenceOperators) {
 					var Map<String, String> newArgs = args
@@ -425,9 +383,7 @@ class CQLGenerator implements IGenerator2 {
 
 	public var List<Map<String, String>> registry_existenceOperators = newArrayList
 
-
 	def private CharSequence parseSelectExpression(SelectExpression e) {
-		println('parseSelectExpression() -> expression= ' + e)
 		var str = ''
 		for (var i = 0; i < e.expressions.size; i++) {
 			var component = (e.expressions.get(i) as ExpressionComponent).value
@@ -626,11 +582,9 @@ class CQLGenerator implements IGenerator2 {
 			var String aggregateOperator = if(operators.size > 1) operators.get(1) else null
 
 			if (mapOperator !== null && aggregateOperator !== null) {
-				println('buildInput() -> aggregate & map')
 				return checkForGroupAttributes(aggregateOperator, select,
 					buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 			} else if (mapOperator !== null) {
-				println('buildInput() -> map')
 				return buildJoin(select.sources)
 			} else if (aggregateOperator !== null) {
 				// Get all names of the attributes in the predicate clause
@@ -640,26 +594,23 @@ class CQLGenerator implements IGenerator2 {
 					} else {
 						null
 					}
-				println('buildInput() -> aggregate ')
 				// If the aggregate operator outputs the same attributes that are selected in the select clause
-				if (registry_AggregationAttributes.containsAll(projectionAttributes.get(select))) {
-					println('buildInput() -> aggregate : contains all project attributes')
+				if (CQLGeneratorUtil.getRegisteredAggregationAttributes().containsAll(
+					CQLGeneratorUtil.getProjectionAttributes().get(select))) {
 					// If the aggregate operator outputs the same attributes that
 					if (predicateAttributes !== null && !predicateAttributes.empty &&
-						registry_AggregationAttributes.containsAll(predicateAttributes)) {
+						CQLGeneratorUtil.getRegisteredAggregationAttributes().containsAll(predicateAttributes)) {
 						return aggregateOperator
 					} else {
 						return checkForGroupAttributes(aggregateOperator, select,
 							buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 					}
 				} else {
-					println('buildInput() -> aggregate : !(contains all project attributes)')
 					return checkForGroupAttributes(aggregateOperator, select,
 						buildJoin(#[aggregateOperator, buildJoin(select.sources)]))
 				}
 			}
 		}
-		println("buildInput() -> skip")
 		return buildJoin(select.sources)
 	}
 
@@ -704,39 +655,7 @@ class CQLGenerator implements IGenerator2 {
 		} else
 			return source.name
 	}
-
-	val EXPRESSSION_NAME_PREFIX = 'expression_'
-
-	def private String getExpressionName() { return EXPRESSSION_NAME_PREFIX + (expressionCounter++) }
-
-	def private String getAggregationName(String name) { return name + '_' + (aggregationCounter++) }
-
-	def private String getProjectAttribute(String attribute) {
-		if (attribute.contains(EXPRESSSION_NAME_PREFIX))
-			return registry_Expressions.get(attribute)
-		if (registry_Expressions.keySet.contains(attribute))
-			return registry_Expressions.get(attribute)
-		println('getProjectionAttribute() -> ' + attribute)
-		println(registry_AttributeAliases.toString)
-		if (attribute.contains('.')) {
-			if (attribute.isAttributeAlias)
-				return attribute
-
-			var split = attribute.split('\\.')
-			var realAttributename = split.get(1)
-			var sourcename = split.get(0)
-			var sourcealias = sourcename
-			if (sourcename.isSourceAlias)
-				sourcename = getSourcenameFromAlias(sourcealias)
-			var aliases = getSource(sourcename).findbyName(realAttributename).aliases
-			if (!aliases.empty)
-				return aliases.get(aliases.size - 1)
-
-			return attribute
-		}
-		return attribute
-	}
-
+	
 	def private Object[] buildMapOperator(List<SelectExpression> expressions) {
 		return buildMapOperator(expressions, null)
 	}
@@ -751,7 +670,7 @@ class CQLGenerator implements IGenerator2 {
 //			var expressionType = MEP.instance.parse(expressionString).returnType.toString //parseSelectExpressionType(expressionComponents)
 //			println("expressiontype:: " + expressionType)
 			if (expressions.get(i).alias === null)
-				expressionName = getExpressionName()
+				expressionName = CQLGeneratorUtil.getExpressionName()
 			else
 				expressionName = expressions.get(i).alias.name
 			expressionStrings.add(expressionString)
@@ -759,7 +678,7 @@ class CQLGenerator implements IGenerator2 {
 			expressionStrings.add(',')
 			var t = generateKeyValueString(expressionStrings)
 			expressionArgument += t
-			registry_Expressions.put(expressionName, t)
+			CQLGeneratorUtil.getRegisteredExpressions().put(expressionName, t)
 			if(i != expressions.size - 1) expressionArgument += ','
 			expressionStrings.clear
 			attributeNames.add(expressionName)
@@ -804,12 +723,12 @@ class CQLGenerator implements IGenerator2 {
 			if (aggAttr.get(i).alias !== null)
 				alias = aggAttr.get(i).alias.name
 			else
-				alias = getAggregationName(aggregation.name)
+				alias = CQLGeneratorUtil.getAggregationName(aggregation.name)
 			args.add(alias)
 			aliases.add(alias)
 
 			if(datatype != '') args.add(datatype)
-			registry_AggregationAttributes.add(alias)
+			CQLGeneratorUtil.getRegisteredAggregationAttributes().add(alias)
 			args.add(',')
 			argsstr += generateKeyValueString(args)
 			if(i != aggAttr.length - 1) argsstr += ','
@@ -865,7 +784,7 @@ class CQLGenerator implements IGenerator2 {
 				var subQueryAttributes = queryAttributes.get(subQuery)
 				var lastOperator = registry_SubQueries.get(subQuery)
 				var inputs = newArrayList
-				var attributeAliases = getAttributeAliasesAsList()
+				var attributeAliases = CQLGeneratorUtil.getAttributeAliasesAsList()
 				for (Entry<String, List<String>> entry : queryAttributess.entrySet) {
 					var attributes = subQueryAttributes.get(entry.key)
 					if (attributes !== null) {
@@ -899,7 +818,7 @@ class CQLGenerator implements IGenerator2 {
 				sourceStrings.set(i, buildJoin(inputs).toString)
 			} else if (source instanceof SimpleSource) {
 				// Reset sorucesDuringrename?
-				println("buildJoin() --> SimpleSource")
+//				println("buildJoin() --> SimpleSource")
 				// Check for self join
 				val sourcename = source.name
 				val count = sourcenames.stream.filter(e|e.equals(sourcename)).count
@@ -923,7 +842,7 @@ class CQLGenerator implements IGenerator2 {
 	var List<Source> sourcesDuringRename
 
 	def private CharSequence buildRename(CharSequence input, SimpleSource simpleSource, int selfJoin) {
-		var source = getSource(simpleSource)
+		var source = CQLGeneratorUtil.getSource(simpleSource)
 		var String sourcealias = null
 		if (simpleSource.alias !== null)
 			sourcealias = simpleSource.alias.name
@@ -932,8 +851,7 @@ class CQLGenerator implements IGenerator2 {
 		for (var j = 0; j < source.attributes.size; j++) {
 			var k = 0
 			for (String attributealias : source.attributes.get(j).aliases) {
-				var sourceFromAlias = registry_AttributeAliases.get(attributealias)
-//				println('buildRename() -> ' + attributealias + ',' + sourceFromAlias)
+				var sourceFromAlias = CQLGeneratorUtil.getAttributeAliases().get(attributealias)
 				if (sourceFromAlias.equals(sourcealias) || sourceFromAlias.equals(simpleSource.name)) {
 					var b = listOfLists.size <= k
 					var List<String> list
@@ -1014,61 +932,27 @@ class CQLGenerator implements IGenerator2 {
 	}
 
 	def private CharSequence buildProjection(SimpleSelect select, CharSequence operator) {
-		var attributes = projectionAttributes.get(select)
-		var sources = projectionSources.get(select)
-
+		var attributes = CQLGeneratorUtil.getProjectionAttributes.get(select)
 		// Add new aliases from the rename operation		
 		for (var i = 0; i < renameAliases.size - 2; i = i + 3) {
 			var attributename = renameAliases.get(i)
 			var sourcename = renameAliases.get(i + 1)
 			var alias = renameAliases.get(i + 2)
-			getSource(sourcename).findbyName(attributename).aliases.add(alias)
+			CQLGeneratorUtil.getSource(sourcename).findbyName(attributename).aliases.add(alias)
 		}
 
 		var list = newArrayList
-		var additionalSources = newArrayList
 		for (var i = 0; i < attributes.size; i++) {
-			var attribute1 = getProjectAttribute(attributes.get(i))
-//			var attribute1 = getProjectAttribute(attributes.get(i - 1))
-//			var attribute2= getProjectAttribute(attributes.get(i))
-//			println(attribute1)
-//			println(attribute2)
-//			var source1 = sources.get(i - 1)
-//			var source2 = sources.get(i)
-//			if(attribute1.isAttributeAlias 
-//				&& !attribute2.isAttributeAlias 
-////				&& getAttributeFromAlias(attribute1).equals(attribute2)
-//			)
-//			{
-//				if(source2 !== null 
-//					&& source1 !== null 
-//					&& !additionalSources.contains(source1)
-//				)
-//				{
-//					if(source1.equals(source2))
-//						additionalSources.add(source1)
-//				}
-//			}
-//			if(!list.contains(attribute1))
+			var attribute1 = CQLGeneratorUtil.getProjectAttribute(attributes.get(i))
 			list.add(attribute1)
-//			list.add(attribute2)
 		}
-//		
-//		println('buildProjection() -> ' + additionalSources.toString)
-//		var List<String> sourcesS = newArrayList
-//		sourcesS.add(operator.toString)
-//		for(String name : additionalSources)
-//			for(Source src : select.sources)
-//				if(src instanceof SimpleSource)
-//					if(src.name.equals(name))
-//						sourcesS.add(buildWindowOP(src).toString)
-//		
+
 		// Add new aliases from the rename operation		
 		for (var i = 0; i < renameAliases.size - 2; i = i + 3) {
 			var attributename = renameAliases.get(i)
 			var sourcename = renameAliases.get(i + 1)
 			var alias = renameAliases.get(i + 2)
-			getSource(sourcename).findbyName(attributename).aliases.remove(alias)
+			CQLGeneratorUtil.getSource(sourcename).findbyName(attributename).aliases.remove(alias)
 		}
 		var argument = generateListString(list).replace("'['", "['").replace("']'", "']")
 		return builder.buildOperator('MAP', newLinkedHashMap('expressions' -> argument, 'input' -> operator.toString))
@@ -1088,141 +972,6 @@ class CQLGenerator implements IGenerator2 {
 		return if(registry_OperatorNames.size > 0) registry_OperatorNames.get(registry_OperatorNames.size - 1) else null
 	}
 
-	// TODO rename method
-	def public List<String> getAttributesFromSource(String attributename) {
-		if (attributename.contains('.*')) {
-			var String sourcename = attributename.split("\\.").get(0)
-			var l = getAttributeNamesFrom(sourcename)
-			return l
-		}
-		return newArrayList
-	}
-
-///// remove
-	def public List<String> getSourceNames() {
-		return registry_Sources.stream.map(e|e.sourcename).collect(Collectors.toList)
-	}
-
-///// remove
-	def public List<String> getSourceAliasesAsList() {
-		var list = newArrayList
-		for (List<String> l : getSourceAliases().values)
-			list.addAll(l)
-		return list
-	}
-
-	def private Map<String, List<String>> addToMap(Map<String, List<String>> map, String attribute,
-		String realSourcename) {
-		var attributeList = map.get(realSourcename)
-		if (attributeList === null)
-			attributeList = newArrayList
-		if (!attributeList.contains(attribute))
-			attributeList.add(attribute)
-		map.put(realSourcename, attributeList)
-		return map
-	}
-
-/////remove
-	def private Object[] parseAttribute(Attribute attribute) {
-		var String sourcename
-		var String sourcealias
-		var List<String> list
-		var boolean subQuery
-		if (attribute.name.contains('.')) {
-			var split = attribute.name.split("\\.")
-			sourcename = split.get(0)
-			if (!getSourceNames().contains(sourcename)) {
-				sourcealias = sourcename
-				if ((sourcename = getSourcenameFromAlias(sourcename)) === null &&
-					registry_SubQuerySources.keySet.contains(split.get(0)))
-					subQuery = true
-			}
-			if (split.get(1).contains('*')) {
-				list = newArrayList
-				sourcename = split.get(0)
-				if (sourcename.isSourceAlias) {
-					sourcealias = sourcename
-					sourcename = getSourcenameFromAlias(sourcename)
-				}
-				for (String str : getAttributeNamesFrom(sourcename))
-					list.add(str)
-			}
-		}
-		return #[attribute.name, sourcename, sourcealias, list, subQuery]
-	}
-
-	def private List<SourceStruct> getSourceCandidates(Attribute attribute, List<Source> sources) {
-		var containedBySources = newArrayList
-		for (Source source1 : sources) {
-			if (source1 instanceof SimpleSource) {
-				for (SourceStruct source2 : registry_Sources) {
-					if (source1.name.equals(source2.sourcename) && source2.containsAttribute(attribute.name) &&
-						sources.stream.map(e|if(e instanceof SimpleSource) e.name).collect(Collectors.toList).contains(
-							source2.sourcename)) {
-						if (!containedBySources.contains(source2))
-							containedBySources.add(source2)
-						else if (!attribute.name.contains('.'))
-							if (!isAttributeAlias(attribute.name))
-								throw new IllegalArgumentException(attribute.name) // TODO Add exception message
-					}
-				}
-			} else {
-				var subQueryAlias = (source1 as NestedSource).alias.name
-				for (String source : registry_SubQuerySources.get(subQueryAlias)) {
-					for (SourceStruct source2 : registry_Sources) {
-						var realName = attribute.name
-						if (realName.contains('.'))
-							realName = realName.split('\\.').get(1)
-						if (source.equals(source2.sourcename) && source2.containsAttribute(realName) // /!!!!
-//							&& sources.stream.map(e|if(e instanceof SimpleSource) e.name).collect(Collectors.toList).contains(source2.sourcename)
-						) {
-							if (!containedBySources.contains(source2))
-								containedBySources.add(source2)
-							else { // TODO comment
-								if (!attribute.name.contains('.')) {
-									if (!isAttributeAlias(attribute.name))
-										throw new IllegalArgumentException(attribute.name)
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return containedBySources
-	}
-
-	def private String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
-		String sourcenamealias, boolean isSubQuery) {
-		println(
-			'registerAttributeAliases() -> attribute= ' + attributename + ', realSourcename= ' + realSourcename +
-				', sourcenameAlias= ' + sourcenamealias + ', isFormSubQuery= ' + isSubQuery)
-		var simpleAttributename = if(attribute.alias !== null) attribute.name else attributename
-		if(simpleAttributename.contains('.')) simpleAttributename = simpleAttributename.split("\\.").get(1)
-		var alias = sourcenamealias
-		for (AttributeStruct attr1 : getSource(realSourcename).attributes) {
-			if (attr1.attributename.equals(simpleAttributename)) {
-				if(alias === null) alias = realSourcename
-				if (attribute.alias !== null) {
-					if (registry_AttributeAliases.entrySet.contains(attribute.alias.name))
-						throw new IllegalArgumentException("given alias " + attribute.alias.name + " is ambiguous")
-					if (!attr1.aliases.contains(attribute.alias.name)) {
-						attr1.aliases.add(attribute.alias.name)
-						registry_AttributeAliases.put(attribute.alias.name, alias)
-					}
-					return attribute.alias.name
-				} else if (attribute.alias === null && getSourceAliasesAsList().contains(alias)) {
-					if (!attr1.aliases.contains(attributename)) {
-						attr1.aliases.add(attributename)
-						registry_AttributeAliases.put(attributename, alias)
-					}
-					return attributename
-				}
-			}
-		}
-		return null
-	}
-
 	def private boolean isSame(String attribute1, String attribute2) {
 		var name1 = attribute1
 		var name2 = attribute2
@@ -1240,13 +989,13 @@ class CQLGenerator implements IGenerator2 {
 			source2 = split.get(0)
 		}
 
-		if (getAttributeAliasesAsList().contains(name1))
+		if (CQLGeneratorUtil.getAttributeAliasesAsList().contains(name1))
 			name1 = getAttributeFromAlias(name1).attributename
-		if (getAttributeAliasesAsList().contains(name2))
+		if (CQLGeneratorUtil.getAttributeAliasesAsList().contains(name2))
 			name2 = getAttributeFromAlias(name2).attributename
-		if (getSourceAliasesAsList().contains(source1))
+		if (CQLGeneratorUtil.getSourceAliasesAsList().contains(source1))
 			source1 = getSourcenameFromAlias(source1)
-		if (getSourceAliasesAsList().contains(source2))
+		if (CQLGeneratorUtil.getSourceAliasesAsList().contains(source2))
 			source2 = getSourcenameFromAlias(source2)
 
 		if (name1.equals(name2))
@@ -1264,647 +1013,282 @@ class CQLGenerator implements IGenerator2 {
 		return false
 	}
 
-//////remove
-	/** Returns all attributes with its corresponding sources from a select statement. */
-	def private Map<String, List<String>> getSelectedAttributes(SimpleSelect select, Map<String, List<String>> var2) {
-		var map = var2
-		var attributes = newArrayList
-		var String[] attributeOrder = newArrayOfSize(select.arguments.size)
-		var String[] sourceOrder = newArrayOfSize(select.arguments.size)
-		// Get all attributes from select arguments		
-		for (SelectArgument argument : select.arguments) {
-			if (argument.attribute !== null)
-				attributes.add(argument.attribute)
-			else if (argument.expression !== null) // Attributes that are contained by functions or aggregations
-			{
-				var expressionAttributes = EcoreUtil2.getAllContentsOfType(argument.expression, Attribute)
-				for (Attribute attribute : expressionAttributes)
-					if (!attributes.stream.map(e|e.name).collect(Collectors.toList).contains(attribute.name))
-						attributes.add(attribute)
-			// TODO insert if(!contains(attributes, attribute)) attributes.add(attribute) here
-			}
-		}
-		// Check if it's a select * query and add for each source its attributes.
-		// Return the computed attribute set
-		if (attributes.empty && EcoreUtil2.getAllContentsOfType(select, SelectExpression).empty) {
-			var List<String> attributeOrderList = newArrayList
-			var List<String> sourceOrderList = newArrayList
-			for (Source source : select.sources)
-				if (source instanceof SimpleSource)
-					for (String attribute : getAttributeNamesFrom(source.name)) {
-						if (source.alias !== null) {
-							var attributealias = source.alias.name + '.' + attribute
-							getSource(source.name).findbyName(attribute).aliases.add(attributealias)
-							registry_AttributeAliases.put(attributealias, source.alias.name)
-//							registerAttributeAliases(attribute, attributename, sourcename, sourcealias, isFromSubQuery)    
-//							registerAttributeAliases(..) //TODO insert method here
-							attributeOrderList.add(attributealias)
-							map = addToMap(map, attributealias, source.name)
-						} else
-							attributeOrderList.add(source.name + '.' + attribute)
-						map = addToMap(map, attribute, source.name)
-						sourceOrderList.add(source.name)
-					}
-			attributeOrder = attributeOrderList
-			sourceOrder = sourceOrderList
-			projectionAttributes.put(select, attributeOrder)
-			projectionSources.put(select, sourceOrder)
-			println('getAttibutename() -> map = ' + map.toString)
-			return map
-		}
-		// Get all attributes from predicates
-		if (select.predicates !== null) {
-			var list = EcoreUtil2.getAllContentsOfType(select.predicates, Attribute)
-			for (Attribute attribute : list)
-				if (attribute.name.contains('.')) {
-					var split = attribute.name.split('\\.')
-					var sourcename = split.get(0)
-					var attributename = split.get(1)
-					if (sourcename.isSourceAlias && !attributename.isAttributeAlias)
-						registerAttributeAliases(attribute, attribute.name, getSourcenameFromAlias(sourcename),
-							sourcename, false)
-//					else
-//						registerAttributeAliases(attribute, attributename, sourcename, null, false)
-				}
-//				if(!contains(attributes, attribute))
-//				{
-//							
-//					attributes.add(attribute)
-//				}
-		}
+	def boolean isSelectAll(SimpleSelect select) {
+		for (SelectArgument a : select.arguments)
+			if (a.attribute !== null)
+				return false
+		return true
+	}
 
-		var i = 0
-		// Iterate over all found attributes
-		for (Attribute attribute : attributes) {
-			// Compute source candidates for the current attribute
-			var sourceCandidates = getSourceCandidates(attribute, select.sources)
-			// Parse the current attribute and get its informations			
-			var result = parseAttribute(attribute)
-			var attributename = result.get(0) as String
-			var sourcename = result.get(1) as String
-			var sourcealias = result.get(2) as String
-			var String attributealias
-			var list = result.get(3) as List<String>
-			var isFromSubQuery = result.get(4) as Boolean
-			if (attribute.alias !== null)
-				attributename = attribute.alias.name
-
-			if (sourceCandidates.size > 0) {
-				if (sourceCandidates.size > 1 && sourcename === null)
-					throw new IllegalArgumentException(
-						"attribute " + attributename + " is ambiguous: possible sources are " +
-							sourceCandidates.toString)
-
-						if (sourceCandidates.size == 1) {
-							sourcename = sourceCandidates.get(0).sourcename
-							if (list !== null)
-								for (String name : list)
-									map = addToMap(map, name, sourcename)
-						}
-						map = addToMap(map, attributename, sourcename)
-						if (isFromSubQuery)
-							registerSourceAlias(sourcename, sourcealias)
-						attributealias = registerAttributeAliases(attribute, attributename, sourcename, sourcealias,
-							isFromSubQuery)
-					} else {
-						if (list !== null)
-							for (String name : list) {
-								map = addToMap(map, name, sourcename)
-								registerAttributeAliases(attribute, sourcealias + '.' + name, sourcename, sourcealias,
-									isFromSubQuery)
-							}
-					}
-					// Place the current attribute in the right order
-					attributeOrder = computeProjectionAttributes(attributeOrder, select, attribute, attributename,
-						attributealias, sourcename)
-					sourceOrder.set(i, sourcename)
-					i++
-				}
-				attributeOrder = computeProjectionAttributes(attributeOrder, select, null, null, null, null)
-				projectionAttributes.put(select, attributeOrder)
-				projectionSources.put(select, sourceOrder)
-
-				println("getSelectedAttributes() -> map= " + map.toString + ', order= ' + attributeOrder.toString)
-				return map
-			}
-
-			def private String[] computeProjectionAttributes(String[] list, SimpleSelect select, Attribute attribute,
-				String attributename, String attributealias, String sourcename) {
-				expressionCounter = 0
-				aggregationCounter = 0
-				var i = 0
-				var attributeOrder = list
-				var Object candidate
-				if (attribute !== null) {
-					for (SelectArgument argument : select.arguments) {
-						if ((candidate = argument.attribute) !== null)
-							if ((candidate as Attribute).name.equals(attribute.name))
-								if ((candidate as Attribute).alias !== null)
-									attributeOrder.set(i, (candidate as Attribute).alias.name)
-								else if (attributealias !== null)
-									attributeOrder.set(i, attributealias)
-								else {
-									if (attributename.contains('.')) {
-										var split = attributename.split('\\.')
-										var name = split.get(1)
-										var source = split.get(0)
-										var salias = source
-										if (isSourceAlias(source))
-											source = getSourcenameFromAlias(salias)
-										if (name.equals('*')) {
-											// TODO Query with stream1.*, stream.* would be overriden!
-											var attributeOrderList = new ArrayList(attributeOrder.size)
-											for (String str : getAttributeNamesFrom(source)) {
-												attributeOrderList.add(salias + '.' + str)
-												i++
-											}
-											attributeOrder = attributeOrderList
-										} else
-											attributeOrder.set(i, attributename)
-									} else
-										attributeOrder.set(i, sourcename + '.' + attributename)
-								}
-
-						if ((candidate = argument.expression) !== null) {
-							if ((candidate as SelectExpression).alias !== null)
-								attributeOrder.set(i, (candidate as SelectExpression).alias.name)
-							else {
-								if ((candidate as SelectExpression).expressions.size == 1) {
-									var function = (candidate as SelectExpression).expressions.get(0).value
-									if (function instanceof Function)
-										if (isAggregateFunction(function.name))
-											attributeOrder.set(i, getAggregationName(function.name))
-										else
-											attributeOrder.set(i, getExpressionName())
-								} else
-									attributeOrder.set(i, getExpressionName())
-							}
-						}
-						i++
-					}
-				} else {
-					for (SelectArgument argument : select.arguments) {
-						if ((candidate = argument.expression) !== null) {
-							if ((candidate as SelectExpression).alias !== null)
-								attributeOrder.set(i, (candidate as SelectExpression).alias.name)
-							else {
-								if ((candidate as SelectExpression).expressions.size == 1) {
-									var function = (candidate as SelectExpression).expressions.get(0).value
-									if (function instanceof Function)
-										if (isAggregateFunction(function.name))
-											attributeOrder.set(i, getAggregationName(function.name))
-										else
-											attributeOrder.set(i, getExpressionName())
-								} else
-									attributeOrder.set(i, getExpressionName())
-							}
-						}
-						i++
-					}
-				}
-				expressionCounter = 0
-				aggregationCounter = 0
-				return attributeOrder
-			}
-
-			def private SourceStruct getSource(String name) {
-				for (SourceStruct source : registry_Sources)
-					if (source.sourcename.equals(name))
-						return source
-					else if (source.aliases.contains(name))
-						return source
-				throw new IllegalArgumentException('given source ' + name + ' is not registered')
-			}
-
-			def private SourceStruct getSource(Source source) {
-				if (source instanceof SimpleSource)
-					return getSource(source.name)
-			}
-
-			def boolean isSelectAll(SimpleSelect select) {
-				for (SelectArgument a : select.arguments)
-					if (a.attribute !== null)
-						return false
-				return true
-			}
-
-			def List<SelectExpression> extractAggregationsFromArgument(List<SelectArgument> args) {
-				var List<SelectExpression> list = newArrayList
-				for (SelectArgument a : args)
-					if (a.expression !== null)
-						if (a.expression.expressions.size == 1) {
-							var aggregation = a.expression.expressions.get(0)
-							var function = aggregation.value
-							if (function instanceof Function) {
-								if (isAggregateFunction(function.name))
-									list.add(a.expression)
-							}
-						}
-				return list
-			}
-
-			def List<SelectExpression> extractSelectExpressionsFromArgument(List<SelectArgument> args) {
-				var List<SelectExpression> list = newArrayList
-				for (SelectArgument a : args)
-					if (a.expression !== null) {
-						if (a.expression.expressions.size == 1) {
-							var aggregation = a.expression.expressions.get(0)
-							var function = aggregation.value
-							if (function instanceof Function) {
-								if (isMEPFunction(function.name,
-									parseSelectExpression(a.expression as SelectExpression).toString))
-									list.add(a.expression)
-							} else
-								list.add(a.expression)
-						} else
+	def List<SelectExpression> extractAggregationsFromArgument(List<SelectArgument> args) {
+		var List<SelectExpression> list = newArrayList
+		for (SelectArgument a : args)
+			if (a.expression !== null)
+				if (a.expression.expressions.size == 1) {
+					var aggregation = a.expression.expressions.get(0)
+					var function = aggregation.value
+					if (function instanceof Function) {
+						if (CQLGeneratorUtil.isAggregateFunction(function.name))
 							list.add(a.expression)
 					}
-				return list
-			}
-
-			def private String generateKeyValueString(String ... s) {
-				var str = "["
-				if (s.length == 1)
-					return str += "'" + s.get(0) + "']"
-				for (var i = 0; i < s.length - 2; i++)
-					str += "'" + s.get(i) + "'" + s.get(s.length - 1)
-				return str += "'" + s.get(s.length - 2) + "']"
-			}
-
-			def private String generateKeyValueString(List<String> l1, List<String> l2, String s) {
-				println('generateKeyValueString()= ' + l1.toString)
-				println(l2.toString)
-				println(s)
-				var str = ''
-				for (var i = 0; i < l1.size - 1; i++) // OUT of bounds...
-					str += generateKeyValueString(l1.get(i), l2.get(i), s) + ","
-				return (str += generateKeyValueString(l1.get(l1.size - 1), l2.get(l1.size - 1), s))
-			}
-
-			def private String generateListString(String s1) { return "'" + s1 + "'" }
-
-			def private String generateListString(List<String> l1) {
-				if (l1 !== null && !l1.empty) {
-					var str = ''
-					for (var i = 0; i < l1.size - 1; i++)
-						str += generateListString(l1.get(i)) + ","
-					return (str += generateListString(l1.get(l1.size - 1)))
 				}
-				return ''
+		return list
+	}
+
+	def List<SelectExpression> extractSelectExpressionsFromArgument(List<SelectArgument> args) {
+		var List<SelectExpression> list = newArrayList
+		for (SelectArgument a : args)
+			if (a.expression !== null) {
+				if (a.expression.expressions.size == 1) {
+					var aggregation = a.expression.expressions.get(0)
+					var function = aggregation.value
+					if (function instanceof Function) {
+						if (CQLGeneratorUtil.isMEPFunction(function.name,
+							parseSelectExpression(a.expression as SelectExpression).toString))
+							list.add(a.expression)
+					} else
+						list.add(a.expression)
+				} else
+					list.add(a.expression)
 			}
+		return list
+	}
 
-			def private CharSequence getID() {
-				operatorCounter++
-				return operatorCounter.toString
+	def private String generateKeyValueString(String ... s) {
+		var str = "["
+		if (s.length == 1)
+			return str += "'" + s.get(0) + "']"
+		for (var i = 0; i < s.length - 2; i++)
+			str += "'" + s.get(i) + "'" + s.get(s.length - 1)
+		return str += "'" + s.get(s.length - 2) + "']"
+	}
+
+	def private String generateKeyValueString(List<String> l1, List<String> l2, String s) {
+		var str = ''
+		for (var i = 0; i < l1.size - 1; i++) // OUT of bounds...
+			str += generateKeyValueString(l1.get(i), l2.get(i), s) + ","
+		return (str += generateKeyValueString(l1.get(l1.size - 1), l2.get(l1.size - 1), s))
+	}
+
+	def private String generateListString(String s1) { return "'" + s1 + "'" }
+
+	def private String generateListString(List<String> l1) {
+		if (l1 !== null && !l1.empty) {
+			var str = ''
+			for (var i = 0; i < l1.size - 1; i++)
+				str += generateListString(l1.get(i)) + ","
+			return (str += generateListString(l1.get(l1.size - 1)))
+		}
+		return ''
+	}
+
+	def private CharSequence getID() {
+		operatorCounter++
+		return operatorCounter.toString
+	}
+
+	def private String registerOperator(CharSequence operator) {
+		return registerOperator(operator, OP + getID())
+	}
+
+	def private String registerOperator(CharSequence operator, String definition) {
+		if (!registry_OperatorNames.contains(definition)) {
+			registry_OperatorNames.add(definition.toString)
+			registry_Operators.put(definition, operator.toString)
+		}
+		return definition
+	}
+
+	def private registerSourceAlias(Source src) {
+		if (src.alias !== null)
+			CQLGeneratorUtil.getSource(src).aliases.add(src.alias.name)
+	}
+
+	def void setSchema(List<SourceStruct> schemata) { CQLGeneratorUtil.setRegisteredSources(schemata) }
+
+	def private CharSequence formatOutputString(String sequence) {
+		var String str
+		var replacement1 = 'AXZTGHHAJJJSUEJJ23123123123'
+		var replacement2 = 'BNHUEOLASJJKEOOS12312309203'
+		if (sequence.contains(ASSIG2))
+			str = sequence.replaceFirst(ASSIG2, replacement1)
+		else
+			str = sequence.replaceFirst(ASSIG1, replacement2)
+
+		return str.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ", "").replace(replacement2,
+			" " + ASSIG1 + " ").replace(replacement1, " " + ASSIG2 + " ")
+	}
+
+	def public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.name) }
+
+	def public String getDataTypeFrom(String attribute) {
+		var attributename = attribute // getAttributename(attribute)
+		var sourcename = ''
+		if (attribute.contains('.')) {
+			var splitted = attribute.split("\\.")
+			if (CQLGeneratorUtil.isAttributeAlias(attributename)) {
+				var sourceFromAlias = CQLGeneratorUtil.getAttributeAliases().get(attribute)
+				if (CQLGeneratorUtil.isSourceAlias(sourceFromAlias))
+					sourceFromAlias = getSourcenameFromAlias(sourceFromAlias)
+				attributename = getAttributenameFromAlias(attributename)
+				sourcename = sourceFromAlias
+				for (AttributeStruct attr : CQLGeneratorUtil.getSource(sourcename).attributes)
+					if (attr.attributename.equals(attributename))
+						return attr.datatype
 			}
-
-			def private String registerOperator(CharSequence operator) {
-				return registerOperator(operator, OP + getID())
+			sourcename = splitted.get(0)
+			attributename = splitted.get(1)
+			if (CQLGeneratorUtil.isAttributeAlias(attributename))
+				attributename = getAttributenameFromAlias(attributename)
+			if (CQLGeneratorUtil.isSourceAlias(sourcename))
+				sourcename = getSourcenameFromAlias(sourcename)
+			for (AttributeStruct attr : CQLGeneratorUtil.getSource(sourcename).attributes)
+				if (attr.attributename.equals(attributename))
+					return attr.datatype
+		} else {
+			if (CQLGeneratorUtil.isAttributeAlias(attributename)) {
+				var sourceFromAlias = CQLGeneratorUtil.getAttributeAliases().get(attribute)
+				if (CQLGeneratorUtil.isSourceAlias(sourceFromAlias))
+					sourceFromAlias = getSourcenameFromAlias(sourceFromAlias)
+				attributename = getAttributenameFromAlias(attributename)
+				if (attributename === null)
+					attributename = attribute
+				for (AttributeStruct attr : CQLGeneratorUtil.getSource(sourceFromAlias).attributes)
+					if (attr.attributename.equals(attributename))
+						return attr.datatype
 			}
-
-			def private String registerOperator(CharSequence operator, String definition) {
-				if (!registry_OperatorNames.contains(definition)) {
-					registry_OperatorNames.add(definition.toString)
-					registry_Operators.put(definition, operator.toString)
-				}
-				return definition
-			}
-
-			def private registerSourceAlias(Source src) {
-				if (src.alias !== null)
-					getSource(src).aliases.add(src.alias.name)
-			}
-
-			def private registerSourceAlias(String sourcename, String sourcealias) {
-				var source = getSource(sourcename)
-				if (!source.aliases.contains(sourcealias))
-					source.aliases.add(sourcealias)
-			}
-
-//	def private void registerSources(Collection<SDFSchema> schema, boolean internal)
-//	{
-//		for(SDFSchema s : schema)
-//		{
-//			for(String sourcename : s.baseSourceNames)
-//			{
-//				if(getSourceNames().contains(sourcename))
-//				{
-//					var iter = registry_Sources.iterator
-//					while(iter.hasNext())
-//					{
-//						var next = iter.next
-//						if(next.sourcename.equals(sourcename))
-//							if(next.internal && !internal)
-//							{
-//								iter.remove
-//								var source = new SourceStruct()
-//								source.internal = internal
-//								source.sourcename = sourcename
-//								source.attributes = newArrayList()
-//								source.aliases = newArrayList()
-//								for(SDFAttribute attributename : s.attributes)
-//									if(sourcename.equals(attributename.sourceName))
-//									{
-//										var attribute = new AttributeStruct()
-//										attribute.attributename = attributename.attributeName 
-//										attribute.sourcename = sourcename
-//										attribute.datatype = attributename.datatype.toString	
-//										attribute.aliases = newArrayList()	
-//										attribute.prefixes = newArrayList()	
-//										source.attributes.add(attribute)
-//									}						
-//								registry_Sources.add(source)
-//							}
-//					}
-//				}
-//				else
-//				{
-//					var source = new SourceStruct()
-//					source.internal = internal
-//					source.sourcename = sourcename
-//					source.attributes = newArrayList()
-//					source.aliases = newArrayList()
-//					for(SDFAttribute attributename : s.attributes)
-//						if(sourcename.equals(attributename.sourceName))
-//						{
-//							var attribute = new AttributeStruct()
-//							attribute.attributename = attributename.attributeName 
-//							attribute.sourcename = sourcename
-//							attribute.datatype = attributename.datatype.toString	
-//							attribute.aliases = newArrayList()	
-//							attribute.prefixes = newArrayList()		
-//							source.attributes.add(attribute)
-//						}						
-//					registry_Sources.add(source)
-//				}
-//			}
-//		}
-//	}
-			def void setSchema(List<SourceStruct> schemata) { registry_Sources = schemata }
-
-//	def void setOtherSchemata(Collection<SDFSchema> schema) { registerSources(schema, false) }
-//	def void setCQLSchemata(Collection<SDFSchema> schema) { registerSources(schema, true) }
-			def private CharSequence formatOutputString(String sequence) {
-				var String str
-				var replacement1 = 'AXZTGHHAJJJSUEJJ23123123123'
-				var replacement2 = 'BNHUEOLASJJKEOOS12312309203'
-				if (sequence.contains(ASSIG2))
-					str = sequence.replaceFirst(ASSIG2, replacement1)
-				else
-					str = sequence.replaceFirst(ASSIG1, replacement2)
-
-				return str.replaceAll("\\s*[\\r\\n]+\\s*", "").trim().replace(" ", "").replace(replacement2,
-					" " + ASSIG1 + " ").replace(replacement1, " " + ASSIG2 + " ")
-			}
-
-			def public boolean isAttributeAlias(String attributename) {
-				return getAttributeAliasesAsList().contains(attributename)
-			}
-
-			def public boolean isSourceAlias(String sourcename) { return getSourceAliasesAsList().contains(sourcename) }
-
-			def public List<AttributeStruct> getAttributes() {
-				var list = newArrayList
-				for (SourceStruct source : registry_Sources)
-					list.addAll(source.attributes)
-				return list
-			}
-
-/////////remove
-			def public Map<AttributeStruct, List<String>> getAttributeAliases() {
-				var map = newHashMap
-				for (SourceStruct source : registry_Sources)
-					for (AttributeStruct attribute : source.attributes)
-						if (!attribute.aliases.empty)
-							map.put(attribute, attribute.aliases)
-				return map
-			}
-
-			def public List<String> getAttributeAliasesAsList() {
-				var list = newArrayList
-				for (List<String> l : getAttributeAliases().values)
-					for (String alias : l)
-						list.add(alias)
-				return list
-			}
-
-
-////////remove
-			def public Map<SourceStruct, List<String>> getSourceAliases() {
-				var map = newHashMap
-				for (SourceStruct source : registry_Sources)
-					map.put(source, source.aliases)
-				return map
-			}
-
-			def public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.name) }
-
-			def public String getDataTypeFrom(String attribute) {
-				var attributename = attribute // getAttributename(attribute)
-				println("getDataTypeFrom() -> attribute= " + attribute + ', attributename= ' + attributename)
-
-				var sourcename = ''
-				if (attribute.contains('.')) {
-					var splitted = attribute.split("\\.")
-					if (attribute.isAttributeAlias) {
-						var sourceFromAlias = registry_AttributeAliases.get(attribute)
-						if (sourceFromAlias.isSourceAlias)
-							sourceFromAlias = getSourcenameFromAlias(sourceFromAlias)
-						attributename = getAttributenameFromAlias(attributename)
-						sourcename = sourceFromAlias
-						for (AttributeStruct attr : getSource(sourcename).attributes)
-							if (attr.attributename.equals(attributename))
-								return attr.datatype
-					}
-					sourcename = splitted.get(0)
-					attributename = splitted.get(1)
-					if (attributename.isAttributeAlias)
-						attributename = getAttributenameFromAlias(attributename)
-					if (sourcename.isSourceAlias)
-						sourcename = getSourcenameFromAlias(sourcename)
-					for (AttributeStruct attr : getSource(sourcename).attributes)
-						if (attr.attributename.equals(attributename))
-							return attr.datatype
-				} else {
-					if (attribute.isAttributeAlias) {
-						var sourceFromAlias = registry_AttributeAliases.get(attribute)
-						println('sourcealas= ' + sourceFromAlias)
-						if (sourceFromAlias.isSourceAlias)
-							sourceFromAlias = getSourcenameFromAlias(sourceFromAlias)
-						attributename = getAttributenameFromAlias(attributename)
-						if (attributename === null)
-							attributename = attribute
-						println('attributename= ' + attributename)
-						println('alisases -> ' + registry_AttributeAliases.toString)
-						for (AttributeStruct attr : getSource(sourceFromAlias).attributes)
-							if (attr.attributename.equals(attributename))
-								return attr.datatype
-					}
-				}
-				return null
-			}
+		}
+		return null
+	}
 
 //////rrmove
-			def public String getSourcenameFromAlias(String sourcealias) {
-				for (Entry<SourceStruct, List<String>> source : getSourceAliases().entrySet)
-					if (source.value.contains(sourcealias))
-						return source.key.sourcename
-				return null
-			}
+	def public String getSourcenameFromAlias(String sourcealias) {
+		for (Entry<SourceStruct, List<String>> source : CQLGeneratorUtil.getSourceAliases().entrySet)
+			if (source.value.contains(sourcealias))
+				return source.key.sourcename
+		return null
+	}
 
-			def public AttributeStruct getAttributeFromAlias(String alias) {
-				println(getAttributeAliases().toString)
-				for (Entry<AttributeStruct, List<String>> entry : getAttributeAliases().entrySet)
-					if (entry.value.contains(alias))
-						return entry.key
-				return null
-			}
+	def public AttributeStruct getAttributeFromAlias(String alias) {
+		for (Entry<AttributeStruct, List<String>> entry : CQLGeneratorUtil.getAttributeAliasesAsMap().entrySet)
+			if (entry.value.contains(alias))
+				return entry.key
+		return null
+	}
 
-			def public String getAttributenameFromAlias(String alias) {
-				var attribute = getAttributeFromAlias(alias)
-				if (attribute !== null)
-					return attribute.attributename
-				if (this.registry_AggregationAttributes.contains(alias) ||
-					this.registry_Expressions.keySet.contains(alias))
-					return alias
-			}
+	def public String getAttributenameFromAlias(String alias) {
+		var attribute = getAttributeFromAlias(alias)
+		if (attribute !== null)
+			return attribute.attributename
+		if (CQLGeneratorUtil.getRegisteredAggregationAttributes().contains(alias) ||
+			CQLGeneratorUtil.getRegisteredExpressions().keySet.contains(alias))
+			return alias
+	}
+
 /////////////
-
-			def public String getAttributename(String attributename, String sourcename) {
-				println("getAttributename() -> attributename=" + attributename + ", sourcename= " + sourcename)
-				var String attribute
-				var String source
-				// If attribute is a system variable like ${Now} //TODO system variable not recognized				
+	def public String getAttributename(String attributename, String sourcename) {
+		var String attribute
+		var String source
+		// If attribute is a system variable like ${Now} //TODO system variable not recognized				
 //				var charArray = attributename.toCharArray
 //				if (charArray.get(0) == '$' 
 //					&& charArray.get(1) == '{' 
 //					&& charArray.get(charArray.size - 1) == '}'
 //				)
 //					return attributename
-				if (sourcename !== null && !sourcename.equals("")) {
-					var SourceStruct tmp
-					attribute = attributename
-					source = if((tmp = getSource(sourcename)) !== null) tmp.sourcename else null
-				} else if (attributename.contains(".")) {
-					var String[] split = attributename.split('\\.')
-					attribute = split.get(1)
-					source = split.get(0)
-				}
-				// //
-				if (source !== null) {
-					var isAlias = isAttributeAlias(attribute)
-					if (isSourceAlias(source))
-						if (isAlias)
-							return attribute
-						else {
-							var r = source + '.' + attribute
-							if (getAttributeAliasesAsList().contains(r))
-								return r
-							else {
-								var sourcenameFromalias = getSourcenameFromAlias(source)
-								var attributeAliases = getAliasFromAttributename(attribute, sourcenameFromalias)
-								if (!attributeAliases.empty) {
-									return attributeAliases.get(0)
-								} else {
-									return source + '.' + attribute
-								}
-							}
-						}
-					else if (isAlias)
-						return attribute
-					else
-						return source + '.' + attribute
-				} else {
-					attribute = attributename
-					if (registry_AggregationAttributes.contains(attribute))
-						return attribute
-					if (registry_Expressions.keySet.contains(attribute))
-						return registry_Expressions.get(attribute)
-					if (isAttributeAlias(attribute))
-						return attribute
-
-					var containedBySources = newArrayList
-					var usedNames = newArrayList
-					for (String name : querySources) {
-						if (!usedNames.contains(name)) {
-							usedNames.add(name)
-							var source2 = getSource(name)
-							for (AttributeStruct attr : source2.attributes)
-								if (attr.attributename.equals(attribute))
-									containedBySources.add(source2)
-						}
-					}
-					if (containedBySources.size == 1) {
-						var aliases = getAliasFromAttributename(attribute, containedBySources.get(0).sourcename)
-						if (!aliases.empty)
-							return aliases.get(0)
-						var sourceStruct = getSource(containedBySources.get(0).sourcename)
-						if (!sourceStruct.aliases.empty)
-							return sourceStruct.aliases.get(0) + '.' + attributename
-						return containedBySources.get(0).sourcename + '.' + attribute
-					}
-				}
-				throw new IllegalArgumentException("attribute " + attribute + " could not be resolved")
-			}
-
-			// TODO Uniform methods with dispatch methods
-			def public String getAttributename(Attribute attribute, String srcname) {
-				return getAttributename(attribute.name, srcname)
-			}
-
-			def public String getAttributename(Attribute attribute) { return getAttributename(attribute.name) }
-
-			def public String getAttributename(String attribute) { return getAttributename(attribute, null) }
-
-			def public List<String> getAliasFromAttributename(String name, String source) {
-				return getSource(source).findbyName(name).aliases
-			}
-
-////////////remove
-			/** Returns all {@link Attribute} elements from the corresponding source. */
-			def public List<String> getAttributeNamesFrom(String srcname) {
-				for (SourceStruct source : registry_Sources)
-					if (source.sourcename.equals(srcname) || source.aliases.contains(srcname))
-						return source.attributes.stream.map(e|e.attributename).collect(Collectors.toList);
-			}
-
-			var FunctionStore functionStore;
-			var Pattern aggregatePattern;
-			var MEP mep;
-
-			def setFunctionStore(FunctionStore store) {
-				functionStore = store;
-			}
-
-			def setAggregatePattern(Pattern pattern) {
-				aggregatePattern = pattern;
-			}
-
-			def setMEP(MEP mep) {
-				this.mep = mep;
-			}
-
-			def boolean isMEPFunction(String name, String function) {
-				if (functionStore.containsSymbol(name)) {
-					try {
-						var datatype = mep.parse(function).returnType
-						for (IFunction<?> f : FunctionStore.instance.getFunctions(name))
-							if (f.returnType.equals(datatype))
-								return true
-					} catch (Exception e) {
-						return false
-					}
-				}
-				return false;
-			}
-
-			def boolean isAggregateFunction(String name) {
-				return aggregatePattern.matcher(name).toString.contains(name);
-			}
-
-			def setDatabaseConnections(Map<String, String> connections) {
-				databaseConnections = connections;
-			}
-
+		if (sourcename !== null && !sourcename.equals("")) {
+			var SourceStruct tmp
+			attribute = attributename
+			source = if((tmp = CQLGeneratorUtil.getSource(sourcename)) !== null) tmp.sourcename else null
+		} else if (attributename.contains(".")) {
+			var String[] split = attributename.split('\\.')
+			attribute = split.get(1)
+			source = split.get(0)
 		}
-		
+		// //
+		if (source !== null) {
+			var isAlias = CQLGeneratorUtil.isAttributeAlias(attribute)
+			if (CQLGeneratorUtil.isSourceAlias(source))
+				if (isAlias)
+					return attribute
+				else {
+					var r = source + '.' + attribute
+					if (CQLGeneratorUtil.getAttributeAliasesAsList().contains(r))
+						return r
+					else {
+						var sourcenameFromalias = getSourcenameFromAlias(source)
+						var attributeAliases = getAliasFromAttributename(attribute, sourcenameFromalias)
+						if (!attributeAliases.empty) {
+							return attributeAliases.get(0)
+						} else {
+							return source + '.' + attribute
+						}
+					}
+				}
+			else if (isAlias)
+				return attribute
+			else
+				return source + '.' + attribute
+		} else {
+			attribute = attributename
+			if (CQLGeneratorUtil.getRegisteredAggregationAttributes().contains(attribute))
+				return attribute
+			if (CQLGeneratorUtil.getRegisteredExpressions().keySet.contains(attribute))
+				return CQLGeneratorUtil.getRegisteredExpressions().get(attribute)
+			if (CQLGeneratorUtil.isAttributeAlias(attribute))
+				return attribute
+
+			var containedBySources = newArrayList
+			var usedNames = newArrayList
+			for (String name : querySources) {
+				if (!usedNames.contains(name)) {
+					usedNames.add(name)
+					var source2 = CQLGeneratorUtil.getSource(name)
+					for (AttributeStruct attr : source2.attributes)
+						if (attr.attributename.equals(attribute))
+							containedBySources.add(source2)
+				}
+			}
+			if (containedBySources.size == 1) {
+				var aliases = getAliasFromAttributename(attribute, containedBySources.get(0).sourcename)
+				if (!aliases.empty)
+					return aliases.get(0)
+				var sourceStruct = CQLGeneratorUtil.getSource(containedBySources.get(0).sourcename)
+				if (!sourceStruct.aliases.empty)
+					return sourceStruct.aliases.get(0) + '.' + attributename
+				return containedBySources.get(0).sourcename + '.' + attribute
+			}
+		}
+		throw new IllegalArgumentException("attribute " + attribute + " could not be resolved")
+	}
+
+	// TODO Uniform methods with dispatch methods
+	def public String getAttributename(Attribute attribute, String srcname) {
+		return getAttributename(attribute.name, srcname)
+	}
+
+	def public String getAttributename(Attribute attribute) { return getAttributename(attribute.name) }
+
+	def public String getAttributename(String attribute) { return getAttributename(attribute, null) }
+
+	def public List<String> getAliasFromAttributename(String name, String source) {
+		return CQLGeneratorUtil.getSource(source).findbyName(name).aliases
+	}
+
+	def setFunctionStore(FunctionStore store) {
+		CQLGeneratorUtil.setFunctionStore(store)
+	}
+
+	def setAggregatePattern(Pattern pattern) {
+		CQLGeneratorUtil.setAggregatePattern(pattern)
+	}
+
+	def setMEP(MEP mep) {
+		CQLGeneratorUtil.setMEP(mep)
+	}
+
+	def setDatabaseConnections(Map<String, String> connections) {
+		databaseConnections = connections;
+	}
+
+}

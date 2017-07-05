@@ -139,7 +139,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "CQL_old";
+		return "CQL1";
 	}
 
 	@Override

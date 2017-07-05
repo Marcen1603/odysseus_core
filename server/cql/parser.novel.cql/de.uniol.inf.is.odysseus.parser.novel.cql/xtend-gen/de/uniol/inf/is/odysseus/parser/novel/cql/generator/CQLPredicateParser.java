@@ -24,12 +24,12 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGenerator;
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGeneratorUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 
 @SuppressWarnings("all")
 public class CQLPredicateParser {
@@ -179,7 +179,7 @@ public class CQLPredicateParser {
             boolean _tripleEquals = (_predicates == null);
             if (_tripleEquals) {
               this.generator.parseSelectWithoutPredicate(select);
-              List<String> _get = this.generator.projectionAttributes.get(select);
+              List<String> _get = CQLGeneratorUtil.getProjectionAttributes().get(select);
               for (final String attribute : _get) {
                 String _predicate = predicate;
                 String _name = quantification.getAttribute().getName();
@@ -193,7 +193,7 @@ public class CQLPredicateParser {
               predicate = predicate.substring(0, _minus);
             } else {
               this.generator.parseSelectWithPredicate(select);
-              List<String> _get_1 = this.generator.projectionAttributes.get(select);
+              List<String> _get_1 = CQLGeneratorUtil.getProjectionAttributes().get(select);
               for (final String attribute_1 : _get_1) {
                 String _predicate_1 = predicate;
                 String _name_1 = quantification.getAttribute().getName();
@@ -223,7 +223,6 @@ public class CQLPredicateParser {
                     String _plus_7 = (_plus_6 + attributename);
                     attributename = _plus_7;
                   }
-                  InputOutput.<String>println(attributename);
                   predicate = predicate.replace(attributename, attributename.replace(".", "_"));
                 }
               }
@@ -280,7 +279,7 @@ public class CQLPredicateParser {
                 boolean _tripleEquals_1 = (_predicates_1 == null);
                 if (_tripleEquals_1) {
                   this.generator.parseSelectWithoutPredicate(select_1);
-                  List<String> _get_2 = this.generator.projectionAttributes.get(select_1);
+                  List<String> _get_2 = CQLGeneratorUtil.getProjectionAttributes().get(select_1);
                   for (final String attribute_2 : _get_2) {
                     String _predicate_2 = predicate_1;
                     String _name_2 = in.getAttribute().getName();
@@ -294,7 +293,7 @@ public class CQLPredicateParser {
                   predicate_1 = predicate_1.substring(0, _minus_5);
                 } else {
                   this.generator.parseSelectWithPredicate(select_1);
-                  List<String> _get_3 = this.generator.projectionAttributes.get(select_1);
+                  List<String> _get_3 = CQLGeneratorUtil.getProjectionAttributes().get(select_1);
                   for (final String attribute_3 : _get_3) {
                     String _predicate_3 = predicate_1;
                     String _name_3 = in.getAttribute().getName();
@@ -321,7 +320,6 @@ public class CQLPredicateParser {
                         String _plus_13 = (_plus_12 + attributename);
                         attributename = _plus_13;
                       }
-                      InputOutput.<String>println(attributename);
                       predicate_1 = predicate_1.replace(attributename, attributename.replace(".", "_"));
                     }
                   }
@@ -430,7 +428,6 @@ public class CQLPredicateParser {
       this.generator.prepareParsingSelect(subQuery);
       this.generator.parseSelectWithoutPredicate(subQuery);
       this.parse(complexPredicate.getSelect().getSelect().getPredicates().getElements().get(0));
-      InputOutput.<String>println(("exists() -> " + this.predicateString));
       Set<Map.Entry<String, List<String>>> _entrySet = this.generator.queryAttributes.get(subQuery).entrySet();
       for (final Map.Entry<String, List<String>> l : _entrySet) {
         List<String> _value = l.getValue();
@@ -445,12 +442,10 @@ public class CQLPredicateParser {
               String _plus_1 = (_plus + attributename);
               attributename = _plus_1;
             }
-            InputOutput.<String>println(attributename);
             this.predicateString = this.predicateString.replace(attributename, attributename.replace(".", "_"));
           }
         }
       }
-      InputOutput.<String>println(("exists() -> " + this.predicateString));
       args.put("predicate", this.predicateString);
       args.put("input", this.generator.getLastOperator());
       this.generator.registry_existenceOperators.add(args);

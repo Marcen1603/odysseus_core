@@ -49,7 +49,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 
 	@Override
 	public String getSupportedParser() {
-		return "CQL_old";
+		return "CQL1";
 	}
 
 	@Override

@@ -5,8 +5,6 @@ package de.uniol.inf.is.odysseus.parser.novel.cql.generator;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.FunctionStore;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.novel.cql.builder.PQLStringBuilder;
@@ -47,13 +45,12 @@ import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Vector;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.WindowOperator;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLGeneratorUtil;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.CQLPredicateParser;
 import de.uniol.inf.is.odysseus.parser.novel.cql.generator.SourceStruct;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,8 +67,6 @@ import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
 
@@ -98,38 +93,16 @@ public class CQLGenerator implements IGenerator2 {
   
   private Map<String, List<String>> registry_RenamedAttributes = CollectionLiterals.<String, List<String>>newHashMap();
   
-  private List<SourceStruct> registry_Sources = CollectionLiterals.<SourceStruct>newArrayList();
-  
   private List<String> registryBackUp_OperatorNames = CollectionLiterals.<String>newArrayList();
   
   private List<String> registry_OperatorNames = CollectionLiterals.<String>newArrayList();
   
-  private Map<String, String> registry_Expressions = CollectionLiterals.<String, String>newHashMap();
-  
-  private List<String> registry_AggregationAttributes = CollectionLiterals.<String>newArrayList();
-  
-  private Map<String, String> registry_AttributeAliases = CollectionLiterals.<String, String>newHashMap();
-  
   private Map<SimpleSelect, List<SelectExpression>> queryAggregations = CollectionLiterals.<SimpleSelect, List<SelectExpression>>newHashMap();
-  
-  private Map<SimpleSelect, List<SelectExpression>> queryExpressions = CollectionLiterals.<SimpleSelect, List<SelectExpression>>newHashMap();
   
   /**
    * Contains string representations of all attributes (inclusivley aggregations and expressions) mapped by their corresponding sources.
    */
   public Map<SimpleSelect, Map<String, List<String>>> queryAttributes = CollectionLiterals.<SimpleSelect, Map<String, List<String>>>newHashMap();
-  
-  /**
-   * Contains all selected attributes for each registered query
-   */
-  public Map<SimpleSelect, List<String>> projectionAttributes = CollectionLiterals.<SimpleSelect, List<String>>newHashMap();
-  
-  /**
-   * Contains the corresponding sources to the attributes in projectionAttributes
-   */
-  private Map<SimpleSelect, List<String>> projectionSources = CollectionLiterals.<SimpleSelect, List<String>>newHashMap();
-  
-  private Map<String, Set<String>> registry_SubQuerySources = CollectionLiterals.<String, Set<String>>newHashMap();
   
   private int operatorCounter = 0;
   
@@ -166,15 +139,10 @@ public class CQLGenerator implements IGenerator2 {
     this.registry_OperatorNames.clear();
     this.registry_Operators.clear();
     this.registry_NestedSelects.clear();
-    this.registry_Sources.clear();
-    this.registry_Expressions.clear();
-    this.registry_AggregationAttributes.clear();
     this.registry_RenamedAttributes.clear();
     this.queryAggregations.clear();
     this.queryAttributes.clear();
-    this.queryExpressions.clear();
     this.registry_SubQueries.clear();
-    this.registry_SubQuerySources.clear();
     this.registry_SimpleSelect.clear();
     this.registry_existenceOperators.clear();
     this.renameAliases.clear();
@@ -186,6 +154,7 @@ public class CQLGenerator implements IGenerator2 {
     this.expressionString = null;
     this.firstJoinInQuery = true;
     this.querySources = CollectionLiterals.<String>newArrayList();
+    CQLGeneratorUtil.clear();
   }
   
   @Override
@@ -200,6 +169,7 @@ public class CQLGenerator implements IGenerator2 {
   
   @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
+    CQLGeneratorUtil.getInstance(this);
     int i = 0;
     Iterable<Query> _filter = Iterables.<Query>filter(IteratorExtensions.<EObject>toIterable(resource.getAllContents()), Query.class);
     for (final Query e : _filter) {
@@ -347,18 +317,19 @@ public class CQLGenerator implements IGenerator2 {
         for (final NestedSource subQuery : subQueries) {
           {
             this.prepareParsingSelect(subQuery.getStatement().getSelect());
-            this.registry_SubQuerySources.put(subQuery.getAlias().getName(), this.queryAttributes.get(subQuery.getStatement().getSelect()).keySet());
+            CQLGeneratorUtil.getSubQuerySources().put(subQuery.getAlias().getName(), 
+              this.queryAttributes.get(subQuery.getStatement().getSelect()).keySet());
           }
         }
         Map<String, List<String>> attributes2 = CollectionLiterals.<String, List<String>>newHashMap();
-        attributes2 = this.getSelectedAttributes(select, attributes2);
+        attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2);
         List<SelectExpression> aggregations = this.extractAggregationsFromArgument(select.getArguments());
         List<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(select.getArguments());
         if ((aggregations != null)) {
           this.queryAggregations.put(select, aggregations);
         }
         if ((expressions != null)) {
-          this.queryExpressions.put(select, expressions);
+          CQLGeneratorUtil.getQueryExpressions().put(select, expressions);
         }
         if ((attributes2 != null)) {
           this.queryAttributes.put(select, attributes2);
@@ -382,7 +353,7 @@ public class CQLGenerator implements IGenerator2 {
           if (_not) {
             this.querySources.add(name);
           }
-          if (((((SimpleSource)source).getAlias() != null) && (!this.getSource(source).aliases.contains(((SimpleSource)source).getAlias().getName())))) {
+          if (((((SimpleSource)source).getAlias() != null) && (!CQLGeneratorUtil.getSource(source).aliases.contains(((SimpleSource)source).getAlias().getName())))) {
             this.registerSourceAlias(source);
           }
         } else {
@@ -448,7 +419,7 @@ public class CQLGenerator implements IGenerator2 {
     if (operator != null) {
       switch (operator) {
         case MAP:
-          List<SelectExpression> expressions = this.queryExpressions.get(select);
+          List<SelectExpression> expressions = CQLGeneratorUtil.getQueryExpressions().get(select);
           if (((expressions != null) && (!expressions.isEmpty()))) {
             result = this.buildMapOperator(expressions);
             operatorName = result[1].toString();
@@ -543,7 +514,8 @@ public class CQLGenerator implements IGenerator2 {
         attributes.add(arg.getAttribute());
       }
     }
-    if ((((!this.checkIfSelectAll(attributes)) || (!this.queryAggregations.get(stmt).isEmpty())) || (!this.queryExpressions.get(stmt).isEmpty()))) {
+    if ((((!this.checkIfSelectAll(attributes)) || (!this.queryAggregations.get(stmt).isEmpty())) || 
+      (!CQLGeneratorUtil.getQueryExpressions().get(stmt).isEmpty()))) {
       return this.registerOperator(this.buildProjection(stmt, select));
     }
     return select;
@@ -553,7 +525,6 @@ public class CQLGenerator implements IGenerator2 {
     boolean _isEmpty = this.registry_existenceOperators.isEmpty();
     boolean _not = (!_isEmpty);
     if (_not) {
-      InputOutput.<String>println(("registerExistenceOperator() -> selectInput= " + selectInput));
       boolean _equals = select.equals("");
       boolean _not_1 = (!_equals);
       if (_not_1) {
@@ -602,7 +573,6 @@ public class CQLGenerator implements IGenerator2 {
   public List<Map<String, String>> registry_existenceOperators = CollectionLiterals.<Map<String, String>>newArrayList();
   
   private CharSequence parseSelectExpression(final SelectExpression e) {
-    InputOutput.<String>println(("parseSelectExpression() -> expression= " + e));
     String str = "";
     for (int i = 0; (i < e.getExpressions().size()); i++) {
       {
@@ -973,13 +943,11 @@ public class CQLGenerator implements IGenerator2 {
       }
       String aggregateOperator = _xifexpression_1;
       if (((mapOperator != null) && (aggregateOperator != null))) {
-        InputOutput.<String>println("buildInput() -> aggregate & map");
         String _buildJoin = this.buildJoin(select.getSources());
         return this.checkForGroupAttributes(aggregateOperator, select, 
           this.buildJoin(new String[] { aggregateOperator, _buildJoin }));
       } else {
         if ((mapOperator != null)) {
-          InputOutput.<String>println("buildInput() -> map");
           return this.buildJoin(select.getSources());
         } else {
           if ((aggregateOperator != null)) {
@@ -996,12 +964,11 @@ public class CQLGenerator implements IGenerator2 {
               _xifexpression_2 = null;
             }
             List<String> predicateAttributes = _xifexpression_2;
-            InputOutput.<String>println("buildInput() -> aggregate ");
-            boolean _containsAll = this.registry_AggregationAttributes.containsAll(this.projectionAttributes.get(select));
+            boolean _containsAll = CQLGeneratorUtil.getRegisteredAggregationAttributes().containsAll(
+              CQLGeneratorUtil.getProjectionAttributes().get(select));
             if (_containsAll) {
-              InputOutput.<String>println("buildInput() -> aggregate : contains all project attributes");
               if ((((predicateAttributes != null) && (!predicateAttributes.isEmpty())) && 
-                this.registry_AggregationAttributes.containsAll(predicateAttributes))) {
+                CQLGeneratorUtil.getRegisteredAggregationAttributes().containsAll(predicateAttributes))) {
                 return aggregateOperator;
               } else {
                 String _buildJoin_1 = this.buildJoin(select.getSources());
@@ -1009,7 +976,6 @@ public class CQLGenerator implements IGenerator2 {
                   this.buildJoin(new String[] { aggregateOperator, _buildJoin_1 }));
               }
             } else {
-              InputOutput.<String>println("buildInput() -> aggregate : !(contains all project attributes)");
               String _buildJoin_2 = this.buildJoin(select.getSources());
               return this.checkForGroupAttributes(aggregateOperator, select, 
                 this.buildJoin(new String[] { aggregateOperator, _buildJoin_2 }));
@@ -1018,7 +984,6 @@ public class CQLGenerator implements IGenerator2 {
         }
       }
     }
-    InputOutput.<String>println("buildInput() -> skip");
     return this.buildJoin(select.getSources());
   }
   
@@ -1111,56 +1076,6 @@ public class CQLGenerator implements IGenerator2 {
     }
   }
   
-  private final String EXPRESSSION_NAME_PREFIX = "expression_";
-  
-  private String getExpressionName() {
-    int _plusPlus = this.expressionCounter++;
-    return (this.EXPRESSSION_NAME_PREFIX + Integer.valueOf(_plusPlus));
-  }
-  
-  private String getAggregationName(final String name) {
-    int _plusPlus = this.aggregationCounter++;
-    return ((name + "_") + Integer.valueOf(_plusPlus));
-  }
-  
-  private String getProjectAttribute(final String attribute) {
-    boolean _contains = attribute.contains(this.EXPRESSSION_NAME_PREFIX);
-    if (_contains) {
-      return this.registry_Expressions.get(attribute);
-    }
-    boolean _contains_1 = this.registry_Expressions.keySet().contains(attribute);
-    if (_contains_1) {
-      return this.registry_Expressions.get(attribute);
-    }
-    InputOutput.<String>println(("getProjectionAttribute() -> " + attribute));
-    InputOutput.<String>println(this.registry_AttributeAliases.toString());
-    boolean _contains_2 = attribute.contains(".");
-    if (_contains_2) {
-      boolean _isAttributeAlias = this.isAttributeAlias(attribute);
-      if (_isAttributeAlias) {
-        return attribute;
-      }
-      String[] split = attribute.split("\\.");
-      String realAttributename = split[1];
-      String sourcename = split[0];
-      String sourcealias = sourcename;
-      boolean _isSourceAlias = this.isSourceAlias(sourcename);
-      if (_isSourceAlias) {
-        sourcename = this.getSourcenameFromAlias(sourcealias);
-      }
-      List<String> aliases = this.getSource(sourcename).findbyName(realAttributename).aliases;
-      boolean _isEmpty = aliases.isEmpty();
-      boolean _not = (!_isEmpty);
-      if (_not) {
-        int _size = aliases.size();
-        int _minus = (_size - 1);
-        return aliases.get(_minus);
-      }
-      return attribute;
-    }
-    return attribute;
-  }
-  
   private Object[] buildMapOperator(final List<SelectExpression> expressions) {
     return this.buildMapOperator(expressions, null);
   }
@@ -1176,7 +1091,7 @@ public class CQLGenerator implements IGenerator2 {
         Alias _alias = expressions.get(i).getAlias();
         boolean _tripleEquals = (_alias == null);
         if (_tripleEquals) {
-          expressionName = this.getExpressionName();
+          expressionName = CQLGeneratorUtil.getExpressionName();
         } else {
           expressionName = expressions.get(i).getAlias().getName();
         }
@@ -1187,7 +1102,7 @@ public class CQLGenerator implements IGenerator2 {
         String t = this.generateKeyValueString(((String[])Conversions.unwrapArray(_converted_expressionStrings, String.class)));
         String _expressionArgument = expressionArgument;
         expressionArgument = (_expressionArgument + t);
-        this.registry_Expressions.put(expressionName, t);
+        CQLGeneratorUtil.getRegisteredExpressions().put(expressionName, t);
         int _size = expressions.size();
         int _minus = (_size - 1);
         boolean _notEquals = (i != _minus);
@@ -1251,7 +1166,7 @@ public class CQLGenerator implements IGenerator2 {
         if (_tripleNotEquals) {
           alias = aggAttr.get(i).getAlias().getName();
         } else {
-          alias = this.getAggregationName(aggregation.getName());
+          alias = CQLGeneratorUtil.getAggregationName(aggregation.getName());
         }
         args.add(alias);
         aliases.add(alias);
@@ -1259,7 +1174,7 @@ public class CQLGenerator implements IGenerator2 {
         if (_notEquals) {
           args.add(datatype);
         }
-        this.registry_AggregationAttributes.add(alias);
+        CQLGeneratorUtil.getRegisteredAggregationAttributes().add(alias);
         args.add(",");
         String _argsstr = argsstr;
         final List<String> _converted_args = (List<String>)args;
@@ -1383,7 +1298,7 @@ public class CQLGenerator implements IGenerator2 {
           Map<String, List<String>> subQueryAttributes = this.queryAttributes.get(subQuery);
           String lastOperator = this.registry_SubQueries.get(subQuery);
           ArrayList<String> inputs = CollectionLiterals.<String>newArrayList();
-          List<String> attributeAliases = this.getAttributeAliasesAsList();
+          List<String> attributeAliases = CQLGeneratorUtil.getAttributeAliasesAsList();
           Set<Map.Entry<String, List<String>>> _entrySet = queryAttributess.entrySet();
           for (final Map.Entry<String, List<String>> entry : _entrySet) {
             {
@@ -1435,7 +1350,6 @@ public class CQLGenerator implements IGenerator2 {
           sourceStrings[i] = this.buildJoin(((String[])Conversions.unwrapArray(_converted_inputs, String.class))).toString();
         } else {
           if ((source instanceof SimpleSource)) {
-            InputOutput.<String>println("buildJoin() --> SimpleSource");
             final String sourcename = ((SimpleSource)source).getName();
             final Predicate<String> _function_4 = (String e) -> {
               return e.equals(sourcename);
@@ -1461,7 +1375,7 @@ public class CQLGenerator implements IGenerator2 {
   private List<Source> sourcesDuringRename;
   
   private CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final int selfJoin) {
-    SourceStruct source = this.getSource(simpleSource);
+    SourceStruct source = CQLGeneratorUtil.getSource(simpleSource);
     String sourcealias = null;
     Alias _alias = simpleSource.getAlias();
     boolean _tripleNotEquals = (_alias != null);
@@ -1474,7 +1388,7 @@ public class CQLGenerator implements IGenerator2 {
         int k = 0;
         for (final String attributealias : source.attributes.get(j).aliases) {
           {
-            String sourceFromAlias = this.registry_AttributeAliases.get(attributealias);
+            String sourceFromAlias = CQLGeneratorUtil.getAttributeAliases().get(attributealias);
             if ((sourceFromAlias.equals(sourcealias) || sourceFromAlias.equals(simpleSource.getName()))) {
               int _size = listOfLists.size();
               boolean b = (_size <= k);
@@ -1604,21 +1518,19 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   private CharSequence buildProjection(final SimpleSelect select, final CharSequence operator) {
-    List<String> attributes = this.projectionAttributes.get(select);
-    List<String> sources = this.projectionSources.get(select);
+    List<String> attributes = CQLGeneratorUtil.getProjectionAttributes().get(select);
     for (int i = 0; (i < (this.renameAliases.size() - 2)); i = (i + 3)) {
       {
         String attributename = this.renameAliases.get(i);
         String sourcename = this.renameAliases.get((i + 1));
         String alias = this.renameAliases.get((i + 2));
-        this.getSource(sourcename).findbyName(attributename).aliases.add(alias);
+        CQLGeneratorUtil.getSource(sourcename).findbyName(attributename).aliases.add(alias);
       }
     }
     ArrayList<String> list = CollectionLiterals.<String>newArrayList();
-    ArrayList<Object> additionalSources = CollectionLiterals.<Object>newArrayList();
     for (int i = 0; (i < attributes.size()); i++) {
       {
-        String attribute1 = this.getProjectAttribute(attributes.get(i));
+        String attribute1 = CQLGeneratorUtil.getProjectAttribute(attributes.get(i));
         list.add(attribute1);
       }
     }
@@ -1627,7 +1539,7 @@ public class CQLGenerator implements IGenerator2 {
         String attributename = this.renameAliases.get(i);
         String sourcename = this.renameAliases.get((i + 1));
         String alias = this.renameAliases.get((i + 2));
-        this.getSource(sourcename).findbyName(attributename).aliases.remove(alias);
+        CQLGeneratorUtil.getSource(sourcename).findbyName(attributename).aliases.remove(alias);
       }
     }
     String argument = this.generateListString(list).replace("\'[\'", "[\'").replace("\']\'", "\']");
@@ -1667,209 +1579,6 @@ public class CQLGenerator implements IGenerator2 {
     return _xifexpression;
   }
   
-  public List<String> getAttributesFromSource(final String attributename) {
-    boolean _contains = attributename.contains(".*");
-    if (_contains) {
-      String sourcename = attributename.split("\\.")[0];
-      List<String> l = this.getAttributeNamesFrom(sourcename);
-      return l;
-    }
-    return CollectionLiterals.<String>newArrayList();
-  }
-  
-  public List<String> getSourceNames() {
-    final java.util.function.Function<SourceStruct, String> _function = (SourceStruct e) -> {
-      return e.sourcename;
-    };
-    return this.registry_Sources.stream().<String>map(_function).collect(Collectors.<String>toList());
-  }
-  
-  public List<String> getSourceAliasesAsList() {
-    ArrayList<String> list = CollectionLiterals.<String>newArrayList();
-    Collection<List<String>> _values = this.getSourceAliases().values();
-    for (final List<String> l : _values) {
-      list.addAll(l);
-    }
-    return list;
-  }
-  
-  private Map<String, List<String>> addToMap(final Map<String, List<String>> map, final String attribute, final String realSourcename) {
-    List<String> attributeList = map.get(realSourcename);
-    if ((attributeList == null)) {
-      attributeList = CollectionLiterals.<String>newArrayList();
-    }
-    boolean _contains = attributeList.contains(attribute);
-    boolean _not = (!_contains);
-    if (_not) {
-      attributeList.add(attribute);
-    }
-    map.put(realSourcename, attributeList);
-    return map;
-  }
-  
-  private Object[] parseAttribute(final Attribute attribute) {
-    String sourcename = null;
-    String sourcealias = null;
-    List<String> list = null;
-    boolean subQuery = false;
-    boolean _contains = attribute.getName().contains(".");
-    if (_contains) {
-      String[] split = attribute.getName().split("\\.");
-      sourcename = split[0];
-      boolean _contains_1 = this.getSourceNames().contains(sourcename);
-      boolean _not = (!_contains_1);
-      if (_not) {
-        sourcealias = sourcename;
-        if ((((sourcename = this.getSourcenameFromAlias(sourcename)) == null) && 
-          this.registry_SubQuerySources.keySet().contains(split[0]))) {
-          subQuery = true;
-        }
-      }
-      boolean _contains_2 = split[1].contains("*");
-      if (_contains_2) {
-        list = CollectionLiterals.<String>newArrayList();
-        sourcename = split[0];
-        boolean _isSourceAlias = this.isSourceAlias(sourcename);
-        if (_isSourceAlias) {
-          sourcealias = sourcename;
-          sourcename = this.getSourcenameFromAlias(sourcename);
-        }
-        List<String> _attributeNamesFrom = this.getAttributeNamesFrom(sourcename);
-        for (final String str : _attributeNamesFrom) {
-          list.add(str);
-        }
-      }
-    }
-    String _name = attribute.getName();
-    return new Object[] { _name, sourcename, sourcealias, list, Boolean.valueOf(subQuery) };
-  }
-  
-  private List<SourceStruct> getSourceCandidates(final Attribute attribute, final List<Source> sources) {
-    ArrayList<SourceStruct> containedBySources = CollectionLiterals.<SourceStruct>newArrayList();
-    for (final Source source1 : sources) {
-      if ((source1 instanceof SimpleSource)) {
-        for (final SourceStruct source2 : this.registry_Sources) {
-          if (((((SimpleSource)source1).getName().equals(source2.sourcename) && source2.containsAttribute(attribute.getName())) && 
-            sources.stream().<String>map(((java.util.function.Function<Source, String>) (Source e) -> {
-              String _xifexpression = null;
-              if ((e instanceof SimpleSource)) {
-                _xifexpression = ((SimpleSource)e).getName();
-              }
-              return _xifexpression;
-            })).collect(Collectors.<String>toList()).contains(
-              source2.sourcename))) {
-            boolean _contains = containedBySources.contains(source2);
-            boolean _not = (!_contains);
-            if (_not) {
-              containedBySources.add(source2);
-            } else {
-              boolean _contains_1 = attribute.getName().contains(".");
-              boolean _not_1 = (!_contains_1);
-              if (_not_1) {
-                boolean _isAttributeAlias = this.isAttributeAlias(attribute.getName());
-                boolean _not_2 = (!_isAttributeAlias);
-                if (_not_2) {
-                  String _name = attribute.getName();
-                  throw new IllegalArgumentException(_name);
-                }
-              }
-            }
-          }
-        }
-      } else {
-        String subQueryAlias = ((NestedSource) source1).getAlias().getName();
-        Set<String> _get = this.registry_SubQuerySources.get(subQueryAlias);
-        for (final String source : _get) {
-          for (final SourceStruct source2_1 : this.registry_Sources) {
-            {
-              String realName = attribute.getName();
-              boolean _contains_2 = realName.contains(".");
-              if (_contains_2) {
-                realName = realName.split("\\.")[1];
-              }
-              if ((source.equals(source2_1.sourcename) && source2_1.containsAttribute(realName))) {
-                boolean _contains_3 = containedBySources.contains(source2_1);
-                boolean _not_3 = (!_contains_3);
-                if (_not_3) {
-                  containedBySources.add(source2_1);
-                } else {
-                  boolean _contains_4 = attribute.getName().contains(".");
-                  boolean _not_4 = (!_contains_4);
-                  if (_not_4) {
-                    boolean _isAttributeAlias_1 = this.isAttributeAlias(attribute.getName());
-                    boolean _not_5 = (!_isAttributeAlias_1);
-                    if (_not_5) {
-                      String _name_1 = attribute.getName();
-                      throw new IllegalArgumentException(_name_1);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    return containedBySources;
-  }
-  
-  private String registerAttributeAliases(final Attribute attribute, final String attributename, final String realSourcename, final String sourcenamealias, final boolean isSubQuery) {
-    InputOutput.<String>println(
-      ((((((("registerAttributeAliases() -> attribute= " + attributename) + ", realSourcename= ") + realSourcename) + 
-        ", sourcenameAlias= ") + sourcenamealias) + ", isFormSubQuery= ") + Boolean.valueOf(isSubQuery)));
-    String _xifexpression = null;
-    Alias _alias = attribute.getAlias();
-    boolean _tripleNotEquals = (_alias != null);
-    if (_tripleNotEquals) {
-      _xifexpression = attribute.getName();
-    } else {
-      _xifexpression = attributename;
-    }
-    String simpleAttributename = _xifexpression;
-    boolean _contains = simpleAttributename.contains(".");
-    if (_contains) {
-      simpleAttributename = simpleAttributename.split("\\.")[1];
-    }
-    String alias = sourcenamealias;
-    for (final AttributeStruct attr1 : this.getSource(realSourcename).attributes) {
-      boolean _equals = attr1.attributename.equals(simpleAttributename);
-      if (_equals) {
-        if ((alias == null)) {
-          alias = realSourcename;
-        }
-        Alias _alias_1 = attribute.getAlias();
-        boolean _tripleNotEquals_1 = (_alias_1 != null);
-        if (_tripleNotEquals_1) {
-          boolean _contains_1 = this.registry_AttributeAliases.entrySet().contains(attribute.getAlias().getName());
-          if (_contains_1) {
-            String _name = attribute.getAlias().getName();
-            String _plus = ("given alias " + _name);
-            String _plus_1 = (_plus + " is ambiguous");
-            throw new IllegalArgumentException(_plus_1);
-          }
-          boolean _contains_2 = attr1.aliases.contains(attribute.getAlias().getName());
-          boolean _not = (!_contains_2);
-          if (_not) {
-            attr1.aliases.add(attribute.getAlias().getName());
-            this.registry_AttributeAliases.put(attribute.getAlias().getName(), alias);
-          }
-          return attribute.getAlias().getName();
-        } else {
-          if (((attribute.getAlias() == null) && this.getSourceAliasesAsList().contains(alias))) {
-            boolean _contains_3 = attr1.aliases.contains(attributename);
-            boolean _not_1 = (!_contains_3);
-            if (_not_1) {
-              attr1.aliases.add(attributename);
-              this.registry_AttributeAliases.put(attributename, alias);
-            }
-            return attributename;
-          }
-        }
-      }
-    }
-    return null;
-  }
-  
   private boolean isSame(final String attribute1, final String attribute2) {
     String name1 = attribute1;
     String name2 = attribute2;
@@ -1887,19 +1596,19 @@ public class CQLGenerator implements IGenerator2 {
       name2 = split_1[1];
       source2 = split_1[0];
     }
-    boolean _contains_2 = this.getAttributeAliasesAsList().contains(name1);
+    boolean _contains_2 = CQLGeneratorUtil.getAttributeAliasesAsList().contains(name1);
     if (_contains_2) {
       name1 = this.getAttributeFromAlias(name1).attributename;
     }
-    boolean _contains_3 = this.getAttributeAliasesAsList().contains(name2);
+    boolean _contains_3 = CQLGeneratorUtil.getAttributeAliasesAsList().contains(name2);
     if (_contains_3) {
       name2 = this.getAttributeFromAlias(name2).attributename;
     }
-    boolean _contains_4 = this.getSourceAliasesAsList().contains(source1);
+    boolean _contains_4 = CQLGeneratorUtil.getSourceAliasesAsList().contains(source1);
     if (_contains_4) {
       source1 = this.getSourcenameFromAlias(source1);
     }
-    boolean _contains_5 = this.getSourceAliasesAsList().contains(source2);
+    boolean _contains_5 = CQLGeneratorUtil.getSourceAliasesAsList().contains(source2);
     if (_contains_5) {
       source2 = this.getSourcenameFromAlias(source2);
     }
@@ -1927,311 +1636,6 @@ public class CQLGenerator implements IGenerator2 {
     return false;
   }
   
-  /**
-   * Returns all attributes with its corresponding sources from a select statement.
-   */
-  private Map<String, List<String>> getSelectedAttributes(final SimpleSelect select, final Map<String, List<String>> var2) {
-    Map<String, List<String>> map = var2;
-    ArrayList<Attribute> attributes = CollectionLiterals.<Attribute>newArrayList();
-    String[] attributeOrder = new String[select.getArguments().size()];
-    String[] sourceOrder = new String[select.getArguments().size()];
-    EList<SelectArgument> _arguments = select.getArguments();
-    for (final SelectArgument argument : _arguments) {
-      Attribute _attribute = argument.getAttribute();
-      boolean _tripleNotEquals = (_attribute != null);
-      if (_tripleNotEquals) {
-        attributes.add(argument.getAttribute());
-      } else {
-        SelectExpression _expression = argument.getExpression();
-        boolean _tripleNotEquals_1 = (_expression != null);
-        if (_tripleNotEquals_1) {
-          List<Attribute> expressionAttributes = EcoreUtil2.<Attribute>getAllContentsOfType(argument.getExpression(), Attribute.class);
-          for (final Attribute attribute : expressionAttributes) {
-            final java.util.function.Function<Attribute, String> _function = (Attribute e) -> {
-              return e.getName();
-            };
-            boolean _contains = attributes.stream().<String>map(_function).collect(Collectors.<String>toList()).contains(attribute.getName());
-            boolean _not = (!_contains);
-            if (_not) {
-              attributes.add(attribute);
-            }
-          }
-        }
-      }
-    }
-    if ((attributes.isEmpty() && EcoreUtil2.<SelectExpression>getAllContentsOfType(select, SelectExpression.class).isEmpty())) {
-      List<String> attributeOrderList = CollectionLiterals.<String>newArrayList();
-      List<String> sourceOrderList = CollectionLiterals.<String>newArrayList();
-      EList<Source> _sources = select.getSources();
-      for (final Source source : _sources) {
-        if ((source instanceof SimpleSource)) {
-          List<String> _attributeNamesFrom = this.getAttributeNamesFrom(((SimpleSource)source).getName());
-          for (final String attribute_1 : _attributeNamesFrom) {
-            {
-              Alias _alias = ((SimpleSource)source).getAlias();
-              boolean _tripleNotEquals_2 = (_alias != null);
-              if (_tripleNotEquals_2) {
-                String _name = ((SimpleSource)source).getAlias().getName();
-                String _plus = (_name + ".");
-                String attributealias = (_plus + attribute_1);
-                this.getSource(((SimpleSource)source).getName()).findbyName(attribute_1).aliases.add(attributealias);
-                this.registry_AttributeAliases.put(attributealias, ((SimpleSource)source).getAlias().getName());
-                attributeOrderList.add(attributealias);
-                map = this.addToMap(map, attributealias, ((SimpleSource)source).getName());
-              } else {
-                String _name_1 = ((SimpleSource)source).getName();
-                String _plus_1 = (_name_1 + ".");
-                String _plus_2 = (_plus_1 + attribute_1);
-                attributeOrderList.add(_plus_2);
-              }
-              map = this.addToMap(map, attribute_1, ((SimpleSource)source).getName());
-              sourceOrderList.add(((SimpleSource)source).getName());
-            }
-          }
-        }
-      }
-      final List<String> _converted_attributeOrderList = (List<String>)attributeOrderList;
-      attributeOrder = ((String[])Conversions.unwrapArray(_converted_attributeOrderList, String.class));
-      final List<String> _converted_sourceOrderList = (List<String>)sourceOrderList;
-      sourceOrder = ((String[])Conversions.unwrapArray(_converted_sourceOrderList, String.class));
-      final String[] _converted_attributeOrder = (String[])attributeOrder;
-      this.projectionAttributes.put(select, ((List<String>)Conversions.doWrapArray(_converted_attributeOrder)));
-      final String[] _converted_sourceOrder = (String[])sourceOrder;
-      this.projectionSources.put(select, ((List<String>)Conversions.doWrapArray(_converted_sourceOrder)));
-      String _string = map.toString();
-      String _plus = ("getAttibutename() -> map = " + _string);
-      InputOutput.<String>println(_plus);
-      return map;
-    }
-    ExpressionsModel _predicates = select.getPredicates();
-    boolean _tripleNotEquals_2 = (_predicates != null);
-    if (_tripleNotEquals_2) {
-      List<Attribute> list = EcoreUtil2.<Attribute>getAllContentsOfType(select.getPredicates(), Attribute.class);
-      for (final Attribute attribute_2 : list) {
-        boolean _contains_1 = attribute_2.getName().contains(".");
-        if (_contains_1) {
-          String[] split = attribute_2.getName().split("\\.");
-          String sourcename = split[0];
-          String attributename = split[1];
-          if ((this.isSourceAlias(sourcename) && (!this.isAttributeAlias(attributename)))) {
-            this.registerAttributeAliases(attribute_2, attribute_2.getName(), this.getSourcenameFromAlias(sourcename), sourcename, false);
-          }
-        }
-      }
-    }
-    int i = 0;
-    for (final Attribute attribute_3 : attributes) {
-      {
-        List<SourceStruct> sourceCandidates = this.getSourceCandidates(attribute_3, select.getSources());
-        Object[] result = this.parseAttribute(attribute_3);
-        Object _get = result[0];
-        String attributename_1 = ((String) _get);
-        Object _get_1 = result[1];
-        String sourcename_1 = ((String) _get_1);
-        Object _get_2 = result[2];
-        String sourcealias = ((String) _get_2);
-        String attributealias = null;
-        Object _get_3 = result[3];
-        List<String> list_1 = ((List<String>) _get_3);
-        Object _get_4 = result[4];
-        Boolean isFromSubQuery = ((Boolean) _get_4);
-        Alias _alias = attribute_3.getAlias();
-        boolean _tripleNotEquals_3 = (_alias != null);
-        if (_tripleNotEquals_3) {
-          attributename_1 = attribute_3.getAlias().getName();
-        }
-        int _size = sourceCandidates.size();
-        boolean _greaterThan = (_size > 0);
-        if (_greaterThan) {
-          if (((sourceCandidates.size() > 1) && (sourcename_1 == null))) {
-            String _string_1 = sourceCandidates.toString();
-            String _plus_1 = ((("attribute " + attributename_1) + " is ambiguous: possible sources are ") + _string_1);
-            throw new IllegalArgumentException(_plus_1);
-          }
-          int _size_1 = sourceCandidates.size();
-          boolean _equals = (_size_1 == 1);
-          if (_equals) {
-            sourcename_1 = sourceCandidates.get(0).sourcename;
-            if ((list_1 != null)) {
-              for (final String name : list_1) {
-                map = this.addToMap(map, name, sourcename_1);
-              }
-            }
-          }
-          map = this.addToMap(map, attributename_1, sourcename_1);
-          if ((isFromSubQuery).booleanValue()) {
-            this.registerSourceAlias(sourcename_1, sourcealias);
-          }
-          attributealias = this.registerAttributeAliases(attribute_3, attributename_1, sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
-        } else {
-          if ((list_1 != null)) {
-            for (final String name_1 : list_1) {
-              {
-                map = this.addToMap(map, name_1, sourcename_1);
-                this.registerAttributeAliases(attribute_3, ((sourcealias + ".") + name_1), sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
-              }
-            }
-          }
-        }
-        attributeOrder = this.computeProjectionAttributes(attributeOrder, select, attribute_3, attributename_1, attributealias, sourcename_1);
-        sourceOrder[i] = sourcename_1;
-        i++;
-      }
-    }
-    attributeOrder = this.computeProjectionAttributes(attributeOrder, select, null, null, null, null);
-    final String[] _converted_attributeOrder_1 = (String[])attributeOrder;
-    this.projectionAttributes.put(select, ((List<String>)Conversions.doWrapArray(_converted_attributeOrder_1)));
-    final String[] _converted_sourceOrder_1 = (String[])sourceOrder;
-    this.projectionSources.put(select, ((List<String>)Conversions.doWrapArray(_converted_sourceOrder_1)));
-    String _string_1 = map.toString();
-    String _plus_1 = ("getSelectedAttributes() -> map= " + _string_1);
-    String _plus_2 = (_plus_1 + ", order= ");
-    final String[] _converted_attributeOrder_2 = (String[])attributeOrder;
-    String _string_2 = ((List<String>)Conversions.doWrapArray(_converted_attributeOrder_2)).toString();
-    String _plus_3 = (_plus_2 + _string_2);
-    InputOutput.<String>println(_plus_3);
-    return map;
-  }
-  
-  private String[] computeProjectionAttributes(final String[] list, final SimpleSelect select, final Attribute attribute, final String attributename, final String attributealias, final String sourcename) {
-    this.expressionCounter = 0;
-    this.aggregationCounter = 0;
-    int i = 0;
-    String[] attributeOrder = list;
-    Object candidate = null;
-    if ((attribute != null)) {
-      EList<SelectArgument> _arguments = select.getArguments();
-      for (final SelectArgument argument : _arguments) {
-        {
-          if (((candidate = argument.getAttribute()) != null)) {
-            boolean _equals = ((Attribute) candidate).getName().equals(attribute.getName());
-            if (_equals) {
-              Alias _alias = ((Attribute) candidate).getAlias();
-              boolean _tripleNotEquals = (_alias != null);
-              if (_tripleNotEquals) {
-                attributeOrder[i] = ((Attribute) candidate).getAlias().getName();
-              } else {
-                if ((attributealias != null)) {
-                  attributeOrder[i] = attributealias;
-                } else {
-                  boolean _contains = attributename.contains(".");
-                  if (_contains) {
-                    String[] split = attributename.split("\\.");
-                    String name = split[1];
-                    String source = split[0];
-                    String salias = source;
-                    boolean _isSourceAlias = this.isSourceAlias(source);
-                    if (_isSourceAlias) {
-                      source = this.getSourcenameFromAlias(salias);
-                    }
-                    boolean _equals_1 = name.equals("*");
-                    if (_equals_1) {
-                      final String[] _converted_attributeOrder = (String[])attributeOrder;
-                      int _size = ((List<String>)Conversions.doWrapArray(_converted_attributeOrder)).size();
-                      ArrayList<String> attributeOrderList = new ArrayList<String>(_size);
-                      List<String> _attributeNamesFrom = this.getAttributeNamesFrom(source);
-                      for (final String str : _attributeNamesFrom) {
-                        {
-                          attributeOrderList.add(((salias + ".") + str));
-                          i++;
-                        }
-                      }
-                      final ArrayList<String> _converted_attributeOrderList = (ArrayList<String>)attributeOrderList;
-                      attributeOrder = ((String[])Conversions.unwrapArray(_converted_attributeOrderList, String.class));
-                    } else {
-                      attributeOrder[i] = attributename;
-                    }
-                  } else {
-                    attributeOrder[i] = ((sourcename + ".") + attributename);
-                  }
-                }
-              }
-            }
-          }
-          if (((candidate = argument.getExpression()) != null)) {
-            Alias _alias_1 = ((SelectExpression) candidate).getAlias();
-            boolean _tripleNotEquals_1 = (_alias_1 != null);
-            if (_tripleNotEquals_1) {
-              attributeOrder[i] = ((SelectExpression) candidate).getAlias().getName();
-            } else {
-              int _size_1 = ((SelectExpression) candidate).getExpressions().size();
-              boolean _equals_2 = (_size_1 == 1);
-              if (_equals_2) {
-                EObject function = ((SelectExpression) candidate).getExpressions().get(0).getValue();
-                if ((function instanceof Function)) {
-                  boolean _isAggregateFunction = this.isAggregateFunction(((Function)function).getName());
-                  if (_isAggregateFunction) {
-                    attributeOrder[i] = this.getAggregationName(((Function)function).getName());
-                  } else {
-                    attributeOrder[i] = this.getExpressionName();
-                  }
-                }
-              } else {
-                attributeOrder[i] = this.getExpressionName();
-              }
-            }
-          }
-          i++;
-        }
-      }
-    } else {
-      EList<SelectArgument> _arguments_1 = select.getArguments();
-      for (final SelectArgument argument_1 : _arguments_1) {
-        {
-          if (((candidate = argument_1.getExpression()) != null)) {
-            Alias _alias = ((SelectExpression) candidate).getAlias();
-            boolean _tripleNotEquals = (_alias != null);
-            if (_tripleNotEquals) {
-              attributeOrder[i] = ((SelectExpression) candidate).getAlias().getName();
-            } else {
-              int _size = ((SelectExpression) candidate).getExpressions().size();
-              boolean _equals = (_size == 1);
-              if (_equals) {
-                EObject function = ((SelectExpression) candidate).getExpressions().get(0).getValue();
-                if ((function instanceof Function)) {
-                  boolean _isAggregateFunction = this.isAggregateFunction(((Function)function).getName());
-                  if (_isAggregateFunction) {
-                    attributeOrder[i] = this.getAggregationName(((Function)function).getName());
-                  } else {
-                    attributeOrder[i] = this.getExpressionName();
-                  }
-                }
-              } else {
-                attributeOrder[i] = this.getExpressionName();
-              }
-            }
-          }
-          i++;
-        }
-      }
-    }
-    this.expressionCounter = 0;
-    this.aggregationCounter = 0;
-    return attributeOrder;
-  }
-  
-  private SourceStruct getSource(final String name) {
-    for (final SourceStruct source : this.registry_Sources) {
-      boolean _equals = source.sourcename.equals(name);
-      if (_equals) {
-        return source;
-      } else {
-        boolean _contains = source.aliases.contains(name);
-        if (_contains) {
-          return source;
-        }
-      }
-    }
-    throw new IllegalArgumentException((("given source " + name) + " is not registered"));
-  }
-  
-  private SourceStruct getSource(final Source source) {
-    if ((source instanceof SimpleSource)) {
-      return this.getSource(((SimpleSource)source).getName());
-    }
-    return null;
-  }
-  
   public boolean isSelectAll(final SimpleSelect select) {
     EList<SelectArgument> _arguments = select.getArguments();
     for (final SelectArgument a : _arguments) {
@@ -2256,7 +1660,7 @@ public class CQLGenerator implements IGenerator2 {
           ExpressionComponent aggregation = a.getExpression().getExpressions().get(0);
           EObject function = aggregation.getValue();
           if ((function instanceof Function)) {
-            boolean _isAggregateFunction = this.isAggregateFunction(((Function)function).getName());
+            boolean _isAggregateFunction = CQLGeneratorUtil.isAggregateFunction(((Function)function).getName());
             if (_isAggregateFunction) {
               list.add(a.getExpression());
             }
@@ -2280,7 +1684,7 @@ public class CQLGenerator implements IGenerator2 {
           EObject function = aggregation.getValue();
           if ((function instanceof Function)) {
             SelectExpression _expression_1 = a.getExpression();
-            boolean _isMEPFunction = this.isMEPFunction(((Function)function).getName(), 
+            boolean _isMEPFunction = CQLGeneratorUtil.isMEPFunction(((Function)function).getName(), 
               this.parseSelectExpression(((SelectExpression) _expression_1)).toString());
             if (_isMEPFunction) {
               list.add(a.getExpression());
@@ -2328,17 +1732,12 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   private String generateKeyValueString(final List<String> l1, final List<String> l2, final String s) {
-    String _string = l1.toString();
-    String _plus = ("generateKeyValueString()= " + _string);
-    InputOutput.<String>println(_plus);
-    InputOutput.<String>println(l2.toString());
-    InputOutput.<String>println(s);
     String str = "";
     for (int i = 0; (i < (l1.size() - 1)); i++) {
       String _str = str;
       String _generateKeyValueString = this.generateKeyValueString(l1.get(i), l2.get(i), s);
-      String _plus_1 = (_generateKeyValueString + ",");
-      str = (_str + _plus_1);
+      String _plus = (_generateKeyValueString + ",");
+      str = (_str + _plus);
     }
     String _str = str;
     int _size = l1.size();
@@ -2397,28 +1796,13 @@ public class CQLGenerator implements IGenerator2 {
     Alias _alias = src.getAlias();
     boolean _tripleNotEquals = (_alias != null);
     if (_tripleNotEquals) {
-      _xifexpression = this.getSource(src).aliases.add(src.getAlias().getName());
+      _xifexpression = CQLGeneratorUtil.getSource(src).aliases.add(src.getAlias().getName());
     }
     return _xifexpression;
   }
   
-  private boolean registerSourceAlias(final String sourcename, final String sourcealias) {
-    boolean _xblockexpression = false;
-    {
-      SourceStruct source = this.getSource(sourcename);
-      boolean _xifexpression = false;
-      boolean _contains = source.aliases.contains(sourcealias);
-      boolean _not = (!_contains);
-      if (_not) {
-        _xifexpression = source.aliases.add(sourcealias);
-      }
-      _xblockexpression = _xifexpression;
-    }
-    return _xblockexpression;
-  }
-  
   public void setSchema(final List<SourceStruct> schemata) {
-    this.registry_Sources = schemata;
+    CQLGeneratorUtil.setRegisteredSources(schemata);
   }
   
   private CharSequence formatOutputString(final String sequence) {
@@ -2435,76 +1819,26 @@ public class CQLGenerator implements IGenerator2 {
       ((" " + this.ASSIG1) + " ")).replace(replacement1, ((" " + this.ASSIG2) + " "));
   }
   
-  public boolean isAttributeAlias(final String attributename) {
-    return this.getAttributeAliasesAsList().contains(attributename);
-  }
-  
-  public boolean isSourceAlias(final String sourcename) {
-    return this.getSourceAliasesAsList().contains(sourcename);
-  }
-  
-  public List<AttributeStruct> getAttributes() {
-    ArrayList<AttributeStruct> list = CollectionLiterals.<AttributeStruct>newArrayList();
-    for (final SourceStruct source : this.registry_Sources) {
-      list.addAll(source.attributes);
-    }
-    return list;
-  }
-  
-  public Map<AttributeStruct, List<String>> getAttributeAliases() {
-    HashMap<AttributeStruct, List<String>> map = CollectionLiterals.<AttributeStruct, List<String>>newHashMap();
-    for (final SourceStruct source : this.registry_Sources) {
-      for (final AttributeStruct attribute : source.attributes) {
-        boolean _isEmpty = attribute.aliases.isEmpty();
-        boolean _not = (!_isEmpty);
-        if (_not) {
-          map.put(attribute, attribute.aliases);
-        }
-      }
-    }
-    return map;
-  }
-  
-  public List<String> getAttributeAliasesAsList() {
-    ArrayList<String> list = CollectionLiterals.<String>newArrayList();
-    Collection<List<String>> _values = this.getAttributeAliases().values();
-    for (final List<String> l : _values) {
-      for (final String alias : l) {
-        list.add(alias);
-      }
-    }
-    return list;
-  }
-  
-  public Map<SourceStruct, List<String>> getSourceAliases() {
-    HashMap<SourceStruct, List<String>> map = CollectionLiterals.<SourceStruct, List<String>>newHashMap();
-    for (final SourceStruct source : this.registry_Sources) {
-      map.put(source, source.aliases);
-    }
-    return map;
-  }
-  
   public String getDataTypeFrom(final Attribute attribute) {
     return this.getDataTypeFrom(attribute.getName());
   }
   
   public String getDataTypeFrom(final String attribute) {
     String attributename = attribute;
-    InputOutput.<String>println(((("getDataTypeFrom() -> attribute= " + attribute) + ", attributename= ") + attributename));
     String sourcename = "";
     boolean _contains = attribute.contains(".");
     if (_contains) {
       String[] splitted = attribute.split("\\.");
-      boolean _isAttributeAlias = this.isAttributeAlias(attribute);
+      boolean _isAttributeAlias = CQLGeneratorUtil.isAttributeAlias(attributename);
       if (_isAttributeAlias) {
-        String sourceFromAlias = this.registry_AttributeAliases.get(attribute);
-        boolean _isSourceAlias = this.isSourceAlias(sourceFromAlias);
+        String sourceFromAlias = CQLGeneratorUtil.getAttributeAliases().get(attribute);
+        boolean _isSourceAlias = CQLGeneratorUtil.isSourceAlias(sourceFromAlias);
         if (_isSourceAlias) {
           sourceFromAlias = this.getSourcenameFromAlias(sourceFromAlias);
         }
         attributename = this.getAttributenameFromAlias(attributename);
         sourcename = sourceFromAlias;
-        for (final AttributeStruct attr : this.getSource(sourcename).attributes) {
+        for (final AttributeStruct attr : CQLGeneratorUtil.getSource(sourcename).attributes) {
           boolean _equals = attr.attributename.equals(attributename);
           if (_equals) {
             return attr.datatype;
@@ -2513,26 +1847,25 @@ public class CQLGenerator implements IGenerator2 {
       }
       sourcename = splitted[0];
       attributename = splitted[1];
-      boolean _isAttributeAlias_1 = this.isAttributeAlias(attributename);
+      boolean _isAttributeAlias_1 = CQLGeneratorUtil.isAttributeAlias(attributename);
       if (_isAttributeAlias_1) {
         attributename = this.getAttributenameFromAlias(attributename);
       }
-      boolean _isSourceAlias_1 = this.isSourceAlias(sourcename);
+      boolean _isSourceAlias_1 = CQLGeneratorUtil.isSourceAlias(sourcename);
       if (_isSourceAlias_1) {
         sourcename = this.getSourcenameFromAlias(sourcename);
       }
-      for (final AttributeStruct attr_1 : this.getSource(sourcename).attributes) {
+      for (final AttributeStruct attr_1 : CQLGeneratorUtil.getSource(sourcename).attributes) {
         boolean _equals_1 = attr_1.attributename.equals(attributename);
         if (_equals_1) {
           return attr_1.datatype;
         }
       }
     } else {
-      boolean _isAttributeAlias_2 = this.isAttributeAlias(attribute);
+      boolean _isAttributeAlias_2 = CQLGeneratorUtil.isAttributeAlias(attributename);
       if (_isAttributeAlias_2) {
-        String sourceFromAlias_1 = this.registry_AttributeAliases.get(attribute);
-        InputOutput.<String>println(("sourcealas= " + sourceFromAlias_1));
-        boolean _isSourceAlias_2 = this.isSourceAlias(sourceFromAlias_1);
+        String sourceFromAlias_1 = CQLGeneratorUtil.getAttributeAliases().get(attribute);
+        boolean _isSourceAlias_2 = CQLGeneratorUtil.isSourceAlias(sourceFromAlias_1);
         if (_isSourceAlias_2) {
           sourceFromAlias_1 = this.getSourcenameFromAlias(sourceFromAlias_1);
         }
@@ -2540,11 +1873,7 @@ public class CQLGenerator implements IGenerator2 {
         if ((attributename == null)) {
           attributename = attribute;
         }
-        InputOutput.<String>println(("attributename= " + attributename));
-        String _string = this.registry_AttributeAliases.toString();
-        String _plus = ("alisases -> " + _string);
-        InputOutput.<String>println(_plus);
-        for (final AttributeStruct attr_2 : this.getSource(sourceFromAlias_1).attributes) {
+        for (final AttributeStruct attr_2 : CQLGeneratorUtil.getSource(sourceFromAlias_1).attributes) {
           boolean _equals_2 = attr_2.attributename.equals(attributename);
           if (_equals_2) {
             return attr_2.datatype;
@@ -2556,7 +1885,7 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   public String getSourcenameFromAlias(final String sourcealias) {
-    Set<Map.Entry<SourceStruct, List<String>>> _entrySet = this.getSourceAliases().entrySet();
+    Set<Map.Entry<SourceStruct, List<String>>> _entrySet = CQLGeneratorUtil.getSourceAliases().entrySet();
     for (final Map.Entry<SourceStruct, List<String>> source : _entrySet) {
       boolean _contains = source.getValue().contains(sourcealias);
       if (_contains) {
@@ -2567,8 +1896,7 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   public AttributeStruct getAttributeFromAlias(final String alias) {
-    InputOutput.<String>println(this.getAttributeAliases().toString());
-    Set<Map.Entry<AttributeStruct, List<String>>> _entrySet = this.getAttributeAliases().entrySet();
+    Set<Map.Entry<AttributeStruct, List<String>>> _entrySet = CQLGeneratorUtil.getAttributeAliasesAsMap().entrySet();
     for (final Map.Entry<AttributeStruct, List<String>> entry : _entrySet) {
       boolean _contains = entry.getValue().contains(alias);
       if (_contains) {
@@ -2583,22 +1911,21 @@ public class CQLGenerator implements IGenerator2 {
     if ((attribute != null)) {
       return attribute.attributename;
     }
-    if ((this.registry_AggregationAttributes.contains(alias) || 
-      this.registry_Expressions.keySet().contains(alias))) {
+    if ((CQLGeneratorUtil.getRegisteredAggregationAttributes().contains(alias) || 
+      CQLGeneratorUtil.getRegisteredExpressions().keySet().contains(alias))) {
       return alias;
     }
     return null;
   }
   
   public String getAttributename(final String attributename, final String sourcename) {
-    InputOutput.<String>println(((("getAttributename() -> attributename=" + attributename) + ", sourcename= ") + sourcename));
     String attribute = null;
     String source = null;
     if (((sourcename != null) && (!sourcename.equals("")))) {
       SourceStruct tmp = null;
       attribute = attributename;
       String _xifexpression = null;
-      if (((tmp = this.getSource(sourcename)) != null)) {
+      if (((tmp = CQLGeneratorUtil.getSource(sourcename)) != null)) {
         _xifexpression = tmp.sourcename;
       } else {
         _xifexpression = null;
@@ -2613,14 +1940,14 @@ public class CQLGenerator implements IGenerator2 {
       }
     }
     if ((source != null)) {
-      boolean isAlias = this.isAttributeAlias(attribute);
-      boolean _isSourceAlias = this.isSourceAlias(source);
+      boolean isAlias = CQLGeneratorUtil.isAttributeAlias(attribute);
+      boolean _isSourceAlias = CQLGeneratorUtil.isSourceAlias(source);
       if (_isSourceAlias) {
         if (isAlias) {
           return attribute;
         } else {
           String r = ((source + ".") + attribute);
-          boolean _contains_1 = this.getAttributeAliasesAsList().contains(r);
+          boolean _contains_1 = CQLGeneratorUtil.getAttributeAliasesAsList().contains(r);
           if (_contains_1) {
             return r;
           } else {
@@ -2644,15 +1971,15 @@ public class CQLGenerator implements IGenerator2 {
       }
     } else {
       attribute = attributename;
-      boolean _contains_2 = this.registry_AggregationAttributes.contains(attribute);
+      boolean _contains_2 = CQLGeneratorUtil.getRegisteredAggregationAttributes().contains(attribute);
       if (_contains_2) {
         return attribute;
       }
-      boolean _contains_3 = this.registry_Expressions.keySet().contains(attribute);
+      boolean _contains_3 = CQLGeneratorUtil.getRegisteredExpressions().keySet().contains(attribute);
       if (_contains_3) {
-        return this.registry_Expressions.get(attribute);
+        return CQLGeneratorUtil.getRegisteredExpressions().get(attribute);
       }
-      boolean _isAttributeAlias = this.isAttributeAlias(attribute);
+      boolean _isAttributeAlias = CQLGeneratorUtil.isAttributeAlias(attribute);
       if (_isAttributeAlias) {
         return attribute;
       }
@@ -2663,7 +1990,7 @@ public class CQLGenerator implements IGenerator2 {
         boolean _not_1 = (!_contains_4);
         if (_not_1) {
           usedNames.add(name);
-          SourceStruct source2 = this.getSource(name);
+          SourceStruct source2 = CQLGeneratorUtil.getSource(name);
           for (final AttributeStruct attr : source2.attributes) {
             boolean _equals = attr.attributename.equals(attribute);
             if (_equals) {
@@ -2681,7 +2008,7 @@ public class CQLGenerator implements IGenerator2 {
         if (_not_2) {
           return aliases.get(0);
         }
-        SourceStruct sourceStruct = this.getSource(containedBySources.get(0).sourcename);
+        SourceStruct sourceStruct = CQLGeneratorUtil.getSource(containedBySources.get(0).sourcename);
         boolean _isEmpty_2 = sourceStruct.aliases.isEmpty();
         boolean _not_3 = (!_isEmpty_2);
         if (_not_3) {
@@ -2708,68 +2035,19 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   public List<String> getAliasFromAttributename(final String name, final String source) {
-    return this.getSource(source).findbyName(name).aliases;
+    return CQLGeneratorUtil.getSource(source).findbyName(name).aliases;
   }
-  
-  /**
-   * Returns all {@link Attribute} elements from the corresponding source.
-   */
-  public List<String> getAttributeNamesFrom(final String srcname) {
-    for (final SourceStruct source : this.registry_Sources) {
-      if ((source.sourcename.equals(srcname) || source.aliases.contains(srcname))) {
-        final java.util.function.Function<AttributeStruct, String> _function = (AttributeStruct e) -> {
-          return e.attributename;
-        };
-        return source.attributes.stream().<String>map(_function).collect(Collectors.<String>toList());
-      }
-    }
-    return null;
-  }
-  
-  private FunctionStore functionStore;
-  
-  private Pattern aggregatePattern;
-  
-  private MEP mep;
   
   public FunctionStore setFunctionStore(final FunctionStore store) {
-    return this.functionStore = store;
+    return CQLGeneratorUtil.setFunctionStore(store);
   }
   
   public Pattern setAggregatePattern(final Pattern pattern) {
-    return this.aggregatePattern = pattern;
+    return CQLGeneratorUtil.setAggregatePattern(pattern);
   }
   
   public MEP setMEP(final MEP mep) {
-    return this.mep = mep;
-  }
-  
-  public boolean isMEPFunction(final String name, final String function) {
-    boolean _containsSymbol = this.functionStore.containsSymbol(name);
-    if (_containsSymbol) {
-      try {
-        SDFDatatype datatype = this.mep.parse(function).getReturnType();
-        List<IFunction<?>> _functions = FunctionStore.getInstance().getFunctions(name);
-        for (final IFunction<?> f : _functions) {
-          boolean _equals = f.getReturnType().equals(datatype);
-          if (_equals) {
-            return true;
-          }
-        }
-      } catch (final Throwable _t) {
-        if (_t instanceof Exception) {
-          final Exception e = (Exception)_t;
-          return false;
-        } else {
-          throw Exceptions.sneakyThrow(_t);
-        }
-      }
-    }
-    return false;
-  }
-  
-  public boolean isAggregateFunction(final String name) {
-    return this.aggregatePattern.matcher(name).toString().contains(name);
+    return CQLGeneratorUtil.setMEP(mep);
   }
   
   public Map<String, String> setDatabaseConnections(final Map<String, String> connections) {

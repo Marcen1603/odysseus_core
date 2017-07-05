@@ -112,7 +112,7 @@ public class CQLParser implements IQueryParser {
 		generator.setAggregatePattern(getAggregateFunctionPattern());
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		resource = resourceSet.createResource(URI.createURI("dummy:/example.cql"));
+		resource = resourceSet.createResource(URI.createURI("platform:/resource/de.uniol.inf.is.odysseus.parser.novel.cql.server/example.cql", true));//"dummy:/example.cql"));
 		executorCommands = new ArrayList<>();
 		// Get all parser tokens
 		List<String> list = new ArrayList<>();
