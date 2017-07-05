@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.transform.rules;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -32,8 +33,13 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 
 	@Override
 	public boolean isExecutable(ReOrderAO operator, TransformationConfiguration config) {
-		if (operator.getInputSchema().isInOrder()) {
-			return true;
+		Collection<LogicalSubscription> sources = operator.getSubscribedToSource();
+		if (sources.size() == 1) {
+			LogicalSubscription sub = sources.iterator().next();
+			// use target and ask output schema for ordering! Ordering could change in the
+			// operator that is not reflected inside the subscription ... Maybe we should add a phase where we recalc 
+			// subscription schemata?
+			return sub.getTarget().getOutputSchema().isInOrder();
 		}
 		return false;
 	}
