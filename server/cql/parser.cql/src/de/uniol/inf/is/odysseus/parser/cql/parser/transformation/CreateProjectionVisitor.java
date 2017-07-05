@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -172,7 +172,7 @@ public class CreateProjectionVisitor extends AbstractDefaultVisitor {
 		} else {
 			mathematicalExpressionNeeded = true;
 			SDFDatatype datatype = SDFDatatype.LONG;
-			IConstant<? extends Number> constant = null;
+			IMepConstant<? extends Number> constant = null;
 			if (node.getValue().contains(".")) {
 				datatype = SDFDatatype.DOUBLE;
 				constant = MEP.createConstant(Double.parseDouble(node.getValue()), datatype);

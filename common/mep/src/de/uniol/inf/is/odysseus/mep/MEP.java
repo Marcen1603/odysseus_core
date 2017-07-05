@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableSet;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionParser;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -43,7 +43,7 @@ import de.uniol.inf.is.odysseus.mep.impl.ExpressionBuilderVisitor;
 import de.uniol.inf.is.odysseus.mep.impl.MEPImpl;
 import de.uniol.inf.is.odysseus.mep.impl.SimpleNode;
 
-public class MEP implements IExpressionParser {
+public class MEP implements IMepExpressionParser {
 
 	volatile protected static Logger _logger = null;
 
@@ -60,17 +60,17 @@ public class MEP implements IExpressionParser {
 		return instance;
 	}
 	
-	public static <T> IConstant<T> createConstant(T value, SDFDatatype type){
+	public static <T> IMepConstant<T> createConstant(T value, SDFDatatype type){
 		return new Constant<>(value, type);
 	}
 
 	@Override
-	public IExpression<?> parse(String expressionStr) throws ParseException {
+	public IMepExpression<?> parse(String expressionStr) throws ParseException {
 		return parse(expressionStr, (List<SDFSchema>) null);
 	}
 
 	@Override
-	public IExpression<?> parse(String expressionStr, List<SDFSchema> schema)
+	public IMepExpression<?> parse(String expressionStr, List<SDFSchema> schema)
 			throws ParseException {
 
 		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
@@ -81,13 +81,13 @@ public class MEP implements IExpressionParser {
 			throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
 		}
 		ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
-		IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(
+		IMepExpression<?> expression = (IMepExpression<?>) expressionNode.jjtAccept(
 				builder, null);
 		return ExpressionOptimizer.simplifyExpression(expression);
 	}
 
 	@Override
-	public IExpression<?> parse(String expressionStr, SDFSchema schema)
+	public IMepExpression<?> parse(String expressionStr, SDFSchema schema)
 			throws ParseException {
 
 		MEPImpl impl = new MEPImpl(new StringReader(expressionStr));
@@ -98,12 +98,12 @@ public class MEP implements IExpressionParser {
 			throw new de.uniol.inf.is.odysseus.core.mep.ParseException(e);
 		}
 		ExpressionBuilderVisitor builder = new ExpressionBuilderVisitor(schema);
-		IExpression<?> expression = (IExpression<?>) expressionNode.jjtAccept(
+		IMepExpression<?> expression = (IMepExpression<?>) expressionNode.jjtAccept(
 				builder, null);
 		return ExpressionOptimizer.simplifyExpression(expression);
 	}
 
-	private static Map<FunctionSignature, IFunction<?>> functions = new HashMap<FunctionSignature, IFunction<?>>();
+	private static Map<FunctionSignature, IMepFunction<?>> functions = new HashMap<FunctionSignature, IMepFunction<?>>();
 	private static FunctionStore functionStore = FunctionStore.getInstance();
 	// MG: Now done by Activator
 	//	static {
@@ -337,7 +337,7 @@ public class MEP implements IExpressionParser {
 	 * @param function
 	 *            The function instance
 	 */
-	public static void registerFunction(IFunction<?> function) {
+	public static void registerFunction(IMepFunction<?> function) {
 
 		try {
 			registerFunctionWithName(function, function.getSymbol());
@@ -351,7 +351,7 @@ public class MEP implements IExpressionParser {
 	}
 
 	private synchronized static void registerFunctionWithName(
-			IFunction<?> function, String symbol) {
+			IMepFunction<?> function, String symbol) {
 		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
 		int arity = function.getArity();
 		for (int i = 0; i < arity; i++) {
@@ -372,7 +372,7 @@ public class MEP implements IExpressionParser {
 	}
 
 	/**
-	 * @deprecated Use unregisterFunction with parameter {@link IFunction}
+	 * @deprecated Use unregisterFunction with parameter {@link IMepFunction}
 	 * @param symbol
 	 */
 	@Deprecated
@@ -386,7 +386,7 @@ public class MEP implements IExpressionParser {
 	 * @param function
 	 *            The function instance
 	 */
-	public static void unregisterFunction(IFunction<?> function) {
+	public static void unregisterFunction(IMepFunction<?> function) {
 		String symbol = function.getSymbol();
 		List<SDFDatatype[]> parameters = new ArrayList<SDFDatatype[]>();
 		int arity = function.getArity();
@@ -417,7 +417,7 @@ public class MEP implements IExpressionParser {
 	 * @return
 	 */
 	@Deprecated
-	public static IFunction<?> getFunction(String symbol) {
+	public static IMepFunction<?> getFunction(String symbol) {
 		try {
 			return functionStore.getFunctions(symbol).get(0).getClass()
 					.newInstance();
@@ -426,7 +426,7 @@ public class MEP implements IExpressionParser {
 		}
 	}
 
-	public static IFunction<?> getFunction(FunctionSignature signature) {
+	public static IMepFunction<?> getFunction(FunctionSignature signature) {
 		try {
 			return functionStore.getFunction(signature).getClass()
 					.newInstance();
@@ -435,7 +435,7 @@ public class MEP implements IExpressionParser {
 		}
 	}
 	
-	public static boolean isDepreacted(IFunction<?> function) {
+	public static boolean isDepreacted(IMepFunction<?> function) {
 		try {
 			boolean dep = functionStore.isDeprecated(function);
 			return dep;
@@ -445,10 +445,10 @@ public class MEP implements IExpressionParser {
 	}
 	
 
-	public static IFunction<?> getFunction(String symbol,
+	public static IMepFunction<?> getFunction(String symbol,
 			List<SDFDatatype> parameter) {
 		try {
-			IFunction<?> function = functionStore
+			IMepFunction<?> function = functionStore
 					.getFunction(symbol, parameter);
 			if (function != null) {
 				return function.getClass().newInstance();
@@ -463,10 +463,10 @@ public class MEP implements IExpressionParser {
 		}
 	}
 
-	public static List<IFunction<?>> getFunctions(String symbol) {
-		List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+	public static List<IMepFunction<?>> getFunctions(String symbol) {
+		List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		try {
-			for (IFunction<?> function : functionStore.getFunctions(symbol)) {
+			for (IMepFunction<?> function : functionStore.getFunctions(symbol)) {
 				functions.add(function.getClass().newInstance());
 			}
 			return functions;
@@ -476,7 +476,7 @@ public class MEP implements IExpressionParser {
 	}
 
 	public void addFunctionProvider(IFunctionProvider provider) {
-		for (IFunction<?> f : provider.getFunctions()) {
+		for (IMepFunction<?> f : provider.getFunctions()) {
 			MEP.registerFunction(f);
 		}
 	}
@@ -484,7 +484,7 @@ public class MEP implements IExpressionParser {
 	public void removeFunctionProvider(IFunctionProvider provider) {
 		// It's not allowed to have multiple implementations
 		// of the same function (see addFunctionProvider).
-		for (IFunction<?> f : provider.getFunctions()) {
+		for (IMepFunction<?> f : provider.getFunctions()) {
 			getLogger().debug("Remove Function Provider: " + f.getSymbol());
 			MEP.unregisterFunction(f);
 		}
@@ -509,10 +509,10 @@ public class MEP implements IExpressionParser {
 		while (entries.hasMoreElements()) {
 			URL curURL = entries.nextElement();
 			Class<?> classObject = loadClass(bundle, curURL);
-			if (IFunction.class.isAssignableFrom(classObject)
+			if (IMepFunction.class.isAssignableFrom(classObject)
 					&& !Modifier.isAbstract(classObject.getModifiers())) {
 				try {
-					MEP.registerFunction((IFunction<?>) classObject
+					MEP.registerFunction((IMepFunction<?>) classObject
 							.newInstance());
 				} catch (InstantiationException | IllegalAccessException e) {
 					e.printStackTrace();

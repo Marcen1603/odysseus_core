@@ -27,8 +27,8 @@ import java.util.Set;
 import java.util.Stack;
 
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NotPredicate;
@@ -257,7 +257,7 @@ public final class PredicateUtils {
      *            The expression
      * @return <code>true</code> iff the expression is of the given form
      */
-    public static boolean isEquiExpression(final IExpression<?> expression) {
+    public static boolean isEquiExpression(final IMepExpression<?> expression) {
         Objects.requireNonNull(expression);
         if (expression instanceof AndOperator) {
             return PredicateUtils.isEquiExpression(((AndOperator) expression).getArgument(0)) && PredicateUtils.isEquiExpression(((AndOperator) expression).getArgument(1));
@@ -265,9 +265,9 @@ public final class PredicateUtils {
         }
         if (expression instanceof EqualsOperator) {
             final EqualsOperator eq = (EqualsOperator) expression;
-            final IExpression<?> arg1 = eq.getArgument(0);
-            final IExpression<?> arg2 = eq.getArgument(1);
-            if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
+            final IMepExpression<?> arg1 = eq.getArgument(0);
+            final IMepExpression<?> arg2 = eq.getArgument(1);
+            if ((arg1 instanceof IMepVariable) && (arg2 instanceof IMepVariable)) {
                 return true;
             }
         }
@@ -283,7 +283,7 @@ public final class PredicateUtils {
      *            The attribute resolver
      * @return The map of attributes
      */
-    public static Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IExpression<?> expression, final IAttributeResolver resolver) {
+    public static Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IMepExpression<?> expression, final IAttributeResolver resolver) {
         Objects.requireNonNull(expression);
         Objects.requireNonNull(resolver);
         final Map<SDFAttribute, List<SDFAttribute>> attributes = new HashMap<SDFAttribute, List<SDFAttribute>>();
@@ -305,14 +305,14 @@ public final class PredicateUtils {
         }
         if (expression instanceof EqualsOperator) {
             final EqualsOperator eq = (EqualsOperator) expression;
-            final IExpression<?> arg1 = eq.getArgument(0);
-            final IExpression<?> arg2 = eq.getArgument(1);
-            if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
-                final SDFAttribute key = resolver.getAttribute(((IVariable) arg1).getIdentifier());
+            final IMepExpression<?> arg1 = eq.getArgument(0);
+            final IMepExpression<?> arg2 = eq.getArgument(1);
+            if ((arg1 instanceof IMepVariable) && (arg2 instanceof IMepVariable)) {
+                final SDFAttribute key = resolver.getAttribute(((IMepVariable) arg1).getIdentifier());
                 if (!attributes.containsKey(key)) {
                     attributes.put(key, new ArrayList<SDFAttribute>());
                 }
-                attributes.get(key).add(resolver.getAttribute(((IVariable) arg2).getIdentifier()));
+                attributes.get(key).add(resolver.getAttribute(((IMepVariable) arg2).getIdentifier()));
             }
         }
         return attributes;
@@ -332,7 +332,7 @@ public final class PredicateUtils {
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(predicate);
         Objects.requireNonNull(predicate.getMEPExpression());
-        final IExpression<?> expression = predicate.getMEPExpression();
+        final IMepExpression<?> expression = predicate.getMEPExpression();
         return PredicateUtils.isEquiExpression(expression);
     }
 

@@ -29,15 +29,15 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putPredicateBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder());
-		OperatorBuilderFactory.putPredicateBuilder(Tuple.class.getName(), new RelationalPredicateBuilder());
+		OperatorBuilderFactory.putExpressionBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder());
+		OperatorBuilderFactory.putExpressionBuilder(Tuple.class.getName(), new RelationalPredicateBuilder());
 	}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removePredicateBuilder(RELATIONAL_PREDICATE);
-		OperatorBuilderFactory.removePredicateBuilder(FOR_ALL_PREDICATE);
-		OperatorBuilderFactory.removePredicateBuilder(FOR_ANY_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(RELATIONAL_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(FOR_ALL_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(FOR_ANY_PREDICATE);
 	}
 
 }

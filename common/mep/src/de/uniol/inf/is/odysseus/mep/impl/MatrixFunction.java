@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mep.impl;
 
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -37,7 +37,7 @@ public class MatrixFunction extends AbstractFunction<double[][]> {
     	super("__matrix", 1,getAllTypes(1), SDFDatatype.MATRIX_DOUBLE);
     }
     
-    public MatrixFunction(IExpression<?>[] lines) {
+    public MatrixFunction(IMepExpression<?>[] lines) {
         super("__matrix", lines.length, getAccTypes(lines.length), SDFDatatype.MATRIX_DOUBLE);
         setArguments(lines);
     }

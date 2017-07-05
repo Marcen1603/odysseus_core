@@ -21,7 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.finance.mep.GetSampleSizeFunction;
 import de.uniol.inf.is.odysseus.finance.mep.ValueAtRiskFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
@@ -39,9 +39,9 @@ public class FinanceFunctionProvider implements IFunctionProvider {
 	}
 
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public List<IMepFunction<?>> getFunctions() {
 
-		final List<IFunction<?>> functions = new ArrayList<>();
+		final List<IMepFunction<?>> functions = new ArrayList<>();
 
 		functions.add(new ValueAtRiskFunction());
 		functions.add(new GetSampleSizeFunction());

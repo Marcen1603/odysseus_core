@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.imagejcv.functions.*;
 
@@ -29,8 +29,8 @@ public class ImageJCVFunctionProvider implements IFunctionProvider {
 	 * @return List<IFunction<?>> List of available functions.
 	 */
 	@Override
-	public List<IFunction<?>> getFunctions() {
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+	public List<IMepFunction<?>> getFunctions() {
+		final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		functions.add(new CountFacesFunction());
 		functions.add(new FillImageFunction());
 		functions.add(new GetAmountOfBlackFunction());

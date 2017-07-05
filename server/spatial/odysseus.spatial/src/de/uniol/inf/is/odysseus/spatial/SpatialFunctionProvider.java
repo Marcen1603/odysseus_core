@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.spatial;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.spatial.functions.AsCartesianCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.AsGeometry;
@@ -70,8 +70,8 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 	}
 
 	@Override
-	public List<IFunction<?>> getFunctions() {
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+	public List<IMepFunction<?>> getFunctions() {
+		final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 		functions.add(new SpatialContains());
 		functions.add(new SpatialCoveredBy());
 		functions.add(new SpatialCovers());

@@ -31,7 +31,7 @@ import cc.kuka.odysseus.polynomial.function.polynomial.EvalFunction;
 import cc.kuka.odysseus.polynomial.function.polynomial.IntegrateFunction;
 import cc.kuka.odysseus.polynomial.function.transform.ToPolynomialFunction;
 import cc.kuka.odysseus.polynomial.function.transform.ToStringFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -51,9 +51,9 @@ public class PolynomialFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         try {
             functions.add(new MinusOperator());
             functions.add(new PlusOperator());

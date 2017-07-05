@@ -18,7 +18,7 @@ package cc.kuka.odysseus.interval.function.transform;
 
 import cc.kuka.odysseus.interval.datatype.Interval;
 import cc.kuka.odysseus.interval.sdf.schema.SDFIntervalDatatype;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -52,7 +52,7 @@ public class ToIntervalFunction<T extends Number> extends AbstractFunction<Inter
     }
 
     @Override
-    public SDFDatatype determineType(final IExpression<?>[] args) {
+    public SDFDatatype determineType(final IMepExpression<?>[] args) {
         if (args[0].getReturnType().equals(SDFDatatype.DOUBLE)) {
             return SDFIntervalDatatype.INTERVAL_DOUBLE;
         }

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	private static Map<String, IOperatorBuilder> operatorBuilders = new HashMap<String, IOperatorBuilder>();
-	private static Map<String, IPredicateBuilder> predicateBuilders = new HashMap<String, IPredicateBuilder>();
+	private static Map<String, IExpressionBuilder<?,?>> expressionsBuilders = new HashMap<String, IExpressionBuilder<?,?>>();
 	private static Map<String, Object> udfs = new HashMap<String, Object>();
 
 	public static IOperatorBuilder createOperatorBuilder(String name,
@@ -57,7 +57,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	public static boolean containsOperatorBuilderType(String name) {
 		return operatorBuilders.containsKey(name.toUpperCase());
 	}
-	
+
 	public static IOperatorBuilder getOperatorBuilderType(String name) {
 		return operatorBuilders.get(name.toUpperCase());
 	}
@@ -66,39 +66,39 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 		return operatorBuilders.keySet();
 	}
 
-	public static void putPredicateBuilder(String identifier,
-			IPredicateBuilder builder) {
+	public static void putExpressionBuilder(String identifier,
+			IExpressionBuilder<?,?> builder) {
 		identifier = identifier.toUpperCase();
-		if (predicateBuilders.containsKey(identifier)) {
+		if (expressionsBuilders.containsKey(identifier)) {
 			throw new IllegalArgumentException(
-					"multiple definitions of predicate builder: " + identifier);
+					"multiple definitions of expression builder: " + identifier);
 		}
 
-		predicateBuilders.put(identifier, builder);
+		expressionsBuilders.put(identifier, builder);
 	}
 
-	public static void removePredicateBuilder(String identifier) {
+	public static void removeExpressionBuilder(String identifier) {
 		identifier = identifier.toUpperCase();
-		predicateBuilders.remove(identifier);
+		expressionsBuilders.remove(identifier);
 	}
 
-	public static IPredicateBuilder getPredicateBuilder(String predicateType) {
-		predicateType = predicateType.toUpperCase();
-		return predicateBuilders.get(predicateType);
+	public static IExpressionBuilder<?,?> getExpressionBuilder(String expressionType) {
+		expressionType = expressionType.toUpperCase();
+		return expressionsBuilders.get(expressionType);
 	}
 
 	/**
-	 * Liefert alle Namen der registrierten PredicateBuilder. Ist kein
-	 * PredicateBuilder registriert, so wird ein leeres Set zurückgegeben.
-	 * 
-	 * @return Menge an Namen der registrierten PredicateBuilder. Ist nie
-	 *         <code>null</code>. Wenn keine PredicateBuilder registriert sind,
+	 * Liefert alle Namen der registrierten ExpressionBuilder. Ist kein
+	 * ExpressionBuilder registriert, so wird ein leeres Set zurückgegeben.
+	 *
+	 * @return Menge an Namen der registrierten ExpressionBuilder. Ist nie
+	 *         <code>null</code>. Wenn keine ExpressionBuilder registriert sind,
 	 *         so wird eine leere Menge zurückgegeben.
-	 * 
+	 *
 	 * @author Timo Michelsen
 	 */
-	public static Set<String> getPredicateBuilderNames() {
-		return predicateBuilders.keySet();
+	public static Set<String> getExpressionBuilderNames() {
+		return expressionsBuilders.keySet();
 	}
 
 	public static void putUdf(
@@ -120,7 +120,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
     public static Collection<String> getUdfs() {
         return Collections.unmodifiableCollection(udfs.keySet());
     }
-	
+
 	public static void removeUdf(String nameToRemove) {
 		udfs.remove(nameToRemove);
 	}
@@ -136,7 +136,7 @@ public class OperatorBuilderFactory implements IOperatorBuilderFactory {
 	public static void removeOperatorBuilderByName(String name) {
 	    removeOperatorBuilderType(name);
 		/** FIXME what is remove here?*/
-	    removePredicateBuilder(name);
+	    removeExpressionBuilder(name);
 	}
 
 	@Override

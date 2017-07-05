@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -37,14 +37,14 @@ import de.uniol.inf.is.odysseus.mep.intern.Constant;
  * @param <E>
  *
  */
-public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> implements IExpressionOptimizerRule<E> {
+public abstract class AbstractExpressionOptimizerRule<E extends IMepExpression<?>> implements IExpressionOptimizerRule<E> {
     /**
      * 
      * {@inheritDoc}
      */
     @Override
     @SuppressWarnings("unchecked")
-    public IExpression<?> executeRule(IExpression<?> expression) {
+    public IMepExpression<?> executeRule(IMepExpression<?> expression) {
         if (isExecutable(expression)) {
             return execute((E) expression);
         }
@@ -59,12 +59,12 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
      * @return A conjunctive split of the expression
      */
     @SuppressWarnings("static-method")
-    protected Set<IExpression<?>> getConjunctiveSplit(IExpression<?> expression) {
-        Set<IExpression<?>> result = new HashSet<>();
-        Stack<IExpression<?>> expressionStack = new Stack<>();
+    protected Set<IMepExpression<?>> getConjunctiveSplit(IMepExpression<?> expression) {
+        Set<IMepExpression<?>> result = new HashSet<>();
+        Stack<IMepExpression<?>> expressionStack = new Stack<>();
         expressionStack.push(expression);
         while (!expressionStack.isEmpty()) {
-            IExpression<?> curExpression = expressionStack.pop();
+            IMepExpression<?> curExpression = expressionStack.pop();
             if (curExpression instanceof AndOperator) {
                 expressionStack.push(curExpression.toFunction().getArgument(0));
                 expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -84,12 +84,12 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
      * @return A disjunctive split of the expression
      */
     @SuppressWarnings("static-method")
-    protected Set<IExpression<?>> getDisjunctiveSplit(IExpression<?> expression) {
-        Set<IExpression<?>> result = new HashSet<>();
-        Stack<IExpression<?>> expressionStack = new Stack<>();
+    protected Set<IMepExpression<?>> getDisjunctiveSplit(IMepExpression<?> expression) {
+        Set<IMepExpression<?>> result = new HashSet<>();
+        Stack<IMepExpression<?>> expressionStack = new Stack<>();
         expressionStack.push(expression);
         while (!expressionStack.isEmpty()) {
-            IExpression<?> curExpression = expressionStack.pop();
+            IMepExpression<?> curExpression = expressionStack.pop();
             if (curExpression instanceof OrOperator) {
                 expressionStack.push(curExpression.toFunction().getArgument(0));
                 expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -108,11 +108,11 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
      *            The list of expressions
      * @return A disjunction of the given expressions
      */
-    protected IExpression<?> disjunction(List<IExpression<?>> expression) {
+    protected IMepExpression<?> disjunction(List<IMepExpression<?>> expression) {
         return disjunction(expression, 0);
     }
 
-    private IExpression<?> disjunction(List<IExpression<?>> expression, int index) {
+    private IMepExpression<?> disjunction(List<IMepExpression<?>> expression, int index) {
         if (expression.size() == 0) {
             return new Constant<>(Boolean.FALSE, SDFDatatype.BOOLEAN);
         }
@@ -120,7 +120,7 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
             return expression.get(index);
         }
         OrOperator or = new OrOperator();
-        or.setArguments(new IExpression[] { expression.get(index), disjunction(expression, index + 1) });
+        or.setArguments(new IMepExpression[] { expression.get(index), disjunction(expression, index + 1) });
         return or;
     }
 
@@ -131,11 +131,11 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
      *            The list of expressions
      * @return A conjunction of the given expressions
      */
-    protected IExpression<?> conjunction(List<IExpression<?>> expression) {
+    protected IMepExpression<?> conjunction(List<IMepExpression<?>> expression) {
         return conjunction(expression, 0);
     }
 
-    private IExpression<?> conjunction(List<IExpression<?>> expression, int index) {
+    private IMepExpression<?> conjunction(List<IMepExpression<?>> expression, int index) {
         if (expression.size() == 0) {
             return new Constant<>(Boolean.TRUE, SDFDatatype.BOOLEAN);
         }
@@ -143,7 +143,7 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
             return expression.get(index);
         }
         AndOperator and = new AndOperator();
-        and.setArguments(new IExpression[] { expression.get(index), conjunction(expression, index + 1) });
+        and.setArguments(new IMepExpression[] { expression.get(index), conjunction(expression, index + 1) });
         return and;
     }
 
@@ -155,7 +155,7 @@ public abstract class AbstractExpressionOptimizerRule<E extends IExpression<?>> 
      * @return <code>true</code> if the expression is a {@link NotOperator},
      *         {@link OrOperator}, or {@link AndOperator}.
      */
-    protected boolean isBooleanOperator(IExpression<?> expression) {
+    protected boolean isBooleanOperator(IMepExpression<?> expression) {
         if (expression.isFunction()) {
             return ((expression instanceof NotOperator) || (expression instanceof OrOperator) || (expression instanceof AndOperator));
         }

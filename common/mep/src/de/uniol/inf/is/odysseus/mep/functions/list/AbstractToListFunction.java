@@ -21,7 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -65,7 +65,7 @@ abstract public class AbstractToListFunction extends AbstractFunction<List<?>> {
      * @see de.uniol.inf.is.odysseus.mep.AbstractFunction#determineType(de.uniol.inf.is.odysseus.core.mep.IExpression[])
      */
     @Override
-    public SDFDatatype determineType(IExpression<?>[] args) {
+    public SDFDatatype determineType(IMepExpression<?>[] args) {
     	SDFDatatype subtype = args[0].getReturnType();
 
 //    	for(SDFDatatype datatype : SDFDatatype.LISTS) {

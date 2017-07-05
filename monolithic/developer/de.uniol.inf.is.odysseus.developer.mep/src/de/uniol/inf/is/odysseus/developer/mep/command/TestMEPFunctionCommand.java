@@ -70,8 +70,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
@@ -94,9 +94,9 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 			}
 
 		});
-		final Map<String, IFunction<?>> functions = new TreeMap<>();
+		final Map<String, IMepFunction<?>> functions = new TreeMap<>();
 		for (final FunctionSignature functionSignature : functionSignatures) {
-			final IFunction<?> function = MEP.getFunction(functionSignature);
+			final IMepFunction<?> function = MEP.getFunction(functionSignature);
 			final String className = function.getClass().getName();
 			functions.put(className, function);
 		}
@@ -105,7 +105,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 		dialog.create();
 		if (dialog.open() == Window.OK) {
 			final Path root = Paths.get(dialog.getPath());
-			final IFunction<?> function = dialog.getFunction();
+			final IMepFunction<?> function = dialog.getFunction();
 
 			Job job = new Job("Test MEP function") { //$NON-NLS-1$
 				@Override
@@ -146,7 +146,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 		});
 	}
 
-	static void testMEPFunction(final Path root, final IFunction<?> function, IProgressMonitor monitor)
+	static void testMEPFunction(final Path root, final IMepFunction<?> function, IProgressMonitor monitor)
 			throws IOException, JSONException {
 		final Object[][] values = ParameterGenerator.getFunctionValues(function);
 
@@ -209,13 +209,13 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 		}
 	}
 
-	private static Throwable generateFunctionResult(final IFunction<?> function, final Object[] value) {
+	private static Throwable generateFunctionResult(final IMepFunction<?> function, final Object[] value) {
 		LOG.info("Generated cases for {}", function.getSymbol()); //$NON-NLS-1$
 		final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 		try {
 
 			@SuppressWarnings("rawtypes")
-			final IExpression[] arguments = new IExpression[function.getArity()];
+			final IMepExpression[] arguments = new IMepExpression[function.getArity()];
 			for (int i = 0; i < function.getArity(); i++) {
 				arguments[i] = MEP.createConstant(value[i], function.getAcceptedTypes(i)[0]);
 			}
@@ -259,19 +259,19 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 	}
 
 	class TestMEPFunctionDialog extends TitleAreaDialog {
-		Map<String, IFunction<?>> functions;
+		Map<String, IMepFunction<?>> functions;
 		Text txtPath;
 
 		Combo cbClass;
 		String path;
-		IFunction<?> function;
+		IMepFunction<?> function;
 		String cls;
 
 		/**
 		 * @param parent
 		 * @param functions
 		 */
-		public TestMEPFunctionDialog(Shell parent, Map<String, IFunction<?>> functions) {
+		public TestMEPFunctionDialog(Shell parent, Map<String, IMepFunction<?>> functions) {
 			super(parent);
 			this.functions = functions;
 		}
@@ -331,7 +331,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 		private void saveInput() {
 			this.path = this.txtPath.getText();
 			this.cls = this.cbClass.getItem(this.cbClass.getSelectionIndex());
-			this.function = (IFunction<?>) this.cbClass.getData(this.cls);
+			this.function = (IMepFunction<?>) this.cbClass.getData(this.cls);
 		}
 
 		@Override
@@ -348,7 +348,7 @@ public class TestMEPFunctionCommand extends AbstractHandler {
 			return this.path;
 		}
 
-		public IFunction<?> getFunction() {
+		public IMepFunction<?> getFunction() {
 			return this.function;
 		}
 	}

@@ -15,14 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
  * @version $Id$
  *
  */
-public interface IExpressionOptimizerRule<E extends IExpression<?>> {
+public interface IExpressionOptimizerRule<E extends IMepExpression<?>> {
     /**
      * Execute the given rule. This method applies the the rule only if it is
      * applicable.
@@ -31,7 +31,7 @@ public interface IExpressionOptimizerRule<E extends IExpression<?>> {
      *            The expression
      * @return The resulting expression after applying the rule
      */
-    IExpression<?> executeRule(IExpression<?> expression);
+    IMepExpression<?> executeRule(IMepExpression<?> expression);
 
     /**
      * Execute the given rule.
@@ -40,7 +40,7 @@ public interface IExpressionOptimizerRule<E extends IExpression<?>> {
      *            The expression
      * @return The resulting expression after applying the rule
      */
-    IExpression<?> execute(E expression);
+    IMepExpression<?> execute(E expression);
 
     /**
      * 
@@ -48,5 +48,5 @@ public interface IExpressionOptimizerRule<E extends IExpression<?>> {
      *            The expression
      * @return <code>true</code> if the given rule can be applied
      */
-    boolean isExecutable(IExpression<?> expression);
+    boolean isExecutable(IMepExpression<?> expression);
 }
