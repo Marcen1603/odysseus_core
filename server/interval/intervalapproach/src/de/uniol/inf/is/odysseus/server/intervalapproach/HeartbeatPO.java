@@ -121,7 +121,7 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 			}
 			restartTimer();
 		} else {
-			LOG.warn("Object removed because out of order " + object);
+			LOG.warn("Removed out of order object: " + object +" for watermark "+marker);
 			// TODO: Restart Time in this case?
 			if (isRestartTimerForEveryInput())
 			restartTimer();
