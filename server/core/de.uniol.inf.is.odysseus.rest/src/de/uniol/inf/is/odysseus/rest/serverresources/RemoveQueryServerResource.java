@@ -16,9 +16,20 @@ public class RemoveQueryServerResource extends AbstractSessionServerResource  {
 	public static final String PATH = "removeQuery";
 
 	@Post
-	public GenericResponseDTO<Boolean> removeQuery(GenericSessionRequestDTO<Integer> genericSessionRequestDTO) {
+	public GenericResponseDTO<Boolean> removeQuery(GenericSessionRequestDTO<Object> genericSessionRequestDTO) {
 		ISession session = this.loginWithToken(genericSessionRequestDTO.getToken());
-		int queryId = genericSessionRequestDTO.getValue();
+		int queryId = -1;
+
+		/*
+		 * When using the REST interface with JavaScript / JSON, integers are maybe send
+		 * as string
+		 */
+		if (genericSessionRequestDTO.getValue() instanceof String) {
+			queryId = Integer.parseInt((String) genericSessionRequestDTO.getValue());
+		} else if (genericSessionRequestDTO.getValue() instanceof Integer) {
+			queryId = (Integer) genericSessionRequestDTO.getValue();
+		}
+		
 		ExecutorServiceBinding.getExecutor().removeQuery(queryId,session);
 		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId, session) == QueryState.UNDEF;
 		return new GenericResponseDTO<Boolean>(result);

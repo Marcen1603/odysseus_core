@@ -16,9 +16,20 @@ public class StopQueryServerResource extends AbstractSessionServerResource  {
 	public static final String PATH = "stopQuery";
 
 	@Post
-	public GenericResponseDTO<Boolean> stopQuery(GenericSessionRequestDTO<Integer> genericSessionRequestDTO) {
+	public GenericResponseDTO<Boolean> stopQuery(GenericSessionRequestDTO<Object> genericSessionRequestDTO) {
 		ISession session = this.loginWithToken(genericSessionRequestDTO.getToken());
-		int queryId = genericSessionRequestDTO.getValue();
+		int queryId = -1;
+
+		/*
+		 * When using the REST interface with JavaScript / JSON, integers are maybe send
+		 * as string
+		 */
+		if (genericSessionRequestDTO.getValue() instanceof String) {
+			queryId = Integer.parseInt((String) genericSessionRequestDTO.getValue());
+		} else if (genericSessionRequestDTO.getValue() instanceof Integer) {
+			queryId = (Integer) genericSessionRequestDTO.getValue();
+		}
+		
 		ExecutorServiceBinding.getExecutor().stopQuery(queryId,session);
 		boolean result = ExecutorServiceBinding.getExecutor().getQueryState(queryId, session) == QueryState.INACTIVE;
 		return new GenericResponseDTO<Boolean>(result);
