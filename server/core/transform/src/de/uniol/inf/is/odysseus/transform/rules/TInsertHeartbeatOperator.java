@@ -56,7 +56,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.OUTOFORDER;
+		return TransformRuleFlowGroup.OUTOFORDER_INIT;
 	}
 
 }

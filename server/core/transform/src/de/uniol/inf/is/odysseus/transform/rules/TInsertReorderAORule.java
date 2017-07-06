@@ -60,7 +60,7 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.OUTOFORDER;
+		return TransformRuleFlowGroup.OUTOFORDER_INIT;
 	}
 
 }
