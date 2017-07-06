@@ -21,7 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.text.function.text.ColognePhoneticFunction;
 import de.uniol.inf.is.odysseus.text.function.text.LevensteinFunction;
@@ -42,9 +42,9 @@ public class TextFunctionProvider implements IFunctionProvider {
     }
 
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
 
         functions.add(new SoundexFunction());
         functions.add(new ColognePhoneticFunction());

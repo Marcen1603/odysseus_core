@@ -25,8 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 /**
@@ -54,7 +54,7 @@ public class TestExpressionOptimizer {
         }
         for (Class<?> cls : classes) {
             try {
-                MEP.registerFunction((IFunction<?>) cls.newInstance());
+                MEP.registerFunction((IMepFunction<?>) cls.newInstance());
             }
             catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -70,7 +70,7 @@ public class TestExpressionOptimizer {
                 if ("q".equalsIgnoreCase(line)) {
                     break;
                 }
-                IExpression<?> expression = MEP.getInstance().parse(line);
+                IMepExpression<?> expression = MEP.getInstance().parse(line);
                 System.out.println("<- " + expression);
                 System.out.println("Optimized: " + BooleanExpressionOptimizer.optimize(expression));
 
@@ -97,7 +97,7 @@ public class TestExpressionOptimizer {
                 name = cur.getName().substring(0, name.lastIndexOf('.'));
                 try {
                     Class<?> clazz = Class.forName(packageName + "." + name);
-                    if (IFunction.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
+                    if (IMepFunction.class.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.getModifiers())) {
                         classes.add(clazz);
                     }
                 }

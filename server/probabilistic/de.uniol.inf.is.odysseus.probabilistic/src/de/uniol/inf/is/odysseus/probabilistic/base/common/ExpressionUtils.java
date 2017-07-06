@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
@@ -31,7 +31,7 @@ public final class ExpressionUtils {
      *            The expression
      * @return <code>true</code> if the given expression is an AND operator
      */
-    public static boolean isAndOperator(final IExpression<?> expression) {
+    public static boolean isAndOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression instanceof AndOperator));
     }
 
@@ -44,7 +44,7 @@ public final class ExpressionUtils {
      *            The expression
      * @return <code>true</code> if the given expression is an OR operator
      */
-    public static boolean isOrOperator(final IExpression<?> expression) {
+    public static boolean isOrOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression instanceof AndOperator));
     }
 
@@ -57,7 +57,7 @@ public final class ExpressionUtils {
      *            The expression
      * @return <code>true</code> if the given expression is an NOT operator
      */
-    public static boolean isNotOperator(final IExpression<?> expression) {
+    public static boolean isNotOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression instanceof NotOperator));
     }
 
@@ -69,14 +69,14 @@ public final class ExpressionUtils {
      * 
      * @return A set of expressions
      */
-    public static Collection<IExpression<?>> conjunctiveSplitExpression(final IExpression<?> expression) {
-        final Set<IExpression<?>> result = new HashSet<IExpression<?>>();
+    public static Collection<IMepExpression<?>> conjunctiveSplitExpression(final IMepExpression<?> expression) {
+        final Set<IMepExpression<?>> result = new HashSet<IMepExpression<?>>();
         if (ExpressionUtils.isAndOperator(expression)) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression);
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -100,15 +100,15 @@ public final class ExpressionUtils {
      * 
      * @return A set of expressions
      */
-    public static Collection<IExpression<?>> disjunctiveSplitExpression(final IExpression<?> expression) {
-        final Set<IExpression<?>> result = new HashSet<IExpression<?>>();
+    public static Collection<IMepExpression<?>> disjunctiveSplitExpression(final IMepExpression<?> expression) {
+        final Set<IMepExpression<?>> result = new HashSet<IMepExpression<?>>();
 
         if (ExpressionUtils.isOrOperator(expression)) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression);
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -141,11 +141,11 @@ public final class ExpressionUtils {
             }
         });
         if (ExpressionUtils.isAndOperator(expression.getMEPExpression())) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -179,11 +179,11 @@ public final class ExpressionUtils {
             }
         });
         if (ExpressionUtils.isAndOperator(expression.getMEPExpression())) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -217,11 +217,11 @@ public final class ExpressionUtils {
             }
         });
         if (ExpressionUtils.isOrOperator(expression.getMEPExpression())) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -255,11 +255,11 @@ public final class ExpressionUtils {
             }
         });
         if (ExpressionUtils.isOrOperator(expression.getMEPExpression())) {
-            final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                final IExpression<?> curExpression = expressionStack.pop();
+                final IMepExpression<?> curExpression = expressionStack.pop();
                 if (ExpressionUtils.isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));

@@ -15,7 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.mep.optimizer;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
@@ -38,9 +38,9 @@ public class ReduceAndRule extends AbstractExpressionOptimizerRule<AndOperator> 
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(AndOperator expression) {
-        IExpression<?> left = expression.getArgument(0);
-        IExpression<?> right = expression.getArgument(1);
+    public IMepExpression<?> execute(AndOperator expression) {
+        IMepExpression<?> left = expression.getArgument(0);
+        IMepExpression<?> right = expression.getArgument(1);
         if (left instanceof NotOperator) {
             if (left.toFunction().getArgument(0).equals(right)) {
                 return new Constant<>(Boolean.FALSE, SDFDatatype.BOOLEAN);
@@ -81,7 +81,7 @@ public class ReduceAndRule extends AbstractExpressionOptimizerRule<AndOperator> 
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return expression instanceof AndOperator;
     }
 

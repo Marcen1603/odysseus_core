@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.wrapper.opcua.access;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.wrapper.opcua.func.ErrorFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcua.func.QualityFunction;
@@ -33,7 +33,7 @@ public class OPCUAFunctionProvider implements IFunctionProvider {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public List<IMepFunction<?>> getFunctions() {
 		return Arrays.asList(new ErrorFunction(), new QualityFunction(), new TimestampFunction(),
 				new ToErrorStrFunction(), new ValueFunction());
 	}

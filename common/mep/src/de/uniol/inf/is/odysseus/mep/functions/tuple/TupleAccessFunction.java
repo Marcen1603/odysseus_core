@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions.tuple;
 
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -34,7 +34,7 @@ public class TupleAccessFunction extends AbstractFunction<Object> implements
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		int pos = Integer.parseInt(args[1].getValue().toString());
 		SDFDatatype dt = args[0].getReturnType();
 		SDFSchema schema = dt.getSchema();

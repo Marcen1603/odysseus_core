@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions.list;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -30,7 +30,7 @@ public abstract class AbstractListPosElementFunction extends AbstractFunction<Ob
 	abstract protected int getPos(List<Object> l);
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args != null) {
 			return args[0].getReturnType().getSubType();
 		}

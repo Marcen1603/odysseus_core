@@ -51,8 +51,8 @@ import com.xafero.turjumaan.server.sdk.api.INodeModel;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
@@ -147,18 +147,18 @@ public class CoreTest {
 
 	@Test
 	public void testFuncProviders() {
-		List<IFunction<?>> funcs = new LinkedList<>();
+		List<IMepFunction<?>> funcs = new LinkedList<>();
 		funcs.addAll(testFuncProvider(dsS, 2));
 		funcs.addAll(testFuncProvider(dsW, 5));
 		testFunctions(funcs);
 	}
 
-	private List<IFunction<?>> testFuncProvider(DS ds, int size) {
+	private List<IMepFunction<?>> testFuncProvider(DS ds, int size) {
 		Object fpc = ds.Registered.get(IFunctionProvider.class);
 		assertNotNull(fpc);
 		assertTrue(fpc instanceof IFunctionProvider);
 		IFunctionProvider fp = (IFunctionProvider) fpc;
-		List<IFunction<?>> funcs = fp.getFunctions();
+		List<IMepFunction<?>> funcs = fp.getFunctions();
 		assertEquals(size, funcs.size());
 		return funcs;
 	}
@@ -176,14 +176,14 @@ public class CoreTest {
 		}
 	}
 
-	private void testFunctions(List<IFunction<?>> funcs) {
+	private void testFunctions(List<IMepFunction<?>> funcs) {
 		Object obj = null;
 		SDFDatatype type = ((IDatatypeProvider) dsC.Registered.get(IDatatypeProvider.class)).getDatatypes().get(0);
 		long ts = System.currentTimeMillis();
 		double val = 42.123;
 		int quality = 0x800;
 		long error = 899L;
-		for (IFunction<?> func : funcs) {
+		for (IMepFunction<?> func : funcs) {
 			String funcName = func.getClass().getSimpleName();
 			switch (funcName) {
 			case "ToOPCValueFunction":
@@ -211,8 +211,8 @@ public class CoreTest {
 				assertEquals(val, func.getValue());
 				assertTrue(func.determineTypeFromInput());
 				assertEquals(SDFDatatype.DOUBLE,
-						func.determineType(new IExpression<?>[] { newConstant(Object.class, obj, type) }));
-				assertNull(func.determineType(new IExpression<?>[0]));
+						func.determineType(new IMepExpression<?>[] { newConstant(Object.class, obj, type) }));
+				assertNull(func.determineType(new IMepExpression<?>[0]));
 				break;
 			case "ToErrorStrFunction":
 				func.setArguments(newConstant(Number.class, 0x809d0000L, SDFDatatype.LONG));

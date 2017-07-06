@@ -23,7 +23,7 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;
 
 /**
@@ -51,9 +51,9 @@ public class DirectAttributeResolver implements IAttributeResolver, IClone {
 	}
 
 
-	public DirectAttributeResolver(Set<IVariable> vars) {
+	public DirectAttributeResolver(Set<IMepVariable> vars) {
 		List<SDFAttribute> attribs = new ArrayList<SDFAttribute>();
-		for (IVariable var : vars) {
+		for (IMepVariable var : vars) {
 			SDFAttribute a = new SDFAttribute(null, var.getIdentifier(), var.getReturnType(), null, null, null);
 			attribs.add(a);
 		}

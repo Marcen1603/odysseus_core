@@ -43,7 +43,7 @@ import org.eclipse.ui.part.ViewPart;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.FunctionSignature;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
@@ -244,7 +244,7 @@ public class MEPFunctionsView extends ViewPart {
 			Set<FunctionSignature> functionSignatures) {
 		List<MEPFunctionInfo> functionInfos = Lists.newArrayList();
 		for (FunctionSignature functionSignature : functionSignatures) {
-			IFunction<?> function = MEP.getFunction(functionSignature);
+			IMepFunction<?> function = MEP.getFunction(functionSignature);
 			functionInfos.add(MEPFunctionInfo.fromMEPFunction(function));
 		}
 		return functionInfos;

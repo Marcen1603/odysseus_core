@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.probabilistic.sdf.schema;
 
 import java.util.regex.Pattern;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
@@ -49,7 +49,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param parser
      *            The expression parser, i.e., MEP
      */
-    public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
+    public SDFProbabilisticExpression(final IMepExpression<?> expression, final IAttributeResolver attributeResolver, final IMepExpressionParser parser) {
         super(expression, attributeResolver, parser);
     }
 
@@ -66,7 +66,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param string
      *            The expression string
      */
-    public SDFProbabilisticExpression(final IExpression<?> expression, final IAttributeResolver attributeResolver, final IExpressionParser parser, final String string) {
+    public SDFProbabilisticExpression(final IMepExpression<?> expression, final IAttributeResolver attributeResolver, final IMepExpressionParser parser, final String string) {
         super(expression, attributeResolver, parser, string);
     }
 
@@ -89,7 +89,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param parser
      *            The expression parser, i.e., MEP
      */
-    public SDFProbabilisticExpression(final String string, final IExpressionParser parser) {
+    public SDFProbabilisticExpression(final String string, final IMepExpressionParser parser) {
         super(string, parser);
     }
 
@@ -104,7 +104,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param parser
      *            The expression parser, i.e., MEP
      */
-    public SDFProbabilisticExpression(final String uri, final String string, final IAttributeResolver attributeResolver, final IExpressionParser parser) {
+    public SDFProbabilisticExpression(final String uri, final String string, final IAttributeResolver attributeResolver, final IMepExpressionParser parser) {
         super(uri, string, attributeResolver, parser, AggregateFunctionBuilderRegistry.getAggregatePattern());
     }
 
@@ -115,7 +115,7 @@ public class SDFProbabilisticExpression extends SDFExpression {
      * @param instance
      * @param aggregatePattern
      */
-    public SDFProbabilisticExpression(final String uri, final String value, final IAttributeResolver attributeResolver, final IExpressionParser expressionParser, final Pattern aggregatePattern) {
+    public SDFProbabilisticExpression(final String uri, final String value, final IAttributeResolver attributeResolver, final IMepExpressionParser expressionParser, final Pattern aggregatePattern) {
         super(uri, value, attributeResolver, expressionParser, AggregateFunctionBuilderRegistry.getAggregatePattern());
     }
 
