@@ -48,7 +48,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	private static final long serialVersionUID = 3710951139395164614L;
 
 	Cardinalities card = null;
-	private boolean assureOrder = true;
+	private Boolean assureOrder = null;
 
 	private IPredicate<?> predicate;
 	private String sweepAreaName; 
@@ -86,7 +86,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	}
 	
 	@Override
-	public boolean isAssureOrder() {
+	public Boolean isAssureOrder() {
 		return assureOrder;
 	}
 
@@ -124,7 +124,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		SDFSchema right = iter.next().getSchema();
 		SDFSchema outputSchema = SDFSchema.join(left, right);
 		
-		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()) || !assureOrder; 
+		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()) || (assureOrder != null && !assureOrder); 
 		
 		SDFSchema outputSchemaWithOrder = SDFSchemaFactory.createNewWithOutOfOrder(outOfOrder, outputSchema);
 		

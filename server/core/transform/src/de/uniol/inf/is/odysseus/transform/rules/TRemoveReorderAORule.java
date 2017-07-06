@@ -25,7 +25,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 
 	@Override
 	public void execute(ReOrderAO operator, TransformationConfiguration config) throws RuleException {
-		
+
 		Collection<LogicalSubscription> sources = operator.getSubscribedToSource();
 		if (sources.size() == 1) {
 			LogicalSubscription sub = sources.iterator().next();
@@ -34,7 +34,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 				((IOutOfOrderHandler) target).setAssureOrder(true);
 			}
 		}
-		
+
 		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
@@ -48,10 +48,12 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 		if (sources.size() == 1) {
 			LogicalSubscription sub = sources.iterator().next();
 			// use target and ask output schema for ordering! Ordering could change in the
-			// operator that is not reflected inside the subscription ... Maybe we should add a phase where we recalc 
+			// operator that is not reflected inside the subscription ... Maybe we should
+			// add a phase where we recalc
 			// subscription schemata?
 			ILogicalOperator target = sub.getTarget();
-			return target.getOutputSchema().isInOrder() || (target instanceof IOutOfOrderHandler);
+			return target.getOutputSchema().isInOrder()
+					|| (target instanceof IOutOfOrderHandler && ((IOutOfOrderHandler) target).isAssureOrder() == null);
 		}
 		return false;
 	}
