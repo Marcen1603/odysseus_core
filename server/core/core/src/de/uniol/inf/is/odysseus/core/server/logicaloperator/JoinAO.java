@@ -124,7 +124,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		SDFSchema right = iter.next().getSchema();
 		SDFSchema outputSchema = SDFSchema.join(left, right);
 		
-		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()); 
+		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()) || !assureOrder; 
 		
 		SDFSchema outputSchemaWithOrder = SDFSchemaFactory.createNewWithOutOfOrder(outOfOrder, outputSchema);
 		
