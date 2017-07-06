@@ -114,7 +114,9 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		}
 
 		PointInTime marker = object.getMetadata().getStart();
-		if (marker.afterOrEquals(getWatermark())) {
+		//if (marker.afterOrEquals(getWatermark())) {
+		// TODO: why afterOrEquals?
+		if (marker.after(getWatermark())) {
 			transfer(object);
 			if (!allowOutofOrder) {
 				setWatermark(marker);

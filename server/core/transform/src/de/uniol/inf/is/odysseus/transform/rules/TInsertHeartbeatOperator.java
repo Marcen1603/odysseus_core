@@ -20,9 +20,12 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 		for (LogicalSubscription subscription : operator.getSubscriptions()) {
 			if (!(subscription.getTarget() instanceof HeartbeatAO)) {
 				HeartbeatAO heartbeat = new HeartbeatAO();
-				// TODO: determine heartbeat options from access
-				heartbeat.setRealTimeDelay(1000);
-				heartbeat.setApplicationTimeDelay(1000);
+				// TODO: magic numbers?
+				long realTimeDelay = operator.getRealTimeDelay();
+				long applicationTimeDelay = operator.getApplicationTimeDelay();
+				
+				heartbeat.setRealTimeDelay(realTimeDelay);
+				heartbeat.setApplicationTimeDelay(applicationTimeDelay);
 				heartbeat.setSendAlwaysHeartbeat(true);
 				heartbeat.setAllowOutOfOrder(false);
 				heartbeat.setRestartTimerForEveryInput(true);

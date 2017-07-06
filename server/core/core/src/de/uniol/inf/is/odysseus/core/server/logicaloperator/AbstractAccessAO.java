@@ -76,6 +76,10 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	private boolean readMetaData;
 	private boolean overWriteSchemaSourceName = true;
 	private SDFSchema overWrittenSchema = null;
+	
+	// TODO: magic default values
+	private long realTimeDelay = 1000;
+	private long applicationTimeDelay = 900;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -104,6 +108,8 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		this.readMetaData = ao.readMetaData;
 		this.overWriteSchemaSourceName = ao.overWriteSchemaSourceName;
 		this.overWrittenSchema = ao.overWrittenSchema;
+		this.realTimeDelay = ao.realTimeDelay;
+		this.applicationTimeDelay = ao.applicationTimeDelay;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
@@ -294,6 +300,25 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		optionsMap.setOption(SDFConstraint.STRICT_ORDER, !outOfOrder);
 	}
 
+
+	public long getRealTimeDelay() {
+		return realTimeDelay;
+	}
+	
+	@Parameter(type = LongParameter.class, optional = true, isList = false, doc = "For out of order. How long should be waited for new elements.")
+	public void setRealTimeDelay(long realTimeDelay) {
+		this.realTimeDelay = realTimeDelay;
+	}
+
+	public long getApplicationTimeDelay() {
+		return applicationTimeDelay;
+	}
+
+	@Parameter(type = LongParameter.class, optional = true, isList = false, doc = "For out of order. After waiting some realTimeDelay, what time should be added to application time.")
+	public void setApplicationTimeDelay(long applicationTimeDelay) {
+		this.applicationTimeDelay = applicationTimeDelay;
+	}
+	
 	@Override
 	public boolean isSemanticallyEqual(IAccessAO operator) {
 		if (!(operator instanceof AbstractAccessAO)) {
@@ -353,6 +378,12 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)) {
 			return false;
 		}		
+		if (!Objects.equals(this.realTimeDelay, other.realTimeDelay)) {
+			return false;
+		}
+		if (!Objects.equals(this.applicationTimeDelay, other.applicationTimeDelay)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -511,5 +542,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	public void setOverWrittenSchema(SDFSchema overWrittenSchema) {
 		this.overWrittenSchema = overWrittenSchema;
 	}
+
 
 }
