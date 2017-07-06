@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.IOutOfOrderHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -24,6 +25,16 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 
 	@Override
 	public void execute(ReOrderAO operator, TransformationConfiguration config) throws RuleException {
+		
+		Collection<LogicalSubscription> sources = operator.getSubscribedToSource();
+		if (sources.size() == 1) {
+			LogicalSubscription sub = sources.iterator().next();
+			ILogicalOperator target = sub.getTarget();
+			if (target instanceof IOutOfOrderHandler) {
+				((IOutOfOrderHandler) target).setAssureOrder(true);
+			}
+		}
+		
 		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
@@ -39,7 +50,8 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 			// use target and ask output schema for ordering! Ordering could change in the
 			// operator that is not reflected inside the subscription ... Maybe we should add a phase where we recalc 
 			// subscription schemata?
-			return sub.getTarget().getOutputSchema().isInOrder();
+			ILogicalOperator target = sub.getTarget();
+			return target.getOutputSchema().isInOrder() || (target instanceof IOutOfOrderHandler);
 		}
 		return false;
 	}
