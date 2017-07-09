@@ -4,7 +4,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(name = "generatesp", minInputPorts = 0, maxInputPorts = 1, doc = "Generates SPs and adds them to the Datastream randomly", url = "-", category = {
+@LogicalOperator(name = "generatesp", minInputPorts = 0, maxInputPorts = 1, doc = "Generates SPs and adds them to the Datastream", url = "-", category = {
 		LogicalOperatorCategory.BASE })
 public class SPGeneratorAO extends AbstractLogicalOperator {
 

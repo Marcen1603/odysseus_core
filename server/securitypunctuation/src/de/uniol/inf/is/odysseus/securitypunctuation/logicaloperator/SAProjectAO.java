@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAPROJECT", doc = "-", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SAPROJECT", doc = "Project Operator that processes Security Punctuations", category = {
 		LogicalOperatorCategory.BASE })
 public class SAProjectAO extends ProjectAO {
 	/**
@@ -17,9 +17,6 @@ public class SAProjectAO extends ProjectAO {
 	 */
 	private static final long serialVersionUID = 3826972870633591949L;
 
-	
-
-	
 	
 	public SAProjectAO() {
 		super();

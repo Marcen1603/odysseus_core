@@ -73,7 +73,10 @@ public abstract class AbstractSecurityPunctuation extends AbstractPunctuation im
 		this.sign = sign;
 
 	}
-
+	@Override
+	public AbstractPunctuation clone(PointInTime newTime) {
+		return null;
+	}
 	@Override
 	public void setTime(PointInTime timestamp) {
 		this.timestamp = timestamp;

@@ -13,9 +13,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
-public class SecurityPunctuation extends AbstractSecurityPunctuation{
-
-
+public class SecurityPunctuation extends AbstractSecurityPunctuation {
 	private static final long serialVersionUID = 7436458563105118060L;
 
 	public SecurityPunctuation(SecurityPunctuation securityPunctuation) {
@@ -101,7 +99,9 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation{
 		return false;
 	}
 
-	public SecurityPunctuation intersect(ISecurityPunctuation punctuation, PointInTime ts) {
+	public SecurityPunctuation intersect(ISecurityPunctuation punctuation, SDFSchema schema, SDFSchema otherSchema,
+			PointInTime ts) {
+
 		List<String> attributes = new ArrayList<>();
 		List<String> roles = new ArrayList<>();
 
@@ -114,8 +114,17 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation{
 			return newSP;
 		}
 
-		// union attributes
-		attributes = unionAttributes(punctuation.getDDP());
+		// union attributes for join
+		if (schema != null && otherSchema != null) {
+			attributes = unionJoinAttributes(punctuation.getDDP(), schema, otherSchema);
+		}
+		// union attribiutes for SPAnalyzer
+		else {
+			attributes = unionAttributes(punctuation.getDDP());
+		}
+		if (attributes.isEmpty()) {
+			return newSP;
+		}
 		// intersect roles
 		roles = mergeStrings(this.getSRP().getRoles(), punctuation.getSRP().getRoles());
 		if (roles.isEmpty()) {
@@ -145,6 +154,69 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation{
 				attributes.add(inputAttribute);
 			}
 		}
+		return attributes;
+	}
+
+	public List<String> unionJoinAttributes(IDataDescriptionPart ddp, SDFSchema schema, SDFSchema otherSchema) {
+		List<String> attributes = new ArrayList<>();
+		if (!ddp.getAttributes().get(0).equals("*") && !this.ddp.getAttributes().get(0).equals("*")) {
+			
+			//if both SPs dont contain attributes
+			if (StringUtils.isBlank(ddp.getAttributes().get(0))
+					&& StringUtils.isBlank(this.ddp.getAttributes().get(0))) {
+				return attributes;
+			} else if (StringUtils.isBlank(ddp.getAttributes().get(0))
+					&& !StringUtils.isBlank(this.ddp.getAttributes().get(0))) {
+				attributes = new ArrayList<>(this.ddp.getAttributes());
+				return attributes;
+
+			} else if (!StringUtils.isBlank(ddp.getAttributes().get(0))
+					&& StringUtils.isBlank(this.ddp.getAttributes().get(0))) {
+				attributes = new ArrayList<>(ddp.getAttributes());
+				return attributes;
+			}
+			attributes = new ArrayList<>(ddp.getAttributes());
+			for (String inputAttribute : this.ddp.getAttributes()) {
+				if (!attributes.contains(inputAttribute)) {
+					attributes.add(inputAttribute);
+				}
+
+			}
+			return attributes;
+		} else if (this.ddp.getAttributes().get(0).equals("*") || ddp.getAttributes().get(0).equals("*")) {
+			if (this.ddp.getAttributes().get(0).equals("*") && !ddp.getAttributes().get(0).equals("*")) {
+				for (SDFAttribute attribute : otherSchema) {
+					attributes.add(attribute.getAttributeName());
+
+				}
+				if (!StringUtils.isBlank(ddp.getAttributes().get(0))) {
+					for (String inputAttribute : ddp.getAttributes()) {
+						if (!attributes.contains(inputAttribute)) {
+							attributes.add(inputAttribute);
+						}
+
+					}
+				}
+				return attributes;
+
+			} else if (ddp.getAttributes().get(0).equals("*") && !this.ddp.getAttributes().get(0).equals("*")) {
+				for (SDFAttribute attribute : schema) {
+					attributes.add(attribute.getAttributeName());
+				}
+				if (!StringUtils.isBlank(this.ddp.getAttributes().get(0))) {
+					for (String inputAttribute : this.ddp.getAttributes()) {
+						if (!attributes.contains(inputAttribute)) {
+							attributes.add(inputAttribute);
+						}
+					}
+				}
+				return attributes;
+			} else {
+				attributes.add("*");
+			}
+
+		}
+
 		return attributes;
 	}
 
@@ -283,7 +355,8 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation{
 				else if (this.getSRP().equals(sp.getSRP())
 						&& (this.getDDP().getTupleRange()[0] == sp.getDDP().getTupleRange()[0]
 								&& this.getDDP().getTupleRange()[1] == sp.getDDP().getTupleRange()[1])) {
-					SecurityPunctuation punctuation = new SecurityPunctuation(this.intersect(sp, sp.getTime()));
+					SecurityPunctuation punctuation = new SecurityPunctuation(
+							this.intersect(sp, null, null, sp.getTime()));
 					punctuation.setDDP(new DataDescriptionPart(
 							String.valueOf(sp.getDDP().getTupleRange()[0]) + ","
 									+ String.valueOf(sp.getDDP().getTupleRange()[1]),
@@ -291,7 +364,7 @@ public class SecurityPunctuation extends AbstractSecurityPunctuation{
 
 					buffer.add(punctuation);
 
-					buffer.remove(sp);		
+					buffer.remove(sp);
 					return buffer;
 				}
 

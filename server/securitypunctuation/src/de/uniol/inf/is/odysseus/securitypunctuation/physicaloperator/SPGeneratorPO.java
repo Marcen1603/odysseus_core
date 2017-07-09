@@ -50,72 +50,20 @@ public class SPGeneratorPO<T extends IStreamObject<? extends ITimeInterval>> ext
 			sps = initFirstStream();
 
 		}
-		// zum kompletttest
-		// if(counter%10==0&&counter%40!=0){
-		// String[] sp = sps[spCounter % 5].split(";");
-		//
-		//
-		// SecurityPunctuation spToSend = new SecurityPunctuation("*",sp[1],
-		// sp[2], true, true, new PointInTime(System.currentTimeMillis()));
-		// sendPunctuation(spToSend);
-		// spCounter++;
-		// }if(counter%40==0){
-		// String[] sp = sps[spCounter % 5].split(";");
-		// long[] ts=new long[2];
-		// ts[0]=System.currentTimeMillis()+900;
-		// ts[1]=System.currentTimeMillis()+5100;
-		//
-		// SecurityPunctuation spToSend = new SecurityPunctuation(ts, sp[1],
-		// sp[2], true, true, new PointInTime(System.currentTimeMillis()));
-		// sendPunctuation(spToSend);
-		// spCounter++;
-		// }
-		// if (counter % 10 == 0) {
-		// String[] sp = sps[spCounter % 3].split(";");
-		// long[] ts = new long[2];
-		// ts[0] = counter;
-		// ts[1] = counter + 3;
-		// SecurityPunctuation spToSend = new SecurityPunctuation(ts, sp[1],
-		// sp[2], true, true,
-		// new PointInTime(System.currentTimeMillis()));
-		// sendPunctuation(spToSend);
-		//
-		// }
-		// if (counter % 10 == 0) {
-		//// String[] sp = sps[spCounter % 3].split(";");
-		// long[] ts = new long[2];
-		// ts[0] = counter;
-		// ts[1] = counter + 3;
-		// SecurityPunctuation spToSend = new SecurityPunctuation(ts, "sa",
-		// "Affe", true, true,
-		// new PointInTime(System.currentTimeMillis()));
-		// sendPunctuation(spToSend);
-		// spCounter++;
-		// }
+
+
 		// zum test der Join-Funktion
 		if (counter % 10 == 0) {
 			String[] sp = sps[spCounter % 5].split(";");
 			long[] ts = new long[2];
-			ts[0] = System.currentTimeMillis()-100;
-			ts[1] = System.currentTimeMillis() + 8000;
+			ts[0] = System.currentTimeMillis()-1;
+			ts[1] = System.currentTimeMillis() + 8;
 			SecurityPunctuation spToSend = new SecurityPunctuation(ts, sp[1], sp[2], true, true,
 					new PointInTime(System.currentTimeMillis()));
 			sendPunctuation(spToSend);
 			spCounter++;
 		}
-		// if (counter % 8 == 0) {
-		// String[] sp = sps[spCounter % 3].split(";");
-		// long[] ts=new long[2];
-		// ts[0]=System.currentTimeMillis()-100;
-		// ts[1]=System.currentTimeMillis()+2200;
-		//
-		// SecurityPunctuation spToSend = new SecurityPunctuation(ts, sp[1],
-		// sp[2], true, true, new PointInTime(System.currentTimeMillis()));
-		//
-		//
-		// sendPunctuation(spToSend);
-		// spCounter++;
-		// }
+
 
 		transfer(object);
 		counter++;
@@ -123,120 +71,27 @@ public class SPGeneratorPO<T extends IStreamObject<? extends ITimeInterval>> ext
 	}
 
 	// zum kompletttest
-	private String[] initSecondStream() {
-		String[] sps = new String[5];
-		sps[0] = "*;*;*;true;false";
-		sps[1] = "*;pulse,patientID;queryexecutor,nurse;true;false";
-		sps[2] = "*;patientID,pulse;*;true;false";
-		sps[3] = ";pulse,C;A,queryexecutor;true;false";
-		sps[4] = "*patientID,pulse;A,queryexecutor;true;false";
-		return sps;
-	}
-
 	private String[] initFirstStream() {
 		String[] sps = new String[5];
-		sps[0] = "*;breathingRate,patientID;*;true;false";
-		sps[1] = "*;patientID,breathingRate,D;doktor,queryexecutor;true;false";
-		sps[2] = ";breathingRate,patientID;nurse,queryexecutor;true;false";
-		sps[3] = "*;*;doctor,queryexecutor;true;false";
-		sps[4] = "*;breathingRate,D;queryexecutor;true;false";
+		sps[0] = "*;pulse,patientID;queryexecutor,doctor,nurse;true;false";
+		sps[1] = ";pulse,patientID,breathingRate;nurse,queryexecutor;true;false";
+		sps[2] = "*;patientID,pulse,breathingRate;*;true;false";
+		sps[3] = "*;*;*;true;false";
+		sps[4] = "*;*;queryexecutor;true;false";
 		return sps;
 	}
 
-	//// Zum Test der Join-Funktion , nur jeweils die ersten 3 arrayeinträge
-	//// genutzt
-	// private String[] initSecondStream() {
-	// String[] sps = new String[5];
-	// sps[0] = "*;C;nurse;true;false";
-	// sps[1] = "*;C;nurse,queryexecutor;true;false";
-	// sps[2] = "*;id,patientID,B;*;true;false";
-	// sps[3] = ";patientID,pulse;doctor,nurse,queryexecutor;true;false";
-	// sps[4] =
-	// "*;breathingRate,patientID,pulse,B;doctor,queryexecutor;true;false";
-	// return sps;
-	// }
-	//
-	// private String[] initFirstStream() {
-	// String[] sps = new String[5];
-	// sps[0] = "*;patientID;nurse,queryexecutor;true;false";
-	// sps[1] = "*;patientID;queryexecutor;true;false";
-	// sps[2] = ";patientID;nurse,queryexecutor;true;false";
-	// sps[3] =
-	// ";breathingRate,patientID,pulse;doctor,nurse,queryexecutor;true;false";
-	// sps[4] = ";breathingRate,patientID,pulse,A;queryexecutor;true;false";
-	// return sps;
-	// }
+	private String[] initSecondStream() {
+		String[] sps = new String[5];
+		sps[0] = "*;breathingRate,patientID,pulse;queryexecutor,nurse,doctir;true;false";
+		sps[1] = "*;breathingRate,patientID,pulse;*;true;false";
+		sps[2] = ";A,C,D,patientID;*;true;false";
+		sps[3] = "*;*;queryexecutor,nurse;true;false";
+		sps[4] = "*;A,B,C,D,patientID,breathingRate;*;true;false";
+		return sps;
+	}
 
-	// private String[] initSecondStream() {
-	// String[] sps = new String[5];
-	// sps[0] = ";pulse,patientID;nurse,doctor;true;false";
-	// sps[1] = "1,1;pulse,patientID;doctor,queryexecutor;true;false";
-	// sps[2] = "*;pulse;nurse,queryexecutor;true;false";
-	// sps[3] = "*;pulse;doctor,nurse,queryexecutor;true;false";
-	// sps[4] = "*;pulse,patientID;doctor,queryexecutor;true;false";
-	// return sps;
-	// }
-	//
-	// private String[] initFirstStream() {
-	// String[] sps = new String[5];
-	// sps[0] =
-	// "*;pulse,breathingRate,patientID;nurse,queryexecutor,doctor;true;false";
-	// sps[1] = "*;*;*;true;false";
-	// sps[2] = ";breathingRate;nurse,queryexecutor;true;false";
-	// sps[3] = "*;*;doctor,nurse,queryexecutor;true;false";
-	// sps[4] = "*;breathingRate,patientID;doctor,queryexecutor;true;false";
-	// return sps;
-	// }
 
-	// Security Shield Latenz
-	// private String[] initSecondStream() {
-	// String[] sps = new String[5];
-	// sps[0] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;queryexecutor;true;false";
-	// sps[1] =
-	// "*;patientID,pulse,breathingRate;queryexecutor,doctor;true;false";
-	// sps[2] = "*;patientID,pulse,breathingRate;nurse,doctor;true;false";
-	// sps[3] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;*;true;false";
-	// sps[4] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;queryexecutor,nurse;true;false";
-	// return sps;
-	// }
-	//
-	// private String[] initFirstStream() {
-	// String[] sps = new String[5];
-	// sps[0] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;queryexecutor;true;false";
-	// sps[1] =
-	// "*;patientID,pulse,breathingRate;queryexecutor,doctor;true;false";
-	// sps[2] = "*;patientID,pulse,breathingRate;nurse,doctor;true;false";
-	// sps[3] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;*;true;false";
-	// sps[4] =
-	// counter+1+","+counter2+";patientID,pulse,breathingRate;queryexecutor,nurse;true;false";
-	// return sps;
-	// }
-
-	// private String[] initSecondStream() {
-	// String[] sps = new String[5];
-	// sps[0] = counter+1+","+counter2+";breathingRate;nurse;true;false";
-	// sps[1] = counter+1+","+counter2+";breathingRate;doctor;true;false";
-	// sps[2] = counter+1+","+counter2+";breathingRate;nurse;true;false";
-	// sps[3] = counter+1+","+counter2+";pulse,breathingRate;nurse;true;false";
-	// sps[4] = counter+1+","+counter2+";pulse,breathingRate;nurse;true;false";
-	// return sps;
-	// }
-	//
-	// private String[] initFirstStream() {
-	// String[] sps = new String[5];
-	// sps[0] =
-	// counter+1+","+counter2+";patientID,pulse;nurse,doctor;true;false";
-	// sps[1] = counter+1+","+counter2+";patientID;nurse,doctor;true;false";
-	// sps[2] = counter+1+","+counter2+";patientID;nurse,doctor;true;false";
-	// sps[3] = counter+1+","+counter2+";patientID;nurse,doctor;true;false";
-	// sps[4] = counter+1+","+counter2+";patientID;nurse,doctor;true;false";
-	// return sps;
-	// }
 
 	// Security Shield test:
 	// private String[] initSecondStream() {

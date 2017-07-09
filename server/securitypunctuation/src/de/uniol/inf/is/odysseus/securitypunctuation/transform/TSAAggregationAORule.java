@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.securitypunctuation.transform;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
@@ -11,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAAggregationAO;
@@ -24,7 +26,7 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 	public void execute(final SAAggregationAO operator, final TransformationConfiguration config) throws RuleException {
 		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = new ArrayList<>();
 		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = new ArrayList<>();
-		String tupleRangeAttribute=operator.getTupleRangeAttribute();
+		
 		final List<IAggregationFunction> functions = operator.getAggregations();
 		for (final IAggregationFunction f : functions) {
 			if (!f.isIncremental()) {
@@ -34,7 +36,8 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 				incrementalFunctions.add((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
 			}
 		}
-
+		String tupleRangeAttribute=operator.getTupleRangeAttribute();
+		List<? extends IRole> roles=operator.getOwner().get(0).getSession().getUser().getRoles();
 		final boolean evaluateAtOutdatingElements = operator.isEvaluateAtOutdatingElements();
 		final boolean evaluateBeforeRemovingOutdatingElements = operator.isEvaluateBeforeRemovingOutdatingElements();
 		final boolean evaluateAtNewElement = operator.isEvaluateAtNewElement();
@@ -50,7 +53,7 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 
 		final SAAggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new SAAggregationPO<ITimeInterval,Tuple<ITimeInterval>>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone,
-				outputOnlyChanges, outputSchema, groupingAttributesIndices,tupleRangeAttribute);
+				outputOnlyChanges, outputSchema, groupingAttributesIndices,tupleRangeAttribute,roles);
 		defaultExecute(operator, po, config, true, true);
 	}
 

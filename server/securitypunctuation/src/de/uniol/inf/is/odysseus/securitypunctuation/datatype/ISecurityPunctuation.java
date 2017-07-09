@@ -26,7 +26,7 @@ public interface ISecurityPunctuation extends IPunctuation {
 
 	void setTime(PointInTime timestamp);
 
-	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation, PointInTime pointInTime);
+	public ISecurityPunctuation intersect(ISecurityPunctuation punctuation, SDFSchema schema, SDFSchema otherSchema, PointInTime ts);
 
 	public boolean isEmpty();
 

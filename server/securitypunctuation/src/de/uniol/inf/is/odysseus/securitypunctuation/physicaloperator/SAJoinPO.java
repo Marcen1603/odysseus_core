@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> extends JoinTIPO<K, T> {
 
-
 	// Contains a Map of the Objects with the SPs referring to them as a key
 	SPMap<K, T> spMap;
 
@@ -74,6 +73,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		if (!checkSP(object, port)) {
 			return;
 		}
+
 		int otherport = port ^ 1;
 		boolean send = false;
 
@@ -117,13 +117,17 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 							// intersected SPs get the timestamp of the object-1
 							// because it has to be smaller else the Security
 							// Punctuation is transferred after the object
-							intersectedSP = temp.intersect(currentSP,
+							intersectedSP = temp.intersect(currentSP, this.getInputSchema(port),
+									this.getInputSchema(otherport),
 									object.getMetadata().getStart().minus(new PointInTime(1L)));
 
 						} else {
-							intersectedSP = currentSP.intersect(temp,
+							intersectedSP = currentSP.intersect(temp, this.getInputSchema(otherport),
+									this.getInputSchema(port),
 									object.getMetadata().getStart().minus(new PointInTime(1L)));
 						}
+						// only adds the intersected sp, if it isn't already
+						// contained in the list of intersected sps
 						if (!intersectedSPs.contains(intersectedSP) && !intersectedSP.isEmpty()) {
 							intersectedSPs.add(intersectedSP);
 						}
@@ -147,6 +151,9 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 
 		}
+		// only inserts the element into the transferarea, if there is at least
+		// one intersected SP, else the object is just inserted into the
+		// sweeparea
 		if (!send) {
 			super.insertElement(object, port, hit);
 		} else {
@@ -176,7 +183,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		} else if (intersectedSPs.size() != lastSentPunctuation.size()) {
 			return false;
 		}
-		
+
 		else if (lastSentPunctuation.containsAll(intersectedSPs) && intersectedSPs.containsAll(lastSentPunctuation)) {
 			return true;
 		}
