@@ -1,8 +1,11 @@
 package de.uniol.inf.is.odysseus.wrapper.iec62056.server;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringBufferInputStream;
 import java.net.UnknownHostException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -18,14 +21,20 @@ import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.AbstractCOSEMParser;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.XMLCOSEMParser;
 
+/**
+ * 
+ * @author Jens Plümer
+ *
+ */
 public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
-
-	private String type;
-	private AbstractCOSEMParser<?> parser;
-	protected boolean isDone;
 
 	private final String XML_TYPE = "xml";
 	private final String JSON_TYPE = "json";
+	
+	private AbstractCOSEMParser parser;
+	private boolean isDone;
+	private String type;
+
 
 	public IEC62056ProcotolHandler() {
 		super();
@@ -99,7 +108,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 
 	@Override
 	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
-		return hasNext() ? getDataHandler().readData(parser.parse()): null;
+		return hasNext() ? getDataHandler().readData(parser.parsePullInputStream()): null;
 	}
 
 	@Override
@@ -123,6 +132,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 
 	@Override
 	public void process(InputStream message) {
+//		new ByteArrayInputStream(parser.parsePushInputStream().getBytes());
 		// TODO Auto-generated method stub
 		super.process(message);
 	}

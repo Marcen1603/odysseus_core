@@ -1,4 +1,4 @@
-package de.uniol.inf.os.odysseus.wrapper.iec62056.model;
+package de.uniol.inf.is.odysseus.wrapper.iec62056.model;
 
 import java.util.HashMap;
 import java.util.Map;

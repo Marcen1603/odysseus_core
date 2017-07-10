@@ -1,13 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.iec62056.parser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -17,117 +11,83 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class JSONCOSEMParser extends AbstractCOSEMParser<String>{
+/**
+ * 
+ * Parser for parsing JSON-formated COSEM objects in the following manner:
+ * 
+ * <pre>
+ * { "logical_name": "smartmetergateway_0", 
+ *   "objects": 
+ *  [
+ * 	 {"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
+ * 	 {"value": 0.345, "unit": 30, "scaler": -3, "status": "000", "capture_time": 1, "logical_name": "sm_012"},
+ * 	 {"value": 0.465, "unit": 30, "scaler": -3, "status": "000", "capture_time": 2, "logical_name": "sm_013"},
+ * 	 {"value": 0.986, "unit": 30, "scaler": -3, "status": "000", "capture_time": 3, "logical_name": "sm_014"},
+ * 	 ...
+ *  ]
+ * }
+ *</pre>
+ * @author Jens Plümer
+ *
+ */
+public class JSONCOSEMParser extends AbstractCOSEMParser {
 
-	private static final String SMWG         = "logical_name";
-	private static final String DEVICES      = "ldevs";
-	private static final String DEVICE_NAME  = "logical_name";
-	private static final String ATTRIBUTES   = "objects";
-	private static final String ATTRIBUTE_1  = "value";
-	private static final String ATTRIBUTE_2  = "status";
-	private static final String ATTRIBUTE_3  = "scalar";
-	private static final String ATTRIBUTE_4  = "unit";
-	private static final String ATTRIBUTE_5  = "capture_time";
-	private static final String ATTRIBUTE_6  = "logical_name";
-	
-	public static void main(String[] args) {
-		
-		long startTime = System.currentTimeMillis();
-//		ObjectMapper m = new ObjectMapper();
-//		try {
-//			CosemData cosem = m.readValue(new File("output_example.json"), CosemData.class);
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		System.out.println("objectMapper: " + (System.currentTimeMillis() - startTime) + " ms");
-		startTime = System.currentTimeMillis();
-		try {
-			JSONCOSEMParser p = new JSONCOSEMParser(new InputStreamReader(new FileInputStream(new File("output_example2.json"))), 6);
-			Iterator<String> iter = p.process();
-			////////
-			while(iter.hasNext()) {
-				System.out.println("--> " + iter.next());
-			}
-			iter = p.process();
-			while(iter.hasNext()) {
-				System.out.println("--> " + iter.next());
-			}
-			iter = p.process();
-			while(iter.hasNext()) {
-				System.out.println("--> " + iter.next());
-			}
-			iter = p.process();
-			while(iter.hasNext()) {
-				System.out.println("--> " + iter.next());
-			}
-			iter = p.process();
-			while(iter.hasNext()) {
-				System.out.println("--> " + iter.next());
-			}
-			////////
-			iter = p.process();
-//			while(iter.hasNext()) {
-//				System.out.println("--> " + iter.next());
-			System.out.println("inProgress= " + JSONCOSEMParser.inProgress);
-//			}
-			iter = p.process();
-			System.out.println(iter);
-//			while(iter.hasNext()) {
-//				System.out.println("--> " + iter.next());
-//			}
-			System.out.println("inProgress= " + JSONCOSEMParser.inProgress);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		System.out.println("streamParsing: " + (System.currentTimeMillis() - startTime) + " ms");
-	}
-	
 	private JsonParser jp;
+	private int attrCount = 0;
+	private boolean inProgress;
+	private String SMGW_TOKEN_VALUE;
+
+	protected final String[] DELIMETER = {
+			"[",
+			"|",
+			"]"
+	};
 	
 	public JSONCOSEMParser(InputStreamReader reader, SDFSchema sdfSchema) {
 		super(reader, sdfSchema);
-		try {
-			jp = new JsonFactory().createParser(reader);
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public JSONCOSEMParser(InputStreamReader reader, int i) {
-		super(reader, i);
-		try {
-			jp = new JsonFactory().createParser(reader);
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		setTokens(new String[] {
+				"logical_name", 
+				"objects", 
+				"value", 
+				"unit", 
+				"scaler", 
+				"status", 
+				"capture_time",
+				"logical_name"
+				}, 
+			2);
 	}
 
-	String logical_name_SMGW = null;
-	static boolean inProgress = false;
-	
-	public Iterator<String> process() {
+	@Override
+	protected void init(InputStreamReader reader) {
+		super.reader = reader;
 		try {
-			if(!inProgress) {
+			jp = new JsonFactory().createParser(reader);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	protected String next() {
+		String TOKEN;
+		try {
+			if (!inProgress) {
 				inProgress = true;
 				jp.nextToken();
 				while (jp.nextToken() == JsonToken.FIELD_NAME) {
-					String fName = jp.getCurrentName();
 					jp.nextToken();
-					if (SMWG.equals(fName)) {
-						logical_name_SMGW = jp.getText();
-					} else if (ATTRIBUTES.equals(fName)) {
-						return iterateAttributes();
+					if (TOKENS[0].equals((TOKEN = jp.getCurrentName()))) {
+						SMGW_TOKEN_VALUE = DELIMETER[0] + jp.getText();
+					} else if (TOKENS[1].equals(TOKEN)) {
+						return appendNextValue();
 					}
 				}
 			} else {
 				jp.nextToken();
-				return iterateAttributes();
+				return appendNextValue();
 			}
 		} catch (JsonParseException e) {
 			e.printStackTrace();
@@ -138,39 +98,31 @@ public class JSONCOSEMParser extends AbstractCOSEMParser<String>{
 		}
 		return null;
 	}
-	
-	private Iterator<String> iterateAttributes() {
-		List<String> list = new LinkedList<>();
+
+	private String appendNextValue() {
+		StringBuilder builder = new StringBuilder(SMGW_TOKEN_VALUE);
 		try {
 			while (jp.nextToken() == JsonToken.START_OBJECT) {
-				list.add(logical_name_SMGW);
 				while (jp.nextToken() != JsonToken.END_OBJECT) {
-					String attribute_value = jp.getCurrentName();
+					String ATTR_TOKEN = jp.getCurrentName();
 					jp.nextToken();
-					switch (attribute_value) {
-					case (ATTRIBUTE_1):
-					case (ATTRIBUTE_2):
-					case (ATTRIBUTE_3):
-					case (ATTRIBUTE_4):
-					case (ATTRIBUTE_5):
-					case (ATTRIBUTE_6):
-						list.add(jp.getText());
-						break;
-					default:
-						break;
-					}
-					if(list.size() == ATTRIBUTE_SIZE) {
-						Iterator<String> iter = list.iterator();
-						list = new LinkedList<>();
-						return iter;
+					for (int i = attrOffset; i < TOKENS.length; i++) {
+						if (TOKENS[i].equals(ATTR_TOKEN)) {
+							attrCount++;
+							builder.append(DELIMETER[1] + jp.getText());
+						}
+						if (ATTRIBUTE_NAMES.length - 1 == attrCount) {
+							attrCount = 0;
+							return builder.append(DELIMETER[2]).toString();
+						}
 					}
 				}
 			}
 			inProgress = false;
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}  
 		return null;
 	}
-	
+
 }
