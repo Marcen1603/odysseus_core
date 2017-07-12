@@ -71,7 +71,7 @@ public class JSONCOSEMParserTest {
 	public void parseTest1() {
 		setup(DATA_1);
 		String expected = "[smartmetergateway_0|0.972|30|-3|000|0|sm_011]";
-		String actual = cosemParser.parsePullInputStream();
+		String actual = cosemParser.parse();
 		assertNotNull("result was null", actual);
 		assertEquals(expected, actual);
 	}

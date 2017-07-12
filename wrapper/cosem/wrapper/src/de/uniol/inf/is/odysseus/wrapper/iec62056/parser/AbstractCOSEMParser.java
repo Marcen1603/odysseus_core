@@ -45,12 +45,10 @@ public abstract class AbstractCOSEMParser {
 	abstract protected void init(InputStreamReader reader);
 
 	/**
-	 * Invokes a parsing process on the current {@code InputStream} for a
-	 * pull-access.
-	 * 
+	 * Invokes a parsing process on the current {@code InputStream}.
 	 * @return
 	 */
-	public final synchronized String parsePullInputStream() {
+	public final synchronized String parse() {
 		try {
 			if (reader.ready()) {
 				return next();
@@ -59,16 +57,6 @@ public abstract class AbstractCOSEMParser {
 			/* reader.ready() throws an exception if the stream is closed */
 		}
 		close();
-		return null;
-	}
-
-	/**
-	 * Invokes a parsing process on the current {@code InputStream} for a push-access.
-	 * 
-	 * @return
-	 */
-	public final synchronized String parsePushInputStream() {
-		// TODO Implement
 		return null;
 	}
 

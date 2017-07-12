@@ -1,12 +1,15 @@
 package de.uniol.inf.is.odysseus.wrapper.iec62056.server;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -19,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.AbstractCOSEMParser;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
-import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.XMLCOSEMParser;
 
 /**
  * 
@@ -28,6 +30,9 @@ import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.XMLCOSEMParser;
  */
 public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
 
+	
+	private static final Logger logger = LoggerFactory.getLogger(IEC62056ProcotolHandler.class.getSimpleName());
+	
 	private final String XML_TYPE = "xml";
 	private final String JSON_TYPE = "json";
 	
@@ -49,6 +54,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 		} else {
 			this.type = "xml";
 		}
+		logger.info("Initialized " + IEC62056ProcotolHandler.class.getSimpleName() + " with a " + this.type + " parser");
 	}
 
 	@Override
@@ -62,20 +68,9 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	public String getName() {
 		return "DLMS/COSEM";
 	}
-
-	@Override
-	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/*
-	 * Pullbased
-	 */
-	@Override
-	public void open() throws UnknownHostException, IOException {
-		getTransportHandler().open();
-		InputStreamReader reader = new InputStreamReader(getTransportHandler().getInputStream());
+	
+	private void initParser(byte[] message) {
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(message));
 		if (parser == null) {
 			switch (type.toLowerCase()) {
 			case JSON_TYPE:
@@ -83,18 +78,36 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 				break;
 			case XML_TYPE:
 			default:
-				parser = new XMLCOSEMParser(reader, getSchema());
+				throw new NotImplementedException("the corresponding XMLCOSEMParser has no implementation yet");
+//				parser = new XMLCOSEMParser(reader, getSchema());
 			}
+		}
+	}
+
+	private void terminateParser() {
+		if (parser != null) {
+			parser.close();
+			parser = null;
+		}
+	}
+	
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+		try {
+			InputStream initialStream = getTransportHandler().getInputStream();
+			byte[] targetArray = new byte[initialStream.available()];
+			initialStream.read(targetArray);
+			initParser(targetArray);
+		} catch (IllegalArgumentException e) {
+			logger.info("Given transport handler has no input stream");
 		}
 		isDone = false;
 	}
 
 	@Override
 	public void close() throws IOException {
-		if (parser != null) {
-			parser.close();
-			parser = null;
-		}
+		terminateParser();
 		super.close();
 	}
 
@@ -107,46 +120,38 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	}
 
 	@Override
-	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
-		return hasNext() ? getDataHandler().readData(parser.parsePullInputStream()): null;
-	}
-
-	@Override
 	public boolean isDone() {
 		return this.isDone;
 	}
 
-	/*
-	 * Pushbased
-	 */
-	@Override
-	public void onConnect(ITransportHandler caller) {
-		super.onConnect(caller);
-	}
-
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
-		// TODO Auto-generated method stub
+		terminateParser();
 		super.onDisonnect(caller);
 	}
-
+	
 	@Override
-	public void process(InputStream message) {
-//		new ByteArrayInputStream(parser.parsePushInputStream().getBytes());
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
 		// TODO Auto-generated method stub
-		super.process(message);
+		return false;
 	}
-
+	
+	/*
+	 * pull-based processing
+	 */
+	@Override
+	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
+		return hasNext() ? getDataHandler().readData(parser.parse()): null;
+	}
+	
+	/*
+	 * push-based processing
+	 */
 	@Override
 	public void process(String[] message) {
-		// TODO Auto-generated method stub
-		super.process(message);
+		initParser(String.join("", message).getBytes());
+		getTransfer().transfer(getDataHandler().readData(parser.parse()));
+		terminateParser();
 	}
-
-	@Override
-	public void process(IStreamObject<? extends IMetaAttribute> message) {
-		// TODO Auto-generated method stub
-		super.process(message);
-	}
-
+	
 }
