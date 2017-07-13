@@ -13,7 +13,7 @@ import org.openmuc.j60870.InformationObject;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
-import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.ASDUConverter;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
  * This MEP function is designed for data from IEC 60870-5-104 transport handler

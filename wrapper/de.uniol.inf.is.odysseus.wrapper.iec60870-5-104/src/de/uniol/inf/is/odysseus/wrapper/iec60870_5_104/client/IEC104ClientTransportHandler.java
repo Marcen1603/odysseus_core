@@ -12,8 +12,8 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.ASDUConverter;
 import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.AbstractIEC104TransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
  * The IEC60870-5-104 client transport handler implements the client stack of

@@ -2,19 +2,45 @@ package de.uniol.inf.is.odysseus.wrapper.pcap;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import org.jnetpcap.Pcap;
+import org.jnetpcap.PcapClosedException;
 import org.jnetpcap.packet.JPacket;
 import org.jnetpcap.packet.JPacketHandler;
 import org.jnetpcap.protocol.tcpip.Tcp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPushTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-// TODO javaDoc
+/**
+ * The Pcap file transport handler uses jNetPcap to read pcap files. <br />
+ * <br />
+ * In the field of computer network administration, pcap (packet capture)
+ * consists of an application programming interface (API) for capturing network
+ * traffic. Unix-like systems implement pcap in the libpcap library; Windows
+ * uses a port of libpcap known as WinPcap. Monitoring software may use libpcap
+ * and/or WinPcap to capture packets travelling over a network and, in newer
+ * versions, to transmit packets on a network at the link layer, as well as to
+ * get a list of network interfaces for possible use with libpcap or WinPcap.
+ * The pcap API is written in C, so other languages such as Java, .NET
+ * languages, and scripting languages generally use a wrapper; no such wrappers
+ * are provided by libpcap or WinPcap itself. C++ programs may link directly to
+ * the C API or use an object-oriented wrapper.
+ *
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public class PcapFileTransportHandler extends AbstractPushTransportHandler {
+
+	/**
+	 * The logger instance for the pcap file wrapper.
+	 */
+	public static final Logger log = LoggerFactory.getLogger("pcap file");
 
 	/**
 	 * The name of the transport handler for query languages.
@@ -87,6 +113,16 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 				|| (this.filename != null && this.filename.equals(other.filename));
 	}
 
+	private void closePCap() {
+		if (pcapObj != null) {
+			try {
+				pcapObj.close();
+			} catch (PcapClosedException e) {
+				log.debug("error while closing pcap", e);
+			}
+		}
+	}
+
 	////////////////////
 	// Read Pcap file //
 	////////////////////
@@ -99,27 +135,35 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 			throw new IOException("Could not open Pcap file!\n" + errBuilder.toString());
 		}
 
-		pcapObj.loop(Pcap.LOOP_INFINITE, new JPacketHandler<PcapFileTransportHandler>() {
-
-			// The object holding all tcp information (including payload)
-			final Tcp tcp = new Tcp();
+		// Start new thread to finish processInOpen
+		new Thread("Pcap Reader") {
 
 			@Override
-			public void nextPacket(JPacket packet, PcapFileTransportHandler pcapHandler) {
-				if (packet.hasHeader(tcp)) {
-					pcapHandler.fireProcess(ByteBuffer.wrap(tcp.getPayload()));
-				}
-			}
+			public void run() {
+				pcapObj.loop(Pcap.LOOP_INFINITE, new JPacketHandler<PcapFileTransportHandler>() {
 
-		}, this);
+					// The object holding all tcp information (including
+					// payload)
+					final Tcp tcp = new Tcp();
+
+					@Override
+					public void nextPacket(JPacket packet, PcapFileTransportHandler pcapHandler) {
+						if (packet.hasHeader(tcp)) {
+							byte[] bytes = tcp.getPayload();
+							pcapHandler.fireProcess(ByteBuffer.wrap(Arrays.copyOfRange(bytes, 1, bytes.length)));
+						}
+					}
+
+				}, PcapFileTransportHandler.this);
+			};
+
+		}.start();
 
 	}
 
 	@Override
 	public void processInClose() throws IOException {
-		if (pcapObj != null) {
-			pcapObj.close();
-		}
+		closePCap();
 	}
 
 	/////////////////////
@@ -133,7 +177,7 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 
 	@Override
 	public void processOutClose() throws IOException {
-		throw new RuntimeException("PcapFileHanlder is currently only implemented to READ files!");
+		closePCap();
 	}
 
 	@Override

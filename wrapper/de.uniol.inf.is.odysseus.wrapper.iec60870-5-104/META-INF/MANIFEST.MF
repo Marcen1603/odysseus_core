@@ -16,3 +16,4 @@ Service-Component: OSGI-INF/IEC60870_5_104MEPFunctionProvider.xml,OSGI-INF/IEC10
  OSGI-INF/IEC104ProtocolHandler.xml
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.lang
+Export-Package: de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util
