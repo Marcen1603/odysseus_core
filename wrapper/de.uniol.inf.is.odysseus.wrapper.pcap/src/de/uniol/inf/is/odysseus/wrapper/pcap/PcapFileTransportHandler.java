@@ -113,6 +113,9 @@ public class PcapFileTransportHandler extends AbstractPushTransportHandler {
 				|| (this.filename != null && this.filename.equals(other.filename));
 	}
 
+	/**
+	 * Closes the pcap object.
+	 */
 	private void closePCap() {
 		if (pcapObj != null) {
 			try {

@@ -250,6 +250,9 @@ public class IEC104ProtocolHandler extends AbstractProtocolHandler<Tuple<IMetaAt
 		return obj != null && obj instanceof IEC104ProtocolHandler;
 	}
 
+	/**
+	 * Transforms an ASdu to a tuple (FIX data type) and transfers it.
+	 */
 	private void transferASdu(ASdu asdu) {
 		getTransfer().transfer(getDataHandler().readData(ASDUConverter.asduToTuple(asdu)));
 	}
