@@ -34,7 +34,7 @@ public class IEC104ProtocolHandler<T extends IStreamObject<IMetaAttribute>> exte
 	 */
 	private static final int buffersize = 255;
 
-	private final ConnectionSettings connSetting = new ConnectionSettings();
+	private final ConnectionSettings connSettings = new ConnectionSettings();
 
 	public IEC104ProtocolHandler() {
 		super();
@@ -63,8 +63,7 @@ public class IEC104ProtocolHandler<T extends IStreamObject<IMetaAttribute>> exte
 
 	private void transferASdu(ASdu asdu) {
 		byte[] bytes = new byte[buffersize];
-		int length = 0;
-		// TODO call length = asdu.encode(bytes, 0, connSettings)
+		int length = asdu.encode(bytes, 0, connSettings);
 		ByteBuffer buffer = ByteBuffer.wrap(bytes, 0, length);
 		getTransfer().transfer(getDataHandler().readData(buffer));
 	}
@@ -72,7 +71,7 @@ public class IEC104ProtocolHandler<T extends IStreamObject<IMetaAttribute>> exte
 	@Override
 	public void process(InputStream message) {
 		try {
-			transferASdu(new APdu(new DataInputStream(message), connSetting).getASdu());
+			transferASdu(new APdu(new DataInputStream(message), connSettings).getASdu());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -82,7 +81,7 @@ public class IEC104ProtocolHandler<T extends IStreamObject<IMetaAttribute>> exte
 	@Override
 	public void process(long callerId, ByteBuffer message) {
 		try {
-			transferASdu(new APdu(new DataInputStream(new ByteBufferInputStream(message)), connSetting).getASdu());
+			transferASdu(new APdu(new DataInputStream(new ByteBufferInputStream(message)), connSettings).getASdu());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -95,7 +94,7 @@ public class IEC104ProtocolHandler<T extends IStreamObject<IMetaAttribute>> exte
 		Arrays.asList(message).stream().forEach(string -> builder.append(string + "\n"));
 		try {
 			transferASdu(
-					new APdu(new DataInputStream(new ByteArrayInputStream(builder.toString().getBytes())), connSetting)
+					new APdu(new DataInputStream(new ByteArrayInputStream(builder.toString().getBytes())), connSettings)
 							.getASdu());
 		} catch (IOException e) {
 			e.printStackTrace();
