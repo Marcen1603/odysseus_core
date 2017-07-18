@@ -7,7 +7,10 @@ import java.util.Set;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
@@ -19,7 +22,7 @@ public interface IMovingObjectDataStructure {
 	 * @param o
 	 *            The object to add to the data structure
 	 */
-	public void add(Object o);
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement);
 
 	/**
 	 * The name of the data structure so that it can be accessed, e.g. via the

@@ -36,14 +36,14 @@ public class MODataStructurePO<T extends IStreamObject<?>> extends AbstractPipe<
 	@Override
 	protected void process_next(T object, int port) {
 		// Save the tuple in a dataStructure
-		this.dataStructure.add(object);
-
-		// And put out a tuple with the name of the dataStructure
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
-		tuple.setAttribute(0, dataStructure.getName());
-		tuple.setMetadata(object.getMetadata());
-		if (tuple instanceof IStreamObject<?>)
-			transfer((T) tuple);
+//		this.dataStructure.add(object);
+//
+//		// And put out a tuple with the name of the dataStructure
+//		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(1, false);
+//		tuple.setAttribute(0, dataStructure.getName());
+//		tuple.setMetadata(object.getMetadata());
+//		if (tuple instanceof IStreamObject<?>)
+//			transfer((T) tuple);
 	}
 
 }

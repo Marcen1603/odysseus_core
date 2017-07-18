@@ -11,29 +11,34 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MovingObjectInterpolation", doc = "Interpolates the location of moving objects.", category = {
+@LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "PredictionEnrich", doc = "Predicts the location of moving objects.", category = {
 		LogicalOperatorCategory.SPATIAL })
-public class MovingObjectInterpolationAO extends UnaryLogicalOp {
+public class PredictionEnrichAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 1235279982306004707L;
 
-	public MovingObjectInterpolationAO() {
+	private String geoObjectAttribute;
+	private String idAttribute;
+
+	public PredictionEnrichAO() {
 		super();
 	}
-	
-	public MovingObjectInterpolationAO(MovingObjectInterpolationAO ao) {
+
+	public PredictionEnrichAO(PredictionEnrichAO ao) {
 		super(ao);
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
-		return new MovingObjectInterpolationAO(this);
+		return new PredictionEnrichAO(this);
 	}
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		
+
 		// Use old schema from the input
 		SDFSchema inputSchema = getInputSchema(pos);
 
@@ -44,7 +49,7 @@ public class MovingObjectInterpolationAO extends UnaryLogicalOp {
 		SDFAttribute attribute3 = new SDFAttribute("", "longitude", SDFDatatype.STRING);
 		SDFAttribute attribute4 = new SDFAttribute("", "speedMetersPerSecond", SDFDatatype.STRING);
 		SDFAttribute attribute5 = new SDFAttribute("", "direction", SDFDatatype.STRING);
-		
+
 		attributes.add(attribute1);
 		attributes.add(attribute2);
 		attributes.add(attribute3);
@@ -54,6 +59,24 @@ public class MovingObjectInterpolationAO extends UnaryLogicalOp {
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
+	}
+
+	public String getGeoObjectAttribute() {
+		return geoObjectAttribute;
+	}
+
+	@Parameter(name = "geoObjectAttribute", optional = false, type = StringParameter.class, isList = false, doc = "The name of the attribute with the geo-object (location of a moving object).")
+	public void setGeoObjectAttribute(String geoObjectAttribute) {
+		this.geoObjectAttribute = geoObjectAttribute;
+	}
+
+	public String getIdAttribute() {
+		return idAttribute;
+	}
+
+	@Parameter(name = "idAttribute", optional = false, type = StringParameter.class, isList = false, doc = "The name of the attribute with the id (identifier of a moving object).")
+	public void setIdAttribute(String idAttribute) {
+		this.idAttribute = idAttribute;
 	}
 
 }

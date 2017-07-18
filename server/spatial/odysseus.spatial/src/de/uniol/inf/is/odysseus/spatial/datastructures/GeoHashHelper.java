@@ -48,6 +48,10 @@ public class GeoHashHelper {
 		GeoHash hash = GeoHash.withBitPrecision(centroid.getX(), centroid.getY(), numberOfBits);
 		return hash;
 	}
+	
+	public static GeoHash fromLatLong(double latitude, double longitude, int numberOfBits) {
+		return GeoHash.withBitPrecision(latitude, longitude, numberOfBits);
+	}
 
 	public static List<Point> createBox(Point topLeft, Point lowerRight) {
 		// Create the polygon

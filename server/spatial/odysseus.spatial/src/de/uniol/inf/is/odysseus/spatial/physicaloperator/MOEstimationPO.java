@@ -40,7 +40,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	}
 
 	private void processTrajectoryTuple(T object) {
-		this.index.add(object);
+//		this.index.add(object);
 	}
 
 	private void processTimeTuple(T object) {

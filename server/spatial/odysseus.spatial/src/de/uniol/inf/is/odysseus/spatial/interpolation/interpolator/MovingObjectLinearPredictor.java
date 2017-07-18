@@ -5,22 +5,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import org.geotools.referencing.GeodeticCalculator;
 
-public class MovingObjectLinearInterpolator implements IMovingObjectInterpolator {
+public class MovingObjectLinearPredictor implements IMovingObjectPredictor {
 
 	private Map<String, LocationMeasurement> lastMovingObjectLocations;
 	private TimeUnit baseTimeUnit;
 
-	public MovingObjectLinearInterpolator(TimeUnit baseTimeUnit) {
+	public MovingObjectLinearPredictor(TimeUnit baseTimeUnit) {
 		this.lastMovingObjectLocations = new HashMap<>();
 		this.baseTimeUnit = baseTimeUnit;
 	}
 
 	@Override
-	public void addLocation(LocationMeasurement locationMeasurement) {
+	public void addLocation(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement) {
 		lastMovingObjectLocations.put(locationMeasurement.getMovingObjectId(), locationMeasurement);
 	}
 

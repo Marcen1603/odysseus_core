@@ -21,8 +21,11 @@ import ch.hsr.geohash.GeoHash;
 import ch.hsr.geohash.WGS84Point;
 import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
+import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
@@ -57,69 +60,65 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public void add(Object o) {
-		if (o instanceof Tuple<?>) {
-			// Get info for new TrajectoryElement
-			Tuple<ITimeInterval> tuple = (Tuple<ITimeInterval>) o;
-			GeoHash geoHash = GeoHashHelper.fromGeometry(GeoHashHelper.getGeometry(tuple, getGeometryPosition()),
-					BIT_PRECISION);
-			String id = getMovingObjectId(tuple);
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement) {
+		// Get info for new TrajectoryElement
+		GeoHash geoHash = GeoHashHelper.fromLatLong(locationMeasurement.getLatitude(),
+				locationMeasurement.getLongitude(), BIT_PRECISION);
+		String id = locationMeasurement.getMovingObjectId();
 
-			// Get the previously latest element from that trajectory
-			TrajectoryElement latestElement = latestTrajectoryElementMap.get(id);
+		// Get the previously latest element from that trajectory
+		TrajectoryElement latestElement = latestTrajectoryElementMap.get(id);
 
-			// Create the new "latest" element and save it
-			TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash, tuple);
-			latestTrajectoryElementMap.put(id, trajectoryElement);
+		// Create the new "latest" element and save it
+		TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash, streamElement);
+		latestTrajectoryElementMap.put(id, trajectoryElement);
 
-			List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
-			if (geoHashList == null) {
-				/*
-				 * Probably we will only have one element in here as two objects
-				 * on the same location are unlikely (but depends on the
-				 * scenario)
-				 */
-				geoHashList = new ArrayList<>(1);
-			}
-
-			// Add the new element to the list
-			geoHashList.add(trajectoryElement);
-			this.pointMap.put(geoHash, geoHashList);
-
-			// Calculate the new total distance of this trajectory
-			double newDistance = (movingObjectDistances.get(id) == null ? 0.0 : movingObjectDistances.get(id))
-					+ trajectoryElement.getDistanceToPreviousElement();
-			movingObjectDistances.put(id, newDistance);
-
-			// Search for the last but one element
-			TrajectoryElement element = trajectoryElement;
-			while (element != null && element.getPreviousElement() != null
-					&& element.getPreviousElement().getPreviousElement() != null) {
-				element = element.getPreviousElement();
-			}
-
-			if (newDistance - element.getDistanceToPreviousElement() > distancePerMovingObject) {
-				// We can delete the last element
-				
-				// Remove from all elements
-				TrajectoryElement previousElement = element.getPreviousElement();
-				List<TrajectoryElement> elemList = pointMap.get(previousElement.getGeoHash());
-				
-				if (elemList != null && elemList.size() <= 1) {
-					// Remove the whole list
-					pointMap.remove(previousElement.getGeoHash());
-				} else if (elemList != null) {
-					// Only remove the one element from the list
-					elemList.remove(previousElement);
-				}
-				
-				// Remove from chained list
-				element.setPreviousElement(null);
-				movingObjectDistances.put(id, newDistance - element.getDistanceToPreviousElement());
-			}
+		List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
+		if (geoHashList == null) {
+			/*
+			 * Probably we will only have one element in here as two objects on the same
+			 * location are unlikely (but depends on the scenario)
+			 */
+			geoHashList = new ArrayList<>(1);
 		}
+
+		// Add the new element to the list
+		geoHashList.add(trajectoryElement);
+		this.pointMap.put(geoHash, geoHashList);
+
+		// Calculate the new total distance of this trajectory
+		double newDistance = (movingObjectDistances.get(id) == null ? 0.0 : movingObjectDistances.get(id))
+				+ trajectoryElement.getDistanceToPreviousElement();
+		movingObjectDistances.put(id, newDistance);
+
+		// Search for the last but one element
+		TrajectoryElement element = trajectoryElement;
+		while (element != null && element.getPreviousElement() != null
+				&& element.getPreviousElement().getPreviousElement() != null) {
+			element = element.getPreviousElement();
+		}
+
+		if (newDistance - element.getDistanceToPreviousElement() > distancePerMovingObject) {
+			// We can delete the last element
+
+			// Remove from all elements
+			TrajectoryElement previousElement = element.getPreviousElement();
+			List<TrajectoryElement> elemList = pointMap.get(previousElement.getGeoHash());
+
+			if (elemList != null && elemList.size() <= 1) {
+				// Remove the whole list
+				pointMap.remove(previousElement.getGeoHash());
+			} else if (elemList != null) {
+				// Only remove the one element from the list
+				elemList.remove(previousElement);
+			}
+
+			// Remove from chained list
+			element.setPreviousElement(null);
+			movingObjectDistances.put(id, newDistance - element.getDistanceToPreviousElement());
+		}
+
 	}
 
 	@Override
@@ -151,10 +150,9 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	 * @param t
 	 *            The time interval that the returned elements have to intersect
 	 * @param candidateCollection
-	 *            The list of candidates. Should cover the whole are from the
-	 *            circle you want to query. You save a lookup of the candidates
-	 *            with this method, e.g., if you already have the list of
-	 *            candidates.
+	 *            The list of candidates. Should cover the whole are from the circle
+	 *            you want to query. You save a lookup of the candidates with this
+	 *            method, e.g., if you already have the list of candidates.
 	 * @return All elements from the candidates that are in the given circle.
 	 */
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
@@ -220,9 +218,8 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		// (http://stackoverflow.com/questions/18290935/flattening-a-collection)
 		List<GeoHash> result = allHashes.keySet().stream()
 				/*
-				 * spatial filter (it's enough to do it only with the first
-				 * element as all elements in this list are on the exact same
-				 * position (have the same geohash)
+				 * spatial filter (it's enough to do it only with the first element as all
+				 * elements in this list are on the exact same position (have the same geohash)
 				 */
 				.filter(e -> polygon.contains(
 						factory.createPoint(new Coordinate(e.getPoint().getLongitude(), e.getPoint().getLatitude()))))

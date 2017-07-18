@@ -3,53 +3,71 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.vividsolutions.jts.geom.Geometry;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectInterpolator;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearInterpolator;
-import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MovingObjectInterpolationAO;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectPredictor;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearPredictor;
+import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.PredictionEnrichAO;
 
-public class MovingObjectInterpolationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
+public class PredictionEnrichPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private IMovingObjectInterpolator movingObjectInterpolator;
+	private final static int DATA_PORT = 0;
+	private final static int ESTIMATION_PORT = 1;
 
-	private int latitudeIndex;
-	private int longitudeIndex;
-	private int courseOverGroundIndex;
-	private int speedOverGroundIndex;
+	private IMovingObjectPredictor movingObjectInterpolator;
+
+	private int geoObjectIndex;
 	private int idIndex;
 
-	public MovingObjectInterpolationPO(MovingObjectInterpolationAO ao) {
-		this.movingObjectInterpolator = new MovingObjectLinearInterpolator(TimeUnit.MILLISECONDS);
+	public PredictionEnrichPO(PredictionEnrichAO ao) {
+		this.movingObjectInterpolator = new MovingObjectLinearPredictor(TimeUnit.MILLISECONDS);
 
-		this.latitudeIndex = 5;
-		this.longitudeIndex = 9;
-		this.courseOverGroundIndex = 6;
-		this.speedOverGroundIndex = 7;
-		this.idIndex = 8;
+		this.geoObjectIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeoObjectAttribute());
+		this.idIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getIdAttribute());
+	}
+
+	@Override
+	protected void process_next(T tuple, int port) {
+		if (port == DATA_PORT) {
+			this.addLocation(tuple);
+		} else if (port == ESTIMATION_PORT) {
+			this.createPrediction(tuple);
+		}
+	}
+
+	private void addLocation(T tuple) {
+
+		double latitude = 0;
+		double longitude = 0;
+
+		if (tuple.getAttribute(this.geoObjectIndex) instanceof GeometryWrapper) {
+			Geometry geometry = ((GeometryWrapper) tuple.getAttribute(this.geoObjectIndex)).getGeometry();
+			// We always use lat / lng
+			latitude = geometry.getCoordinate().x;
+			longitude = geometry.getCoordinate().y;
+		}
+
+		String id = tuple.getAttribute(this.idIndex).toString();
+
+		// TODO Do we keep speed and direction?
+		LocationMeasurement locationMeasurement = new LocationMeasurement(latitude, longitude, 0, 0,
+				tuple.getMetadata().getStart(), id);
+
+		this.movingObjectInterpolator.addLocation(locationMeasurement, tuple);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
-	protected void process_next(T object, int port) {
-		double latitude = object.getAttribute(this.latitudeIndex);
-		double longitude = object.getAttribute(this.longitudeIndex);
-		double courseOverGround = object.getAttribute(this.courseOverGroundIndex);
-		double speedOverGround = object.getAttribute(this.speedOverGroundIndex);
-		String id = object.getAttribute(this.idIndex).toString();
-
-		LocationMeasurement locationMeasurement = new LocationMeasurement(latitude, longitude, courseOverGround,
-				speedOverGround, object.getMetadata().getStart(), id);
-
-		this.movingObjectInterpolator.addLocation(locationMeasurement);
-
+	private void createPrediction(T tuple) {
 		// Interpolate for all objects until this time
 		Map<String, LocationMeasurement> allLocations = this.movingObjectInterpolator
-				.calcAllLocations(object.getMetadata().getStart());
+				.calcAllLocations(tuple.getMetadata().getStart());
 		for (LocationMeasurement interpolatedLocationMeasurement : allLocations.values()) {
 			this.transfer((T) createTuple(interpolatedLocationMeasurement));
 		}
