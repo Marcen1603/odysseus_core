@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

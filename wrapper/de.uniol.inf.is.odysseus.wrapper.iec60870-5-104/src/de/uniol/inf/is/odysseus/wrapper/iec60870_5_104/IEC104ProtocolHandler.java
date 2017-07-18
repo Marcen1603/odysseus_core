@@ -1,23 +1,33 @@
-package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.client;
+package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.UnknownHostException;
-import java.util.concurrent.TimeoutException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
-import org.openmuc.j60870.ClientConnectionBuilder;
-import org.openmuc.j60870.Connection;
+import org.openmuc.j60870.APdu;
+import org.openmuc.j60870.ASdu;
+import org.openmuc.j60870.internal.ConnectionSettings;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.AbstractIEC104TransportHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
- * The IEC60870-5-104 client transport handler implements the client stack of
- * the IEC60870-5-104 communication standard. <br />
+ * The IEC60870-5-104 protocol handler implements the IEC60870-5-104
+ * communication standard without TCP layer, so also without handshake. The
+ * purpose of this protocol handler is to convert binary data (payload of tcp)
+ * to ASdus. <br />
+ * <br />
+ * ATTENTION: Use only the tuple data handler with this protocol handler!<br />
  * <br />
  * IEC 60870 part 5 is one of the IEC 60870 set of standards which define
  * systems used for telecontrol (supervisory control and data acquisition) in
@@ -206,37 +216,28 @@ import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class IEC104ClientTransportHandler extends AbstractIEC104TransportHandler {
+public class IEC104ProtocolHandler extends AbstractProtocolHandler<Tuple<IMetaAttribute>> {
 
 	/**
-	 * The name of the transport handler for query languages.
+	 * The name of the protocol handler for query languages.
 	 */
-	private static final String name = "IEC60870-5-104_Client";
+	private static final String name = "IEC60870-5-104";
 
-	/**
-	 * The j60870 connection.
-	 */
-	private Connection clientConnection;
+	private final ConnectionSettings connSettings = new ConnectionSettings();
 
-	/**
-	 * Empty default constructor. Needed to run as an OSGi service.
-	 */
-	public IEC104ClientTransportHandler() {
+	public IEC104ProtocolHandler() {
+		super();
 	}
 
-	/**
-	 * Creates a new transport handler.
-	 *
-	 * @param protocolHandler
-	 *            The transport handler to use.
-	 * @param options
-	 *            The options map.
-	 * @throws UnknownHostException
-	 *             if the host specified in the options map is unknown.
-	 */
-	public IEC104ClientTransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options)
-			throws UnknownHostException {
-		super(protocolHandler, options);
+	public IEC104ProtocolHandler(ITransportDirection direction, IAccessPattern access,
+			IStreamObjectDataHandler<Tuple<IMetaAttribute>> datahandler, OptionMap optionsMap) {
+		super(direction, access, datahandler, optionsMap);
+	}
+
+	@Override
+	public IProtocolHandler<Tuple<IMetaAttribute>> createInstance(ITransportDirection direction, IAccessPattern access,
+			OptionMap options, IStreamObjectDataHandler<Tuple<IMetaAttribute>> dataHandler) {
+		return new IEC104ProtocolHandler(direction, access, dataHandler, options);
 	}
 
 	@Override
@@ -245,79 +246,60 @@ public class IEC104ClientTransportHandler extends AbstractIEC104TransportHandler
 	}
 
 	@Override
-	public ITransportHandler createInstance(IProtocolHandler<?> protocolHandler, OptionMap options) {
-		try {
-			return new IEC104ClientTransportHandler(protocolHandler, options);
-		} catch (UnknownHostException e) {
-			log.error("{} is an unknown internet adress!", getHost());
-			return null;
-		}
+	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> obj) {
+		return obj != null && obj instanceof IEC104ProtocolHandler;
 	}
 
 	/**
-	 * Starts a new j60870 {@link #clientConnection}.
-	 *
-	 * @throws IOException
-	 *             may be thrown by
-	 *             {@link Connection#startDataTransfer(org.openmuc.j60870.ConnectionEventListener, int)}.
+	 * Transforms an ASdu to a tuple (FIX data type) and transfers it.
 	 */
-	private void startClient() throws IOException {
-		clientConnection = new ClientConnectionBuilder(getHost()).setPort(getPort()).connect();
+	private void transferASdu(ASdu asdu) {
+		getTransfer().transfer(getDataHandler().readData(ASDUConverter.asduToTuple(asdu)));
+	}
+
+	@Override
+	public void process(InputStream message) {
 		try {
-			clientConnection.startDataTransfer(new IEC104ClientListener(this, clientConnection), getTimeout());
-			log.debug("j60870 client successfully connected");
-		} catch (TimeoutException e) {
-			log.error("Connection closed for the following reason", e);
-		}
-	}
-
-	/**
-	 * Stops a running j60870 {@link #clientConnection}.
-	 */
-	private void stopClient() {
-		if (clientConnection != null) {
-			clientConnection.close();
-			log.debug("j60870 client successfully disconnected");
+			transferASdu(new APdu(new DataInputStream(message), connSettings).getASdu());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
 	}
 
 	@Override
-	public void processInOpen() throws IOException {
-		startClient();
-	}
-
-	@Override
-	public void processOutOpen() throws IOException {
-		startClient();
-	}
-
-	@Override
-	public void processInClose() throws IOException {
-		stopClient();
-	}
-
-	@Override
-	public void processOutClose() throws IOException {
-		stopClient();
-	}
-
-	@Override
-	public void send(Object message) throws IOException {
-		if (message instanceof Tuple) {
-			@SuppressWarnings("unchecked")
-			Tuple<IMetaAttribute> tuple = (Tuple<IMetaAttribute>) message;
-			clientConnection.send(ASDUConverter.TupleToASDU(tuple));
+	public void process(long callerId, ByteBuffer message) {
+		try {
+			transferASdu(
+					new APdu(new DataInputStream(new ByteArrayInputStream(message.array())), connSettings).getASdu());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
 	}
 
 	@Override
-	public boolean isSemanticallyEqualImpl(ITransportHandler obj) {
-		if (obj == null || !(obj instanceof IEC104ClientTransportHandler)) {
-			return false;
+	public void process(String[] message) {
+		StringBuilder builder = new StringBuilder();
+		Arrays.asList(message).stream().forEach(string -> builder.append(string + "\n"));
+		try {
+			transferASdu(
+					new APdu(new DataInputStream(new ByteArrayInputStream(builder.toString().getBytes())), connSettings)
+							.getASdu());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
 		}
+	}
 
-		IEC104ClientTransportHandler other = (IEC104ClientTransportHandler) obj;
-		return getHost().equals(other.getHost()) && getPort() == other.getPort();
+	@Override
+	public void process(Tuple<IMetaAttribute> message) {
+		getTransfer().transfer(message);
+	}
+
+	@Override
+	public void process(Tuple<IMetaAttribute> message, int port) {
+		getTransfer().transfer(message, port);
 	}
 
 }

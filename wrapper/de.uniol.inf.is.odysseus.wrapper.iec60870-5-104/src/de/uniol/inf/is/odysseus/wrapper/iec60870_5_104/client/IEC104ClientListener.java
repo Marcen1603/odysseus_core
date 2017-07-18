@@ -6,8 +6,8 @@ import org.openmuc.j60870.ASdu;
 import org.openmuc.j60870.Connection;
 import org.openmuc.j60870.ConnectionEventListener;
 
-import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.ASDUConverter;
 import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.AbstractIEC104TransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
  * Listener implementation for a new IEC60870-5-104 connection. <br />
