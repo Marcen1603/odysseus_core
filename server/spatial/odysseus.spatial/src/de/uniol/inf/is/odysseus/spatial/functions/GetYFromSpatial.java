@@ -37,7 +37,7 @@ public class GetYFromSpatial extends AbstractFunction<Double> {
 			x = point.getY();
 		} else if (this.getInputValue(0) instanceof GeometryWrapper) {
 			point = ((GeometryWrapper) this.getInputValue(0)).getGeometry().getCentroid();
-			x = point.getX();
+			x = point.getY();
 		}
 		return x;
 	}

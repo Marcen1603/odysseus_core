@@ -33,8 +33,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
 
 		// TODO Name and "length" is not correct here.
-		this.index = new GeoHashMODataStructure("EstimationPO", this.geometryAttributeIndex, this.idAttributeIndex,
-				1000);
+		this.index = new GeoHashMODataStructure("EstimationPO", this.geometryAttributeIndex, 1000);
 	}
 
 	@Override
@@ -62,6 +61,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.index.add(locationMeasurement, object);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void processTimeTuple(T object) {
 
 		// Get the point in time to which the moving objects need to be

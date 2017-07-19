@@ -15,7 +15,7 @@ public class MovingObjectLinearHistoryPredictor implements IMovingObjectPredicto
 
 	public MovingObjectLinearHistoryPredictor(int geometryAttributePosition, int idAttributePosition) {
 		// TODO Fill magic values with correct content / change index structure
-		this.indexStructure = new GeoHashMODataStructure("bla", geometryAttributePosition, idAttributePosition, 1000);
+		this.indexStructure = new GeoHashMODataStructure("bla", geometryAttributePosition, 1000);
 	}
 	
 	@Override

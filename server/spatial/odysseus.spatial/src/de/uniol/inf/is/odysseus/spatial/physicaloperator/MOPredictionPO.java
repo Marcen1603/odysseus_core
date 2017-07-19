@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -19,6 +18,14 @@ import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObject
 import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearPredictor;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOPredictionAO;
 
+/**
+ * This operator can use predictors to predict the locations of moving objects
+ * at certain points in time.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final int DATA_PORT = 0;
@@ -49,8 +56,8 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.speedOverGroundPosition = ao.getInputSchema(DATA_PORT)
 				.findAttributeIndex(ao.getSpeedOverGroundAttribute());
 
-		// TODO Read basetimeunit from stream
-		this.movingObjectInterpolator = new MovingObjectLinearPredictor(TimeUnit.MILLISECONDS);
+		// Set the basetimeunit so that the passed time is correct
+		this.movingObjectInterpolator = new MovingObjectLinearPredictor(ao.getBaseTimeUnit());
 
 		this.geoFactory = new GeometryFactory();
 	}
@@ -64,6 +71,12 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		}
 	}
 
+	/**
+	 * A new location of a moving object
+	 * 
+	 * @param object
+	 *            The tuple with the location information
+	 */
 	private void processTrajectoryTuple(T object) {
 		GeometryWrapper geometry = object.getAttribute(this.geometryPosition);
 
@@ -79,6 +92,13 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.movingObjectInterpolator.addLocation(locationMeasurement, object);
 	}
 
+	/**
+	 * Time progress, e.g. by a timer
+	 * 
+	 * @param object
+	 *            Tuple with time information
+	 */
+	@SuppressWarnings("unchecked")
 	private void processTimeTuple(T object) {
 		List<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
 		long timeStamp = object.getAttribute(this.pointInTimePosition);

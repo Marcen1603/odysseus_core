@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
-import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MovingObjectRangeAO;
 
@@ -21,14 +20,12 @@ public class MovingObjectRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> 
 
 	private IMovingObjectDataStructure dataStructure;
 	private int geometryPosition;
-	private int idPosition;
 	private double range;
 
 	public MovingObjectRangePO(MovingObjectRangeAO ao) {
 		this.dataStructure = MovingObjectDataStructureProvider.getInstance()
 				.getDataStructure(ao.getDataStructureName());
 		this.geometryPosition = ao.getInputSchema(0).findAttributeIndex(ao.getGeometryAttribute());
-//		this.idPosition = ao.getInputSchema(0).findAttributeIndex(ao.getIdAttribute());
 		this.range = ao.getRange();
 	}
 

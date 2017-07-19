@@ -35,7 +35,6 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	private static final int BIT_PRECISION = 64;
 	public static final String TYPE = "mo_geohash";
 
-	private int idPosition;
 	private double distancePerMovingObject;
 
 	// The position of the geometry-attribute within the tuple
@@ -48,10 +47,9 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	private Map<String, TrajectoryElement> latestTrajectoryElementMap;
 	private Map<String, Double> movingObjectDistances;
 
-	public GeoHashMODataStructure(String name, int geometryPosition, int idPosition, double distancePerMovingObject) {
+	public GeoHashMODataStructure(String name, int geometryPosition, double distancePerMovingObject) {
 		this.name = name;
 		this.geometryAttributePosition = geometryPosition;
-		this.idPosition = idPosition;
 		this.distancePerMovingObject = distancePerMovingObject;
 
 		this.pointMap = new TreeMap<>();
@@ -271,11 +269,6 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		}
 
 		return resultMap;
-	}
-
-	private String getMovingObjectId(Tuple<?> tuple) {
-		Object o = tuple.getAttribute(this.idPosition);
-		return o.toString();
 	}
 
 	@Override
