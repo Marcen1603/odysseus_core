@@ -33,7 +33,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
 
 		// TODO Name and "length" is not correct here.
-		this.index = new GeoHashMODataStructure("EstimationPO", this.geometryAttributeIndex, 1000);
+		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
 	}
 
 	@Override
