@@ -5,10 +5,12 @@ import com.vividsolutions.jts.geom.Point;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * Returns the y value from a spatial point or geometry
+ * 
  * @author Tobias Brandt
  *
  */
@@ -33,6 +35,9 @@ public class GetYFromSpatial extends AbstractFunction<Double> {
 		} else if (this.getInputValue(0) instanceof Point) {
 			point = ((Point) this.getInputValue(0));
 			x = point.getY();
+		} else if (this.getInputValue(0) instanceof GeometryWrapper) {
+			point = ((GeometryWrapper) this.getInputValue(0)).getGeometry().getCentroid();
+			x = point.getX();
 		}
 		return x;
 	}
