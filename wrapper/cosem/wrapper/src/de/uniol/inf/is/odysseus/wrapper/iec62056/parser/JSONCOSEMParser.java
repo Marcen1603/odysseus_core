@@ -81,7 +81,6 @@ public class JSONCOSEMParser extends AbstractCOSEMParser {
 					jp.nextToken();
 					if (TOKENS[0].equals((TOKEN = jp.getCurrentName()))) {
 						SMGW_TOKEN_VALUE = DELIMETER[0] + jp.getText();
-						System.out.println("SMGW_TOKEN_VALUE " + SMGW_TOKEN_VALUE);
 					} else if (TOKENS[1].equals(TOKEN)) {
 						return appendNextValue();
 					}
