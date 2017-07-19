@@ -1,0 +1,7 @@
+{
+	"logical_name": "smartmetergateway_0", 
+	"objects": 
+	[
+		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
+	]
+}
