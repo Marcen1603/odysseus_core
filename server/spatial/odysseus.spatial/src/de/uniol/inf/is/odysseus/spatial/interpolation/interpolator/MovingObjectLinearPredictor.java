@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import org.geotools.referencing.GeodeticCalculator;
 
-public class MovingObjectLinearPredictor implements IMovingObjectPredictor {
+public class MovingObjectLinearPredictor implements IMovingObjectLocationPredictor {
 
 	private Map<String, LocationMeasurement> lastMovingObjectLocations;
 	private TimeUnit baseTimeUnit;
@@ -22,12 +22,13 @@ public class MovingObjectLinearPredictor implements IMovingObjectPredictor {
 	}
 
 	@Override
-	public void addLocation(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement) {
+	public void addLocation(LocationMeasurement locationMeasurement,
+			IStreamObject<? extends IMetaAttribute> streamElement) {
 		lastMovingObjectLocations.put(locationMeasurement.getMovingObjectId(), locationMeasurement);
 	}
 
 	@Override
-	public LocationMeasurement calcLocation(String movingObjectId, PointInTime time) {
+	public LocationMeasurement predictLocation(String movingObjectId, PointInTime time) {
 
 		// Get the last measurement
 		LocationMeasurement locationMeasurement = lastMovingObjectLocations.get(movingObjectId);
@@ -51,11 +52,11 @@ public class MovingObjectLinearPredictor implements IMovingObjectPredictor {
 	}
 
 	@Override
-	public Map<String, LocationMeasurement> calcAllLocations(PointInTime time) {
+	public Map<String, LocationMeasurement> predictAllLocations(PointInTime time) {
 		Map<String, LocationMeasurement> allInterpolatedLocations = new HashMap<>();
 		lastMovingObjectLocations.values().stream()
 				.forEach(locationMeasurment -> allInterpolatedLocations.put(locationMeasurment.getMovingObjectId(),
-						calcLocation(locationMeasurment.getMovingObjectId(), time)));
+						predictLocation(locationMeasurment.getMovingObjectId(), time)));
 		return allInterpolatedLocations;
 	}
 

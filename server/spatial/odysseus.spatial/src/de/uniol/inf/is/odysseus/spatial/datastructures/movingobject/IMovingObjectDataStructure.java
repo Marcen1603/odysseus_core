@@ -71,6 +71,21 @@ public interface IMovingObjectDataStructure {
 	 *         neighborhood around the given geometry
 	 */
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
+	
+	/**
+	 * A circle query with a given candidate collection.
+	 * 
+	 * @param geometry
+	 *            The center of the circle to query
+	 * @param radius
+	 *            The radius of the circle to query
+	 * @param t
+	 *            The time interval that the returned elements have to intersect
+	 * @param movingObjectIdToIgnore
+	 *            results with this id won't be included in the resultlist
+	 * @return All elements from the candidates that are in the given circle.
+	 */
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t, String movingObjectIdToIgnore);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a

@@ -65,7 +65,7 @@ public class MovingObjectRangeAO extends BinaryLogicalOp {
 		return idAttribute;
 	}
 
-	@Parameter(name = "idAttribute", optional = true, type = StringParameter.class, isList = false, doc = "EXPERIMENTAL! Name of the attribute with the id of the object.")
+	@Parameter(name = "idAttribute", optional = true, type = StringParameter.class, isList = false, doc = "Name of the attribute with the id of the object. Will exclude results with the own id from the results.")
 	public void setIdAttribute(String idAttribute) {
 		this.idAttribute = idAttribute;
 	}
@@ -74,7 +74,7 @@ public class MovingObjectRangeAO extends BinaryLogicalOp {
 		return geometryAttribute;
 	}
 
-	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the object.F")
+	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the object.")
 	public void setGeometryAttribute(String geometryAttribute) {
 		this.geometryAttribute = geometryAttribute;
 	}

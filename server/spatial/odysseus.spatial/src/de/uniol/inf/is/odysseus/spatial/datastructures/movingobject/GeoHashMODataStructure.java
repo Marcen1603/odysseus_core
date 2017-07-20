@@ -116,12 +116,15 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 			element.setPreviousElement(null);
 			movingObjectDistances.put(id, newDistance - element.getDistanceToPreviousElement());
 		}
-
 	}
 
 	@Override
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
-
+		return queryCircle(geometry, radius, t, null);
+	}
+	
+	@Override
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t, String movingObjectIdToIgnore) {
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
@@ -134,27 +137,11 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
 				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
 
-		return queryCircle(geometry, radius, t, candidateCollection);
-
+		return queryCircle(geometry, radius, t, candidateCollection, movingObjectIdToIgnore);
 	}
-
-	/**
-	 * A circle query with a given candidate collection.
-	 * 
-	 * @param geometry
-	 *            The center of the circle to query
-	 * @param radius
-	 *            The radius of the circle to query
-	 * @param t
-	 *            The time interval that the returned elements have to intersect
-	 * @param candidateCollection
-	 *            The list of candidates. Should cover the whole are from the circle
-	 *            you want to query. You save a lookup of the candidates with this
-	 *            method, e.g., if you already have the list of candidates.
-	 * @return All elements from the candidates that are in the given circle.
-	 */
-	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
-			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection) {
+	
+	private Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
+			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection, String movingObjectIdToIgnore) {
 
 		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
 
@@ -176,6 +163,13 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 				// All elements that are at this point (key) need to be added to
 				// the result
 				for (TrajectoryElement element : pointMap.get(key)) {
+
+					if (movingObjectIdToIgnore != null && !movingObjectIdToIgnore.isEmpty()
+							&& element.getMovingObjectID().equals(movingObjectIdToIgnore)) {
+						// This is probably the moving object we are searching for, hence, do not put it
+						// into the results
+						continue;
+					}
 
 					// Check if the result is within the given time interval
 					if (element.getStreamElement().getMetadata() instanceof ITimeInterval) {

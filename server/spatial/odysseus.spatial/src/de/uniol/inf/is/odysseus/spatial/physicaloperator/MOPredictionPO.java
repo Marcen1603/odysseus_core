@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectPredictor;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectLocationPredictor;
 import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearPredictor;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOPredictionAO;
 
@@ -41,7 +41,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int courseOverGroundPosition;
 	private int speedOverGroundPosition;
 
-	private IMovingObjectPredictor movingObjectInterpolator;
+	private IMovingObjectLocationPredictor movingObjectInterpolator;
 	private GeometryFactory geoFactory;
 
 	public MOPredictionPO(MOPredictionAO ao) {
@@ -105,19 +105,18 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		PointInTime pointInTime = new PointInTime(timeStamp);
 
 		for (String movingObjectId : movingObjectIds) {
-			LocationMeasurement prediction = this.movingObjectInterpolator.calcLocation(movingObjectId, pointInTime);
+			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId, pointInTime);
 			Tuple<ITimeInterval> tuple = createTuple(prediction);
 			this.transfer((T) tuple);
 		}
 	}
 
 	private Tuple<ITimeInterval> createTuple(LocationMeasurement interpolatedLocationMeasurement) {
-
 		Geometry geometry = this.geoFactory.createPoint(new Coordinate(interpolatedLocationMeasurement.getLatitude(),
 				interpolatedLocationMeasurement.getLongitude()));
 		GeometryWrapper geoWrapper = new GeometryWrapper(geometry);
 
-		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(5, false);
+		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(4, false);
 		tupleWithInterpolatedLocation
 				.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime()));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
