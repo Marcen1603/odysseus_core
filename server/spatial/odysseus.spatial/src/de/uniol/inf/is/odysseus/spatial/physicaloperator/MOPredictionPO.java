@@ -117,8 +117,9 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		GeometryWrapper geoWrapper = new GeometryWrapper(geometry);
 
 		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(4, false);
-		tupleWithInterpolatedLocation
-				.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime()));
+		// The prediction is valid only one point in time
+		tupleWithInterpolatedLocation.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime(),
+				interpolatedLocationMeasurement.getMeasurementTime().plus(1)));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, geoWrapper);
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getSpeedInMetersPerSecond());
