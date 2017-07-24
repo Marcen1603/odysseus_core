@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -44,7 +44,7 @@ public class DateToStringFunction2 extends AbstractFunction<String> {
 	}
 
     @Override
-    public SDFDatatype determineType(IExpression<?>[] args) {
+    public SDFDatatype determineType(IMepExpression<?>[] args) {
     	// just used to init dateFormat
     	if (args.length == 3 && args[0] != null){
     		init((String)args[1].getValue(), (String)args[2].getValue());

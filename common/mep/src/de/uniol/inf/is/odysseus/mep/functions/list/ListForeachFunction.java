@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions.list;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 public class ListForeachFunction extends AbstractLambdaListFunction {
@@ -19,7 +19,7 @@ public class ListForeachFunction extends AbstractLambdaListFunction {
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		return super.determineType(args);
 	}
 	

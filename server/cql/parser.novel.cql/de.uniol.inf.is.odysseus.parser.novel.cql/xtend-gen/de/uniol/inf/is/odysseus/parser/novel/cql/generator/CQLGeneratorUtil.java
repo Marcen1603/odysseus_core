@@ -1,12 +1,13 @@
 package de.uniol.inf.is.odysseus.parser.novel.cql.generator;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.FunctionStore;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.ExpressionsModel;
+import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.novel.cql.cQL.SelectExpression;
@@ -22,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.eclipse.emf.common.util.EList;
@@ -188,22 +188,6 @@ public class CQLGeneratorUtil {
       boolean _tripleNotEquals = (_attribute != null);
       if (_tripleNotEquals) {
         attributes.add(argument.getAttribute());
-      } else {
-        SelectExpression _expression = argument.getExpression();
-        boolean _tripleNotEquals_1 = (_expression != null);
-        if (_tripleNotEquals_1) {
-          List<Attribute> expressionAttributes = EcoreUtil2.<Attribute>getAllContentsOfType(argument.getExpression(), Attribute.class);
-          for (final Attribute attribute : expressionAttributes) {
-            final Function<Attribute, String> _function = (Attribute e) -> {
-              return e.getName();
-            };
-            boolean _contains = attributes.stream().<String>map(_function).collect(Collectors.<String>toList()).contains(attribute.getName());
-            boolean _not = (!_contains);
-            if (_not) {
-              attributes.add(attribute);
-            }
-          }
-        }
       }
     }
     if ((attributes.isEmpty() && EcoreUtil2.<SelectExpression>getAllContentsOfType(select, SelectExpression.class).isEmpty())) {
@@ -213,25 +197,25 @@ public class CQLGeneratorUtil {
       for (final Source source : _sources) {
         if ((source instanceof SimpleSource)) {
           List<String> _attributeNamesFrom = CQLGeneratorUtil.getAttributeNamesFrom(((SimpleSource)source).getName());
-          for (final String attribute_1 : _attributeNamesFrom) {
+          for (final String attribute : _attributeNamesFrom) {
             {
               Alias _alias = ((SimpleSource)source).getAlias();
-              boolean _tripleNotEquals_2 = (_alias != null);
-              if (_tripleNotEquals_2) {
+              boolean _tripleNotEquals_1 = (_alias != null);
+              if (_tripleNotEquals_1) {
                 String _name = ((SimpleSource)source).getAlias().getName();
                 String _plus = (_name + ".");
-                String attributealias = (_plus + attribute_1);
-                CQLGeneratorUtil.getSource(((SimpleSource)source).getName()).findbyName(attribute_1).aliases.add(attributealias);
+                String attributealias = (_plus + attribute);
+                CQLGeneratorUtil.getSource(((SimpleSource)source).getName()).findbyName(attribute).aliases.add(attributealias);
                 CQLGeneratorUtil.registry_AttributeAliases.put(attributealias, ((SimpleSource)source).getAlias().getName());
                 attributeOrderList.add(attributealias);
                 map = CQLGeneratorUtil.addToMap(map, attributealias, ((SimpleSource)source).getName());
               } else {
                 String _name_1 = ((SimpleSource)source).getName();
                 String _plus_1 = (_name_1 + ".");
-                String _plus_2 = (_plus_1 + attribute_1);
+                String _plus_2 = (_plus_1 + attribute);
                 attributeOrderList.add(_plus_2);
               }
-              map = CQLGeneratorUtil.addToMap(map, attribute_1, ((SimpleSource)source).getName());
+              map = CQLGeneratorUtil.addToMap(map, attribute, ((SimpleSource)source).getName());
               sourceOrderList.add(((SimpleSource)source).getName());
             }
           }
@@ -248,26 +232,26 @@ public class CQLGeneratorUtil {
       return map;
     }
     ExpressionsModel _predicates = select.getPredicates();
-    boolean _tripleNotEquals_2 = (_predicates != null);
-    if (_tripleNotEquals_2) {
+    boolean _tripleNotEquals_1 = (_predicates != null);
+    if (_tripleNotEquals_1) {
       List<Attribute> list = EcoreUtil2.<Attribute>getAllContentsOfType(select.getPredicates(), Attribute.class);
-      for (final Attribute attribute_2 : list) {
-        boolean _contains_1 = attribute_2.getName().contains(".");
-        if (_contains_1) {
-          String[] split = attribute_2.getName().split("\\.");
+      for (final Attribute attribute_1 : list) {
+        boolean _contains = attribute_1.getName().contains(".");
+        if (_contains) {
+          String[] split = attribute_1.getName().split("\\.");
           String sourcename = split[0];
           String attributename = split[1];
           if ((CQLGeneratorUtil.isSourceAlias(sourcename) && (!CQLGeneratorUtil.isAttributeAlias(attributename)))) {
-            CQLGeneratorUtil.registerAttributeAliases(attribute_2, attribute_2.getName(), CQLGeneratorUtil.getSourcenameFromAlias(sourcename), sourcename, false);
+            CQLGeneratorUtil.registerAttributeAliases(attribute_1, attribute_1.getName(), CQLGeneratorUtil.getSourcenameFromAlias(sourcename), sourcename, false);
           }
         }
       }
     }
     int i = 0;
-    for (final Attribute attribute_3 : attributes) {
+    for (final Attribute attribute_2 : attributes) {
       {
-        List<SourceStruct> sourceCandidates = CQLGeneratorUtil.getSourceCandidates(attribute_3, select.getSources());
-        Object[] result = CQLGeneratorUtil.parseAttribute(attribute_3);
+        List<SourceStruct> sourceCandidates = CQLGeneratorUtil.getSourceCandidates(attribute_2, select.getSources());
+        Object[] result = CQLGeneratorUtil.parseAttribute(attribute_2);
         Object _get = result[0];
         String attributename_1 = ((String) _get);
         Object _get_1 = result[1];
@@ -279,10 +263,10 @@ public class CQLGeneratorUtil {
         List<String> list_1 = ((List<String>) _get_3);
         Object _get_4 = result[4];
         Boolean isFromSubQuery = ((Boolean) _get_4);
-        Alias _alias = attribute_3.getAlias();
-        boolean _tripleNotEquals_3 = (_alias != null);
-        if (_tripleNotEquals_3) {
-          attributename_1 = attribute_3.getAlias().getName();
+        Alias _alias = attribute_2.getAlias();
+        boolean _tripleNotEquals_2 = (_alias != null);
+        if (_tripleNotEquals_2) {
+          attributename_1 = attribute_2.getAlias().getName();
         }
         int _size = sourceCandidates.size();
         boolean _greaterThan = (_size > 0);
@@ -306,18 +290,18 @@ public class CQLGeneratorUtil {
           if ((isFromSubQuery).booleanValue()) {
             CQLGeneratorUtil.registerSourceAlias(sourcename_1, sourcealias);
           }
-          attributealias = CQLGeneratorUtil.registerAttributeAliases(attribute_3, attributename_1, sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
+          attributealias = CQLGeneratorUtil.registerAttributeAliases(attribute_2, attributename_1, sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
         } else {
           if ((list_1 != null)) {
             for (final String name_1 : list_1) {
               {
                 map = CQLGeneratorUtil.addToMap(map, name_1, sourcename_1);
-                CQLGeneratorUtil.registerAttributeAliases(attribute_3, ((sourcealias + ".") + name_1), sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
+                CQLGeneratorUtil.registerAttributeAliases(attribute_2, ((sourcealias + ".") + name_1), sourcename_1, sourcealias, (isFromSubQuery).booleanValue());
               }
             }
           }
         }
-        attributeOrder = CQLGeneratorUtil.computeProjectionAttributes(attributeOrder, select, attribute_3, attributename_1, attributealias, sourcename_1);
+        attributeOrder = CQLGeneratorUtil.computeProjectionAttributes(attributeOrder, select, attribute_2, attributename_1, attributealias, sourcename_1);
         sourceOrder[i] = sourcename_1;
         i++;
       }
@@ -395,10 +379,10 @@ public class CQLGeneratorUtil {
               boolean _equals_2 = (_size_1 == 1);
               if (_equals_2) {
                 EObject function = ((SelectExpression) candidate).getExpressions().get(0).getValue();
-                if ((function instanceof de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)) {
-                  boolean _isAggregateFunction = CQLGeneratorUtil.isAggregateFunction(((de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)function).getName());
+                if ((function instanceof Function)) {
+                  boolean _isAggregateFunction = CQLGeneratorUtil.isAggregateFunction(((Function)function).getName());
                   if (_isAggregateFunction) {
-                    attributeOrder[i] = CQLGeneratorUtil.getAggregationName(((de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)function).getName());
+                    attributeOrder[i] = CQLGeneratorUtil.getAggregationName(((Function)function).getName());
                   } else {
                     attributeOrder[i] = CQLGeneratorUtil.getExpressionName();
                   }
@@ -425,10 +409,10 @@ public class CQLGeneratorUtil {
               boolean _equals = (_size == 1);
               if (_equals) {
                 EObject function = ((SelectExpression) candidate).getExpressions().get(0).getValue();
-                if ((function instanceof de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)) {
-                  boolean _isAggregateFunction = CQLGeneratorUtil.isAggregateFunction(((de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)function).getName());
+                if ((function instanceof Function)) {
+                  boolean _isAggregateFunction = CQLGeneratorUtil.isAggregateFunction(((Function)function).getName());
                   if (_isAggregateFunction) {
-                    attributeOrder[i] = CQLGeneratorUtil.getAggregationName(((de.uniol.inf.is.odysseus.parser.novel.cql.cQL.Function)function).getName());
+                    attributeOrder[i] = CQLGeneratorUtil.getAggregationName(((Function)function).getName());
                   } else {
                     attributeOrder[i] = CQLGeneratorUtil.getExpressionName();
                   }
@@ -453,7 +437,7 @@ public class CQLGeneratorUtil {
       if ((source1 instanceof SimpleSource)) {
         for (final SourceStruct source2 : CQLGeneratorUtil.registry_Sources) {
           if (((((SimpleSource)source1).getName().equals(source2.sourcename) && source2.containsAttribute(attribute.getName())) && 
-            sources.stream().<String>map(((Function<Source, String>) (Source e) -> {
+            sources.stream().<String>map(((java.util.function.Function<Source, String>) (Source e) -> {
               String _xifexpression = null;
               if ((e instanceof SimpleSource)) {
                 _xifexpression = ((SimpleSource)e).getName();
@@ -521,7 +505,7 @@ public class CQLGeneratorUtil {
   public static List<String> getAttributeNamesFrom(final String srcname) {
     for (final SourceStruct source : CQLGeneratorUtil.registry_Sources) {
       if ((source.sourcename.equals(srcname) || source.aliases.contains(srcname))) {
-        final Function<AttributeStruct, String> _function = (AttributeStruct e) -> {
+        final java.util.function.Function<AttributeStruct, String> _function = (AttributeStruct e) -> {
           return e.attributename;
         };
         return source.attributes.stream().<String>map(_function).collect(Collectors.<String>toList());
@@ -604,7 +588,7 @@ public class CQLGeneratorUtil {
   }
   
   public static List<String> getSourceNames() {
-    final Function<SourceStruct, String> _function = (SourceStruct e) -> {
+    final java.util.function.Function<SourceStruct, String> _function = (SourceStruct e) -> {
       return e.sourcename;
     };
     return CQLGeneratorUtil.registry_Sources.stream().<String>map(_function).collect(Collectors.<String>toList());
@@ -808,8 +792,8 @@ public class CQLGeneratorUtil {
     if (_containsSymbol) {
       try {
         SDFDatatype datatype = CQLGeneratorUtil.mep.parse(function).getReturnType();
-        List<IFunction<?>> _functions = FunctionStore.getInstance().getFunctions(name);
-        for (final IFunction<?> f : _functions) {
+        List<IMepFunction<?>> _functions = FunctionStore.getInstance().getFunctions(name);
+        for (final IMepFunction<?> f : _functions) {
           boolean _equals = f.getReturnType().equals(datatype);
           if (_equals) {
             return true;

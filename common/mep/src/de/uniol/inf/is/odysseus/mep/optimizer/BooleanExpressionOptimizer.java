@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.optimizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
@@ -49,30 +49,30 @@ public final class BooleanExpressionOptimizer {
      *            The expression
      * @return The optimized expression
      */
-    public static IExpression<?> optimize(IExpression<?> expression) {
+    public static IMepExpression<?> optimize(IMepExpression<?> expression) {
         if ((expression.isConstant()) || (expression.isVariable())) {
             return expression;
         }
         if ((expression instanceof NotOperator) || (expression instanceof AndOperator) || (expression instanceof OrOperator)) {
             if (expression instanceof NotOperator) {
-                IExpression<?> child = expression.toFunction().getArgument(0);
+                IMepExpression<?> child = expression.toFunction().getArgument(0);
                 if (child != null) {
                     child = optimize(child);
                 }
-                expression.toFunction().setArguments(new IExpression<?>[] { child });
+                expression.toFunction().setArguments(new IMepExpression<?>[] { child });
             }
             else {
-                IExpression<?> left = expression.toFunction().getArgument(0);
+                IMepExpression<?> left = expression.toFunction().getArgument(0);
                 if (left != null) {
                     left = optimize(left);
                 }
-                IExpression<?> right = expression.toFunction().getArgument(1);
+                IMepExpression<?> right = expression.toFunction().getArgument(1);
                 if (right != null) {
                     right = optimize(right);
                 }
-                expression.toFunction().setArguments(new IExpression<?>[] { left, right });
+                expression.toFunction().setArguments(new IMepExpression<?>[] { left, right });
             }
-            IExpression<?> expr = expression;
+            IMepExpression<?> expr = expression;
             String tmpExpr = "";
             int i = 0;
             while ((!expr.toString().equals(tmpExpr)) && (i < MAX_ITERATION)) {
@@ -94,9 +94,9 @@ public final class BooleanExpressionOptimizer {
      *            The expression
      * @return The disjunctive normal form of the expression
      */
-    public static IExpression<?> toDisjunctiveNormalForm(IExpression<?> expression) {
+    public static IMepExpression<?> toDisjunctiveNormalForm(IMepExpression<?> expression) {
         DisjunctiveNormalFormRule disjunctiveNormalFormRule = new DisjunctiveNormalFormRule();
-        IExpression<?> dnf = disjunctiveNormalFormRule.executeRule(expression);
+        IMepExpression<?> dnf = disjunctiveNormalFormRule.executeRule(expression);
         return optimize(dnf);
     }
 
@@ -107,15 +107,15 @@ public final class BooleanExpressionOptimizer {
      *            The expression
      * @return The conjunctive normal form of the expression
      */
-    public static IExpression<?> toConjunctiveNormalForm(IExpression<?> expression) {
+    public static IMepExpression<?> toConjunctiveNormalForm(IMepExpression<?> expression) {
         ConjunctiveNormalFormRule conjunctiveNormalFormRule = new ConjunctiveNormalFormRule();
-        IExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
+        IMepExpression<?> cnf = conjunctiveNormalFormRule.executeRule(expression);
         return optimize(cnf);
     }
 
-    public static IExpression<?> sortByStringExpressions(IExpression<?> expression) {
+    public static IMepExpression<?> sortByStringExpressions(IMepExpression<?> expression) {
         SortByStringExpressionRule rules = new SortByStringExpressionRule();
-        IExpression<?> res = rules.executeRule(expression);
+        IMepExpression<?> res = rules.executeRule(expression);
         return res;
     }
 

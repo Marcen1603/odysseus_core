@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -24,7 +24,7 @@ public class ROptimizeSelectionPredicate extends AbstractRewriteRule<SelectAO> {
 			throws RuleException {
 		AbstractRelationalExpression<?> originalSDFExpression = ((AbstractRelationalExpression<?>) sel
 				.getPredicate());
-		IExpression<?> optimizedExpression = BooleanExpressionOptimizer.optimize(originalSDFExpression.getMEPExpression());
+		IMepExpression<?> optimizedExpression = BooleanExpressionOptimizer.optimize(originalSDFExpression.getMEPExpression());
 		if(!originalSDFExpression.getMEPExpression().equals(optimizedExpression)) {
 			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
 					optimizedExpression.toString(), originalSDFExpression.getAttributeResolver(), originalSDFExpression.getExpressionParser()));

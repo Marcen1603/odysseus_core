@@ -23,7 +23,7 @@ import cc.kuka.odysseus.financial.function.financial.AnnualPercentageRateFunctio
 import cc.kuka.odysseus.financial.function.financial.AnnualPercentageYieldFunction;
 import cc.kuka.odysseus.financial.function.financial.ResidualValueFunction;
 import cc.kuka.odysseus.financial.function.financial.ValueAddedTaxFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -41,9 +41,9 @@ public class FinancialFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         functions.add(new AnnualPercentageRateFunction());
         functions.add(new AnnualPercentageYieldFunction());
         functions.add(new ResidualValueFunction());

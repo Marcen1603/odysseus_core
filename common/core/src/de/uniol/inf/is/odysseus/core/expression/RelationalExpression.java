@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -50,7 +50,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends AbstractRela
 	public IPredicate<Tuple<T>> and(IPredicate<Tuple<T>> predicate) {
 		if (predicate instanceof AbstractRelationalExpression) {
 
-			IExpression<?> expr = this.expression.getMEPExpression();
+			IMepExpression<?> expr = this.expression.getMEPExpression();
 			List<SDFSchema> schemalist = new ArrayList<>();
 			schemalist.addAll(((AbstractRelationalExpression<T>) predicate).getAttributeResolver().getSchema());
 			schemalist.addAll((expression.getAttributeResolver().getSchema()));
@@ -70,7 +70,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends AbstractRela
 	@Override
 	public IPredicate<Tuple<T>> or(IPredicate<Tuple<T>> predicate) {
 		if (predicate instanceof AbstractRelationalExpression) {
-				IExpression<?> expr =  this.expression.getMEPExpression();
+				IMepExpression<?> expr =  this.expression.getMEPExpression();
 				List<SDFSchema> schemalist = new ArrayList<>();
 				schemalist.addAll(((AbstractRelationalExpression<T>) predicate).getAttributeResolver().getSchema());
 				schemalist.addAll(( expression.getAttributeResolver().getSchema()));
@@ -89,7 +89,7 @@ public class RelationalExpression<T extends IMetaAttribute> extends AbstractRela
 
 	@Override
 	public IPredicate<Tuple<T>> not() {
-			IExpression<?> expr = this.expression.getMEPExpression();
+			IMepExpression<?> expr = this.expression.getMEPExpression();
 			// We need to reparse the expression because of multiple instances
 			// of the same variable may exist
 

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -83,11 +83,11 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	public List<IPredicate> splitPredicate() {
 		final List<IPredicate> result = new LinkedList<IPredicate>();
 		if (this.isAndPredicate()) {
-			final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+			final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
 			expressionStack.push(this.expression.getMEPExpression());
 
 			while (!expressionStack.isEmpty()) {
-				final IExpression<?> curExpression = expressionStack.pop();
+				final IMepExpression<?> curExpression = expressionStack.pop();
 				if (this.isAndExpression(curExpression)) {
 					expressionStack.push(curExpression.toFunction().getArgument(0));
 					expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -337,7 +337,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		if (predicate instanceof AbstractRelationalPredicate) {
 			SDFExpression expr = ((AbstractRelationalPredicate<?>) predicate).getExpression();
 			AndOperator and = new AndOperator();
-			and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+			and.setArguments(new IMepExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			return new ProbabilisticRelationalPredicate(
 					new SDFExpression(and.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 		}
@@ -352,7 +352,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 		if (predicate instanceof AbstractRelationalPredicate) {
 			SDFExpression expr = ((AbstractRelationalPredicate<?>) predicate).getExpression();
 			OrOperator or = new OrOperator();
-			or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+			or.setArguments(new IMepExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			return new ProbabilisticRelationalPredicate(
 					new SDFExpression(or.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 		}
@@ -365,7 +365,7 @@ public class ProbabilisticRelationalPredicate extends AbstractRelationalPredicat
 	@Override
 	public IPredicate<ProbabilisticTuple<?>> not() {
 		NotOperator not = new NotOperator();
-		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+		not.setArguments(new IMepExpression<?>[] { expression.getMEPExpression() });
 		return new ProbabilisticRelationalPredicate(
 				new SDFExpression(not.toString(), expression.getAttributeResolver(), expression.getExpressionParser()));
 

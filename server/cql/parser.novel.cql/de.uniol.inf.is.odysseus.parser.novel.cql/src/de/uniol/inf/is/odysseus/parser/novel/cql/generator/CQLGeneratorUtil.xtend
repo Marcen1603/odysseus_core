@@ -18,7 +18,7 @@ import java.util.Set
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
-import de.uniol.inf.is.odysseus.core.mep.IFunction
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction
 
 class CQLGeneratorUtil {
 
@@ -120,15 +120,8 @@ class CQLGeneratorUtil {
 		var String[] sourceOrder = newArrayOfSize(select.arguments.size)
 		// Get all attributes from select arguments		
 		for (SelectArgument argument : select.arguments) {
-			if (argument.attribute !== null)
+			if (argument.attribute !== null) {
 				attributes.add(argument.attribute)
-			else if (argument.expression !== null) // Attributes that are contained by functions or aggregations
-			{
-				var expressionAttributes = EcoreUtil2.getAllContentsOfType(argument.expression, Attribute)
-				for (Attribute attribute : expressionAttributes)
-					if (!attributes.stream.map(e|e.name).collect(Collectors.toList).contains(attribute.name))
-						attributes.add(attribute)
-			// TODO insert if(!contains(attributes, attribute)) attributes.add(attribute) here
 			}
 		}
 		// Check if it's a select * query and add for each source its attributes.
@@ -156,7 +149,6 @@ class CQLGeneratorUtil {
 			sourceOrder = sourceOrderList
 			projectionAttributes.put(select, attributeOrder)
 			projectionSources.put(select, sourceOrder)
-//			println('getAttibutename() -> map = ' + map.toString)
 			return map
 		}
 		// Get all attributes from predicates
@@ -568,7 +560,7 @@ class CQLGeneratorUtil {
 				if (functionStore.containsSymbol(name)) {
 					try {
 						var datatype = mep.parse(function).returnType
-						for (IFunction<?> f : FunctionStore.instance.getFunctions(name))
+						for (IMepFunction<?> f : FunctionStore.instance.getFunctions(name))
 							if (f.returnType.equals(datatype))
 								return true
 					} catch (Exception e) {

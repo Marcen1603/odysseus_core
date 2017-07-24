@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.spatial.datastructures.movingobject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
@@ -88,5 +89,11 @@ public interface IMovingObjectDataStructure {
 	 * @return The position in the tuple where the geometry can be found
 	 */
 	public int getGeometryPosition();
+	
+	/**
+	 * 
+	 * @return The Ids from all moving objects currently in the data structure.
+	 */
+	public Set<String> getAllMovingObjectIds();
 
 }

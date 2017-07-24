@@ -70,7 +70,7 @@ import cc.kuka.odysseus.statistic.function.distribution.WeibullCDFFunction;
 import cc.kuka.odysseus.statistic.function.distribution.WeibullPDFFunction;
 import cc.kuka.odysseus.statistic.function.distribution.ZScoreFunction;
 import cc.kuka.odysseus.statistic.function.distribution.ZScoreFunctionVector;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -93,8 +93,8 @@ public class StatisticFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
-        final List<IFunction<?>> functions = new ArrayList<>();
+    public List<IMepFunction<?>> getFunctions() {
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         try {
             functions.add(new BinominalCoefficientFunction());
             functions.add(new MultinominalCoefficientFunction());

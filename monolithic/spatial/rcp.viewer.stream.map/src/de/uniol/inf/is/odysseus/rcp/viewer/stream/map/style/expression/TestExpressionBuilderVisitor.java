@@ -19,8 +19,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.mep.MEP;
 
 public class TestExpressionBuilderVisitor {
@@ -35,9 +35,9 @@ public class TestExpressionBuilderVisitor {
 		BufferedReader inRead = new BufferedReader(new InputStreamReader(
 				System.in));
 		try {
-			IExpression<?> expression = MEP.getInstance().parse(inRead.readLine());
+			IMepExpression<?> expression = MEP.getInstance().parse(inRead.readLine());
 			
-			for (IVariable curVar : expression.getVariables()) {
+			for (IMepVariable curVar : expression.getVariables()) {
 				System.out
 						.println("Value for " + curVar.getIdentifier() + ": ");
 				BufferedReader reader = new BufferedReader(

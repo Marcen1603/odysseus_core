@@ -2,7 +2,7 @@ package de.uniol.inf.is.odysseus.server.keyvalue.predicate;
 
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.NamedAttributePredicate;
@@ -40,7 +40,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends NamedAttribu
 		if (predicate instanceof KeyValuePredicate) {
 			SDFExpression expr = ((KeyValuePredicate<T>) predicate).expression;
 			AndOperator and = new AndOperator();
-			and.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+			and.setArguments(new IMepExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(),
 					expr.getAttributeResolver().getSchema());
 			return new KeyValuePredicate<>(
@@ -57,7 +57,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends NamedAttribu
 		if (predicate instanceof KeyValuePredicate) {
 			SDFExpression expr = ((KeyValuePredicate<T>) predicate).expression;
 			OrOperator or = new OrOperator();
-			or.setArguments(new IExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
+			or.setArguments(new IMepExpression<?>[] { expression.getMEPExpression(), expr.getMEPExpression() });
 			IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(),
 					expr.getAttributeResolver().getSchema());
 
@@ -73,7 +73,7 @@ public class KeyValuePredicate<T extends KeyValueObject<?>> extends NamedAttribu
 	@Override
 	public IPredicate<T> not() {
 		NotOperator not = new NotOperator();
-		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+		not.setArguments(new IMepExpression<?>[] { expression.getMEPExpression() });
 		return new KeyValuePredicate<>(
 				new SDFExpression(not.toString(), expression.getAttributeResolver(), expression.getExpressionParser()), inputSchema);
 	}

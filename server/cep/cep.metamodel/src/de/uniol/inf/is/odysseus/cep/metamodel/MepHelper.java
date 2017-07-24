@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -31,19 +31,19 @@ import de.uniol.inf.is.odysseus.mep.MEP;
 public class MepHelper {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static IExpression initMEPExpressionFromLabel(String label,
-			Map<CepVariable, IVariable> symbolTable /* INOUT */,
+	public static IMepExpression initMEPExpressionFromLabel(String label,
+			Map<CepVariable, IMepVariable> symbolTable /* INOUT */,
 			List<SDFSchema> schema) throws ParseException {
 
 		String transformToMepVar = transformToMepVar(label);
-		IExpression expression = MEP.getInstance().parse(transformToMepVar);
+		IMepExpression expression = MEP.getInstance().parse(transformToMepVar);
 
-		Set<IVariable> v = expression.getVariables();
+		Set<IMepVariable> v = expression.getVariables();
 		if (schema != null) {
 			// Try to find out, what are the datatypes of the variables
 			// This is a hack and should be done in another way later!!
 			List<SDFAttribute> tmpList = new ArrayList<SDFAttribute>();
-			for (IVariable variable : v) {
+			for (IMepVariable variable : v) {
 				String varString = variable.toString();
 				String attName = varString
 						.substring(varString.lastIndexOf(".")+1);
@@ -64,7 +64,7 @@ public class MepHelper {
 			v = expression.getVariables();
 		}
 
-		for (IVariable s : v) {
+		for (IMepVariable s : v) {
 			symbolTable.put(transformToOutVar(s.getIdentifier()), s);
 		}
 		return expression;

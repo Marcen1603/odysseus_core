@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.matrix;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -37,9 +37,9 @@ public class MatrixFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
 
         // Getter functions
         functions.add(new MatrixGetEntry());

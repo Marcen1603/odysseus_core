@@ -29,7 +29,7 @@ import cc.kuka.odysseus.signal.function.signal.MagnitudeFunction;
 import cc.kuka.odysseus.signal.function.signal.RealFunction;
 import cc.kuka.odysseus.signal.function.transform.ToComplexFunction;
 import cc.kuka.odysseus.signal.function.transform.ToStringFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -47,9 +47,9 @@ public class SignalFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         functions.add(new ComplexDivideOperator());
         functions.add(new ComplexMultiplyOperator());
         functions.add(new ComplexPlusOperator());

@@ -15,10 +15,12 @@
  */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.physicaloperator.UpdatePredicatePunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
@@ -26,14 +28,23 @@ import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>implements IHasPredicate {
+public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T> implements IHasPredicate {
 
 	private IPredicate<? super T> predicate;
 	private int heartbeatRate;
 	private IHeartbeatGenerationStrategy<T> heartbeatGenerationStrategy = new NoHeartbeatGenerationStrategy<>();
 
+	private boolean predicateIsUpdateable;
+
 	public SelectPO(IPredicate<? super T> predicate) {
 		this.predicate = predicate.clone();
+		this.predicateIsUpdateable = false;
+	}
+
+	public SelectPO(boolean predicateIsUpdateable,
+			IPredicate<? super T> predicate) {
+		this.predicate = predicate.clone();
+		this.predicateIsUpdateable = predicateIsUpdateable;
 	}
 
 	@Override
@@ -87,8 +98,43 @@ public class SelectPO<T extends IStreamObject<?>> extends AbstractPipe<T, T>impl
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
+		/*
+		 * (1) Expressions can be updated with punctuations, (2) this is a
+		 * punctuation to update the expressions and (3) this operator is in the
+		 * list with the targets for this punctuation
+		 */
+		if (this.predicateIsUpdateable && punctuation instanceof UpdatePredicatePunctuation
+				&& ((UpdatePredicatePunctuation) punctuation).getTargetOperatorNames().contains(this.getName())) {
+			UpdatePredicatePunctuation updatePredicatePunctuation = (UpdatePredicatePunctuation) punctuation;
+			this.updatePredicate(updatePredicatePunctuation);
+		}
+
 		IPunctuation puncToSend = predicate.processPunctuation(punctuation);
 		sendPunctuation(puncToSend);
+	}
+
+	/**
+	 * Updates the predicate of the operator via a punctuation
+	 * 
+	 * @param updatePredicatePunctuation
+	 *            the punctuation which has the new predicate
+	 */
+	private void updatePredicate(UpdatePredicatePunctuation updatePredicatePunctuation) {
+		IPredicate<?> newPredicate = updatePredicatePunctuation.getNewPredicate();
+
+		if (newPredicate instanceof AbstractRelationalExpression) {
+			@SuppressWarnings("unchecked")
+			AbstractRelationalExpression<? super T> newExpression = (AbstractRelationalExpression<? super T>) newPredicate;
+
+			// Re-initialize, cause the original expression was created
+			// without knowing the actual schema
+			newExpression.initVars(getOutputSchema());
+			this.setPredicate(newExpression);
+		} else {
+			// Maybe it's not relational but keyValue. In this case, the
+			// expressions does not need to be re-initialized.
+			this.setPredicate(newPredicate);
+		}
 	}
 
 	@Override

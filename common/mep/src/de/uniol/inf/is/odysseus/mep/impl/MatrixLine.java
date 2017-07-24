@@ -17,7 +17,7 @@ package de.uniol.inf.is.odysseus.mep.impl;
 
 import java.util.Arrays;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -25,7 +25,7 @@ public class MatrixLine extends AbstractFunction<double[]> {
 
     private static final long serialVersionUID = -2878724836669428853L;
 
-    public MatrixLine(IExpression<?>[] values) {
+    public MatrixLine(IMepExpression<?>[] values) {
         super("__matrixline", values.length, getAccTypes(values.length), SDFDatatype.VECTOR_DOUBLE);
         setArguments(values);
     }

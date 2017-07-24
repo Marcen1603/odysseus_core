@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -38,6 +39,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallelizableOperator {
 	private static final long serialVersionUID = 3215936185841514846L;
 	private int rate;
+	
+	private boolean predicateIsUpdateable = false;
 
 	private IPredicate<?> predicate;
 
@@ -49,6 +52,7 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 		super(po);
 		this.rate = po.rate;
 		this.predicate = po.predicate.clone();
+		this.predicateIsUpdateable = po.isPredicateIsUpdateable();
 	}
 
 	public SelectAO(IPredicate<?> predicate) {
@@ -74,6 +78,15 @@ public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallel
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
+	}
+	
+	public boolean isPredicateIsUpdateable() {
+		return predicateIsUpdateable;
+	}
+	
+	@Parameter(name = "predicateIsUpdateable", optional = true, type = BooleanParameter.class, isList = false, doc = "If set to true, the predicate of the select can be updated with punctuations.")
+	public void setPredicateIsUpdateable(boolean predicateIsUpdateable) {
+		this.predicateIsUpdateable = predicateIsUpdateable;
 	}
 
 	@Override
