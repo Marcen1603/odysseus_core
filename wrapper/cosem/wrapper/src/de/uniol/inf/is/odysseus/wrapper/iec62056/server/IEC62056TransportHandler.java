@@ -1,17 +1,9 @@
 package de.uniol.inf.is.odysseus.wrapper.iec62056.server;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.openmuc.jdlms.AuthenticationMechanism;
-import org.openmuc.jdlms.RawMessageData;
-import org.openmuc.jdlms.RawMessageListener;
-import org.openmuc.jdlms.SecuritySuite;
-import org.openmuc.jdlms.SecuritySuite.EncryptionMechanism;
-import org.openmuc.jdlms.TcpConnectionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +16,10 @@ public class IEC62056TransportHandler extends AbstractPushTransportHandler {
 
 	public static final Logger log = LoggerFactory.getLogger(IEC62056TransportHandler.class);
 
-	private int port;
-	private final int defaulPort = 6789;
-	private int maxClients;
-	private String host;
+//	private final int defaulPort = 6789;
+//	private int port;
+//	private int maxClients;
+//	private String host;
 
 	public IEC62056TransportHandler() {
 	}
@@ -35,33 +27,33 @@ public class IEC62056TransportHandler extends AbstractPushTransportHandler {
 	public IEC62056TransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options)
 			throws UnknownHostException {
 		super(protocolHandler, options);
-		init(options);
+//		init(options);
+		throw new NotImplementedException("this transport handler has no implementation!");
 	}
 
-	private void init(OptionMap options) throws UnknownHostException {
-		// options.checkRequiredException(hostKey);
-		port = options.getInt("port", defaulPort);
+//	private void init(OptionMap options) throws UnknownHostException {
+//		 options.checkRequiredException(hostKey);
+//		port = options.getInt("port", defaulPort);
+//	}
 
-	}
-
-	public void init2() throws UnknownHostException {
-		
-		InetAddress inetAddress = InetAddress.getByName("127.0.0.1");
-		SecuritySuite securitySuite = SecuritySuite.builder()
-				.setPassword("Password".getBytes(StandardCharsets.US_ASCII))
-				.setAuthenticationMechanism(AuthenticationMechanism.LOW)
-				.setEncryptionMechanism(EncryptionMechanism.NONE).build();
-		TcpConnectionBuilder connectionBuilder = new TcpConnectionBuilder(inetAddress).setTcpPort(6789)
-				.setSecuritySuite(securitySuite).setRawMessageListener(new RawMessageListener() {
-					@Override
-					public void messageCaptured(RawMessageData rawMessageData) {
-						// TODO: log data
-						// logger.debug(.. rawMessageData.getMessageSource() ..
-						System.out.println("here some data!!! ---> " + rawMessageData.toString());
-					}
-				});
-		
-	}
+//	public void init2() throws UnknownHostException {
+//		
+//		InetAddress inetAddress = InetAddress.getByName("127.0.0.1");
+//		SecuritySuite securitySuite = SecuritySuite.builder()
+//				.setPassword("Password".getBytes(StandardCharsets.US_ASCII))
+//				.setAuthenticationMechanism(AuthenticationMechanism.LOW)
+//				.setEncryptionMechanism(EncryptionMechanism.NONE).build();
+//		TcpConnectionBuilder connectionBuilder = new TcpConnectionBuilder(inetAddress).setTcpPort(6789)
+//				.setSecuritySuite(securitySuite).setRawMessageListener(new RawMessageListener() {
+//					@Override
+//					public void messageCaptured(RawMessageData rawMessageData) {
+//						// TODO: log data
+//						// logger.debug(.. rawMessageData.getMessageSource() ..
+//						System.out.println("here some data!!! ---> " + rawMessageData.toString());
+//					}
+//				});
+//		
+//	}
 
 	@Override
 	public String getName() {

@@ -2,12 +2,10 @@ package de.uniol.inf.is.odysseus.wrapper.iec62056.parser;
 
 import java.io.InputStreamReader;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-
 public class XMLCOSEMParser extends AbstractCOSEMParser{
 
-	public XMLCOSEMParser(InputStreamReader reader, SDFSchema sdfSchema) {
-		super(reader, sdfSchema);
+	public XMLCOSEMParser(InputStreamReader reader, StringBuilder builder, String[] tokens) {
+		super(reader, builder, tokens);
 	}
 
 	@Override

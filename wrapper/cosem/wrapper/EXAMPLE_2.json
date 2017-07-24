@@ -1,23 +1,15 @@
 {
-	"logical_name": "smartmetergateway_0", 
-	"objects": 
-	[
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_012"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_013"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_012"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_013"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_012"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_013"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_014"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_011"},
-		{"value": 0.972, "unit": 30, "scaler": -3, "status": "000", "capture_time": 0, "logical_name": "sm_012"},
-	]
+  "SMGWSimulator-0.smartmetergateway_109": {
+    "objects": [
+      {
+        "scaler": -3,
+        "value": 3.424839,
+        "capture_time": 11700,
+        "unit": 30,
+        "logical_name": "sm_21",
+        "status": "000"
+      }
+    ],
+    "logical_name": "smartmetergateway_109"
+  }
 }
