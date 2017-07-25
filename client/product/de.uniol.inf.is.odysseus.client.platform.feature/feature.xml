@@ -64,7 +64,7 @@ limitations under the License.
          version="0.0.0"/>
 
    <includes
-         id="de.uniol.inf.is.odysseus.parser.novel.cql.ui.feature"
+         id="de.uniol.inf.is.odysseus.parser.cql2.ui.feature"
          version="0.0.0"/>
 
    <plugin
