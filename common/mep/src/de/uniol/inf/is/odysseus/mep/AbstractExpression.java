@@ -4,52 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
 
-public abstract class AbstractExpression<T> implements IExpression<T> {
+public abstract class AbstractExpression<T> implements IMepExpression<T> {
 
 	private static final long serialVersionUID = 9124933241292239141L;
 
 	@Override
-	public IFunction<?> and(IExpression<?> expression) {
+	public IMepFunction<?> and(IMepExpression<?> expression) {
 		AndOperator and = new AndOperator();
-		and.setArguments(new IExpression<?>[] { this, expression });
+		and.setArguments(new IMepExpression<?>[] { this, expression });
 		return and;
 	}
 
 	@Override
-	public IFunction<?> or(IExpression<?> expression) {
+	public IMepFunction<?> or(IMepExpression<?> expression) {
 		OrOperator or = new OrOperator();
-		or.setArguments(new IExpression<?>[] { this, expression });
+		or.setArguments(new IMepExpression<?>[] { this, expression });
 		return or;
 	}
 
 	@Override
-	public IFunction<?> not() {
+	public IMepFunction<?> not() {
 		NotOperator not = new NotOperator();
-		not.setArguments(new IExpression<?>[] { this});
+		not.setArguments(new IMepExpression<?>[] { this});
 		return not;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<IExpression<T>> conjunctiveSplit() {
-		List<IExpression<T>> result = new ArrayList<>();
+	public List<IMepExpression<T>> conjunctiveSplit() {
+		List<IMepExpression<T>> result = new ArrayList<>();
 		// Split with and
-		final Stack<IExpression<T>> expressionStack = new Stack<>();
+		final Stack<IMepExpression<T>> expressionStack = new Stack<>();
 		expressionStack.push(this);
 		while (!expressionStack.isEmpty()) {
-			final IExpression<T> curExpression = expressionStack.pop();
-			if (curExpression.isFunction() && ((IFunction<?>)curExpression).isAndPredicate()) {
-				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(0));
-				expressionStack.push((IExpression<T>) curExpression.toFunction().getArgument(1));
+			final IMepExpression<T> curExpression = expressionStack.pop();
+			if (curExpression.isFunction() && ((IMepFunction<?>)curExpression).isAndPredicate()) {
+				expressionStack.push((IMepExpression<T>) curExpression.toFunction().getArgument(0));
+				expressionStack.push((IMepExpression<T>) curExpression.toFunction().getArgument(1));
 			} else {
 				result.add(curExpression);
 			}
@@ -59,17 +59,17 @@ public abstract class AbstractExpression<T> implements IExpression<T> {
 	
 	
 	@Override
-	public IVariable toVariable() {
+	public IMepVariable toVariable() {
 		throw new RuntimeException("cannot convert to Variable");
 	}
 
 	@Override
-	public IFunction<T> toFunction() {
+	public IMepFunction<T> toFunction() {
 		throw new RuntimeException("cannot convert to Function");
 	}
 	
 	@Override
-	public IConstant<T> toConstant() {
+	public IMepConstant<T> toConstant() {
 		throw new RuntimeException("cannot convert to Constant");
 	}
 	
@@ -89,7 +89,7 @@ public abstract class AbstractExpression<T> implements IExpression<T> {
 	}
 	
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		throw new RuntimeException("cannot determine type");
 	}
 	

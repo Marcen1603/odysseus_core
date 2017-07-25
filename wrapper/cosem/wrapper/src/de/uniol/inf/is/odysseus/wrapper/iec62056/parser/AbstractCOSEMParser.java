@@ -4,31 +4,35 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * An abstract parser to parse COSEM objects to a string representation such
- * that the {@link TupleDataHandler} can produces tuple objects.
+ * that the {@link TupleDataHandler} can produces tuple objects. For the
+ * definition of the string the following format is used:
+ * 
+ * <pre>
+ * [attribute1|attribute2|attribute3|..]
+ * </pre>
  * 
  * @author Jens Plümer
  *
  */
 public abstract class AbstractCOSEMParser {
 
-	protected final String[] ATTRIBUTE_NAMES;
-
-	protected int attrOffset;
+//	private static final Logger logger = LoggerFactory.getLogger(AbstractCOSEMParser.class.getSimpleName());
+	
+	protected final StringBuilder builderCopy;
+	protected StringBuilder builder;
 	protected boolean isDone;
-	protected String[] TOKENS;
 	protected InputStreamReader reader;
+	protected String[] tokens;
 
-	public AbstractCOSEMParser(InputStreamReader reader, SDFSchema schema) {
-		init(reader);
+	public AbstractCOSEMParser(InputStreamReader reader, StringBuilder builder, String[] tokens) {
+		this.tokens = tokens;
 		this.isDone = false;
-		ATTRIBUTE_NAMES = new String[schema.getAttributes().size()];
-		for (int i = 0; i < schema.getAttributes().size(); i++) {
-			ATTRIBUTE_NAMES[i] = schema.getAttributes().get(i).getAttributeName();
-		}
+		this.builder = builder;
+		this.builderCopy = builder;
+		init(reader);
 	}
 
 	/**
@@ -46,56 +50,49 @@ public abstract class AbstractCOSEMParser {
 
 	/**
 	 * Invokes a parsing process on the current {@code InputStream}.
-	 * @return
+	 * @return a string that contains the information about a smart meter
 	 */
 	public final synchronized String parse() {
-		try {
-			if (reader.ready()) {
-				return next();
-			}
-		} catch (IOException e) {
-			/* reader.ready() throws an exception if the stream is closed */
+		if (!isDone) {
+			return next();
 		}
-		close();
 		return null;
 	}
 
 	/**
-	 * Set tokens for the parser.
-	 * 
-	 * @param tokens
-	 *            that are defined by the parser schema
-	 * @param offSet
-	 *            that marks the beginning of the token attributes in the array
+	 * Set a new value for the string that represents a smart meter.
+	 * @param key is the name of a schema attribute that corresponds to a field name (e.g. a xml or json token)
+	 * @param value is the corresponding value for the given key
 	 */
-	public void setTokens(String[] tokens, int offSet) {
-		TOKENS = tokens;
-		attrOffset = offSet;
-	}
-
-	public String[] getTokens() {
-		return TOKENS;
-	}
-
-	public String[] getAttributeTokens() {
-		String[] attributeTokens = new String[TOKENS.length - attrOffset];
-		for (int i = attrOffset; i < TOKENS.length; i++) {
-			attributeTokens[i - attrOffset] = TOKENS[i];
+	protected final synchronized void setValue(String key, String value) {
+		int index = this.builder.indexOf(key);
+		if(index != -1) {
+			this.builder = new StringBuilder(this.builder.toString().replaceFirst(key, value));
 		}
-		return attributeTokens;
 	}
-
+	
+	/**
+	 * Returns the current string representation and should be called only if one smart meter was processed completely. 
+	 * @return string representation of a smart meter
+	 */
+	protected String getStringRepresentation() {
+		String representation = this.builder.toString();
+		this.builder = null;
+		this.builder = new StringBuilder(builderCopy);
+		return representation;
+	}
+	
 	/**
 	 * Returns {@code true} if the input stream reader reached EOF otherwise {@code false}.
 	 * 
-	 * @return
+	 * @return true, if the processed stream reached its end otherwise false
 	 */
 	public final synchronized boolean isDone() {
 		return isDone;
 	}
 
 	/**
-	 * Closes the input stream reader.
+	 * Closes the input stream reader and signals that the parser reached the end of the stream.
 	 */
 	public synchronized void close() {
 		try {

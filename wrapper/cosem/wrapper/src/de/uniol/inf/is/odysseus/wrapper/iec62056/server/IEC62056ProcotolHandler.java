@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
  */
 public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
 
-	
 	private static final Logger logger = LoggerFactory.getLogger(IEC62056ProcotolHandler.class.getSimpleName());
 	
 	private final String XML_TYPE = "xml";
@@ -39,8 +39,9 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	private AbstractCOSEMParser parser;
 	private boolean isDone;
 	private String type;
-
-
+	private String smgwDeviceName;
+	private String[] tokens;
+	
 	public IEC62056ProcotolHandler() {
 		super();
 	}
@@ -53,6 +54,29 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 			this.type = type;
 		} else {
 			this.type = "xml";
+		}
+		@SuppressWarnings("unchecked")
+		List<String> tokens = ((List<String>) options.getValue("tokens"));
+		switch (type) {
+		case (JSON_TYPE):
+			smgwDeviceName = options.getValue("smgwDeviceName");
+			if (smgwDeviceName != null) {
+				if (tokens != null) {
+					if (getSchema().getAttributes().stream()
+							.anyMatch(e -> e.getAttributeName().equals(smgwDeviceName))) {
+						tokens.add(smgwDeviceName);
+					} else {
+						throw new IllegalArgumentException("missing " + smgwDeviceName + " in schema definition");
+					}
+				}
+			} else {
+				throw new IllegalArgumentException("missing option from access operator: smgwDeviceName");
+			}
+		case (XML_TYPE):
+			break;
+		}
+		if(tokens != null) {
+			this.tokens = tokens.toArray(new String[tokens.size()]);
 		}
 		logger.info("Initialized " + IEC62056ProcotolHandler.class.getSimpleName() + " with a " + this.type + " parser");
 	}
@@ -74,14 +98,35 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 		if (parser == null) {
 			switch (type.toLowerCase()) {
 			case JSON_TYPE:
-				parser = new JSONCOSEMParser(reader, getSchema());
+				if(tokens == null) {
+					List<String> tokenList = new ArrayList<String>();
+					if (!getSchema().getAttributes().stream()
+							.anyMatch(e -> e.getAttributeName().equals(smgwDeviceName))) {
+						throw new IllegalArgumentException("missing " + smgwDeviceName + " in schema definition");
+					}
+					tokenList.add("logical_name");
+					tokenList.add("objects");
+					tokenList.add(smgwDeviceName);
+					tokens = tokenList.toArray(new String[tokenList.size()]);
+				}
+				parser = new JSONCOSEMParser(reader, getStringBuilder(), tokens);
 				break;
 			case XML_TYPE:
 			default:
 				throw new NotImplementedException("the corresponding XMLCOSEMParser has no implementation yet");
-//				parser = new XMLCOSEMParser(reader, getSchema());
+//				parser = new XMLCOSEMParser(reader, getStringBuilder(), tokens);
 			}
 		}
+	}
+	
+	private StringBuilder getStringBuilder() {
+		StringBuilder builder = new StringBuilder("[" + getSchema().getAttributes().get(0).getAttributeName());
+		for(int i = 1; i < getSchema().getAttributes().size(); i++) {
+			builder.append("|");
+			builder.append(getSchema().getAttributes().get(i).getAttributeName());
+		}
+		builder.append("]");
+		return builder;
 	}
 
 	private void terminateParser() {
@@ -103,12 +148,14 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 			logger.info("Given transport handler has no input stream");
 		}
 		isDone = false;
+		logger.info("connection opened");
 	}
 
 	@Override
 	public void close() throws IOException {
 		terminateParser();
 		super.close();
+		logger.info("connection closed");
 	}
 
 	@Override
@@ -128,6 +175,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	public void onDisonnect(ITransportHandler caller) {
 		terminateParser();
 		super.onDisonnect(caller);
+		logger.info("disconnected");
 	}
 	
 	@Override
@@ -149,9 +197,20 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	 */
 	@Override
 	public void process(String[] message) {
+		try {
 		initParser(String.join("", message).getBytes());
 		getTransfer().transfer(getDataHandler().readData(parser.parse()));
 		terminateParser();
+		} catch (IllegalArgumentException e) {
+			if (!isDone) {
+				logger.error("error occurred: " + e.getMessage());
+				try {
+					close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
 	}
 	
 }

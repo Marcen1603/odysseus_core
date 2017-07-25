@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.iec62056.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,12 +10,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
 
 /**
@@ -26,31 +26,69 @@ public class JSONCOSEMParserTest {
 
 	public static final String DATA_1 = "EXAMPLE_1.json";
 	public static final String DATA_2 = "EXAMPLE_2.json";
+	public static final String DATA_3 = "EXAMPLE_3.json";
+	public static final String DATA_4 = "EXAMPLE_4.json";
+	
+	public static final String RESULT_1 = 
+			  "[smartmetergateway_109|sm_21|3.424839|-3|11700|30|000]";
+	public static final String RESULT_2 = 
+			  "[smartmetergateway_123|sm_041|1.182|-3|30600|30|000]"
+			+ "[smartmetergateway_123|sm_043|1.0575|-3|30600|30|000]"
+			+ "[smartmetergateway_123|sm_042|0.7155|-3|30600|30|000]";
+	
 
 	public InputStreamReader reader;
 	public JSONCOSEMParser cosemParser;
 
-	public void setup(String pathToFile) {
+	@Rule
+	public TestWatcher testWatcher = new TestWatcher() {
+		protected void failed(Throwable e, Description description) {
+			System.out.println("" + description.getMethodName() + " \n\tfailed " + e.getMessage());
+			super.failed(e, description);
+		}
+
+	};
+
+	/**
+	 * Parses the given file and checks if the result is equal with
+	 * {@code expected}.
+	 * 
+	 * @param pathToFile
+	 * @param expected
+	 */
+	public void parsePullBased(String pathToFile, String expected) {
 		try {
-			if(reader != null) {
+			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
+			String actual = "";
+			String result = "";
+			/*
+			 * Initiate all needed resources; - reader that reads the given
+			 * input file - StringBuilder that defines a schema - String-Array
+			 * that defines some parser-specific tokens
+			 */
 			reader = new InputStreamReader(new FileInputStream(new File(pathToFile)));
-			SDFAttribute[] attributes = new SDFAttribute[7];
-			attributes[0] = new SDFAttribute("source1", "1", SDFDatatype.STRING);
-			attributes[1] = new SDFAttribute("source1", "2", SDFDatatype.DOUBLE);
-			attributes[2] = new SDFAttribute("source1", "3", SDFDatatype.INTEGER);
-			attributes[3] = new SDFAttribute("source1", "4", SDFDatatype.INTEGER);
-			attributes[4] = new SDFAttribute("source1", "5", SDFDatatype.STRING);
-			attributes[5] = new SDFAttribute("source1", "6", SDFDatatype.LONG);
-			attributes[6] = new SDFAttribute("source1", "7", SDFDatatype.STRING);
-			@SuppressWarnings("static-access")
-			SDFSchema schema = new SDFSchemaFactory().createNewTupleSchema("schema1", attributes);
-			cosemParser = new JSONCOSEMParser(reader, schema);
+			cosemParser = new JSONCOSEMParser(reader,
+					new StringBuilder("[smgw_device_name|logical_name|value|scaler|capture_time|unit|status]"),
+					new String[] { "logical_name", "objects", "smgw_device_name" });
+			/*
+			 * Call cosemParse.parser() as long as every smart meter has been
+			 * processed and concatenate all results to one string that can be
+			 * compared with RESULT_X.
+			 */
+			while (!cosemParser.isDone()) {
+				result = cosemParser.parse();
+				if (result != null) {
+					actual += result;
+				}
+			}
+			assertNotNull("result was null", actual);
+			assertEquals(expected, actual);
 		} catch (FileNotFoundException e2) {
 			e2.printStackTrace();
 		}
@@ -69,24 +107,22 @@ public class JSONCOSEMParserTest {
 
 	@Test
 	public void parseTest1() {
-		setup(DATA_1);
-		String expected = "[smartmetergateway_0|0.972|30|-3|000|0|sm_011]";
-		String actual = cosemParser.parse();
-		assertNotNull("result was null", actual);
-		assertEquals(expected, actual);
+		parsePullBased(DATA_1, RESULT_1);
 	}
-	
-//	@Test
-//	public void parseTest2() {
-//		setup(DATA_2);
-//		StringBuilder builder = new StringBuilder();
-//		String expected = "[smartmetergateway_0|0.972|30|-3|000|0|sm_011]";
-//		while(cosemParser.isDone()) {
-//			builder.append(cosemParser.parsePullInputStream());
-//		}
-//		String actual = builder.toString();
-//		System.out.println(actual);
-//		assertNotNull("result was null", actual);
-//		assertEquals(expected, actual);
-//	}
+
+	@Test
+	public void parseTest2() {
+		parsePullBased(DATA_2, RESULT_1);
+	}
+
+	@Test
+	public void parseTest3() {
+		parsePullBased(DATA_3, RESULT_2);
+	}
+
+	@Test
+	public void parseTest4() {
+		parsePullBased(DATA_4, RESULT_2);
+	}
+
 }

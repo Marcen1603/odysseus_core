@@ -22,7 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDifferenceFunction;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalDivisionOperator;
 import de.uniol.inf.is.odysseus.datatype.interval.function.IntervalIntersectionFunction;
@@ -48,9 +48,9 @@ public class IntervalFunctionProvider implements IFunctionProvider {
     }
 
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 
         functions.add(new IntervalMinusOperator());
         functions.add(new IntervalPlusOperator());

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -163,7 +163,7 @@ public class LogicalGraphHelper {
 		IPredicate<?> predicate = selectOperator.getPredicate();
 		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
-			IExpression<?> expression = relPredicate.getMEPExpression();
+			IMepExpression<?> expression = relPredicate.getMEPExpression();
 			if (SDFAttributeHelper
 					.expressionContainsStatefulFunction(expression)) {
 				if (assureSemanticCorrectness) {
@@ -194,7 +194,7 @@ public class LogicalGraphHelper {
 		MapAO mapOperator = (MapAO) currentOperator;
 		List<SDFExpression> expressionList = mapOperator.getExpressionList();
 		for (SDFExpression sdfExpression : expressionList) {
-			IExpression<?> mepExpression = sdfExpression.getMEPExpression();
+			IMepExpression<?> mepExpression = sdfExpression.getMEPExpression();
 			if (SDFAttributeHelper
 					.expressionContainsStatefulFunction(mepExpression)) {
 				if (assureSemanticCorrectness) {

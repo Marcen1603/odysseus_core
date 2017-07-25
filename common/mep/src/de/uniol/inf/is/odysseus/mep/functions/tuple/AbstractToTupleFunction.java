@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -37,14 +37,14 @@ abstract public class AbstractToTupleFunction extends AbstractFunction<Tuple<IMe
     }
 	
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		List<SDFAttribute> attr = new ArrayList<>();
 		int counter = 0;
-		for (IExpression<?> arg : args) {
+		for (IMepExpression<?> arg : args) {
 			SDFDatatype retType = arg.getReturnType();
 			String name;
 			if(arg.isVariable()) {
-				name = ((IVariable) arg).getIdentifier();
+				name = ((IMepVariable) arg).getIdentifier();
 			} else {
 				name = "x" + counter++;
 			}

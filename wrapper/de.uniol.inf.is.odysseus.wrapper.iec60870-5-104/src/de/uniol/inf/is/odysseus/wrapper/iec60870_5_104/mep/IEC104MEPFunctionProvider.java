@@ -3,7 +3,7 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.mep;
 import java.util.Arrays;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -22,11 +22,11 @@ public class IEC104MEPFunctionProvider implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IFunction<?>[] functions = new IFunction[] { new TimestampFromASDUFunction(),
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new TimestampFromASDUFunction(),
 			new TimestampToASDUFunction() };
 
 	@Override
-	public List<IFunction<?>> getFunctions() {
+	public List<IMepFunction<?>> getFunctions() {
 		return Arrays.asList(functions);
 	}
 

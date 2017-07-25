@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.optimizer.PredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -66,9 +66,9 @@ public class RMergeSelectionJoinRule extends AbstractRewriteRule<JoinAO> {
 				if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
 					if (join.getPredicate() instanceof IRelationalExpression) {
 						RelationalExpression<?> relationalPredicate = (RelationalExpression<?>) join.getPredicate();
-						IExpression<?> expression = ((RelationalExpression<?>) join.getPredicate()).getMEPExpression();
+						IMepExpression<?> expression = ((RelationalExpression<?>) join.getPredicate()).getMEPExpression();
 						expression = BooleanExpressionOptimizer.optimize(expression);
-						IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
+						IMepExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
 						SDFExpression sdfExpression = new SDFExpression(cnf.toString(),
 								relationalPredicate.getAttributeResolver(), relationalPredicate.getExpressionParser());
 						join.setPredicate(new RelationalExpression(sdfExpression));

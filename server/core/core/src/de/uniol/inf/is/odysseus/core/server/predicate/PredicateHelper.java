@@ -4,8 +4,8 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.ComparablePair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -40,7 +40,7 @@ public class PredicateHelper {
 				AggregateFunctionBuilderRegistry.getAggregatePattern());
 		// ===========================================
 
-		IExpression<?> mepExpr = expr.getMEPExpression();
+		IMepExpression<?> mepExpr = expr.getMEPExpression();
 		return checkEqualsPredicate(mepExpr, neededAttrs, ownSchema, otherSchema);
 
 		// if(predicate instanceof AndPredicate){
@@ -65,7 +65,7 @@ public class PredicateHelper {
 		// return false;
 	}
 
-	public static boolean checkEqualsPredicate(IExpression mepExpr, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFSchema ownSchema, SDFSchema otherSchema){
+	public static boolean checkEqualsPredicate(IMepExpression mepExpr, Set<Pair<SDFAttribute, SDFAttribute>> neededAttrs, SDFSchema ownSchema, SDFSchema otherSchema){
 		if(mepExpr instanceof AndOperator){
 			return checkEqualsPredicate(((AndOperator)mepExpr).getArgument(0), neededAttrs, ownSchema, otherSchema) &&
 					checkEqualsPredicate(((AndOperator)mepExpr).getArgument(1), neededAttrs, ownSchema, otherSchema);
@@ -76,12 +76,12 @@ public class PredicateHelper {
 			// if these are variables
 			// return true
 			IEqualsOperator eq = (IEqualsOperator)mepExpr;
-			IExpression arg1 = eq.getArgument(0);
-			IExpression arg2 = eq.getArgument(1);
+			IMepExpression arg1 = eq.getArgument(0);
+			IMepExpression arg2 = eq.getArgument(1);
 			
-			if(arg1 instanceof IVariable && arg2 instanceof IVariable){
-				String id1 = ((IVariable)arg1).getIdentifier();
-				String id2 = ((IVariable)arg2).getIdentifier();
+			if(arg1 instanceof IMepVariable && arg2 instanceof IMepVariable){
+				String id1 = ((IMepVariable)arg1).getIdentifier();
+				String id2 = ((IMepVariable)arg2).getIdentifier();
 				
 				SDFAttribute ownAttr = ownSchema.findAttribute(id1);
 				if (ownAttr == null){

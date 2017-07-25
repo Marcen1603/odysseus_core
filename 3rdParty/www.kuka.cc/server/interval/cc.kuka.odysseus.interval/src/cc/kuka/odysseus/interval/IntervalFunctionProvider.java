@@ -43,7 +43,7 @@ import cc.kuka.odysseus.interval.function.math.IntervalPlusOperator;
 import cc.kuka.odysseus.interval.function.math.IntervalPowerOperator;
 import cc.kuka.odysseus.interval.function.transform.ToIntervalFunction;
 import cc.kuka.odysseus.interval.function.transform.ToStringFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -65,9 +65,9 @@ public class IntervalFunctionProvider implements IFunctionProvider {
      */
     @SuppressWarnings("rawtypes")
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         try {
             functions.add(new IntervalMinusOperator());
             functions.add(new IntervalPlusOperator());
