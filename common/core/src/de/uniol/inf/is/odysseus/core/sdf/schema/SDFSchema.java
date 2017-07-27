@@ -404,6 +404,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 						+ "' in left and right input! Use Rename for one.");
 			}
 		}
+				
 		// return SDFSchema.changeSourceName(newSet, name);
 		return newSet;
 	}

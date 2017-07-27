@@ -15,7 +15,10 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 
 /**
@@ -38,6 +41,12 @@ public class ReOrderAO extends UnaryLogicalOp {
 	public ReOrderAO(ReOrderAO ao) {
 		super(ao);
 	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		setOutputSchema(SDFSchemaFactory.createNewWithOutOfOrder(false, getInputSchema()));
+		return getOutputSchema();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -49,6 +58,11 @@ public class ReOrderAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new ReOrderAO(this);
+	}
+	
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.SELFHANDLED;
 	}
 
 }

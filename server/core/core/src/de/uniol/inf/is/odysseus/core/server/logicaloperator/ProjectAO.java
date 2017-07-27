@@ -22,6 +22,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -102,6 +103,14 @@ public class ProjectAO extends UnaryLogicalOp {
 		/// WTF ???
 		/// setOutputSchema(new SDFSchema(getInputSchema().getURI(),
 		/// getOutputSchema()));
+	}
+
+	/**
+	 * There should be no restriction for stateless operators
+	 */
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
 	}
 
 }
