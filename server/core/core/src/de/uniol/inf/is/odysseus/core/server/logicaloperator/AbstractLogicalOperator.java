@@ -266,13 +266,19 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public String getName() {
 		if (name == null) {
-			name = this.getClass().getSimpleName();
+			String name = this.getClass().getSimpleName();
 			if (name.endsWith("AO")) {
 				name = name.substring(0, name.length() - 2);
 			}
+			return name;
 		}
 
 		return name;
+	}
+	
+	@Override
+	public boolean isNameSet() {
+		return name != null;
 	}
 
 	@Override
