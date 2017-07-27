@@ -81,7 +81,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		// // otherwise we use a LeftJoinTISweepArea
 		// else{
 
-		if (joinAO.isAssureOrder()) {
+		if (joinAO.isAssureOrder() == null || joinAO.isAssureOrder()) {
 			joinPO.setTransferFunction(new TITransferArea());
 		} else {
 			joinPO.setTransferFunction(new DirectTransferArea());

@@ -437,7 +437,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 			constraints.put(SDFConstraint.DATE_FORMAT, new SDFConstraint(SDFConstraint.DATE_FORMAT, dateFormat));
 		}
 
-		boolean strictOrder = false;
+		boolean strictOrder = true;
 		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)) {
 			String sorder = optionsMap.get(SDFConstraint.STRICT_ORDER);
 			strictOrder = Boolean.parseBoolean(sorder);
