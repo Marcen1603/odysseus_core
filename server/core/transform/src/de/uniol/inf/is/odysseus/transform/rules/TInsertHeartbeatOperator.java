@@ -13,6 +13,13 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * In cases where the output of an access operator is out of order, a heartbeat operator needs to
+ * be inserted to assure, that elements get processed
+ * 
+ * @author Marco Grawunder
+ *
+ */
 public class TInsertHeartbeatOperator extends AbstractTransformationRule<AbstractAccessAO> {
 
 	@Override
@@ -20,7 +27,6 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 		for (LogicalSubscription subscription : operator.getSubscriptions()) {
 			if (!(subscription.getTarget() instanceof HeartbeatAO)) {
 				HeartbeatAO heartbeat = new HeartbeatAO();
-				// TODO: magic numbers?
 				long realTimeDelay = operator.getRealTimeDelay();
 				long applicationTimeDelay = operator.getApplicationTimeDelay();
 				
@@ -45,14 +51,11 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 	@Override
 	public boolean isExecutable(AbstractAccessAO operator, TransformationConfiguration config) {
 		if (!operator.getOutputSchema().isInOrder()) {
-
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
 				if (!(subscription.getTarget() instanceof HeartbeatAO)) {
 					return true;
 				}
 			}
-
-			return false;
 		}
 		return false;
 	}
