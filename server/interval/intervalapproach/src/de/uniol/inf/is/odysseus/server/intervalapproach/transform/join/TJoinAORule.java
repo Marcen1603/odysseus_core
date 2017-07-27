@@ -97,7 +97,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
-		if (isCross) {
+		if (isCross && !joinAO.isNameSet()) {
 			joinPO.setName("Crossproduct");
 		}
 
