@@ -263,4 +263,16 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	public boolean isDebug();
 
 	boolean isSuppressPunctuations();
+	
+	/**
+	 * Out of order processing
+	 */
+	
+	/**
+	 * Define which way the input of the source should be treated
+	 * @param inputPort The port for which the input should be delivered
+	 * @return the input type
+	 */
+	InputOrderRequirement getInputOrderRequirement(int inputPort);
+	
 }

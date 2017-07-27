@@ -87,6 +87,12 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 			joinPO.setTransferFunction(new DirectTransferArea());
 		}
 		// }
+		
+		if (joinAO.getInputSchema(0).isInOrder() && joinAO.getInputSchema(1).isInOrder()) {
+			joinPO.setOutOfOrder(false);
+		}else {
+			joinPO.setOutOfOrder(true);
+		}
 
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
 
@@ -118,5 +124,6 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 	public Class<? super JoinAO> getConditionClass() {
 		return JoinAO.class;
 	}
+
 
 }
