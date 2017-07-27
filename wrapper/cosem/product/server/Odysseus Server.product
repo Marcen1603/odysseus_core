@@ -58,6 +58,8 @@
       <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.cosem.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

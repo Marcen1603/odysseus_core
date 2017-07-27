@@ -10,6 +10,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  org.apache.commons.lang,
  com.fasterxml.jackson,
  org.junit
-Import-Package: org.slf4j
+Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
+ de.uniol.inf.is.odysseus.datarate,
+ org.slf4j
 Service-Component: OSGI-INF/IEC62056TransportHandler.xml, OSGI-INF/IEC62056ProtocolHandler.xml
 Bundle-ActivationPolicy: lazy

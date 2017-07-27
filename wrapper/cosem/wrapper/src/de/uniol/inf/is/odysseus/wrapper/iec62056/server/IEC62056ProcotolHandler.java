@@ -5,22 +5,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.datarate.IDatarate;
+import de.uniol.inf.is.odysseus.wrapper.iec62056.model.ProcessedData;
+import de.uniol.inf.is.odysseus.wrapper.iec62056.model.Result;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.AbstractCOSEMParser;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
 
@@ -38,7 +52,10 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	
 	private AbstractCOSEMParser parser;
 	private boolean isDone;
+	private boolean isTranportHandlerOpen;
+	private String queryID;
 	private String type;
+	private String jsonSchema;
 	private String smgwDeviceName;
 	private String[] tokens;
 	
@@ -49,34 +66,48 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	public IEC62056ProcotolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<IStreamObject<? extends IMetaAttribute>> dataHandler) {
 		super(direction, access, dataHandler, options);
-		String type = options.getValue("type");
-		if (type != null) {
-			this.type = type;
-		} else {
-			this.type = "xml";
-		}
-		@SuppressWarnings("unchecked")
-		List<String> tokens = ((List<String>) options.getValue("tokens"));
-		switch (type) {
-		case (JSON_TYPE):
-			smgwDeviceName = options.getValue("smgwDeviceName");
-			if (smgwDeviceName != null) {
-				if (tokens != null) {
-					if (getSchema().getAttributes().stream()
-							.anyMatch(e -> e.getAttributeName().equals(smgwDeviceName))) {
-						tokens.add(smgwDeviceName);
-					} else {
-						throw new IllegalArgumentException("missing " + smgwDeviceName + " in schema definition");
-					}
-				}
+		if (getDirection().equals(ITransportDirection.IN)) {
+			String type = options.getValue("type");
+			if (type != null) {
+				this.type = type;
 			} else {
-				throw new IllegalArgumentException("missing option from access operator: smgwDeviceName");
+				this.type = "xml";
 			}
-		case (XML_TYPE):
-			break;
-		}
-		if(tokens != null) {
-			this.tokens = tokens.toArray(new String[tokens.size()]);
+			@SuppressWarnings("unchecked")
+			List<String> tokens = ((List<String>) options.getValue("tokens"));
+			if (type != null) {
+				switch (type) {
+				case (JSON_TYPE):
+					smgwDeviceName = options.getValue("smgwDeviceName");
+					if (smgwDeviceName != null) {
+						if (tokens != null) {
+							if (getSchema().getAttributes().stream()
+									.anyMatch(e -> e.getAttributeName().equals(smgwDeviceName))) {
+								tokens.add(smgwDeviceName);
+							} else {
+								throw new IllegalArgumentException(
+										"missing " + smgwDeviceName + " in schema definition");
+							}
+						}
+					} else {
+						throw new IllegalArgumentException("missing option from access operator: smgwDeviceName");
+					}
+				case (XML_TYPE):
+					break;
+				}
+				if (tokens != null) {
+					this.tokens = tokens.toArray(new String[tokens.size()]);
+				}
+			}
+		} else {
+			queryID = options.get("queryID");
+			if(queryID == null) {
+				throw new IllegalArgumentException("missing option in access operator: queryID");
+			}
+			jsonSchema = options.get("jsonschema");
+			if(jsonSchema == null) {
+				throw new IllegalArgumentException("missing option in access operator: outType");
+			}
 		}
 		logger.info("Initialized " + IEC62056ProcotolHandler.class.getSimpleName() + " with a " + this.type + " parser");
 	}
@@ -139,18 +170,21 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	@Override
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
-		try {
-			InputStream initialStream = getTransportHandler().getInputStream();
-			byte[] targetArray = new byte[initialStream.available()];
-			initialStream.read(targetArray);
-			initParser(targetArray);
-		} catch (IllegalArgumentException e) {
-			logger.info("Given transport handler has no input stream");
+		if(getDirection().equals(ITransportDirection.IN)) {
+			try {
+				InputStream initialStream = getTransportHandler().getInputStream();
+				byte[] targetArray = new byte[initialStream.available()];
+				initialStream.read(targetArray);
+				initParser(targetArray);
+			} catch (IllegalArgumentException e) {
+				logger.info("Given transport handler has no input stream");
+			}
+			isDone = false;
 		}
-		isDone = false;
-		logger.info("connection opened");
 	}
 
+	
+	
 	@Override
 	public void close() throws IOException {
 		terminateParser();
@@ -172,15 +206,34 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	}
 
 	@Override
+	public void onConnect(ITransportHandler caller) {
+		super.onConnect(caller);
+		logger.info("connected");
+	}
+
+	@Override
 	public void onDisonnect(ITransportHandler caller) {
-		terminateParser();
 		super.onDisonnect(caller);
+		terminateParser();
+		if(getTransportHandler() != null) {
+			try {
+				if (getDirection().equals(ITransportDirection.OUT)) {
+					getTransportHandler().processOutClose();
+				} else if (getDirection().equals(ITransportDirection.IN)) {
+					getTransportHandler().processInClose();
+				} else {
+					getTransportHandler().processInClose();
+					getTransportHandler().processOutClose();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		logger.info("disconnected");
 	}
 	
 	@Override
 	public boolean isSemanticallyEqualImpl(IProtocolHandler<?> other) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
@@ -198,12 +251,12 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	@Override
 	public void process(String[] message) {
 		try {
-		initParser(String.join("", message).getBytes());
-		getTransfer().transfer(getDataHandler().readData(parser.parse()));
-		terminateParser();
-		} catch (IllegalArgumentException e) {
+			initParser(String.join("", message).getBytes());
+			getTransfer().transfer(getDataHandler().readData(parser.parse()));
+			terminateParser();
+		} catch (IllegalArgumentException | NullPointerException e) {
+			logger.info("last message: " + Arrays.toString(message));
 			if (!isDone) {
-				logger.error("error occurred: " + e.getMessage());
 				try {
 					close();
 				} catch (IOException e1) {
@@ -211,6 +264,70 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 				}
 			}
 		}
+	}
+	
+	/*
+	 * write processed data as json
+	 */
+	@Override
+	public void write(IStreamObject<? extends IMetaAttribute> object) throws IOException {
+		if(!isTranportHandlerOpen) {
+			getTransportHandler().processOutOpen();
+			isTranportHandlerOpen = true;
+		}
+		//get the json schema from options
+		Result data = ProcessedData.getResultType(jsonSchema);
+		if(data == null) {
+			close();
+			throw new IllegalArgumentException("given output schema is unknown: " + jsonSchema);
+		}
+		long timeintervalStart = -1;
+		long timeintervalEnd = -1;
+		Long minlStart = null;
+		Long maxlStart = null;
+		Long lend = null;
+		Long latency = null;
+		Map<String, Double> datarates = null;
+		IMetaAttribute meta = object.getMetadata();
+		//collect meta data
+		if (meta instanceof ITimeInterval) {
+			timeintervalStart = ((ITimeInterval) meta).getStart().getMainPoint();
+			timeintervalEnd = ((ITimeInterval) meta).getEnd().getMainPoint();
+		}
+		if (meta instanceof ILatency) {
+			minlStart = ((ILatency) meta).getLatencyStart();
+			maxlStart = ((ILatency) meta).getMaxLatencyStart();
+			lend = ((ILatency) meta).getLatencyEnd();
+			latency = ((ILatency) meta).getLatency();
+		}
+		if (meta instanceof IDatarate) {
+			datarates = ((IDatarate) meta).getDatarates();
+		}
+		//set meta data
+		data.setTimeintervalStart(timeintervalStart);
+		data.setTimeintervalEnd(timeintervalEnd);
+		data.setMinlStart(minlStart != null ? minlStart : -1);
+		data.setMaxlStart(maxlStart != null ? maxlStart : -1);
+		data.setLend(lend != null ? lend : -1);
+		data.setLatency(latency != null ? latency : -1);
+		data.setDatarate(datarates);
+		Map<String, Object> values = new HashMap<String, Object>();
+		for(int i = 0; i < getSchema().size(); i++) {
+			values.put(getSchema().get(i).getAttributeName(), ((Tuple<?>) object).getAttribute(i));
+		}
+		//set specific tuple values
+		data.setValues(values);
+		ProcessedData processed = new ProcessedData();
+		processed.setQueryId(queryID);
+		processed.setResult(data);
+		//write data out
+		String json = new ObjectMapper().writeValueAsString(processed);
+		CharBuffer charBuffer = CharBuffer.wrap(json);
+		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);
+		byte[] encodedBytesTmp = bBuffer.array();
+		byte[] encodedBytes = new byte[charBuffer.limit()];
+		System.arraycopy(encodedBytesTmp, 0, encodedBytes, 0, charBuffer.limit());
+		this.getTransportHandler().send(encodedBytes);
 	}
 	
 }
