@@ -11,6 +11,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+/**
+ * Defines raw cosem data that is neither processed nor manipulated but enriched
+ * with odysseus meta data.
+ * 
+ * @author Jens Plümer
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "smgw_device_name",

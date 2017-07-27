@@ -209,10 +209,11 @@ public class FileHandler extends AbstractFileHandler {
 		final File file = new File(filename);
 
 		try {
-			if (!delayOpenOut)
+			if (!delayOpenOut) {
 				out = createOutputStream(file);
-			else
+			} else {
 				out = createDelayOutputStream(file);
+			}
 			fireOnConnect();
 		} catch (Exception e) {
 			fireOnDisconnect();

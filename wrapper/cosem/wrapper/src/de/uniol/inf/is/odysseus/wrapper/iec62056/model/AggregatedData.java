@@ -10,6 +10,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+/**
+ * 
+ * @author Jens Plümer
+ *
+ */
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 	"aggregation_value",
