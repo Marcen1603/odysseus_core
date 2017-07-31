@@ -1,0 +1,1 @@
+view1 := MAP({expressions=['bid.timestamp','bid.auction','bid.bidder','bid.datetime','bid.price']},bid)
