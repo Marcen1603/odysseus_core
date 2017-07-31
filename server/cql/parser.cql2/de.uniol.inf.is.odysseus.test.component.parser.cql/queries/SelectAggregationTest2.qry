@@ -1,3 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT bidder AS auctioneer, COUNT(auction) AS Counter FROM bid [SIZE 5 MINUTES TIME];
