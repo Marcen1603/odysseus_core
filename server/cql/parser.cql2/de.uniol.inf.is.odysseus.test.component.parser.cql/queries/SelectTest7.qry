@@ -1,0 +1,3 @@
+#PARSER CQL
+#QUERY
+SELECT C.name FROM category AS C WHERE C.id != 108;

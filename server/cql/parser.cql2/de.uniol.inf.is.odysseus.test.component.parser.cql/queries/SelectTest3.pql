@@ -1,0 +1,2 @@
+operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','bid.price','avgPrice','Double']]},bid)
+operator_2 = MAP({expressions=['bid.price','avgPrice','bid.auction','bid.bidder']},JOIN(operator_1,bid))

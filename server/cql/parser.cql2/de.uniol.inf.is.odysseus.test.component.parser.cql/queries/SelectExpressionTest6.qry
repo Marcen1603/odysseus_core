@@ -1,0 +1,3 @@
+#PARSER CQL
+#RUNQUERY
+SELECT 'hello' + 'world' FROM bid;

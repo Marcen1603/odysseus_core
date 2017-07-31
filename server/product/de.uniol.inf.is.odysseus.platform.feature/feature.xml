@@ -119,13 +119,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.core.resources"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.core.contenttype"
          download-size="0"
          install-size="0"
@@ -449,13 +442,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="javax.servlet"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.equinox.http.jetty"
          download-size="0"
          install-size="0"
@@ -556,6 +542,27 @@ limitations under the License.
 
    <plugin
          id="org.eclipse.equinox.p2.operations"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.resources"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.core.resources.source"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.help"
          download-size="0"
          install-size="0"
          version="0.0.0"
