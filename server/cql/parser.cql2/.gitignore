@@ -1,3 +1,9 @@
 /de.uniol.inf.is.odysseus.parser.cql2.ui.tests/
 /de.uniol.inf.is.odysseus.parser.cql2.product/
+**/bin/
+*.class
+**/*.class
+**/*.java._trace
+**/*.xtendbin
+**/*.xtextbin
 *.log
