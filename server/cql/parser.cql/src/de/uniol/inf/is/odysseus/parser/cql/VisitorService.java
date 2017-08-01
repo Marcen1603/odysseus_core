@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * @author Dennis Geesen
  * Created at: 06.02.2012
  */
-@Deprecated
 public class VisitorService {
 	
 	private Logger logger = LoggerFactory.getLogger(VisitorService.class);

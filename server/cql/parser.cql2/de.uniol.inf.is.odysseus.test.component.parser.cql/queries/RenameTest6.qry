@@ -1,4 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B1.bidder AS auctioneer1, B2.bidder AS auctioneer2, B2.auction 
-FROM bid [SIZE 5 SECONDS TIME] AS B1, bid [SIZE 15 SECONDS TIME] AS B2 WHERE auctioneer1=B2.auction;

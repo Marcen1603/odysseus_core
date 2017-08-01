@@ -6,17 +6,17 @@ public class CQLScriptTemplate implements IOdysseusScriptTemplate {
 
 	@Override
 	public String getName() {
-		return "CLQ1 Basic";
+		return "CQL Basic";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Empty query with prepared CQL1-Environment";
+		return "Empty query with prepared CQL-Environment";
 	}
 
 	@Override
 	public String getText() {
-		return 	"#PARSER CQL1\n" +
+		return 	"#PARSER CQL\n" +
 				"#RUNQUERY\n" +
 				"///Your first cql-query here";		
 	}

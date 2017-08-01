@@ -1,5 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B1.auction AS auctioneer, B2.auction
-FROM bid AS B1, bid AS B2
-WHERE B1.auction!=B2.bidder

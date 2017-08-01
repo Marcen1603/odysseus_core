@@ -37,7 +37,6 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -112,7 +111,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.PickUpAttribute
 import de.uniol.inf.is.odysseus.parser.cql.parser.transformation.SubstituteAliasesVisitor;
 import de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator.TimestampToPayloadAO;
 
-@Deprecated
 public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	final private List<IExecutorCommand> commands = new ArrayList<IExecutorCommand>();
@@ -139,7 +137,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "CQL1";
+		return "CQL";
 	}
 
 	@Override
@@ -148,6 +146,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throws QueryParseException {
 		// HACK: replace deprecated strings
 		query = query.replace("Now()", "TimeInterval.start");
+		query = query.replace("now()", "TimeInterval.start");
 		query = query.replace("streamtime()", "TimeInterval.start");
 		query = query.replace("Streamtime()", "TimeInterval.start");
 		query = query.replace("StreamTime()", "TimeInterval.start");

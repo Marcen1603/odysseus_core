@@ -50,20 +50,19 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.compile"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.test.component.jira"
+         id="de.uniol.inf.is.odysseus.test.component.keyvalue"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.keyvalue"
+         id="de.uniol.inf.is.odysseus.test.component.compile"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.test.component.jira"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
@@ -75,14 +74,13 @@ Unless required by applicable law or agreed to in writing, software
          version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.parser.cql"
+         id="de.uniol.inf.is.odysseus.test.component.operator"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.operator"
+         id="de.uniol.inf.is.odysseus.test.component.probabilistic"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

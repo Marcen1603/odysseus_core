@@ -63,10 +63,6 @@ limitations under the License.
          id="org.eclipse.emf.common"
          version="0.0.0"/>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.parser.cql2.ui.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.slf4j"
          download-size="0"

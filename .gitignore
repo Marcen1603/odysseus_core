@@ -1,9 +1,3 @@
-*.project
-*.classpath
-*.prefs
-*.java._trace
-*.xtendbin
-*.xtextbin
-*.class
-
-
+/.metadata/
+/.recommenders/
+/External Plug-in Libraries/

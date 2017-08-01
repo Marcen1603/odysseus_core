@@ -1,2 +1,0 @@
-operator_1 = AGGREGATE({AGGREGATIONS=[['COUNT','*','count']]},bid)
-operator_2 = MAP({expressions=['count']},operator_1)

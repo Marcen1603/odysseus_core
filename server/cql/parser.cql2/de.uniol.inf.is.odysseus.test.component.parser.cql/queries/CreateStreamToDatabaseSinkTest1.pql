@@ -1,2 +1,0 @@
-operator_1 = MAP({expressions=['bid.timestamp','bid.auction','bid.bidder','bid.datetime','bid.price']},bid)
-dbsink = DATABASESINK({connection='con1',table='example',type='mysql'},operator_1)
