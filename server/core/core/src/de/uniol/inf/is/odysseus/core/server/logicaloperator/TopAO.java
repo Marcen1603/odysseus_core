@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 
 /**
  * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
@@ -43,5 +44,10 @@ public class TopAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isSourceOperator() {
 		return false;
+	}
+	
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
 	}
 }

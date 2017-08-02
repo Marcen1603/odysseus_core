@@ -34,17 +34,20 @@ public class TDifferenceAORule extends AbstractIntervalTransformationRule<Differ
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) throws RuleException {
-		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> left;
-		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> right;
-		try {
-			left = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
-			right = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new RuleException(e);
-		}
-		ITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>> transferArea = new TITransferArea<>();
-		AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO, left, right, transferArea);
-		defaultExecute(differenceAO, po, transformConfig, true, true);		
+		
+		throw new RuntimeException("Difference is currently not working!");
+		
+//		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> left;
+//		ITimeIntervalSweepArea<IStreamObject<ITimeInterval>> right;
+//		try {
+//			left = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+//			right = (ITimeIntervalSweepArea<IStreamObject<ITimeInterval>>) SweepAreaRegistry.getSweepArea(DefaultTISweepArea.NAME);
+//		} catch (InstantiationException | IllegalAccessException e) {
+//			throw new RuleException(e);
+//		}
+//		ITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>> transferArea = new TITransferArea<>();
+//		AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO, left, right, transferArea);
+//		defaultExecute(differenceAO, po, transformConfig, true, true);		
 	}
 
 	@Override

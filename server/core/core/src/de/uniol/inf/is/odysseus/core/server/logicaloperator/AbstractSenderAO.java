@@ -21,6 +21,7 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -298,5 +299,13 @@ abstract public class AbstractSenderAO extends AbstractLogicalOperator {
 	@Override
 	public boolean isSourceOperator() {
 		return false;
+	}
+	
+	/**
+	 * There should be no restriction on order for senders
+	 */
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
 	}
 }

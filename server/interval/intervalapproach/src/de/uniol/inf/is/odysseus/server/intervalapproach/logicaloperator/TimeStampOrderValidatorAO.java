@@ -14,6 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
@@ -48,5 +49,10 @@ public class TimeStampOrderValidatorAO extends UnaryLogicalOp {
 	public AbstractLogicalOperator clone() {
 		return new TimeStampOrderValidatorAO(this);
 	}	
+	
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
+	}
 	
 }

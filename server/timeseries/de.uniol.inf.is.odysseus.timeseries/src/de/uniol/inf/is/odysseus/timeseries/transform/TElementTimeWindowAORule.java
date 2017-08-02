@@ -11,13 +11,8 @@ import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MergeAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -26,13 +21,11 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.timeseries.logicaloperator.ElementTimeWindowAO;
-import de.uniol.inf.is.odysseus.timeseries.logicaloperator.RegularTimeSeriesAO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -101,8 +94,8 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 		MergeAO merge = new MergeAO();
 		merge.setName(operator.getName() + "MergeAO");
 
-		RestructHelper.insertOperatorBefore(merge, mapAoDayWindowUndo, 0, 0);
-		RestructHelper.insertOperatorBefore(merge, mapAoNightWindowUndo, 1, 0);
+		RestructHelper.insertOperatorBefore(merge, mapAoDayWindowUndo, 0, 0, 0);
+		RestructHelper.insertOperatorBefore(merge, mapAoNightWindowUndo, 1, 0, 0);
 		insert(merge);
 
 
@@ -216,7 +209,7 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 
 		System.out.println("dayTimeWindowAO: " + timeWindowAO);
 
-		RestructHelper.insertOperatorBefore(timeWindowAO, operatorBefore, 0, 0);
+		RestructHelper.insertOperatorBefore(timeWindowAO, operatorBefore, 0, 0, 0);
 		insert(timeWindowAO);
 
 		return timeWindowAO;
@@ -274,7 +267,7 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 
 		System.out.println("nightTimeWindowAO: " + timeWindowAO);
 
-		RestructHelper.insertOperatorBefore(timeWindowAO, operatorBefore, 0, 1);
+		RestructHelper.insertOperatorBefore(timeWindowAO, operatorBefore, 0, 1, 0);
 		insert(timeWindowAO);
 
 		return timeWindowAO;
