@@ -10,7 +10,7 @@ public class CQLFileExecutor implements IFileExecutor {
 
 	@Override
 	public String getFileExtension() {
-		return "cql";
+		return "cql1";
 	}
 
 	@Override
