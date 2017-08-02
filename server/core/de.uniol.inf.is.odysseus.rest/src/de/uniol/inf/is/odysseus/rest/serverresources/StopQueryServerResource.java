@@ -4,6 +4,8 @@
 
 
 import org.restlet.resource.Post;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -13,6 +15,8 @@ import de.uniol.inf.is.odysseus.rest.dto.response.GenericResponseDTO;
 
 public class StopQueryServerResource extends AbstractSessionServerResource  {
 
+	static Logger logger = LoggerFactory.getLogger(StopQueryServerResource.class);
+	
 	public static final String PATH = "stopQuery";
 
 	@Post
@@ -28,6 +32,9 @@ public class StopQueryServerResource extends AbstractSessionServerResource  {
 			queryId = Integer.parseInt((String) genericSessionRequestDTO.getValue());
 		} else if (genericSessionRequestDTO.getValue() instanceof Integer) {
 			queryId = (Integer) genericSessionRequestDTO.getValue();
+		} else {
+			// It's in an unknown format
+			logger.error("Query-id of the request is not in a known format. Should be integer or string.");
 		}
 		
 		ExecutorServiceBinding.getExecutor().stopQuery(queryId,session);
