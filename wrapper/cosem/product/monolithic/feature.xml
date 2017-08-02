@@ -43,4 +43,16 @@ limitations under the License.
          id="de.uniol.inf.is.odysseus.studio.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.web.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.wrapper.cosem.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature"
+         version="0.0.0"/>
+
 </feature>
