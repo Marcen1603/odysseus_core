@@ -40,9 +40,16 @@ public class Activator extends AbstractUIPlugin {
 			@Override
 			public void run() {
 				for (Bundle bundle : context.getBundles()) {
-					logger.trace("Try to start bundle " + bundle.getSymbolicName()+" in Version "+bundle.getVersion());
-					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
+					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;				
+					
 					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+					 
+						// Just a test
+						if (bundle.getSymbolicName().equals("org.eclipse.core.resources")) {
+							continue;
+						}
+						
+						logger.trace("Try to start bundle " + bundle.getSymbolicName()+" in Version "+bundle.getVersion());
 						try {
 							bundle.start();
 						}catch (IllegalStateException e){
