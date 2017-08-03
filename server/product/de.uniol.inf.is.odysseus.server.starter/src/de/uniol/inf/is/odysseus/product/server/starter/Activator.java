@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.product.server.starter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -16,13 +13,12 @@ public class Activator implements BundleActivator {
 		return context;
 	}
 
-	// private static Object executor;
+
+//	private static Object executor;
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.
-	 * BundleContext)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
@@ -32,15 +28,13 @@ public class Activator implements BundleActivator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
 	}
-
+	
 	private static void startBundles(final BundleContext context) {
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -51,8 +45,10 @@ public class Activator implements BundleActivator {
 					e1.printStackTrace();
 				}
 				for (Bundle bundle : context.getBundles()) {
-					boolean isFragment = bundle.getHeaders().get(Constants.FRAGMENT_HOST) != null;
-					if (bundle != context.getBundle() && !isFragment && bundle.getState() == Bundle.RESOLVED) {
+					boolean isFragment = bundle.getHeaders().get(
+							Constants.FRAGMENT_HOST) != null;
+					if (bundle != context.getBundle() && !isFragment
+							&& bundle.getState() == Bundle.RESOLVED) {
 						try {
 							bundle.start();
 						} catch (Exception e) {
@@ -60,24 +56,24 @@ public class Activator implements BundleActivator {
 						}
 					}
 				}
-
 			}
 		});
 		t.start();
 	}
 
-	// public void bindExecutor(Object ex){
-	// synchronized (Activator.class) {
-	// executor = ex;
-	// Activator.class.notifyAll();
-	// }
-	//
-	// }
-	// public static void waitForExecutor() throws InterruptedException {
-	// synchronized (Activator.class) {
-	// while (executor == null) {
-	// Activator.class.wait(1000);
-	// }
-	// }
-	// }
+	
+//	public void bindExecutor(Object ex){
+//		synchronized (Activator.class) {
+//			executor = ex;			
+//			Activator.class.notifyAll();
+//		}
+//
+//	}
+//	public static void waitForExecutor() throws InterruptedException {
+//		synchronized (Activator.class) {
+//			while (executor == null) {
+//				Activator.class.wait(1000);
+//			}
+//		}
+//	}
 }

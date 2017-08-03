@@ -64,7 +64,6 @@ import de.uniol.inf.is.odysseus.parser.cql.parser.ASTTime;
  * 
  * @author Dennis Geesen Created at: 20.10.2011
  */
-@Deprecated
 public class DatabaseVisitor extends CQLParser {
 
 	@Override

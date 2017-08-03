@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.parser.cql;
 import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated
 public class VisitorFactory {
 
 	private Map<String, IVisitor> visitorMap = null;
