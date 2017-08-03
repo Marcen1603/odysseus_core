@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl en @noDefault -profile OdysseusProfile -data
+      <programArgs>-console -clean -debug -nl en @user.home -profile OdysseusProfile -data
       </programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true
       </vmArgs>
