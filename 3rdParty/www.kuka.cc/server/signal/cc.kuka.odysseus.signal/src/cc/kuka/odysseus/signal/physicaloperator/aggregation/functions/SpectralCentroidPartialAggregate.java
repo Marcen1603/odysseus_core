@@ -70,7 +70,7 @@ public class SpectralCentroidPartialAggregate<R> extends AbstractPartialAggregat
         return "SpectralCentroid= " + this.getAggValue();
     }
 
-    @SuppressWarnings("boxing")
+    //@SuppressWarnings("boxing")
     public static void main(final String[] args) {
         final SpectralCentroidPartialAggregate<?> agg = new SpectralCentroidPartialAggregate<>();
         agg.add(1.0, 1.0);

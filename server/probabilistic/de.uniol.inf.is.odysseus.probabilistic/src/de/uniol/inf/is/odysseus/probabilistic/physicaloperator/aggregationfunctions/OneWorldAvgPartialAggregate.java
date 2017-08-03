@@ -374,6 +374,7 @@ public class OneWorldAvgPartialAggregate<T> extends AbstractPartialAggregate<T> 
 	 *            The value of \f$ l \f$
 	 * @return The value of \f$ \~{g} \f$
 	 */
+	@SuppressWarnings("deprecation")
 	private Polynomial gTilde(final double[] p, final double l) {
 		Polynomial gTilde = null;
 		for (int i = 1; i <= this.k0; i++) {
