@@ -24,11 +24,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.server.IExtension;
 
 public class DatabaseParser implements IExtension {
 
-	private ISession user;
-	private IDataDictionary dictionary;
-	private List<IExecutorCommand> commands;
-	private IMetaAttribute metaattribute;
-
 	private Map<String, String> databaseConnections = new HashMap<>();
 
 	@Override
@@ -111,22 +106,18 @@ public class DatabaseParser implements IExtension {
 
 	@Override
 	public void setUser(ISession user) {
-		this.user = user;
 	}
 
 	@Override
 	public void setDataDictionary(IDataDictionary dd) {
-		this.dictionary = dd;
 	}
 
 	@Override
 	public void setCommands(List<IExecutorCommand> commands) {
-		this.commands = commands;
 	}
 
 	@Override
 	public void setMetaAttribute(IMetaAttribute metaAttribute) {
-		this.metaattribute = metaAttribute;
 	}
 
 }

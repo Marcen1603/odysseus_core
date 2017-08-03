@@ -6,9 +6,6 @@ import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.admission.IAdmissionRule;
 import de.uniol.inf.is.odysseus.admission.IAdmissionRuleProvider;
-import de.uniol.inf.is.odysseus.admission.rules.btw.ActivateLongestPausedQueryAdmissionRule;
-import de.uniol.inf.is.odysseus.admission.rules.btw.PauseRandomQueryWhenCpuOver70AdmissionRule;
-import de.uniol.inf.is.odysseus.admission.rules.btw.PauseStartingQueryWhenCpuOver70AdmissionRule;
 
 public class BTWAdmissionRuleProvider implements IAdmissionRuleProvider {
 

@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,7 +108,7 @@ public class HTTPPostFormUrlencodedProtocolHandler<T extends Tuple<?>> extends A
 	 */
 	@Override
 	public void process(long callerId, ByteBuffer message) {
-		String str = Charset.forName("UTF-8").decode(message).toString();
+		String str = getCharset().decode(message).toString();
 		getTransfer().transfer(getDataHandler().readData(parseAttributes(str).iterator()));
 	}
 	

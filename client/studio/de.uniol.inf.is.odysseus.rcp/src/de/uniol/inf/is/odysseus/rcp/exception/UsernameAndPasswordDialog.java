@@ -13,18 +13,23 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.uniol.inf.is.odysseus.bugreport.BugreportSender;
+
 public class UsernameAndPasswordDialog extends Dialog {
 
 	private static final String DIALOG_TITLE = "Set JIRA account";
 	
 	private String username;
 	private String password;
+
+	private String jira;
 	
-	protected UsernameAndPasswordDialog(Shell parentShell, String username, String password ) {
+	protected UsernameAndPasswordDialog(Shell parentShell, String username, String password, String jira ) {
 		super(parentShell);
 		
 		this.username = username != null ? username : "";
 		this.password = password != null ? password : "";
+		this.jira = jira;
 	}
 
 	public final String getPassword() {
@@ -80,7 +85,7 @@ public class UsernameAndPasswordDialog extends Dialog {
 	
 	@Override
 	protected void okPressed() {
-		if( BugReport.checkLogin(username, password)) {
+		if( BugreportSender.checkLogin(username, password, jira)) {
 			setReturnCode(OK);
 			close();
 		} else {

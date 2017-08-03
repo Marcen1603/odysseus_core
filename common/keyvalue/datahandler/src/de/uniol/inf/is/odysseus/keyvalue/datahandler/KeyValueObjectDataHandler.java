@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,9 +31,6 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(KeyValueObjectDataHandler.class);
-	private Charset charset = Charset.forName("UTF-8");
-	private CharsetEncoder encoder = charset.newEncoder();
-
 
 	static {
 		types.add(SDFKeyValueDatatype.KEYVALUEOBJECT.getURI());
@@ -47,7 +42,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		writeJSONData(builder, attribute, handleMetaData);
 		ByteBuffer charBuffer;
 		try {
-			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
+			charBuffer = getEncoder().encode(CharBuffer.wrap(builder.toString()));
 			return charBuffer.limit();
 		} catch (CharacterCodingException e) {
 			// TODO Auto-generated catch block
@@ -80,7 +75,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		// TODO: Find a way to handle metadata in key value
 		try {
 			if (buffer.remaining() > 0) {
-				CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(buffer);
+				CharBuffer decoded = getDecoder().decode(buffer);
 				return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
 			}
 		} catch (IOException e) {
@@ -98,7 +93,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 				buffer[i] = (byte) inputStream.read();
 			}
 
-			CharBuffer decoded = Charset.forName("UTF-8").newDecoder().decode(ByteBuffer.wrap(buffer));
+			CharBuffer decoded = getDecoder().decode(ByteBuffer.wrap(buffer));
 			return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
 		} catch (IOException e) {
 			LOG.error("Could not decode data with KeyValueObject handler", e);
@@ -118,7 +113,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		writeJSONData(builder, data, handleMetaData);
 		ByteBuffer charBuffer;
 		try {
-			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
+			charBuffer = getEncoder().encode(CharBuffer.wrap(builder.toString()));
 			buffer.put(charBuffer);
 			return;
 		} catch (CharacterCodingException e) {

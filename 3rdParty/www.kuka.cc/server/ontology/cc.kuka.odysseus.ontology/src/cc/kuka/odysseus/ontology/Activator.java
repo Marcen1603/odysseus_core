@@ -54,12 +54,12 @@ public class Activator implements BundleActivator {
         Activator.context = null;
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected void bindSensorOntologyService(final SensorOntologyService service) {
         Activator.sensorOntologyService = service;
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected void unbindSensorOntologyService(final SensorOntologyService service) {
         Activator.sensorOntologyService = null;
     }

@@ -227,7 +227,7 @@ public abstract class AbstractWheelDashboardPart extends AbstractCanvasDashboard
         this.setMaxZ(maxZ);
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     private Tuple<?> getTuple(final IStreamObject<?> element) {
         return (Tuple<?>) element;
     }

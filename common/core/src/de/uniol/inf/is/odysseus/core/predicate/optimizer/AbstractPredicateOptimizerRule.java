@@ -53,7 +53,7 @@ public abstract class AbstractPredicateOptimizerRule<E extends IPredicate<?>> im
      *            The expression
      * @return A conjunctive split of the expression
      */
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected Set<IPredicate<?>> getConjunctiveSplit(IPredicate<?> expression) {
         Set<IPredicate<?>> result = new HashSet<>();
         Stack<IPredicate<?>> expressionStack = new Stack<>();
@@ -78,7 +78,7 @@ public abstract class AbstractPredicateOptimizerRule<E extends IPredicate<?>> im
      *            The expression
      * @return A disjunctive split of the expression
      */
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected Set<IPredicate<?>> getDisjunctiveSplit(IPredicate<?> expression) {
         Set<IPredicate<?>> result = new HashSet<>();
         Stack<IPredicate<?>> expressionStack = new Stack<>();

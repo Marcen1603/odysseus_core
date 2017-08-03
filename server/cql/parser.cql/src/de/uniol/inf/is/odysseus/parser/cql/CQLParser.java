@@ -431,6 +431,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void initPredicate(IPredicate<?> predicate, SDFSchema left,
 			SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {

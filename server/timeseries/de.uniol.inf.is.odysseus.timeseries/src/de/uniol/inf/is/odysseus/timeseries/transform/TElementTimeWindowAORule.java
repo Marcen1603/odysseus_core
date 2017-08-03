@@ -112,8 +112,7 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 
 		String timeEnd = operator.getTimeEnd();
 
-//		long dayDuration = operator.getDayDuration().getTime();
-		long nightDuration = operator.getNightDuration().getTime();
+operator.getNightDuration().getTime();
 
 //		long timeWindowDiff = (long) ((countElem * regularTimeMillis)
 //				+ Math.floor(countElem * (double) regularTimeMillis / (double) dayDuration) * nightDuration);
@@ -227,11 +226,8 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 		final TimeWindowAO timeWindowAO = new TimeWindowAO();
 		timeWindowAO.setName(operatorName);
 
-//		int countElem = elementWindowAO.getElementSize();
-		long regularTimeMillis = this.getTimeAsMilliseconds(elementWindowAO.getRegularWindowSize());
-//
-//		long dayDuration = elementWindowAO.getDayDuration().getTime();
-		long nightDuration = elementWindowAO.getNightDuration().getTime();
+this.getTimeAsMilliseconds(elementWindowAO.getRegularWindowSize());
+elementWindowAO.getNightDuration().getTime();
 
 //		double nightsFactor = Math.floor(countElem * (double) regularTimeMillis / (double) dayDuration);
 //		long timeWindow = (long) ((countElem * regularTimeMillis));
@@ -407,10 +403,12 @@ public class TElementTimeWindowAORule extends AbstractTransformationRule<Element
 		
 	}
 	
+	@SuppressWarnings("unused")
 	private long getWeekendsDurations(final ElementTimeWindowAO elementWindowAO){
 		return 0;
 	}
 	
+	@SuppressWarnings("unused")
 	private long getWeekendDuration(final ElementTimeWindowAO elementWindowAO){
 		return 0;
 	}

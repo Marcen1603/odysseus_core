@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -36,7 +35,6 @@ public class SVMProtocolHandler<T extends Tuple<IMetaAttribute>> extends
 
 	private final Logger LOG = LoggerFactory
 			.getLogger(SVMProtocolHandler.class);
-	private static final Charset charset = Charset.forName("UTF-8");
 	protected char delimiter;
 	protected char textDelimiter;
 	protected DecimalFormat floatingFormatter;
@@ -206,7 +204,7 @@ public class SVMProtocolHandler<T extends Tuple<IMetaAttribute>> extends
 		out.append(retBuff.toString());
 		out.append(System.lineSeparator());
 		getTransportHandler()
-				.send(charset.encode(CharBuffer.wrap(out)).array());
+				.send(getCharset().encode(CharBuffer.wrap(out)).array());
 	}
 
 	/**

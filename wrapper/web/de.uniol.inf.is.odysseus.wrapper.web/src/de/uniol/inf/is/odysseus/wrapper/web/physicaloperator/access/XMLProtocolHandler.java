@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -189,7 +188,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     @Override
     public void process(long callerId, ByteBuffer message) {
-        String msg = new String(message.array(), Charset.forName("UTF-8"));
+        String msg = new String(message.array(), getCharset());
         System.out.println(msg);
 
         try {

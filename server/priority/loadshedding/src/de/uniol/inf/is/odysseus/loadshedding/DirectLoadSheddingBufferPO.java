@@ -45,7 +45,7 @@ extends DirectInterlinkBufferPO<T> {
 
 		if (rate != NO_LOAD_SHEDDING) {
 
-			@SuppressWarnings("cast")
+			//@SuppressWarnings("cast")
             IPriority prio = (IPriority) next.getMetadata();
 
 			if (prio.getPriority() > 0) {

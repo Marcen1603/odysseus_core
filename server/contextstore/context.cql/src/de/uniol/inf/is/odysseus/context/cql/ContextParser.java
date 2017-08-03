@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.context.cql;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.emf.common.util.EList;
 import de.uniol.inf.is.odysseus.context.ContextManagementException;
 import de.uniol.inf.is.odysseus.context.store.ContextStoreManager;
 import de.uniol.inf.is.odysseus.context.store.IContextStore;
