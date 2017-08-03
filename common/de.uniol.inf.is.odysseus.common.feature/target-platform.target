@@ -68,7 +68,7 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.xtext.redist.feature.group" version="2.10.0.v201605250459"/>
 <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="2.9.0.v201605261103"/>
-<repository location="http://vesta.informatik.rwth-aachen.de/ftp/pub/mirror/eclipse.org/modeling/tmf/xtext/updates/releases/"/>
+<repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
 </location>
 </locations>
 </target>
