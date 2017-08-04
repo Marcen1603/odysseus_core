@@ -594,12 +594,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		try {
 			Collection<Integer> response = getWebserviceServer(user.getConnectionName())
 					.addQuery2(user.getToken(), parserID, query, context).getResponseValue();
-			fireUpdateEvent(IUpdateEventListener.QUERY);
-			// Query could create schema information ... fire events
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			return response;
 		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
 			throw new PlanManagementException(e);
+		}finally {
+			fireUpdateEvent(IUpdateEventListener.QUERY);
+			// Query could create schema information ... fire events
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);			
 		}
 	}
 
