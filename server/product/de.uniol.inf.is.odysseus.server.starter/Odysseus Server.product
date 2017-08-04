@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl en @user.home -profile OdysseusProfile -data
+      <programArgs>-console -clean -debug -nl en -profile OdysseusProfile -data @user.home
       </programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true
       </vmArgs>
@@ -19,7 +19,6 @@
 
    <launcher name="odysseus">
       <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
