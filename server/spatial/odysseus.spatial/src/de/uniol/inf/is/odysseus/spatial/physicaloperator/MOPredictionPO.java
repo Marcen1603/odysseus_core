@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectLocationPredictor;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearPredictor;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearLocationPredictor;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOPredictionAO;
 
 /**
@@ -57,7 +57,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 				.findAttributeIndex(ao.getSpeedOverGroundAttribute());
 
 		// Set the basetimeunit so that the passed time is correct
-		this.movingObjectInterpolator = new MovingObjectLinearPredictor(ao.getBaseTimeUnit());
+		this.movingObjectInterpolator = new MovingObjectLinearLocationPredictor(ao.getBaseTimeUnit());
 
 		this.geoFactory = new GeometryFactory();
 	}

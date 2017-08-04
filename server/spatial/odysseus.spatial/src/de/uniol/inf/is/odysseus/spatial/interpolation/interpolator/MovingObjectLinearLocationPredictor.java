@@ -11,12 +11,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import org.geotools.referencing.GeodeticCalculator;
 
-public class MovingObjectLinearPredictor implements IMovingObjectLocationPredictor {
+public class MovingObjectLinearLocationPredictor implements IMovingObjectLocationPredictor {
 
 	private Map<String, LocationMeasurement> lastMovingObjectLocations;
 	private TimeUnit baseTimeUnit;
 
-	public MovingObjectLinearPredictor(TimeUnit baseTimeUnit) {
+	public MovingObjectLinearLocationPredictor(TimeUnit baseTimeUnit) {
 		this.lastMovingObjectLocations = new HashMap<>();
 		this.baseTimeUnit = baseTimeUnit;
 	}
