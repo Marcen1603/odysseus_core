@@ -1,0 +1,3 @@
+#PARSER CQL
+#QUERY
+SELECT price, AVG(price) AS avgPrice, auction, bidder FROM bid;
