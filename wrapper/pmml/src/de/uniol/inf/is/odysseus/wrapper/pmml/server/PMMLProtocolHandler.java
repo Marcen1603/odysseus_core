@@ -11,8 +11,10 @@ import org.jpmml.model.PMMLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -22,10 +24,22 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
+/**
+ * Defines protocol handler for reading PMML model and returning all available models
+ * 
+ * 
+ * @author Viktor Spadi
+ *
+ */
+@SuppressWarnings("rawtypes")
 public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>>{
 	
 	private static final Logger logger = LoggerFactory.getLogger(PMMLProtocolHandler.class.getSimpleName());
 	
+	private boolean parsed = false;
+	private boolean fireOnce = false;
+	private InputStream inputStream;
+	private PMML pmml;
 	public PMMLProtocolHandler() {
 		super();
 	}
@@ -34,6 +48,8 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
             IStreamObjectDataHandler<IStreamObject<? extends IMetaAttribute>> dataHandler) {
 		super(direction, access, dataHandler, options);
 		logger.info("Started Instance of PMML Parser");
+		// get options
+		this.fireOnce = "true".equals(options.get("fireOnce", "false"));
 	}
 
 	@Override
@@ -52,20 +68,7 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 	public void open() throws UnknownHostException, IOException {
 		super.open();
 		getTransportHandler().open();
-		if(getDirection().equals(ITransportDirection.IN)) {
-			try {
-				InputStream initialStream = getTransportHandler().getInputStream();
-				PMML pmml = PMMLUtil.unmarshal(initialStream);
-				
-				String app = pmml.getHeader().getApplication().getName();
-			} catch (IllegalArgumentException e) {
-				logger.error("Given transport handler has no input stream");
-			} catch (SAXException e) {
-				logger.error("SAX Exception on parsing PMML", e);
-			} catch (JAXBException e) {
-				logger.error("JAXB Exception on parsing PMML", e);
-			}
-		}
+		
 		logger.info("connection opened");
 	}
 	
@@ -74,7 +77,9 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 	public void close() throws IOException {
 		super.close();
 		getTransportHandler().close();
-		
+		this.parsed = false;
+		this.inputStream.close();
+		this.pmml = null;
 		logger.info("connection closed");
 	}
 
@@ -86,22 +91,79 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 	
 	@Override
 	public boolean hasNext() throws IOException {
-		return true;
+		boolean wasParsed = this.parsed;
+		boolean wasRead = readPMMLFromStream();
+		if(pmml == null)
+			logger.warn("pmml is null -> check stream");
+		else
+			logger.info("parser next: fireOnce="+(fireOnce?"true":"false")+" parsed="+(parsed?"true":"false"));
+		return (!fireOnce || !wasParsed) && wasRead;
+	}
+	
+	private boolean readPMMLFromStream() {
+		if(getDirection().equals(ITransportDirection.IN)) {
+			try {
+				this.inputStream = getTransportHandler().getInputStream();
+				
+				if(this.inputStream.available() > 0) {
+					PMML pmml = PMMLUtil.unmarshal(inputStream);
+					
+					if(pmml != null) {
+						this.pmml = pmml;
+						this.parsed = true;
+						logger.info("parse pmml successfull");
+						return true;
+					}
+				}
+				// catch some exceptions! :) 
+			} catch (IllegalArgumentException e) {
+				logger.error("Given transport handler has no input stream", e);
+			} catch (SAXException e) {
+				logger.error("SAX Exception on parsing PMML", e);
+			} catch (JAXBException e) {
+				if(e.getLinkedException() instanceof SAXParseException) {
+					// nothing special, just no more input 
+				} else {
+					logger.error("JAXB Exception on parsing PMML", e);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isDone() {
+		return fireOnce && parsed;
 	}
 	
 	@Override
 	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
-		return getDataHandler().readData("[123|Freezy|Meezy]");
+		logger.info("get next");
+		Tuple t = new Tuple(1, false);
+		t.setAttribute(0, this.pmml);
+		return t;
 	}
 	
 	@Override
 	public void onConnect(ITransportHandler caller) {
 		super.onConnect(caller);
+		logger.info("connect");
 	}
 
 	@Override
 	public void onDisonnect(ITransportHandler caller) {
 		super.onDisonnect(caller);
+		if(this.inputStream != null) {
+			try {
+				this.inputStream.close();
+			} catch (IOException e) {
+				logger.error("error closing inputStream", e);
+			}
+		}
+		logger.info("disconnect");
 	}
 	
 
