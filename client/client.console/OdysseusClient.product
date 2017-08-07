@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -debug -nl ${target.nl} -data @noDefault
+      <programArgs>-console -clean -debug -nl ${target.nl} -data @user.home
       </programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC
       </vmArgs>
@@ -18,7 +18,6 @@
    <windowImages/>
 
    <launcher name="odyclient">
-      <solaris/>
       <win useIco="false">
          <bmp/>
       </win>

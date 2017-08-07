@@ -1,0 +1,1 @@
+operator_1 = MAP({expressions=['bid.attr1', 'bid.attr2']}, bid)

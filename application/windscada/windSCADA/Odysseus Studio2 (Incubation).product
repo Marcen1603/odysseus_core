@@ -18,7 +18,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -console -debug -nl ${target.nl} -data @noDefault -clean -debug
+      <programArgs>-os ${target.os} -ws ${target.ws} -arch ${target.arch} -console -debug -nl ${target.nl} -data @user.home -clean -debug
       </programArgs>
       <vmArgs>-Xms8000M -Xmx8000M -XX:+UseConcMarkSweepGC -Dorg.osgi.framework.bootdelegation=org.netbeans.lib.profiler,org.netbeans.lib.profiler.*
       </vmArgs>

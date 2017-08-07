@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile
+      <programArgs>-console -debug -nl en -data @user.home -clean -debug -profile OdysseusProfile
       </programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true -Declipse.log.level=ERROR -Dnet.autostart=true
       </vmArgs>

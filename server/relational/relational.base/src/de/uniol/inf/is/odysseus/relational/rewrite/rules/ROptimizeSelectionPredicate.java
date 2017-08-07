@@ -33,7 +33,7 @@ public class ROptimizeSelectionPredicate extends AbstractRewriteRule<SelectAO> {
 			RelationalExpression<?> predicate = new RelationalExpression<>(new SDFExpression(
 					optimizedExpression.toString(), originalSDFExpression.getAttributeResolver(), originalSDFExpression.getExpressionParser()));
 			sel.setPredicate(predicate);
-			
+
 			// Determine input schema from subscription (because of rename):
 			
 			Collection<LogicalSubscription> subs = sel.getSubscriptions();
