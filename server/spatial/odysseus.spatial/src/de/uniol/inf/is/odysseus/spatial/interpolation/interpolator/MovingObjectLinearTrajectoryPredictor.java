@@ -33,11 +33,10 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 	@Override
 	public TrajectoryElement predictTrajectory(String movingObjectId, PointInTime endPointInTime, long timeStepMs) {
 
+		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
+
 		// Get the last measurement
 		LocationMeasurement locationMeasurement = lastMovingObjectLocations.get(movingObjectId);
-
-
-		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 
 		// Calculate the waypoints between start and destination
 		long timeToTravelMs = this.baseTimeUnit
@@ -47,6 +46,7 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 		double lastLongitude = locationMeasurement.getLongitude();
 		double lastLatitude = locationMeasurement.getLatitude();
 
+		TrajectoryElement firstElement = null;
 		TrajectoryElement previousElement = null;
 
 		while (timeTravelledMs < timeToTravelMs) {
@@ -62,19 +62,25 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 			geodeticCalculator.setStartingGeographicPoint(lastLongitude, lastLatitude);
 			geodeticCalculator.setDirection(locationMeasurement.getHorizontalDirection(), distanceTravelledInMeters);
 			Point2D waypointDestination = geodeticCalculator.getDestinationGeographicPoint();
+			PointInTime timeOfLocation = new PointInTime(endPointInTime.getMainPoint() - (timeToTravelMs - timeTravelledMs));
 
 			// Save it as a part of a trajectory
 			TrajectoryElement element = new TrajectoryElement(previousElement, movingObjectId,
-					waypointDestination.getY(), waypointDestination.getX(), null);
+					waypointDestination.getY(), waypointDestination.getX(), timeOfLocation, null);
 			previousElement = element;
+			
+			// Save the first element of the trajectory
+			if (firstElement == null) {
+				firstElement = element;
+			}
 
 			lastLongitude = waypointDestination.getX();
 			lastLatitude = waypointDestination.getY();
 			timeTravelledMs += timeStepMs;
 		}
 
-		// Return the last element of the trajectory (the destination)
-		return previousElement;
+		// Return the first element of the trajectory (the start)
+		return firstElement;
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 	private String pointInTimeAttribute;
 	private String movingObjectListAttribute;
 
-	private String geometryAttribute;
+	private String trajectoryAttribute;
 	private String idAttribute;
 	private String courseOverGroundAttribute;
 	private String speedOverGroundAttribute;
@@ -35,7 +35,7 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 
 	public MOTrajectoryPredictionAO(MOTrajectoryPredictionAO ao) {
 		super(ao);
-		this.geometryAttribute = ao.getGeometryAttribute();
+		this.trajectoryAttribute = ao.getTrajectoryAttribute();
 		this.idAttribute = ao.getIdAttribute();
 		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
 		this.movingObjectListAttribute = ao.getMovingObjectListAttribute();
@@ -43,13 +43,13 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 		this.speedOverGroundAttribute = ao.getSpeedOverGroundAttribute();
 	}
 	
-	public String getGeometryAttribute() {
-		return geometryAttribute;
+	public String getTrajectoryAttribute() {
+		return trajectoryAttribute;
 	}
 
 	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the moving object.")
-	public void setGeometryAttribute(String geometryAttribute) {
-		this.geometryAttribute = geometryAttribute;
+	public void setTrajectoryAttribute(String trajectoryAttribute) {
+		this.trajectoryAttribute = trajectoryAttribute;
 	}
 
 	public String getIdAttribute() {
@@ -111,14 +111,10 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
 		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.STRING);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location", SDFSpatialDatatype.SPATIAL_POINT);
-		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "speedMetersPerSecond", SDFDatatype.STRING);
-		SDFAttribute attribute4 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "direction", SDFDatatype.STRING);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location", SDFSpatialDatatype.LIST_TUPLE);
 		
 		attributes.add(attribute1);
 		attributes.add(attribute2);
-		attributes.add(attribute3);
-		attributes.add(attribute4);
 
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);

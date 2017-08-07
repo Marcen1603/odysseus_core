@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import ch.hsr.geohash.GeoHash;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
@@ -17,16 +18,18 @@ public class TrajectoryElement {
 	private transient TrajectoryElement nextElement;
 	private GeoHash geoHash;
 	private double distanceToPreviousElement;
+	private PointInTime measurementTime;
 	private IStreamObject<? extends IMetaAttribute> streamElement;
 
 	public TrajectoryElement(TrajectoryElement previousElement, String movingObjectID, double latitude,
-			double longitude, IStreamObject<? extends IMetaAttribute> streamElement) {
+			double longitude, PointInTime measurementTime, IStreamObject<? extends IMetaAttribute> streamElement) {
 		this.previousElement = previousElement;
 		if (this.previousElement != null) {
 			this.previousElement.nextElement = this;
 		}
 		this.movingObjectID = movingObjectID;
 		this.geoHash = GeoHashHelper.fromLatLong(latitude, longitude, BIT_PRECISION);
+		this.setMeasurementTime(measurementTime);
 		this.streamElement = streamElement;
 
 		// Calculate distance to previous element
@@ -105,6 +108,22 @@ public class TrajectoryElement {
 
 	public void setMovingObjectID(String movingObjectID) {
 		this.movingObjectID = movingObjectID;
+	}
+	
+	public double getLatitude() {
+		return this.geoHash.getPoint().getLatitude();
+	}
+	
+	public double getLongitude() {
+		return this.geoHash.getPoint().getLongitude();
+	}
+
+	public PointInTime getMeasurementTime() {
+		return measurementTime;
+	}
+
+	public void setMeasurementTime(PointInTime measurementTime) {
+		this.measurementTime = measurementTime;
 	}
 
 }
