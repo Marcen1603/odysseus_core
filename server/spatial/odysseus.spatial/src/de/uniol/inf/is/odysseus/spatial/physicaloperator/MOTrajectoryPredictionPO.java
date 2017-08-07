@@ -20,11 +20,20 @@ import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObject
 import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearTrajectoryPredictor;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOTrajectoryPredictionAO;
 
+/**
+ * Predicts a trajectory of a moving object. Trajectory element are predicted
+ * with a certain granularity. A list of waypoints is calcualted for every
+ * moving object.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final int DATA_PORT = 0;
 	private static final int ENRICH_PORT = 1;
 
+	// TODO Make configurable
 	private int trajectoryTimeStepMs = 1000;
 
 	// On the enrich-port

@@ -15,12 +15,20 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
+/**
+ * Predicts a trajectory of a moving object. Trajectory element are predicted
+ * with a certain granularity. A list of waypoints is calcualted for every
+ * moving object.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "MovingObjectTrajectoryPrediction", doc = "Enriches the point in time (input 2) with a prediction of a trajectory, where the moving objects will move along.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 
 	private static final long serialVersionUID = 8390952478718119148L;
-	
+
 	private String pointInTimeAttribute;
 	private String movingObjectListAttribute;
 
@@ -42,7 +50,7 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 		this.courseOverGroundAttribute = ao.getCourseOverGroundAttribute();
 		this.speedOverGroundAttribute = ao.getSpeedOverGroundAttribute();
 	}
-	
+
 	public String getTrajectoryAttribute() {
 		return trajectoryAttribute;
 	}
@@ -96,23 +104,25 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 	public void setSpeedOverGroundAttribute(String speedOverGroundAttribute) {
 		this.speedOverGroundAttribute = speedOverGroundAttribute;
 	}
-	
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new MOTrajectoryPredictionAO(this);
 	}
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		
+
 		// Use old schema from the input
 		SDFSchema inputSchema = getInputSchema(pos);
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.STRING);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location", SDFSpatialDatatype.LIST_TUPLE);
-		
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId",
+				SDFDatatype.STRING);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location",
+				SDFSpatialDatatype.LIST_TUPLE);
+
 		attributes.add(attribute1);
 		attributes.add(attribute2);
 
