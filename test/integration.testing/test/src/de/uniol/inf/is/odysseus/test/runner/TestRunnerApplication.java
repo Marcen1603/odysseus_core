@@ -117,7 +117,7 @@ public class TestRunnerApplication implements IApplication {
 		IReport rep = reportGenerator.generateReport(session);
 		LOG.debug("##########################Extended Information ");
 		for (String key: rep.getTitles()) {
-			LOG.debug("++++key++++");
+			LOG.debug("++++"+key+"++++");
 			Optional<String> repText = rep.getReportText(key);
 			if (repText.isPresent()) {
 				LOG.debug(repText.get());
