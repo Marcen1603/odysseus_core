@@ -125,8 +125,12 @@ public class CQLParser implements IQueryParser {
 
 		}
 		if (url == null) {
-			url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-					"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+			try {
+				url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
+						"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+			}catch(Exception e) {
+				
+			}
 		}
 		if (url != null) {
 			// String pathToTokens =
@@ -152,6 +156,7 @@ public class CQLParser implements IQueryParser {
 			}
 		}else {
 			tokens = new String[1];
+			infoService.warning("Could not read tokens!");
 		}
 	}
 
