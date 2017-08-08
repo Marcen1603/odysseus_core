@@ -83,7 +83,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 public class CQLParser implements IQueryParser {
 
 	private static final InfoService infoService = InfoServiceFactory.getInfoService("CQLParser");
-	
+
 	private static Map<String, String> databaseConnections = new HashMap<>();
 	private static Set<SDFSchema> currentSchema;
 	private static CQLGenerator generator;
@@ -112,32 +112,46 @@ public class CQLParser implements IQueryParser {
 		generator.setAggregatePattern(getAggregateFunctionPattern());
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-		resource = resourceSet.createResource(URI.createURI("platform:/resource/de.uniol.inf.is.odysseus.parser.cql2.server/example.cql", true));//"dummy:/example.cql"));
+		resource = resourceSet.createResource(
+				URI.createURI("platform:/resource/de.uniol.inf.is.odysseus.parser.cql2.server/example.cql", true));// "dummy:/example.cql"));
 		executorCommands = new ArrayList<>();
 		// Get all parser tokens
 		List<String> list = new ArrayList<>();
-		URL url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-				"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
-		// String pathToTokens =
-		// "/../bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens";
-		try (InputStream in = url.openStream()) {// getClass().getClassLoader().getResourceAsStream(pathToTokens))
-													// {
-			if (in != null) {
-				String line;
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
-				while ((line = br.readLine()) != null) {
-					if (line.contains("'")) {
-						line = line.substring(1, line.lastIndexOf("'"));
-						list.add(line);
+		URL url = null;
+		try {
+			url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
+					"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+		} catch (Exception e) {
+
+		}
+		if (url == null) {
+			url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
+					"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+		}
+		if (url != null) {
+			// String pathToTokens =
+			// "/../bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens";
+			try (InputStream in = url.openStream()) {// getClass().getClassLoader().getResourceAsStream(pathToTokens))
+														// {
+				if (in != null) {
+					String line;
+					BufferedReader br = new BufferedReader(new InputStreamReader(in));
+					while ((line = br.readLine()) != null) {
+						if (line.contains("'")) {
+							line = line.substring(1, line.lastIndexOf("'"));
+							list.add(line);
+						}
 					}
+				} else {
+					throw new IOException("InputStream was null: no tokens could be loaded");
 				}
-			} else {
-				throw new IOException("InputStream was null: no tokens could be loaded");
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				tokens = list.toArray(new String[list.size()]);
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			tokens = list.toArray(new String[list.size()]);
+		}else {
+			tokens = new String[1];
 		}
 	}
 
@@ -184,8 +198,8 @@ public class CQLParser implements IQueryParser {
 							if (e.getValue() != null && !e.getValue().equals("")) {
 								String pqlString = e.getValue().toString();
 								infoService.info("Generated following PQL String:\n " + pqlString);
-								executorCommands.add(new AddQueryCommand(pqlString, "PQL", user, null,
-										context, new ArrayList<>(), false));
+								executorCommands.add(new AddQueryCommand(pqlString, "PQL", user, null, context,
+										new ArrayList<>(), false));
 							}
 						}
 					} else if (component instanceof Command) {
@@ -301,15 +315,18 @@ public class CQLParser implements IQueryParser {
 				executorCommand = new RevokeRoleCommand(cast.getUser(), cast.getOperations(), user);
 		} else if (commandType instanceof CreateDataBaseConnectionGeneric) {
 			noExecutorCommand = true;
-			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser").parse((CreateDataBaseConnectionGeneric) commandType);
+			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser")
+					.parse((CreateDataBaseConnectionGeneric) commandType);
 			generator.setDatabaseConnections(databaseConnections);
 		} else if (commandType instanceof CreateDataBaseConnectionJDBC) {
 			noExecutorCommand = true;
-			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser").parse((CreateDataBaseConnectionJDBC) commandType);
+			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser")
+					.parse((CreateDataBaseConnectionJDBC) commandType);
 			generator.setDatabaseConnections(databaseConnections);
 		} else if (commandType instanceof DropDatabaseConnection) {
 			noExecutorCommand = true;
-			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser").parse((DropDatabaseConnection) commandType);
+			databaseConnections = (Map<String, String>) ExtensionFactory.getInstance().getExtension("DatabaseParser")
+					.parse((DropDatabaseConnection) commandType);
 			generator.setDatabaseConnections(databaseConnections);
 		} else if (commandType instanceof CreateContextStore) {
 			noExecutorCommand = true;
