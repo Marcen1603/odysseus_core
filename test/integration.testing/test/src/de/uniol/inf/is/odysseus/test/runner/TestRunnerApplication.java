@@ -78,7 +78,7 @@ public class TestRunnerApplication implements IApplication {
    
         LOG.debug("Odysseus is up and running!");
 
-        printAdditionalInfos();
+   //     printAdditionalInfos();
         
         if (System.getProperty("cheatsheet") != null || System.getenv("cheatsheet") != null) {
             String file = System.getProperty("cheatsheet");
@@ -104,7 +104,7 @@ public class TestRunnerApplication implements IApplication {
             if (oneFailed) {
                 LOG.debug("At least one test failed!");
                 
-                printAdditionalInfos();
+               // printAdditionalInfos();
         		
                 return -1;
             }
