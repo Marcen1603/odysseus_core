@@ -75,8 +75,10 @@ public class TestRunnerApplication implements IApplication {
     public Object start(IApplicationContext context) throws Exception {
         LOG.debug("Starting Odysseus...");
         startBundles(context.getBrandingBundle().getBundleContext());
-
+   
         LOG.debug("Odysseus is up and running!");
+
+        printAdditionalInfos();
         
         if (System.getProperty("cheatsheet") != null || System.getenv("cheatsheet") != null) {
             String file = System.getProperty("cheatsheet");
