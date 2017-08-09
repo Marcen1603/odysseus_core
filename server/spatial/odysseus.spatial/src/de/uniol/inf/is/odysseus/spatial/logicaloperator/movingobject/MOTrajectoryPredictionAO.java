@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
 /**
  * Predicts a trajectory of a moving object. Trajectory element are predicted
@@ -118,13 +117,10 @@ public class MOTrajectoryPredictionAO extends BinaryLogicalOp {
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId",
-				SDFDatatype.STRING);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location",
-				SDFSpatialDatatype.LIST_TUPLE);
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "trajectories",
+				SDFDatatype.LIST_TUPLE);
 
 		attributes.add(attribute1);
-		attributes.add(attribute2);
 
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);

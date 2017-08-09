@@ -109,19 +109,33 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 		long timeStamp = object.getAttribute(this.pointInTimePosition);
 		PointInTime pointInTime = new PointInTime(timeStamp);
 
+		// Collect the tuples and send them together
+		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
+		
 		for (String movingObjectId : movingObjectIds) {
 			TrajectoryElement trajectory = this.movingObjectTrajectoryPredictor.predictTrajectory(movingObjectId,
 					pointInTime, this.trajectoryTimeStepMs);
-			Tuple<ITimeInterval> tuple = createTuple(trajectory);
-			this.transfer((T) tuple);
+			Tuple<ITimeInterval> tuple = createTuple(trajectory, pointInTime);
+
+			tupleList.add(tuple);
 		}
+		
+		Tuple<ITimeInterval> tupleWithTupleList = new Tuple<ITimeInterval>(2, false);
+		tupleWithTupleList.setMetadata(new TimeInterval(pointInTime, pointInTime.plus(1)));
+		tupleWithTupleList.setAttribute(0, tupleList);
+		this.transfer((T) tupleWithTupleList);
 	}
 
-	private Tuple<ITimeInterval> createTuple(TrajectoryElement trajectoryElement) {
+	/**
+	 * 
+	 * @param trajectoryElement
+	 * @param predictionTime
+	 *            The point in time when the prediction was created
+	 * @return
+	 */
+	private Tuple<ITimeInterval> createTuple(TrajectoryElement trajectoryElement, PointInTime predictionTime) {
 
 		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
-		PointInTime startTime = trajectoryElement.getMeasurementTime();
-		PointInTime endTime = null;
 		String movingObjectID = trajectoryElement.getMovingObjectID();
 
 		// Create a tuple for every element of the trajectory
@@ -138,15 +152,13 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 			tupleWithPredictedLocation.setAttribute(1, geoWrapper);
 			tupleList.add(tupleWithPredictedLocation);
 
-			endTime = trajectoryElement.getMeasurementTime();
-
 			// Go on with the next element of the trajectory
 			trajectoryElement = trajectoryElement.getNextElement();
 		} while (trajectoryElement != null);
 
 		// Create a tuple with the list of elements as its content
 		Tuple<ITimeInterval> tupleWithTrajectory = new Tuple<ITimeInterval>(2, false);
-		tupleWithTrajectory.setMetadata(new TimeInterval(startTime, endTime));
+		tupleWithTrajectory.setMetadata(new TimeInterval(predictionTime, predictionTime.plus(1)));
 		tupleWithTrajectory.setAttribute(0, movingObjectID);
 		tupleWithTrajectory.setAttribute(1, tupleList);
 
