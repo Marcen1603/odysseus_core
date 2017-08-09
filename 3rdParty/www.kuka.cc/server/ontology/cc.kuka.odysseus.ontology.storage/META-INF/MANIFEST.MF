@@ -31,6 +31,5 @@ Bundle-ClassPath: .,
  lib/jena-tdb-1.0.2.jar
 Bundle-Vendor: Christian Kuka
 Require-Bundle: de.uniol.inf.is.odysseus.core.server,
- de.uniol.inf.is.odysseus.core,
- org.apache.xerces
+ de.uniol.inf.is.odysseus.core
 
