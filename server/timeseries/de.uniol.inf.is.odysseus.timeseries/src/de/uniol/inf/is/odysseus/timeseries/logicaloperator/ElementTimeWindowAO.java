@@ -236,7 +236,7 @@ public class ElementTimeWindowAO extends UnaryLogicalOp {
 			throw new IllegalArgumentException("Start time after end time.");
 		}
 
-		long diffMinutes = diff / (60 * 1000) % 60;
+		//long diffMinutes = diff / (60 * 1000) % 60;
 		long diffMilliseconds = diff;
 
 		return new TimeValueItem(diffMilliseconds, TimeUnit.MICROSECONDS);
@@ -262,7 +262,6 @@ public class ElementTimeWindowAO extends UnaryLogicalOp {
 			throw new IllegalArgumentException("Start time after end time.");
 		}
 
-		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffMilliseconds = diff;
 
 		return new TimeValueItem(diffMilliseconds, TimeUnit.MICROSECONDS);

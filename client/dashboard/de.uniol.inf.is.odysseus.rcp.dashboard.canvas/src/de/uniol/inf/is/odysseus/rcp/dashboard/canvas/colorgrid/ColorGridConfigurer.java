@@ -323,7 +323,7 @@ public class ColorGridConfigurer extends
 				toolkit.createLabel(group, "Background");
 				final RGB backgroundColor = this.getDashboardPart()
 						.getBackgroundColor();
-				@SuppressWarnings("boxing")
+				//@SuppressWarnings("boxing")
 				final Text backgroundColorText = toolkit.createText(group,
 						String.format("%s,%s,%s", (int) backgroundColor.R,
 								(int) backgroundColor.G,
@@ -367,7 +367,7 @@ public class ColorGridConfigurer extends
 			{// Alpha
 				toolkit.createLabel(group, "Alpha");
 				final int alpha = this.getDashboardPart().getBackgroundAlpha();
-				@SuppressWarnings("boxing")
+				//@SuppressWarnings("boxing")
 				final Slider alphaSlide = new Slider(group, SWT.NONE);
 				alphaSlide.setMinimum(0);
 				alphaSlide.setMaximum(255);
@@ -386,7 +386,7 @@ public class ColorGridConfigurer extends
 			{// Background image
 				toolkit.createLabel(group, "Background Image");
 				final String image = this.getDashboardPart().getImagePath();
-				@SuppressWarnings("boxing")
+				//@SuppressWarnings("boxing")
 				final Text imageText = toolkit.createText(group, image);
 				imageText.setEditable(true);
 				final Button imageButton = toolkit.createButton(group, "..",
@@ -626,7 +626,7 @@ public class ColorGridConfigurer extends
 				toolkit.createLabel(group, "Base Color");
 
 				final RGB color = this.getDashboardPart().getColor();
-				@SuppressWarnings("boxing")
+				//@SuppressWarnings("boxing")
 				final Text colorText = toolkit.createText(group, String
 						.format("%s,%s,%s", (int) color.R, (int) color.G,
 								(int) color.B));

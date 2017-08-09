@@ -66,7 +66,7 @@ public class LiquidGaugeWheelConfigurer extends AbstractWheelDashboardPartConfig
             {// Gauge color
                 toolkit.createLabel(group, "Color");
                 final RGB gaugeColor = this.getDashboardPart().getGaugeColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text gaugeColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) gaugeColor.R, (int) gaugeColor.G, (int) gaugeColor.B));
                 gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) gaugeColor.R, (int) gaugeColor.G, (int) gaugeColor.B)));
                 gaugeColorText.setEditable(false);

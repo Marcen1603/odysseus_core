@@ -472,7 +472,7 @@ public abstract class AbstractGLCanvasDashboardPart extends AbstractDashboardPar
         }
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     public void drawBox(final Coordinate point, final double height, final double width, final double depth) {
         final double lx = (width * 0.5f);
         final double ly = (height * 0.5f);

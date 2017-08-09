@@ -23,7 +23,6 @@ import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TDifferenceAORule extends AbstractIntervalTransformationRule<DifferenceAO> {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) throws RuleException {
 		

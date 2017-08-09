@@ -131,8 +131,8 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 			// object.getMetadata().getEnd().minus(object.getMetadata().getStart());
 			// PointInTime currentForecastStart = object.getMetadata().getEnd();
 			PointInTime currentForecastStart = object.getMetadata().getStart().plus(between);
-			Date start = new Date(currentForecastStart.getMainPoint());
-			Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+			new Date(currentForecastStart.getMainPoint());
+			new Date(currentForecastStart.plus(between).getMainPoint());
 
 			Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
 			varianceForecastTuple.setAttribute(0, 0.0);
@@ -182,8 +182,8 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 					this.updateLagVariances(countOfVariances, varianceForecast);
 				}
 
-				Date start = new Date(currentForecastStart.getMainPoint());
-				Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+				new Date(currentForecastStart.getMainPoint());
+				new Date(currentForecastStart.plus(between).getMainPoint());
 
 				Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
 				varianceForecastTuple.setAttribute(0, varianceForecast);

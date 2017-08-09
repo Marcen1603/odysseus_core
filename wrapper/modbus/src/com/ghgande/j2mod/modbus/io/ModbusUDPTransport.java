@@ -79,7 +79,7 @@ public ModbusTransaction createTransaction() {
 	  return trans;
   }
 
-  @SuppressWarnings("cast")
+  //@SuppressWarnings("cast")
 @Override
 public void writeMessage(ModbusMessage msg)
       throws ModbusIOException {
