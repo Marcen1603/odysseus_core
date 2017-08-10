@@ -163,6 +163,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		List<String> msg = Arrays.asList(message);
 		getTransfer().transfer(getDataHandler().readData(msg.iterator()));
 	}
+	
+	@Override
+	public void process(String message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
 
 	@Override
 	public void process(long callerId, ByteBuffer message) {

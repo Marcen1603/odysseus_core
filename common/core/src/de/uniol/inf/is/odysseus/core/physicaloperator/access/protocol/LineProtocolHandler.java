@@ -380,7 +380,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 	}
 
-	protected void process(String token) {
+	public void process(String token) {
 		try {
 			T retValue = getDataHandler().readData(token);
 			getTransfer().transfer(retValue);
