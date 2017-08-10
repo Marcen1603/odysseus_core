@@ -88,26 +88,20 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler implem
 
 	private void init(final OptionMap options) {
 		options.checkRequiredException(CONSUMERKEY, CONSUMERSECRET, ACCESSTOKEN, ACCESSTOKENSECRET);
-		if (options.containsKey(CONSUMERKEY)) {
-			setConsumerKey(options.get(CONSUMERKEY));
-		}
-		if (options.containsKey(CONSUMERSECRET)) {
-			setConsumerSecret(options.get(CONSUMERSECRET));
-		}
-		if (options.containsKey(ACCESSTOKEN)) {
-			setAccessToken(options.get(ACCESSTOKEN));
-		}
-		if (options.containsKey(ACCESSTOKENSECRET)) {
-			setAccessTokenSecret(options.get(ACCESSTOKENSECRET));
-		}
+		this.consumerKey = options.get(CONSUMERKEY);
+		this.consumerSecret = options.get(CONSUMERSECRET);
+		this.accessToken = options.get(ACCESSTOKEN);
+		this.accessTokenSecret = options.get(ACCESSTOKENSECRET);
+	
 		if (options.containsKey(SEARCHKEYS)) {
-			setSearchKeys(options.get(SEARCHKEYS));
+			this.searchKeys = options.get(SEARCHKEYS).split(",");
 		}
+		
 		if (options.containsKey(LOCATIONS)) {
-			setLocations(options.get(LOCATIONS));
+			this.locations = convertStringTo2DArray(options.get(LOCATIONS));
 		}
 		if (options.containsKey(LANGUAGEKEYS)) {
-			setLanguageKeys(options.get(LANGUAGEKEYS));
+			this.languageKeys = options.get(LANGUAGEKEYS).split(",");
 		}
 		outputJson = options.getBoolean(OUTPUT_JSON, false);
 
@@ -118,45 +112,6 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler implem
 		return NAME;
 	}
 
-	public String getConsumerKey() {
-		return this.consumerKey;
-	}
-
-	public void setConsumerKey(String consumerKey) {
-		this.consumerKey = consumerKey;
-	}
-
-	public String getConsumerSecret() {
-		return this.consumerSecret;
-	}
-
-	public void setConsumerSecret(String consumerSecret) {
-		this.consumerSecret = consumerSecret;
-	}
-
-	public String getAccessToken() {
-		return this.accessToken;
-	}
-
-	public void setAccessToken(String accessToken) {
-		this.accessToken = accessToken;
-	}
-
-	public String getAccessTokenSecret() {
-		return this.accessTokenSecret;
-	}
-
-	public void setAccessTokenSecret(String accessTokenSecret) {
-		this.accessTokenSecret = accessTokenSecret;
-	}
-
-	public void setSearchKeys(String searchKeys) {
-		this.searchKeys = searchKeys.split(",");
-	}
-
-	public void setLocations(String locations) {
-		this.locations = convertStringTo2DArray(locations);
-	}
 
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
@@ -345,6 +300,11 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler implem
 
 			}
 		}
+		
+		if (this.outputJson != other.outputJson) {
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -352,7 +312,5 @@ public class TwitterTransportHandler extends AbstractPushTransportHandler implem
 		return languageKeys;
 	}
 
-	public void setLanguageKeys(String languageKeys) {
-		this.languageKeys = languageKeys.split(",");
-	}
+
 }
