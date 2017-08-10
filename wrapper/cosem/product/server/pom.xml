@@ -1,0 +1,97 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.pgestream.odysseus.server</groupId>
+	<artifactId>de.pgestream.odysseus.server</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	
+	<parent>
+		<groupId>de.pgestream.odysseus.server</groupId>
+		<artifactId>de.pgestream.odysseus.server.configuration</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>./releng/configuration</relativePath>
+	</parent>
+	
+	<modules>
+		<module>releng</module>
+		<module>product</module>
+	</modules>
+	
+<!-- 	
+	<repositories>
+		<repository>
+			<id>eclipse</id>
+			<layout>p2</layout>
+			<url>http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/releases/mars/</url>
+		</repository>
+	</repositories>
+	
+	<build>
+		<sourceDirectory>src/</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>0.24.0</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+				  <archive>
+				    <manifest>
+					<mainClass>de.uniol.inf.is.odysseus.product.server.starter.Activator</mainClass>
+				    </manifest>
+				  </archive>
+				</configuration>
+	    		</plugin>
+			<plugin>
+			    <groupId>org.eclipse.tycho</groupId>
+			    <artifactId>target-platform-configuration </artifactId>
+			    <version>0.24.0</version>
+			    <configuration>
+			      <dependency-resolution>
+			          <extraRequirements>
+			            <requirement>
+			                <type>eclipse-feature</type>
+			                <id>org.eclipse.equinox.executable.feature.group</id>
+			                <versionRange>3.6.0</versionRange>
+			            </requirement>
+			          </extraRequirements>
+			      </dependency-resolution>
+			    </configuration>
+			</plugin>
+			<plugin>
+			     <groupId>org.apache.felix</groupId>
+			     <artifactId>maven-bundle-plugin</artifactId>
+			     <version>1.4.0</version>
+			     <extensions>true</extensions>
+			     <configuration>
+			         <instructions>
+			             <Bundle-SymbolicName>de.pgestream.odysseus.server.Odysseus Server Starter</Bundle-SymbolicName>
+			             <Bundle-Name>Odysseus Server Starter</Bundle-Name>
+			             <Bundle-Version>1.0.0</Bundle-Version>
+			             <Private-Package>de.uniol.inf.is.odysseus.product.server.starter</Private-Package>
+			             <Bundle-Activator>de.uniol.inf.is.odysseus.product.server.starter.Activator</Bundle-Activator>
+			             <Import-Package>
+			                 org.osgi.framework,
+			                 *;resolution:=optional
+			             </Import-Package>
+			         </instructions>
+			     </configuration>
+			 	</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>1.0.0</version>
+			<type>bundle</type>
+		</dependency>
+	</dependencies>
+	
+	-->
+</project>

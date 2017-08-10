@@ -61,6 +61,9 @@ public class Activator implements BundleActivator {
 		t.start();
 	}
 
+	public static void main(String[] args) {
+		Activator.startBundles(getContext());
+	}
 	
 //	public void bindExecutor(Object ex){
 //		synchronized (Activator.class) {

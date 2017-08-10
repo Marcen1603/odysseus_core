@@ -2,7 +2,7 @@
          <pathconvert property="equinox.launcher.jar">  
            <first count="1">  
              <sort>  
-               <fileset dir="${eclipse.home}/plugins" includes="**/org.eclipse.equinox.launcher_*.jar"/>  
+               <fileset dir="Eclipse/plugins" includes="**/org.eclipse.equinox.launcher_*.jar"/>  
                <reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">  
                  <date/>  
                </reverse>  
@@ -15,7 +15,7 @@
             <property name="destination" location="${sp:destination}"/>  
             <delete dir="${destination}"/>  
             <mkdir dir="${destination}"/>          	
-            <makeurl property="repository" file="/opt/jenkins/output/nightly/update"/>  
+            <makeurl property="repository" file="/Users/jp/Desktop"/>  
             <echoproperties/>  
             <echo message="============================== RCP Settings =============================="/>  
             <echo message="Repository:  ${repository}"/>  
@@ -54,7 +54,7 @@
             <property name="destination" location="${sp:destination}"/>  
             <delete dir="${destination}"/>  
             <mkdir dir="${destination}"/>          	
-            <makeurl property="repository" file="/opt/jenkins/output/test/update"/>  
+            <makeurl property="repository" file="/Users/jp/Desktop"/>  
             <echoproperties/>  
             <echo message="============================== RCP Settings =============================="/>  
             <echo message="Repository:  ${repository}"/>  
