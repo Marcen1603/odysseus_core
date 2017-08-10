@@ -168,7 +168,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	}
 
 	@Override
-	protected void process(String token) {
+	public void process(String token) {
 		T retValue = readLine(token);
 		getTransfer().transfer(retValue);
 	}
