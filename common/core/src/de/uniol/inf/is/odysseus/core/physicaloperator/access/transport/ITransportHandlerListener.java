@@ -55,6 +55,12 @@ public interface ITransportHandlerListener<T extends IStreamObject<? extends IMe
 
 	/**
 	 * Implement this method to process the message
+	 * @param message as String Array
+	 */
+	void process(String message);
+
+	/**
+	 * Implement this method to process the message
 	 * @param message as T
 	 */
 	void process(T m, int port);
