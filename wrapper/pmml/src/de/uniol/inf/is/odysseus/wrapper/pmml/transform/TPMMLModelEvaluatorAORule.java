@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 import de.uniol.inf.is.odysseus.wrapper.pmml.logicaloperator.PMMLModelEvaluatorAO;
 import de.uniol.inf.is.odysseus.wrapper.pmml.physicaloperator.PMMLModelEvaluatorPO;
 
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class TPMMLModelEvaluatorAORule extends AbstractTransformationRule<PMMLModelEvaluatorAO>{
 
 	@Override
@@ -18,7 +18,10 @@ public class TPMMLModelEvaluatorAORule extends AbstractTransformationRule<PMMLMo
 	
 	@Override
 	public void execute(PMMLModelEvaluatorAO operator, TransformationConfiguration config) throws RuleException {
-		defaultExecute(operator, new PMMLModelEvaluatorPO(operator.getModelName(), operator.getOuputMode()), config, true, true);
+		defaultExecute(operator, new PMMLModelEvaluatorPO(
+				operator.getModelName(), 
+				operator.getOuputMode(), 
+				operator.getStackSize()), config, true, true);
 	}
 
 	@Override
