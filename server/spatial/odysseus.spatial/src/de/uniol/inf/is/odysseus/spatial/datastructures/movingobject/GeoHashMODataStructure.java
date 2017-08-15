@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.spatial.datastructures.movingobject;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import org.geotools.referencing.GeodeticCalculator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -24,9 +27,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
+import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
@@ -196,6 +201,145 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		}
 
 		return resultMap;
+	}
+	
+	public Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory(String movingObjectID, double radius) {
+		// TODO Maybe add start and end time for the query
+
+		Map<String, List<SpatioTemporalQueryResult>> results = new HashMap<>();
+
+		// Get the trajectory of the given moving object ID
+		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(movingObjectID);
+		if (centerElement == null) {
+			return results;
+		}
+
+		GeodeticCalculator calculator = new GeodeticCalculator();
+
+		// For each trajectory element, make a whole circle query
+		PointInTime measurementTime = centerElement.getMeasurementTime();
+		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
+			if (otherMovingObjectID.equals(movingObjectID)) {
+				// The own trajectory doesn't count, we will be close to ourself
+				continue;
+			}
+			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
+			calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
+			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
+			double distanceMeters = calculator.getOrthodromicDistance();
+			if (distanceMeters <= radius) {
+				// Add to result map
+				SpatioTemporalQueryResult queryResultElement = new SpatioTemporalQueryResult(distanceMeters,
+						new WGS84Point(centerElement.getLatitude(), centerElement.getLongitude()), otherLocation,
+						measurementTime);
+				if (!results.containsKey(otherMovingObjectID)) {
+					List<SpatioTemporalQueryResult> resultsForOneMovingObject = new ArrayList<>();
+					results.put(otherMovingObjectID, resultsForOneMovingObject);
+				}
+				results.get(otherMovingObjectID).add(queryResultElement);
+			}
+		}
+
+		return results;
+	}
+	
+	private WGS84Point predictLocation(String id, PointInTime time) {
+
+		TrajectoryElement elementBefore = searchClostestElementBeforeOrEquals(id, time);
+		TrajectoryElement elementAfter = searchClostestElementAfterOrEquals(id, time);
+
+		if (elementBefore != null && elementBefore == elementAfter) {
+			// We have the exact location in our index, use it
+			return new WGS84Point(elementBefore.getLatitude(), elementBefore.getLongitude());
+		} else if (elementBefore == null) {
+			/*
+			 * We want to predict a location in the past, before we know anything: use the
+			 * first two known elements to calculate speed and direction
+			 */
+			elementBefore = elementAfter;
+			elementAfter = searchClostestElementAfterOrEquals(id, elementBefore.getMeasurementTime().plus(1));
+			if (elementAfter == null) {
+				/*
+				 * We only have one location in the trajectory, we cannot say anything about the
+				 * speed or direction -> we have to return the only known location
+				 */
+				return new WGS84Point(elementBefore.getLatitude(), elementBefore.getLongitude());
+			}
+		} else if (elementAfter == null) {
+			/*
+			 * We want to predict a location in the future: use the two last elements to
+			 * calculate speed and direction
+			 */
+
+			/*
+			 * elementBefore is the last known location -> use if as the elementAfter and
+			 * put the last but one location as the elementBefore
+			 */
+			elementAfter = elementBefore;
+			elementBefore = searchClostestElementBeforeOrEquals(id, elementAfter.getMeasurementTime().plus(-1));
+			if (elementBefore == null) {
+				/*
+				 * We only have one location in the trajectory, we cannot say anything about the
+				 * speed or direction -> we have to return the only known location
+				 */
+				return new WGS84Point(elementAfter.getLatitude(), elementAfter.getLongitude());
+			}
+		}
+
+		// Use them to interpolate location
+		// Calculate speed and direction
+
+		// Distance
+		double distanceMeters = MetrticSpatialUtils.getInstance().calculateDistance(null,
+				new Coordinate(elementBefore.getLatitude(), elementBefore.getLongitude()),
+				new Coordinate(elementAfter.getLatitude(), elementAfter.getLongitude()));
+
+		// Time
+		long timeDistanceMs = Math.abs(
+				elementAfter.getMeasurementTime().getMainPoint() - elementBefore.getMeasurementTime().getMainPoint());
+
+		// Speed
+		double speedMetersPerSecond = distanceMeters / (timeDistanceMs * 1000);
+
+		// Distance to interpolated point
+		long timeBetweenStartAndPointMs = time.minus(elementBefore.getMeasurementTime()).getMainPoint();
+		double distanceToPointMeters = speedMetersPerSecond * (timeBetweenStartAndPointMs / 1000);
+
+		// Direction
+		double startingLatitude = elementBefore.getLatitude();
+		double startingLongitude = elementBefore.getLongitude();
+		double destinationLatitude = elementAfter.getLatitude();
+		double destinationLongitude = elementAfter.getLongitude();
+
+		GeodeticCalculator calculator = new GeodeticCalculator();
+		calculator.setStartingGeographicPoint(startingLongitude, startingLatitude);
+		calculator.setDestinationGeographicPoint(destinationLongitude, destinationLatitude);
+		// The azimuth, in decimal degrees from -180° to +180°.
+		double azimuth = calculator.getAzimuth();
+
+		calculator.setDirection(azimuth, distanceToPointMeters);
+		Point2D interpolatedDestination = calculator.getDestinationGeographicPoint();
+		double longitude = interpolatedDestination.getX();
+		double latitude = interpolatedDestination.getY();
+
+		WGS84Point resultPoint = new WGS84Point(latitude, longitude);
+		return resultPoint;
+	}
+
+	private TrajectoryElement searchClostestElementBeforeOrEquals(String id, PointInTime time) {
+		TrajectoryElement iterator = this.latestTrajectoryElementMap.get(id);
+		while (iterator != null && iterator.getMeasurementTime().after(time)) {
+			iterator = iterator.getPreviousElement();
+		}
+		return iterator;
+	}
+
+	private TrajectoryElement searchClostestElementAfterOrEquals(String id, PointInTime time) {
+		TrajectoryElement iterator = this.latestTrajectoryElementMap.get(id);
+		while (iterator != null && iterator.getMeasurementTime().before(time)) {
+			iterator = iterator.getNextElement();
+		}
+		return iterator;
 	}
 
 	public Map<String, List<TrajectoryElement>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {

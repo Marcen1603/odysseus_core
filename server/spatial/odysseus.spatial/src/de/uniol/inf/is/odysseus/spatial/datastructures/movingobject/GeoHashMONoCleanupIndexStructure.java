@@ -211,7 +211,6 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		}
 
 		return results;
-
 	}
 
 	public Map<String, List<TrajectoryElement>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {

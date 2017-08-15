@@ -32,6 +32,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 		this.radiusMeters = ao.getRadius();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(T object, int port) {
 
@@ -67,6 +68,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 			// Put the result into a tuple
 			Tuple<ITimeInterval> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
 					movingObjectIDToQuery);
+			resultTupleForMovingObject.setMetadata(object.getMetadata());
 			this.transfer((T) resultTupleForMovingObject);
 		}
 	}
@@ -84,7 +86,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 			for (SpatioTemporalQueryResult meetingPoint : trajectoryElementsInCircle) {
 				Tuple<ITimeInterval> resultTuple = new Tuple<>(6, false);
 
-				// CenterID | CenterGeometry | OtherID | OtherGeometry | meetingTime
+				// CenterID | CenterGeometry | OtherID | OtherGeometry | distance | meetingTime
 				resultTuple.addAttributeValue(0, movingObjectID);
 
 				Geometry centerGeometry = factory
