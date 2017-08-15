@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.rest.serverresources.CreateMultipleSocketServerR
 import de.uniol.inf.is.odysseus.rest.serverresources.CreateSocketServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.DetermineOutputSchemaServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetAllOperatorInformationServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.GetDatatypesServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetOperatorInformationServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetQueryIdsServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetResultStreamInformationServerResource;
@@ -40,7 +41,9 @@ public class CoreRestProvider implements IRestProvider{
 		router.attach("/"+GetAllOperatorInformationServerResource.PATH, GetAllOperatorInformationServerResource.class);
 		router.attach("/"+GetOperatorInformationServerResource.PATH, GetOperatorInformationServerResource.class);
 		router.attach("/"+GetViewsServerResource.PATH, GetViewsServerResource.class);
+		router.attach("/"+GetDatatypesServerResource.PATH, GetDatatypesServerResource.class);
 		router.attach("/"+DetermineOutputSchemaServerResource.PATH, DetermineOutputSchemaServerResource.class);
+			
 	}
 
 }
