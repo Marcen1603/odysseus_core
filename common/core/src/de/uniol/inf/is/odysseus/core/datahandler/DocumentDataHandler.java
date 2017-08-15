@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,12 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 		types.add(SDFDatatype.DOCUMENT.getURI());
 	}
 
+	@Override
+	public void setCharset(Charset charset) {
+		super.setCharset(charset);
+		stringHandler.setCharset(charset);
+	}
+	
 	@Override
 	public Document<?> readData(ByteBuffer buffer, boolean handleMetaData ) {
 		return new Document<>(stringHandler.readData(buffer));

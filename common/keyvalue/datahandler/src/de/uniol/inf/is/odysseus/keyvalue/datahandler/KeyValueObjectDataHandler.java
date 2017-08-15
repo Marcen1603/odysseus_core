@@ -133,6 +133,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 	private void writeJSONData(StringBuilder string, Object data, boolean handleMetaData) {
 		if (data instanceof KeyValueObject<?>) {
 			string.append((((KeyValueObject<?>) data).toString(handleMetaData)));
+			System.err.println(string);
 		}
 	}
 

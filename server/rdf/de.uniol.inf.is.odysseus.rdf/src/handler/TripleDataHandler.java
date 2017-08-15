@@ -3,6 +3,7 @@ package handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,16 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 		dataHandler.add(new StringHandler());
 		dataHandler.add(new StringHandler());
 		dataHandler.add(new StringHandler());
+	}
+	
+	@Override
+	public void setCharset(Charset charset) {
+		super.setCharset(charset);
+		if (dataHandler != null) {
+			for (IDataHandler<?> handler : dataHandler) {
+				handler.setCharset(charset);
+			}
+		}
 	}
 
 	@Override
