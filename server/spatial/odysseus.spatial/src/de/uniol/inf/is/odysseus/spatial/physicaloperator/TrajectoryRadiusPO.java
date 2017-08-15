@@ -82,7 +82,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 					.get(otherMovingObjectID);
 
 			for (SpatioTemporalQueryResult meetingPoint : trajectoryElementsInCircle) {
-				Tuple<ITimeInterval> resultTuple = new Tuple<>(5, false);
+				Tuple<ITimeInterval> resultTuple = new Tuple<>(6, false);
 
 				// CenterID | CenterGeometry | OtherID | OtherGeometry | meetingTime
 				resultTuple.addAttributeValue(0, movingObjectID);
@@ -97,8 +97,10 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 				Geometry otherGeometry = factory.createPoint(new Coordinate(
 						meetingPoint.getOtherLocation().getLatitude(), meetingPoint.getOtherLocation().getLongitude()));
 				resultTuple.addAttributeValue(3, otherGeometry);
+				
+				resultTuple.addAttributeValue(4, meetingPoint.getDistanceInMeters());
 
-				resultTuple.addAttributeValue(4, meetingPoint.getMeetingTime());
+				resultTuple.addAttributeValue(5, meetingPoint.getMeetingTime());
 
 				tupleList.add(resultTuple);
 			}

@@ -35,6 +35,7 @@ public class TrajectoryRadiusAO extends BinaryLogicalOp {
 		super(ao);
 		this.queryAllMovingObjects = ao.isQueryAllMovingObjects();
 		this.movingObjectsToQuery = ao.getMovingObjectsToQuery();
+		this.radius = ao.getRadius();
 	}
 
 	@Override
