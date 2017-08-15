@@ -20,6 +20,8 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.TrajectoryR
 
 public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
 
+	private static final int TRAJECTORIES_ATTRIBUTE_POSITION = 0;
+
 	private boolean queryAllMovingObjects = true;
 	private List<String> movingObjectsToQuery;
 	private double radiusMeters;
@@ -27,6 +29,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 	public TrajectoryRadiusPO(TrajectoryRadiusAO ao) {
 		this.queryAllMovingObjects = ao.isQueryAllMovingObjects();
 		this.movingObjectsToQuery = ao.getMovingObjectsToQuery();
+		this.radiusMeters = ao.getRadius();
 	}
 
 	@Override
@@ -38,7 +41,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 		// trajectories
 		// TODO Still need name and geometryPosition?
 		GeoHashMONoCleanupIndexStructure index = new GeoHashMONoCleanupIndexStructure("bla", 1);
-		List<Tuple<ITimeInterval>> trajectories = object.getAttribute(0);
+		List<Tuple<ITimeInterval>> trajectories = object.getAttribute(TRAJECTORIES_ATTRIBUTE_POSITION);
 		for (Tuple<ITimeInterval> trajectoryTuple : trajectories) {
 			String movingObjectId = trajectoryTuple.getAttribute(0);
 			List<Tuple<ITimeInterval>> predictedLocations = trajectoryTuple.getAttribute(1);
@@ -55,20 +58,16 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 
 		// 2. Query the radius for the given IDs
 		if (this.queryAllMovingObjects) {
-			// TODO I don't want / can't really give the geometry (center)
-			// index.queryCircle(geometry, radius, t, movingObjectIdToIgnore);
-			// Loop with all
-			// index.queryCircleTrajectory(movingObjectID, 1000);
-		} else {
-			for (String movingObjectIDToQuery : this.movingObjectsToQuery) {
-				Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory = index
-						.queryCircleTrajectory(movingObjectIDToQuery, this.radiusMeters);
+			this.movingObjectsToQuery = new ArrayList<>(index.getAllMovingObjectIds());
+		}
+		for (String movingObjectIDToQuery : this.movingObjectsToQuery) {
+			Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory = index
+					.queryCircleTrajectory(movingObjectIDToQuery, this.radiusMeters);
 
-				// Put the result into a tuple
-				Tuple<ITimeInterval> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
-						movingObjectIDToQuery);
-				this.transfer((T) resultTupleForMovingObject);
-			}
+			// Put the result into a tuple
+			Tuple<ITimeInterval> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
+					movingObjectIDToQuery);
+			this.transfer((T) resultTupleForMovingObject);
 		}
 	}
 
@@ -83,7 +82,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 					.get(otherMovingObjectID);
 
 			for (SpatioTemporalQueryResult meetingPoint : trajectoryElementsInCircle) {
-				Tuple<ITimeInterval> resultTuple = new Tuple<>();
+				Tuple<ITimeInterval> resultTuple = new Tuple<>(5, false);
 
 				// CenterID | CenterGeometry | OtherID | OtherGeometry | meetingTime
 				resultTuple.addAttributeValue(0, movingObjectID);
@@ -105,7 +104,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 			}
 		}
 
-		Tuple<ITimeInterval> listTuple = new Tuple<>();
+		Tuple<ITimeInterval> listTuple = new Tuple<>(2, false);
 		listTuple.addAttributeValue(0, movingObjectID);
 		listTuple.addAttributeValue(1, tupleList);
 		return listTuple;

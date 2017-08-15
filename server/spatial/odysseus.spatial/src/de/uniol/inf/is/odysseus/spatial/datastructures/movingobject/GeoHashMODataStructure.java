@@ -69,7 +69,8 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 		TrajectoryElement latestElement = latestTrajectoryElementMap.get(id);
 
 		// Create the new "latest" element and save it
-		TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash, streamElement);
+		TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash,
+				locationMeasurement.getMeasurementTime(), streamElement);
 		latestTrajectoryElementMap.put(id, trajectoryElement);
 
 		List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
@@ -122,9 +123,10 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t) {
 		return queryCircle(geometry, radius, t, null);
 	}
-	
+
 	@Override
-	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t, String movingObjectIdToIgnore) {
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
+			String movingObjectIdToIgnore) {
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
@@ -139,7 +141,7 @@ public class GeoHashMODataStructure implements IMovingObjectDataStructure {
 
 		return queryCircle(geometry, radius, t, candidateCollection, movingObjectIdToIgnore);
 	}
-	
+
 	private Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection, String movingObjectIdToIgnore) {
 

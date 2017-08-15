@@ -76,7 +76,8 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		TrajectoryElement latestElement = latestTrajectoryElementMap.get(id);
 
 		// Create the new "latest" element and save it
-		TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash, streamElement);
+		TrajectoryElement trajectoryElement = new TrajectoryElement(latestElement, id, geoHash,
+				locationMeasurement.getMeasurementTime(), streamElement);
 		latestTrajectoryElementMap.put(id, trajectoryElement);
 
 		List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
@@ -179,12 +180,19 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 
 		// Get the trajectory of the given moving object ID
 		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(movingObjectID);
+		if (centerElement == null) {
+			return results;
+		}
 
 		GeodeticCalculator calculator = new GeodeticCalculator();
 
 		// For each trajectory element, make a whole circle query
 		PointInTime measurementTime = centerElement.getMeasurementTime();
 		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
+			if (otherMovingObjectID.equals(movingObjectID)) {
+				// The own trajectory doesn't count, we will be close to ourself
+				continue;
+			}
 			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
 			calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
 			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
@@ -280,6 +288,44 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		TrajectoryElement elementBefore = searchClostestElementBeforeOrEquals(id, time);
 		TrajectoryElement elementAfter = searchClostestElementAfterOrEquals(id, time);
 
+		if (elementBefore != null && elementBefore == elementAfter) {
+			// We have the exact location in our index, use it
+			return new WGS84Point(elementBefore.getLatitude(), elementBefore.getLongitude());
+		} else if (elementBefore == null) {
+			/*
+			 * We want to predict a location in the past, before we know anything: use the
+			 * first two known elements to calculate speed and direction
+			 */
+			elementBefore = elementAfter;
+			elementAfter = searchClostestElementAfterOrEquals(id, elementBefore.getMeasurementTime().plus(1));
+			if (elementAfter == null) {
+				/*
+				 * We only have one location in the trajectory, we cannot say anything about the
+				 * speed or direction -> we have to return the only known location
+				 */
+				return new WGS84Point(elementBefore.getLatitude(), elementBefore.getLongitude());
+			}
+		} else if (elementAfter == null) {
+			/*
+			 * We want to predict a location in the future: use the two last elements to
+			 * calculate speed and direction
+			 */
+
+			/*
+			 * elementBefore is the last known location -> use if as the elementAfter and
+			 * put the last but one location as the elementBefore
+			 */
+			elementAfter = elementBefore;
+			elementBefore = searchClostestElementBeforeOrEquals(id, elementAfter.getMeasurementTime().plus(-1));
+			if (elementBefore == null) {
+				/*
+				 * We only have one location in the trajectory, we cannot say anything about the
+				 * speed or direction -> we have to return the only known location
+				 */
+				return new WGS84Point(elementAfter.getLatitude(), elementAfter.getLongitude());
+			}
+		}
+
 		// Use them to interpolate location
 		// Calculate speed and direction
 
@@ -290,7 +336,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 
 		// Time
 		long timeDistanceMs = Math.abs(
-				elementBefore.getMeasurementTime().getMainPoint() - elementAfter.getMeasurementTime().getMainPoint());
+				elementAfter.getMeasurementTime().getMainPoint() - elementBefore.getMeasurementTime().getMainPoint());
 
 		// Speed
 		double speedMetersPerSecond = distanceMeters / (timeDistanceMs * 1000);
