@@ -1,9 +1,12 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -11,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMONoCleanupIndexStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
-import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
+import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.TrajectoryRadiusAO;
 
@@ -58,10 +61,54 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 			// index.queryCircleTrajectory(movingObjectID, 1000);
 		} else {
 			for (String movingObjectIDToQuery : this.movingObjectsToQuery) {
-				Map<String, List<ResultElement>> queryCircleTrajectory = index
+				Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory = index
 						.queryCircleTrajectory(movingObjectIDToQuery, this.radiusMeters);
+
+				// Put the result into a tuple
+				Tuple<ITimeInterval> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
+						movingObjectIDToQuery);
+				this.transfer((T) resultTupleForMovingObject);
 			}
 		}
+	}
+
+	private Tuple<ITimeInterval> createTupleList(
+			Map<String, List<SpatioTemporalQueryResult>> resultsForCircleTrajectory, String movingObjectID) {
+
+		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
+		GeometryFactory factory = new GeometryFactory();
+
+		for (String otherMovingObjectID : resultsForCircleTrajectory.keySet()) {
+			List<SpatioTemporalQueryResult> trajectoryElementsInCircle = resultsForCircleTrajectory
+					.get(otherMovingObjectID);
+
+			for (SpatioTemporalQueryResult meetingPoint : trajectoryElementsInCircle) {
+				Tuple<ITimeInterval> resultTuple = new Tuple<>();
+
+				// CenterID | CenterGeometry | OtherID | OtherGeometry | meetingTime
+				resultTuple.addAttributeValue(0, movingObjectID);
+
+				Geometry centerGeometry = factory
+						.createPoint(new Coordinate(meetingPoint.getCenterLocation().getLatitude(),
+								meetingPoint.getCenterLocation().getLongitude()));
+				resultTuple.addAttributeValue(1, centerGeometry);
+
+				resultTuple.addAttributeValue(2, otherMovingObjectID);
+
+				Geometry otherGeometry = factory.createPoint(new Coordinate(
+						meetingPoint.getOtherLocation().getLatitude(), meetingPoint.getOtherLocation().getLongitude()));
+				resultTuple.addAttributeValue(3, otherGeometry);
+
+				resultTuple.addAttributeValue(4, meetingPoint.getMeetingTime());
+
+				tupleList.add(resultTuple);
+			}
+		}
+
+		Tuple<ITimeInterval> listTuple = new Tuple<>();
+		listTuple.addAttributeValue(0, movingObjectID);
+		listTuple.addAttributeValue(1, tupleList);
+		return listTuple;
 	}
 
 	@Override

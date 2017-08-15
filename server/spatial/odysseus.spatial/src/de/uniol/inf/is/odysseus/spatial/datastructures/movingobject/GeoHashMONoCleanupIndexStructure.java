@@ -31,6 +31,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
+import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
@@ -171,33 +172,33 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		return resultMap;
 	}
 
-	public Map<String, List<ResultElement>> queryCircleTrajectory(String movingObjectID, double radius) {
+	public Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory(String movingObjectID, double radius) {
 		// TODO Maybe add start and end time for the query
 
-		Map<String, List<ResultElement>> results = new HashMap<>();
+		Map<String, List<SpatioTemporalQueryResult>> results = new HashMap<>();
 
 		// Get the trajectory of the given moving object ID
-		TrajectoryElement element = this.latestTrajectoryElementMap.get(movingObjectID);
+		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(movingObjectID);
 
 		GeodeticCalculator calculator = new GeodeticCalculator();
 
 		// For each trajectory element, make a whole circle query
-		PointInTime measurementTime = element.getMeasurementTime();
+		PointInTime measurementTime = centerElement.getMeasurementTime();
 		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
 			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
-			calculator.setStartingGeographicPoint(element.getLongitude(), element.getLatitude());
+			calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
 			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
 			double distanceMeters = calculator.getOrthodromicDistance();
 			if (distanceMeters <= radius) {
 				// Add to result map
-				TrajectoryElement trajectoryElement = new TrajectoryElement(null, otherMovingObjectID, GeoHashHelper
-						.fromLatLong(otherLocation.getLatitude(), otherLocation.getLongitude(), BIT_PRECISION), null);
-				ResultElement resultElement = new ResultElement(trajectoryElement, distanceMeters);
+				SpatioTemporalQueryResult queryResultElement = new SpatioTemporalQueryResult(distanceMeters,
+						new WGS84Point(centerElement.getLatitude(), centerElement.getLongitude()), otherLocation,
+						measurementTime);
 				if (!results.containsKey(otherMovingObjectID)) {
-					List<ResultElement> resultsForOneMovingObject = new ArrayList<>();
+					List<SpatioTemporalQueryResult> resultsForOneMovingObject = new ArrayList<>();
 					results.put(otherMovingObjectID, resultsForOneMovingObject);
 				}
-				results.get(otherMovingObjectID).add(resultElement);
+				results.get(otherMovingObjectID).add(queryResultElement);
 			}
 		}
 
