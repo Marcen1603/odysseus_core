@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
 import org.slf4j.Logger;
@@ -47,17 +48,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 	public static final String CSV_WRITE_HEADING = "csv.writeheading";
 
-	static byte[] newline;
-
-	static {
-		StringBuilder out = new StringBuilder();
-		out.append(System.lineSeparator());
-		CharBuffer cb = CharBuffer.wrap(out);
-		ByteBuffer encoded = charset.encode(cb);
-		byte[] encodedBytes1 = encoded.array();
-		newline = new byte[cb.limit()];
-		System.arraycopy(encodedBytes1, 0, newline, 0, cb.limit());
-	}
+	byte[] newline;
 
 	public AbstractCSVHandler() {
 		super();
@@ -74,6 +65,16 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		// simply update
 		init_internal();
 		super.optionsMapChanged(key, value);
+	}
+
+	private void initCharSet(Charset charset) {
+		StringBuilder out = new StringBuilder();
+		out.append(System.lineSeparator());
+		CharBuffer cb = CharBuffer.wrap(out);
+		ByteBuffer encoded = charset.encode(cb);
+		byte[] encodedBytes1 = encoded.array();
+		newline = new byte[cb.limit()];
+		System.arraycopy(encodedBytes1, 0, newline, 0, cb.limit());
 	}
 
 	private void init_internal() {
@@ -94,7 +95,9 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 			numberFormatter = new DecimalFormat(options.get(CSV_NUMBER_FORMATTER));
 		}
 		if (options.containsKey(CSV_WRITE_METADATA)) {
-			INFOSERVICE.error(CSV_WRITE_METADATA+" no longer supported. Use 'writeMetadata' in SENDER instead. Meta data will not be written!", new IllegalArgumentException("Unsupported Parameter"));
+			INFOSERVICE.error(CSV_WRITE_METADATA
+					+ " no longer supported. Use 'writeMetadata' in SENDER instead. Meta data will not be written!",
+					new IllegalArgumentException("Unsupported Parameter"));
 		}
 		if (options.containsKey(CSV_TRIM)) {
 			trim = Boolean.parseBoolean(options.get(CSV_TRIM));
@@ -110,6 +113,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		}
 
 		writeOptions.setWriteHeading(options.getBoolean(CSV_WRITE_HEADING, false));
+		initCharSet(getCharset());
 	}
 
 	@Override
@@ -145,7 +149,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		}
 		getDataHandler().writeCSVData(out, object, writeOptions);
 		CharBuffer cb = CharBuffer.wrap(out);
-		ByteBuffer encoded = charset.encode(cb);
+		ByteBuffer encoded = getCharset().encode(cb);
 		byte[] encodedBytes1 = encoded.array();
 		byte[] encodedBytes = new byte[cb.limit() + newline.length];
 		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
@@ -155,15 +159,15 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 
 	private void writeHeadings(StringBuilder out) {
 		SDFSchema schema = getDataHandler().getSchema();
-		if (schema.getType().equals(Tuple.class)){
+		if (schema.getType().equals(Tuple.class)) {
 			out.append(schema.getAttribute(0).getURI(true));
-			for (int i=1;i<schema.size();i++){
+			for (int i = 1; i < schema.size(); i++) {
 				out.append(writeOptions.getDelimiter());
 				out.append(schema.getAttribute(i).getURI(true));
 			}
 			out.append(System.lineSeparator());
-		}else{
-			LOG.warn("Cannot create heading with schema "+schema);
+		} else {
+			LOG.warn("Cannot create heading with schema " + schema);
 		}
 	}
 

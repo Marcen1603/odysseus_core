@@ -24,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +41,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
 public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
-
-	protected static final Charset charset = Charset.forName("UTF-8");
 
 	public static final String NAME = "Line";
 	static final Runtime RUNTIME = Runtime.getRuntime();
@@ -334,10 +331,10 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			writer.write(object.toString());
 	}
 
-	private static String bb_to_str(ByteBuffer buffer) {
+	private String bb_to_str(ByteBuffer buffer) {
 		String data = "";
 		try {
-			data = charset.decode(buffer).toString();
+			data = getCharset().decode(buffer).toString();
 			// reset buffer's position to its original so it is not altered:
 		} catch (Exception e) {
 			e.printStackTrace();

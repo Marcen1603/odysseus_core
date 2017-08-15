@@ -19,8 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.base.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -38,6 +41,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		implements IProtocolHandler<T> {
+
+	public final String CHARSET = "charset";
+
 	private final ITransportDirection direction;
 	private final IAccessPattern access;
 	private ITransportHandler transportHandler;
@@ -46,6 +52,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	private IExecutor executor;
 	private SDFSchema schema;
+
+	private Charset charset = Charset.forName("UTF-8");
 
 	protected final OptionMap optionsMap;
 
@@ -62,11 +70,20 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		this.access = access;
 		this.dataHandler = datahandler;
 		this.optionsMap = optionsMap;
+		this.charset = Charset.forName(optionsMap.get(CHARSET, "UTF-8"));
+		datahandler.setCharset(charset);
 	}
 
+	public Charset getCharset() {
+		return charset;
+	}
+	
 	@Override
 	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
+		if (optionsMap.containsKey(CHARSET)) {
+			this.charset = Charset.forName(optionsMap.get(CHARSET));
+		}
 		optionsMapChanged(key, value);
 	}
 
@@ -163,7 +180,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		List<String> msg = Arrays.asList(message);
 		getTransfer().transfer(getDataHandler().readData(msg.iterator()));
 	}
-	
+
 	@Override
 	public void process(String message) {
 		getTransfer().transfer(getDataHandler().readData(message));
@@ -230,8 +247,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	/**
-	 * This method is supposed to retrieve the options for an instance, which
-	 * were used during the call of
+	 * This method is supposed to retrieve the options for an instance, which were
+	 * used during the call of
 	 * {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IDataHandler)}
 	 * based on the current configuration. This is useful serialising different
 	 * ProtocolHandler-instances. CANNOT be used for comparisons to check if two
@@ -262,6 +279,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		} else if (!this.dataHandler.isSemanticallyEqual(other.getDataHandler())) {
 			return false;
 		} else if (!this.transportHandler.isSemanticallyEqual(other.getTransportHandler())) {
+			return false;
+		}
+		if (!Objects.equal(this.charset, other.charset)) {
 			return false;
 		}
 		return isSemanticallyEqualImpl(other);

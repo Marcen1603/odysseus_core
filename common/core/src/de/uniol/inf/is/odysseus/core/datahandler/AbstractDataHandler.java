@@ -17,6 +17,9 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +31,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	final private SDFSchema schema;
+	
+	// Default char set
+	private Charset charset = Charset.forName("UTF-8");
+	private CharsetDecoder decoder = charset.newDecoder();
+	private CharsetEncoder encoder = charset.newEncoder();
+
 	
 	protected AbstractDataHandler(SDFSchema schema){
 		this.schema = schema;
@@ -55,6 +64,28 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return null;
 	}
 
+	public void setCharset(String charsetString) {
+		setCharset(Charset.forName(charsetString));
+	}
+	
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+		decoder = charset.newDecoder();
+		encoder = charset.newEncoder();	
+	}
+	
+	public Charset getCharset() {
+		return charset;
+	}
+	
+	public CharsetDecoder getDecoder() {
+		return decoder;
+	}
+	
+	public CharsetEncoder getEncoder() {
+		return encoder;
+	}
+	
 	@Override
 	public T readData(InputStream inputStream) throws IOException {
 		throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");
