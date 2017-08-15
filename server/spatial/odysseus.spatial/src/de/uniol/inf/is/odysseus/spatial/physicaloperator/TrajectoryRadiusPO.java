@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import java.util.List;
+import java.util.Map;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -9,16 +10,17 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMONoCleanupIndexStructure;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
+import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.TrajectoryRadiusAO;
 
 public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
-	
+
 	private boolean queryAllMovingObjects = true;
 	private List<String> movingObjectsToQuery;
-	
+	private double radiusMeters;
+
 	public TrajectoryRadiusPO(TrajectoryRadiusAO ao) {
 		this.queryAllMovingObjects = ao.isQueryAllMovingObjects();
 		this.movingObjectsToQuery = ao.getMovingObjectsToQuery();
@@ -32,7 +34,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 		// 1. Create and fill an index structure so that we can work on this set of
 		// trajectories
 		// TODO Still need name and geometryPosition?
-		IMovingObjectDataStructure index = new GeoHashMONoCleanupIndexStructure("bla", 1);
+		GeoHashMONoCleanupIndexStructure index = new GeoHashMONoCleanupIndexStructure("bla", 1);
 		List<Tuple<ITimeInterval>> trajectories = object.getAttribute(0);
 		for (Tuple<ITimeInterval> trajectoryTuple : trajectories) {
 			String movingObjectId = trajectoryTuple.getAttribute(0);
@@ -47,11 +49,18 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 				index.add(location, predictedLocation);
 			}
 		}
-		
+
 		// 2. Query the radius for the given IDs
 		if (this.queryAllMovingObjects) {
 			// TODO I don't want / can't really give the geometry (center)
-//			index.queryCircle(geometry, radius, t, movingObjectIdToIgnore);
+			// index.queryCircle(geometry, radius, t, movingObjectIdToIgnore);
+			// Loop with all
+			// index.queryCircleTrajectory(movingObjectID, 1000);
+		} else {
+			for (String movingObjectIDToQuery : this.movingObjectsToQuery) {
+				Map<String, List<ResultElement>> queryCircleTrajectory = index
+						.queryCircleTrajectory(movingObjectIDToQuery, this.radiusMeters);
+			}
 		}
 	}
 
@@ -63,8 +72,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 
 	@Override
 	public OutputMode getOutputMode() {
-		// TODO Auto-generated method stub
-		return null;
+		return OutputMode.NEW_ELEMENT;
 	}
 
 }

@@ -171,6 +171,40 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		return resultMap;
 	}
 
+	public Map<String, List<ResultElement>> queryCircleTrajectory(String movingObjectID, double radius) {
+		// TODO Maybe add start and end time for the query
+
+		Map<String, List<ResultElement>> results = new HashMap<>();
+
+		// Get the trajectory of the given moving object ID
+		TrajectoryElement element = this.latestTrajectoryElementMap.get(movingObjectID);
+
+		GeodeticCalculator calculator = new GeodeticCalculator();
+
+		// For each trajectory element, make a whole circle query
+		PointInTime measurementTime = element.getMeasurementTime();
+		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
+			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
+			calculator.setStartingGeographicPoint(element.getLongitude(), element.getLatitude());
+			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
+			double distanceMeters = calculator.getOrthodromicDistance();
+			if (distanceMeters <= radius) {
+				// Add to result map
+				TrajectoryElement trajectoryElement = new TrajectoryElement(null, otherMovingObjectID, GeoHashHelper
+						.fromLatLong(otherLocation.getLatitude(), otherLocation.getLongitude(), BIT_PRECISION), null);
+				ResultElement resultElement = new ResultElement(trajectoryElement, distanceMeters);
+				if (!results.containsKey(otherMovingObjectID)) {
+					List<ResultElement> resultsForOneMovingObject = new ArrayList<>();
+					results.put(otherMovingObjectID, resultsForOneMovingObject);
+				}
+				results.get(otherMovingObjectID).add(resultElement);
+			}
+		}
+
+		return results;
+
+	}
+
 	public Map<String, List<TrajectoryElement>> queryBoundingBox(List<Point> polygonPoints, ITimeInterval t) {
 		Polygon polygon = GeoHashHelper.createPolygon(polygonPoints);
 
@@ -240,7 +274,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		return resultMap;
 	}
 
-	private void predictLocation(String id, PointInTime time) {
+	private WGS84Point predictLocation(String id, PointInTime time) {
 
 		TrajectoryElement elementBefore = searchClostestElementBeforeOrEquals(id, time);
 		TrajectoryElement elementAfter = searchClostestElementAfterOrEquals(id, time);
@@ -280,6 +314,9 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		Point2D interpolatedDestination = calculator.getDestinationGeographicPoint();
 		double longitude = interpolatedDestination.getX();
 		double latitude = interpolatedDestination.getY();
+
+		WGS84Point resultPoint = new WGS84Point(latitude, longitude);
+		return resultPoint;
 	}
 
 	private TrajectoryElement searchClostestElementBeforeOrEquals(String id, PointInTime time) {
