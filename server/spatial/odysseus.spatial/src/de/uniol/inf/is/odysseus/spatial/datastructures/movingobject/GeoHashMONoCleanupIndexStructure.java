@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  */
 public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStructure {
 
-	private static final int BIT_PRECISION = 64;
+	public static final int BIT_PRECISION = 64;
 	public static final String TYPE = "mo_no_cleanup_geohash";
 
 	// The position of the geometry-attribute within the tuple
@@ -54,8 +54,8 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 	// The name of the data structure to access it
 	private String name;
 
-	private NavigableMap<GeoHash, List<TrajectoryElement>> pointMap;
-	private Map<String, TrajectoryElement> latestTrajectoryElementMap;
+	protected NavigableMap<GeoHash, List<TrajectoryElement>> pointMap;
+	protected Map<String, TrajectoryElement> latestTrajectoryElementMap;
 
 	public GeoHashMONoCleanupIndexStructure(String name, int geometryPosition) {
 		this.name = name;
