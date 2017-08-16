@@ -23,6 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpr
 
 public class PriorityPredicateBuilder<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractExpressionBuilder<T,M> {
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IPredicate<T> createPredicate(IAttributeResolver resolver,
 			String predicate) {

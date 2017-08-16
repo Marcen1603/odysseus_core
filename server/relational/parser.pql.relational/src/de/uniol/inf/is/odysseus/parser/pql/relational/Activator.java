@@ -29,8 +29,8 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putExpressionBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder());
-		OperatorBuilderFactory.putExpressionBuilder(Tuple.class.getName(), new RelationalPredicateBuilder());
+		OperatorBuilderFactory.putExpressionBuilder(RELATIONAL_PREDICATE, new RelationalPredicateBuilder<>());
+		OperatorBuilderFactory.putExpressionBuilder(Tuple.class.getName(), new RelationalPredicateBuilder<>());
 	}
 
 	@Override
