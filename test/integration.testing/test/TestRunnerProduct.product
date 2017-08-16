@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl en -consoleLog -debug .options System manager -console -data @userData
+      <programArgs>-nl en -consoleLog -debug .options System manager -console -data @userData -clean
       </programArgs>
       <programArgsLin>-os linux -ws gtk -arch x86_64
       </programArgsLin>
