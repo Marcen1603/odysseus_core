@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -28,20 +32,60 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-abstract public class AbstractTransportHandler implements ITransportHandler{
+abstract public class AbstractTransportHandler implements ITransportHandler {
 
+	private static final String CHARSET = "charset";
 	final AbstractTransportHandlerDelegate<IStreamObject<IMetaAttribute>> delegate;
 	IExecutor executor;
 
-	public AbstractTransportHandler(){
-		delegate = new AbstractTransportHandlerDelegate<>(null, null, this,null);
+	private Charset charset;
+	private CharsetEncoder encoder;
+	private CharsetDecoder decoder;
+
+	byte[] newline;
+
+	public AbstractTransportHandler() {
+		delegate = new AbstractTransportHandlerDelegate<>(null, null, this, null);
+		setCharset("UTF-8");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public AbstractTransportHandler(IProtocolHandler protocolHandler, OptionMap optionsMap) {
-		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(), protocolHandler.getDirection(), this, optionsMap);
+		delegate = new AbstractTransportHandlerDelegate<>(protocolHandler.getExchangePattern(),
+				protocolHandler.getDirection(), this, optionsMap);
 		protocolHandler.setTransportHandler(this);
 		delegate.addListener(protocolHandler);
+
+		if (optionsMap.containsKey(CHARSET)) {
+			String charsetString = optionsMap.get(CHARSET);
+			setCharset(charsetString);
+		}
+	}
+
+	private void setCharset(String charsetString) {
+		this.charset = Charset.forName(charsetString);
+		this.encoder = charset.newEncoder();
+		this.decoder = charset.newDecoder();
+
+		StringBuilder out = new StringBuilder();
+		out.append(System.lineSeparator());
+		CharBuffer cb = CharBuffer.wrap(out);
+		ByteBuffer encoded = charset.encode(cb);
+		byte[] encodedBytes1 = encoded.array();
+		newline = new byte[cb.limit()];
+		System.arraycopy(encodedBytes1, 0, newline, 0, cb.limit());
+	}
+
+	public Charset getCharset() {
+		return charset;
+	}
+
+	public CharsetEncoder getEncoder() {
+		return encoder;
+	}
+
+	public CharsetDecoder getDecoder() {
+		return decoder;
 	}
 
 	@Override
@@ -69,12 +113,18 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		return false;
 	}
 
-
 	@Override
 	public boolean isSemanticallyEqual(ITransportHandler other) {
-		if(!this.getExchangePattern().equals(other.getExchangePattern())) {
+		if (!(other instanceof AbstractTransportHandler)) {
 			return false;
-		} else if(!this.getName().equals(other.getName())) {
+		}
+		if (!this.getExchangePattern().equals(other.getExchangePattern())) {
+			return false;
+		} else if (!this.getName().equals(other.getName())) {
+			return false;
+		}
+		AbstractTransportHandler o = (AbstractTransportHandler) other;
+		if (!this.charset.name().equals(o.charset.name())) {
 			return false;
 		}
 		return isSemanticallyEqualImpl(other);
@@ -113,7 +163,6 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.close();
 	}
 
-
 	@Override
 	public ITransportExchangePattern getExchangePattern() {
 		return delegate.getExchangePattern();
@@ -131,7 +180,7 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.fireProcess(0, message);
 	}
 
-	final public void fireProcess(InputStream message){
+	final public void fireProcess(InputStream message) {
 		delegate.fireProcess(message);
 	}
 
@@ -139,7 +188,11 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 		delegate.fireProcess(message);
 	}
 
-	final public void fireProcess(IStreamObject<IMetaAttribute> message){
+	final public void fireProcess(String message) {
+		delegate.fireProcess(message);
+	}
+
+	final public void fireProcess(IStreamObject<IMetaAttribute> message) {
 		delegate.fireProcess(message);
 	}
 
@@ -162,13 +215,29 @@ abstract public class AbstractTransportHandler implements ITransportHandler{
 	}
 
 	@Override
+	public synchronized void send(String message, boolean withNewline) throws IOException {		
+		ByteBuffer encoded = getCharset().encode(CharBuffer.wrap(message));
+		byte[] encodedBytes;
+
+		if (withNewline) {
+			byte[] encodedBytes1 = encoded.array();
+			encodedBytes = new byte[encoded.limit() + newline.length];
+			System.arraycopy(encodedBytes1, 0, encodedBytes, 0, encoded.limit());
+			System.arraycopy(newline, 0, encodedBytes, encoded.limit(), newline.length);
+		}else {
+			encodedBytes = encoded.array();
+		}
+		send(encodedBytes);
+	}
+
+	@Override
 	public void updateOption(String key, String value) {
 		this.getOptionsMap().setOption(key, value);
-		optionsMapChanged(key,value);
+		optionsMapChanged(key, value);
 	}
 
 	private void optionsMapChanged(String key, String value) {
-		delegate.optionsMapChanged(key,value);
+		delegate.optionsMapChanged(key, value);
 	}
 
 }

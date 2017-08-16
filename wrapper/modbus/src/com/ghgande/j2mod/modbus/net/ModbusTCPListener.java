@@ -151,7 +151,7 @@ public class ModbusTCPListener implements ModbusListener {
 	 * 
 	 * @deprecated
 	 */
-	@SuppressWarnings("dep-ann")
+	//("dep-ann")
 	public void start() {
 		m_Listening = true;
 		

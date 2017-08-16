@@ -43,7 +43,6 @@ import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
@@ -1241,14 +1240,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public Set<String> getRegisteredAggregateFunctions(
-			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+	public Set<String> getRegisteredAggregateFunctions(String datamodel, ISession caller) {
 		assureLogin(caller);
 		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
 				set.addAll(getWebserviceServer(caller.getConnectionName())
-						.getRegisteredAggregateFunctions(datamodel.getName(), caller.getToken()).getResponseValue());
+						.getRegisteredAggregateFunctions(datamodel, caller.getToken()).getResponseValue());
 				return set;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -1257,6 +1255,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return new HashSet<>();
 	}
 
+	@Override
+	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+		return getRegisteredAggregateFunctions(datamodel.getName(), caller);
+	}
+	
 	@Override
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
 		assureLogin(caller);

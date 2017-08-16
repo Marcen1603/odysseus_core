@@ -4,9 +4,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.machine_learning.learner.AbstractLearner;
-import de.uniol.inf.is.odysseus.machine_learning.model.Model;
-import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.AbstractAutoregressionModelEstimator;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.estimator.IAutoregressionEstimator;
 import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionForecaster;
 
@@ -41,6 +38,7 @@ public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void process_next(Tuple<ITimeInterval> object, int port) {
 

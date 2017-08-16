@@ -66,7 +66,7 @@ public class ColorWheelConfigurer extends AbstractWheelDashboardPartConfigurer<C
             {// Gauge color
                 toolkit.createLabel(group, "Color");
                 final RGB baseColor = this.getDashboardPart().getBaseColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text gaugeColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) baseColor.R, (int) baseColor.G, (int) baseColor.B));
                 gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) baseColor.R, (int) baseColor.G, (int) baseColor.B)));
                 gaugeColorText.setEditable(false);

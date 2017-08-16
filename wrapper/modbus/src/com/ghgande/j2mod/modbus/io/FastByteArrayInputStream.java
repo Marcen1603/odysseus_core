@@ -151,7 +151,7 @@ public class FastByteArrayInputStream extends InputStream {
 		return true;
 	}// markSupported
 
-	@SuppressWarnings("sync-override")
+	//@SuppressWarnings("sync-override")
 	@Override
 	public void mark(int readlimit) {
 		// System.out.println("mark()");
@@ -159,7 +159,7 @@ public class FastByteArrayInputStream extends InputStream {
 		// System.out.println("mark=" + mark + " pos=" + pos);
 	}// mark
 
-	@SuppressWarnings("sync-override")
+	//@SuppressWarnings("sync-override")
 	@Override
 	public void reset() {
 		// System.out.println("reset()");

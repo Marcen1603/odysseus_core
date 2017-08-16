@@ -69,7 +69,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
  * @version $Id$
  *
  */
-@SuppressWarnings("null")
+//@SuppressWarnings("null")
 public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
     /** The Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(RInsertSensingDevicesRule.class);

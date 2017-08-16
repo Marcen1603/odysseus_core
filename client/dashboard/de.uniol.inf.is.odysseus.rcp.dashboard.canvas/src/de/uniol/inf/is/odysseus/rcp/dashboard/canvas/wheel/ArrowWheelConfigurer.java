@@ -66,7 +66,7 @@ public class ArrowWheelConfigurer extends AbstractWheelDashboardPartConfigurer<A
             {// Gauge color
                 toolkit.createLabel(group, "Color");
                 final RGB arrowColor = this.getDashboardPart().getArrowColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text gaugeColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B));
                 gaugeColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B)));
                 gaugeColorText.setEditable(false);

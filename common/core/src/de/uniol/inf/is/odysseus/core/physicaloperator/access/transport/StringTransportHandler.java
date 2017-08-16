@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -19,7 +18,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class StringTransportHandler extends AbstractTransportHandler {
 
 	final InputStream inputStream;
-	private Charset charset = Charset.forName("UTF-8");
 	
 	public StringTransportHandler(List<String> output, OptionMap options) {
 		StringBuffer s = new StringBuffer();
@@ -30,7 +28,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 			}
 		}
 		
-		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(charset));
+		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(getCharset()));
 		
 	}
 
@@ -96,10 +94,6 @@ public class StringTransportHandler extends AbstractTransportHandler {
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
     	if(!(o instanceof StringTransportHandler)) {
-    		return false;
-    	}
-    	StringTransportHandler other = (StringTransportHandler)o;
-    	if(!this.charset.name().equals(other.charset.name())) {
     		return false;
     	}
     	
