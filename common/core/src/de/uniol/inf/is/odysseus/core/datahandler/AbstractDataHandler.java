@@ -32,18 +32,19 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	final private SDFSchema schema;
 	
-	// Default char set
-	private Charset charset = Charset.forName("UTF-8");
-	private CharsetDecoder decoder = charset.newDecoder();
-	private CharsetEncoder encoder = charset.newEncoder();
+	private Charset charset;
+	private CharsetDecoder decoder;
+	private CharsetEncoder encoder;
 
 	
 	protected AbstractDataHandler(SDFSchema schema){
 		this.schema = schema;
+		setCharset("UTF-8");
 	}
 	
 	protected AbstractDataHandler(){
 		this.schema = null;
+		setCharset("UTF-8");
 	}
 	
 	@Override

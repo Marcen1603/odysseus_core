@@ -2,9 +2,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 
 import org.slf4j.Logger;
@@ -48,8 +45,6 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 	public static final String CSV_WRITE_HEADING = "csv.writeheading";
 
-	byte[] newline;
-
 	public AbstractCSVHandler() {
 		super();
 	}
@@ -65,16 +60,6 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		// simply update
 		init_internal();
 		super.optionsMapChanged(key, value);
-	}
-
-	private void initCharSet(Charset charset) {
-		StringBuilder out = new StringBuilder();
-		out.append(System.lineSeparator());
-		CharBuffer cb = CharBuffer.wrap(out);
-		ByteBuffer encoded = charset.encode(cb);
-		byte[] encodedBytes1 = encoded.array();
-		newline = new byte[cb.limit()];
-		System.arraycopy(encodedBytes1, 0, newline, 0, cb.limit());
 	}
 
 	private void init_internal() {
@@ -113,7 +98,6 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 		}
 
 		writeOptions.setWriteHeading(options.getBoolean(CSV_WRITE_HEADING, false));
-		initCharSet(getCharset());
 	}
 
 	@Override
@@ -148,13 +132,15 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 			writeHeadings(out);
 		}
 		getDataHandler().writeCSVData(out, object, writeOptions);
-		CharBuffer cb = CharBuffer.wrap(out);
-		ByteBuffer encoded = getCharset().encode(cb);
-		byte[] encodedBytes1 = encoded.array();
-		byte[] encodedBytes = new byte[cb.limit() + newline.length];
-		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
-		System.arraycopy(newline, 0, encodedBytes, cb.limit(), newline.length);
-		getTransportHandler().send(encodedBytes);
+
+		// is now done in AbstractTransportHandler
+//		CharBuffer cb = CharBuffer.wrap(out);
+//		ByteBuffer encoded = getCharset().encode(cb);
+//		byte[] encodedBytes1 = encoded.array();
+//		byte[] encodedBytes = new byte[cb.limit() + newline.length];
+//		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
+//		System.arraycopy(newline, 0, encodedBytes, cb.limit(), newline.length);
+		getTransportHandler().send(out.toString());
 	}
 
 	private void writeHeadings(StringBuilder out) {

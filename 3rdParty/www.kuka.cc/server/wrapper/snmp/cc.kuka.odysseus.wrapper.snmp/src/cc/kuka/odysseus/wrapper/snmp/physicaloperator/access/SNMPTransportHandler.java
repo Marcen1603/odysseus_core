@@ -220,7 +220,7 @@ public class SNMPTransportHandler extends AbstractPullTransportHandler {
                             pdu.add(new VariableBinding(new OID(getOid()), new Integer32(this.buffer.getInt())));
                         }
                         else {
-                            pdu.add(new VariableBinding(new OID(getOid()), new OctetString(new String(this.buffer.array(), Charset.forName("UTF-8")))));
+                            pdu.add(new VariableBinding(new OID(getOid()), new OctetString(new String(this.buffer.array(), getCharset()))));
                         }
 
                     }

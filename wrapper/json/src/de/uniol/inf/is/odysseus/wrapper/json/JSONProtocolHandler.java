@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.wrapper.json;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -13,7 +11,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -21,6 +18,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 
 public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 		extends AbstractJSONProtocolHandler<T> {
@@ -112,14 +110,14 @@ public class JSONProtocolHandler<T extends KeyValueObject<IMetaAttribute>>
 
 		this.getDataHandler().writeData(string, kvObject, writemetadata);
 
-		string.append(System.getProperty("line.separator"));
-		CharBuffer charBuffer = CharBuffer.wrap(string);
-		ByteBuffer bBuffer = Charset.forName("UTF-8").encode(charBuffer);
-		byte[] encodedBytesTmp = bBuffer.array();
-		byte[] encodedBytes = new byte[charBuffer.limit()];
-		System.arraycopy(encodedBytesTmp, 0, encodedBytes, 0,
-				charBuffer.limit());
-		this.getTransportHandler().send(encodedBytes);
+//		string.append(System.getProperty("line.separator"));
+//		CharBuffer charBuffer = CharBuffer.wrap(string);
+//		ByteBuffer bBuffer = getCharset().encode(charBuffer);
+//		byte[] encodedBytesTmp = bBuffer.array();
+//		byte[] encodedBytes = new byte[charBuffer.limit()];
+//		System.arraycopy(encodedBytesTmp, 0, encodedBytes, 0,
+//				charBuffer.limit());
+		this.getTransportHandler().send(string.toString(), true);
 	}
 
 	@Override
