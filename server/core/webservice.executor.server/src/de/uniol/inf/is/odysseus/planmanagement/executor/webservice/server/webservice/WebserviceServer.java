@@ -960,7 +960,7 @@ public class WebserviceServer {
 			@WebParam(name = "datamodel") @SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
 			@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<String> names = getExecutor().getRegisteredAggregateFunctions(datamodel, user);
+		Set<String> names = getExecutor().getRegisteredAggregateFunctions(datamodel.getName(), user);
 		return new StringListResponse(names, true);
 	}
 
