@@ -63,8 +63,6 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		types.add("ScaiTuple");
 	}
 
-	private final Charset charset = Charset.forName("UTF-8");
-
 	public ScaiDataHandler() {
 		super(null);
 	}
@@ -92,9 +90,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		final CharsetDecoder decoder = this.charset.newDecoder();
 		try {
-			final CharBuffer charBuffer = decoder.decode(buffer);
+			final CharBuffer charBuffer = getDecoder().decode(buffer);
 			return readData(charBuffer.toString());
 		} catch (CharacterCodingException e) {
 			LOG.warn(e.getMessage(), e);

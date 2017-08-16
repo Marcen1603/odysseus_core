@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,7 +55,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	private IExecutor executor;
 	private SDFSchema schema;
 
-	private Charset charset = Charset.forName("UTF-8");
+	private Charset charset;
+	private CharsetDecoder decoder;
+	private CharsetEncoder encoder;
 
 	protected final OptionMap optionsMap;
 
@@ -61,7 +65,7 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		direction = null;
 		access = null;
 		dataHandler = null;
-		optionsMap = null;
+		optionsMap = null;	
 	}
 
 	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access,
@@ -70,19 +74,34 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		this.access = access;
 		this.dataHandler = datahandler;
 		this.optionsMap = optionsMap;
-		this.charset = Charset.forName(optionsMap.get(CHARSET, "UTF-8"));
-		datahandler.setCharset(charset);
+		setCharset(optionsMap.get(CHARSET, "UTF-8"));
+	}
+
+	private void setCharset(String charSetName) {
+		this.charset = Charset.forName(charSetName);
+		this.encoder = charset.newEncoder();
+		this.decoder = charset.newDecoder();
+		getDataHandler().setCharset(charset);
+
 	}
 
 	public Charset getCharset() {
 		return charset;
 	}
 	
+	public CharsetEncoder getEncoder() {
+		return encoder;
+	}
+	
+	public CharsetDecoder getDecoder() {
+		return decoder;
+	}
+	
 	@Override
 	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
 		if (optionsMap.containsKey(CHARSET)) {
-			this.charset = Charset.forName(optionsMap.get(CHARSET));
+			setCharset(optionsMap.get(CHARSET));
 		}
 		optionsMapChanged(key, value);
 	}

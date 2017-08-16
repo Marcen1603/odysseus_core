@@ -189,7 +189,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     @Override
     public void process(long callerId, ByteBuffer message) {
-        String msg = new String(message.array(), Charset.forName("UTF-8"));
+        String msg = new String(message.array(), getCharset());
         System.out.println(msg);
 
         try {

@@ -326,7 +326,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	@Override
 	public void write(T object) throws IOException {
 		if (writer == null)
-			getTransportHandler().send(object.toString().getBytes("UTF-8"));
+			getTransportHandler().send(object.toString().getBytes(getCharset().name()));
 		else
 			writer.write(object.toString());
 	}

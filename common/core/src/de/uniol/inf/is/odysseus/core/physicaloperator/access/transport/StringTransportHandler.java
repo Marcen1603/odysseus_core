@@ -19,7 +19,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 public class StringTransportHandler extends AbstractTransportHandler {
 
 	final InputStream inputStream;
-	private Charset charset = Charset.forName("UTF-8");
 	
 	public StringTransportHandler(List<String> output, OptionMap options) {
 		StringBuffer s = new StringBuffer();
@@ -30,7 +29,7 @@ public class StringTransportHandler extends AbstractTransportHandler {
 			}
 		}
 		
-		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(charset));
+		this.inputStream = new ByteArrayInputStream(s.toString().getBytes(getCharset()));
 		
 	}
 
@@ -96,10 +95,6 @@ public class StringTransportHandler extends AbstractTransportHandler {
     @Override
     public boolean isSemanticallyEqualImpl(ITransportHandler o) {
     	if(!(o instanceof StringTransportHandler)) {
-    		return false;
-    	}
-    	StringTransportHandler other = (StringTransportHandler)o;
-    	if(!this.charset.name().equals(other.charset.name())) {
     		return false;
     	}
     	
