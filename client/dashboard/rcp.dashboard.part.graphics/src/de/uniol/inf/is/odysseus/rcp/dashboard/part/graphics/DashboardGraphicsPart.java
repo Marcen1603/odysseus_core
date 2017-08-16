@@ -158,6 +158,7 @@ public class DashboardGraphicsPart extends AbstractDashboardPart implements
 	 * @see
 	 * de.uniol.inf.is.odysseus.rcp.dashboard.AbstractDashboardPart#dispose()
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void dispose() {
 		editDomain.getCommandStack().removeCommandStackListener(this);
