@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.relational.base.predicate.IRelationalPredicate;
  * ILogicalOperator.
  * @author Jonas Jacobi
  */
+@SuppressWarnings("deprecation")
 public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 
 	private final SDFSchema leftSchema;
