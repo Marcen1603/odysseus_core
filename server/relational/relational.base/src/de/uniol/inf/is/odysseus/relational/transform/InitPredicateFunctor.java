@@ -37,6 +37,7 @@ public class InitPredicateFunctor implements IUnaryFunctor<IPredicate<?>> {
 		this.leftSchema = op.getInputSchema(0);
 		this.rightSchema = op.getNumberOfInputs() > 1 ? op.getInputSchema(1) : null;
 	}
+	@SuppressWarnings("deprecation")
 	@Override
 	public void call(IPredicate<?> parameter) {
 		if(parameter instanceof IRelationalPredicate) {
