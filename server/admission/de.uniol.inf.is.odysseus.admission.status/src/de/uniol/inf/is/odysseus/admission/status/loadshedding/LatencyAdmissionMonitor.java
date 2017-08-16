@@ -30,15 +30,14 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	private Map<IPhysicalQuery, List<Long>> latencies = new HashMap<IPhysicalQuery, List<Long>>();
 	
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addQuery(IPhysicalQuery query) {
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
 			
 			//A new AdmissionSink is created here.
-			@SuppressWarnings("rawtypes")
 			AdmissionSink<?> admissionSink = new AdmissionSink();
 			admissionSink.setLatencyAdmissionMonitor(this);
-			@SuppressWarnings("rawtypes")
 			ISource source = null;
 			
 			//All last operators of the query plans are checked.

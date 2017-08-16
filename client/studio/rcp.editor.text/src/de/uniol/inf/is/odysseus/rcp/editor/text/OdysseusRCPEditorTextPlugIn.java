@@ -112,7 +112,7 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 	}
 
 	public static void unbindCompletionProvider(IEditorLanguagePropertiesProvider ecp) {
-		completionproviders.remove(ecp);
+		completionproviders.remove(ecp.getSupportedParser());
 	}
 
 	public static Collection<IEditorLanguagePropertiesProvider> getEditorCompletionProviders() {
@@ -134,9 +134,11 @@ public class OdysseusRCPEditorTextPlugIn extends AbstractUIPlugin {
 		return list;
 	}
 
-	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel) {
+	public synchronized List<String> getInstalledAggregateFunctions(
+			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel) {
 		if (cachedAggregateFunctions == null) {
-			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, OdysseusRCPPlugIn.getActiveSession()));
+			cachedAggregateFunctions = new ArrayList<String>(getExecutor()
+					.getRegisteredAggregateFunctions(datamodel.getName(), OdysseusRCPPlugIn.getActiveSession()));
 			Collections.sort(cachedAggregateFunctions);
 		}
 		return cachedAggregateFunctions;

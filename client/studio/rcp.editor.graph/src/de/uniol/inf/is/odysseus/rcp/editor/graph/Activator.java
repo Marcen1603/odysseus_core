@@ -104,7 +104,7 @@ public class Activator extends AbstractUIPlugin {
 	
 	public synchronized List<String> getInstalledAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel){
 		if(cachedAggregateFunctions == null){
-			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel, getCaller()));
+			cachedAggregateFunctions = new ArrayList<String>(getExecutor().getRegisteredAggregateFunctions(datamodel.getName(), getCaller()));
 			Collections.sort(cachedAggregateFunctions);
 		}
 		return cachedAggregateFunctions;
