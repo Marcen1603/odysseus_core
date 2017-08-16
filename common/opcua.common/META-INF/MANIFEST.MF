@@ -102,3 +102,4 @@ Export-Package: com.google.common.annotations,
  org.apache.commons.logging.impl
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*.xml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
