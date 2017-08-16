@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * @author Christoph Schröer
  *
  */
+@SuppressWarnings("rawtypes")
 @Deprecated
 public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
 
@@ -48,6 +49,7 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 	/**
 	 * To detect, wether a model is changed.
 	 */
+	
 	private IAutoregressionForecaster oldModel;
 
 	/**
@@ -82,6 +84,7 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<ITimeInterval> object, int port) {
 

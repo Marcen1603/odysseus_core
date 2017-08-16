@@ -35,8 +35,10 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 			latencies.put(query, new ArrayList<Long>());
 			
 			//A new AdmissionSink is created here.
+			@SuppressWarnings("rawtypes")
 			AdmissionSink<?> admissionSink = new AdmissionSink();
 			admissionSink.setLatencyAdmissionMonitor(this);
+			@SuppressWarnings("rawtypes")
 			ISource source = null;
 			
 			//All last operators of the query plans are checked.
@@ -148,6 +150,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	 * @param query IPhysicalQuery
 	 * @return ISource
 	 */
+	@SuppressWarnings("rawtypes")
 	private ISource getPreviousSource(IPhysicalOperator operator, IPhysicalQuery query) {
 		for (IPhysicalOperator previous : query.getAllOperators()) {
 			if (previous.isSource()) {

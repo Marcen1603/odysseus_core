@@ -38,6 +38,7 @@ public class ModelVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<IT
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void process_next(Tuple<ITimeInterval> object, int port) {
 
