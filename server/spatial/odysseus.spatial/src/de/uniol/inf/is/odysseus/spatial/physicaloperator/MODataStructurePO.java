@@ -80,7 +80,13 @@ public class MODataStructurePO<T extends IStreamObject<? extends ITimeInterval>>
 					longitude = geometry.getCentroid().getY();
 				}
 
-				id = (String) objectAsTuple.getAttribute(this.idPosition);
+				Object idObject = objectAsTuple.getAttribute(this.idPosition);
+				if (idObject instanceof Long) {
+					id = String.valueOf((Long) idObject);
+				} else {
+					id = (String) objectAsTuple.getAttribute(this.idPosition);
+				}
+
 			}
 		}
 

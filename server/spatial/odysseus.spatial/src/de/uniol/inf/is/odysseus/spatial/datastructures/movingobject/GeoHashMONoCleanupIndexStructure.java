@@ -173,6 +173,45 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		return resultMap;
 	}
 
+	@Override
+	public Map<String, SpatioTemporalQueryResult> queryCircle(String movingObjectID, double radius) {
+		Map<String, SpatioTemporalQueryResult> results = new HashMap<>();
+
+		// Get the latest known location of the moving object to search the neighbors
+		// for
+		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(movingObjectID);
+		if (centerElement == null) {
+			return results;
+		}
+
+		GeodeticCalculator calculator = new GeodeticCalculator();
+		PointInTime measurementTime = centerElement.getMeasurementTime();
+
+		/*
+		 * For all other objects make a prediction for the time of the center object and
+		 * see, if they are close enough
+		 */
+		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
+			if (otherMovingObjectID.equals(movingObjectID)) {
+				continue;
+			}
+			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
+			calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
+			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
+			double distanceMeters = calculator.getOrthodromicDistance();
+			if (distanceMeters <= radius) {
+				// Add to result map
+				SpatioTemporalQueryResult queryResultElement = new SpatioTemporalQueryResult(distanceMeters,
+						new WGS84Point(centerElement.getLatitude(), centerElement.getLongitude()), otherLocation,
+						measurementTime);
+				results.put(otherMovingObjectID, queryResultElement);
+			}
+		}
+
+		return results;
+	}
+
+	@Override
 	public Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory(String movingObjectID, double radius) {
 		// TODO Maybe add start and end time for the query
 

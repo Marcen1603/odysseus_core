@@ -83,16 +83,31 @@ public interface IMovingObjectDataStructure {
 	 * @param t
 	 *            The time interval that the returned elements have to intersect
 	 * @param movingObjectIdToIgnore
-	 *            results with this id won't be included in the resultlist
+	 *            results with this id won't be included in the result list
 	 * @return All elements from the candidates that are in the given circle.
 	 */
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			String movingObjectIdToIgnore);
 
 	/**
-	 * A query on the whole trajectory of a moving object. Checks the distance to
-	 * every other moving object by interpolating the location of the other moving
-	 * objects at the points in time where we know the location of this object at.
+	 * A radius query on the latest known location of a moving object. For the other
+	 * objects, the location to that point in time is predicted.
+	 * 
+	 * @param movingObjectID
+	 *            The ID of the object we want to know the neighbors from
+	 * @param radius
+	 *            The radius around the moving object
+	 * @return A map with the other moving objects which are within the given
+	 *         radius. The map contains: ID of the other moving object -> Location
+	 *         where the other moving object probably is at that point in time
+	 */
+	public Map<String, SpatioTemporalQueryResult> queryCircle(String movingObjectID, double radius);
+
+	/**
+	 * A radius query on the whole trajectory of a moving object. Checks the
+	 * distance to every other moving object by interpolating the location of the
+	 * other moving objects at the points in time where we know the location of this
+	 * object at.
 	 * 
 	 * @param movingObjectID
 	 *            The ID of the object we want to know the neighbors from
