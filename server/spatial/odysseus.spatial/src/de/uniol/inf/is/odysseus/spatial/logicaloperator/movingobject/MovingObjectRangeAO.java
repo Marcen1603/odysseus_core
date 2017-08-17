@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MOVINGOBJECTRANGE", doc = "Puts out all objects in the given range around the given moving object in the given data structure.", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "MOVINGOBJECTRADIUS", doc = "Puts out all objects in the given range around the given moving object in the given data structure.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class MovingObjectRangeAO extends BinaryLogicalOp {
 
@@ -23,8 +23,7 @@ public class MovingObjectRangeAO extends BinaryLogicalOp {
 	
 	private String dataStructureName;
 	private String idAttribute;
-	private String geometryAttribute;
-	private double range;
+	private double radius;
 
 	public MovingObjectRangeAO() {
 		super();
@@ -33,9 +32,8 @@ public class MovingObjectRangeAO extends BinaryLogicalOp {
 	public MovingObjectRangeAO(MovingObjectRangeAO ao) {
 		super(ao);
 		this.dataStructureName = ao.getDataStructureName();
-		this.range = ao.getRange();
+		this.radius = ao.getRange();
 		this.idAttribute = ao.getIdAttribute();
-		this.geometryAttribute = ao.getGeometryAttribute();
 	}
 
 	@Override
@@ -53,30 +51,21 @@ public class MovingObjectRangeAO extends BinaryLogicalOp {
 	}
 
 	public double getRange() {
-		return range;
+		return radius;
 	}
 
-	@Parameter(name = "range", optional = false, type = IntegerParameter.class, isList = false, doc = "Range around the given spatial object in meters.")
-	public void setRange(double range) {
-		this.range = range;
+	@Parameter(name = "radius", optional = false, type = IntegerParameter.class, isList = false, doc = "Radius around the given spatial object in meters.")
+	public void setRange(double radius) {
+		this.radius = radius;
 	}
 
 	public String getIdAttribute() {
 		return idAttribute;
 	}
 
-	@Parameter(name = "idAttribute", optional = true, type = StringParameter.class, isList = false, doc = "Name of the attribute with the id of the object. Will exclude results with the own id from the results.")
+	@Parameter(name = "idAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the id of the center object.")
 	public void setIdAttribute(String idAttribute) {
 		this.idAttribute = idAttribute;
-	}
-
-	public String getGeometryAttribute() {
-		return geometryAttribute;
-	}
-
-	@Parameter(name = "geometryAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the geometry of the object.")
-	public void setGeometryAttribute(String geometryAttribute) {
-		this.geometryAttribute = geometryAttribute;
 	}
 	
 	@Override

@@ -16,27 +16,19 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MovingObjec
 public class MovingObjectRangePO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private IMovingObjectDataStructure dataStructure;
-	// private int geometryPosition;
 	private int idPosition;
-	private boolean idPositionSet = false;
 	private double range;
 
 	public MovingObjectRangePO(MovingObjectRangeAO ao) {
 		this.dataStructure = MovingObjectDataStructureProvider.getInstance()
 				.getDataStructure(ao.getDataStructureName());
-		// this.geometryPosition =
-		// ao.getInputSchema(0).findAttributeIndex(ao.getGeometryAttribute());
-		if (ao.getIdAttribute() != null && !ao.getIdAttribute().isEmpty()) {
-			this.idPosition = ao.getInputSchema(0).findAttributeIndex(ao.getIdAttribute());
-			this.idPositionSet = true;
-		}
+		this.idPosition = ao.getInputSchema(0).findAttributeIndex(ao.getIdAttribute());
 		this.range = ao.getRange();
 	}
 
 	@Override
 	public void processPunctuation(IPunctuation punctuation, int port) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -48,31 +40,16 @@ public class MovingObjectRangePO<T extends Tuple<? extends ITimeInterval>> exten
 	@Override
 	protected void process_next(T tuple, int port) {
 
-		// Get the geometry
-		// Object o = tuple.getAttribute(this.geometryPosition);
-		// Geometry geometry = null;
-
-		// if (o instanceof GeometryWrapper) {
-		// geometry = ((GeometryWrapper) o).getGeometry();
-		// }
-
 		// Get the id of the moving object (if it is used)
 		String movingObjectId = null;
-		if (this.idPositionSet) {
-			Object idObject = tuple.getAttribute(this.idPosition);
-			if (idObject instanceof Long) {
-				movingObjectId = String.valueOf((Long) idObject);
-			} else {
-				movingObjectId = tuple.getAttribute(this.idPosition);
-			}
+		Object idObject = tuple.getAttribute(this.idPosition);
+		if (idObject instanceof Long) {
+			movingObjectId = String.valueOf((Long) idObject);
+		} else {
+			movingObjectId = tuple.getAttribute(this.idPosition);
 		}
 
 		// Calculate the results
-		// Map<String, List<ResultElement>> resultMap =
-		// this.dataStructure.queryCircle(geometry, this.range,
-		// new TimeInterval(tuple.getMetadata().getStart(),
-		// tuple.getMetadata().getEnd()), movingObjectId);
-
 		Map<String, SpatioTemporalQueryResult> queryCircle = this.dataStructure.queryCircle(movingObjectId, this.range);
 
 		// Send the result, but only if there are neighbors
@@ -83,5 +60,4 @@ public class MovingObjectRangePO<T extends Tuple<? extends ITimeInterval>> exten
 			transfer((T) newTuple);
 		}
 	}
-
 }
