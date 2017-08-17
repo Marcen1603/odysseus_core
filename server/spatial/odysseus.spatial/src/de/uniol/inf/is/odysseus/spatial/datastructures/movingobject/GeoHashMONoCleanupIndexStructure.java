@@ -213,7 +213,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 
 	@Override
 	public Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory(String movingObjectID, double radius) {
-		// TODO Maybe add start and end time for the query
+		// TODO Maybe add start and end time for the query?
 
 		Map<String, List<SpatioTemporalQueryResult>> results = new HashMap<>();
 
@@ -226,28 +226,33 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		GeodeticCalculator calculator = new GeodeticCalculator();
 
 		// For each trajectory element, make a whole circle query
-		PointInTime measurementTime = centerElement.getMeasurementTime();
-		for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
-			if (otherMovingObjectID.equals(movingObjectID)) {
-				// The own trajectory doesn't count, we will be close to ourself
-				continue;
-			}
-			WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
-			calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
-			calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
-			double distanceMeters = calculator.getOrthodromicDistance();
-			if (distanceMeters <= radius) {
-				// Add to result map
-				SpatioTemporalQueryResult queryResultElement = new SpatioTemporalQueryResult(distanceMeters,
-						new WGS84Point(centerElement.getLatitude(), centerElement.getLongitude()), otherLocation,
-						measurementTime);
-				if (!results.containsKey(otherMovingObjectID)) {
-					List<SpatioTemporalQueryResult> resultsForOneMovingObject = new ArrayList<>();
-					results.put(otherMovingObjectID, resultsForOneMovingObject);
+		do {
+			PointInTime measurementTime = centerElement.getMeasurementTime();
+			for (String otherMovingObjectID : this.latestTrajectoryElementMap.keySet()) {
+				if (otherMovingObjectID.equals(movingObjectID)) {
+					// The own trajectory doesn't count, we will be close to ourself
+					continue;
 				}
-				results.get(otherMovingObjectID).add(queryResultElement);
+				WGS84Point otherLocation = this.predictLocation(otherMovingObjectID, measurementTime);
+				calculator.setStartingGeographicPoint(centerElement.getLongitude(), centerElement.getLatitude());
+				calculator.setDestinationGeographicPoint(otherLocation.getLongitude(), otherLocation.getLatitude());
+				double distanceMeters = calculator.getOrthodromicDistance();
+				if (distanceMeters <= radius) {
+					// Add to result map
+					SpatioTemporalQueryResult queryResultElement = new SpatioTemporalQueryResult(distanceMeters,
+							new WGS84Point(centerElement.getLatitude(), centerElement.getLongitude()), otherLocation,
+							measurementTime);
+					if (!results.containsKey(otherMovingObjectID)) {
+						List<SpatioTemporalQueryResult> resultsForOneMovingObject = new ArrayList<>();
+						results.put(otherMovingObjectID, resultsForOneMovingObject);
+					}
+					results.get(otherMovingObjectID).add(queryResultElement);
+				}
 			}
-		}
+			
+			// Go on with the previous / older element we know
+			centerElement = centerElement.getPreviousElement();
+		} while (centerElement != null);
 
 		return results;
 	}
