@@ -59,6 +59,8 @@ abstract public class AbstractTransportHandler implements ITransportHandler {
 		if (optionsMap.containsKey(CHARSET)) {
 			String charsetString = optionsMap.get(CHARSET);
 			setCharset(charsetString);
+		}else {
+			setCharset("UTF-8");
 		}
 	}
 
