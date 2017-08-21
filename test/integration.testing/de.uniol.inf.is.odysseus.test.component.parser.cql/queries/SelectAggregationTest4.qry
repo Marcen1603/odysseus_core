@@ -1,0 +1,3 @@
+#PARSER CQL
+#RUNQUERY
+SELECT COUNT(*) AS count FROM bid;

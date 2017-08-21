@@ -730,6 +730,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		return newRoots;
 	}
 
+	@SuppressWarnings("unused")
 	@Deprecated
 	private List<ISource<?>> replaceMDUWithBuffers(List<ISource<?>> metaDataUpdates) {
 		List<ISource<?>> replace = new ArrayList<ISource<?>>();

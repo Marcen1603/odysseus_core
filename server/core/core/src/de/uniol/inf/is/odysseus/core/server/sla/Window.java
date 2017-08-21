@@ -95,7 +95,7 @@ public class Window {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("fallthrough")
+	//@SuppressWarnings("fallthrough")
     public long lengthToMilliseconds() {
 		long tempLength = this.length;
 		switch (this.unit) {

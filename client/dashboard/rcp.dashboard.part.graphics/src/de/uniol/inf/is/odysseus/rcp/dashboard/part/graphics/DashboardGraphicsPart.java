@@ -89,6 +89,7 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.GraphicsLayer;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.model.ImagePictogram;
 import de.uniol.inf.is.odysseus.rcp.dashboard.part.graphics.part.GraphicalEditPartFactory;
 
+@SuppressWarnings("deprecation")
 public class DashboardGraphicsPart extends AbstractDashboardPart implements
 		CommandStackListener, ISelectionListener, Observer {
 

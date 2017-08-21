@@ -260,7 +260,7 @@ public class TSenderAOGenericRule extends AbstractTransformationRule<AbstractSen
 	 *            The logical operator
 	 * @return A new {@link SenderPO} implementation
 	 */
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
 	protected SenderPO<?> getSenderPO(IProtocolHandler<?> protocolHandler,
 			AbstractSenderAO senderAO) {
 		return new SenderPO<>(protocolHandler);

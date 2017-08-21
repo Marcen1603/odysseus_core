@@ -79,7 +79,7 @@ public class FerryBoxProtocolHandler extends LineProtocolHandler<KeyValueObject<
 	@Override
 	public void process(long callerId, final ByteBuffer message)
 	{
-		String asString = new String(message.array(), 0, message.limit(), charset);
+		String asString = new String(message.array(), 0, message.limit(), getCharset());
 
 		String[] lines = asString.split("\n");
 		for (String line : lines)

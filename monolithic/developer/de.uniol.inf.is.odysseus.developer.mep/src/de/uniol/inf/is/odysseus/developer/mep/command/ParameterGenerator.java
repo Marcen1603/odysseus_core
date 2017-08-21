@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.BitVector;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -62,7 +62,7 @@ public final class ParameterGenerator {
 	 *            The function to generate parameter values for
 	 * @return An array with generated parameter values
 	 */
-	public static Object[][] getFunctionValues(final IFunction<?> function) {
+	public static Object[][] getFunctionValues(final IMepFunction<?> function) {
 		if (function.getArity() == 0) {
 			final Object[][] values = new Object[TEST_CASES][];
 			Arrays.fill(values, new Object[] {});

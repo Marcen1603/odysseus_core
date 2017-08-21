@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DeviceClass;
@@ -50,8 +48,7 @@ public class BluetoothTransportHandler extends AbstractPushTransportHandler impl
 
     /** Logger */
     private final Logger LOG = LoggerFactory.getLogger(BluetoothTransportHandler.class);
-    private static Charset charset = Charset.forName("UTF-8");
-    private static CharsetEncoder encoder = BluetoothTransportHandler.charset.newEncoder();
+
 
     /** Init parameter. */
     public static final String SERVICE = "SERVICE";
@@ -142,7 +139,7 @@ public class BluetoothTransportHandler extends AbstractPushTransportHandler impl
         sb.append(cod.getServiceClasses()).append(",");
         sb.append(this.getNormelizedRSSI(btDevice)).append("\n");
         try {
-            final ByteBuffer charBuffer = BluetoothTransportHandler.encoder.encode(CharBuffer.wrap(sb));
+            final ByteBuffer charBuffer = getEncoder().encode(CharBuffer.wrap(sb));
             final ByteBuffer buffer = ByteBuffer.allocate(charBuffer.capacity() + 4);
             buffer.putInt(charBuffer.capacity());
             buffer.put(charBuffer);

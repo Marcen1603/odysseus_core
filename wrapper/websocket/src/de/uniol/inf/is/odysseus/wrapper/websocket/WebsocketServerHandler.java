@@ -6,9 +6,6 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
 import org.java_websocket.WebSocket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractTransportHandler;
@@ -16,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 
 public class WebsocketServerHandler extends AbstractTransportHandler {
 
-	private static final Logger LOG = LoggerFactory.getLogger(WebsocketServerHandler.class);
+	//private static final Logger LOG = LoggerFactory.getLogger(WebsocketServerHandler.class);
 	private static final String PORT = "port";
 	private int port;
 	private WebsocketServer server = null;

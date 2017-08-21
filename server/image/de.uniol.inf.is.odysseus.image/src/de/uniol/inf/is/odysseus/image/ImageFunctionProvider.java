@@ -21,7 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.image.functions.CountFacesFunction;
 import de.uniol.inf.is.odysseus.image.functions.FillImageFunction;
 import de.uniol.inf.is.odysseus.image.functions.GetImageFunction;
@@ -47,9 +47,9 @@ public class ImageFunctionProvider implements IFunctionProvider {
     }
 
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+        final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
         functions.add(new RotateImageFunction());
         functions.add(new SubImageFunction());
         functions.add(new ResizeImageFunction());

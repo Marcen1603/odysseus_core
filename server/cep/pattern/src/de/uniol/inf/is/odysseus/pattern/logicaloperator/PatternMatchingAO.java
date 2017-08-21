@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -239,7 +239,7 @@ public class PatternMatchingAO extends AbstractLogicalOperator {
 				// TODO: Maybe here should an attribute resolver be used?
 				
 				SDFAttribute attr = null;
-				IExpression<?> mepExpression = expr.expression
+				IMepExpression<?> mepExpression = expr.expression
 						.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;

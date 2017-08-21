@@ -48,7 +48,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalParameterInformation;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -74,7 +74,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 
-			@SuppressWarnings("nls")
+			//@SuppressWarnings("nls")
 			@Override
 			public void run() {
 				final Shell shell;
@@ -121,7 +121,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		return null;
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	static void build(final StringBuilder builder) {
 		builder.append("<!DOCTYPE html>\n");
 		builder.append("<html xmlns='http://www.w3.org/1999/xhtml'>\n\n");
@@ -177,7 +177,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</html>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildDatatypes(final StringBuilder builder) {
 		builder.append("<div class='row'>");
 		builder.append("<h2>Datatypes</h2>\n");
@@ -202,7 +202,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildMetadatas(final StringBuilder builder) {
 		builder.append("<div class='row'>");
 		builder.append("<h2>Metadata</h2>\n");
@@ -219,7 +219,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildScheduling(final StringBuilder builder) {
 		builder.append("<div class='row'>");
 		builder.append("<h2>Scheduling</h2>\n");
@@ -228,7 +228,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildSchedulers(final StringBuilder builder) {
 		builder.append("<h3>Schedulers</h3>\n");
 		builder.append("<ul class='list-inline'>\n");
@@ -244,7 +244,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</ul>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildSchedulingStrategies(final StringBuilder builder) {
 		builder.append("<h3>Scheduling Strategies</h3>\n");
 		builder.append("<ul class='list-inline'>\n");
@@ -260,7 +260,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</ul>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildBufferPlacementStrategies(final StringBuilder builder) {
 		builder.append("<div class='row'>");
 		builder.append("<h2>Buffer Placement Strategies</h2>\n");
@@ -279,7 +279,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildPQLOperators(final StringBuilder builder) {
 		if (Activator.getExecutor() != null) {
 			final List<LogicalOperatorInformation> operators = Activator.getExecutor()
@@ -354,7 +354,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		}
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildAggregationFunctions(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Aggregates</h2>\n");
@@ -381,7 +381,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildMEPFunctions(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Functions</h2>\n");
@@ -395,11 +395,11 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 
 		});
 
-		final List<IFunction<?>> symbols = new ArrayList<>();
-		final Map<String, List<IFunction<?>>> functions = new HashMap<>();
+		final List<IMepFunction<?>> symbols = new ArrayList<>();
+		final Map<String, List<IMepFunction<?>>> functions = new HashMap<>();
 
 		for (final FunctionSignature functionSignature : functionSignatures) {
-			final IFunction<?> function = MEP.getFunction(functionSignature);
+			final IMepFunction<?> function = MEP.getFunction(functionSignature);
 			if (function.getSymbol().charAt(0) >= 'A' && function.getSymbol().charAt(0) <= 'Z'
 					|| function.getSymbol().charAt(0) >= 'a' && function.getSymbol().charAt(0) <= 'z') {
 				String packageName = function.getClass().getPackage().getName();
@@ -407,7 +407,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 				packageName = packageName.substring(index + 1, index + 2).toUpperCase()
 						+ packageName.substring(index + 2);
 				if (!functions.containsKey(packageName)) {
-					functions.put(packageName, new ArrayList<IFunction<?>>());
+					functions.put(packageName, new ArrayList<IMepFunction<?>>());
 				}
 				functions.get(packageName).add(function);
 			} else {
@@ -421,14 +421,14 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		for (final String packageName : packages) {
 			builder.append("<h3>").append(packageName).append("</h3>\n");
 			String len = "";
-			for (final IFunction<?> function : functions.get(packageName)) {
+			for (final IMepFunction<?> function : functions.get(packageName)) {
 				if (function.getSymbol().length() > len.length()) {
 					len = GenerateHTMLCheatSheetCommand.sanitize(function.getSymbol());
 				}
 			}
 			builder.append("<table class='table table-striped'>\n");
 			builder.append("<tbody>\n");
-			for (final IFunction<?> function : functions.get(packageName)) {
+			for (final IMepFunction<?> function : functions.get(packageName)) {
 				final String name = function.getSymbol();
 				final String returnType = function.getReturnType().getQualName();
 				final StringBuilder sb = new StringBuilder();
@@ -459,7 +459,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("<h2>Symbols</h2>\n");
 		builder.append("<table class='table table-striped'>\n");
 		builder.append("<tbody>\n");
-		for (final IFunction<?> symbol : symbols) {
+		for (final IMepFunction<?> symbol : symbols) {
 			final String name = symbol.getSymbol();
 			final String returnType = symbol.getReturnType().getQualName();
 			final StringBuilder sb = new StringBuilder();
@@ -479,7 +479,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildHandlers(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Handlers</h2>\n");
@@ -489,7 +489,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildDataHandlers(final StringBuilder builder) {
 		builder.append("<h3>Data Handlers</h3>\n");
 		final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
@@ -501,7 +501,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</ul>\n\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildProtocolHandlers(final StringBuilder builder) {
 		builder.append("<h3>Protocol Handlers</h3>\n");
 		final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
@@ -514,7 +514,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</ul>\n\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildTransportHandlers(final StringBuilder builder) {
 		builder.append("<h3>Transport Handlers</h3>\n");
 		final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
@@ -527,7 +527,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</ul>\n\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildOdysseusScript(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Odysseus Script</h2>\n");
@@ -557,7 +557,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildSample(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Sample Odysseus query</h2>\n");
@@ -578,7 +578,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static void buildPQLGrammar(final StringBuilder builder) {
 		builder.append("<div class='row'>\n");
 		builder.append("<h2>Full Grammar of PQL</h2>\n");
@@ -624,7 +624,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		builder.append("</div>\n");
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static String sanitize(final String string) {
 		String result = string;
 		result = result.replace("&", "&amp;");
@@ -643,7 +643,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 		return result;
 	}
 
-	@SuppressWarnings("nls")
+	//@SuppressWarnings("nls")
 	private static String concatDatatypes(final SDFDatatype[] types) {
 		if (types == null || types.length == 0) {
 			return "";

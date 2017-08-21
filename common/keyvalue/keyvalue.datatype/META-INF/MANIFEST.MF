@@ -18,5 +18,4 @@ Export-Package: de.uniol.inf.is.odysseus.keyvalue.datatype;
    de.uniol.inf.is.odysseus.core.metadata,
    de.uniol.inf.is.odysseus.core.datatype,
    de.uniol.inf.is.odysseus.core.collection",
- de.uniol.inf.is.odysseus.keyvalue.mergefunction;uses:="de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.physicaloperator,de.uniol.inf.is.odysseus.core.metadata",
- de.uniol.inf.is.odysseus.keyvalue.predicate;uses:="de.uniol.inf.is.odysseus.core.sdf.schema,de.uniol.inf.is.odysseus.keyvalue.datatype,de.uniol.inf.is.odysseus.core.predicate"
+ de.uniol.inf.is.odysseus.keyvalue.mergefunction;uses:="de.uniol.inf.is.odysseus.core,de.uniol.inf.is.odysseus.core.physicaloperator,de.uniol.inf.is.odysseus.core.metadata"

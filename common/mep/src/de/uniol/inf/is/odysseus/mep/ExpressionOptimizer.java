@@ -24,11 +24,11 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
@@ -40,9 +40,9 @@ import de.uniol.inf.is.odysseus.mep.intern.Constant;
  */
 public class ExpressionOptimizer {
 
-	public static IExpression<?> simplifyExpression(IExpression<?> expression) {
+	public static IMepExpression<?> simplifyExpression(IMepExpression<?> expression) {
 		PreCalculateConstants simplificator = new PreCalculateConstants();
-		expression = (IExpression<?>) expression.acceptVisitor(simplificator,
+		expression = (IMepExpression<?>) expression.acceptVisitor(simplificator,
 				null);
 		CombineConstants constants = new CombineConstants();
 		expression.acceptVisitor(constants, null);
@@ -68,11 +68,11 @@ public class ExpressionOptimizer {
             }
         });
         if (isAndOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                IMepExpression<?> curExpression = expressionStack.pop();
                 if (isAndOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -106,11 +106,11 @@ public class ExpressionOptimizer {
             }
         });
         if (isOrOperator(expression.getMEPExpression())) {
-            Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+            Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
             expressionStack.push(expression.getMEPExpression());
 
             while (!expressionStack.isEmpty()) {
-                IExpression<?> curExpression = expressionStack.pop();
+                IMepExpression<?> curExpression = expressionStack.pop();
                 if (isOrOperator(curExpression)) {
                     expressionStack.push(curExpression.toFunction().getArgument(0));
                     expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -136,7 +136,7 @@ public class ExpressionOptimizer {
      *            The expression
      * @return <code>true</code> if the given expression is an AND operator
      */
-    public static boolean isAndOperator(final IExpression<?> expression) {
+    public static boolean isAndOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("&&")));
     }
 
@@ -149,7 +149,7 @@ public class ExpressionOptimizer {
      *            The expression
      * @return <code>true</code> if the given expression is an OR operator
      */
-    public static boolean isOrOperator(final IExpression<?> expression) {
+    public static boolean isOrOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("||")));
     }
 
@@ -162,51 +162,51 @@ public class ExpressionOptimizer {
      *            The expression
      * @return <code>true</code> if the given expression is an NOT operator
      */
-    public static boolean isNotOperator(final IExpression<?> expression) {
+    public static boolean isNotOperator(final IMepExpression<?> expression) {
         return ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("!")));
     }
     
 	/**
 	 * combines all constants in a nested call of the same (commutative and associative) operator to a single constant.
 	 */
-	private static class CombineConstants implements IExpressionVisitor {
+	private static class CombineConstants implements IMepExpressionVisitor {
 
 		@Override
-		public Object visit(IVariable variable, Object data) {
+		public Object visit(IMepVariable variable, Object data) {
 			return null;
 		}
 
 		@Override
-		public Object visit(IConstant<?> constant, Object data) {
+		public Object visit(IMepConstant<?> constant, Object data) {
 			return null;
 		}
 
 		@Override
-		public Object visit(IFunction<?> function, Object data) {
+		public Object visit(IMepFunction<?> function, Object data) {
 			if (function instanceof IBinaryOperator) {
 				IBinaryOperator<?> op = (IBinaryOperator<?>) function;
 				if (op.isAssociative() && op.isCommutative()) {
-					List<IExpression<?>> expressions = collectExpressions((IBinaryOperator<?>) function);
-					Iterator<IExpression<?>> it = expressions.iterator();
-					List<IExpression<?>> constants = new LinkedList<IExpression<?>>();
+					List<IMepExpression<?>> expressions = collectExpressions((IBinaryOperator<?>) function);
+					Iterator<IMepExpression<?>> it = expressions.iterator();
+					List<IMepExpression<?>> constants = new LinkedList<IMepExpression<?>>();
 					while (it.hasNext()) {
-						IExpression<?> curExpression = it.next();
+						IMepExpression<?> curExpression = it.next();
 						if (curExpression.isConstant()) {
 							constants.add(curExpression);
 							it.remove();
 						}
 					}
 					if (!constants.isEmpty()) {
-						IConstant<?> c = calculateConstant(function.getClass(),
+						IMepConstant<?> c = calculateConstant(function.getClass(),
 								constants);
 						function.setArgument(0, c);
 
-						Iterator<IExpression<?>> exprIt = expressions
+						Iterator<IMepExpression<?>> exprIt = expressions
 								.iterator();
-						IFunction<?> curFunction = function;
+						IMepFunction<?> curFunction = function;
 						for (int i = 0; i < expressions.size() - 1; ++i) {
 							try {
-								IFunction<?> newFunc = createFunction(function
+								IMepFunction<?> newFunc = createFunction(function
 										.getClass());
 								curFunction.setArgument(1, newFunc);
 								newFunc.setArgument(0, exprIt.next());
@@ -217,29 +217,29 @@ public class ExpressionOptimizer {
 						}
 						curFunction.setArgument(1, exprIt.next());
 
-						for (IExpression<?> curExpression : expressions) {
+						for (IMepExpression<?> curExpression : expressions) {
 							curExpression.acceptVisitor(this, null);
 						}
 					}
 				}
 			} else {
-				for (IExpression<?> curArgument : function.getArguments()) {
+				for (IMepExpression<?> curArgument : function.getArguments()) {
 					curArgument.acceptVisitor(this, null);
 				}
 			}
 			return null;
 		}
 
-		private static IConstant<?> calculateConstant(
-				@SuppressWarnings("rawtypes") Class<? extends IFunction> class1,
-				List<IExpression<?>> constants) {
+		private static IMepConstant<?> calculateConstant(
+				@SuppressWarnings("rawtypes") Class<? extends IMepFunction> class1,
+				List<IMepExpression<?>> constants) {
 			if (constants.size() == 1) {
 				return constants.get(0).toConstant();
 			}
 			try {
-				final IFunction<?> function = createFunction(class1);
-				Iterator<IExpression<?>> i = constants.iterator();
-				IConstant<?> c = i.next().toConstant();
+				final IMepFunction<?> function = createFunction(class1);
+				Iterator<IMepExpression<?>> i = constants.iterator();
+				IMepConstant<?> c = i.next().toConstant();
 				function.setArgument(0, c);
 				while (i.hasNext()) {
 					function.setArgument(1, i.next());
@@ -253,26 +253,26 @@ public class ExpressionOptimizer {
 			}
 		}
 
-		private static IFunction<?> createFunction(
-				@SuppressWarnings("rawtypes") Class<? extends IFunction> class1) {
+		private static IMepFunction<?> createFunction(
+				@SuppressWarnings("rawtypes") Class<? extends IMepFunction> class1) {
 			try {
-				IFunction<?> function = class1.newInstance();
-				function.setArguments(new IExpression[function.getArity()]);
+				IMepFunction<?> function = class1.newInstance();
+				function.setArguments(new IMepExpression[function.getArity()]);
 				return function;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		private static List<IExpression<?>> collectExpressions(
+		private static List<IMepExpression<?>> collectExpressions(
 				IBinaryOperator<?> function) {
-			List<IExpression<?>> list = new LinkedList<IExpression<?>>();
-			Stack<IExpression<?>> expressions = new Stack<IExpression<?>>();
+			List<IMepExpression<?>> list = new LinkedList<IMepExpression<?>>();
+			Stack<IMepExpression<?>> expressions = new Stack<IMepExpression<?>>();
 			expressions.push(function);
 			do {
-				IExpression<?> curExpression = expressions.pop();
+				IMepExpression<?> curExpression = expressions.pop();
 				if (curExpression.getClass() == function.getClass()) {
-					for (IExpression<?> expr : curExpression.toFunction()
+					for (IMepExpression<?> expr : curExpression.toFunction()
 							.getArguments()) {
 						expressions.push(expr);
 					}
@@ -289,24 +289,24 @@ public class ExpressionOptimizer {
 	/**
 	 * pre calculate constant expressions
 	 */
-	private static class PreCalculateConstants implements IExpressionVisitor {
+	private static class PreCalculateConstants implements IMepExpressionVisitor {
 
 		@Override
-		public IVariable visit(IVariable variable, Object data) {
+		public IMepVariable visit(IMepVariable variable, Object data) {
 			return variable;
 		}
 
 		@Override
-		public IConstant<?> visit(IConstant<?> constant, Object data) {
+		public IMepConstant<?> visit(IMepConstant<?> constant, Object data) {
 			return constant;
 		}
 
 		@Override
-		public IExpression<?> visit(IFunction<?> function, Object data) {
+		public IMepExpression<?> visit(IMepFunction<?> function, Object data) {
 			boolean isAllInputsConstant = true;
 			for (int i = 0; i < function.getArity(); ++i) {
-				IExpression<?> iExpression = function.getArguments()[i];
-				function.getArguments()[i] = (IExpression<?>) iExpression
+				IMepExpression<?> iExpression = function.getArguments()[i];
+				function.getArguments()[i] = (IMepExpression<?>) iExpression
 						.acceptVisitor(this, data);
 				if (!(function.getArguments()[i].isConstant())) {
 					isAllInputsConstant = false;
@@ -328,7 +328,7 @@ public class ExpressionOptimizer {
             return function;
 		}
 
-		private static boolean isConstantPredicate(IExpression<?>[] iExpression, Boolean value) {
+		private static boolean isConstantPredicate(IMepExpression<?>[] iExpression, Boolean value) {
 			return iExpression[0] instanceof Constant && iExpression[0].getValue() != null
 					&& iExpression[0].getValue().equals(value)
 					|| iExpression[1] instanceof Constant && iExpression[1].getValue() != null

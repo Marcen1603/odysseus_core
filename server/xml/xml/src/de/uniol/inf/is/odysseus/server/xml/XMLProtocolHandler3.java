@@ -2,26 +2,17 @@ package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
@@ -36,23 +27,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern; 
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 
 /**
@@ -160,6 +147,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		return parseXml(input);
 	}
 
+	@SuppressWarnings("unused")
 	private List<String> getXPaths()
 	{
 		return Collections.unmodifiableList(this.xpaths);
@@ -240,6 +228,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	private InputStream DocumentToInputStream(Document doc)
 	{
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -271,7 +260,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 	@Override
 	public void process(long callerId, ByteBuffer message)
 	{
-		String msg = new String(message.array(), Charset.forName("UTF-8"));
+		//String msg = new String(message.array(), Charset.forName("UTF-8"));
 		//System.out.println(msg);
 
 		try
@@ -283,6 +272,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void setXPaths(final List<String> xpaths)
 	{
 		this.xpaths.clear();

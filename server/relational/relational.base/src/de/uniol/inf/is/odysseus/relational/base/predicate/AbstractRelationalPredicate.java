@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.AndPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -178,9 +178,9 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 				return true;
 			}
 
-			if (this.expression.getMEPExpression() instanceof IFunction) {
-				IFunction thisFunction = (IFunction) expression.getMEPExpression();
-				IExpression otherExpression =  ((AbstractRelationalPredicate<T>) pred).expression.getMEPExpression();
+			if (this.expression.getMEPExpression() instanceof IMepFunction) {
+				IMepFunction thisFunction = (IMepFunction) expression.getMEPExpression();
+				IMepExpression otherExpression =  ((AbstractRelationalPredicate<T>) pred).expression.getMEPExpression();
 
 				if (thisFunction.cnfEquals(otherExpression)) {
 					return true;
@@ -233,11 +233,11 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	public List<IPredicate> splitPredicate() {
 		final List<IPredicate> result = new LinkedList<IPredicate>();
 		if (this.isAndPredicate()) {
-			final Stack<IExpression<?>> expressionStack = new Stack<IExpression<?>>();
+			final Stack<IMepExpression<?>> expressionStack = new Stack<IMepExpression<?>>();
 			expressionStack.push(this.expression.getMEPExpression());
 
 			while (!expressionStack.isEmpty()) {
-				final IExpression<?> curExpression = expressionStack.pop();
+				final IMepExpression<?> curExpression = expressionStack.pop();
 				if (this.isAndExpression(curExpression)) {
 					expressionStack.push(curExpression.toFunction().getArgument(0));
 					expressionStack.push(curExpression.toFunction().getArgument(1));
@@ -266,7 +266,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	public boolean isEquiPredicate() {
 		Objects.requireNonNull(this.getExpression());
 		Objects.requireNonNull(this.getExpression().getMEPExpression());
-		final IExpression<?> expression = this.getExpression().getMEPExpression();
+		final IMepExpression<?> expression = this.getExpression().getMEPExpression();
 		return isEquiExpression(expression);
 	}
 
@@ -280,7 +280,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	public Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IAttributeResolver resolver) {
 		Objects.requireNonNull(this.getExpression());
 		Objects.requireNonNull(this.getExpression().getMEPExpression());
-		final IExpression<?> expression = this.getExpression().getMEPExpression();
+		final IMepExpression<?> expression = this.getExpression().getMEPExpression();
 		return getEquiExpressionAtributes(expression, resolver);
 	}
 
@@ -293,7 +293,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	 *            The attribute resolver
 	 * @return The map of attributes
 	 */
-	private Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IExpression<?> expression,
+	private Map<SDFAttribute, List<SDFAttribute>> getEquiExpressionAtributes(final IMepExpression<?> expression,
 			final IAttributeResolver resolver) {
 		Objects.requireNonNull(expression);
 		Objects.requireNonNull(resolver);
@@ -318,14 +318,14 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 		}
 		if ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("=="))) {
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
-			final IExpression<?> arg1 = eq.getArgument(0);
-			final IExpression<?> arg2 = eq.getArgument(1);
-			if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
-				final SDFAttribute key = resolver.getAttribute(((IVariable) arg1).getIdentifier());
+			final IMepExpression<?> arg1 = eq.getArgument(0);
+			final IMepExpression<?> arg2 = eq.getArgument(1);
+			if ((arg1 instanceof IMepVariable) && (arg2 instanceof IMepVariable)) {
+				final SDFAttribute key = resolver.getAttribute(((IMepVariable) arg1).getIdentifier());
 				if (!attributes.containsKey(key)) {
 					attributes.put(key, new ArrayList<SDFAttribute>());
 				}
-				attributes.get(key).add(resolver.getAttribute(((IVariable) arg2).getIdentifier()));
+				attributes.get(key).add(resolver.getAttribute(((IMepVariable) arg2).getIdentifier()));
 			}
 		}
 		return attributes;
@@ -340,7 +340,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 	 *            The expression
 	 * @return <code>true</code> iff the expression is of the given form
 	 */
-	private boolean isEquiExpression(final IExpression<?> expression) {
+	private boolean isEquiExpression(final IMepExpression<?> expression) {
 		Objects.requireNonNull(expression);
 		if (expression instanceof AndOperator) {
 			return isEquiExpression(((AndOperator) expression).getArgument(0))
@@ -349,9 +349,9 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 		}
 		if ((expression.isFunction()) && (expression.toFunction().getSymbol().equalsIgnoreCase("=="))) {
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
-			final IExpression<?> arg1 = eq.getArgument(0);
-			final IExpression<?> arg2 = eq.getArgument(1);
-			if ((arg1 instanceof IVariable) && (arg2 instanceof IVariable)) {
+			final IMepExpression<?> arg1 = eq.getArgument(0);
+			final IMepExpression<?> arg2 = eq.getArgument(1);
+			if ((arg1 instanceof IMepVariable) && (arg2 instanceof IMepVariable)) {
 				return true;
 			}
 		}
@@ -374,7 +374,7 @@ public abstract class AbstractRelationalPredicate<T extends Tuple<?>> extends Ab
 		return this.expression.toString();
 	}
 
-	protected boolean isAndExpression(IExpression<?> expression) {
+	protected boolean isAndExpression(IMepExpression<?> expression) {
 		return expression.isFunction() && expression.toFunction().getSymbol().equalsIgnoreCase("&&");
 	}
 

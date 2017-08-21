@@ -33,8 +33,8 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putPredicateBuilder(PRIORITY_PREDICATE,
-				new PriorityPredicateBuilder());
+		OperatorBuilderFactory.putExpressionBuilder(PRIORITY_PREDICATE,
+				new PriorityPredicateBuilder<>());
 	}
 
 	/*
@@ -45,7 +45,7 @@ public class Activator implements BundleActivator {
 	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removePredicateBuilder(PRIORITY_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(PRIORITY_PREDICATE);
 	}
 
 }

@@ -30,6 +30,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	private Map<IPhysicalQuery, List<Long>> latencies = new HashMap<IPhysicalQuery, List<Long>>();
 	
 	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addQuery(IPhysicalQuery query) {
 		if (!latencies.containsKey(query)) {
 			latencies.put(query, new ArrayList<Long>());
@@ -148,6 +149,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 	 * @param query IPhysicalQuery
 	 * @return ISource
 	 */
+	@SuppressWarnings("rawtypes")
 	private ISource getPreviousSource(IPhysicalOperator operator, IPhysicalQuery query) {
 		for (IPhysicalOperator previous : query.getAllOperators()) {
 			if (previous.isSource()) {

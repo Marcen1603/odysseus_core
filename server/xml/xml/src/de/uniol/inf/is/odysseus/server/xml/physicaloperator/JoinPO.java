@@ -18,14 +18,10 @@ package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IDataMergeFunction;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
-import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
@@ -38,9 +34,9 @@ import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicate;
 public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> implements IHasPredicate
 {
 
-	private XMLStreamObjectPredicate<XMLStreamObject> predicate;
-	private List<XMLStreamObject> cache = new ArrayList<>();
-	private List<XMLStreamObject> buffer = new ArrayList<>();
+	private XMLStreamObjectPredicate<XMLStreamObject<T>> predicate;
+	private List<XMLStreamObject<T>> cache = new ArrayList<>();
+	private List<XMLStreamObject<T>> buffer = new ArrayList<>();
 	private String target;
 
 	private int minSize = 0;
@@ -50,10 +46,10 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 		this.minSize = minimalSize;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public JoinPO(IPredicate predicate, int minimumSize, String _target)
 	{
-		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject>) predicate;
+		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) predicate;
 		this.minSize = minimumSize;
 		this.target = _target;
 	}
@@ -65,7 +61,7 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 	{
 		super(po);
 		this.minSize = po.minSize;
-		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject>) po.predicate.clone();
+		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) po.predicate.clone();
 	}
 
 	@Override
@@ -101,7 +97,7 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 			{
 				synchronized (this.buffer)
 				{
-					for (XMLStreamObject buffered : this.buffer)
+					for (XMLStreamObject<T> buffered : this.buffer)
 					{
 						processJoin(buffered);
 					}
@@ -127,15 +123,16 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 
 	}
 
-	private void processJoin(XMLStreamObject object)
+	@SuppressWarnings("unchecked")
+	private void processJoin(XMLStreamObject<T> object)
 	{
 		synchronized (cache)
 		{
-			for (XMLStreamObject cached : this.cache)
+			for (XMLStreamObject<T> cached : this.cache)
 			{
 				if (this.predicate.evaluate(cached, object))
 				{
-					XMLStreamObject enriched = XMLStreamObject.merge(object, cached, this.target);
+					XMLStreamObject<T> enriched = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, this.target);
 					transfer(enriched);
 				}
 			}

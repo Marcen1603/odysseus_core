@@ -10,13 +10,13 @@ public class CQLFileExecutor implements IFileExecutor {
 
 	@Override
 	public String getFileExtension() {
-		return "cql";
+		return "cql1";
 	}
 
 	@Override
 	public void run(String text, Context context) {
 		IExecutor executor = OdysseusRCPEditorTextPlugIn.getExecutor();
-        executor.addQuery(text, "CQL", OdysseusRCPPlugIn.getActiveSession(),context);
+        executor.addQuery(text, getFileExtension(), OdysseusRCPPlugIn.getActiveSession(),context);
 	}
 
 }

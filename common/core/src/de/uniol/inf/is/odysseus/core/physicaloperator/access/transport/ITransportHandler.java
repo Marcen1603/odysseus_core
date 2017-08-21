@@ -89,6 +89,13 @@ public interface ITransportHandler {
      * @throws IOException
      */
     void send(byte[] message) throws IOException;
+    
+    /**
+     * This message is used, when the transport handler works as sender
+     * @param message
+     * @throws IOException
+     */
+    void send(String message, boolean addNewline) throws IOException;
 
     /**
      * This message is used, when the transport handler works as sender

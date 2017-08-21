@@ -15,9 +15,9 @@
   */
 package de.uniol.inf.is.odysseus.mep;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 
-public interface IOperator<T> extends IFunction<T> {
+public interface IOperator<T> extends IMepFunction<T> {
 
 	public enum ASSOCIATIVITY {
 		LEFT_TO_RIGHT, RIGHT_TO_LEFT

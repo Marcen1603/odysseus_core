@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.server.opcua.func;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.opcua.common.utilities.StatusMapping;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.opcua.common.utilities.StatusMapping.Kind;
 /**
  * This function retrieves the code to a status.
  */
-public class ToErrorValFunction extends AbstractFunction<Long> implements IFunction<Long> {
+public class ToErrorValFunction extends AbstractFunction<Long> implements IMepFunction<Long> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 628688567636378307L;

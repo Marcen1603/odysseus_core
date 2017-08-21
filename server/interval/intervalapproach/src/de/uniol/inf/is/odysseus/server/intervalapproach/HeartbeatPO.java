@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	private long applicationTimeDelay;
 	private boolean sendAlwaysHeartbeat = false;
 	private boolean allowOutofOrder = false;
+	private boolean restartTimerForEveryInput = false;
 
 	private PointInTime _watermark = PointInTime.getZeroTime();
 
@@ -112,14 +114,19 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		}
 
 		PointInTime marker = object.getMetadata().getStart();
-		if (marker.afterOrEquals(getWatermark())) {
+		//if (marker.afterOrEquals(getWatermark())) {
+		// TODO: why afterOrEquals?
+		if (marker.after(getWatermark())) {
 			transfer(object);
 			if (!allowOutofOrder) {
 				setWatermark(marker);
 			}
 			restartTimer();
 		} else {
-			LOG.warn("Object removed because out of order " + object);
+			LOG.warn("Removed out of order object: " + object +" for watermark "+marker);
+			// TODO: Restart Time in this case?
+			if (isRestartTimerForEveryInput())
+			restartTimer();
 			transfer(object, 99);
 		}
 	}
@@ -195,6 +202,14 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		this.startTimerAfterFirstElement = startTimerAfterFirstElement;
 	}
 
+	public boolean isRestartTimerForEveryInput() {
+		return restartTimerForEveryInput;
+	}
+
+	public void setRestartTimerForEveryInput(boolean restartTimerForEveryInput) {
+		this.restartTimerForEveryInput = restartTimerForEveryInput;
+	}
+
 	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo instanceof HeartbeatPO)) {
@@ -216,6 +231,10 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		}
 
 		if (this.allowOutofOrder != po.allowOutofOrder) {
+			return false;
+		}
+		
+		if (!Objects.equals(this.restartTimerForEveryInput, po.restartTimerForEveryInput)) {
 			return false;
 		}
 

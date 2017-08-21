@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.client.common.ClientSessionStore;
+import de.uniol.inf.is.odysseus.core.Activator;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
@@ -77,6 +78,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
+import de.uniol.inf.is.odysseus.core.util.BundleClassLoading;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientSession;
 import de.uniol.inf.is.odysseus.planmanagement.executor.webservice.client.util.WsClientUser;
 import de.uniol.inf.is.odysseus.webservice.client.ConnectionInformation;
@@ -108,6 +110,8 @@ import de.uniol.inf.is.odysseus.webservice.client.WebserviceServerService;
 public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 
 	InfoService INFO = InfoServiceFactory.getInfoService(WsClient.class);
+
+	final static SDFSchema EMPTY_SCHEMA = SDFSchemaFactory.createNewTupleSchema("NOT AVAILABLE", new SDFAttribute("","",SDFDatatype.OBJECT),new SDFAttribute("","",SDFDatatype.OBJECT));
 
 	// TODO: When connecting to multiple servers ... query id is not unique
 	// anymore --> need server in gui
@@ -589,12 +593,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		try {
 			Collection<Integer> response = getWebserviceServer(user.getConnectionName())
 					.addQuery2(user.getToken(), parserID, query, context).getResponseValue();
-			fireUpdateEvent(IUpdateEventListener.QUERY);
-			// Query could create schema information ... fire events
-			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
 			return response;
 		} catch (InvalidUserDataException_Exception | CreateQueryException_Exception e) {
 			throw new PlanManagementException(e);
+		}finally {
+			fireUpdateEvent(IUpdateEventListener.QUERY);
+			// Query could create schema information ... fire events
+			fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);			
 		}
 	}
 
@@ -650,8 +655,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		query.setContainsCycles(info.isContainsCycles());
 		query.setQueryText(info.getQueryText());
 		query.setUser(caller);
-		query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
-
+		if (info.getName() != null){
+			query.setName(Resource.specialCreateResource(info.getName().toString(),caller.getUser()));
+		}
 		return query;
 	}
 
@@ -814,7 +820,9 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		}
 
 		try{
-			Class<?> typeClass = Class.forName(info.getTypeClass());
+			// TODO: This will not work in OSGi if type class is in different bundle!
+			//Class<?> typeClass = Class.forName(info.getTypeClass());
+			Class<?> typeClass = BundleClassLoading.findClass(info.getTypeClass(), Activator.getBundleContext().getBundle());
 			return SDFSchemaFactory.createNewSchema(uri, typeClass, attributes);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -914,11 +922,16 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				for (ViewInformationWS viws : l) {
 					ViewInformation vi = new ViewInformation();
 					vi.setName(toResource(viws.getName()));
-					vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					try{
+						vi.setOutputSchema(toSDFSchema(viws.getSchema()));
+					}catch(ClassNotFoundException e){
+						// TODO: Should there be an output??
+						vi.setOutputSchema(EMPTY_SCHEMA);
+					}
 					result.add(vi);
 				}
 				return result;
-			} catch (InvalidUserDataException_Exception | ClassNotFoundException e) {
+			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
 		}
@@ -1174,8 +1187,12 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 			SDFDatatype dt = new SDFDatatype(sda.getDatatype().getUri());
 			attributes.add(new SDFAttribute(sda.getSourcename(), sda.getAttributename(), dt, null, null, null));
 		}
+
+		// Will not work in OSGi environments!
+		//Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
 		@SuppressWarnings({ "rawtypes" })
-		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) Class.forName(si.getTypeClass());
+		Class<? extends IStreamObject> type = (Class<? extends IStreamObject>) BundleClassLoading.findClass(si.getTypeClass(), Activator.getBundleContext().getBundle());
+
 		SDFSchema schema = SDFSchemaFactory.createNewSchema(si.getUri(), type,
 				attributes);
 		return schema;
@@ -1223,14 +1240,13 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	 * de.uniol.inf.is.odysseus.core.usermanagement.ISession)
 	 */
 	@Override
-	public Set<String> getRegisteredAggregateFunctions(
-			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+	public Set<String> getRegisteredAggregateFunctions(String datamodel, ISession caller) {
 		assureLogin(caller);
 		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				HashSet<String> set = new HashSet<>();
 				set.addAll(getWebserviceServer(caller.getConnectionName())
-						.getRegisteredAggregateFunctions(datamodel.getName(), caller.getToken()).getResponseValue());
+						.getRegisteredAggregateFunctions(datamodel, caller.getToken()).getResponseValue());
 				return set;
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
@@ -1239,6 +1255,11 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 		return new HashSet<>();
 	}
 
+	@Override
+	public Set<String> getRegisteredAggregateFunctions(@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel, ISession caller) {
+		return getRegisteredAggregateFunctions(datamodel.getName(), caller);
+	}
+	
 	@Override
 	public Set<String> getRegisteredWrapperNames(ISession caller) {
 		assureLogin(caller);

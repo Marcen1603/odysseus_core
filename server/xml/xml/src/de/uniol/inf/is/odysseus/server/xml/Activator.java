@@ -12,13 +12,13 @@ public class Activator implements BundleActivator {
 
 	@Override
 	public void start(BundleContext context) throws Exception {
-		OperatorBuilderFactory.putPredicateBuilder(XMLSTREAMOBJECT_PREDICATE, new XMLStreamObjectPredicateBuilder<>());
-		OperatorBuilderFactory.putPredicateBuilder(XMLStreamObject.class.getName(), new XMLStreamObjectPredicateBuilder<XMLStreamObject<?>>());
+		OperatorBuilderFactory.putExpressionBuilder(XMLSTREAMOBJECT_PREDICATE, new XMLStreamObjectPredicateBuilder<>());
+		OperatorBuilderFactory.putExpressionBuilder(XMLStreamObject.class.getName(), new XMLStreamObjectPredicateBuilder<>());
 			}
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		OperatorBuilderFactory.removePredicateBuilder(XMLSTREAMOBJECT_PREDICATE);
-		OperatorBuilderFactory.removePredicateBuilder(XMLStreamObject.class.getName());
+		OperatorBuilderFactory.removeExpressionBuilder(XMLSTREAMOBJECT_PREDICATE);
+		OperatorBuilderFactory.removeExpressionBuilder(XMLStreamObject.class.getName());
 	}
 }

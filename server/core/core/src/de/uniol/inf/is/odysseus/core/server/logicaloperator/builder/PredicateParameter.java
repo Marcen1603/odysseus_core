@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -50,8 +50,9 @@ public class PredicateParameter extends AbstractParameter<IPredicate<?>> {
 			setValue((IPredicate<?>)inputValue);
 			return;
 		}
-		IPredicateBuilder pBuilder = OperatorBuilderFactory
-				.getPredicateBuilder(predicateType);
+		@SuppressWarnings("rawtypes")
+		IExpressionBuilder pBuilder = OperatorBuilderFactory
+				.getExpressionBuilder(predicateType);
 
 		if (pBuilder == null) {
 			throw new IllegalArgumentException("unkown type of predicate: "

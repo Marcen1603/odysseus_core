@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
  * Copyright 2011 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -137,7 +137,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "CQL";
+		return "CQL1";
 	}
 
 	@Override
@@ -184,7 +184,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 	public void setDataDictionary(IDataDictionary dataDictionary) {
 		this.dataDictionary = dataDictionary;
 	}
-	
+
 	public void setMetaAttribute(IMetaAttribute metaAttribute) {
 		this.metaAttribute = metaAttribute;
 	}
@@ -341,7 +341,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			// this is only for priority stuff...
 			try {
 				Class<?> prioVisitor = Class
-						.forName("de.uniol.inf.is.odysseus.priority.CreatePriorityAOVisitor");
+						.forName("de.uniol.inf.is.odysseus.priority.cql.CreatePriorityAOVisitor");
 				Object pv = prioVisitor.newInstance();
 				// prioVisitor.setTopOperator(top);
 
@@ -431,6 +431,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void initPredicate(IPredicate<?> predicate, SDFSchema left,
 			SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {
@@ -1074,7 +1075,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * de.uniol.inf.is.odysseus.parser.cql.parser.NewSQLParserVisitor#visit(
 	 * de.uniol.inf.is.odysseus.parser.cql.parser.ASTCreateType,
@@ -1504,7 +1505,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			options = visit(optionsNode, null);
 		}
 		OptionMap ops = OptionMap.fromStringMap(options);
-		
+
 		// build ao
 		SenderAO sender = new SenderAO();
 		sender.setDataHandler(datahandler);
@@ -1594,7 +1595,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		for (Entry<String, String> e:options.entrySet()){
 			optionMap.setOption(e.getKey(), e.getValue());
 		}
-		
+
 		if (!WrapperRegistry.containsWrapper(wrapper)) {
 			throw new QueryParseException("Wrapper " + wrapper + " is unknown.");
 		}
@@ -1609,7 +1610,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 		return null;
 	}
-	
+
 	private SDFSchema createOutputSchema(String resource, List<SDFAttribute> attributes) {
 		SDFSchema outputSchema = SDFSchemaFactory.createNewTupleSchema(
 				resource.toString(), attributes);
@@ -1620,7 +1621,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		return outputSchema;
 	}
 
-	
+
 
 	@Override
 	public Object visit(ASTDropSinkStatement node, Object data)

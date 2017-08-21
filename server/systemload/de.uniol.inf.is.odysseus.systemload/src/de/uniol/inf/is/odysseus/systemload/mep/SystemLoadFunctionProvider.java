@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 public class SystemLoadFunctionProvider implements IFunctionProvider {
 
 	@Override
-	public List<IFunction<?>> getFunctions() {
-		List<IFunction<?>> functions = Lists.newArrayList();
+	public List<IMepFunction<?>> getFunctions() {
+		List<IMepFunction<?>> functions = Lists.newArrayList();
 		
 		functions.add(new CPUFreeFunction());
 		functions.add(new CPUMaxFunction());

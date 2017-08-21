@@ -116,7 +116,7 @@ public class DashboardPartEditorActionBarContributor extends ActionBarContributo
 		addGlobalActionKey(ActionFactory.DELETE.getId());
 	}
 
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	@Override
 	public void dispose() {
 		for (int i = 0; i < retargetActions.size(); i++) {

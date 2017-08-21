@@ -19,7 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
@@ -77,9 +77,9 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
             RelationalExpression relationalPredicate = ((RelationalExpression) sel);
             ParameterPredicateOptimizer optimizeConfig = config.getQueryBuildConfiguration().get(ParameterPredicateOptimizer.class);
             if (optimizeConfig != null && optimizeConfig.getValue().booleanValue()) {
-                IExpression<?> expression = ((RelationalExpression) sel).getMEPExpression();
+                IMepExpression<?> expression = ((RelationalExpression) sel).getMEPExpression();
                 expression = BooleanExpressionOptimizer.optimize(expression);
-                IExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
+                IMepExpression<?> cnf = BooleanExpressionOptimizer.toConjunctiveNormalForm(expression);
                 SDFExpression sdfExpression = new SDFExpression(cnf.toString(), relationalPredicate.getAttributeResolver(), relationalPredicate.getExpressionParser());
 
                 preds = (new RelationalExpression(sdfExpression)).conjunctiveSplit();

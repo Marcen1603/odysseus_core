@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.s100.functions.*;
 
@@ -24,9 +24,9 @@ public class S100FunctionProvider implements IFunctionProvider
 	}
 	
 	@Override
-	public List<IFunction<?>> getFunctions() 
+	public List<IMepFunction<?>> getFunctions() 
 	{
-		final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+		final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
 //		functions.add(new NewGMPoint());
 		functions.add(new ToGMPoint());
 		functions.add(new GetGMPointCoordinate());

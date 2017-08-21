@@ -23,8 +23,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public abstract class MEPCondition extends AbstractCondition{
@@ -37,8 +37,8 @@ public abstract class MEPCondition extends AbstractCondition{
 	/**
 	 * Referenz auf den Ausdruck der Transitionsbedingung
 	 */
-	private IExpression<Boolean> expression;
-	protected Map<CepVariable, IVariable> symbolTable = new HashMap<CepVariable, IVariable>();
+	private IMepExpression<Boolean> expression;
+	protected Map<CepVariable, IMepVariable> symbolTable = new HashMap<CepVariable, IMepVariable>();
 	private boolean negate = false;
 	
 	static private Logger _logger = null;

@@ -19,18 +19,18 @@ import de.uniol.inf.is.odysseus.physicaloperator.relational.state.RelationalStat
 import de.uniol.inf.is.odysseus.relational.IProvidesMaxHistoryElements;
 import de.uniol.inf.is.odysseus.relational.base.predicate.RelationalStateExpression;
 
-public class RelationalStateMapPO<T extends IMetaAttribute> extends
-		RelationalMapPO<T> implements IStatefulPO {
+public class RelationalStateMapPO<T extends IMetaAttribute> extends RelationalMapPO<T> implements IStatefulPO {
 	Logger LOG = LoggerFactory.getLogger(RelationalStateMapPO.class);
 
 	final private GroupedHistoryStore<Tuple<T>> history;
 
-	public RelationalStateMapPO(SDFSchema inputSchema,
-			SDFExpression[] expressions, boolean allowNullInOutput,
-			IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor,
-			boolean evaluateOnPunctuation, boolean suppressErrors, boolean keepInput, int[] restrictList) {
+	public RelationalStateMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
+			IGroupProcessor<Tuple<T>, Tuple<T>> groupProcessor, boolean evaluateOnPunctuation,
+			boolean expressionsUpdateable, boolean suppressErrors,
+			boolean keepInput, int[] restrictList) {
 		// MUST USE THIS WAY, else maxHistoryElements is always 0 :-)
-		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, suppressErrors, keepInput, restrictList);
+		super(inputSchema, allowNullInOutput, evaluateOnPunctuation, expressionsUpdateable, suppressErrors, keepInput,
+				restrictList);
 		history = new GroupedHistoryStore<Tuple<T>>(groupProcessor);
 		init(inputSchema, expressions);
 	}
@@ -43,7 +43,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 			this.expressions[i] = new RelationalStateExpression<T>(expr[i].clone());
 			this.expressions[i].initVars(schema);
 		}
-		history.determineMaxHistoryElements((IProvidesMaxHistoryElements[])expressions);
+		history.determineMaxHistoryElements((IProvidesMaxHistoryElements[]) expressions);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		}
 		@SuppressWarnings("unchecked")
 		RelationalStateMapPO<T> rmpo = (RelationalStateMapPO<T>) ipo;
-		if (!this.history.equals(rmpo.history)){
+		if (!this.history.equals(rmpo.history)) {
 			return false;
 		}
 
@@ -72,7 +72,6 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 		return history.process(object);
 	}
 
-
 	@Override
 	public IOperatorState getState() {
 		RelationalStateMapPOState<T> state = new RelationalStateMapPOState<T>();
@@ -87,7 +86,8 @@ public class RelationalStateMapPO<T extends IMetaAttribute> extends
 			RelationalStateMapPOState<T> state = (RelationalStateMapPOState<T>) serializable;
 			history.setGroupsLastObjects(state.getGroupsLastObjects());
 		} catch (Throwable T) {
-			LOG.error("The serializable state to set for the RelationalStateMapPO is not a valid RelationalStateMapPOState!");
+			LOG.error(
+					"The serializable state to set for the RelationalStateMapPO is not a valid RelationalStateMapPOState!");
 		}
 	}
 

@@ -16,16 +16,11 @@ import org.w3c.dom.Document;
 import com.ganesh.transformer.DynamicXMLTransformer;
 
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ConstructAO;
 
 public class ConstructPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>>
 {
@@ -52,6 +47,7 @@ public class ConstructPO<T extends IMetaAttribute> extends AbstractPipe<XMLStrea
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(XMLStreamObject<T> object, int port)
 	{

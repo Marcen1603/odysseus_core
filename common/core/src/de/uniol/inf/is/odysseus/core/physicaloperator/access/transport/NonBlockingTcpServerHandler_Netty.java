@@ -1,5 +1,30 @@
 package de.uniol.inf.is.odysseus.core.physicaloperator.access.transport;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.security.cert.CertificateException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.net.ssl.SSLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.uniol.inf.is.odysseus.core.IHasAlias;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
+import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
+import de.uniol.inf.is.odysseus.core.connection.IConnection;
+import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.websocket.NettyWebSocketServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -10,34 +35,29 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import de.uniol.inf.is.odysseus.core.IHasAlias;
-import de.uniol.inf.is.odysseus.core.collection.OptionMap;
-import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
-import de.uniol.inf.is.odysseus.core.connection.IAccessConnectionListener;
-import de.uniol.inf.is.odysseus.core.connection.IConnection;
-import de.uniol.inf.is.odysseus.core.connection.IConnectionListener;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 
 public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, IHasAlias {
 
-	private static final String PORT = "port";
-	private static final String MAX_BUFFER_SIZE = "maxbuffersize";
+	static Logger logger = LoggerFactory.getLogger(TransportHandlerRegistry.class);
+
+	public static final String PORT = "port";
+	public static final String MAX_BUFFER_SIZE = "maxbuffersize";
+	public static final String WEBSOCKET = "websocket";
+	public static final String PATH_OPTION = "path";
+	
 	private int port;
-	List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
+	boolean isWebSocket = false;
+	// TODO:
+	boolean SSL;
+	String path = "/websocket";
+
+	private List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
 	private MyTCPServer tcpServer = null;
 	static private MyTCPServer tcpServerStatic = null;
 	boolean shareTCPServer = true;
@@ -70,8 +90,10 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	public NonBlockingTcpServerHandler_Netty(IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		port = options.containsKey(PORT) ? Integer.parseInt(options.get(PORT)) : 8080;
-		maxBufferSize = options.containsKey(MAX_BUFFER_SIZE) ? Integer.parseInt(options.get(MAX_BUFFER_SIZE)) : 0;
+		port = options.getInt(PORT, 8080);
+		maxBufferSize = options.getInt(MAX_BUFFER_SIZE, 0);
+		isWebSocket = options.getBoolean(WEBSOCKET, false);
+		this.path = options.getString(PATH_OPTION, this.path);
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
@@ -102,7 +124,8 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		send.writeBytes(message);
 		// wait until channel is writable to avoid out of memory
 		// Problem: Blocks all other (potentially faster) clients
-		// Solution could be: Keep elements for channel if not writable and send later until a fixed size and delay than...
+		// Solution could be: Keep elements for channel if not writable and send
+		// later until a fixed size and delay than...
 		while (!shutdown && !ctx.channel().isWritable() && ctx.channel().isOpen()) {
 			synchronized (this) {
 				try {
@@ -112,7 +135,14 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 				}
 			}
 		}
-		ctx.writeAndFlush(send);
+		if (isWebSocket) {
+			ChannelFuture result = ctx.writeAndFlush(new BinaryWebSocketFrame(send));
+			if (!result.isSuccess()) {
+				logger.debug("Sending data via websocket not successful");
+			}
+		} else {
+			ctx.writeAndFlush(send);
+		}
 	}
 
 	@Override
@@ -175,7 +205,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		shutdown = false;
 		try {
 			getTcpServer().add(port, this);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -243,6 +273,14 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	}
 
+	public void addChannel(ChannelHandlerContext ctx) {
+		channels.add(ctx);
+	}
+
+	public void removeChannel(ChannelHandlerContext ctx) {
+		channels.remove(ctx);
+	}
+
 }
 
 class MyTCPServer {
@@ -280,7 +318,8 @@ class MyTCPServer {
 		}
 	}
 
-	public void add(int port, final NonBlockingTcpServerHandler_Netty caller) throws InterruptedException {
+	public void add(int port, final NonBlockingTcpServerHandler_Netty caller)
+			throws InterruptedException, CertificateException, SSLException {
 
 		if (portMapping.containsKey(port)) {
 			throw new IllegalArgumentException("Server port " + port + " already bound!");
@@ -289,14 +328,32 @@ class MyTCPServer {
 		ServerBootstrap b = new ServerBootstrap();
 		NioEventLoopGroup bossGroup = new NioEventLoopGroup();
 		NioEventLoopGroup workerGroup = new NioEventLoopGroup();
-		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-				.childHandler(new ChannelInitializer<SocketChannel>() {
-					@Override
-					protected void initChannel(SocketChannel ch) throws Exception {
-						final ServerHandler handler = new ServerHandler(caller);
-						ch.pipeline().addLast(handler);
-					}
-				}).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
+
+		final SslContext sslCtx;
+		if (caller.SSL) {
+			SelfSignedCertificate ssc;
+			ssc = new SelfSignedCertificate();
+			sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+		} else {
+			sslCtx = null;
+		}
+
+		if (caller.isWebSocket) {
+			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+					.childHandler(new NettyWebSocketServerInitializer(sslCtx, caller.path, caller))
+					.option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
+
+		} else {
+			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+					.childHandler(new ChannelInitializer<SocketChannel>() {
+						@Override
+						protected void initChannel(SocketChannel ch) throws Exception {
+							final ServerHandler handler = new ServerHandler(caller);
+							ch.pipeline().addLast(handler);
+						}
+					}).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
+
+		}
 
 		bootsTraps.put(port, b);
 		bossGroups.put(port, bossGroup);
@@ -312,9 +369,9 @@ class MyTCPServer {
 
 /**
  * For each Connection there must be a handler class
- * 
+ *
  * @author Marco Grawunder
- * 
+ *
  */
 
 class ServerHandler extends ByteToMessageDecoder {
@@ -369,14 +426,14 @@ class ServerHandler extends ByteToMessageDecoder {
 			}
 		}
 
-		handler.channels.add(ctx);
+		handler.addChannel(ctx);
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		// System.err.println("Channel inactive " +
 		// ctx.channel().localAddress());
-		handler.channels.remove(ctx);
+		handler.removeChannel(ctx);
 	}
 
 	@Override

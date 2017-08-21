@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,18 +23,14 @@ import javax.xml.xpath.XPathFactoryConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 
 // GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
 
@@ -70,7 +67,6 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
 	{
 		XMLStreamObject<IMetaAttribute> result = (XMLStreamObject<IMetaAttribute>) new XMLStreamObject<IMetaAttribute>(right.getDocument());
@@ -135,6 +131,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void setDocument(Document doc)
 	{
 		content = doc;
@@ -291,5 +288,17 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		{
 			return null;
 		}
+	}
+
+	@Override
+	public List<Object> path(String path) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAttribute(String name, Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

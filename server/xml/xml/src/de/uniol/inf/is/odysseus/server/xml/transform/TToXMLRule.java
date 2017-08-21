@@ -2,16 +2,11 @@ package de.uniol.inf.is.odysseus.server.xml.transform;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToXMLAO;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
 import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ToXMLPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ProjectPO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XPathPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

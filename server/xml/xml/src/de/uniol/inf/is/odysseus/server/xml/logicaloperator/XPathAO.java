@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XPATH", doc = "Return result of the XPath specified", url = "", category = {LogicalOperatorCategory.BASE})
 public class XPathAO extends UnaryLogicalOp

@@ -35,21 +35,22 @@ public class AggregateFunctionBuilderRegistry {
 	static Logger logger = LoggerFactory
 			.getLogger(AggregateFunctionBuilderRegistry.class);
 
-	static private Map<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder> builders = new HashMap<Pair<Class<? extends IStreamObject>, String>, IAggregateFunctionBuilder>();
+	static private Map<Pair<String, String>, IAggregateFunctionBuilder> builders = new HashMap<>();
 	static private List<String> aggregateFunctionNames = new LinkedList<String>();
-	static private Map<Class<? extends IStreamObject>, List<String>> aggFuncNames = new HashMap<>();
+	static private Map<String, List<String>> aggFuncNames = new HashMap<>();
 	static private Pattern aggregatePattern;
 
 	public synchronized void registerAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
-		Class<? extends IStreamObject> datamodel = builder.getDatamodel();
+		String datamodel = builder.getDatamodel().getName();
+		
 		Collection<String> functionNames = builder.getFunctionNames();
 		if (!aggFuncNames.containsKey(datamodel)){
 			aggFuncNames.put(datamodel, new LinkedList<String>());
 		}
 		logger.trace("Found new AggregateBuilder " + builder);
 		for (String functionName : functionNames) {
-			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
+			Pair<String, String> key = new Pair<>(datamodel,
 					functionName.toUpperCase());
 			if (!builders.containsKey(key)) {
 				builders.put(key, builder);
@@ -89,10 +90,10 @@ public class AggregateFunctionBuilderRegistry {
 	
 	public synchronized void removeAggregateFunctionBuilder(
 			IAggregateFunctionBuilder builder) {
-		Class<? extends IStreamObject> datamodel = builder.getDatamodel();
+		String datamodel = builder.getDatamodel().getName();
 		Collection<String> functionNames = builder.getFunctionNames();
 		for (String functionName : functionNames) {
-			Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(datamodel,
+			Pair<String, String> key = new Pair<>(datamodel,
 					functionName.toUpperCase());
 			if (builders.containsKey(key)) {
 				builders.remove(key);
@@ -107,13 +108,17 @@ public class AggregateFunctionBuilderRegistry {
 	}
 
 	public static Collection<String> getFunctionNames(Class<? extends IStreamObject> datamodel){
+		return getFunctionNames(datamodel.getName());
+	}
+
+	public static Collection<String> getFunctionNames(String datamodel){
 		return Collections.unmodifiableCollection(aggFuncNames.get(datamodel));
 	}
-	
+
 	static public IAggregateFunctionBuilder getBuilder(
 			Class<? extends IStreamObject> datamodel, String functionName) {
-		Pair<Class<? extends IStreamObject>, String> key = new Pair<Class<? extends IStreamObject>, String>(
-				datamodel, functionName.toUpperCase());
+		Pair<String, String> key = new Pair<String, String>(
+				datamodel.getName(), functionName.toUpperCase());
 		return builders.get(key);
 	}
 

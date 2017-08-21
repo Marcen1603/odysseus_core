@@ -1,0 +1,1 @@
+operator_1 = JOIN(stream1, JOIN(stream2, stream3))

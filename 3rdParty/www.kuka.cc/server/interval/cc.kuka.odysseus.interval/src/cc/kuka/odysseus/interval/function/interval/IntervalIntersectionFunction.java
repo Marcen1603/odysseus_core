@@ -18,7 +18,7 @@ package cc.kuka.odysseus.interval.function.interval;
 
 import cc.kuka.odysseus.interval.datatype.Interval;
 import cc.kuka.odysseus.interval.sdf.schema.SDFIntervalDatatype;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -70,7 +70,7 @@ public class IntervalIntersectionFunction<T extends Number> extends AbstractFunc
      * {@inheritDoc}
      */
     @Override
-    public SDFDatatype determineType(final IExpression<?>[] args) {
+    public SDFDatatype determineType(final IMepExpression<?>[] args) {
         return args[0].getReturnType();
     }
 }

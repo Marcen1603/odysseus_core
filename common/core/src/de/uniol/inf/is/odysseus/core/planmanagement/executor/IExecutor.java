@@ -131,7 +131,7 @@ public interface IExecutor extends IClientPlanManager {
 	/**
 	 * This method tries to translate the given query to a logical plan and
 	 * delivers the output schema for the root operator Remark: It must be
-	 * shure, that there in only one output operator, else the first one will be
+	 * sure, that there in only one output operator, else the first one will be
 	 * choosen that is found!
 	 *
 	 * @param query
@@ -323,9 +323,22 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return A list of the function
 	 */
-
+	@Deprecated
 	public Set<String> getRegisteredAggregateFunctions(
 			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
+			ISession caller);
+
+	/**
+	 * Returns all registered aggregated functions for a certain data model
+	 *
+	 * @param datamodel
+	 *            The data model
+	 * @param caller
+	 *            The current user
+	 * @return A list of the function
+	 */
+	
+	public Set<String> getRegisteredAggregateFunctions(String datamodel,
 			ISession caller);
 
 	/**

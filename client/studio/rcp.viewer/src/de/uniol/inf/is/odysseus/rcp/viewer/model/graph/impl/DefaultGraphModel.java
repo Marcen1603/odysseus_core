@@ -133,7 +133,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 	 * @param node Knoten, welcher die neue Verbindung haben soll
 	 * @param connection Neue Verbindung
 	 */
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
     private void addConnectionToNode( INodeModel<C> node, IConnectionModel<C> connection ) {
 		// Alle Verbindungen, welche diesen Knoten betreffen, holen
 		Collection<IConnectionModel<C>> allConnections = node.getConnections();
@@ -155,7 +155,7 @@ public class DefaultGraphModel<C> implements IGraphModel<C> {
 	 * @param node Knoten, von welcher die Verbindung entfernt werden soll
 	 * @param connection Die zu entfernende Verbindung
 	 */
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
     private void removeConnectionFromNode( INodeModel<C> node, IConnectionModel<C> connection ) {
 		Collection<? extends IConnectionModel<C>> allConnections = node.getConnections();
 		

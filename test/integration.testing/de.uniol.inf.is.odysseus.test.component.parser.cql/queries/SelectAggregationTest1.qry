@@ -1,0 +1,3 @@
+#PARSER CQL
+#RUNQUERY
+SELECT COUNT(auction) AS auctionCount FROM bid GROUP BY auction;

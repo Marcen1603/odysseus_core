@@ -18,7 +18,7 @@ http://odysseus.informatik.uni-oldenburg.de/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -clean -nl en -data @noDefault
+      <programArgs>-console -clean -nl en -data @user.home
       </programArgs>
       <vmArgs>-Xms8000M -Xmx8000M -Xms8000M -Xmx8000M -XX:+UseConcMarkSweepGC -Dsysredirect=false -Declipse.p2.mirrors=false -Declipse.log.level=ERROR
       </vmArgs>
@@ -32,7 +32,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       location="de.uniol.inf.is.odysseus.client.starter" />
    <launcher name="studio">
       <macosx icon="/de.uniol.inf.is.odysseus.product.studio.starter/icons/Odysseus-icons-mac.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
@@ -70,7 +69,6 @@ limitations under the License.
 
    <features>
       <feature id="de.uniol.inf.is.odysseus.gc.product.feature" version="1.0.0.qualifier"/>
-      <feature id="de.uniol.inf.is.odysseus.server.xml.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

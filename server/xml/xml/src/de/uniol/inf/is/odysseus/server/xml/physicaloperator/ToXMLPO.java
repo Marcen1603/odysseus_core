@@ -17,17 +17,13 @@ import com.ganesh.transformer.DynamicXMLTransformer;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe.OutputMode;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ToXMLAO;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XPathAO;
 
 public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XMLStreamObject<T>>
 {
@@ -56,7 +52,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	protected void process_next(Tuple<T> object, int port)
 	{
 		DynamicXMLTransformer xmlTransformer = new DynamicXMLTransformer();

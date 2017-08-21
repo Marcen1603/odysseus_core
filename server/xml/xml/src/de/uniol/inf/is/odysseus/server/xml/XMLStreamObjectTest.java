@@ -1,10 +1,7 @@
 package de.uniol.inf.is.odysseus.server.xml;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObjectDataHandler;
 

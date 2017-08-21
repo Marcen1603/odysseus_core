@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;

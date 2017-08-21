@@ -21,7 +21,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.ErrorFunction;
 import de.uniol.inf.is.odysseus.wrapper.opcda.function.QualityFunction;
@@ -45,9 +45,9 @@ public class OPCDAFunctionProvider implements IFunctionProvider {
      */
     @SuppressWarnings("rawtypes")
 	@Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         try {
             functions.add(new ErrorFunction());
             functions.add(new QualityFunction());

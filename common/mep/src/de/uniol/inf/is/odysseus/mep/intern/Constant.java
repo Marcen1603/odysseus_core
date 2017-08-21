@@ -23,10 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionVisitor;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionVisitor;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractExpression;
 
@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractExpression;
  *            used
  */
 
-public class Constant<T> extends AbstractExpression<T> implements IConstant<T> {
+public class Constant<T> extends AbstractExpression<T> implements IMepConstant<T> {
 
 	private static final long serialVersionUID = 504053838249636471L;
 	private static final NumberFormat DOUBLE_FORMATTER = NumberFormat.getNumberInstance(Locale.ENGLISH); // '.' instead of ',' 
@@ -74,7 +74,7 @@ public class Constant<T> extends AbstractExpression<T> implements IConstant<T> {
 	}
 
 	@Override
-	public Object acceptVisitor(IExpressionVisitor visitor, Object data) {
+	public Object acceptVisitor(IMepExpressionVisitor visitor, Object data) {
 		return visitor.visit(this, data);
 	}
 
@@ -96,7 +96,7 @@ public class Constant<T> extends AbstractExpression<T> implements IConstant<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<IVariable> getVariables() {
+	public Set<IMepVariable> getVariables() {
 		return Collections.EMPTY_SET;
 	}
 
@@ -131,14 +131,14 @@ public class Constant<T> extends AbstractExpression<T> implements IConstant<T> {
 	}
 	
 	@Override
-	public List<IExpression<T>> conjunctiveSplit() {
-		List<IExpression<T>> ret = new ArrayList<>();
+	public List<IMepExpression<T>> conjunctiveSplit() {
+		List<IMepExpression<T>> ret = new ArrayList<>();
 		ret.add(this);
 		return ret;
 	}
 	
 	@Override
-	public IExpression<T> clone(Map<IVariable, IVariable> vars){
+	public IMepExpression<T> clone(Map<IMepVariable, IMepVariable> vars){
 		return this;
 	}
 

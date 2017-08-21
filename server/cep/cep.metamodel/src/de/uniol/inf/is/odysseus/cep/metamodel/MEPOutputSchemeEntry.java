@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.mep.ParseException;
 
 public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
@@ -29,8 +29,8 @@ public class MEPOutputSchemeEntry extends AbstractOutputSchemeEntry {
 	 * 
 	 */
 	private static final long serialVersionUID = 6442137580076153969L;
-	IExpression<?> expression;
-	protected Map<CepVariable, IVariable> symbolTable = new HashMap<CepVariable, IVariable>();
+	IMepExpression<?> expression;
+	protected Map<CepVariable, IMepVariable> symbolTable = new HashMap<CepVariable, IMepVariable>();
 	
 	public MEPOutputSchemeEntry(String label) {
 		super(label);

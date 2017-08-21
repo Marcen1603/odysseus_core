@@ -19,8 +19,6 @@ import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -63,8 +61,6 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 		types.add("ScaiTuple");
 	}
 
-	private final Charset charset = Charset.forName("UTF-8");
-
 	public ScaiDataHandler() {
 		super(null);
 	}
@@ -92,9 +88,8 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	 */
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
-		final CharsetDecoder decoder = this.charset.newDecoder();
 		try {
-			final CharBuffer charBuffer = decoder.decode(buffer);
+			final CharBuffer charBuffer = getDecoder().decode(buffer);
 			return readData(charBuffer.toString());
 		} catch (CharacterCodingException e) {
 			LOG.warn(e.getMessage(), e);

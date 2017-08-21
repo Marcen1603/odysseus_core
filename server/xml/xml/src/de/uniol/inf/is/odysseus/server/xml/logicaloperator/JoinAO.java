@@ -17,10 +17,7 @@ package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
