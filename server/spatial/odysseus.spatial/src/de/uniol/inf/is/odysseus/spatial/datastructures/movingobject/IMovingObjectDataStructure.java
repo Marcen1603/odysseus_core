@@ -7,7 +7,10 @@ import java.util.Set;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
@@ -19,7 +22,7 @@ public interface IMovingObjectDataStructure {
 	 * @param o
 	 *            The object to add to the data structure
 	 */
-	public void add(Object o);
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement);
 
 	/**
 	 * The name of the data structure so that it can be accessed, e.g. via the
@@ -68,6 +71,21 @@ public interface IMovingObjectDataStructure {
 	 *         neighborhood around the given geometry
 	 */
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t);
+	
+	/**
+	 * A circle query with a given candidate collection.
+	 * 
+	 * @param geometry
+	 *            The center of the circle to query
+	 * @param radius
+	 *            The radius of the circle to query
+	 * @param t
+	 *            The time interval that the returned elements have to intersect
+	 * @param movingObjectIdToIgnore
+	 *            results with this id won't be included in the resultlist
+	 * @return All elements from the candidates that are in the given circle.
+	 */
+	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t, String movingObjectIdToIgnore);
 
 	/**
 	 * Queries the data structure and returns all data points which are in a

@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,6 +64,10 @@ public interface IDataHandler<T> {
 	 */
 	public IDataHandler<T> createInstance(List<SDFDatatype> schema);
 
+	void setCharset(String charsetString);
+	void setCharset(Charset charset);
+	
+	Charset getCharset();
 	
 	/**
 	 * Read data from  Odysseus internal byte format

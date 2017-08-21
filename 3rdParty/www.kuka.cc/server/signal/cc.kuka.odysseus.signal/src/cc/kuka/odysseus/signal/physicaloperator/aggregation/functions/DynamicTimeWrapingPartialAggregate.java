@@ -153,7 +153,7 @@ public class DynamicTimeWrapingPartialAggregate<R> extends AbstractPartialAggreg
         return FastMath.min(a, FastMath.min(b, c));
     }
 
-    @SuppressWarnings("boxing")
+    //@SuppressWarnings("boxing")
     public static void main(final String[] args) {
         final DynamicTimeWrapingPartialAggregate<?> agg = new DynamicTimeWrapingPartialAggregate<>();
         agg.add(1.0, 1.0);

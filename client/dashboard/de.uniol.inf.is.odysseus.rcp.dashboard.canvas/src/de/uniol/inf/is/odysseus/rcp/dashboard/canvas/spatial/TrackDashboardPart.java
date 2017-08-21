@@ -178,7 +178,7 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
         this.setMaxX(maxX);
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     private Tuple<?> getTuple(final IStreamObject<?> element) {
         return (Tuple<?>) element;
     }
@@ -406,7 +406,7 @@ public class TrackDashboardPart extends AbstractCanvasDashboardPart {
             /**
              * {@inheritDoc}
              */
-            @SuppressWarnings("boxing")
+            //@SuppressWarnings("boxing")
             @Override
             public void run() {
                 final Random rnd = new Random();

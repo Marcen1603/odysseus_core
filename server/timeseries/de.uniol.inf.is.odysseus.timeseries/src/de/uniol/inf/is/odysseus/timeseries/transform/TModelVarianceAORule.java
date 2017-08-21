@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  *
  */
 @Deprecated
+@SuppressWarnings("all")
 public class TModelVarianceAORule extends AbstractTransformationRule<ModelVarianceAO> {
 
 	public TModelVarianceAORule() {

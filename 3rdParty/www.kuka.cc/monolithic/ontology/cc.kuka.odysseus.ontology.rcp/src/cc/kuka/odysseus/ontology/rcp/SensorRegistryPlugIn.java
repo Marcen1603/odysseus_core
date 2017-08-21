@@ -97,12 +97,12 @@ public class SensorRegistryPlugIn extends AbstractUIPlugin {
         return SensorRegistryPlugIn.plugin;
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected void bindSensorOntologyService(final SensorOntologyService service) {
         SensorRegistryPlugIn.sensorOntologyService = service;
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected void unbindSensorOntologyService(final SensorOntologyService service) {
         SensorRegistryPlugIn.sensorOntologyService = null;
     }

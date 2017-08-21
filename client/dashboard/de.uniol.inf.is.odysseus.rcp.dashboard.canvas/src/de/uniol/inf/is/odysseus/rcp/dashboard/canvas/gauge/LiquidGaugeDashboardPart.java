@@ -188,7 +188,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
         this.setMax(max);
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     private Tuple<?> getTuple(final IStreamObject<?> element) {
         return (Tuple<?>) element;
     }
@@ -352,7 +352,7 @@ public class LiquidGaugeDashboardPart extends AbstractCanvasDashboardPart {
             /**
              * {@inheritDoc}
              */
-            @SuppressWarnings("boxing")
+            //@SuppressWarnings("boxing")
             @Override
             public void run() {
                 final Random rnd = new Random();

@@ -1415,6 +1415,20 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		set.addAll(AggregateFunctionBuilderRegistry.getFunctionNames(datamodel));
 		return set;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor#
+	 * getRegisteredAggregateFunctions
+	 * (de.uniol.inf.is.odysseus.core.usermanagement.ISession)
+	 */
+	@Override
+	public Set<String> getRegisteredAggregateFunctions(String datamodel, ISession caller) {
+		TreeSet<String> set = new TreeSet<>();
+		set.addAll(AggregateFunctionBuilderRegistry.getFunctionNames(datamodel));
+		return set;
+	}
 
 	/*
 	 * (non-Javadoc)

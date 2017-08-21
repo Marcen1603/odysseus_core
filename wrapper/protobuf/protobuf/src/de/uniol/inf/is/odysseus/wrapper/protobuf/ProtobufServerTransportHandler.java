@@ -324,6 +324,11 @@ public class ProtobufServerTransportHandler<R extends MessageLite,T> extends
 	}
 
 	@Override
+	public void send(String message, boolean addNewline) throws IOException {
+		throw new RuntimeException("Not implemented");
+	}
+	
+	@Override
 	public ITransportHandler createInstance(
 			IProtocolHandler<?> protocolHandler, OptionMap options) {
 		return new ProtobufServerTransportHandler<>( protocolHandler, options);

@@ -28,8 +28,13 @@ import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.report.IReport;
+import de.uniol.inf.is.odysseus.report.IReportGenerator;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.cheatsheet.CheatSheetGenerator;
 import de.uniol.inf.is.odysseus.test.component.ITestComponent;
@@ -41,7 +46,7 @@ import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
  * Application for running all TestComponents. Recieves all registered
  * {@code TestComponents} over Declarative Services and executes them.
  * 
- * @author Timo Michelsen, Dennis Geesen
+ * @author Timo Michelsen, Dennis Geesen, Marco Grawunder
  * 
  */
 public class TestRunnerApplication implements IApplication {
@@ -52,13 +57,27 @@ public class TestRunnerApplication implements IApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestRunnerApplication.class);
 
+	private static IReportGenerator reportGenerator;
+    
+	// called by OSGi-DS
+	public static void bindReportGenerator(IReportGenerator serv) {
+		reportGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindReportGenerator(IReportGenerator serv) {
+		if (reportGenerator == serv) {
+			reportGenerator = null;
+		}
+	}
+    
     @Override
     public Object start(IApplicationContext context) throws Exception {
         LOG.debug("Starting Odysseus...");
         startBundles(context.getBrandingBundle().getBundleContext());
-
+   
         LOG.debug("Odysseus is up and running!");
-
+        
         if (System.getProperty("cheatsheet") != null || System.getenv("cheatsheet") != null) {
             String file = System.getProperty("cheatsheet");
             if (file == null){
@@ -82,12 +101,29 @@ public class TestRunnerApplication implements IApplication {
 
             if (oneFailed) {
                 LOG.debug("At least one test failed!");
+                
+                printAdditionalInfos();
+        		
                 return -1;
             }
             LOG.debug("All tests finished with no errors.");
         }
         return IApplication.EXIT_OK;
     }
+
+	private void printAdditionalInfos() {
+		// print infos about current system state (e.g. bundles etc.)
+		ISession session = UserManagementProvider.getSessionmanagement().login("System", "manager".getBytes(), UserManagementProvider.getDefaultTenant());
+		IReport rep = reportGenerator.generateReport(session);
+		LOG.debug("##########################Extended Information ");
+		for (String key: rep.getTitles()) {
+			LOG.debug("++++"+key+"++++");
+			Optional<String> repText = rep.getReportText(key);
+			if (repText.isPresent()) {
+				LOG.debug(repText.get());
+			}
+		}
+	}
 
     private List<TestReport> executeComponents(IApplicationContext context) {
         boolean oneFailed = false;

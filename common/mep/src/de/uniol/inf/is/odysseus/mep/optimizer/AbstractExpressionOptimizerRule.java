@@ -58,7 +58,7 @@ public abstract class AbstractExpressionOptimizerRule<E extends IMepExpression<?
      *            The expression
      * @return A conjunctive split of the expression
      */
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected Set<IMepExpression<?>> getConjunctiveSplit(IMepExpression<?> expression) {
         Set<IMepExpression<?>> result = new HashSet<>();
         Stack<IMepExpression<?>> expressionStack = new Stack<>();
@@ -83,7 +83,7 @@ public abstract class AbstractExpressionOptimizerRule<E extends IMepExpression<?
      *            The expression
      * @return A disjunctive split of the expression
      */
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     protected Set<IMepExpression<?>> getDisjunctiveSplit(IMepExpression<?> expression) {
         Set<IMepExpression<?>> result = new HashSet<>();
         Stack<IMepExpression<?>> expressionStack = new Stack<>();

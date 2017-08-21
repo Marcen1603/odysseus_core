@@ -114,10 +114,9 @@ public class SocketService extends Observable {
 	 * @param queryName
 	 *            The name of the query you want to get the socket connection to
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
-	 * @return The outer map has the name of the operator as key, the inner map
-	 *         the output port of the operator
+	 *            If you want to send the metadata via the socket. Not working now.
+	 * @return The outer map has the name of the operator as key, the inner map the
+	 *         output port of the operator
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			boolean withMetaData) {
@@ -134,21 +133,20 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Creates sockets for all output ports of the given operator in the given
-	 * query and returns the information needed to connect to this socket
+	 * Creates sockets for all output ports of the given operator in the given query
+	 * and returns the information needed to connect to this socket
 	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryName
 	 *            The name of the query you want to get the socket connection to
 	 * @param operatorName
-	 *            The name of the operator you want the output from. Make sure
-	 *            that the name is set in the operator.
+	 *            The name of the operator you want the output from. Make sure that
+	 *            the name is set in the operator.
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
-	 * @return The outer map has the name of the operator as key, the inner map
-	 *         the output port of the operator
+	 *            If you want to send the metadata via the socket. Not working now.
+	 * @return The outer map has the name of the operator as key, the inner map the
+	 *         output port of the operator
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			String operatorName, boolean withMetaData) {
@@ -167,21 +165,20 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Creates a socket for the given output port of the given operator in the
-	 * given query and returns the information needed to connect to this socket
+	 * Creates a socket for the given output port of the given operator in the given
+	 * query and returns the information needed to connect to this socket
 	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryName
 	 *            The name of the query you want to get the socket connection to
 	 * @param operatorName
-	 *            The name of the operator you want the output from. Make sure
-	 *            that the name is set in the operator.
+	 *            The name of the operator you want the output from. Make sure that
+	 *            the name is set in the operator.
 	 * @param operatorOutputPort
 	 *            The output port of the operator you want to get the socket for
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
+	 *            If you want to send the metadata via the socket. Not working now.
 	 * @return The Socket Information
 	 */
 	public SocketInfo getConnectionInformation(ISession session, String queryName, String operatorName,
@@ -203,10 +200,9 @@ public class SocketService extends Observable {
 	 * @param queryId
 	 *            The id of the query you want to get the socket connection to
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
-	 * @return The outer map has the name of the operator as key, the inner map
-	 *         the output port of the operator
+	 *            If you want to send the metadata via the socket. Not working now.
+	 * @return The outer map has the name of the operator as key, the inner map the
+	 *         output port of the operator
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			boolean withMetaData) {
@@ -223,21 +219,20 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Creates sockets for all output ports of the given operator in the given
-	 * query and returns the information needed to connect to this socket
+	 * Creates sockets for all output ports of the given operator in the given query
+	 * and returns the information needed to connect to this socket
 	 *
 	 * @param session
 	 *            The session (for the user/right management)
 	 * @param queryId
 	 *            The id of the query you want to get the socket connection to
 	 * @param operatorName
-	 *            The name of the operator you want the output from. Make sure
-	 *            that the name is set in the operator.
+	 *            The name of the operator you want the output from. Make sure that
+	 *            the name is set in the operator.
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
-	 * @return The outer map has the name of the operator as key, the inner map
-	 *         the output port of the operator
+	 *            If you want to send the metadata via the socket. Not working now.
+	 * @return The outer map has the name of the operator as key, the inner map the
+	 *         output port of the operator
 	 */
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			String operatorName, boolean withMetaData) {
@@ -252,8 +247,8 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Creates a socket for the given output port of the given operator in the
-	 * given query and returns the information needed to connect to this socket
+	 * Creates a socket for the given output port of the given operator in the given
+	 * query and returns the information needed to connect to this socket
 	 *
 	 * @param session
 	 *            The session (for the user/right management)
@@ -262,8 +257,7 @@ public class SocketService extends Observable {
 	 * @param operatorOutputPort
 	 *            The output port of the operator you want to get the socket for
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
+	 *            If you want to send the metadata via the socket. Not working now.
 	 * @return A list with information about the created sockets
 	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, String operatorName,
@@ -277,8 +271,8 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Creates a socket for the given output port of the given operator in the
-	 * given query and returns the information needed to connect to this socket
+	 * Creates a socket for the given output port of the given operator in the given
+	 * query and returns the information needed to connect to this socket
 	 *
 	 * @param session
 	 *            The session (for the user/rights management)
@@ -287,8 +281,7 @@ public class SocketService extends Observable {
 	 * @param operator
 	 *            The operator you want to get the sockets for
 	 * @param withMetaData
-	 *            If you want to send the metadata via the socket. Not working
-	 *            now.
+	 *            If you want to send the metadata via the socket. Not working now.
 	 * @return A map with information about the created sockets
 	 */
 	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, int queryId,
@@ -317,8 +310,8 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Searches for the connection information for the given operator. If there
-	 * is no socket for this operator, the socket will be created.
+	 * Searches for the connection information for the given operator. If there is
+	 * no socket for this operator, the socket will be created.
 	 *
 	 * @param session
 	 *            The session for user / right management
@@ -331,8 +324,8 @@ public class SocketService extends Observable {
 	 * @param operator
 	 *            The operator where you want to have the socket connection
 	 *            information for
-	 * @return A list with all socket information available (one operator can
-	 *         have multiple outputs and hence multiple sockets)
+	 * @return A list with all socket information available (one operator can have
+	 *         multiple outputs and hence multiple sockets)
 	 */
 	private SocketInfo getConnectionInformationWithPorts(ISession session, String queryName, int minPort, int maxPort,
 			IPhysicalOperator operator, int operatorOutputPort, boolean withMetaData) {
@@ -352,8 +345,8 @@ public class SocketService extends Observable {
 	}
 
 	/**
-	 * Searches for the connection information for the given operator. If there
-	 * is no socket for this operator, the socket will be created.
+	 * Searches for the connection information for the given operator. If there is
+	 * no socket for this operator, the socket will be created.
 	 *
 	 * @param session
 	 *            The session for user / right management
@@ -366,8 +359,8 @@ public class SocketService extends Observable {
 	 * @param operator
 	 *            The operator where you want to have the socket connection
 	 *            information for
-	 * @return A map with all socket information available (one operator can
-	 *         have multiple outputs and hence multiple sockets)
+	 * @return A map with all socket information available (one operator can have
+	 *         multiple outputs and hence multiple sockets)
 	 */
 	private Map<Integer, SocketInfo> getConnectionInformationWithPorts(ISession session, int queryId, int minPort,
 			int maxPort, IPhysicalOperator operator, boolean withMetaData) {
@@ -488,7 +481,16 @@ public class SocketService extends Observable {
 		return roots.get(rootPort);
 	}
 
-	private List<IPhysicalOperator> getRootOperators(int queryId, ISession session) {
+	/**
+	 * Searches for the roots of a query
+	 * 
+	 * @param queryId
+	 *            The id of the query
+	 * @param session
+	 *            The session
+	 * @return A list of roots
+	 */
+	public List<IPhysicalOperator> getRootOperators(int queryId, ISession session) {
 		IExecutionPlan plan = ExecutorServiceBinding.getExecutor().getExecutionPlan(session);
 		IPhysicalQuery query = plan.getQueryById(queryId, session);
 		return query.getRoots();
@@ -588,9 +590,8 @@ public class SocketService extends Observable {
 				Collection<ISubscription> sources = rootAsSink.getSubscribedToSource();
 
 				/*
-				 * For every such operator, connect our new sink (the socket
-				 * operator) to it so that the socket operator receives all the
-				 * data the original operator receives
+				 * For every such operator, connect our new sink (the socket operator) to it so
+				 * that the socket operator receives all the data the original operator receives
 				 */
 				for (ISubscription source : sources) {
 					Object target = source.getTarget();
@@ -604,9 +605,8 @@ public class SocketService extends Observable {
 			} else {
 
 				/*
-				 * The physical operator we want to subscribe to is itself a
-				 * source, hence we can directly subscribe to this operator ->
-				 * only one connection needed
+				 * The physical operator we want to subscribe to is itself a source, hence we
+				 * can directly subscribe to this operator -> only one connection needed
 				 */
 				final ISource<?> rootAsSource = (ISource<?>) root;
 				rootAsSource.subscribeSink((ISink) sink, 0, rootOutputPort, root.getOutputSchema(rootOutputPort), true,

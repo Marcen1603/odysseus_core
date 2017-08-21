@@ -106,7 +106,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 				return vh;
 			}
 		}
-		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream!");
+		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream! Schemata are "+schemata);
 	}
 
 	@Override

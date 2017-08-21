@@ -12,8 +12,8 @@ import org.openmuc.j60870.ServerEventListener;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.ASDUConverter;
 import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.AbstractIEC104TransportHandler;
+import de.uniol.inf.is.odysseus.wrapper.iec60870_5_104.util.ASDUConverter;
 
 /**
  * Listener implementation for new IEC60870-5-104 clients. <br />

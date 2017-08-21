@@ -332,7 +332,6 @@ POSSIBILITY OF SUCH DAMAGES.
       <import plugin="org.renjin"/>
       <import plugin="org.slf4j.api"/>
       <import plugin="javax.validation"/>
-      <import plugin="org.apache.xerces"/>
    </requires>
 
    <plugin

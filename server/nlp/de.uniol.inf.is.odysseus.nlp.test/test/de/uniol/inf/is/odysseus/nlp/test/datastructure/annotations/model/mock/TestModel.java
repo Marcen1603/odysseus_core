@@ -11,8 +11,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.exception.NLPModelNotFoundExce
 import de.uniol.inf.is.odysseus.nlp.test.datastructure.annotations.mock.TestAnnotation;
 
 public class TestModel extends AnnotationModel<TestAnnotation>{
-	private static final long serialVersionUID = -6974681467417796179L;
-	
 	private boolean exchanged = false;
 
 	public TestModel(){

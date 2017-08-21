@@ -70,13 +70,16 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	private Map<Integer, List<SDFAttribute>> outputSchema = new HashMap<Integer, List<SDFAttribute>>();
 	private List<String> inputSchema = null;
 	private long maxTimeToWaitForNewEventMS;
-	private boolean newAccessFramework = false;
 
 	private IMetaAttribute localMetaAttribute;
 
 	private boolean readMetaData;
 	private boolean overWriteSchemaSourceName = true;
 	private SDFSchema overWrittenSchema = null;
+	
+	// TODO: magic default values
+	private long realTimeDelay = 1000;
+	private long applicationTimeDelay = 900;
 
 	public AbstractAccessAO(AbstractLogicalOperator po) {
 		super(po);
@@ -86,26 +89,27 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		super();
 	}
 
-	public AbstractAccessAO(AbstractAccessAO po) {
-		super(po);
-		wrapper = po.wrapper;
-		optionsMap.addAll(po.optionsMap);
-		if (po.optionsList != null) {
-			this.optionsList = new ArrayList<>(po.optionsList);
+	public AbstractAccessAO(AbstractAccessAO ao) {
+		super(ao);
+		wrapper = ao.wrapper;
+		optionsMap.addAll(ao.optionsMap);
+		if (ao.optionsList != null) {
+			this.optionsList = new ArrayList<>(ao.optionsList);
 		}
-		inputSchema = po.inputSchema;
-		dataHandler = po.dataHandler;
-		protocolHandler = po.protocolHandler;
-		transportHandler = po.transportHandler;
-		accessAOResource = po.accessAOResource;
-		this.outputSchema.putAll(po.outputSchema);
-		this.maxTimeToWaitForNewEventMS = po.maxTimeToWaitForNewEventMS;
-		this.dateFormat = po.dateFormat;
-		this.newAccessFramework = po.newAccessFramework;
-		this.localMetaAttribute = po.localMetaAttribute;
-		this.readMetaData = po.readMetaData;
-		this.overWriteSchemaSourceName = po.overWriteSchemaSourceName;
-		this.overWrittenSchema = po.overWrittenSchema;
+		inputSchema = ao.inputSchema;
+		dataHandler = ao.dataHandler;
+		protocolHandler = ao.protocolHandler;
+		transportHandler = ao.transportHandler;
+		accessAOResource = ao.accessAOResource;
+		this.outputSchema.putAll(ao.outputSchema);
+		this.maxTimeToWaitForNewEventMS = ao.maxTimeToWaitForNewEventMS;
+		this.dateFormat = ao.dateFormat;
+		this.localMetaAttribute = ao.localMetaAttribute;
+		this.readMetaData = ao.readMetaData;
+		this.overWriteSchemaSourceName = ao.overWriteSchemaSourceName;
+		this.overWrittenSchema = ao.overWrittenSchema;
+		this.realTimeDelay = ao.realTimeDelay;
+		this.applicationTimeDelay = ao.applicationTimeDelay;
 	}
 
 	public AbstractAccessAO(Resource name, String wrapper, String transportHandler, String protocolHandler,
@@ -174,15 +178,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 
 	public long getMaxTimeToWaitForNewEventMS() {
 		return maxTimeToWaitForNewEventMS;
-	}
-
-	@Parameter(type = BooleanParameter.class, name = "naf", optional = true, isList = false, doc = "Enable or disable new access framework")
-	public void setNewAccessFramework(boolean newAccessFramework) {
-		this.newAccessFramework = newAccessFramework;
-	}
-
-	public boolean getNewAccessFramework() {
-		return this.newAccessFramework;
 	}
 
 	public boolean isOverWriteSchemaSourceName() {
@@ -298,7 +293,32 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	public boolean readMetaData() {
 		return readMetaData;
 	}
+	
+	
+	@Parameter(type = BooleanParameter.class, name = "outOfOrder", optional = true, isList = false, doc = "The system needs to know if the input is ordered by timestamps. Set to true if this is not the case!")
+	public void setOutOfOrder(boolean outOfOrder){
+		optionsMap.setOption(SDFConstraint.STRICT_ORDER, !outOfOrder);
+	}
 
+
+	public long getRealTimeDelay() {
+		return realTimeDelay;
+	}
+	
+	@Parameter(type = LongParameter.class, optional = true, isList = false, doc = "For out of order. How long should be waited for new elements.")
+	public void setRealTimeDelay(long realTimeDelay) {
+		this.realTimeDelay = realTimeDelay;
+	}
+
+	public long getApplicationTimeDelay() {
+		return applicationTimeDelay;
+	}
+
+	@Parameter(type = LongParameter.class, optional = true, isList = false, doc = "For out of order. After waiting some realTimeDelay, what time should be added to application time.")
+	public void setApplicationTimeDelay(long applicationTimeDelay) {
+		this.applicationTimeDelay = applicationTimeDelay;
+	}
+	
 	@Override
 	public boolean isSemanticallyEqual(IAccessAO operator) {
 		if (!(operator instanceof AbstractAccessAO)) {
@@ -344,9 +364,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		if (!Objects.equals(this.maxTimeToWaitForNewEventMS, other.maxTimeToWaitForNewEventMS)) {
 			return false;
 		}
-		if (!Objects.equals(this.newAccessFramework, other.newAccessFramework)) {
-			return false;
-		}
+
 		if (!Objects.equals(this.localMetaAttribute, other.localMetaAttribute)) {
 			return false;
 		}
@@ -359,8 +377,13 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		if (!Objects.equals(this.overWrittenSchema, other.overWrittenSchema)) {
 			return false;
+		}		
+		if (!Objects.equals(this.realTimeDelay, other.realTimeDelay)) {
+			return false;
 		}
-
+		if (!Objects.equals(this.applicationTimeDelay, other.applicationTimeDelay)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -414,7 +437,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 			constraints.put(SDFConstraint.DATE_FORMAT, new SDFConstraint(SDFConstraint.DATE_FORMAT, dateFormat));
 		}
 
-		boolean strictOrder = false;
+		boolean strictOrder = true;
 		if (optionsMap.containsKey(SDFConstraint.STRICT_ORDER)) {
 			String sorder = optionsMap.get(SDFConstraint.STRICT_ORDER);
 			strictOrder = Boolean.parseBoolean(sorder);
@@ -443,7 +466,7 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 		}
 		schema = SDFSchemaFactory.createNewSchema(getName(), type, s2);
 		schema = SDFSchemaFactory.createNewWithContraints(constraints, schema);
-		schema = SDFSchemaFactory.createNewWithStrictOrder(strictOrder, schema);
+		schema = SDFSchemaFactory.createNewWithOutOfOrder(!strictOrder, schema);
 
 		// Add meta attributes. If is set in operator, this overwrites other
 		// options
@@ -519,5 +542,6 @@ abstract public class AbstractAccessAO extends AbstractLogicalOperator implement
 	public void setOverWrittenSchema(SDFSchema overWrittenSchema) {
 		this.overWrittenSchema = overWrittenSchema;
 	}
+
 
 }

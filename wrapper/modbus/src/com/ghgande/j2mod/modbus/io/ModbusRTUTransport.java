@@ -377,7 +377,7 @@ public class ModbusRTUTransport extends ModbusSerialTransport {
 	 * @param out
 	 * @throws IOException
 	 */
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	private void getResponse(int function, BytesOutputStream out)
 			throws IOException {
 		int byteCount = -1;

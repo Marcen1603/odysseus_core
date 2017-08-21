@@ -152,7 +152,7 @@ public abstract class Abstract3DWheelDashboardPart extends AbstractGLCanvasDashb
 
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     private Tuple<?> getTuple(final IStreamObject<?> element) {
         return (Tuple<?>) element;
     }

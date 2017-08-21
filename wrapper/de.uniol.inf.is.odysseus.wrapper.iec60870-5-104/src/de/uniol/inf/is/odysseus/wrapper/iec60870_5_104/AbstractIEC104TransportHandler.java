@@ -260,7 +260,7 @@ public abstract class AbstractIEC104TransportHandler extends AbstractPushTranspo
 	 * Creates a new transport handler.
 	 *
 	 * @param protocolHandler
-	 *            The transport handler to use.
+	 *            The protocol handler to use.
 	 * @param options
 	 *            The options map.
 	 * @throws UnknownHostException

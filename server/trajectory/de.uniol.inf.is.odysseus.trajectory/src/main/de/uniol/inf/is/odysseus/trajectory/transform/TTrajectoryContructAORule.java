@@ -90,6 +90,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		predicateWindowAO.setPartitionBy(groupOrPartitionBy);
 		
 		final IAttributeResolver attributeResolver = new DirectAttributeResolver(operatorBefore.getInputSchema());
+		@SuppressWarnings("rawtypes")
 		final RelationalPredicateBuilder builder = new RelationalPredicateBuilder();
 		
 		final RelationalExpression<?> predStart = (RelationalExpression<?>)builder.createPredicate(attributeResolver, "State = 0");

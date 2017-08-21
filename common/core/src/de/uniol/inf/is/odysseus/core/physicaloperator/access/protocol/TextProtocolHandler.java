@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
 public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
-	private String charset;
 	private String objectDelimiter;
 	private Scanner scanner;
 	private boolean keepDelimiter;
@@ -50,11 +49,6 @@ public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	}
 
 	public void init_internal() {
-		if (optionsMap.containsKey("charset")) {
-			charset = optionsMap.get("charset");
-		} else {
-			charset = "UTF-8";
-		}
 		if (optionsMap.containsKey("delimiter")) {
 			objectDelimiter = optionsMap.get("delimiter");
 		} else {
@@ -76,7 +70,7 @@ public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 					|| (this.getAccessPattern()
 							.equals(IAccessPattern.ROBUST_PULL))) {
 				this.scanner = new Scanner(getTransportHandler()
-						.getInputStream(), charset);
+						.getInputStream(), getCharset().name());
 				scanner.useDelimiter(objectDelimiter);
 			}
 		} else {
@@ -168,7 +162,7 @@ public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	public void process(long callerId, ByteBuffer message) {
 		// TODO: check if callerId is relevant
 		Scanner scanner = new Scanner(
-				new ByteArrayInputStream(message.array()), charset);
+				new ByteArrayInputStream(message.array()), getCharset().name());
 		scanner.useDelimiter(objectDelimiter);
 		while (scanner.hasNext()) {
 			if (keepDelimiter) {
@@ -189,16 +183,11 @@ public class TextProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 			return false;
 		}
 		TextProtocolHandler<?> other = (TextProtocolHandler<?>) o;
-		if (!this.charset.equals(other.getCharset())
-				|| !this.objectDelimiter.equals(other.getObjectDelimiter())
+		if (!this.objectDelimiter.equals(other.getObjectDelimiter())
 				|| this.keepDelimiter != other.isKeepDelimiter()) {
 			return false;
 		}
 		return true;
-	}
-
-	public String getCharset() {
-		return charset;
 	}
 
 	public String getObjectDelimiter() {

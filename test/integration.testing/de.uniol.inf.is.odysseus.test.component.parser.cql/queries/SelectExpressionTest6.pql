@@ -1,0 +1,1 @@
+operator_1 = MAP({expressions=[['"hello"+"world"','expression_0']]},bid)

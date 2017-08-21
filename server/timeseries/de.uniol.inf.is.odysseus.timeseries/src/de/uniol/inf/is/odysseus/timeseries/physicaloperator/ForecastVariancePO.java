@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.timeseries.autoregression.model.IAutoregressionF
  * @author Christoph Schröer
  *
  */
+@SuppressWarnings("rawtypes")
 @Deprecated
 public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple<ITimeInterval>> {
 
@@ -48,6 +49,7 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 	/**
 	 * To detect, wether a model is changed.
 	 */
+	
 	private IAutoregressionForecaster oldModel;
 
 	/**
@@ -82,6 +84,7 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 		return OutputMode.NEW_ELEMENT;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void process_next(Tuple<ITimeInterval> object, int port) {
 
@@ -131,8 +134,8 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 			// object.getMetadata().getEnd().minus(object.getMetadata().getStart());
 			// PointInTime currentForecastStart = object.getMetadata().getEnd();
 			PointInTime currentForecastStart = object.getMetadata().getStart().plus(between);
-			Date start = new Date(currentForecastStart.getMainPoint());
-			Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+			new Date(currentForecastStart.getMainPoint());
+			new Date(currentForecastStart.plus(between).getMainPoint());
 
 			Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
 			varianceForecastTuple.setAttribute(0, 0.0);
@@ -182,8 +185,8 @@ public class ForecastVariancePO extends AbstractPipe<Tuple<ITimeInterval>, Tuple
 					this.updateLagVariances(countOfVariances, varianceForecast);
 				}
 
-				Date start = new Date(currentForecastStart.getMainPoint());
-				Date end = new Date(currentForecastStart.plus(between).getMainPoint());
+				new Date(currentForecastStart.getMainPoint());
+				new Date(currentForecastStart.plus(between).getMainPoint());
 
 				Tuple<ITimeInterval> varianceForecastTuple = new Tuple<ITimeInterval>(4, false);
 				varianceForecastTuple.setAttribute(0, varianceForecast);

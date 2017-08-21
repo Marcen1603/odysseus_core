@@ -8,8 +8,6 @@ import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.To
 import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.model.AnnotationModel;
 
 public class BTokensModel extends AnnotationModel<Tokens>{
-	private static final long serialVersionUID = 5796855427147951374L;
-
 	public BTokensModel(){
 		super();
 	}

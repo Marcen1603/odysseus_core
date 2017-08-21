@@ -301,4 +301,8 @@
          id="de.uniol.inf.is.odysseus.parallelization.dynamic.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.rest.feature"
+         version="0.0.0"/>
+
 </feature>

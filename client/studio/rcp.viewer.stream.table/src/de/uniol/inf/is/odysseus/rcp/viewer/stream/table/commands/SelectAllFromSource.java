@@ -37,7 +37,7 @@ public class SelectAllFromSource extends AbstractHandler implements IHandler {
 
 	private static final String STREAM_EDITOR_TYPE = "de.uniol.inf.is.odysseus.rcp.viewer.stream.Table20";
 
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		try {

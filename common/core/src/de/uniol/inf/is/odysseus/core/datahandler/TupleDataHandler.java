@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -93,6 +94,16 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 			createDataHandler(schema);
 		} else {
 			throw new RuntimeException("TupleDataHandler is immutable. Values already set");
+		}
+	}
+	
+	@Override
+	public void setCharset(Charset charset) {
+		super.setCharset(charset);
+		if (dataHandlers != null) {
+			for (IDataHandler<?> handler : dataHandlers) {
+				handler.setCharset(charset);
+			}
 		}
 	}
 
