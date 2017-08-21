@@ -1520,15 +1520,15 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	//TODO!
 	
 	private String getJiraUser() {
-		return OdysseusConfiguration.get("BUGREPORT_USER", "odysseus_studio");
+		return OdysseusConfiguration.instance.get("BUGREPORT_USER", "odysseus_studio");
 	}
 
 	private String getJiraPassword() {
-		return OdysseusConfiguration.get("BUGREPORT_PASSWORD", "jhf4hdds673");
+		return OdysseusConfiguration.instance.get("BUGREPORT_PASSWORD", "jhf4hdds673");
 	}
 	
 	private String getJiraUrl() {
-		return OdysseusConfiguration.get("BUGREPORT_BASEURL",
+		return OdysseusConfiguration.instance.get("BUGREPORT_BASEURL",
 				"http://jira.odysseus.offis.uni-oldenburg.de/");
 	}
 	
