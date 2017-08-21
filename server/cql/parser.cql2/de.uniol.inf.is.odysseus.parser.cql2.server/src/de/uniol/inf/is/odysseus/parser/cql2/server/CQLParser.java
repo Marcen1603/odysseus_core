@@ -201,10 +201,11 @@ public class CQLParser implements IQueryParser {
 						// create a new {@ IExecutorCommand}
 						for (Entry<String, CharSequence> e : generatePQL(component, fsa, null).entrySet()) {
 							if (e.getValue() != null && !e.getValue().equals("")) {
-								String pqlString = e.getValue().toString();
+								String pqlString = "#PARSER PQL\n" ;
+								pqlString += "#ADDQUERY\n";
+								pqlString += e.getValue().toString();
 								infoService.info("Generated following PQL String:\n " + pqlString);
-								executorCommands.add(new AddQueryCommand(pqlString, "PQL", user, null, context,
-										new ArrayList<>(), false));
+								executorCommands.add(new AddQueryCommand(pqlString, "OdysseusScript", user, null, context, new ArrayList<>(), false));
 							}
 						}
 					} else if (component instanceof Command) {
@@ -217,8 +218,7 @@ public class CQLParser implements IQueryParser {
 						if (command != null)
 							executorCommands.add(command);
 					} else {
-						throw new QueryParseException(
-								"Given querie contains unknown component: " + component.toString());
+						throw new QueryParseException("Given querie contains unknown component: " + component.toString());
 					}
 				}
 			} else {

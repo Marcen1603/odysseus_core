@@ -33,11 +33,15 @@ terminal MATRIX_FLOAT:
 	'[' (FLOAT)+ (',' FLOAT)* (';' (FLOAT)+ (',' FLOAT)*)* ']';
 
 SystemVariable:
-	'$' '{' ID '}'
+	('$' '{' ID '}')| /// 
+	(ID '()')
 ;
 
 enum Time:
-	MILLISECOND
+	NULL
+	| NANOSECOND
+	| NANOSECONDS
+	| MILLISECOND
 	| SECOND
 	| MINUTE
 	| HOUR
@@ -397,12 +401,14 @@ UnboundedWindow returns WindowOperator:
 
 TimebasedWindow returns WindowOperator:
 	{TimebasedWindow}
-	'SIZE' size=INT unit=Time
-	('ADVANCE' advance_size=INT advance_unit=Time)?
+	'SIZE' size=INT 
+	(unit=Time)?
+	('ADVANCE' advance_size=INT (advance_unit=Time)?)?
 	'TIME';
 
 TuplebasedWindow returns WindowOperator:
-	{TuplebasedWindow} 'SIZE' size=INT
+	{TuplebasedWindow} 
+	'SIZE' size=INT
 	('ADVANCE' advance_size=INT)?
 	'TUPLE'
 	('PARTITION' 'BY' partition_attribute=Attribute)?;

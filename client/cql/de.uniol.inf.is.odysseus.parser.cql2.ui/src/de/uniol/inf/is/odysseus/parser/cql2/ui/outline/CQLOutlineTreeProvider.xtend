@@ -10,6 +10,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
  *
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#outline
  */
+
 class CQLOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 }

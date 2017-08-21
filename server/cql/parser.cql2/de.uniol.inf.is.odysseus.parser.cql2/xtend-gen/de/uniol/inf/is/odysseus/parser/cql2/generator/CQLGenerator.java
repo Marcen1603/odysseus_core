@@ -40,6 +40,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.TimebasedWindow;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.TuplebasedWindow;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector;
@@ -67,8 +68,11 @@ import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generates PQL text from a CQL text.
@@ -80,6 +84,8 @@ public class CQLGenerator implements IGenerator2 {
     
     AGGREGATE;
   }
+  
+  private final Logger log = LoggerFactory.getLogger(CQLGenerator.class);
   
   private Map<String, String> registry_Operators = CollectionLiterals.<String, String>newHashMap();
   
@@ -97,13 +103,9 @@ public class CQLGenerator implements IGenerator2 {
   
   private List<String> registry_OperatorNames = CollectionLiterals.<String>newArrayList();
   
-  private Map<SimpleSelect, List<SelectExpression>> queryAggregations = CollectionLiterals.<SimpleSelect, List<SelectExpression>>newHashMap();
-  
   /**
-   * Contains string representations of all attributes (inclusivley aggregations and expressions) mapped by their corresponding sources.
+   * Contains string representations of all attributes mapped by their corresponding sources.
    */
-  public Map<SimpleSelect, Map<String, List<String>>> queryAttributes = CollectionLiterals.<SimpleSelect, Map<String, List<String>>>newHashMap();
-  
   private int operatorCounter = 0;
   
   private int aggregationCounter = 0;
@@ -140,8 +142,6 @@ public class CQLGenerator implements IGenerator2 {
     this.registry_Operators.clear();
     this.registry_NestedSelects.clear();
     this.registry_RenamedAttributes.clear();
-    this.queryAggregations.clear();
-    this.queryAttributes.clear();
     this.registry_SubQueries.clear();
     this.registry_SimpleSelect.clear();
     this.registry_existenceOperators.clear();
@@ -307,38 +307,56 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   public boolean prepareParsingSelect(final SimpleSelect select) {
-    boolean _xifexpression = false;
-    boolean _contains = this.registry_SimpleSelect.contains(select);
-    boolean _not = (!_contains);
-    if (_not) {
-      boolean _xblockexpression = false;
-      {
-        List<NestedSource> subQueries = this.registerAllSource(select);
-        for (final NestedSource subQuery : subQueries) {
+    try {
+      boolean _xtrycatchfinallyexpression = false;
+      try {
+        boolean _xifexpression = false;
+        boolean _contains = this.registry_SimpleSelect.contains(select);
+        boolean _not = (!_contains);
+        if (_not) {
+          boolean _xblockexpression = false;
           {
-            this.prepareParsingSelect(subQuery.getStatement().getSelect());
-            CQLGeneratorUtil.getSubQuerySources().put(subQuery.getAlias().getName(), 
-              this.queryAttributes.get(subQuery.getStatement().getSelect()).keySet());
+            List<NestedSource> subQueries = this.registerAllSource(select);
+            for (final NestedSource subQuery : subQueries) {
+              {
+                this.prepareParsingSelect(subQuery.getStatement().getSelect());
+                CQLGeneratorUtil.getSubQuerySources().put(subQuery.getAlias().getName(), 
+                  CQLGeneratorUtil.getQueryAttributes(subQuery.getStatement().getSelect()).keySet());
+              }
+            }
+            Map<String, List<String>> attributes2 = CollectionLiterals.<String, List<String>>newHashMap();
+            attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2);
+            List<SelectExpression> aggregations = this.extractAggregationsFromArgument(select.getArguments());
+            List<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(select.getArguments());
+            if ((aggregations != null)) {
+              CQLGeneratorUtil.addQueryAggregations(select, aggregations);
+            }
+            if ((expressions != null)) {
+              CQLGeneratorUtil.getQueryExpressions().put(select, expressions);
+            }
+            if ((attributes2 != null)) {
+              CQLGeneratorUtil.addQueryAttributes(select, attributes2);
+            }
+            _xblockexpression = this.registry_SimpleSelect.add(select);
           }
+          _xifexpression = _xblockexpression;
         }
-        Map<String, List<String>> attributes2 = CollectionLiterals.<String, List<String>>newHashMap();
-        attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2);
-        List<SelectExpression> aggregations = this.extractAggregationsFromArgument(select.getArguments());
-        List<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(select.getArguments());
-        if ((aggregations != null)) {
-          this.queryAggregations.put(select, aggregations);
+        _xtrycatchfinallyexpression = _xifexpression;
+      } catch (final Throwable _t) {
+        if (_t instanceof Exception) {
+          final Exception e = (Exception)_t;
+          String _message = e.getMessage();
+          String _plus = ("error occurred while parsing select: " + _message);
+          this.log.error(_plus);
+          throw e;
+        } else {
+          throw Exceptions.sneakyThrow(_t);
         }
-        if ((expressions != null)) {
-          CQLGeneratorUtil.getQueryExpressions().put(select, expressions);
-        }
-        if ((attributes2 != null)) {
-          this.queryAttributes.put(select, attributes2);
-        }
-        _xblockexpression = this.registry_SimpleSelect.add(select);
       }
-      _xifexpression = _xblockexpression;
+      return _xtrycatchfinallyexpression;
+    } catch (Throwable _e) {
+      throw Exceptions.sneakyThrow(_e);
     }
-    return _xifexpression;
   }
   
   public List<NestedSource> registerAllSource(final SimpleSelect select) {
@@ -426,7 +444,7 @@ public class CQLGenerator implements IGenerator2 {
           }
           break;
         case AGGREGATE:
-          List<SelectExpression> aggregations = this.queryAggregations.get(select);
+          List<SelectExpression> aggregations = CQLGeneratorUtil.getQueryAggregations(select);
           if (((aggregations != null) && (!aggregations.isEmpty()))) {
             result = this.buildAggregateOP(aggregations, select.getOrder(), select.getSources());
             operatorName = this.registerOperator(result[1].toString());
@@ -514,7 +532,7 @@ public class CQLGenerator implements IGenerator2 {
         attributes.add(arg.getAttribute());
       }
     }
-    if ((((!this.checkIfSelectAll(attributes)) || (!this.queryAggregations.get(stmt).isEmpty())) || 
+    if ((((!this.checkIfSelectAll(attributes)) || (!CQLGeneratorUtil.getQueryAggregations(stmt).isEmpty())) || 
       (!CQLGeneratorUtil.getQueryExpressions().get(stmt).isEmpty()))) {
       return this.registerOperator(this.buildProjection(stmt, select));
     }
@@ -1022,26 +1040,46 @@ public class CQLGenerator implements IGenerator2 {
     if ((window instanceof TimebasedWindow)) {
       String _xifexpression = null;
       int _advance_size = ((TimebasedWindow)window).getAdvance_size();
-      boolean _notEquals = (_advance_size != 0);
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_advance_size != 0);
+      if (_tripleNotEquals) {
         _xifexpression = Integer.valueOf(((TimebasedWindow)window).getAdvance_size()).toString();
       } else {
         _xifexpression = "1";
       }
       String var1 = _xifexpression;
       String _xifexpression_1 = null;
-      int _advance_size_1 = ((TimebasedWindow)window).getAdvance_size();
-      boolean _notEquals_1 = (_advance_size_1 != 0);
-      if (_notEquals_1) {
-        _xifexpression_1 = ((TimebasedWindow)window).getAdvance_unit().getName();
-      } else {
+      Time _unit = ((TimebasedWindow)window).getUnit();
+      boolean _tripleNotEquals_1 = (_unit != Time.NULL);
+      if (_tripleNotEquals_1) {
         _xifexpression_1 = ((TimebasedWindow)window).getUnit().getName();
+      } else {
+        _xifexpression_1 = Time.NANOSECONDS.getName();
       }
-      String var2 = _xifexpression_1;
+      String var3 = _xifexpression_1;
+      String _xifexpression_2 = null;
+      Time _advance_unit = ((TimebasedWindow)window).getAdvance_unit();
+      boolean _tripleNotEquals_2 = (_advance_unit != Time.NULL);
+      if (_tripleNotEquals_2) {
+        _xifexpression_2 = ((TimebasedWindow)window).getAdvance_unit().getName();
+      } else {
+        _xifexpression_2 = var3;
+      }
+      String var2 = _xifexpression_2;
+      String _var2 = var2;
+      String _xifexpression_3 = null;
+      int _length = var2.length();
+      int _minus = (_length - 1);
+      boolean _equalsIgnoreCase = Character.valueOf(var2.charAt(_minus)).toString().equalsIgnoreCase("S");
+      boolean _not = (!_equalsIgnoreCase);
+      if (_not) {
+        _xifexpression_3 = "S";
+      } else {
+        _xifexpression_3 = "";
+      }
+      var2 = (_var2 + _xifexpression_3);
       String _string = Integer.valueOf(((TimebasedWindow)window).getSize()).toString();
       String _plus = (_string + ",\'");
-      String _name = ((TimebasedWindow)window).getUnit().getName();
-      String _plus_1 = (_plus + _name);
+      String _plus_1 = (_plus + var3);
       String _plus_2 = (_plus_1 + "\'");
       args.put("size", _plus_2);
       args.put("advance", (((var1 + ",\'") + var2) + "\'"));
@@ -1049,25 +1087,26 @@ public class CQLGenerator implements IGenerator2 {
       return this.builder.buildOperator("TIMEWINDOW", args);
     } else {
       if ((window instanceof TuplebasedWindow)) {
+        this.log.error("build element window");
         args.put("size", Integer.valueOf(((TuplebasedWindow)window).getSize()).toString());
-        int _xifexpression_2 = (int) 0;
-        int _advance_size_2 = ((TuplebasedWindow)window).getAdvance_size();
-        boolean _notEquals_2 = (_advance_size_2 != 0);
-        if (_notEquals_2) {
-          _xifexpression_2 = ((TuplebasedWindow)window).getAdvance_size();
+        int _xifexpression_4 = (int) 0;
+        int _advance_size_1 = ((TuplebasedWindow)window).getAdvance_size();
+        boolean _notEquals = (_advance_size_1 != 0);
+        if (_notEquals) {
+          _xifexpression_4 = ((TuplebasedWindow)window).getAdvance_size();
         } else {
-          _xifexpression_2 = 1;
+          _xifexpression_4 = 1;
         }
-        args.put("advance", Integer.valueOf(_xifexpression_2).toString());
-        String _xifexpression_3 = null;
+        args.put("advance", Integer.valueOf(_xifexpression_4).toString());
+        String _xifexpression_5 = null;
         Attribute _partition_attribute = ((TuplebasedWindow)window).getPartition_attribute();
-        boolean _tripleNotEquals = (_partition_attribute != null);
-        if (_tripleNotEquals) {
-          _xifexpression_3 = ((TuplebasedWindow)window).getPartition_attribute().getName();
+        boolean _tripleNotEquals_3 = (_partition_attribute != null);
+        if (_tripleNotEquals_3) {
+          _xifexpression_5 = ((TuplebasedWindow)window).getPartition_attribute().getName();
         } else {
-          _xifexpression_3 = null;
+          _xifexpression_5 = null;
         }
-        args.put("partition", _xifexpression_3);
+        args.put("partition", _xifexpression_5);
         args.put("input", source.getName());
         return this.builder.buildOperator("ELEMENTWINDOW", args);
       } else {
@@ -1174,7 +1213,7 @@ public class CQLGenerator implements IGenerator2 {
         if (_notEquals) {
           args.add(datatype);
         }
-        CQLGeneratorUtil.getRegisteredAggregationAttributes().add(alias);
+        CQLGeneratorUtil.addAggregationAttribute(aggAttr.get(i), alias);
         args.add(",");
         String _argsstr = argsstr;
         final List<String> _converted_args = (List<String>)args;
@@ -1292,13 +1331,17 @@ public class CQLGenerator implements IGenerator2 {
           int _size = this.registry_SimpleSelect.size();
           int _minus = (_size - 1);
           SimpleSelect query = this.registry_SimpleSelect.get(_minus);
-          Map<String, List<String>> queryAttributess = this.queryAttributes.get(query);
+          Map<String, List<String>> queryAttributess = CQLGeneratorUtil.getQueryAttributes(query);
+          List<SelectExpression> queryAggregations = CQLGeneratorUtil.getQueryAggregations(query);
           SimpleSelect _select = ((NestedSource)source).getStatement().getSelect();
           SimpleSelect subQuery = ((SimpleSelect) _select);
-          Map<String, List<String>> subQueryAttributes = this.queryAttributes.get(subQuery);
+          Map<String, List<String>> subQueryAttributes = CQLGeneratorUtil.getQueryAttributes(subQuery);
+          List<SelectExpression> subQueryAggregations = CQLGeneratorUtil.getQueryAggregations(subQuery);
           String lastOperator = this.registry_SubQueries.get(subQuery);
           ArrayList<String> inputs = CollectionLiterals.<String>newArrayList();
           List<String> attributeAliases = CQLGeneratorUtil.getAttributeAliasesAsList();
+          List<String> allQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(query);
+          List<String> allSubQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(subQuery);
           Set<Map.Entry<String, List<String>>> _entrySet = queryAttributess.entrySet();
           for (final Map.Entry<String, List<String>> entry : _entrySet) {
             {
@@ -1346,6 +1389,35 @@ public class CQLGenerator implements IGenerator2 {
               }
             }
           }
+          ArrayList<String> aliasses = CollectionLiterals.<String>newArrayList();
+          String subQueryAlias = ((NestedSource)source).getAlias().getName();
+          List<String> _allQueryAttributes = CQLGeneratorUtil.getAllQueryAttributes(subQuery);
+          for (final String name : _allQueryAttributes) {
+            {
+              String realName = name;
+              boolean _contains = realName.contains(".");
+              if (_contains) {
+                int _indexOf = realName.indexOf(".");
+                int _plus = (_indexOf + 1);
+                realName = realName.substring(_plus, realName.length());
+                aliasses.add(name.replace(".", "_"));
+              } else {
+                aliasses.add(name);
+              }
+              boolean _isAggregationAttribute = CQLGeneratorUtil.isAggregationAttribute(name);
+              if (_isAggregationAttribute) {
+                aliasses.add(((subQueryAlias + ".") + realName));
+              } else {
+                aliasses.add(((subQueryAlias + ".") + realName));
+              }
+            }
+          }
+          String _generateListString = this.generateListString(aliasses);
+          Pair<String, String> _mappedTo = Pair.<String, String>of("aliases", _generateListString);
+          Pair<String, String> _mappedTo_1 = Pair.<String, String>of("pairs", "true");
+          Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", lastOperator);
+          String op = this.builder.buildOperator("RENAME", CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2));
+          inputs.add(this.registerOperator(op));
           final ArrayList<String> _converted_inputs = (ArrayList<String>)inputs;
           sourceStrings[i] = this.buildJoin(((String[])Conversions.unwrapArray(_converted_inputs, String.class))).toString();
         } else {
@@ -1478,8 +1550,7 @@ public class CQLGenerator implements IGenerator2 {
     int _size = ((List<String>)Conversions.doWrapArray(_converted_sourcenames)).size();
     boolean _lessThan = (_size < 1);
     if (_lessThan) {
-      throw new IllegalArgumentException(
-        "Invalid number of source elements: There have to be at least two sources");
+      throw new IllegalArgumentException("Invalid number of source elements: There has to be at least one source");
     }
     final String[] _converted_sourcenames_1 = (String[])sourcenames;
     int _size_1 = ((List<String>)Conversions.doWrapArray(_converted_sourcenames_1)).size();
@@ -1684,8 +1755,7 @@ public class CQLGenerator implements IGenerator2 {
           EObject function = aggregation.getValue();
           if ((function instanceof Function)) {
             SelectExpression _expression_1 = a.getExpression();
-            boolean _isMEPFunction = CQLGeneratorUtil.isMEPFunction(((Function)function).getName(), 
-              this.parseSelectExpression(((SelectExpression) _expression_1)).toString());
+            boolean _isMEPFunction = CQLGeneratorUtil.isMEPFunction(((Function)function).getName(), this.parseSelectExpression(((SelectExpression) _expression_1)).toString());
             if (_isMEPFunction) {
               list.add(a.getExpression());
             }
@@ -1855,10 +1925,25 @@ public class CQLGenerator implements IGenerator2 {
       if (_isSourceAlias_1) {
         sourcename = this.getSourcenameFromAlias(sourcename);
       }
-      for (final AttributeStruct attr_1 : CQLGeneratorUtil.getSource(sourcename).attributes) {
-        boolean _equals_1 = attr_1.attributename.equals(attributename);
-        if (_equals_1) {
-          return attr_1.datatype;
+      try {
+        for (final AttributeStruct attr_1 : CQLGeneratorUtil.getSource(sourcename).attributes) {
+          boolean _equals_1 = attr_1.attributename.equals(attributename);
+          if (_equals_1) {
+            return attr_1.datatype;
+          }
+        }
+      } catch (final Throwable _t) {
+        if (_t instanceof IllegalArgumentException) {
+          final IllegalArgumentException e = (IllegalArgumentException)_t;
+          Set<String> _get = CQLGeneratorUtil.getSubQuerySources().get(sourcename);
+          for (final String attr_2 : _get) {
+            boolean _equals_2 = this.getAttributename(attr_2).equals(attributename);
+            if (_equals_2) {
+              return CQLGeneratorUtil.getAttribute(attr_2).datatype;
+            }
+          }
+        } else {
+          throw Exceptions.sneakyThrow(_t);
         }
       }
     } else {
@@ -1873,15 +1958,15 @@ public class CQLGenerator implements IGenerator2 {
         if ((attributename == null)) {
           attributename = attribute;
         }
-        for (final AttributeStruct attr_2 : CQLGeneratorUtil.getSource(sourceFromAlias_1).attributes) {
-          boolean _equals_2 = attr_2.attributename.equals(attributename);
-          if (_equals_2) {
-            return attr_2.datatype;
+        for (final AttributeStruct attr_3 : CQLGeneratorUtil.getSource(sourceFromAlias_1).attributes) {
+          boolean _equals_3 = attr_3.attributename.equals(attributename);
+          if (_equals_3) {
+            return attr_3.datatype;
           }
         }
       }
     }
-    return null;
+    return "Double";
   }
   
   public String getSourcenameFromAlias(final String sourcealias) {
@@ -1940,6 +2025,10 @@ public class CQLGenerator implements IGenerator2 {
       }
     }
     if ((source != null)) {
+      boolean _isAggregationAttribute = CQLGeneratorUtil.isAggregationAttribute(attribute);
+      if (_isAggregationAttribute) {
+        return attribute;
+      }
       boolean isAlias = CQLGeneratorUtil.isAttributeAlias(attribute);
       boolean _isSourceAlias = CQLGeneratorUtil.isSourceAlias(source);
       if (_isSourceAlias) {
@@ -2006,17 +2095,35 @@ public class CQLGenerator implements IGenerator2 {
         boolean _isEmpty_1 = aliases.isEmpty();
         boolean _not_2 = (!_isEmpty_1);
         if (_not_2) {
+          List<String> renames = this.registry_RenamedAttributes.get(attribute);
+          if (((renames == null) || renames.isEmpty())) {
+            return attribute;
+          }
           return aliases.get(0);
         }
         SourceStruct sourceStruct = CQLGeneratorUtil.getSource(containedBySources.get(0).sourcename);
         boolean _isEmpty_2 = sourceStruct.aliases.isEmpty();
         boolean _not_3 = (!_isEmpty_2);
         if (_not_3) {
+          List<String> renames_1 = this.registry_RenamedAttributes.get(attribute);
+          if (((renames_1 == null) || renames_1.isEmpty())) {
+            return attribute;
+          }
           String _get = sourceStruct.aliases.get(0);
           String _plus = (_get + ".");
           return (_plus + attributename);
         }
         return ((containedBySources.get(0).sourcename + ".") + attribute);
+      }
+      boolean _contains_5 = attributename.contains("()");
+      if (_contains_5) {
+        String _replace = attributename.replace("(", "").replace(")", "");
+        String _plus_1 = ("${" + _replace);
+        return (_plus_1 + "}");
+      }
+      boolean _contains_6 = attributename.contains("$(");
+      if (_contains_6) {
+        return attributename;
       }
     }
     throw new IllegalArgumentException((("attribute " + attribute) + " could not be resolved"));
