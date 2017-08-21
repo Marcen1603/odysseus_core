@@ -49,7 +49,7 @@ public class DistancePojo {
     }
 
     @Evaluate
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     public Double evaluate(final List<Position> partial) {
         double distance = 0.0;
         double tmpLat = partial.get(0).latitude;
