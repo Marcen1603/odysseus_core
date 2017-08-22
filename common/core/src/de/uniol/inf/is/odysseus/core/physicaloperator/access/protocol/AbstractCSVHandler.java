@@ -140,7 +140,7 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 //		byte[] encodedBytes = new byte[cb.limit() + newline.length];
 //		System.arraycopy(encodedBytes1, 0, encodedBytes, 0, cb.limit());
 //		System.arraycopy(newline, 0, encodedBytes, cb.limit(), newline.length);
-		getTransportHandler().send(out.toString());
+		getTransportHandler().send(out.toString(), true);
 	}
 
 	private void writeHeadings(StringBuilder out) {
