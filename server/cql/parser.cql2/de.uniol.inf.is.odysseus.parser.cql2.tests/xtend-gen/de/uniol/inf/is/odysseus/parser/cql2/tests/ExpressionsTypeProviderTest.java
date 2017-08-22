@@ -2,10 +2,8 @@ package de.uniol.inf.is.odysseus.parser.cql2.tests;
 
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model;
-import de.uniol.inf.is.odysseus.parser.cql2.tests.CQLInjectorProvider;
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsTypeProvider;
-import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -14,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
-@InjectWith(CQLInjectorProvider.class)
 @Deprecated
 @SuppressWarnings("all")
 public class ExpressionsTypeProviderTest {

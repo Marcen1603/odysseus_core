@@ -27,7 +27,7 @@ public class ExtensionFactory {
 
 	public void removeExtension(IExtension extension) {
 		logger.info("removed " + extension.getName() + " for " + CQLParser.class.getCanonicalName());
-		map.remove(extension);
+		map.remove(extension.getName());
 	}
 
 	public IExtension getExtension(String name) {

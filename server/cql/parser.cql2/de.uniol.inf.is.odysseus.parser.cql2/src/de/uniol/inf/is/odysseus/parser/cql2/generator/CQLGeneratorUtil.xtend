@@ -19,8 +19,12 @@ import java.util.Set
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class CQLGeneratorUtil {
+
+	val private static Logger log = LoggerFactory.getLogger(CQLGeneratorUtil);
 
 	public static var CQLGeneratorUtil instance = null
 
@@ -29,10 +33,11 @@ class CQLGeneratorUtil {
 	}
 
 	private var CQLGenerator generator
-	
+
 	private static var List<SourceStruct> registry_Sources = newArrayList
 	private static var Map<String, String> registry_Expressions = newHashMap
 	private static var List<String> registry_AggregationAttributes = newArrayList
+	private static var Map<SelectExpression, String> registry_AggregationAttributes2 = newHashMap
 	private static var Map<String, Set<String>> registry_SubQuerySources = newHashMap
 	private static var Map<String, String> registry_AttributeAliases = newHashMap
 	/** Contains all selected attributes for each registered query */
@@ -40,6 +45,11 @@ class CQLGeneratorUtil {
 	/** Contains the corresponding sources to the attributes in projectionAttributes */
 	private static var Map<SimpleSelect, List<String>> projectionSources = newHashMap
 	private static var Map<SimpleSelect, List<SelectExpression>> queryExpressions = newHashMap
+
+	/** Contains string representations of all attributes mapped by their corresponding sources.*/
+	private static var Map<SimpleSelect, Map<String, List<String>>> queryAttributes = newHashMap
+	/** Contains {@SelectExpression} objects that corresponds to aggregations of the given source. */
+	private static var Map<SimpleSelect, List<SelectExpression>> queryAggregations = newHashMap
 
 	private static var aggregationCounter = 0
 	private static var expressionCounter = 0
@@ -71,13 +81,28 @@ class CQLGeneratorUtil {
 		return getAttributeAliasesAsList().contains(attributename)
 	}
 
-	public static def isSourceAlias(String sourcename) { return getSourceAliasesAsList().contains(sourcename) }
+	public static def isSourceAlias(String sourcename) {
+		return getSourceAliasesAsList().contains(sourcename)
+	}
+
+	public static def isAggregationAttribute(String name) {
+		return registry_AggregationAttributes.contains(name)
+	}
 
 	public static def List<AttributeStruct> getAttributes() {
 		var list = newArrayList
 		for (SourceStruct source : registry_Sources)
 			list.addAll(source.attributes)
 		return list
+	}
+
+	public static def AttributeStruct getAttribute(String name) {
+		for (AttributeStruct attr : getAttributes()) {
+			if (attr.attributename.equals(name))
+				return attr
+			else if (attr.aliases.contains(name))
+				return attr
+		}
 	}
 
 	private static def String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
@@ -537,6 +562,78 @@ class CQLGeneratorUtil {
 
 			public static def getSubQuerySources() {
 				return registry_SubQuerySources
+			}
+
+			public static def addAggregationAttribute(SelectExpression aggregation, String alias) {
+				if (!registry_AggregationAttributes.contains(alias) &&
+					!registry_AggregationAttributes2.containsKey(aggregation)) {
+					registry_AggregationAttributes.add(alias)
+					registry_AggregationAttributes2.put(aggregation, alias)
+					for (Entry<SimpleSelect, List<SelectExpression>> entry : queryAggregations.entrySet) {
+						var expressions = entry.value;
+						if (!expressions.empty && expressions.contains(aggregation) &&
+							queryAggregations.get(entry.key) !== null) {
+							if (!queryAggregations.get(entry.key).contains(aggregation))
+								queryAggregations.get(entry.key).add(aggregation);
+						}
+					}
+				}
+			}
+
+			public static def addQueryAttributes(SimpleSelect select, Map<String, List<String>> map) {
+				if(select !== null && map !== null) {
+					queryAttributes.put(select, map)
+				} else {
+//					throw new IllegalArgumentException("given objects were: select= " + select + ", list= " + map)
+				}
+			}
+
+			public static def addQueryAggregations(SimpleSelect select, List<SelectExpression> expressions) {
+				if (select !== null && expressions !== null && !expressions.empty) {
+					queryAggregations.put(select, expressions)
+				} else {
+//					throw new IllegalArgumentException("given objects were: select= " + select + ", expressions= " + expressions)
+				}
+			}
+
+			public static def Map<String, List<String>> getQueryAttributes(SimpleSelect query) {
+				return if(queryAttributes.containsKey(query)) queryAttributes.get(query) else newHashMap
+			}
+
+			public static def List<SelectExpression> getQueryAggregations(SimpleSelect query) {
+				return if(queryAggregations.containsKey(query)) queryAggregations.get(query) else newArrayList
+			}
+
+			public static def List<String> getQueryAggregationsAsString(SimpleSelect query) {
+				var l = newArrayList
+				for (SelectExpression e : CQLGeneratorUtil.getQueryAggregations(query)) {
+					if (registry_AggregationAttributes2.containsKey(e)) {
+						var name = registry_AggregationAttributes2.get(e)
+						if (name !== null && !l.contains(name)) {
+							l.add(name)
+						}
+					}
+				}
+				return l
+			}
+
+			/** Returns all attributes (including aggregations) by its name of the given query. */
+			public static def List<String> getAllQueryAttributes(SimpleSelect query) {
+				var List<String> l = newArrayList
+				var Map<String, List<String>> attributes = getQueryAttributes(query)
+				log.error(attributes.toString)
+				var List<SelectExpression> aggregations = getQueryAggregations(query)
+				for (SelectExpression aggregation : aggregations) {
+					var name = registry_AggregationAttributes2.get(aggregation)
+					if (name !== null && !l.contains(name))
+						l.add(name)
+				}
+				for (List<String> names : attributes.values) {
+					for (String name : names)
+						if (name !== null && !l.contains(name))
+							l.add(name)
+				}
+				return l
 			}
 
 			public static def Map<String, String> getAttributeAliases() {

@@ -17,7 +17,6 @@ import org.junit.runner.RunWith
 import static extension org.junit.Assert.*
 
 @RunWith(XtextRunner)
-@InjectWith(CQLInjectorProvider)
 @Deprecated
 class CQLGeneratorMethodTest 
 {

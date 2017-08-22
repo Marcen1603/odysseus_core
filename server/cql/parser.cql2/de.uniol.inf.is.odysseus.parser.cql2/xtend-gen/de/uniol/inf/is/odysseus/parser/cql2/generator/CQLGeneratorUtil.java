@@ -31,9 +31,13 @@ import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class CQLGeneratorUtil {
+  private final static Logger log = LoggerFactory.getLogger(CQLGeneratorUtil.class);
+  
   public static CQLGeneratorUtil instance = null;
   
   public static CQLGeneratorUtil getInstance(final CQLGenerator generator) {
@@ -55,6 +59,8 @@ public class CQLGeneratorUtil {
   
   private static List<String> registry_AggregationAttributes = CollectionLiterals.<String>newArrayList();
   
+  private static Map<SelectExpression, String> registry_AggregationAttributes2 = CollectionLiterals.<SelectExpression, String>newHashMap();
+  
   private static Map<String, Set<String>> registry_SubQuerySources = CollectionLiterals.<String, Set<String>>newHashMap();
   
   private static Map<String, String> registry_AttributeAliases = CollectionLiterals.<String, String>newHashMap();
@@ -70,6 +76,16 @@ public class CQLGeneratorUtil {
   private static Map<SimpleSelect, List<String>> projectionSources = CollectionLiterals.<SimpleSelect, List<String>>newHashMap();
   
   private static Map<SimpleSelect, List<SelectExpression>> queryExpressions = CollectionLiterals.<SimpleSelect, List<SelectExpression>>newHashMap();
+  
+  /**
+   * Contains string representations of all attributes mapped by their corresponding sources.
+   */
+  private static Map<SimpleSelect, Map<String, List<String>>> queryAttributes = CollectionLiterals.<SimpleSelect, Map<String, List<String>>>newHashMap();
+  
+  /**
+   * Contains {@SelectExpression} objects that corresponds to aggregations of the given source.
+   */
+  private static Map<SimpleSelect, List<SelectExpression>> queryAggregations = CollectionLiterals.<SimpleSelect, List<SelectExpression>>newHashMap();
   
   private static int aggregationCounter = 0;
   
@@ -112,12 +128,32 @@ public class CQLGeneratorUtil {
     return CQLGeneratorUtil.getSourceAliasesAsList().contains(sourcename);
   }
   
+  public static boolean isAggregationAttribute(final String name) {
+    return CQLGeneratorUtil.registry_AggregationAttributes.contains(name);
+  }
+  
   public static List<AttributeStruct> getAttributes() {
     ArrayList<AttributeStruct> list = CollectionLiterals.<AttributeStruct>newArrayList();
     for (final SourceStruct source : CQLGeneratorUtil.registry_Sources) {
       list.addAll(source.attributes);
     }
     return list;
+  }
+  
+  public static AttributeStruct getAttribute(final String name) {
+    List<AttributeStruct> _attributes = CQLGeneratorUtil.getAttributes();
+    for (final AttributeStruct attr : _attributes) {
+      boolean _equals = attr.attributename.equals(name);
+      if (_equals) {
+        return attr;
+      } else {
+        boolean _contains = attr.aliases.contains(name);
+        if (_contains) {
+          return attr;
+        }
+      }
+    }
+    return null;
   }
   
   private static String registerAttributeAliases(final Attribute attribute, final String attributename, final String realSourcename, final String sourcenamealias, final boolean isSubQuery) {
@@ -764,6 +800,112 @@ public class CQLGeneratorUtil {
   
   public static Map<String, Set<String>> getSubQuerySources() {
     return CQLGeneratorUtil.registry_SubQuerySources;
+  }
+  
+  public static void addAggregationAttribute(final SelectExpression aggregation, final String alias) {
+    if (((!CQLGeneratorUtil.registry_AggregationAttributes.contains(alias)) && 
+      (!CQLGeneratorUtil.registry_AggregationAttributes2.containsKey(aggregation)))) {
+      CQLGeneratorUtil.registry_AggregationAttributes.add(alias);
+      CQLGeneratorUtil.registry_AggregationAttributes2.put(aggregation, alias);
+      Set<Map.Entry<SimpleSelect, List<SelectExpression>>> _entrySet = CQLGeneratorUtil.queryAggregations.entrySet();
+      for (final Map.Entry<SimpleSelect, List<SelectExpression>> entry : _entrySet) {
+        {
+          List<SelectExpression> expressions = entry.getValue();
+          if ((((!expressions.isEmpty()) && expressions.contains(aggregation)) && 
+            (CQLGeneratorUtil.queryAggregations.get(entry.getKey()) != null))) {
+            boolean _contains = CQLGeneratorUtil.queryAggregations.get(entry.getKey()).contains(aggregation);
+            boolean _not = (!_contains);
+            if (_not) {
+              CQLGeneratorUtil.queryAggregations.get(entry.getKey()).add(aggregation);
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  public static Map<String, List<String>> addQueryAttributes(final SimpleSelect select, final Map<String, List<String>> map) {
+    Map<String, List<String>> _xifexpression = null;
+    if (((select != null) && (map != null))) {
+      _xifexpression = CQLGeneratorUtil.queryAttributes.put(select, map);
+    } else {
+      _xifexpression = null;
+    }
+    return _xifexpression;
+  }
+  
+  public static List<SelectExpression> addQueryAggregations(final SimpleSelect select, final List<SelectExpression> expressions) {
+    List<SelectExpression> _xifexpression = null;
+    if ((((select != null) && (expressions != null)) && (!expressions.isEmpty()))) {
+      _xifexpression = CQLGeneratorUtil.queryAggregations.put(select, expressions);
+    } else {
+      _xifexpression = null;
+    }
+    return _xifexpression;
+  }
+  
+  public static Map<String, List<String>> getQueryAttributes(final SimpleSelect query) {
+    Map<String, List<String>> _xifexpression = null;
+    boolean _containsKey = CQLGeneratorUtil.queryAttributes.containsKey(query);
+    if (_containsKey) {
+      _xifexpression = CQLGeneratorUtil.queryAttributes.get(query);
+    } else {
+      _xifexpression = CollectionLiterals.<String, List<String>>newHashMap();
+    }
+    return _xifexpression;
+  }
+  
+  public static List<SelectExpression> getQueryAggregations(final SimpleSelect query) {
+    List<SelectExpression> _xifexpression = null;
+    boolean _containsKey = CQLGeneratorUtil.queryAggregations.containsKey(query);
+    if (_containsKey) {
+      _xifexpression = CQLGeneratorUtil.queryAggregations.get(query);
+    } else {
+      _xifexpression = CollectionLiterals.<SelectExpression>newArrayList();
+    }
+    return _xifexpression;
+  }
+  
+  public static List<String> getQueryAggregationsAsString(final SimpleSelect query) {
+    ArrayList<String> l = CollectionLiterals.<String>newArrayList();
+    List<SelectExpression> _queryAggregations = CQLGeneratorUtil.getQueryAggregations(query);
+    for (final SelectExpression e : _queryAggregations) {
+      boolean _containsKey = CQLGeneratorUtil.registry_AggregationAttributes2.containsKey(e);
+      if (_containsKey) {
+        String name = CQLGeneratorUtil.registry_AggregationAttributes2.get(e);
+        if (((name != null) && (!l.contains(name)))) {
+          l.add(name);
+        }
+      }
+    }
+    return l;
+  }
+  
+  /**
+   * Returns all attributes (including aggregations) by its name of the given query.
+   */
+  public static List<String> getAllQueryAttributes(final SimpleSelect query) {
+    List<String> l = CollectionLiterals.<String>newArrayList();
+    Map<String, List<String>> attributes = CQLGeneratorUtil.getQueryAttributes(query);
+    CQLGeneratorUtil.log.error(attributes.toString());
+    List<SelectExpression> aggregations = CQLGeneratorUtil.getQueryAggregations(query);
+    for (final SelectExpression aggregation : aggregations) {
+      {
+        String name = CQLGeneratorUtil.registry_AggregationAttributes2.get(aggregation);
+        if (((name != null) && (!l.contains(name)))) {
+          l.add(name);
+        }
+      }
+    }
+    Collection<List<String>> _values = attributes.values();
+    for (final List<String> names : _values) {
+      for (final String name : names) {
+        if (((name != null) && (!l.contains(name)))) {
+          l.add(name);
+        }
+      }
+    }
+    return l;
   }
   
   public static Map<String, String> getAttributeAliases() {
