@@ -50,8 +50,7 @@ public class JSONCOSEMParserTest {
 	};
 
 	/**
-	 * Parses the given file and checks if the result is equal with
-	 * {@code expected}.
+	 * Parses the given file and checks if the result is equal with {@code expected}.
 	 * 
 	 * @param pathToFile
 	 * @param expected

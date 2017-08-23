@@ -16,44 +16,13 @@ public class IEC62056TransportHandler extends AbstractPushTransportHandler {
 
 	public static final Logger log = LoggerFactory.getLogger(IEC62056TransportHandler.class);
 
-//	private final int defaulPort = 6789;
-//	private int port;
-//	private int maxClients;
-//	private String host;
-
 	public IEC62056TransportHandler() {
 	}
 
 	public IEC62056TransportHandler(IProtocolHandler<?> protocolHandler, OptionMap options)
 			throws UnknownHostException {
-		super(protocolHandler, options);
-//		init(options);
 		throw new NotImplementedException("this transport handler has no implementation!");
 	}
-
-//	private void init(OptionMap options) throws UnknownHostException {
-//		 options.checkRequiredException(hostKey);
-//		port = options.getInt("port", defaulPort);
-//	}
-
-//	public void init2() throws UnknownHostException {
-//		
-//		InetAddress inetAddress = InetAddress.getByName("127.0.0.1");
-//		SecuritySuite securitySuite = SecuritySuite.builder()
-//				.setPassword("Password".getBytes(StandardCharsets.US_ASCII))
-//				.setAuthenticationMechanism(AuthenticationMechanism.LOW)
-//				.setEncryptionMechanism(EncryptionMechanism.NONE).build();
-//		TcpConnectionBuilder connectionBuilder = new TcpConnectionBuilder(inetAddress).setTcpPort(6789)
-//				.setSecuritySuite(securitySuite).setRawMessageListener(new RawMessageListener() {
-//					@Override
-//					public void messageCaptured(RawMessageData rawMessageData) {
-//						// TODO: log data
-//						// logger.debug(.. rawMessageData.getMessageSource() ..
-//						System.out.println("here some data!!! ---> " + rawMessageData.toString());
-//					}
-//				});
-//		
-//	}
 
 	@Override
 	public String getName() {
