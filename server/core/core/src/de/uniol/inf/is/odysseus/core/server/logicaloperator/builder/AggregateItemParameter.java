@@ -45,7 +45,7 @@ public class AggregateItemParameter extends AbstractParameter<AggregateItem> {
 		super(name, requirement, USAGE.RECENT);
 	}
 
-	@SuppressWarnings({ "unchecked", "cast" })
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	protected void internalAssignment() {
 		if (inputValue instanceof AggregateItem) {

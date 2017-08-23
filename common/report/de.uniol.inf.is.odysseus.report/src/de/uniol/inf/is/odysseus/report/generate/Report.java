@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.report.generate;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Optional;
@@ -35,5 +36,10 @@ public class Report implements IReport {
 	@Override
 	public Optional<Throwable> getException() {
 		return optException;
+	}
+	
+	@Override
+	public Map<String, String> getReportMap() {
+		return new HashMap<>(reportMap);
 	}
 }

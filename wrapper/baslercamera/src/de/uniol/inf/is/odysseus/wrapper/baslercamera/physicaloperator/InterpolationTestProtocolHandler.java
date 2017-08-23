@@ -92,7 +92,7 @@ public class InterpolationTestProtocolHandler<T extends IStreamObject<IMetaAttri
 		
 	}
 	
-	protected void process(String token)
+	public void process(String token)
 	{
 		T retValue = getDataHandler().readData(token);
 		getTransfer().transfer(retValue);		

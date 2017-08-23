@@ -312,7 +312,7 @@ public class SensorOntology {
 
     private OntModel getModel() throws IOException {
         if (this.model == null) {
-            final String home = OdysseusConfiguration.getHomeDir();
+            final String home = OdysseusConfiguration.instance.getHomeDir();
             final File root = new File(home, this.STORE);
             if (!root.exists()) {
                 this.createModel(root);

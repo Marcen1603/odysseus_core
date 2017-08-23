@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -23,8 +23,7 @@ public abstract class AbstractLoadSheddingAdmissionStatusComponent implements IL
 	/**
 	 * The ISession superUser is used to get access to the execution plan of the queries.
 	 */
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
-			.loginSuperUser(null);
+	static private final ISession superUser = SessionManagement.instance.loginSuperUser(null);
 
 	/**
 	 * Contains all allowed queries with their maximal shedding factor.

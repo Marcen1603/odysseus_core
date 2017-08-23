@@ -58,7 +58,7 @@ public class KeyWebSocketClient extends WebSocketClient {
 		if (instance == null || instance.getConnection().isClosed()) {
 			System.out.println("Connecting to server");
 			try {
-				instance = new KeyWebSocketClient(new URI(OdysseusConfiguration.get("crypt.client.uri")));
+				instance = new KeyWebSocketClient(new URI(OdysseusConfiguration.instance.get("crypt.client.uri")));
 			} catch (URISyntaxException ex) {
 				throw new Exception("Uri Syntax invalid", ex);
 			}

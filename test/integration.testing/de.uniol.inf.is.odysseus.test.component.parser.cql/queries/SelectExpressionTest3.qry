@@ -1,0 +1,4 @@
+#PARSER CQL
+#RUNQUERY
+SELECT DolToEur(price * 2.5) - price + id AS complexPrice, DolToEur(price) AS priceToEuro 
+FROM bid, category;

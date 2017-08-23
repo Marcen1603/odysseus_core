@@ -323,9 +323,22 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return A list of the function
 	 */
-
+	@Deprecated
 	public Set<String> getRegisteredAggregateFunctions(
 			@SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
+			ISession caller);
+
+	/**
+	 * Returns all registered aggregated functions for a certain data model
+	 *
+	 * @param datamodel
+	 *            The data model
+	 * @param caller
+	 *            The current user
+	 * @return A list of the function
+	 */
+	
+	public Set<String> getRegisteredAggregateFunctions(String datamodel,
 			ISession caller);
 
 	/**

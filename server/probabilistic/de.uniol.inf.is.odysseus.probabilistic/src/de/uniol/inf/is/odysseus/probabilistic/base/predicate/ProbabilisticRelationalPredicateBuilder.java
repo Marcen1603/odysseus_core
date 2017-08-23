@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.probabilistic.sdf.schema.SDFProbabilisticExpress
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
+@SuppressWarnings("rawtypes")
 public class ProbabilisticRelationalPredicateBuilder<M extends IMetaAttribute> extends AbstractExpressionBuilder {
 
     @Override

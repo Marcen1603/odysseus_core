@@ -66,7 +66,7 @@ public class SmileDectionFunction extends AbstractFunction<Boolean> {
         super("smileDetection", 1, SmileDectionFunction.ACC_TYPES, SDFDatatype.BOOLEAN);
         {// Load face cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(SmileDectionFunction.FACE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), SmileDectionFunction.FACE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), SmileDectionFunction.FACE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];
@@ -84,7 +84,7 @@ public class SmileDectionFunction extends AbstractFunction<Boolean> {
         }
         {// Load smile cascade file
             try (InputStream is = this.getClass().getClassLoader().getResourceAsStream(SmileDectionFunction.SMILE_CASCADE_FILE)) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), SmileDectionFunction.SMILE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), SmileDectionFunction.SMILE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];

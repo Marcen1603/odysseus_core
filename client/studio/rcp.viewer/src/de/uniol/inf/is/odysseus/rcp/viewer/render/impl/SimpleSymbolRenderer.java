@@ -103,7 +103,7 @@ public class SimpleSymbolRenderer<C> implements IRenderer<C> {
 		}
 	}
 	
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
     private void updateSymbol( SymbolElementContainer<C> symbol ) {
 		for( ISymbolElement<C> element : symbol ) {
 			if( element != null )
@@ -118,7 +118,7 @@ public class SimpleSymbolRenderer<C> implements IRenderer<C> {
 		}
 	}
 	
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
     private void renderSymbolElement( ISymbolElement<C> element, Vector pos, int width, int height, Vector shift, float zoomFactor ) {
 		element.draw( pos, width, height, shift, zoomFactor );
 	}

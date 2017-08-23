@@ -14,6 +14,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.net.ssl.SSLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.IHasAlias;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.connection.ConnectionMessageReason;
@@ -34,7 +37,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -42,16 +44,18 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		implements IAccessConnectionListener<ByteBuffer>, IConnectionListener, IHasAlias {
 
-	private static final String PORT = "port";
-	private static final String MAX_BUFFER_SIZE = "maxbuffersize";
-	private static final String WEBSOCKET = "websocket";
+	static Logger logger = LoggerFactory.getLogger(TransportHandlerRegistry.class);
+
+	public static final String PORT = "port";
+	public static final String MAX_BUFFER_SIZE = "maxbuffersize";
+	public static final String WEBSOCKET = "websocket";
+	public static final String PATH_OPTION = "path";
+	
 	private int port;
 	boolean isWebSocket = false;
 	// TODO:
 	boolean SSL;
 	String path = "/websocket";
-
-
 
 	private List<ChannelHandlerContext> channels = new CopyOnWriteArrayList<>();
 	private MyTCPServer tcpServer = null;
@@ -89,6 +93,7 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 		port = options.getInt(PORT, 8080);
 		maxBufferSize = options.getInt(MAX_BUFFER_SIZE, 0);
 		isWebSocket = options.getBoolean(WEBSOCKET, false);
+		this.path = options.getString(PATH_OPTION, this.path);
 	}
 
 	public NonBlockingTcpServerHandler_Netty() {
@@ -130,9 +135,12 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 				}
 			}
 		}
-		if (isWebSocket){
-			ctx.writeAndFlush(new BinaryWebSocketFrame(send));
-		}else{
+		if (isWebSocket) {
+			ChannelFuture result = ctx.writeAndFlush(new BinaryWebSocketFrame(send));
+			if (!result.isSuccess()) {
+				logger.debug("Sending data via websocket not successful");
+			}
+		} else {
 			ctx.writeAndFlush(send);
 		}
 	}
@@ -265,11 +273,11 @@ public class NonBlockingTcpServerHandler_Netty extends AbstractTransportHandler
 
 	}
 
-	public void addChannel(ChannelHandlerContext ctx){
+	public void addChannel(ChannelHandlerContext ctx) {
 		channels.add(ctx);
 	}
 
-	public void removeChannel(ChannelHandlerContext ctx){
+	public void removeChannel(ChannelHandlerContext ctx) {
 		channels.remove(ctx);
 	}
 
@@ -310,7 +318,8 @@ class MyTCPServer {
 		}
 	}
 
-	public void add(int port, final NonBlockingTcpServerHandler_Netty caller) throws InterruptedException, CertificateException, SSLException {
+	public void add(int port, final NonBlockingTcpServerHandler_Netty caller)
+			throws InterruptedException, CertificateException, SSLException {
 
 		if (portMapping.containsKey(port)) {
 			throw new IllegalArgumentException("Server port " + port + " already bound!");
@@ -331,7 +340,8 @@ class MyTCPServer {
 
 		if (caller.isWebSocket) {
 			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-					.childHandler(new NettyWebSocketServerInitializer(sslCtx, caller.path, caller)).option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
+					.childHandler(new NettyWebSocketServerInitializer(sslCtx, caller.path, caller))
+					.option(ChannelOption.SO_BACKLOG, 128).childOption(ChannelOption.SO_KEEPALIVE, true);
 
 		} else {
 			b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)

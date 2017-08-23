@@ -74,7 +74,7 @@ public class XYZ extends AbstractColorSpace {
         return new RGB(R, G, B);
     }
 
-    @SuppressWarnings("static-method")
+    //@SuppressWarnings("static-method")
     private int normalize(final double value) {
         if (value < 0.0) {
             return 0;

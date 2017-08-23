@@ -100,7 +100,7 @@ public class SubscribeAO extends UnaryLogicalOp implements IHasPredicates {
 		// Convert Predicate strings to predicates
 		IAttributeResolver attributeResolver = new DirectAttributeResolver(
 				getOutputSchemaIntern(0));
-		IExpressionBuilder predicateBuilder = OperatorBuilderFactory
+		IExpressionBuilder<?, ?> predicateBuilder = OperatorBuilderFactory
 				.getExpressionBuilder(predicateType);
 
 		if (predicateBuilder == null) {

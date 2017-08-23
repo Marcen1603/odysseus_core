@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.AbstractUserManagemen
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IGenericDAO;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
+import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.PrivilegeDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.RoleDAO;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.dao.UserDAO;
@@ -31,10 +32,9 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Privileg
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.Role;
 import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
-public class UserManagementServiceImpl extends
-		AbstractUserManagement<User, Role, Privilege> {
+public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
 
-	ISessionManagement sessionMgmt;
+	private OdysseusConfiguration config;
 
 	@Override
 	protected Role createEmptyRole() {
@@ -90,8 +90,7 @@ public class UserManagementServiceImpl extends
 
 	@Override
 	public String getType() {
-		if (OdysseusConfiguration.get("StoretypeUserMgmt").equalsIgnoreCase(
-				"Filestore")) {
+		if (config.get("StoretypeUserMgmt").equalsIgnoreCase("Filestore")) {
 			return "Filestore";
 		} else {
 			return "Memorystore";
@@ -103,12 +102,19 @@ public class UserManagementServiceImpl extends
 		initDefaultUsers(tenant);
 	}
 
+	
+	void setConfig(OdysseusConfiguration config) {
+		this.config = config;
+	}
+
 	@Override
-	public ISessionManagement getSessionManagement() {
-		if (sessionMgmt == null) {
-			sessionMgmt = new SessionManagementServiceImpl();
+	public IUser findUser(ITenant tenant, String username) {
+		try {
+			return UserDAO.getInstance(tenant).findByName(username);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return sessionMgmt;
+		return null;
 	}
 
 }

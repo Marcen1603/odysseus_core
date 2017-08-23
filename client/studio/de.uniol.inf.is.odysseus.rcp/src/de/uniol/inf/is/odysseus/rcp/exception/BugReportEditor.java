@@ -45,12 +45,18 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.bugreport.BugreportSender;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 import de.uniol.inf.is.odysseus.report.IReport;
 
 public class BugReportEditor extends TitleAreaDialog {
 
+	public static final String BUGREPORT_PASSWORD = "password";
+	public static final String BUGREPORT_USER = "user";
+	public static final String BUGREPORT_BASEURL = "baseurl";
+
+	
 	private static final String BUGREPORT_MAILADDRESS_CFGKEY = "bugreport.mailaddress";
 
 	private static final String ODYSSEUS_BUG_REPORT_DEFAULT_TITLE = "Odysseus Bug Report";
@@ -93,7 +99,20 @@ public class BugReportEditor extends TitleAreaDialog {
 
 		baseReport = report;
 	}
+	
+	static private String getUser() {
+		return OdysseusRCPConfiguration.get(BUGREPORT_USER, "odysseus_studio");
+	}
 
+	static private String getPassword() {
+		return OdysseusRCPConfiguration.get(BUGREPORT_PASSWORD, "jhf4hdds673");
+	}
+
+	static private String getJira() {
+		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL,
+				"http://jira.odysseus.offis.uni-oldenburg.de/");
+	}
+	
 	@Override
 	public Control createDialogArea(Composite parent) {
 		GridLayout layout = new GridLayout();
@@ -244,13 +263,13 @@ public class BugReportEditor extends TitleAreaDialog {
 		jiraButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String savedUsername = OdysseusRCPConfiguration.get(BugReport.BUGREPORT_USER, "");
-				String savedPassword = OdysseusRCPConfiguration.get(BugReport.BUGREPORT_PASSWORD, "");
+				String savedUsername = OdysseusRCPConfiguration.get(BUGREPORT_USER, "");
+				String savedPassword = OdysseusRCPConfiguration.get(BUGREPORT_PASSWORD, "");
 
-				UsernameAndPasswordDialog dlg = new UsernameAndPasswordDialog(getParentShell(), savedUsername, savedPassword);
+				UsernameAndPasswordDialog dlg = new UsernameAndPasswordDialog(getParentShell(), savedUsername, savedPassword, getJira());
 				if (dlg.open() == Window.OK) {
-					OdysseusRCPConfiguration.set(BugReport.BUGREPORT_USER, dlg.getUsername());
-					OdysseusRCPConfiguration.set(BugReport.BUGREPORT_PASSWORD, dlg.getPassword());
+					OdysseusRCPConfiguration.set(BUGREPORT_USER, dlg.getUsername());
+					OdysseusRCPConfiguration.set(BUGREPORT_PASSWORD, dlg.getPassword());
 					OdysseusRCPConfiguration.save();
 				}
 			}
@@ -271,7 +290,7 @@ public class BugReportEditor extends TitleAreaDialog {
 			String questionsText = createQuestionsText();
 
 			Map<String, String> reportMap = createReportMap();
-			boolean result = BugReport.send(title, questionsText, reportMap);
+			boolean result = BugreportSender.send(getUser(), getPassword(), getJira(), title, questionsText, reportMap);
 			
 			setReturnCode(result ? Window.OK : Window.CANCEL);
 			

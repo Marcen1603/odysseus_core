@@ -1,0 +1,6 @@
+#PARSER CQL
+#RUNQUERY
+SELECT auction, AVG(auction) AS auctionAVG 
+FROM bid 
+GROUP BY auction
+HAVING auctionAVG > 150

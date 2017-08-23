@@ -54,7 +54,7 @@ public class Base3DWheelDashboardPart extends Abstract3DWheelDashboardPart {
             /**
              * {@inheritDoc}
              */
-            @SuppressWarnings("boxing")
+            //@SuppressWarnings("boxing")
             @Override
             public void run() {
                 final Random rnd = new Random();

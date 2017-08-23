@@ -63,7 +63,9 @@ public class PermanentFunction extends AbstractFunction<Double> {
             }
             // factorial function is moved to CombinatoricsUtils in future
             // versions
-            final long factorial = ArithmeticUtils.factorial(order);
+            
+            @SuppressWarnings("deprecation")
+			final long factorial = ArithmeticUtils.factorial(order);
             final List<int[]> permutations = new ArrayList<>((int) factorial);
             PermanentFunction.calcHeapPermutation(permutations, indexes, order);
 

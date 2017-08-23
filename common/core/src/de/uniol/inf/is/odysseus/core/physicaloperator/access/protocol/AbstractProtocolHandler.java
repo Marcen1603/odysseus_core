@@ -19,8 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.List;
+
+import com.google.common.base.Objects;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -38,6 +43,9 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		implements IProtocolHandler<T> {
+
+	public final String CHARSET = "charset";
+
 	private final ITransportDirection direction;
 	private final IAccessPattern access;
 	private ITransportHandler transportHandler;
@@ -47,13 +55,17 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	private IExecutor executor;
 	private SDFSchema schema;
 
+	private Charset charset;
+	private CharsetDecoder decoder;
+	private CharsetEncoder encoder;
+
 	protected final OptionMap optionsMap;
 
 	public AbstractProtocolHandler() {
 		direction = null;
 		access = null;
 		dataHandler = null;
-		optionsMap = null;
+		optionsMap = null;	
 	}
 
 	public AbstractProtocolHandler(ITransportDirection direction, IAccessPattern access,
@@ -62,11 +74,35 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		this.access = access;
 		this.dataHandler = datahandler;
 		this.optionsMap = optionsMap;
+		setCharset(optionsMap.get(CHARSET, "UTF-8"));
 	}
 
+	private void setCharset(String charSetName) {
+		this.charset = Charset.forName(charSetName);
+		this.encoder = charset.newEncoder();
+		this.decoder = charset.newDecoder();
+		getDataHandler().setCharset(charset);
+
+	}
+
+	public Charset getCharset() {
+		return charset;
+	}
+	
+	public CharsetEncoder getEncoder() {
+		return encoder;
+	}
+	
+	public CharsetDecoder getDecoder() {
+		return decoder;
+	}
+	
 	@Override
 	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
+		if (optionsMap.containsKey(CHARSET)) {
+			setCharset(optionsMap.get(CHARSET));
+		}
 		optionsMapChanged(key, value);
 	}
 
@@ -165,6 +201,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	@Override
+	public void process(String message) {
+		getTransfer().transfer(getDataHandler().readData(message));
+	}
+
+	@Override
 	public void process(long callerId, ByteBuffer message) {
 		getTransfer().transfer(getDataHandler().readData(message));
 	}
@@ -225,8 +266,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	}
 
 	/**
-	 * This method is supposed to retrieve the options for an instance, which
-	 * were used during the call of
+	 * This method is supposed to retrieve the options for an instance, which were
+	 * used during the call of
 	 * {@link IProtocolHandler#createInstance(ITransportDirection, IAccessPattern, OptionMap, IDataHandler)}
 	 * based on the current configuration. This is useful serialising different
 	 * ProtocolHandler-instances. CANNOT be used for comparisons to check if two
@@ -257,6 +298,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		} else if (!this.dataHandler.isSemanticallyEqual(other.getDataHandler())) {
 			return false;
 		} else if (!this.transportHandler.isSemanticallyEqual(other.getTransportHandler())) {
+			return false;
+		}
+		if (!Objects.equal(this.charset, other.charset)) {
 			return false;
 		}
 		return isSemanticallyEqualImpl(other);

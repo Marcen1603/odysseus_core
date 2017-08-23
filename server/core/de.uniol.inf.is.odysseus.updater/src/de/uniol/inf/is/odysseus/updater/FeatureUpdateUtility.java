@@ -60,7 +60,7 @@ public class FeatureUpdateUtility {
 
 	static {
 		try {
-			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
+			DEFAULT_REPOSITORY_LOC = new URI(OdysseusConfiguration.instance.get(OdysseusConfiguration.DEFAULT_UPDATE_SITE,
 					"http://odysseus.informatik.uni-oldenburg.de/update/"));
 		} catch (final URISyntaxException e) {
 			LOG.error("URI invalid: " + e.getMessage());
@@ -75,7 +75,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static final void setRepositoryLocation(String url, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE,
 				UpdatePermission.objectURI)) {
 
 			try {
@@ -90,7 +90,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static final void clearRepositoryLocation(final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.CONFIGURE,
 				UpdatePermission.objectURI)) {
 			current_repository_location = null;
 		} else {
@@ -99,7 +99,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static IStatus uninstallFeature(String id, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.REMOVE,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.REMOVE,
 				UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			Collection<IInstallableUnit> toUninstall = new ArrayList<IInstallableUnit>();
@@ -124,7 +124,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static IStatus installFeature(String id, final ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
 				UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstallableUnits(id, caller);
 
@@ -191,7 +191,7 @@ public class FeatureUpdateUtility {
 	}
 
 	private static List<IInstallableUnit> getInstallableUnits(String id, ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
@@ -224,7 +224,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static boolean isFeatureInstalled(String id, ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
@@ -239,7 +239,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static List<IInstallableUnit> getInstalledFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
@@ -272,7 +272,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static List<IInstallableUnit> getInstallableFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			IProvisioningAgent agent = getAgent(context);
@@ -318,7 +318,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static boolean checkForUpdates(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE,
 				UpdatePermission.objectURI)) {
 			try {
 				LOG.info("Looking for updates on " + getRepositoryLocation());
@@ -365,7 +365,7 @@ public class FeatureUpdateUtility {
 
 	public static IStatus checkForAndInstallUpdates(final ISession caller) throws OperationCanceledException {
 
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.UPDATE,
 				UpdatePermission.objectURI)) {
 
 			try {
@@ -429,7 +429,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static String getVersionNumberFromFeatures(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			List<IInstallableUnit> units = getInstalledFeatures(caller);
 			for (IInstallableUnit unit : units) {
@@ -444,7 +444,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static String getVersionNumber(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			return Activator.getContext().getBundle().getVersion().toString();
 		} 
@@ -466,7 +466,7 @@ public class FeatureUpdateUtility {
 	}
 
 	public static void restart(ISession caller) {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.INSTALL,
 				UpdatePermission.objectURI)) {
 			BundleContext context = Activator.getContext();
 			ServiceReference<?> eventAdminServiceReference = context.getServiceReference(EventAdmin.class.getName());
@@ -562,7 +562,7 @@ public class FeatureUpdateUtility {
 
 	public static void refreshArtifactRepositories(URI location, BundleContext context, ISession caller)
 			throws ProvisionException {
-		if (UserManagementProvider.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
+		if (UserManagementProvider.instance.getUsermanagement(true).hasPermission(caller, UpdatePermission.LIST,
 				UpdatePermission.objectURI)) {
 			IProvisioningAgent agent = getAgent(context);
 

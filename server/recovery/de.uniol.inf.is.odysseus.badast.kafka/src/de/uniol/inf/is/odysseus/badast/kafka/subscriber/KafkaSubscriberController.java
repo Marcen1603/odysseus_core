@@ -42,12 +42,12 @@ public class KafkaSubscriberController extends Thread implements ISubscriberCont
 	/**
 	 * Host name of the Broker.
 	 */
-	static final String HOST = OdysseusConfiguration.get("kafka.host.name", "localhost");
+	static final String HOST = OdysseusConfiguration.instance.get("kafka.host.name", "localhost");
 
 	/**
 	 * Port of the Broker.
 	 */
-	static final int PORT = OdysseusConfiguration.getInt("kafka.clientPort", 9092);
+	static final int PORT = OdysseusConfiguration.instance.getInt("kafka.clientPort", 9092);
 
 	/**
 	 * The socket timeout threshold for the {@link SimpleConsumer}.

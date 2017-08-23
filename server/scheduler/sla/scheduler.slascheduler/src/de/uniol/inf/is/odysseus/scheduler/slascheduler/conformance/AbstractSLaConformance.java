@@ -120,7 +120,7 @@ public abstract class AbstractSLaConformance<T extends IStreamObject<?>>
 		this.buffers = new ArrayList<IBuffer<?>>();
 		this.maxPathTimeMap = new HashMap<IBuffer<?>, Double>();
 		this.pathMap = new HashMap<>();
-		this.pathTimeUpdateInterval = Integer.parseInt(OdysseusConfiguration
+		this.pathTimeUpdateInterval = Integer.parseInt(OdysseusConfiguration.instance
 				.get("sla_pathTimeUpdateInterval"));
 	}
 

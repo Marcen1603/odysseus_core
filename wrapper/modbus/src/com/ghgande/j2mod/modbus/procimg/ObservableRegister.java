@@ -82,7 +82,7 @@ public class ObservableRegister extends Observable implements Register {
 		notifyObservers("value");
 	}
 
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	@Override
 	public final synchronized void setValue(byte[] bytes) {
 		if (bytes.length < 2) {

@@ -137,7 +137,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 
 	@Override
 	public String getLanguage() {
-		return "CQL";
+		return "CQL1";
 	}
 
 	@Override
@@ -431,6 +431,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void initPredicate(IPredicate<?> predicate, SDFSchema left,
 			SDFSchema right) {
 		if (predicate instanceof ComplexPredicate) {
@@ -1098,7 +1099,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 			throw new QueryParseException("unknown sla: " + slaName);
 		}
 
-		IUser user = UserManagementProvider.getUsermanagement(true).findUser(
+		IUser user = UserManagementProvider.instance.getUsermanagement(true).findUser(
 				userName, this.caller);
 		if (user == null) {
 			throw new QueryParseException(new UsernameNotExistException(

@@ -9,7 +9,7 @@ import com.google.common.base.Optional;
  * @author Michael Brand
  *
  */
-@SuppressWarnings(value = { "nls" })
+//@SuppressWarnings(value = { "nls" })
 public enum QueryStateLogTag {
 
 	/**

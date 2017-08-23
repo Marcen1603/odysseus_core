@@ -25,10 +25,11 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IAbstractEntity;
 public class AbstractStoreDAO<T extends IAbstractEntity> implements
 		IGenericDAO<T, String> {
 
-	final IStore<String, T> entities;
-	final List<T> allEntities;
+	protected IStore<String, T> entities;
+	protected List<T> allEntities;
 
-	public AbstractStoreDAO(IStore<String, T> entities, List<T> allEntities) {
+	
+	protected void init(IStore<String, T> entities, List<T> allEntities) {
 		this.entities = entities;
 		this.allEntities = allEntities;
 	}

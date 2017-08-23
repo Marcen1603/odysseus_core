@@ -54,6 +54,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.Sche
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionEvent;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.ISessionListener;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -212,8 +213,7 @@ public class SensorOntologyServiceImpl
 
 	public void bindUserManagement(final IUserManagement userManagement) {
 		SensorOntologyServiceImpl.userManagement = userManagement;
-		SensorOntologyServiceImpl.session = SensorOntologyServiceImpl.getUserManagement().getSessionManagement()
-				.loginSuperUser(null);
+		SensorOntologyServiceImpl.session = SessionManagement.instance.loginSuperUser(null);
 		SensorOntologyServiceImpl.LOG.debug("UserManagement " + userManagement + " bound");
 		this.prepareUserManagement();
 	}
@@ -278,7 +278,7 @@ public class SensorOntologyServiceImpl
 	}
 
 	private void prepareUserManagement() {
-		SensorOntologyServiceImpl.getUserManagement().getSessionManagement().subscribe(this);
+		SessionManagement.instance.subscribe(this);
 		this.registerDataDictionaryListener();
 	}
 

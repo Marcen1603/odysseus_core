@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 public class Autostart implements BundleActivator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Autostart.class);
-	private static final String AUTOSTARTFILE[] = { "/autostart/autostart.qry", OdysseusConfiguration.getHomeDir() + "autostart" + File.separator + "autostart.qry" };
+	private static final String AUTOSTARTFILE[] = { "/autostart/autostart.qry", OdysseusConfiguration.instance.getHomeDir() + "autostart" + File.separator + "autostart.qry" };
 	
 	private static Object lock = new Object();
 	

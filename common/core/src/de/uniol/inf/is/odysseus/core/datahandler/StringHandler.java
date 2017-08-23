@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +41,6 @@ public class StringHandler extends AbstractDataHandler<String> {
 		types.add(SDFDatatype.START_TIMESTAMP_STRING.getURI());
 	}
 
-	private Charset charset = Charset.forName("UTF-8");
-	private CharsetDecoder decoder = charset.newDecoder();
-	private CharsetEncoder encoder = charset.newEncoder();
 
 	@Override
 	public IDataHandler<String> getInstance(SDFSchema schema) {
@@ -65,7 +59,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 				buffer[i] = (byte) inputStream.read();
 			}
 			try {
-				CharBuffer decoded = decoder.decode(ByteBuffer.wrap(buffer));
+				CharBuffer decoded = getDecoder().decode(ByteBuffer.wrap(buffer));
 				return decoded.toString();
 			} catch (CharacterCodingException e) {
 				LOG.error("Could not decode data with string handler", e);
@@ -82,7 +76,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 			int limit = b.limit();
 			b.limit(b.position() + size);
 			try {
-				CharBuffer decoded = decoder.decode(b);
+				CharBuffer decoded = getDecoder().decode(b);
 				return decoded.toString();
 			} catch (CharacterCodingException e) {
 				LOG.error("Could not decode data with string handler", e);
@@ -118,7 +112,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 		String s = (String) data;
 		try {
 			if (data != null) {
-				ByteBuffer charBuffer = encoder.encode(CharBuffer.wrap(s));
+				ByteBuffer charBuffer = getEncoder().encode(CharBuffer.wrap(s));
 				buffer.putInt(charBuffer.limit());
 				buffer.put(charBuffer);
 			} else {
@@ -141,7 +135,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 			if (attr == null) {
 				attr = "";
 			}
-			int val = encoder.encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
+			int val = getEncoder().encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
 			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);

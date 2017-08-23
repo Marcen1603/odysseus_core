@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.scheduler.priorityscheduler;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -23,6 +24,8 @@ import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.IPhysicalQuerySc
 import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.SimpleThreadSchedulerEachSourceThreaded;
 
 public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
+
+	private OdysseusConfiguration config;
 
 	@Override
 	public IScheduler createScheduler(ISchedulingFactory schedulingFactoring, int threadCount) {
@@ -33,7 +36,11 @@ public class SimpleDynamicSchedulerFactory extends AbstractSchedulerFactory {
 		}
 
 		
-		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring, scheduling);
+		return new SimpleThreadSchedulerEachSourceThreaded(schedulingFactoring, scheduling, config);
+	}
+	
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
 	}
 
 }

@@ -18,7 +18,7 @@ public class FileExecutorRegistry {
 		} else if (fileExecutor.getFileExtension().length() == 0) {
 			throw new IllegalArgumentException("file extension has length=0");
 		} else if (fileExecutors.containsKey(fileExecutor.getFileExtension().toLowerCase())) {
-			throw new IllegalArgumentException("file extension already registered");
+			throw new IllegalArgumentException("file extension "+fileExecutor.getFileExtension()+" already registered for "+fileExecutor.getFileExtension().toLowerCase());
 		}
 		fileExecutors.put(fileExecutor.getFileExtension().toLowerCase(), fileExecutor);
 	}
