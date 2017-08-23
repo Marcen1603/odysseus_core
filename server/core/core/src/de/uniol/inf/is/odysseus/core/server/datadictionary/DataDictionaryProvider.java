@@ -16,15 +16,21 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.datatype.IDatatypeProvider;
 
 public class DataDictionaryProvider {
+	/**
+	 * use OSGI injection instead
+	 */
+	@Deprecated
+	public static DataDictionaryProvider instance;
 
-	static private List<IDatatypeProvider> datatypeProvider = new ArrayList<>();
-	static private Map<ITenant, IDataDictionary> datadictionary = new HashMap<ITenant, IDataDictionary>();
-	static private List<String> allDatatypeNames = new LinkedList<>();
-	static private Map<IDatadictionaryProviderListener, ITenant> ddPlistener = new HashMap<>();
+	private List<IDatatypeProvider> datatypeProvider = new ArrayList<>();
+	private Map<ITenant, IDataDictionary> datadictionary = new HashMap<ITenant, IDataDictionary>();
+	private List<String> allDatatypeNames = new LinkedList<>();
+	private Map<IDatadictionaryProviderListener, ITenant> ddPlistener = new HashMap<>();
+	private UserManagementProvider userManagementProvider;
 
 	public synchronized void bindDataDictionary(IDataDictionary bindDD) {
 		// Is dd the right type
-		List<ITenant> tenants = UserManagementProvider.getTenants();
+		List<ITenant> tenants = userManagementProvider.getTenants();
 		for (ITenant t : tenants) {
 			IDataDictionary dd = bindDD.createInstance(t);
 			// Default Datatypes
@@ -38,8 +44,7 @@ public class DataDictionaryProvider {
 	}
 
 	public synchronized void unbindDataDictionary(IDataDictionary bb) {
-		Iterator<Entry<ITenant, IDataDictionary>> iter = datadictionary.entrySet()
-				.iterator();
+		Iterator<Entry<ITenant, IDataDictionary>> iter = datadictionary.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<ITenant, IDataDictionary> e = iter.next();
 			for (IDatatypeProvider p : datatypeProvider) {
@@ -72,30 +77,28 @@ public class DataDictionaryProvider {
 
 	}
 
-	public static IDataDictionary getDataDictionary(ITenant tenant) {
+	public IDataDictionary getDataDictionary(ITenant tenant) {
 		return datadictionary.get(tenant);
 	}
 
-	public static List<String> getAllDatatypeNames() {
+	public List<String> getAllDatatypeNames() {
 		return Collections.unmodifiableList(allDatatypeNames);
 	}
 
-	static public void subscribe(ITenant forTenant,
-			IDatadictionaryProviderListener listener) {
+	public void subscribe(ITenant forTenant, IDatadictionaryProviderListener listener) {
 		ddPlistener.put(listener, forTenant);
 	}
 
-	static public void unsubscribe(IDatadictionaryProviderListener listener) {
+	public void unsubscribe(IDatadictionaryProviderListener listener) {
 		ddPlistener.remove(listener);
 	}
 
 	public void fire(ITenant forTenant, IDataDictionary dd, boolean add) {
-		for (Entry<IDatadictionaryProviderListener, ITenant> e : ddPlistener
-				.entrySet()) {
+		for (Entry<IDatadictionaryProviderListener, ITenant> e : ddPlistener.entrySet()) {
 			if (e.getValue().equals(forTenant)) {
-				if (add){
+				if (add) {
 					e.getKey().newDatadictionary(dd);
-				}else{
+				} else {
 					e.getKey().removedDatadictionary(dd);
 				}
 			}
@@ -122,4 +125,11 @@ public class DataDictionaryProvider {
 		}
 	}
 
+	void setUserManagementProvider(UserManagementProvider provider) {
+		this.userManagementProvider = provider;
+	}
+
+	void setInstance() {
+		instance = this;
+	}
 }

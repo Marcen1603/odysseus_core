@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
@@ -21,8 +22,9 @@ abstract public class AbstractSimpleThreadSchedulerMultipleSourcesThreaded
 
 	public AbstractSimpleThreadSchedulerMultipleSourcesThreaded(
 			ISchedulingFactory schedulingStrategieFactory,
-			IPhysicalQueryScheduling[] planScheduling) {
-		super(schedulingStrategieFactory, planScheduling);
+			IPhysicalQueryScheduling[] planScheduling,
+			OdysseusConfiguration config) {
+		super(schedulingStrategieFactory, planScheduling, config);
 	}
 
 	private void removeUnscheduledSources() {

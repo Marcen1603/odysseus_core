@@ -73,18 +73,18 @@ public class OPCUAComponent implements Closeable {
 	public OPCUAComponent() {
 		log = LoggerFactory.getLogger(OPCUAComponent.class);
 		// Set end-point and security
-		String endpoint = OdysseusConfiguration.get("OpcUaCmp.Endpoint", "opc.tcp://localhost:12345/UA/OdyServer");
+		String endpoint = OdysseusConfiguration.instance.get("OpcUaCmp.Endpoint", "opc.tcp://localhost:12345/UA/OdyServer");
 		// [None, Basic128Rsa15, Basic256, Basic256Sha256]
-		SecurityPolicy policy = BasicUtils.toEnum(OdysseusConfiguration.get("OpcUaCmp.Policy", "None"),
+		SecurityPolicy policy = BasicUtils.toEnum(OdysseusConfiguration.instance.get("OpcUaCmp.Policy", "None"),
 				SecurityPolicy.class);
 		// [Invalid, None, Sign, SignAndEncrypt]
-		MessageSecurityMode mode = BasicUtils.toEnum(OdysseusConfiguration.get("OpcUaCmp.Mode", "None"),
+		MessageSecurityMode mode = BasicUtils.toEnum(OdysseusConfiguration.instance.get("OpcUaCmp.Mode", "None"),
 				MessageSecurityMode.class);
 		// Bind address and patches
-		String bind = OdysseusConfiguration.get("OpcUaCmp.Bind", null);
-		boolean patchHello = OdysseusConfiguration.getBoolean("OpcUaCmp.EmptyHello", false);
+		String bind = OdysseusConfiguration.instance.get("OpcUaCmp.Bind", null);
+		boolean patchHello = OdysseusConfiguration.instance.getBoolean("OpcUaCmp.EmptyHello", false);
 		// Get base model
-		File modelXml = new File(OdysseusConfiguration.get("OpcUaCmp.BaseNodeSet", "Opc.Ua.NodeSet2.xml"));
+		File modelXml = new File(OdysseusConfiguration.instance.get("OpcUaCmp.BaseNodeSet", "Opc.Ua.NodeSet2.xml"));
 		downloadIfNeeded(modelXml);
 		// Create special model
 		model = new OdysseusNodeModel(modelXml.getAbsolutePath());

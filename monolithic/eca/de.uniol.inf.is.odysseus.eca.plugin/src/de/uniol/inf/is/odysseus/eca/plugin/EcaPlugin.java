@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -27,8 +28,8 @@ public class EcaPlugin {
 	 */
 	public EcaPlugin() {
 		if (currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null,
-					UserManagementProvider.getDefaultTenant().getName());
+			currentSession = SessionManagement.instance.loginSuperUser(null,
+					UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		context = new Context();
 		executor = EcaPluginEventBinder.getExecutor();
@@ -52,7 +53,7 @@ public class EcaPlugin {
 
 	/**
 	 * Sources zu timer, planmodification und systemload werden angelegt, um
-	 * dies nicht immer wieder manuell machen zu müssen.
+	 * dies nicht immer wieder manuell machen zu mï¿½ssen.
 	 */
 	private void regSources(EcaRuleObj rule) {
 		int timer = 0;

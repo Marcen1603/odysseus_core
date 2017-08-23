@@ -79,8 +79,8 @@ public class SocketService extends Observable {
 	 * @return SocketInformation about the socket
 	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, int outputOperator) {
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		IPhysicalOperator rootOperator = getRootOperator(queryId, outputOperator, session);
 		SocketInfo info = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator, 0, false);
 		return info;
@@ -99,8 +99,8 @@ public class SocketService extends Observable {
 	 * @return SocketInformation about the socket
 	 */
 	public SocketInfo getConnectionInformation(ISession session, int queryId, IPhysicalOperator operator) {
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		SocketInfo info = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, 0, false);
 		return info;
 	}
@@ -121,8 +121,8 @@ public class SocketService extends Observable {
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, String queryName,
 			boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryName, session);
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
 		for (IPhysicalOperator root : rootOperators) {
 			Map<Integer, SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort,
@@ -154,8 +154,8 @@ public class SocketService extends Observable {
 		if (rootOperator == null) {
 			return new HashMap<String, Map<Integer, SocketInfo>>();
 		}
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 
 		Map<Integer, SocketInfo> infos = getConnectionInformationWithPorts(session, queryName, minPort, maxPort,
 				rootOperator, withMetaData);
@@ -184,8 +184,8 @@ public class SocketService extends Observable {
 	public SocketInfo getConnectionInformation(ISession session, String queryName, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryName, operatorName, session);
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		SocketInfo info = getConnectionInformationWithPorts(session, queryName, minPort, maxPort, rootOperator,
 				operatorOutputPort, withMetaData);
 		return info;
@@ -207,8 +207,8 @@ public class SocketService extends Observable {
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			boolean withMetaData) {
 		List<IPhysicalOperator> rootOperators = getRootOperators(queryId, session);
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<String, Map<Integer, SocketInfo>> allInfos = new HashMap<>();
 		for (IPhysicalOperator root : rootOperators) {
 			Map<Integer, SocketInfo> partInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort,
@@ -237,8 +237,8 @@ public class SocketService extends Observable {
 	public Map<String, Map<Integer, SocketInfo>> getMultipleConnectionInformation(ISession session, int queryId,
 			String operatorName, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName, session);
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		Map<Integer, SocketInfo> socketInfos = getConnectionInformationWithPorts(session, queryId, minPort, maxPort,
 				rootOperator, withMetaData);
 		Map<String, Map<Integer, SocketInfo>> output = new HashMap<>();
@@ -263,8 +263,8 @@ public class SocketService extends Observable {
 	public SocketInfo getConnectionInformation(ISession session, int queryId, String operatorName,
 			int operatorOutputPort, boolean withMetaData) {
 		IPhysicalOperator rootOperator = getRootOperator(queryId, operatorName, session);
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		SocketInfo socketInfo = getConnectionInformationWithPorts(session, queryId, minPort, maxPort, rootOperator,
 				operatorOutputPort, withMetaData);
 		return socketInfo;
@@ -286,8 +286,8 @@ public class SocketService extends Observable {
 	 */
 	public Map<Integer, SocketInfo> getMultipleConnectionInformation(ISession session, int queryId,
 			IPhysicalOperator operator, boolean withMetaData) {
-		int minPort = Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT));
-		int maxPort = Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT));
+		int minPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT));
+		int maxPort = Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT));
 		return getConnectionInformationWithPorts(session, queryId, minPort, maxPort, operator, withMetaData);
 	}
 

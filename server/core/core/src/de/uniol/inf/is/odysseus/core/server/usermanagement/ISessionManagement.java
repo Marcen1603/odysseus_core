@@ -65,5 +65,4 @@ public interface ISessionManagement {
 
 	ISession loginSuperUser(Object secret);
 
-	String getType();
-}
+	}

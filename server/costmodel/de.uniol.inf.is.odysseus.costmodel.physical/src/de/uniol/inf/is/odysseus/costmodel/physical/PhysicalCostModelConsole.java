@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.costmodel.DetailCost;
@@ -18,7 +19,7 @@ import de.uniol.inf.is.odysseus.costmodel.physical.impl.OperatorEstimatorRegistr
 
 public class PhysicalCostModelConsole implements CommandProvider {
 
-	static private final ISession currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession currentUser = SessionManagement.instance.loginSuperUser(null);
 
 
 	private static IPhysicalCostModel physicalCostModel;

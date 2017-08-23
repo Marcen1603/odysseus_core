@@ -72,6 +72,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.report.IReport;
@@ -273,7 +274,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = SessionManagement.instance.loginSuperUser(null);
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -321,13 +322,13 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		// } catch (Exception e) {
 		// ci.println(e.getMessage());
 		// }
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = SessionManagement.instance.loginSuperUser(null);
 	}
 
 	@Help(parameter = "<logout>", description = "Logout current user.")
 	public void _logout(CommandInterpreter ci) {
 		try {
-			UserManagementProvider.getSessionmanagement().logout(currentUser);
+			SessionManagement.instance.logout(currentUser);
 			currentUser = null;
 			ci.println("Current user logged out ");
 		} catch (Exception e) {
@@ -1519,15 +1520,15 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	//TODO!
 	
 	private String getJiraUser() {
-		return OdysseusConfiguration.get("BUGREPORT_USER", "odysseus_studio");
+		return OdysseusConfiguration.instance.get("BUGREPORT_USER", "odysseus_studio");
 	}
 
 	private String getJiraPassword() {
-		return OdysseusConfiguration.get("BUGREPORT_PASSWORD", "jhf4hdds673");
+		return OdysseusConfiguration.instance.get("BUGREPORT_PASSWORD", "jhf4hdds673");
 	}
 	
 	private String getJiraUrl() {
-		return OdysseusConfiguration.get("BUGREPORT_BASEURL",
+		return OdysseusConfiguration.instance.get("BUGREPORT_BASEURL",
 				"http://jira.odysseus.offis.uni-oldenburg.de/");
 	}
 	

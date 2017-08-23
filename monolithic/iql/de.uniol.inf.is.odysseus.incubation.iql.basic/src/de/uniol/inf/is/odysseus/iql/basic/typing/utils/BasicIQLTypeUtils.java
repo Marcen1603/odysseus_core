@@ -8,7 +8,7 @@ public class BasicIQLTypeUtils extends AbstractIQLTypeUtils {
 
 	
 	public static String getIQLOutputPath() {
-		return OdysseusConfiguration.getHomeDir()+IQL_DIR;
+		return OdysseusConfiguration.instance.getHomeDir()+IQL_DIR;
 	}
 
 

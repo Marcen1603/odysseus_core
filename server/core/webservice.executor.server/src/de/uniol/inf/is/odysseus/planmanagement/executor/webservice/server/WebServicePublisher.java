@@ -27,7 +27,7 @@ public class WebServicePublisher {
 	
 	private static HttpServer createHttpServer() throws GeneralSecurityException {		
 		HttpsConfigurator configurator = null;
-		boolean useSSL = OdysseusConfiguration.getBoolean("WebService.SSL");
+		boolean useSSL = OdysseusConfiguration.instance.getBoolean("WebService.SSL");
 		if (useSSL) {
 			while (SecurityProviderServiceBinding.getSecurityProvider() == null) {
 				try {
@@ -40,7 +40,7 @@ public class WebServicePublisher {
 			TrustManager[] trustManagers = null;
 			KeyManager[] keyManagers = SecurityProviderServiceBinding.getSecurityProvider().getKeyManagers();
 
-			boolean sslClientAuthentication = OdysseusConfiguration.getBoolean("Webservice.SSL_Client_Authentication");
+			boolean sslClientAuthentication = OdysseusConfiguration.instance.getBoolean("Webservice.SSL_Client_Authentication");
 			if (sslClientAuthentication) {
 				trustManagers = SecurityProviderServiceBinding.getSecurityProvider().getTrustManagers();
 				configurator = new HttpsConfigurator(ssl) {
@@ -57,9 +57,9 @@ public class WebServicePublisher {
 			ssl.init(keyManagers, trustManagers, new SecureRandom());
 		}
 
-		int port = Integer.parseInt(OdysseusConfiguration.get("WebService.Port"));
-		int maxPort = Integer.parseInt(OdysseusConfiguration.get("WebService.MaxPort"));
-		String localhost = OdysseusConfiguration.get("WebService.Server");
+		int port = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.Port"));
+		int maxPort = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.MaxPort"));
+		String localhost = OdysseusConfiguration.instance.get("WebService.Server");
 
 		while (port <= maxPort) {
 			try {
@@ -93,7 +93,7 @@ public class WebServicePublisher {
 			if (httpServerInstance == null)
 				httpServerInstance = createHttpServer();			
 
-			String contextStr = OdysseusConfiguration.get("WebService.ExecutorContext");
+			String contextStr = OdysseusConfiguration.instance.get("WebService.ExecutorContext");
 			if (subUrl != null && subUrl != "")
 				contextStr += "/" + subUrl;
 			
