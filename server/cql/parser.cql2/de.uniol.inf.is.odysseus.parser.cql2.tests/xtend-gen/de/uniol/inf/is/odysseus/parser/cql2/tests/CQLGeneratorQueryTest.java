@@ -3,8 +3,6 @@ package de.uniol.inf.is.odysseus.parser.cql2.tests;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.cql2.tests.CQLInjectorProvider;
-import org.eclipse.xtext.junit4.InjectWith;
 import org.eclipse.xtext.junit4.XtextRunner;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper;
@@ -14,7 +12,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 @RunWith(XtextRunner.class)
-@InjectWith(CQLInjectorProvider.class)
 @Deprecated
 @SuppressWarnings("all")
 public class CQLGeneratorQueryTest {

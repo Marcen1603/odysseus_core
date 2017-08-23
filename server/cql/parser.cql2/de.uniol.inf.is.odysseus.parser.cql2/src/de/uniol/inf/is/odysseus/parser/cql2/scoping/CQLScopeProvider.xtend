@@ -15,7 +15,6 @@ class CQLScopeProvider extends AbstractDeclarativeScopeProvider
 {
 
 
-
 //	// re-implementation of the original one, using Xtend's collection extensions:
 //	def IScope scope_Scalar_Function(Scalar_Function reference, EReference eRef) 
 //	{

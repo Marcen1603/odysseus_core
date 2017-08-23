@@ -11,7 +11,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(typeof(XtextRunner))
-@InjectWith(typeof(CQLInjectorProvider))
 @Deprecated
 class ExpressionsTypeProviderTest 
 {

@@ -31,14 +31,13 @@ public class QDLMetadataMethodCompiler extends AbstractIQLMetadataMethodCompiler
   public String compile(final QDLMetadataValueSingleID o, final String varName, final IQDLGeneratorContext context) {
     String _xblockexpression = null;
     {
-      String _canonicalName = ID.class.getCanonicalName();
-      context.addImport(_canonicalName);
+      context.addImport(ID.class.getCanonicalName());
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("ID ");
-      _builder.append(varName, "");
+      _builder.append(varName);
       _builder.append(" = new ID(\"");
       String _value = o.getValue();
-      _builder.append(_value, "");
+      _builder.append(_value);
       _builder.append("\");");
       _xblockexpression = _builder.toString();
     }

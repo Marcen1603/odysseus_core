@@ -12,7 +12,6 @@ import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
 @RunWith(XtextRunner)
-@InjectWith(CQLInjectorProvider)
 @Deprecated
 class CQLGeneratorQueryTest 
 {
