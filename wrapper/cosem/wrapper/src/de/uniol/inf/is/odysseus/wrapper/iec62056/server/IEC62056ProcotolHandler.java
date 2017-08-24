@@ -66,6 +66,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 	public IEC62056ProcotolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<IStreamObject<? extends IMetaAttribute>> dataHandler) {
 		super(direction, access, dataHandler, options);
+		//ACCESS
 		if (getDirection().equals(ITransportDirection.IN)) {
 			String type = options.getValue("type");
 			if (type != null) {
@@ -99,10 +100,12 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 					this.tokens = tokens.toArray(new String[tokens.size()]);
 				}
 			}
+		//SENDER
 		} else {
 			queryID = options.get("queryID");
 			if(queryID == null) {
-				throw new IllegalArgumentException("missing option in access operator: queryID");
+				logger.warn("missing option in sender operator: queryID");
+//				throw new IllegalArgumentException("missing option in access operator: queryID");
 			}
 			jsonSchema = options.get("jsonschema");
 			if(jsonSchema == null) {
