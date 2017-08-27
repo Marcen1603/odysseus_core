@@ -8,8 +8,4 @@
 /.StreamingsparqlGenerator.xtendbin
 /.TripleToJoin.java._trace
 /.TripleToJoin.xtendbin
-/IStreamingSparqlParser.java
-/StreamingSparqlParser.java
-/StreamingSparqlTriplePatternMatching.java
-/StreamingsparqlGenerator.java
-/TripleToJoin.java
+
