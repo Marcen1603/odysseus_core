@@ -1,0 +1,77 @@
+<project name="wsNameClent" basedir=".">
+
+	<property name="wsdl" value="http://localhost:9669/odysseus?wsdl" />
+	<property name="package-dir" value="de/uniol/inf/is/odysseus/webservice/client" />
+	<property name="source-dir" value="src" />
+	<property name="source-dir" value="bin" />
+	
+	
+	<target name="wsimport" depends="clean">
+		<exec executable="wsimport">
+			<arg value="-verbose" />
+			<arg value="-keep" />
+			<arg value="-d" />
+			<arg value="bin" />
+			<arg value="-s" />
+			<arg value="src" />			
+		<!--	<arg value="-b"/>
+			<arg value="jxb-binding.xml"/>
+			-->
+			<arg value="-p" />
+			<arg value="de.uniol.inf.is.odysseus.webservice.client" />
+			<arg value="${wsdl}" />			
+		</exec>
+		<echo>Remove files that have to be used directly from common.</echo>
+		<delete verbose="true" file="${source-dir}/${package-dir}/Context.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/LogicalOperatorInformation.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/StoredProcedure.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/Pair.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/QueryState.java"/>
+		<delete verbose="true" file="${source-dir}/${package-dir}/KindOfDatatype.java"/>
+		<echo>Fixing imports again</echo>
+		<replace dir="${source-dir}">
+				<replacetoken>package de.uniol.inf.is.odysseus.webservice.client;</replacetoken>
+				<replacevalue>package de.uniol.inf.is.odysseus.webservice.client;
+import de.uniol.inf.is.odysseus.core.collection.Context;
+import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype.KindOfDatatype;					
+				</replacevalue>	
+	    </replace>
+
+		<replace  dir="${source-dir}">
+			<replacetoken>public class</replacetoken>
+			<replacevalue>@SuppressWarnings(value = { "all" })
+public class</replacevalue>			
+		</replace>
+
+		<replace  dir="${source-dir}">
+				<replacetoken>public enum</replacetoken>
+				<replacevalue>@SuppressWarnings(value = { "all" })
+	public enum</replacevalue>			
+			</replace>
+
+		<replace  dir="${source-dir}">
+				<replacetoken>public interface</replacetoken>
+				<replacevalue>@SuppressWarnings(value = { "all" })
+	public interface</replacevalue>			
+			</replace>
+
+		
+		<replace dir="${source-dir}" >
+			<replacetoken>@SuppressWarnings(value = { "all" })
+@SuppressWarnings(value = { "all" })</replacetoken>
+			<replacevalue>@SuppressWarnings(value = { "all" })</replacevalue>
+		</replace>
+
+		
+	</target>
+	
+	<target name="clean">
+		<delete dir="${source-dir}/${package-dir}" />
+		<delete dir="${bin-dir}/${package-dir}" />
+	</target>
+
+</project>
