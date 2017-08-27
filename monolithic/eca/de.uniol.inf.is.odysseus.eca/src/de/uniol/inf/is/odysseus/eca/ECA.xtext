@@ -10,16 +10,16 @@ Model:
 
 /* Definition von Konstanten, Fenstern, Timerintervall und Events */
 Constant:
-	"DEFINE CONSTANT" name=ID ":" constValue=INT ";";
+	"DEFINE" "CONSTANT" name=ID ":" constValue=INT ";";
 
 Window:
-	"DEFINE WINDOWSIZE" ":" windowValue=INT ";";
+	"DEFINE" "WINDOWSIZE" ":" windowValue=INT ";";
 
 Timer:
-	"DEFINE TIMEINTERVALL" ":" timerIntervallValue=INT ";";
+	"DEFINE" "TIMEINTERVALL" ":" timerIntervallValue=INT ";";
 
 DefinedEvent:
-	"DEFINE EVENT" name=ID ":" definedSource=Source "WITH"
+	"DEFINE" "EVENT" name=ID ":" definedSource=Source "WITH"
 	definedAttribute=ID
 	definedOperator=Operator definedValue=EcaValue ";";
 

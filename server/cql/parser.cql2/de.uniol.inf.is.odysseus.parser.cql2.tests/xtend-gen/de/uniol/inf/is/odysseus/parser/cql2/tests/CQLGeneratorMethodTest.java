@@ -1,36 +1,26 @@
 package de.uniol.inf.is.odysseus.parser.cql2.tests;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 
-@RunWith(XtextRunner.class)
 @Deprecated
 @SuppressWarnings("all")
 public class CQLGeneratorMethodTest {
   @Inject
   @Extension
   private CQLGenerator _cQLGenerator;
-  
-  @Inject
-  @Extension
-  private ParseHelper<Model> _parseHelper;
   
   @Rule
   public ExpectedException thrown = ExpectedException.none();
@@ -56,19 +46,13 @@ public class CQLGeneratorMethodTest {
   private String source2Alias = "s2";
   
   public void generateModel(final String query) {
-    try {
-      final InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
-      Model model = this._parseHelper.parse(query);
-      this._cQLGenerator.doGenerate(model.eResource(), fsa, null);
-      String result = "";
-      Set<Map.Entry<String, CharSequence>> _entrySet = fsa.getTextFiles().entrySet();
-      for (final Map.Entry<String, CharSequence> e : _entrySet) {
-        String _result = result;
-        CharSequence _value = e.getValue();
-        result = (_result + _value);
-      }
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
+    final InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
+    String result = "";
+    Set<Map.Entry<String, CharSequence>> _entrySet = fsa.getTextFiles().entrySet();
+    for (final Map.Entry<String, CharSequence> e : _entrySet) {
+      String _result = result;
+      CharSequence _value = e.getValue();
+      result = (_result + _value);
     }
   }
   

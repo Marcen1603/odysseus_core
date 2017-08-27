@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAttribute;
@@ -98,8 +97,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       _builder.append("public class ");
       _builder.append(name);
       {
-        boolean _notEquals = (!Objects.equal(superClass, null));
-        if (_notEquals) {
+        if ((superClass != null)) {
           _builder.append(" extends ");
           String _compile = this.typeCompiler.compile(superClass, context, true);
           _builder.append(_compile);
@@ -133,7 +131,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
+            if (((e.getArgsMap() != null) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod = this.createGetterMethod(e.getRef(), e.getArgsMap(), context);
               _builder.append(_createGetterMethod, "\t");
@@ -147,7 +145,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLAttribute a : attributes) {
           {
-            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a.getInit() != null) && (a.getInit().getArgsMap() != null)) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod_1 = this.createGetterMethod(a.getType(), a.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod_1, "\t");
@@ -161,7 +159,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a_1.getInit() != null) && (a_1.getInit().getArgsMap() != null)) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -303,8 +301,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     _builder.append(_simpleName);
     {
       IQLVariableInitialization _init = a.getInit();
-      boolean _notEquals = (!Objects.equal(_init, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_init != null);
+      if (_tripleNotEquals) {
         _builder.append(" = ");
         String _compile_1 = this.stmtCompiler.compile(a.getInit(), a.getType(), context);
         _builder.append(_compile_1);
@@ -321,10 +319,10 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     {
       String className = this.helper.getClassName(m);
       String returnT = "";
-      if (((!Objects.equal(m.getReturnType(), null)) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+      if (((m.getReturnType() != null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
         returnT = this.typeCompiler.compile(m.getReturnType(), context, false);
       } else {
-        if ((Objects.equal(m.getReturnType(), null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+        if (((m.getReturnType() == null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
           returnT = "void";
         }
       }
@@ -344,8 +342,8 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
       _builder.append("(");
       {
         EList<JvmFormalParameter> _parameters = m.getParameters();
-        boolean _notEquals = (!Objects.equal(_parameters, null));
-        if (_notEquals) {
+        boolean _tripleNotEquals = (_parameters != null);
+        if (_tripleNotEquals) {
           final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
             return this.compile(p, context);
           };
@@ -458,8 +456,7 @@ public abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extend
     {
       JvmTypeReference type = this.helper.getPropertyType(e.getKey(), typeRef);
       String _xifexpression = null;
-      boolean _notEquals = (!Objects.equal(type, null));
-      if (_notEquals) {
+      if ((type != null)) {
         StringConcatenation _builder = new StringConcatenation();
         String _compile = this.typeCompiler.compile(type, context, false);
         _builder.append(_compile);

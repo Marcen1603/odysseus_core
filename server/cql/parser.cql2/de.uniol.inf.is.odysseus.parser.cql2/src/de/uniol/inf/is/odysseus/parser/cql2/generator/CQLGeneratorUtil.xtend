@@ -453,8 +453,8 @@ class CQLGeneratorUtil {
 				var attribute = getAttributeFromAlias(alias)
 				if (attribute !== null)
 					return attribute.attributename
-				if (this.registry_AggregationAttributes.contains(alias) ||
-					this.registry_Expressions.keySet.contains(alias))
+				if (registry_AggregationAttributes.contains(alias) ||
+					registry_Expressions.keySet.contains(alias))
 					return alias
 			}
 

@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
@@ -112,8 +111,8 @@ public abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompil
   public String compile(final IQLMetadataValueSingleString o, final G c) {
     String _xifexpression = null;
     JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (_notEquals) {
+    boolean _tripleNotEquals = (_expectedTypeRef != null);
+    if (_tripleNotEquals) {
       String _xifexpression_1 = null;
       boolean _isCharacter = this.typeUtils.isCharacter(c.getExpectedTypeRef());
       if (_isCharacter) {

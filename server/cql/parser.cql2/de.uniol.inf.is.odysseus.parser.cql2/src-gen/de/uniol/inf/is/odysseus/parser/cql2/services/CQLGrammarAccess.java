@@ -4057,7 +4057,7 @@ public class CQLGrammarAccess extends AbstractGrammarElementFinder {
 		return getModelAccess().getRule();
 	}
 	
-	//terminal ID:
+	//@ Override terminal ID:
 	//	(LETTER | SPECIAL_CHARS) (LETTER | SPECIAL_CHARS | INT)*;
 	public TerminalRule getIDRule() {
 		return tID;

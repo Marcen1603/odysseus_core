@@ -52,7 +52,7 @@ class ECAGenerator implements IGenerator {
 		// Fensterdefinition auslesen
 		resource.allContents.filter(typeof(Window)).forEach [
 			{
-				if (it != null) {
+				if (it !== null) {
 					windowSize = it.windowValue;
 				}
 			}
@@ -60,7 +60,7 @@ class ECAGenerator implements IGenerator {
 		// Zeitintervall auslesen
 		resource.allContents.filter(typeof(Timer)).forEach [
 			{
-				if (it != null) {
+				if (it !== null) {
 					timerIntervall = it.timerIntervallValue;
 				}
 			}
@@ -81,26 +81,26 @@ class ECAGenerator implements IGenerator {
 		var String ruleCondition;
 
 		// Eventquelle auslesen
-		if (!(rule.source.defSource == null)) {
+		if (!(rule.source.defSource === null)) {
 			ruleSource = rule.source.defSource.definedSource.name;
 			sourceCondCount++
 			sourceCond.append(rule.source.defSource.definedAttribute + " " + rule.source.defSource.definedOperator +
 				" ")
 
-			if (rule.source.defSource.definedValue.constValue != null) {
+			if (rule.source.defSource.definedValue.constValue !== null) {
 				sourceCond.append(rule.source.defSource.definedValue.constValue)
-			} else if (rule.source.defSource.definedValue.idValue != null) {
+			} else if (rule.source.defSource.definedValue.idValue !== null) {
 				sourceCond.append("\"" + rule.source.defSource.definedValue.idValue + "\"")
-			} else if (rule.source.defSource.definedValue.stringValue != null) {
+			} else if (rule.source.defSource.definedValue.stringValue !== null) {
 				systemCond.append(rule.source.defSource.definedValue.stringValue)
 			} else if (rule.source.defSource.definedValue.doubleValue > 0) {
 				sourceCond.append(rule.source.defSource.definedValue.doubleValue)
 			} else {
 				sourceCond.append(rule.source.defSource.definedValue.intValue)
 			}
-		} else if (!(rule.source.newSource == null)) {
+		} else if (!(rule.source.newSource === null)) {
 			ruleSource = rule.source.newSource.name;
-		} else if (!(rule.source.preSource == null)) {
+		} else if (!(rule.source.preSource === null)) {
 			ruleSource = rule.source.preSource;
 		}
 
@@ -171,11 +171,11 @@ class ECAGenerator implements IGenerator {
 		sourceCondCount++
 		sourceCond.append(cond.condAttribute + " " + cond.operator + " ")
 
-		if (cond.value.constValue != null) {
+		if (cond.value.constValue !== null) {
 			sourceCond.append(cond.value.constValue.constValue)
-		} else if (cond.value.idValue != null) {
+		} else if (cond.value.idValue !== null) {
 			sourceCond.append("\"" + cond.value.idValue + "\"")
-		} else if (cond.value.stringValue != null) {
+		} else if (cond.value.stringValue !== null) {
 			systemCond.append(cond.value.stringValue)
 		} else if (cond.value.doubleValue > 0) {
 			sourceCond.append(cond.value.doubleValue)
@@ -192,15 +192,15 @@ class ECAGenerator implements IGenerator {
 		systemList.add(cond.systemAttribute);
 		systemList.add(cond.operator);
 
-		if (cond.value.constValue != null) {
+		if (cond.value.constValue !== null) {
 			tmp.append(cond.value.constValue.constValue)
 			systemList.add(tmp.toString())
 			tmp.setLength(0)
-		} else if (cond.value.idValue != null) {
+		} else if (cond.value.idValue !== null) {
 			tmp.append(cond.value.idValue)
 			systemList.add(tmp.toString())
 			tmp.setLength(0)
-		} else if (cond.value.stringValue != null) {
+		} else if (cond.value.stringValue !== null) {
 			tmp.append(cond.value.stringValue)
 			systemList.add(tmp.toString())
 			tmp.setLength(0)
@@ -228,16 +228,16 @@ class ECAGenerator implements IGenerator {
 		subActionCount++
 
 		actionList.add(actions.subActname);
-		if (actions.actionValue != null) {
-			if (actions.actionValue.constValue != null) {
+		if (actions.actionValue !== null) {
+			if (actions.actionValue.constValue !== null) {
 				tmp.append(actions.actionValue.constValue.constValue)
 				actionList.add(tmp.toString());
 				tmp.setLength(0);
-			} else if (actions.actionValue.idValue != null) {
+			} else if (actions.actionValue.idValue !== null) {
 				tmp.append(actions.actionValue.idValue)
 				actionList.add(tmp.toString());
 				tmp.setLength(0);
-			} else if (actions.actionValue.stringValue != null) {
+			} else if (actions.actionValue.stringValue !== null) {
 				tmp.append(actions.actionValue.stringValue)
 				actionList.add(tmp.toString());
 				tmp.setLength(0);
@@ -250,9 +250,9 @@ class ECAGenerator implements IGenerator {
 				actionList.add(tmp.toString());
 				tmp.setLength(0);
 			}
-		} else if (actions.functAction != null) {
+		} else if (actions.functAction !== null) {
 			// 0function - 1prioperator - 2privalue - 3state
-			if (actions.functAction.sel != null) {
+			if (actions.functAction.sel !== null) {
 				actionList.add(actions.functAction.sel)
 			} else {
 				actionList.add("rnd");
@@ -276,7 +276,7 @@ class ECAGenerator implements IGenerator {
 		var StringBuffer tmp = new StringBuffer();
 		tmp.setLength(0);
 		// 0query - 1prioperator - 2privalue - 3state
-		if (cond.queryNot != null) {
+		if (cond.queryNot !== null) {
 			queryCondList.add("!exists");
 		} else {
 			queryCondList.add("exists");

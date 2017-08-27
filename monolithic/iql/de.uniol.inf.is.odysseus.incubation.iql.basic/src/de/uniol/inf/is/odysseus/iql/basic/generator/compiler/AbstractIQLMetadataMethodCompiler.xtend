@@ -45,7 +45,7 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 		public void «CREATE_METADATA_METHOD_NAME»() {
 			«FOR m : o.elements»
 			«var varName = METADATA_VALUE_VAR_NAME+counter.incrementAndGet()»
-			«IF m.value != null» 
+			«IF m.value !== null» 
 			«compile(m.getValue(), varName, counter, context)»
 			«ADD_METADATA_METHOD_NAME»("«m.name»",«varName»);
 			«ELSE»
@@ -88,7 +88,7 @@ abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHelper, G
 
 	
 	def String compile(IQLMetadataValueSingleString o, String varName, G context) {
-		if (context.expectedTypeRef != null) {
+		if (context.expectedTypeRef !== null) {
 			if (typeUtils.isCharacter(context.expectedTypeRef)) {
 				return "String "+varName+" = '"+o.value+"';"				
 			} else {

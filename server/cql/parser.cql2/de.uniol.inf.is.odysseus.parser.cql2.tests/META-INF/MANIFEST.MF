@@ -7,7 +7,6 @@ Bundle-SymbolicName: de.uniol.inf.is.odysseus.parser.cql2.tests;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.uniol.inf.is.odysseus.parser.cql2,
  org.junit,
- org.eclipse.xtext.junit4,
  org.eclipse.xtext.xbase.junit,
  org.eclipse.xtext.xbase.lib,
  de.uniol.inf.is.odysseus.core,
