@@ -1,5 +1,6 @@
 /.AttributeStruct.java._trace
 /.AttributeStruct.xtendbin
+/.CQLGenerator.java._trace
 /.CQLGenerator.xtendbin
 /.CQLGeneratorUtil.java._trace
 /.CQLGeneratorUtil.xtendbin
@@ -7,9 +8,3 @@
 /.CQLPredicateParser.xtendbin
 /.SourceStruct.java._trace
 /.SourceStruct.xtendbin
-/AttributeStruct.java
-/CQLGeneratorUtil.java
-/CQLPredicateParser.java
-/SourceStruct.java
-/.CQLGenerator.java._trace
-/CQLGenerator.java

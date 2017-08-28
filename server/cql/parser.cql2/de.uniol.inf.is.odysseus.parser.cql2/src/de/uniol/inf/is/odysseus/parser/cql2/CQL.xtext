@@ -5,6 +5,7 @@ generate cQL "http://www.uniol.de/inf/is/odysseus/parser/cql2/CQL"
 Model:
 	((components+=(Query | Command)) (';')?)*;
 
+@Override 
 terminal ID:
 	(LETTER | SPECIAL_CHARS) (LETTER | SPECIAL_CHARS | INT)*;
 

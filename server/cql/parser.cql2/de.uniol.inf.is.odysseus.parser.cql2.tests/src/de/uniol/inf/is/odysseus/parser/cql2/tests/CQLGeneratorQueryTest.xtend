@@ -1,24 +1,21 @@
 package de.uniol.inf.is.odysseus.parser.cql2.tests
 
-import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model
-import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
-import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import org.junit.Rule
 import org.junit.rules.ExpectedException
+import org.eclipse.xtext.testing.XtextRunner
 import org.junit.runner.RunWith
+//import com.google.inject.Inject
+//import org.eclipse.xtext.testing.util.ParseHelper
+//import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model
 
 @RunWith(XtextRunner)
 @Deprecated
 class CQLGeneratorQueryTest 
 {
 
-	@Inject extension CQLGenerator
-	@Inject extension ParseHelper<Model>
-	@Inject extension ValidationTestHelper
+//	@Inject extension CQLGenerator
+//	@Inject extension ParseHelper<Model>
+//	@Inject extension ValidationTestHelper
 	
 	@Rule public ExpectedException thrown = ExpectedException.none()
 	

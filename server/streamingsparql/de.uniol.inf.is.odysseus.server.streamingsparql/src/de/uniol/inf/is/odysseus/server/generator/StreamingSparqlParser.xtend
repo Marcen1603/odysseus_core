@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.server.generator
 
-import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.core.collection.Context
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary
@@ -17,11 +16,12 @@ import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 import java.util.List
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.junit4.util.ParseHelper
+import com.google.inject.Inject
+import org.eclipse.xtext.testing.util.ParseHelper
 
 class StreamingSparqlParser implements IStreamingSparqlParser{
 	
-	@Inject
+	@Inject 
 	ParseHelper<SPARQLQuery> helper;
 	
 	SelectQuery qry
@@ -53,12 +53,12 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 			prefixMap.put(prefix.name, pf);
 		}
 		for (clause : q.datasetClauses) {
-			if(clause.type == null){
+			if(clause.type === null){
 				streamMap.put(clause.name ,clause.dataSet.value.replace('>','').replace('<',''))
 			}else if(clause.type.equals("TIME")){
-				streamMap.put(clause.name, '''«clause.name» = TIMEWINDOW({SIZE = «IF clause.unit != null»[«clause.size», '«clause.unit»']«ELSE»«clause.size»«ENDIF»«IF clause.advance != 0», advance = «clause.advance»«ENDIF»}, «clause.dataSet.value.replace('>','').replace('<','')»)''')
+				streamMap.put(clause.name, '''«clause.name» = TIMEWINDOW({SIZE = «IF clause.unit !== null»[«clause.size», '«clause.unit»']«ELSE»«clause.size»«ENDIF»«IF clause.advance !== 0», advance = «clause.advance»«ENDIF»}, «clause.dataSet.value.replace('>','').replace('<','')»)''')
 			}else if(clause.type.equals("ELEMENT")){
-				streamMap.put(clause.name, '''«clause.name» = ELEMENTWINDOW({SIZE = «clause.size» «IF clause.advance != 0», advance = «clause.advance»«ENDIF»}, «clause.dataSet.value.replace('>','').replace('<','')»)''')
+				streamMap.put(clause.name, '''«clause.name» = ELEMENTWINDOW({SIZE = «clause.size» «IF clause.advance !== 0», advance = «clause.advance»«ENDIF»}, «clause.dataSet.value.replace('>','').replace('<','')»)''')
 			}
 		}
 		
@@ -66,12 +66,12 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 			for (triple : whereClause.groupGraphPattern.graphPatterns) {
 				for (propob : triple.propertyList) {
 					if(streamMap.get(whereClause.name.name).contains('=')){
-						var object = if(propob.object.variable == null) propob.object.literal else "?" + propob.object.variable.unnamed.name
+						var object = if(propob.object.variable === null) propob.object.literal else "?" + propob.object.variable.unnamed.name
 						val triplePattern = new StreamingSparqlTriplePatternMatching("?" + triple.subject.variable.unnamed.name,prefixMap.get(propob.property.variable.property.prefix.name) + "/" + propob.property.variable.property.name, object, whereClause.name.name, "pattern" + cnt)
 						last = "pattern" + cnt
 						triplePatternMatchingMap.put(last, triplePattern)
 					}else{
-						var object = if(propob.object.variable == null) propob.object.literal else "?" + propob.object.variable.unnamed.name
+						var object = if(propob.object.variable === null) propob.object.literal else "?" + propob.object.variable.unnamed.name
 						val triplePattern = new StreamingSparqlTriplePatternMatching("?" + triple.subject.variable.unnamed.name,prefixMap.get(propob.property.variable.property.prefix.name) + "/" + propob.property.variable.property.name,object, streamMap.get(whereClause.name.name), "pattern" + cnt)
 						last = "pattern" + cnt
 						triplePatternMatchingMap.put(last, triplePattern)
@@ -110,7 +110,7 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		while(!duplicatesIterator.empty){
 
 			val toAdd = listToJoinIteration(duplicatesIterator, varToPattern, listToJoin)
-			if(toAdd != null && !toAdd.empty){
+			if(toAdd !== null && !toAdd.empty){
 				listToJoin.addAll(toAdd)
 			}
 			
@@ -163,22 +163,22 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		}
 				
 		var filter = ""
-		if(q.filterclause != null){
+		if(q.filterclause !== null){
 			filter = '''
 			filter=SELECT({predicate='«q.filterclause.left.unnamed.name» «q.filterclause.operator» «q.filterclause.right.unnamed.name»'},«last»)'''
 			last = "filter"
 		}
 		
 		var aggregate = ""
-		if(q.aggregateClause != null){
+		if(q.aggregateClause !== null){
 			val aggregateClause = q.aggregateClause
 			var name = "aggregate"
 			var aggregations = "";
 			var groupBy = "";
-			if(aggregateClause.aggregations != null){
-				aggregations = '''AGGREGATIONS=[«FOR clause : aggregateClause.aggregations SEPARATOR ','»['«clause.function»','«clause.varToAgg.unnamed.name»','«clause.aggName»'«IF clause.datatype != null»,'«clause.datatype»'«ENDIF»]«ENDFOR»]'''
+			if(aggregateClause.aggregations !== null){
+				aggregations = '''AGGREGATIONS=[«FOR clause : aggregateClause.aggregations SEPARATOR ','»['«clause.function»','«clause.varToAgg.unnamed.name»','«clause.aggName»'«IF clause.datatype !== null»,'«clause.datatype»'«ENDIF»]«ENDFOR»]'''
 			}
-			if(aggregateClause.groupby != null){
+			if(aggregateClause.groupby !== null){
 				groupBy = '''group_by = [«FOR v : aggregateClause.groupby.variables SEPARATOR ','»'«v.unnamed.name»'«ENDFOR»]'''
 			}
 			aggregate = '''«name» = AGGREGATE({«IF !aggregations.equals("")» «aggregations»«ENDIF»«IF !groupBy.equals("")», «groupBy»«ENDIF»}, «last»)'''
@@ -192,7 +192,7 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		
 		val query = new StringBuilder()
 		query.append("#PARSER PQL\n")
-		if(q.method != null){
+		if(q.method !== null){
 			query.append(q.method + "\n")
 		}else{
 			query.append("#ADDQUERY\n")
@@ -211,17 +211,17 @@ class StreamingSparqlParser implements IStreamingSparqlParser{
 		for (triple : unionMap.entrySet) {
 			query.append(triple.value + "\n")
 		}
-		if(q.filterclause != null){
+		if(q.filterclause !== null){
 			query.append(filter + "\n")
 		}
-//		if(q.groupClause != null){
+//		if(q.groupClause !== null){
 //			query.append(group + "\n")
 //		}
-		if(q.aggregateClause != null){
+		if(q.aggregateClause !== null){
 			query.append(aggregate + "\n")
 		}
 		query.append(projection)
-		if(q.filesinkclause != null){
+		if(q.filesinkclause !== null){
 			query.append("res = CSVFILESINK({SINK = 'sink', FILENAME = '" + q.filesinkclause.path.replace('/', '\\') + "'}, result)")
 		}
 		print(query)

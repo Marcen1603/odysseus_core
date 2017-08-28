@@ -19,8 +19,6 @@ public class InternalStreamingsparqlLexer extends Lexer {
     public static final int T__17=17;
     public static final int T__18=18;
     public static final int T__51=51;
-    public static final int T__52=52;
-    public static final int T__53=53;
     public static final int RULE_IRI_TERMINAL=5;
     public static final int RULE_ID=4;
     public static final int T__26=26;
@@ -75,15 +73,15 @@ public class InternalStreamingsparqlLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g"; }
+    public String getGrammarFileName() { return "InternalStreamingsparql.g"; }
 
     // $ANTLR start "T__15"
     public final void mT__15() throws RecognitionException {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:11:7: ( 'PREFIX' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:11:9: 'PREFIX'
+            // InternalStreamingsparql.g:11:7: ( 'PREFIX' )
+            // InternalStreamingsparql.g:11:9: 'PREFIX'
             {
             match("PREFIX"); 
 
@@ -103,8 +101,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__16;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:12:7: ( ':' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:12:9: ':'
+            // InternalStreamingsparql.g:12:7: ( ':' )
+            // InternalStreamingsparql.g:12:9: ':'
             {
             match(':'); 
 
@@ -123,8 +121,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__17;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:13:7: ( 'BASE' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:13:9: 'BASE'
+            // InternalStreamingsparql.g:13:7: ( 'BASE' )
+            // InternalStreamingsparql.g:13:9: 'BASE'
             {
             match("BASE"); 
 
@@ -144,8 +142,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__18;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:14:7: ( '#ADDQUERY' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:14:9: '#ADDQUERY'
+            // InternalStreamingsparql.g:14:7: ( '#ADDQUERY' )
+            // InternalStreamingsparql.g:14:9: '#ADDQUERY'
             {
             match("#ADDQUERY"); 
 
@@ -165,8 +163,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__19;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:15:7: ( '#RUNQUERY' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:15:9: '#RUNQUERY'
+            // InternalStreamingsparql.g:15:7: ( '#RUNQUERY' )
+            // InternalStreamingsparql.g:15:9: '#RUNQUERY'
             {
             match("#RUNQUERY"); 
 
@@ -186,8 +184,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__20;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:16:7: ( 'SELECT' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:16:9: 'SELECT'
+            // InternalStreamingsparql.g:16:7: ( 'SELECT' )
+            // InternalStreamingsparql.g:16:9: 'SELECT'
             {
             match("SELECT"); 
 
@@ -207,10 +205,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__21;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:17:7: ( 'DISTINCT' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:17:9: 'DISTINCT'
+            // InternalStreamingsparql.g:17:7: ( 'AGGREGATE(' )
+            // InternalStreamingsparql.g:17:9: 'AGGREGATE('
             {
-            match("DISTINCT"); 
+            match("AGGREGATE("); 
 
 
             }
@@ -228,10 +226,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__22;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:18:7: ( 'REDUCED' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:18:9: 'REDUCED'
+            // InternalStreamingsparql.g:18:7: ( 'aggregations' )
+            // InternalStreamingsparql.g:18:9: 'aggregations'
             {
-            match("REDUCED"); 
+            match("aggregations"); 
 
 
             }
@@ -249,11 +247,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:19:7: ( 'AGGREGATE(' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:19:9: 'AGGREGATE('
+            // InternalStreamingsparql.g:19:7: ( '=' )
+            // InternalStreamingsparql.g:19:9: '='
             {
-            match("AGGREGATE("); 
-
+            match('='); 
 
             }
 
@@ -270,11 +267,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:20:7: ( 'aggregations = [' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:20:9: 'aggregations = ['
+            // InternalStreamingsparql.g:20:7: ( '[' )
+            // InternalStreamingsparql.g:20:9: '['
             {
-            match("aggregations = ["); 
-
+            match('['); 
 
             }
 
@@ -291,8 +287,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:21:7: ( ']' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:21:9: ']'
+            // InternalStreamingsparql.g:21:7: ( ']' )
+            // InternalStreamingsparql.g:21:9: ']'
             {
             match(']'); 
 
@@ -311,8 +307,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:22:7: ( ',' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:22:9: ','
+            // InternalStreamingsparql.g:22:7: ( ',' )
+            // InternalStreamingsparql.g:22:9: ','
             {
             match(','); 
 
@@ -331,8 +327,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:23:7: ( ')' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:23:9: ')'
+            // InternalStreamingsparql.g:23:7: ( ')' )
+            // InternalStreamingsparql.g:23:9: ')'
             {
             match(')'); 
 
@@ -351,8 +347,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__28;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:24:7: ( 'group_by=[' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:24:9: 'group_by=['
+            // InternalStreamingsparql.g:24:7: ( 'group_by=[' )
+            // InternalStreamingsparql.g:24:9: 'group_by=['
             {
             match("group_by=["); 
 
@@ -372,10 +368,11 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__29;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:25:7: ( '[' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:25:9: '['
+            // InternalStreamingsparql.g:25:7: ( 'CSVFILESINK(' )
+            // InternalStreamingsparql.g:25:9: 'CSVFILESINK('
             {
-            match('['); 
+            match("CSVFILESINK("); 
+
 
             }
 
@@ -392,10 +389,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__30;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:26:7: ( 'CSVFILESINK(' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:26:9: 'CSVFILESINK('
+            // InternalStreamingsparql.g:26:7: ( 'FILTER(' )
+            // InternalStreamingsparql.g:26:9: 'FILTER('
             {
-            match("CSVFILESINK("); 
+            match("FILTER("); 
 
 
             }
@@ -413,10 +410,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__31;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:27:7: ( 'FILTER(' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:27:9: 'FILTER('
+            // InternalStreamingsparql.g:27:7: ( 'FROM' )
+            // InternalStreamingsparql.g:27:9: 'FROM'
             {
-            match("FILTER("); 
+            match("FROM"); 
 
 
             }
@@ -434,10 +431,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__32;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:28:7: ( 'FROM' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:28:9: 'FROM'
+            // InternalStreamingsparql.g:28:7: ( 'AS' )
+            // InternalStreamingsparql.g:28:9: 'AS'
             {
-            match("FROM"); 
+            match("AS"); 
 
 
             }
@@ -455,10 +452,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__33;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:29:7: ( 'AS' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:29:9: 'AS'
+            // InternalStreamingsparql.g:29:7: ( 'TYPE' )
+            // InternalStreamingsparql.g:29:9: 'TYPE'
             {
-            match("AS"); 
+            match("TYPE"); 
 
 
             }
@@ -476,10 +473,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__34;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:30:7: ( '[TYPE ' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:30:9: '[TYPE '
+            // InternalStreamingsparql.g:30:7: ( 'SIZE' )
+            // InternalStreamingsparql.g:30:9: 'SIZE'
             {
-            match("[TYPE "); 
+            match("SIZE"); 
 
 
             }
@@ -497,10 +494,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__35;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:31:7: ( 'SIZE ' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:31:9: 'SIZE '
+            // InternalStreamingsparql.g:31:7: ( 'ADVANCE' )
+            // InternalStreamingsparql.g:31:9: 'ADVANCE'
             {
-            match("SIZE "); 
+            match("ADVANCE"); 
 
 
             }
@@ -518,10 +515,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__36;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:32:7: ( 'ADVANCE' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:32:9: 'ADVANCE'
+            // InternalStreamingsparql.g:32:7: ( 'UNIT' )
+            // InternalStreamingsparql.g:32:9: 'UNIT'
             {
-            match("ADVANCE"); 
+            match("UNIT"); 
 
 
             }
@@ -539,10 +536,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__37;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:33:7: ( 'UNIT ' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:33:9: 'UNIT '
+            // InternalStreamingsparql.g:33:7: ( 'WHERE' )
+            // InternalStreamingsparql.g:33:9: 'WHERE'
             {
-            match("UNIT "); 
+            match("WHERE"); 
 
 
             }
@@ -560,11 +557,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__38;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:34:7: ( 'WHERE' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:34:9: 'WHERE'
+            // InternalStreamingsparql.g:34:7: ( '{' )
+            // InternalStreamingsparql.g:34:9: '{'
             {
-            match("WHERE"); 
-
+            match('{'); 
 
             }
 
@@ -581,10 +577,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__39;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:35:7: ( '{' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:35:9: '{'
+            // InternalStreamingsparql.g:35:7: ( '}' )
+            // InternalStreamingsparql.g:35:9: '}'
             {
-            match('{'); 
+            match('}'); 
 
             }
 
@@ -601,10 +597,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__40;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:36:7: ( '}' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:36:9: '}'
+            // InternalStreamingsparql.g:36:7: ( '.' )
+            // InternalStreamingsparql.g:36:9: '.'
             {
-            match('}'); 
+            match('.'); 
 
             }
 
@@ -621,10 +617,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__41;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:37:7: ( '.' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:37:9: '.'
+            // InternalStreamingsparql.g:37:7: ( ';' )
+            // InternalStreamingsparql.g:37:9: ';'
             {
-            match('.'); 
+            match(';'); 
 
             }
 
@@ -641,10 +637,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__42;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:38:7: ( ';' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:38:9: ';'
+            // InternalStreamingsparql.g:38:7: ( '?' )
+            // InternalStreamingsparql.g:38:9: '?'
             {
-            match(';'); 
+            match('?'); 
 
             }
 
@@ -661,10 +657,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__43;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:39:7: ( '?' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:39:9: '?'
+            // InternalStreamingsparql.g:39:7: ( '<' )
+            // InternalStreamingsparql.g:39:9: '<'
             {
-            match('?'); 
+            match('<'); 
 
             }
 
@@ -681,10 +677,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__44;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:40:7: ( '<' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:40:9: '<'
+            // InternalStreamingsparql.g:40:7: ( '>' )
+            // InternalStreamingsparql.g:40:9: '>'
             {
-            match('<'); 
+            match('>'); 
 
             }
 
@@ -701,10 +697,11 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__45;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:41:7: ( '>' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:41:9: '>'
+            // InternalStreamingsparql.g:41:7: ( '<=' )
+            // InternalStreamingsparql.g:41:9: '<='
             {
-            match('>'); 
+            match("<="); 
+
 
             }
 
@@ -721,10 +718,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__46;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:42:7: ( '<=' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:42:9: '<='
+            // InternalStreamingsparql.g:42:7: ( '>=' )
+            // InternalStreamingsparql.g:42:9: '>='
             {
-            match("<="); 
+            match(">="); 
 
 
             }
@@ -742,10 +739,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__47;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:43:7: ( '>=' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:43:9: '>='
+            // InternalStreamingsparql.g:43:7: ( '!=' )
+            // InternalStreamingsparql.g:43:9: '!='
             {
-            match(">="); 
+            match("!="); 
 
 
             }
@@ -763,10 +760,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__48;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:44:7: ( '=' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:44:9: '='
+            // InternalStreamingsparql.g:44:7: ( '+' )
+            // InternalStreamingsparql.g:44:9: '+'
             {
-            match('='); 
+            match('+'); 
 
             }
 
@@ -783,11 +780,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__49;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:45:7: ( '!=' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:45:9: '!='
+            // InternalStreamingsparql.g:45:7: ( '/' )
+            // InternalStreamingsparql.g:45:9: '/'
             {
-            match("!="); 
-
+            match('/'); 
 
             }
 
@@ -804,10 +800,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__50;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:46:7: ( '+' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:46:9: '+'
+            // InternalStreamingsparql.g:46:7: ( '-' )
+            // InternalStreamingsparql.g:46:9: '-'
             {
-            match('+'); 
+            match('-'); 
 
             }
 
@@ -824,48 +820,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = T__51;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:47:7: ( '/' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:47:9: '/'
-            {
-            match('/'); 
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__51"
-
-    // $ANTLR start "T__52"
-    public final void mT__52() throws RecognitionException {
-        try {
-            int _type = T__52;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:48:7: ( '-' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:48:9: '-'
-            {
-            match('-'); 
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__52"
-
-    // $ANTLR start "T__53"
-    public final void mT__53() throws RecognitionException {
-        try {
-            int _type = T__53;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:49:7: ( '*' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:49:9: '*'
+            // InternalStreamingsparql.g:47:7: ( '*' )
+            // InternalStreamingsparql.g:47:9: '*'
             {
             match('*'); 
 
@@ -877,17 +833,17 @@ public class InternalStreamingsparqlLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "T__53"
+    // $ANTLR end "T__51"
 
     // $ANTLR start "RULE_AGG_FUNCTION"
     public final void mRULE_AGG_FUNCTION() throws RecognitionException {
         try {
             int _type = RULE_AGG_FUNCTION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:19: ( ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' ) )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:21: ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' )
+            // InternalStreamingsparql.g:1731:19: ( ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' ) )
+            // InternalStreamingsparql.g:1731:21: ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' )
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:21: ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' )
+            // InternalStreamingsparql.g:1731:21: ( 'COUNT' | 'MAX' | 'MIN' | 'AVG' | 'SUM' | 'MEDIAN' )
             int alt1=6;
             switch ( input.LA(1) ) {
             case 'C':
@@ -941,7 +897,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
             switch (alt1) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:22: 'COUNT'
+                    // InternalStreamingsparql.g:1731:22: 'COUNT'
                     {
                     match("COUNT"); 
 
@@ -949,7 +905,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:30: 'MAX'
+                    // InternalStreamingsparql.g:1731:30: 'MAX'
                     {
                     match("MAX"); 
 
@@ -957,7 +913,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:36: 'MIN'
+                    // InternalStreamingsparql.g:1731:36: 'MIN'
                     {
                     match("MIN"); 
 
@@ -965,7 +921,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:42: 'AVG'
+                    // InternalStreamingsparql.g:1731:42: 'AVG'
                     {
                     match("AVG"); 
 
@@ -973,7 +929,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:48: 'SUM'
+                    // InternalStreamingsparql.g:1731:48: 'SUM'
                     {
                     match("SUM"); 
 
@@ -981,7 +937,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1714:54: 'MEDIAN'
+                    // InternalStreamingsparql.g:1731:54: 'MEDIAN'
                     {
                     match("MEDIAN"); 
 
@@ -1007,11 +963,11 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_IRI_TERMINAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1716:19: ( '<' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )* '>' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1716:21: '<' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )* '>'
+            // InternalStreamingsparql.g:1733:19: ( '<' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )* '>' )
+            // InternalStreamingsparql.g:1733:21: '<' ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )* '>'
             {
             match('<'); 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1716:25: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )*
+            // InternalStreamingsparql.g:1733:25: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '-' | '0' .. '9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=' )*
             loop2:
             do {
                 int alt2=2;
@@ -1024,7 +980,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:
+            	    // InternalStreamingsparql.g:
             	    {
             	    if ( (input.LA(1)>='#' && input.LA(1)<='$')||input.LA(1)=='&'||(input.LA(1)>='-' && input.LA(1)<=':')||input.LA(1)=='='||(input.LA(1)>='?' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1061,11 +1017,11 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1718:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1718:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+            // InternalStreamingsparql.g:1735:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
+            // InternalStreamingsparql.g:1735:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1718:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+            // InternalStreamingsparql.g:1735:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
             loop3:
             do {
                 int alt3=3;
@@ -1081,7 +1037,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt3) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1718:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
+            	    // InternalStreamingsparql.g:1735:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\"' | '\\'' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||input.LA(1)=='t' ) {
@@ -1097,7 +1053,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1718:61: ~ ( ( '\\\\' | '\"' ) )
+            	    // InternalStreamingsparql.g:1735:61: ~ ( ( '\\\\' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1134,10 +1090,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_WINDOWTYPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1720:17: ( ( 'ELEMENT' | 'TIME' ) )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1720:19: ( 'ELEMENT' | 'TIME' )
+            // InternalStreamingsparql.g:1737:17: ( ( 'ELEMENT' | 'TIME' ) )
+            // InternalStreamingsparql.g:1737:19: ( 'ELEMENT' | 'TIME' )
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1720:19: ( 'ELEMENT' | 'TIME' )
+            // InternalStreamingsparql.g:1737:19: ( 'ELEMENT' | 'TIME' )
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -1155,7 +1111,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1720:20: 'ELEMENT'
+                    // InternalStreamingsparql.g:1737:20: 'ELEMENT'
                     {
                     match("ELEMENT"); 
 
@@ -1163,7 +1119,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1720:30: 'TIME'
+                    // InternalStreamingsparql.g:1737:30: 'TIME'
                     {
                     match("TIME"); 
 
@@ -1189,15 +1145,15 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_UNITTYPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:15: ( ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' ) )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )
+            // InternalStreamingsparql.g:1739:15: ( ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' ) )
+            // InternalStreamingsparql.g:1739:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )
+            // InternalStreamingsparql.g:1739:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )
             int alt5=7;
             alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:18: 'NANOSECONDS'
+                    // InternalStreamingsparql.g:1739:18: 'NANOSECONDS'
                     {
                     match("NANOSECONDS"); 
 
@@ -1205,7 +1161,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:32: 'MICROSECONDS'
+                    // InternalStreamingsparql.g:1739:32: 'MICROSECONDS'
                     {
                     match("MICROSECONDS"); 
 
@@ -1213,7 +1169,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:47: 'MILLISECONDS'
+                    // InternalStreamingsparql.g:1739:47: 'MILLISECONDS'
                     {
                     match("MILLISECONDS"); 
 
@@ -1221,7 +1177,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:62: 'SECONDS'
+                    // InternalStreamingsparql.g:1739:62: 'SECONDS'
                     {
                     match("SECONDS"); 
 
@@ -1229,7 +1185,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:72: 'MINUTES'
+                    // InternalStreamingsparql.g:1739:72: 'MINUTES'
                     {
                     match("MINUTES"); 
 
@@ -1237,7 +1193,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 6 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:82: 'HOURS'
+                    // InternalStreamingsparql.g:1739:82: 'HOURS'
                     {
                     match("HOURS"); 
 
@@ -1245,7 +1201,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     break;
                 case 7 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1722:90: 'DAYS'
+                    // InternalStreamingsparql.g:1739:90: 'DAYS'
                     {
                     match("DAYS"); 
 
@@ -1271,10 +1227,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1724:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1724:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalStreamingsparql.g:1741:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalStreamingsparql.g:1741:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1724:11: ( '^' )?
+            // InternalStreamingsparql.g:1741:11: ( '^' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -1283,7 +1239,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1724:11: '^'
+                    // InternalStreamingsparql.g:1741:11: '^'
                     {
                     match('^'); 
 
@@ -1301,7 +1257,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1724:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalStreamingsparql.g:1741:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop7:
             do {
                 int alt7=2;
@@ -1314,7 +1270,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:
+            	    // InternalStreamingsparql.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1350,10 +1306,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1726:10: ( ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1726:12: ( '0' .. '9' )+
+            // InternalStreamingsparql.g:1743:10: ( ( '0' .. '9' )+ )
+            // InternalStreamingsparql.g:1743:12: ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1726:12: ( '0' .. '9' )+
+            // InternalStreamingsparql.g:1743:12: ( '0' .. '9' )+
             int cnt8=0;
             loop8:
             do {
@@ -1367,7 +1323,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1726:13: '0' .. '9'
+            	    // InternalStreamingsparql.g:1743:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1399,12 +1355,12 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1728:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1728:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalStreamingsparql.g:1745:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalStreamingsparql.g:1745:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1728:24: ( options {greedy=false; } : . )*
+            // InternalStreamingsparql.g:1745:24: ( options {greedy=false; } : . )*
             loop9:
             do {
                 int alt9=2;
@@ -1429,7 +1385,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1728:52: .
+            	    // InternalStreamingsparql.g:1745:52: .
             	    {
             	    matchAny(); 
 
@@ -1459,12 +1415,12 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalStreamingsparql.g:1747:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalStreamingsparql.g:1747:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalStreamingsparql.g:1747:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop10:
             do {
                 int alt10=2;
@@ -1477,7 +1433,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalStreamingsparql.g:1747:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1497,7 +1453,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:40: ( ( '\\r' )? '\\n' )?
+            // InternalStreamingsparql.g:1747:40: ( ( '\\r' )? '\\n' )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1506,9 +1462,9 @@ public class InternalStreamingsparqlLexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:41: ( '\\r' )? '\\n'
+                    // InternalStreamingsparql.g:1747:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:41: ( '\\r' )?
+                    // InternalStreamingsparql.g:1747:41: ( '\\r' )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -1517,7 +1473,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1730:41: '\\r'
+                            // InternalStreamingsparql.g:1747:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1549,10 +1505,10 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1732:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1732:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalStreamingsparql.g:1749:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalStreamingsparql.g:1749:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1732:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalStreamingsparql.g:1749:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt13=0;
             loop13:
             do {
@@ -1566,7 +1522,7 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:
+            	    // InternalStreamingsparql.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -1606,8 +1562,8 @@ public class InternalStreamingsparqlLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1734:16: ( . )
-            // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1734:18: .
+            // InternalStreamingsparql.g:1751:16: ( . )
+            // InternalStreamingsparql.g:1751:18: .
             {
             matchAny(); 
 
@@ -1622,355 +1578,341 @@ public class InternalStreamingsparqlLexer extends Lexer {
     // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:8: ( T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | RULE_AGG_FUNCTION | RULE_IRI_TERMINAL | RULE_STRING | RULE_WINDOWTYPE | RULE_UNITTYPE | RULE_ID | RULE_INT | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
-        int alt14=50;
+        // InternalStreamingsparql.g:1:8: ( T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | RULE_AGG_FUNCTION | RULE_IRI_TERMINAL | RULE_STRING | RULE_WINDOWTYPE | RULE_UNITTYPE | RULE_ID | RULE_INT | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt14=48;
         alt14 = dfa14.predict(input);
         switch (alt14) {
             case 1 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:10: T__15
+                // InternalStreamingsparql.g:1:10: T__15
                 {
                 mT__15(); 
 
                 }
                 break;
             case 2 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:16: T__16
+                // InternalStreamingsparql.g:1:16: T__16
                 {
                 mT__16(); 
 
                 }
                 break;
             case 3 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:22: T__17
+                // InternalStreamingsparql.g:1:22: T__17
                 {
                 mT__17(); 
 
                 }
                 break;
             case 4 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:28: T__18
+                // InternalStreamingsparql.g:1:28: T__18
                 {
                 mT__18(); 
 
                 }
                 break;
             case 5 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:34: T__19
+                // InternalStreamingsparql.g:1:34: T__19
                 {
                 mT__19(); 
 
                 }
                 break;
             case 6 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:40: T__20
+                // InternalStreamingsparql.g:1:40: T__20
                 {
                 mT__20(); 
 
                 }
                 break;
             case 7 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:46: T__21
+                // InternalStreamingsparql.g:1:46: T__21
                 {
                 mT__21(); 
 
                 }
                 break;
             case 8 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:52: T__22
+                // InternalStreamingsparql.g:1:52: T__22
                 {
                 mT__22(); 
 
                 }
                 break;
             case 9 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:58: T__23
+                // InternalStreamingsparql.g:1:58: T__23
                 {
                 mT__23(); 
 
                 }
                 break;
             case 10 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:64: T__24
+                // InternalStreamingsparql.g:1:64: T__24
                 {
                 mT__24(); 
 
                 }
                 break;
             case 11 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:70: T__25
+                // InternalStreamingsparql.g:1:70: T__25
                 {
                 mT__25(); 
 
                 }
                 break;
             case 12 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:76: T__26
+                // InternalStreamingsparql.g:1:76: T__26
                 {
                 mT__26(); 
 
                 }
                 break;
             case 13 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:82: T__27
+                // InternalStreamingsparql.g:1:82: T__27
                 {
                 mT__27(); 
 
                 }
                 break;
             case 14 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:88: T__28
+                // InternalStreamingsparql.g:1:88: T__28
                 {
                 mT__28(); 
 
                 }
                 break;
             case 15 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:94: T__29
+                // InternalStreamingsparql.g:1:94: T__29
                 {
                 mT__29(); 
 
                 }
                 break;
             case 16 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:100: T__30
+                // InternalStreamingsparql.g:1:100: T__30
                 {
                 mT__30(); 
 
                 }
                 break;
             case 17 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:106: T__31
+                // InternalStreamingsparql.g:1:106: T__31
                 {
                 mT__31(); 
 
                 }
                 break;
             case 18 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:112: T__32
+                // InternalStreamingsparql.g:1:112: T__32
                 {
                 mT__32(); 
 
                 }
                 break;
             case 19 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:118: T__33
+                // InternalStreamingsparql.g:1:118: T__33
                 {
                 mT__33(); 
 
                 }
                 break;
             case 20 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:124: T__34
+                // InternalStreamingsparql.g:1:124: T__34
                 {
                 mT__34(); 
 
                 }
                 break;
             case 21 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:130: T__35
+                // InternalStreamingsparql.g:1:130: T__35
                 {
                 mT__35(); 
 
                 }
                 break;
             case 22 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:136: T__36
+                // InternalStreamingsparql.g:1:136: T__36
                 {
                 mT__36(); 
 
                 }
                 break;
             case 23 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:142: T__37
+                // InternalStreamingsparql.g:1:142: T__37
                 {
                 mT__37(); 
 
                 }
                 break;
             case 24 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:148: T__38
+                // InternalStreamingsparql.g:1:148: T__38
                 {
                 mT__38(); 
 
                 }
                 break;
             case 25 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:154: T__39
+                // InternalStreamingsparql.g:1:154: T__39
                 {
                 mT__39(); 
 
                 }
                 break;
             case 26 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:160: T__40
+                // InternalStreamingsparql.g:1:160: T__40
                 {
                 mT__40(); 
 
                 }
                 break;
             case 27 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:166: T__41
+                // InternalStreamingsparql.g:1:166: T__41
                 {
                 mT__41(); 
 
                 }
                 break;
             case 28 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:172: T__42
+                // InternalStreamingsparql.g:1:172: T__42
                 {
                 mT__42(); 
 
                 }
                 break;
             case 29 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:178: T__43
+                // InternalStreamingsparql.g:1:178: T__43
                 {
                 mT__43(); 
 
                 }
                 break;
             case 30 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:184: T__44
+                // InternalStreamingsparql.g:1:184: T__44
                 {
                 mT__44(); 
 
                 }
                 break;
             case 31 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:190: T__45
+                // InternalStreamingsparql.g:1:190: T__45
                 {
                 mT__45(); 
 
                 }
                 break;
             case 32 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:196: T__46
+                // InternalStreamingsparql.g:1:196: T__46
                 {
                 mT__46(); 
 
                 }
                 break;
             case 33 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:202: T__47
+                // InternalStreamingsparql.g:1:202: T__47
                 {
                 mT__47(); 
 
                 }
                 break;
             case 34 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:208: T__48
+                // InternalStreamingsparql.g:1:208: T__48
                 {
                 mT__48(); 
 
                 }
                 break;
             case 35 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:214: T__49
+                // InternalStreamingsparql.g:1:214: T__49
                 {
                 mT__49(); 
 
                 }
                 break;
             case 36 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:220: T__50
+                // InternalStreamingsparql.g:1:220: T__50
                 {
                 mT__50(); 
 
                 }
                 break;
             case 37 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:226: T__51
+                // InternalStreamingsparql.g:1:226: T__51
                 {
                 mT__51(); 
 
                 }
                 break;
             case 38 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:232: T__52
-                {
-                mT__52(); 
-
-                }
-                break;
-            case 39 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:238: T__53
-                {
-                mT__53(); 
-
-                }
-                break;
-            case 40 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:244: RULE_AGG_FUNCTION
+                // InternalStreamingsparql.g:1:232: RULE_AGG_FUNCTION
                 {
                 mRULE_AGG_FUNCTION(); 
 
                 }
                 break;
-            case 41 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:262: RULE_IRI_TERMINAL
+            case 39 :
+                // InternalStreamingsparql.g:1:250: RULE_IRI_TERMINAL
                 {
                 mRULE_IRI_TERMINAL(); 
 
                 }
                 break;
-            case 42 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:280: RULE_STRING
+            case 40 :
+                // InternalStreamingsparql.g:1:268: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 43 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:292: RULE_WINDOWTYPE
+            case 41 :
+                // InternalStreamingsparql.g:1:280: RULE_WINDOWTYPE
                 {
                 mRULE_WINDOWTYPE(); 
 
                 }
                 break;
-            case 44 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:308: RULE_UNITTYPE
+            case 42 :
+                // InternalStreamingsparql.g:1:296: RULE_UNITTYPE
                 {
                 mRULE_UNITTYPE(); 
 
                 }
                 break;
-            case 45 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:322: RULE_ID
+            case 43 :
+                // InternalStreamingsparql.g:1:310: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 46 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:330: RULE_INT
+            case 44 :
+                // InternalStreamingsparql.g:1:318: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
-            case 47 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:339: RULE_ML_COMMENT
+            case 45 :
+                // InternalStreamingsparql.g:1:327: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 48 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:355: RULE_SL_COMMENT
+            case 46 :
+                // InternalStreamingsparql.g:1:343: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 49 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:371: RULE_WS
+            case 47 :
+                // InternalStreamingsparql.g:1:359: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
-            case 50 :
-                // ../de.uniol.inf.is.odysseus.server.streamingsparql/src-gen/de/uniol/inf/is/odysseus/server/parser/antlr/internal/InternalStreamingsparql.g:1:379: RULE_ANY_OTHER
+            case 48 :
+                // InternalStreamingsparql.g:1:367: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -2039,339 +1981,260 @@ public class InternalStreamingsparqlLexer extends Lexer {
             this.transition = DFA5_transition;
         }
         public String getDescription() {
-            return "1722:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )";
+            return "1739:17: ( 'NANOSECONDS' | 'MICROSECONDS' | 'MILLISECONDS' | 'SECONDS' | 'MINUTES' | 'HOURS' | 'DAYS' )";
         }
     }
     static final String DFA14_eotS =
-        "\1\uffff\1\54\1\uffff\1\54\1\52\5\54\3\uffff\1\54\1\101\4\54\5"+
-        "\uffff\1\116\1\121\1\uffff\1\52\1\uffff\1\127\2\uffff\1\54\1\52"+
-        "\4\54\1\52\4\uffff\1\54\2\uffff\1\54\2\uffff\7\54\1\156\3\54\3\uffff"+
-        "\1\54\2\uffff\6\54\5\uffff\1\171\14\uffff\3\54\1\uffff\4\54\2\uffff"+
-        "\5\54\1\u0088\4\54\1\uffff\1\54\1\u0088\10\54\1\uffff\2\u0088\10"+
-        "\54\1\u009f\3\54\1\uffff\1\54\1\u00a4\10\54\1\u00ad\7\54\1\u00b5"+
-        "\3\54\1\uffff\2\54\1\uffff\1\54\1\uffff\6\54\1\u0088\1\54\2\uffff"+
-        "\1\u00c3\5\54\1\uffff\1\54\1\u00a4\1\u00ca\1\u00cb\11\54\1\uffff"+
-        "\3\54\1\u0088\2\54\2\uffff\1\u00a4\1\54\1\u00db\1\54\1\u00dd\3\54"+
-        "\1\uffff\1\u00a4\2\54\1\u00b5\1\54\1\u00e4\1\uffff\1\54\1\uffff"+
-        "\6\54\1\uffff\2\54\1\uffff\4\54\1\uffff\11\54\1\u00a4\1\54\1\uffff"+
-        "\2\u00a4\1\uffff";
+        "\1\uffff\1\53\1\uffff\1\53\1\51\3\53\5\uffff\6\53\5\uffff\1\114\1\117\1\51\1\uffff\1\124\2\uffff\1\53\1\51\4\53\1\51\4\uffff\1\53\2\uffff\1\53\2\uffff\4\53\1\150\3\53\5\uffff\11\53\5\uffff\1\165\13\uffff\3\53\1\uffff\4\53\2\uffff\5\53\1\u0084\1\53\1\uffff\1\53\1\u0084\12\53\1\uffff\2\u0084\10\53\1\u009a\2\53\1\u009d\1\uffff\7\53\1\u00a5\1\u00a6\1\u00a7\1\u00a8\10\53\1\u00b1\1\53\1\uffff\2\53\1\uffff\5\53\1\u0084\1\53\4\uffff\1\u00bb\6\53\1\u00b1\1\uffff\1\u00c2\1\u00c3\7\53\1\uffff\3\53\1\u0084\2\53\2\uffff\1\u00b1\1\53\1\u00d1\3\53\1\uffff\1\u00b1\2\53\1\u00a7\2\53\1\uffff\10\53\1\uffff\4\53\1\uffff\11\53\1\u00b1\1\u00ee\1\uffff\2\u00b1\1\uffff";
     static final String DFA14_eofS =
-        "\u00fc\uffff";
+        "\u00ef\uffff";
     static final String DFA14_minS =
-        "\1\0\1\122\1\uffff\2\101\1\105\1\101\1\105\1\104\1\147\3\uffff"+
-        "\1\162\1\124\1\117\1\111\1\116\1\110\5\uffff\1\43\1\75\1\uffff\1"+
-        "\75\1\uffff\1\52\2\uffff\1\101\1\0\1\114\1\111\1\101\1\117\1\101"+
-        "\4\uffff\1\105\2\uffff\1\123\2\uffff\1\103\1\132\1\115\1\123\1\131"+
-        "\1\104\1\107\1\60\1\126\1\107\1\147\3\uffff\1\157\2\uffff\1\126"+
-        "\1\125\1\114\1\117\1\111\1\105\5\uffff\1\43\14\uffff\1\130\1\103"+
-        "\1\104\1\uffff\1\105\1\115\1\116\1\125\2\uffff\1\106\2\105\1\117"+
-        "\1\105\1\60\1\124\1\123\1\125\1\122\1\uffff\1\101\1\60\1\162\1\165"+
-        "\1\106\1\116\1\124\1\115\1\124\1\122\1\uffff\2\60\1\122\1\114\1"+
-        "\111\1\115\1\105\1\117\1\122\1\111\1\60\1\103\1\116\1\40\1\uffff"+
-        "\1\111\1\60\1\103\1\105\1\116\1\145\1\160\1\111\1\124\1\105\1\60"+
-        "\1\40\1\105\1\124\1\117\1\111\1\101\1\105\1\60\2\123\1\130\1\uffff"+
-        "\1\124\1\104\1\uffff\1\116\1\uffff\1\105\1\107\1\103\1\147\1\137"+
-        "\1\114\1\60\1\122\2\uffff\1\60\1\105\2\123\2\116\1\uffff\1\105\3"+
-        "\60\1\123\1\103\1\104\1\101\1\105\1\141\1\142\1\105\1\50\1\uffff"+
-        "\1\123\2\105\1\60\1\124\1\103\2\uffff\1\60\1\124\1\60\1\124\1\60"+
-        "\1\164\1\171\1\123\1\uffff\1\60\2\103\1\60\1\117\1\60\1\uffff\1"+
-        "\105\1\uffff\1\151\1\75\1\111\2\117\1\116\1\uffff\1\50\1\157\1\uffff"+
-        "\3\116\1\104\1\uffff\1\156\1\113\2\104\1\123\1\163\1\50\2\123\1"+
-        "\60\1\40\1\uffff\2\60\1\uffff";
+        "\1\0\1\122\1\uffff\2\101\1\105\1\104\1\147\5\uffff\1\162\1\117\2\111\1\116\1\110\5\uffff\1\43\2\75\1\uffff\1\52\2\uffff\1\101\1\0\1\114\1\101\1\117\2\101\4\uffff\1\105\2\uffff\1\123\2\uffff\1\103\1\132\1\115\1\107\1\60\1\126\1\107\1\147\5\uffff\1\157\1\126\1\125\1\114\1\117\1\120\1\115\1\111\1\105\5\uffff\1\43\13\uffff\1\130\1\103\1\104\1\uffff\1\105\1\116\1\125\1\131\2\uffff\1\106\2\105\1\117\1\105\1\60\1\122\1\uffff\1\101\1\60\1\162\1\165\1\106\1\116\1\124\1\115\2\105\1\124\1\122\1\uffff\2\60\1\122\1\114\1\111\1\115\1\117\1\122\1\123\1\111\1\60\1\103\1\116\1\60\1\uffff\1\105\1\116\1\145\1\160\1\111\1\124\1\105\4\60\1\105\1\124\1\117\1\111\1\101\1\105\2\123\1\60\1\130\1\uffff\1\124\1\104\1\uffff\1\107\1\103\1\147\1\137\1\114\1\60\1\122\4\uffff\1\60\1\105\2\123\2\116\1\105\1\60\1\uffff\2\60\1\123\1\101\1\105\1\141\1\142\1\105\1\50\1\uffff\1\123\2\105\1\60\1\124\1\103\2\uffff\1\60\1\124\1\60\1\164\1\171\1\123\1\uffff\1\60\2\103\1\60\1\117\1\105\1\uffff\1\151\1\75\1\111\2\117\1\116\1\50\1\157\1\uffff\3\116\1\104\1\uffff\1\156\1\113\2\104\1\123\1\163\1\50\2\123\2\60\1\uffff\2\60\1\uffff";
     static final String DFA14_maxS =
-        "\1\uffff\1\122\1\uffff\1\101\1\122\1\125\1\111\1\105\1\126\1\147"+
-        "\3\uffff\1\162\1\124\1\123\1\122\1\116\1\110\5\uffff\1\172\1\75"+
-        "\1\uffff\1\75\1\uffff\1\57\2\uffff\1\111\1\uffff\1\114\1\111\1\101"+
-        "\1\117\1\172\4\uffff\1\105\2\uffff\1\123\2\uffff\1\114\1\132\1\115"+
-        "\1\123\1\131\1\104\1\107\1\172\1\126\1\107\1\147\3\uffff\1\157\2"+
-        "\uffff\1\126\1\125\1\114\1\117\1\111\1\105\5\uffff\1\172\14\uffff"+
-        "\1\130\1\116\1\104\1\uffff\1\105\1\115\1\116\1\125\2\uffff\1\106"+
-        "\2\105\1\117\1\105\1\172\1\124\1\123\1\125\1\122\1\uffff\1\101\1"+
-        "\172\1\162\1\165\1\106\1\116\1\124\1\115\1\124\1\122\1\uffff\2\172"+
-        "\1\122\1\114\1\111\1\115\1\105\1\117\1\122\1\111\1\172\1\103\1\116"+
-        "\1\40\1\uffff\1\111\1\172\1\103\1\105\1\116\1\145\1\160\1\111\1"+
-        "\124\1\105\1\172\1\40\1\105\1\124\1\117\1\111\1\101\1\105\1\172"+
-        "\2\123\1\130\1\uffff\1\124\1\104\1\uffff\1\116\1\uffff\1\105\1\107"+
-        "\1\103\1\147\1\137\1\114\1\172\1\122\2\uffff\1\172\1\105\2\123\2"+
-        "\116\1\uffff\1\105\3\172\1\123\1\103\1\104\1\101\1\105\1\141\1\142"+
-        "\1\105\1\50\1\uffff\1\123\2\105\1\172\1\124\1\103\2\uffff\1\172"+
-        "\1\124\1\172\1\124\1\172\1\164\1\171\1\123\1\uffff\1\172\2\103\1"+
-        "\172\1\117\1\172\1\uffff\1\105\1\uffff\1\151\1\75\1\111\2\117\1"+
-        "\116\1\uffff\1\50\1\157\1\uffff\3\116\1\104\1\uffff\1\156\1\113"+
-        "\2\104\1\123\1\163\1\50\2\123\1\172\1\40\1\uffff\2\172\1\uffff";
+        "\1\uffff\1\122\1\uffff\1\101\1\122\1\125\1\126\1\147\5\uffff\1\162\1\123\1\122\1\131\1\116\1\110\5\uffff\1\172\2\75\1\uffff\1\57\2\uffff\1\111\1\uffff\1\114\1\101\1\117\1\101\1\172\4\uffff\1\105\2\uffff\1\123\2\uffff\1\114\1\132\1\115\1\107\1\172\1\126\1\107\1\147\5\uffff\1\157\1\126\1\125\1\114\1\117\1\120\1\115\1\111\1\105\5\uffff\1\172\13\uffff\1\130\1\116\1\104\1\uffff\1\105\1\116\1\125\1\131\2\uffff\1\106\2\105\1\117\1\105\1\172\1\122\1\uffff\1\101\1\172\1\162\1\165\1\106\1\116\1\124\1\115\2\105\1\124\1\122\1\uffff\2\172\1\122\1\114\1\111\1\115\1\117\1\122\1\123\1\111\1\172\1\103\1\116\1\172\1\uffff\1\105\1\116\1\145\1\160\1\111\1\124\1\105\4\172\1\105\1\124\1\117\1\111\1\101\1\105\2\123\1\172\1\130\1\uffff\1\124\1\104\1\uffff\1\107\1\103\1\147\1\137\1\114\1\172\1\122\4\uffff\1\172\1\105\2\123\2\116\1\105\1\172\1\uffff\2\172\1\123\1\101\1\105\1\141\1\142\1\105\1\50\1\uffff\1\123\2\105\1\172\1\124\1\103\2\uffff\1\172\1\124\1\172\1\164\1\171\1\123\1\uffff\1\172\2\103\1\172\1\117\1\105\1\uffff\1\151\1\75\1\111\2\117\1\116\1\50\1\157\1\uffff\3\116\1\104\1\uffff\1\156\1\113\2\104\1\123\1\163\1\50\2\123\2\172\1\uffff\2\172\1\uffff";
     static final String DFA14_acceptS =
-        "\2\uffff\1\2\7\uffff\1\13\1\14\1\15\6\uffff\1\31\1\32\1\33\1\34"+
-        "\1\35\2\uffff\1\42\1\uffff\1\44\1\uffff\1\46\1\47\7\uffff\1\55\1"+
-        "\56\1\61\1\62\1\uffff\1\55\1\2\1\uffff\1\4\1\5\13\uffff\1\13\1\14"+
-        "\1\15\1\uffff\1\24\1\17\6\uffff\1\31\1\32\1\33\1\34\1\35\1\uffff"+
-        "\1\36\1\51\1\41\1\37\1\42\1\43\1\44\1\57\1\60\1\45\1\46\1\47\3\uffff"+
-        "\1\52\4\uffff\1\56\1\61\12\uffff\1\23\12\uffff\1\40\16\uffff\1\50"+
-        "\26\uffff\1\3\2\uffff\1\25\1\uffff\1\54\10\uffff\1\22\1\27\6\uffff"+
-        "\1\53\15\uffff\1\30\6\uffff\1\1\1\6\10\uffff\1\21\6\uffff\1\10\1"+
-        "\uffff\1\26\6\uffff\1\7\2\uffff\1\16\4\uffff\1\11\13\uffff\1\20"+
-        "\2\uffff\1\12";
+        "\2\uffff\1\2\5\uffff\1\11\1\12\1\13\1\14\1\15\6\uffff\1\30\1\31\1\32\1\33\1\34\3\uffff\1\42\1\uffff\1\44\1\45\7\uffff\1\53\1\54\1\57\1\60\1\uffff\1\53\1\2\1\uffff\1\4\1\5\10\uffff\1\11\1\12\1\13\1\14\1\15\11\uffff\1\30\1\31\1\32\1\33\1\34\1\uffff\1\35\1\47\1\40\1\36\1\41\1\42\1\55\1\56\1\43\1\44\1\45\3\uffff\1\50\4\uffff\1\54\1\57\7\uffff\1\22\14\uffff\1\37\16\uffff\1\46\25\uffff\1\3\2\uffff\1\24\7\uffff\1\21\1\23\1\51\1\26\10\uffff\1\52\11\uffff\1\27\6\uffff\1\1\1\6\6\uffff\1\20\6\uffff\1\25\10\uffff\1\16\4\uffff\1\7\13\uffff\1\17\2\uffff\1\10";
     static final String DFA14_specialS =
-        "\1\0\40\uffff\1\1\u00da\uffff}>";
+        "\1\1\37\uffff\1\0\u00ce\uffff}>";
     static final String[] DFA14_transitionS = {
-            "\11\52\2\51\2\52\1\51\22\52\1\51\1\33\1\41\1\4\5\52\1\14\1"+
-            "\37\1\34\1\13\1\36\1\25\1\35\12\50\1\2\1\26\1\30\1\32\1\31\1"+
-            "\27\1\52\1\10\1\3\1\17\1\6\1\42\1\20\1\47\1\45\4\47\1\40\1\44"+
-            "\1\47\1\1\1\47\1\7\1\5\1\43\1\21\1\47\1\22\3\47\1\16\1\52\1"+
-            "\12\1\46\1\47\1\52\1\11\5\47\1\15\23\47\1\23\1\52\1\24\uff82"+
-            "\52",
-            "\1\53",
+            "\11\51\2\50\2\51\1\50\22\51\1\50\1\32\1\40\1\4\5\51\1\14\1\36\1\33\1\13\1\35\1\25\1\34\12\47\1\2\1\26\1\30\1\10\1\31\1\27\1\51\1\6\1\3\1\16\1\44\1\41\1\17\1\46\1\43\4\46\1\37\1\42\1\46\1\1\2\46\1\5\1\20\1\21\1\46\1\22\3\46\1\11\1\51\1\12\1\45\1\46\1\51\1\7\5\46\1\15\23\46\1\23\1\51\1\24\uff82\51",
+            "\1\52",
             "",
-            "\1\56",
-            "\1\57\20\uffff\1\60",
-            "\1\61\3\uffff\1\62\13\uffff\1\63",
-            "\1\65\7\uffff\1\64",
-            "\1\66",
-            "\1\71\2\uffff\1\67\13\uffff\1\70\2\uffff\1\72",
-            "\1\73",
-            "",
-            "",
-            "",
-            "\1\77",
-            "\1\100",
-            "\1\103\3\uffff\1\102",
-            "\1\104\10\uffff\1\105",
-            "\1\106",
-            "\1\107",
+            "\1\55",
+            "\1\56\20\uffff\1\57",
+            "\1\60\3\uffff\1\61\13\uffff\1\62",
+            "\1\65\2\uffff\1\63\13\uffff\1\64\2\uffff\1\66",
+            "\1\67",
             "",
             "",
             "",
             "",
             "",
-            "\2\117\1\uffff\1\117\6\uffff\16\117\2\uffff\1\115\35\117\4"+
-            "\uffff\1\117\1\uffff\32\117",
+            "\1\75",
+            "\1\77\3\uffff\1\76",
+            "\1\100\10\uffff\1\101",
+            "\1\103\17\uffff\1\102",
+            "\1\104",
+            "\1\105",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\2\115\1\uffff\1\115\6\uffff\16\115\2\uffff\1\113\35\115\4\uffff\1\115\1\uffff\32\115",
+            "\1\116",
             "\1\120",
             "",
-            "\1\123",
-            "",
-            "\1\125\4\uffff\1\126",
+            "\1\122\4\uffff\1\123",
             "",
             "",
-            "\1\132\3\uffff\1\134\3\uffff\1\133",
-            "\0\135",
+            "\1\127\3\uffff\1\131\3\uffff\1\130",
+            "\0\132",
+            "\1\133",
+            "\1\134",
+            "\1\135",
             "\1\136",
-            "\1\137",
-            "\1\140",
+            "\32\53\4\uffff\1\53\1\uffff\32\53",
+            "",
+            "",
+            "",
+            "",
             "\1\141",
-            "\32\54\4\uffff\1\54\1\uffff\32\54",
             "",
             "",
+            "\1\142",
             "",
             "",
-            "\1\144",
-            "",
-            "",
+            "\1\144\10\uffff\1\143",
             "\1\145",
-            "",
-            "",
-            "\1\147\10\uffff\1\146",
-            "\1\150",
+            "\1\146",
+            "\1\147",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\151",
             "\1\152",
             "\1\153",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\154",
             "\1\155",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\156",
             "\1\157",
             "\1\160",
             "\1\161",
-            "",
-            "",
-            "",
             "\1\162",
-            "",
-            "",
             "\1\163",
             "\1\164",
-            "\1\165",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\2\115\1\uffff\1\115\6\uffff\16\115\2\uffff\36\115\4\uffff\1\115\1\uffff\32\115",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\166",
-            "\1\167",
-            "\1\170",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "\2\117\1\uffff\1\117\6\uffff\16\117\2\uffff\36\117\4\uffff"+
-            "\1\117\1\uffff\32\117",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\1\170\10\uffff\1\171\1\uffff\1\167",
             "\1\172",
-            "\1\174\10\uffff\1\175\1\uffff\1\173",
+            "",
+            "\1\173",
+            "\1\174",
+            "\1\175",
             "\1\176",
+            "",
             "",
             "\1\177",
             "\1\u0080",
             "\1\u0081",
             "\1\u0082",
-            "",
-            "",
             "\1\u0083",
-            "\1\u0084",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u0085",
+            "",
             "\1\u0086",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u0087",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u0088",
             "\1\u0089",
             "\1\u008a",
             "\1\u008b",
             "\1\u008c",
-            "",
             "\1\u008d",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
             "\1\u008e",
             "\1\u008f",
             "\1\u0090",
-            "\1\u0091",
+            "",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\24\53\1\u0091\5\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u0092",
             "\1\u0093",
             "\1\u0094",
             "\1\u0095",
-            "",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\12\54\7\uffff\24\54\1\u0096\5\54\4\uffff\1\54\1\uffff\32"+
-            "\54",
+            "\1\u0096",
             "\1\u0097",
             "\1\u0098",
             "\1\u0099",
-            "\1\u009a",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u009b",
             "\1\u009c",
-            "\1\u009d",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "",
             "\1\u009e",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u009f",
             "\1\u00a0",
             "\1\u00a1",
             "\1\u00a2",
-            "",
             "\1\u00a3",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\1\u00a5",
-            "\1\u00a6",
-            "\1\u00a7",
-            "\1\u00a8",
+            "\1\u00a4",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00a9",
             "\1\u00aa",
             "\1\u00ab",
             "\1\u00ac",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u00ad",
             "\1\u00ae",
             "\1\u00af",
             "\1\u00b0",
-            "\1\u00b1",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00b2",
+            "",
             "\1\u00b3",
             "\1\u00b4",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "",
+            "\1\u00b5",
             "\1\u00b6",
             "\1\u00b7",
             "\1\u00b8",
-            "",
             "\1\u00b9",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00ba",
             "",
-            "\1\u00bb",
             "",
+            "",
+            "",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00bc",
             "\1\u00bd",
             "\1\u00be",
             "\1\u00bf",
             "\1\u00c0",
             "\1\u00c1",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\1\u00c2",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "",
-            "",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00c4",
             "\1\u00c5",
             "\1\u00c6",
             "\1\u00c7",
             "\1\u00c8",
-            "",
             "\1\u00c9",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u00ca",
+            "",
+            "\1\u00cb",
             "\1\u00cc",
             "\1\u00cd",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00ce",
             "\1\u00cf",
+            "",
+            "",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00d0",
-            "\1\u00d1",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00d2",
             "\1\u00d3",
             "\1\u00d4",
             "",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00d5",
             "\1\u00d6",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "\1\u00d7",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
             "\1\u00d8",
+            "",
             "\1\u00d9",
-            "",
-            "",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
             "\1\u00da",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u00db",
             "\1\u00dc",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u00dd",
             "\1\u00de",
             "\1\u00df",
             "\1\u00e0",
             "",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
             "\1\u00e1",
             "\1\u00e2",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
             "\1\u00e3",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\1\u00e4",
             "",
             "\1\u00e5",
-            "",
             "\1\u00e6",
             "\1\u00e7",
             "\1\u00e8",
             "\1\u00e9",
             "\1\u00ea",
             "\1\u00eb",
-            "",
             "\1\u00ec",
             "\1\u00ed",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             "",
-            "\1\u00ee",
-            "\1\u00ef",
-            "\1\u00f0",
-            "\1\u00f1",
-            "",
-            "\1\u00f2",
-            "\1\u00f3",
-            "\1\u00f4",
-            "\1\u00f5",
-            "\1\u00f6",
-            "\1\u00f7",
-            "\1\u00f8",
-            "\1\u00f9",
-            "\1\u00fa",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\1\u00fb",
-            "",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
-            "\12\54\7\uffff\32\54\4\uffff\1\54\1\uffff\32\54",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
+            "\12\53\7\uffff\32\53\4\uffff\1\53\1\uffff\32\53",
             ""
     };
 
@@ -2405,13 +2268,23 @@ public class InternalStreamingsparqlLexer extends Lexer {
             this.transition = DFA14_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | T__52 | T__53 | RULE_AGG_FUNCTION | RULE_IRI_TERMINAL | RULE_STRING | RULE_WINDOWTYPE | RULE_UNITTYPE | RULE_ID | RULE_INT | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | T__47 | T__48 | T__49 | T__50 | T__51 | RULE_AGG_FUNCTION | RULE_IRI_TERMINAL | RULE_STRING | RULE_WINDOWTYPE | RULE_UNITTYPE | RULE_ID | RULE_INT | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             IntStream input = _input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
+                        int LA14_32 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA14_32>='\u0000' && LA14_32<='\uFFFF')) ) {s = 90;}
+
+                        else s = 41;
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
                         int LA14_0 = input.LA(1);
 
                         s = -1;
@@ -2425,13 +2298,13 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                         else if ( (LA14_0=='S') ) {s = 5;}
 
-                        else if ( (LA14_0=='D') ) {s = 6;}
+                        else if ( (LA14_0=='A') ) {s = 6;}
 
-                        else if ( (LA14_0=='R') ) {s = 7;}
+                        else if ( (LA14_0=='a') ) {s = 7;}
 
-                        else if ( (LA14_0=='A') ) {s = 8;}
+                        else if ( (LA14_0=='=') ) {s = 8;}
 
-                        else if ( (LA14_0=='a') ) {s = 9;}
+                        else if ( (LA14_0=='[') ) {s = 9;}
 
                         else if ( (LA14_0==']') ) {s = 10;}
 
@@ -2441,11 +2314,11 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                         else if ( (LA14_0=='g') ) {s = 13;}
 
-                        else if ( (LA14_0=='[') ) {s = 14;}
+                        else if ( (LA14_0=='C') ) {s = 14;}
 
-                        else if ( (LA14_0=='C') ) {s = 15;}
+                        else if ( (LA14_0=='F') ) {s = 15;}
 
-                        else if ( (LA14_0=='F') ) {s = 16;}
+                        else if ( (LA14_0=='T') ) {s = 16;}
 
                         else if ( (LA14_0=='U') ) {s = 17;}
 
@@ -2465,49 +2338,37 @@ public class InternalStreamingsparqlLexer extends Lexer {
 
                         else if ( (LA14_0=='>') ) {s = 25;}
 
-                        else if ( (LA14_0=='=') ) {s = 26;}
+                        else if ( (LA14_0=='!') ) {s = 26;}
 
-                        else if ( (LA14_0=='!') ) {s = 27;}
+                        else if ( (LA14_0=='+') ) {s = 27;}
 
-                        else if ( (LA14_0=='+') ) {s = 28;}
+                        else if ( (LA14_0=='/') ) {s = 28;}
 
-                        else if ( (LA14_0=='/') ) {s = 29;}
+                        else if ( (LA14_0=='-') ) {s = 29;}
 
-                        else if ( (LA14_0=='-') ) {s = 30;}
+                        else if ( (LA14_0=='*') ) {s = 30;}
 
-                        else if ( (LA14_0=='*') ) {s = 31;}
+                        else if ( (LA14_0=='M') ) {s = 31;}
 
-                        else if ( (LA14_0=='M') ) {s = 32;}
+                        else if ( (LA14_0=='\"') ) {s = 32;}
 
-                        else if ( (LA14_0=='\"') ) {s = 33;}
+                        else if ( (LA14_0=='E') ) {s = 33;}
 
-                        else if ( (LA14_0=='E') ) {s = 34;}
+                        else if ( (LA14_0=='N') ) {s = 34;}
 
-                        else if ( (LA14_0=='T') ) {s = 35;}
+                        else if ( (LA14_0=='H') ) {s = 35;}
 
-                        else if ( (LA14_0=='N') ) {s = 36;}
+                        else if ( (LA14_0=='D') ) {s = 36;}
 
-                        else if ( (LA14_0=='H') ) {s = 37;}
+                        else if ( (LA14_0=='^') ) {s = 37;}
 
-                        else if ( (LA14_0=='^') ) {s = 38;}
+                        else if ( (LA14_0=='G'||(LA14_0>='I' && LA14_0<='L')||LA14_0=='O'||(LA14_0>='Q' && LA14_0<='R')||LA14_0=='V'||(LA14_0>='X' && LA14_0<='Z')||LA14_0=='_'||(LA14_0>='b' && LA14_0<='f')||(LA14_0>='h' && LA14_0<='z')) ) {s = 38;}
 
-                        else if ( (LA14_0=='G'||(LA14_0>='I' && LA14_0<='L')||LA14_0=='O'||LA14_0=='Q'||LA14_0=='V'||(LA14_0>='X' && LA14_0<='Z')||LA14_0=='_'||(LA14_0>='b' && LA14_0<='f')||(LA14_0>='h' && LA14_0<='z')) ) {s = 39;}
+                        else if ( ((LA14_0>='0' && LA14_0<='9')) ) {s = 39;}
 
-                        else if ( ((LA14_0>='0' && LA14_0<='9')) ) {s = 40;}
+                        else if ( ((LA14_0>='\t' && LA14_0<='\n')||LA14_0=='\r'||LA14_0==' ') ) {s = 40;}
 
-                        else if ( ((LA14_0>='\t' && LA14_0<='\n')||LA14_0=='\r'||LA14_0==' ') ) {s = 41;}
-
-                        else if ( ((LA14_0>='\u0000' && LA14_0<='\b')||(LA14_0>='\u000B' && LA14_0<='\f')||(LA14_0>='\u000E' && LA14_0<='\u001F')||(LA14_0>='$' && LA14_0<='(')||LA14_0=='@'||LA14_0=='\\'||LA14_0=='`'||LA14_0=='|'||(LA14_0>='~' && LA14_0<='\uFFFF')) ) {s = 42;}
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
-                        int LA14_33 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA14_33>='\u0000' && LA14_33<='\uFFFF')) ) {s = 93;}
-
-                        else s = 42;
+                        else if ( ((LA14_0>='\u0000' && LA14_0<='\b')||(LA14_0>='\u000B' && LA14_0<='\f')||(LA14_0>='\u000E' && LA14_0<='\u001F')||(LA14_0>='$' && LA14_0<='(')||LA14_0=='@'||LA14_0=='\\'||LA14_0=='`'||LA14_0=='|'||(LA14_0>='~' && LA14_0<='\uFFFF')) ) {s = 41;}
 
                         if ( s>=0 ) return s;
                         break;

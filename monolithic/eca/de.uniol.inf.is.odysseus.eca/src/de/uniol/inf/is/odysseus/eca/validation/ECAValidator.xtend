@@ -23,13 +23,13 @@ class ECAValidator extends AbstractECAValidator {
 		var String actName;
 		var String actState;
 
-		if (act.subActname != null) {
+		if (act.subActname !== null) {
 			actName = act.subActname;
 		}
-		if (act.functAction.stateName != null) {
+		if (act.functAction.stateName !== null) {
 			actState = act.functAction.stateName;
 		}
-		if (act.functAction.stateName != null && actName != null && actState != null) {
+		if (act.functAction.stateName !== null && actName !== null && actState !== null) {
 
 			if ((actName.equals("startQuery")) && !(actState.equals("INACTIVE"))) {
 				error(

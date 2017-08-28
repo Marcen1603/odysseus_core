@@ -1,29 +1,24 @@
 package de.uniol.inf.is.odysseus.parser.cql2.tests
 
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator
 import java.util.List
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import org.junit.runner.RunWith
 
 import static extension org.junit.Assert.*
 
-@RunWith(XtextRunner)
+//@RunWith(XtextRunner)
 @Deprecated
 class CQLGeneratorMethodTest 
 {
 
 
 	@Inject extension CQLGenerator
-	@Inject extension ParseHelper<Model>
+//	@Inject extension ParseHelper<Model>
 	
 	@Rule public ExpectedException thrown = ExpectedException.none()
 	
@@ -41,8 +36,8 @@ class CQLGeneratorMethodTest
 	def generateModel(String query)
 	{
 		val fsa = new InMemoryFileSystemAccess()
-		var model = query.parse
-		doGenerate(model.eResource(), fsa, null)
+//		var model = query.parse
+//		doGenerate(model.eResource(), fsa, null)
         var result = ''
 		for(e : fsa.textFiles.entrySet)
 		{

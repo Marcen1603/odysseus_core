@@ -188,7 +188,8 @@ class CQLGenerator implements IGenerator2 {
 		return model
 	}
 
-	def public prepareParsingSelect(SimpleSelect select) {
+// Type has to CharSequence to avoid a warning, that currently is a Eclipse bug
+	def public CharSequence prepareParsingSelect(SimpleSelect select) {
 		try {
 			if (!registry_SimpleSelect.contains(select)) {
 				var subQueries = registerAllSource(select)
@@ -210,12 +211,14 @@ class CQLGenerator implements IGenerator2 {
 					CQLGeneratorUtil.addQueryAttributes(select, attributes2)
 
 				registry_SimpleSelect.add(select)
+				return null
 			}
 		} catch (Exception e) {
 			// TODO remove this after debugging
 			log.error("error occurred while parsing select: " + e.message)
 			throw e
 		}
+		return null
 	}
 
 	def List<NestedSource> registerAllSource(SimpleSelect select) {
@@ -422,9 +425,9 @@ class CQLGenerator implements IGenerator2 {
 		}
 		return str
 	}
-
+//TODO Remove this method
 	def CharSequence parseSelectExpressionType(List<Object> components) {
-		var list = newArrayList
+//		var list = newArrayList
 		for (Object comp : components) {
 //			if(comp instanceof IntConstant)//TODO fix me
 //				list.add(SDFDatatype.INTEGER)
@@ -788,25 +791,25 @@ class CQLGenerator implements IGenerator2 {
 		var String[] sourceStrings = newArrayOfSize(sources.size)
 		var List<String> sourcenames = newArrayList
 
-		var simpleSources = sources.stream.filter(e|e instanceof SimpleSource).map(e|e as SimpleSource).collect(
-			Collectors.toList)
-		var subQueries = sources.stream.filter(e|e instanceof NestedSource).map(e|e as NestedSource).collect(
-			Collectors.toList)
+//		var simpleSources = sources.stream.filter(e|e instanceof SimpleSource).map(e|e as SimpleSource).collect(
+//			Collectors.toList)
+//		var subQueries = sources.stream.filter(e|e instanceof NestedSource).map(e|e as NestedSource).collect(
+//			Collectors.toList)
 
 		for (var i = 0; i < sources.size; i++) {
 			var source = sources.get(i)
 			if (source instanceof NestedSource) {
 				var query = registry_SimpleSelect.get(registry_SimpleSelect.size - 1)
 				var queryAttributess = CQLGeneratorUtil.getQueryAttributes(query)
-				var queryAggregations = CQLGeneratorUtil.getQueryAggregations(query)
+//				var queryAggregations = CQLGeneratorUtil.getQueryAggregations(query)
 				var subQuery = source.statement.select as SimpleSelect
 				var subQueryAttributes = CQLGeneratorUtil.getQueryAttributes(subQuery)
-				var subQueryAggregations = CQLGeneratorUtil.getQueryAggregations(subQuery)
+//				var subQueryAggregations = CQLGeneratorUtil.getQueryAggregations(subQuery)
 				var lastOperator = registry_SubQueries.get(subQuery)
 				var inputs = newArrayList
 				var attributeAliases = CQLGeneratorUtil.getAttributeAliasesAsList()
-				var allQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(query)
-				var allSubQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(subQuery)
+//				var allQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(query)
+//				var allSubQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(subQuery)
 				for (Entry<String, List<String>> entry : queryAttributess.entrySet) {
 					var attributes = subQueryAttributes.get(entry.key)
 					if (attributes !== null) {
@@ -1051,10 +1054,13 @@ class CQLGenerator implements IGenerator2 {
 		return false
 	}
 
-	def private boolean contains(List<Attribute> list, Attribute attribute) {
-		for (Attribute element : list)
-			if (isSame(attribute.name, element.name))
+//TODO Put this a helper class
+	def boolean containsAttribute(List<Attribute> list, Attribute attribute) {
+		for (Attribute element : list) {
+			if (isSame(attribute.name, element.name)) {
 				return true
+			}
+		}
 		return false
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.xtext.xbase.lib.Extension;
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
+@Deprecated
 @SuppressWarnings("all")
 public class CQLExpressionsValidator extends AbstractCQLValidator {
   @Inject

@@ -37,7 +37,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	private long realTimeDelay;
 	private long applicationTimeDelay;
 	private boolean sendAlwaysHeartbeat = false;
-	private boolean allowOutofOrder = false;
 	private boolean restartTimerForEveryInput = false;
 
 	private PointInTime _watermark = PointInTime.getZeroTime();
@@ -118,9 +117,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		// TODO: why afterOrEquals?
 		if (marker.after(getWatermark())) {
 			transfer(object);
-			if (!allowOutofOrder) {
-				setWatermark(marker);
-			}
 			restartTimer();
 		} else {
 			LOG.warn("Removed out of order object: " + object +" for watermark "+marker);
@@ -142,9 +138,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		PointInTime marker = punctuation.getTime();
 		if (marker.afterOrEquals(getWatermark())) {
 			sendPunctuation(punctuation);
-			if (!allowOutofOrder) {
-				setWatermark(marker);
-			}
 			restartTimer();
 		} else {
 			LOG.warn("Punctuation removed because out of order " + punctuation);
@@ -191,10 +184,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		this.sendAlwaysHeartbeat = sendAlwaysHeartbeat;
 	}
 
-	public void setAllowOutOfOrder(boolean allowOutofOrder) {
-		this.allowOutofOrder = allowOutofOrder;
-	}
-
 	/**
 	 * @param startTimerAfterFirstElement
 	 */
@@ -227,10 +216,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		}
 
 		if (this.sendAlwaysHeartbeat != po.sendAlwaysHeartbeat) {
-			return false;
-		}
-
-		if (this.allowOutofOrder != po.allowOutofOrder) {
 			return false;
 		}
 		

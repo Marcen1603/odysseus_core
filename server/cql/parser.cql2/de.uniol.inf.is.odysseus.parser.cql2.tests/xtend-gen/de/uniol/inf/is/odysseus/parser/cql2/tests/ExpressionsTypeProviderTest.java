@@ -1,24 +1,12 @@
 package de.uniol.inf.is.odysseus.parser.cql2.tests;
 
-import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsTypeProvider;
-import org.eclipse.xtext.junit4.XtextRunner;
-import org.eclipse.xtext.junit4.util.ParseHelper;
-import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.eclipse.xtext.xbase.lib.Extension;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(XtextRunner.class)
 @Deprecated
 @SuppressWarnings("all")
 public class ExpressionsTypeProviderTest {
-  @Inject
-  @Extension
-  private ParseHelper<Model> _parseHelper;
-  
   @Test
   public void stringConstant1() {
     this.assertStringType("\'hippo\'");
@@ -161,10 +149,5 @@ public class ExpressionsTypeProviderTest {
   }
   
   public void assertType(final CharSequence input, final ExpressionsType type) {
-    try {
-      Model model = this._parseHelper.parse(("SELECT * FROM stream1 WHERE " + input));
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
   }
 }
