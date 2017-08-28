@@ -3,28 +3,30 @@
  */
 package de.uniol.inf.is.odysseus.eca.generator
 
-import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IGenerator
-import org.eclipse.xtext.generator.IFileSystemAccess
-import de.uniol.inf.is.odysseus.eca.eCA.Window
-import de.uniol.inf.is.odysseus.eca.eCA.Timer
-import de.uniol.inf.is.odysseus.eca.eCA.Rule
-import java.util.ArrayList
-import de.uniol.inf.is.odysseus.eca.eCA.FREECONDITION
-import de.uniol.inf.is.odysseus.eca.plugin.EcaRuleObj
 import de.uniol.inf.is.odysseus.eca.connect.EcaPluginConnector
 import de.uniol.inf.is.odysseus.eca.eCA.COMMANDACTION
-import de.uniol.inf.is.odysseus.eca.eCA.SYSTEMCONDITION
-import de.uniol.inf.is.odysseus.eca.eCA.QUERYCONDITION
-import de.uniol.inf.is.odysseus.eca.eCA.SOURCECONDITION
+import de.uniol.inf.is.odysseus.eca.eCA.FREECONDITION
 import de.uniol.inf.is.odysseus.eca.eCA.MAPCONDITION
+import de.uniol.inf.is.odysseus.eca.eCA.QUERYCONDITION
+import de.uniol.inf.is.odysseus.eca.eCA.Rule
+import de.uniol.inf.is.odysseus.eca.eCA.SOURCECONDITION
+import de.uniol.inf.is.odysseus.eca.eCA.SYSTEMCONDITION
+import de.uniol.inf.is.odysseus.eca.eCA.Timer
+import de.uniol.inf.is.odysseus.eca.eCA.Window
+import de.uniol.inf.is.odysseus.eca.plugin.EcaRuleObj
+import java.util.ArrayList
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator2
+import org.eclipse.xtext.generator.IFileSystemAccess2
+import org.eclipse.xtext.generator.IGeneratorContext
 
 /**
  * Generates code from your model files on save.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
-class ECAGenerator implements IGenerator {
+class ECAGenerator implements IGenerator2 {
 	private var EcaPluginConnector connect = new EcaPluginConnector();
 	private var ArrayList<EcaRuleObj> querySet = new ArrayList();
 
@@ -47,7 +49,7 @@ class ECAGenerator implements IGenerator {
 	private var int windowSize = 1000;
 	private var int timerIntervall = 1000;
 
-	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+	def void doGenerate(Resource resource, IFileSystemAccess fsa) {
 
 		// Fensterdefinition auslesen
 		resource.allContents.filter(typeof(Window)).forEach [
@@ -290,6 +292,18 @@ class ECAGenerator implements IGenerator {
 		tmp.append(cond.queryFunct.stateName)
 		queryCondList.add(tmp.toString());
 		tmp.setLength(0);
+	}
+	
+	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	}
+	
+	override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
+		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 
 }
