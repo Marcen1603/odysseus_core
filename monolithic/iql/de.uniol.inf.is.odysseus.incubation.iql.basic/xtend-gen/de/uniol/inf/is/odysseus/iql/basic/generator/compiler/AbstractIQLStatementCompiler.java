@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLBreakStatement;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLCasePart;
@@ -197,8 +196,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
     _builder.newLineIfNotEmpty();
     {
       IQLStatement _elseBody = s.getElseBody();
-      boolean _notEquals = (!Objects.equal(_elseBody, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_elseBody != null);
+      if (_tripleNotEquals) {
         _builder.append("else");
         _builder.newLine();
         _builder.append("\t");
@@ -329,7 +328,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       }
     }
     {
-      if (((!Objects.equal(s.getStatements(), null)) && (s.getStatements().size() > 0))) {
+      if (((s.getStatements() != null) && (s.getStatements().size() > 0))) {
         _builder.append("\t");
         _builder.append("default :");
         _builder.newLine();
@@ -395,8 +394,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       _builder.append("return ");
       {
         IQLExpression _expression = s.getExpression();
-        boolean _notEquals = (!Objects.equal(_expression, null));
-        if (_notEquals) {
+        boolean _tripleNotEquals = (_expression != null);
+        if (_tripleNotEquals) {
           String _compile = this.exprCompiler.compile(s.getExpression(), c);
           _builder.append(_compile);
         }
@@ -425,8 +424,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
   }
   
   public String getDefaultLiteral(final JvmTypeReference typeRef) {
-    boolean _equals = Objects.equal(typeRef, null);
-    if (_equals) {
+    if ((typeRef == null)) {
       return "null";
     } else {
       boolean _isPrimitive = this.typeUtils.isPrimitive(typeRef);
@@ -480,8 +478,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
   public String compile(final IQLConstructorCallStatement s, final G c) {
     IQLClass type = this.helper.getClass(s);
     String content = "";
-    boolean _notEquals = (!Objects.equal(type, null));
-    if (_notEquals) {
+    if ((type != null)) {
       JvmTypeReference typeRef = this.typeUtils.createTypeRef(type);
       JvmExecutable constructor = null;
       boolean _isSuper = s.isSuper();
@@ -490,14 +487,14 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       } else {
         constructor = this.lookUp.findDeclaredConstructor(typeRef, s.getArgs().getElements());
       }
-      if (((!Objects.equal(constructor, null)) && s.isSuper())) {
+      if (((constructor != null) && s.isSuper())) {
         c.addExceptions(constructor.getExceptions());
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("super(");
         {
           IQLArgumentsList _args = s.getArgs();
-          boolean _notEquals_1 = (!Objects.equal(_args, null));
-          if (_notEquals_1) {
+          boolean _tripleNotEquals = (_args != null);
+          if (_tripleNotEquals) {
             String _compile = this.exprCompiler.compile(s.getArgs(), constructor.getParameters(), c);
             _builder.append(_compile);
           }
@@ -505,15 +502,14 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         _builder.append(");");
         content = _builder.toString();
       } else {
-        boolean _notEquals_2 = (!Objects.equal(constructor, null));
-        if (_notEquals_2) {
+        if ((constructor != null)) {
           c.addExceptions(constructor.getExceptions());
           StringConcatenation _builder_1 = new StringConcatenation();
           _builder_1.append("this(");
           {
             IQLArgumentsList _args_1 = s.getArgs();
-            boolean _notEquals_3 = (!Objects.equal(_args_1, null));
-            if (_notEquals_3) {
+            boolean _tripleNotEquals_1 = (_args_1 != null);
+            if (_tripleNotEquals_1) {
               String _compile_1 = this.exprCompiler.compile(s.getArgs(), constructor.getParameters(), c);
               _builder_1.append(_compile_1);
             }
@@ -529,8 +525,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         _builder_2.append("super(");
         {
           IQLArgumentsList _args_2 = s.getArgs();
-          boolean _notEquals_4 = (!Objects.equal(_args_2, null));
-          if (_notEquals_4) {
+          boolean _tripleNotEquals_2 = (_args_2 != null);
+          if (_tripleNotEquals_2) {
             String _compile_2 = this.exprCompiler.compile(s.getArgs(), c);
             _builder_2.append(_compile_2);
           }
@@ -542,8 +538,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         _builder_3.append("this(");
         {
           IQLArgumentsList _args_3 = s.getArgs();
-          boolean _notEquals_5 = (!Objects.equal(_args_3, null));
-          if (_notEquals_5) {
+          boolean _tripleNotEquals_3 = (_args_3 != null);
+          if (_tripleNotEquals_3) {
             String _compile_3 = this.exprCompiler.compile(s.getArgs(), c);
             _builder_3.append(_compile_3);
           }
@@ -567,7 +563,7 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
       IQLVariableDeclaration leftVar = ((IQLVariableDeclaration) _var);
       JvmTypeReference leftType = leftVar.getRef();
       String content = "";
-      if ((((!Objects.equal(s.getInit(), null)) && Objects.equal(s.getInit().getArgsList(), null)) && Objects.equal(s.getInit().getArgsMap(), null))) {
+      if ((((s.getInit() != null) && (s.getInit().getArgsList() == null)) && (s.getInit().getArgsMap() == null))) {
         TypeResult right = this.exprEvaluator.eval(s.getInit().getValue(), leftType);
         if ((right.isNull() || this.lookUp.isAssignable(leftType, right.getRef()))) {
           StringConcatenation _builder = new StringConcatenation();
@@ -601,8 +597,8 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         }
       } else {
         IQLVariableInitialization _init = s.getInit();
-        boolean _notEquals = (!Objects.equal(_init, null));
-        if (_notEquals) {
+        boolean _tripleNotEquals = (_init != null);
+        if (_tripleNotEquals) {
           StringConcatenation _builder_3 = new StringConcatenation();
           _builder_3.append(" ");
           _builder_3.append("= ");
@@ -657,10 +653,9 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
   public String compile(final IQLVariableInitialization init, final JvmTypeReference typeRef, final G context) {
     String result = "";
     context.setExpectedTypeRef(typeRef);
-    if ((((!Objects.equal(init.getArgsList(), null)) && (!Objects.equal(init.getArgsMap(), null))) && (init.getArgsMap().getElements().size() > 0))) {
+    if ((((init.getArgsList() != null) && (init.getArgsMap() != null)) && (init.getArgsMap().getElements().size() > 0))) {
       JvmExecutable constructor = this.lookUp.findPublicConstructor(typeRef, init.getArgsList().getElements());
-      boolean _notEquals = (!Objects.equal(constructor, null));
-      if (_notEquals) {
+      if ((constructor != null)) {
         context.addExceptions(constructor.getExceptions());
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("get");
@@ -699,11 +694,10 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         result = _builder_1.toString();
       }
     } else {
-      if (((!Objects.equal(init.getArgsMap(), null)) && (init.getArgsMap().getElements().size() > 0))) {
+      if (((init.getArgsMap() != null) && (init.getArgsMap().getElements().size() > 0))) {
         ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
         JvmExecutable constructor_1 = this.lookUp.findPublicConstructor(typeRef, _arrayList);
-        boolean _notEquals_1 = (!Objects.equal(constructor_1, null));
-        if (_notEquals_1) {
+        if ((constructor_1 != null)) {
           context.addExceptions(constructor_1.getExceptions());
         }
         StringConcatenation _builder_2 = new StringConcatenation();
@@ -722,11 +716,10 @@ public abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper,
         result = _builder_2.toString();
       } else {
         IQLArgumentsList _argsList = init.getArgsList();
-        boolean _notEquals_2 = (!Objects.equal(_argsList, null));
-        if (_notEquals_2) {
+        boolean _tripleNotEquals = (_argsList != null);
+        if (_tripleNotEquals) {
           JvmExecutable constructor_2 = this.lookUp.findPublicConstructor(typeRef, init.getArgsList().getElements());
-          boolean _notEquals_3 = (!Objects.equal(constructor_2, null));
-          if (_notEquals_3) {
+          if ((constructor_2 != null)) {
             context.addExceptions(constructor_2.getExceptions());
             StringConcatenation _builder_3 = new StringConcatenation();
             _builder_3.append("new ");

@@ -50,7 +50,7 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 	def String compileQuery(IQLModelElement element, QDLQuery q, IQDLGeneratorContext context) {
 		var name = q.simpleName
 		var superClass = AbstractQDLQuery.simpleName
-		var metadata = q.metadataList != null
+		var metadata = q.metadataList !== null
 		var block = q.statements as IQLStatementBlock
 		var newExpressions = helper.getNewExpressions(q);
 		var varStmts = helper.getVarStatements(q);
@@ -95,15 +95,15 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 			«FOR a : varStmts»
 				«var decl = a.^var as IQLVariableDeclaration»
 				«var type = decl.ref»
-				«IF a.init != null && a.init.argsMap!= null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap!== null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(type, a.init.argsMap, context)»
-				«ELSEIF a.init != null && a.init.argsList!=null && (helper.isOperator(type))»	
+				«ELSEIF a.init !== null && a.init.argsList!==null && (helper.isOperator(type))»	
 					«createGetterMethod(type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 				
 			«FOR e : newExpressions»
-				«IF e.argsMap != null && e.argsMap.elements.size>0»
+				«IF e.argsMap !== null && e.argsMap.elements.size>0»
 					«createGetterMethod(e.ref, e.argsMap, context)»
 				«ELSEIF helper.isOperator(e.ref)»	
 					«createGetterMethod(e.ref, e.argsMap, context)»
@@ -121,9 +121,9 @@ class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGeneratorC
 		if (helper.isOperator(typeRef)) {
 			'''
 			
-			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«Operator.simpleName»> operators«IF map != null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
+			private «typeCompiler.compile(typeRef, context, false)» getOperator«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(«typeCompiler.compile(typeRef, context, false)» type, «Collection.simpleName»<«Operator.simpleName»> operators«IF map !== null && map.elements.size > 0», «map.elements.map[ el | super.compile(el, typeRef, context)].join(", ")»«ENDIF») {
 				operators.add(type);
-				«IF map != null»
+				«IF map !== null»
 					«FOR el :map.elements»
 						«IF el.key instanceof JvmOperation»
 							«IF helper.isParameter(el.key.simpleName.substring(3), typeRef)»

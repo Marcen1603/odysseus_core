@@ -39,6 +39,7 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 		return "CQL";
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public List<Terminal> getTerminals() {
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();

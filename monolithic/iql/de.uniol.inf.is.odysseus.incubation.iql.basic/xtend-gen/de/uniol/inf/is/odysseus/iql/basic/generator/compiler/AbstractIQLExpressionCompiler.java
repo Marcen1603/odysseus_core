@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLAdditiveExpression;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
@@ -1058,8 +1057,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     if ((((!left.isNull()) && e.getOp().equals("==")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.EQUALS, e.getRightOperand()))) {
       result = this.compileOperatorOverloading("==", IQLOperatorOverloadingUtils.EQUALS, left.getRef(), e.getLeftOperand(), e.getRightOperand(), c);
     } else {
-      if ((((!left.isNull()) && e.getOp().equals("!=")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.EQUALS_NOT, e.getRightOperand()))) {
-        result = this.compileOperatorOverloading("!=", IQLOperatorOverloadingUtils.EQUALS_NOT, left.getRef(), e.getLeftOperand(), e.getRightOperand(), c);
+      if ((((!left.isNull()) && e.getOp().equals("!==")) && this.typeExtensionsDictionary.hasTypeExtensions(left.getRef(), IQLOperatorOverloadingUtils.EQUALS_NOT, e.getRightOperand()))) {
+        result = this.compileOperatorOverloading("!==", IQLOperatorOverloadingUtils.EQUALS_NOT, left.getRef(), e.getLeftOperand(), e.getRightOperand(), c);
       } else {
         boolean _isNull = left.isNull();
         boolean _not = (!_isNull);
@@ -1137,7 +1136,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     JvmTypeReference targetType = this.typeExtensionsDictionary.getMethod(left, operatorName, rightOperand).getParameters().get(0).getParameterType();
     c.setExpectedTypeRef(targetType);
     String result = "";
-    if (((((!Objects.equal(targetType, null)) && this.helper.isJvmArray(targetType)) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
+    if (((((targetType != null) && this.helper.isJvmArray(targetType)) && (!rightType.isNull())) && (!this.helper.isJvmArray(rightType.getRef())))) {
       c.addImport(IQLUtils.class.getCanonicalName());
       boolean _isPrimitiveArray = this.helper.isPrimitiveArray(targetType);
       if (_isPrimitiveArray) {
@@ -1711,7 +1710,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(left, field.getSimpleName());
         c.addImport(typeOps.getClass().getCanonicalName());
         String _xifexpression_1 = null;
-        if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+        if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
           String _xblockexpression_1 = null;
           {
             c.addImport(IQLUtils.class.getCanonicalName());
@@ -1747,7 +1746,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         {
           IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
           String _xifexpression_2 = null;
-          if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+          if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               c.addImport(IQLUtils.class.getCanonicalName());
@@ -1778,7 +1777,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         _xifexpression_1 = _xblockexpression_1;
       } else {
         String _xifexpression_2 = null;
-        if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+        if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
           String _xblockexpression_2 = null;
           {
             c.addImport(IQLUtils.class.getCanonicalName());
@@ -1817,8 +1816,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       c.addExceptions(method.getExceptions());
       List<IQLExpression> list = null;
       IQLArgumentsList _args = e.getSel().getArgs();
-      boolean _notEquals = (!Objects.equal(_args, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_args != null);
+      if (_tripleNotEquals) {
         list = e.getSel().getArgs().getElements();
       } else {
         ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
@@ -1832,7 +1831,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(left, method.getSimpleName(), list);
           c.addImport(typeOps.getClass().getCanonicalName());
           String _xifexpression_1 = null;
-          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+          if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               c.addImport(IQLUtils.class.getCanonicalName());
@@ -1930,7 +1929,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
             String _xifexpression_2 = null;
-            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -1961,7 +1960,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           _xifexpression_1 = _xblockexpression_2;
         } else {
           String _xifexpression_2 = null;
-          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+          if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_3 = null;
             {
               c.addImport(IQLUtils.class.getCanonicalName());
@@ -2022,19 +2021,17 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public List<String> compileArguments(final IQLArgumentsList args, final EList<JvmFormalParameter> parameters, final G c) {
     ArrayList<String> result = new ArrayList<String>();
-    boolean _equals = Objects.equal(args, null);
-    if (_equals) {
+    if ((args == null)) {
       return result;
     }
     for (int i = 0; (i < parameters.size()); i++) {
       {
         JvmTypeReference expectedTypeRef = parameters.get(i).getParameterType();
-        boolean _notEquals = (!Objects.equal(expectedTypeRef, null));
-        if (_notEquals) {
+        if ((expectedTypeRef != null)) {
           c.setExpectedTypeRef(expectedTypeRef);
         }
         TypeResult type = this.exprEvaluator.eval(args.getElements().get(i));
-        if (((((!Objects.equal(expectedTypeRef, null)) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
+        if (((((expectedTypeRef != null) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
           c.addImport(IQLUtils.class.getCanonicalName());
           boolean _isPrimitiveArray = this.helper.isPrimitiveArray(expectedTypeRef);
           if (_isPrimitiveArray) {
@@ -2094,8 +2091,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   public String compile(final IQLArgumentsList list, final G context) {
     String _xblockexpression = null;
     {
-      boolean _equals = Objects.equal(list, null);
-      if (_equals) {
+      if ((list == null)) {
         return "";
       }
       StringConcatenation _builder = new StringConcatenation();
@@ -2120,11 +2116,10 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
         IQLArgumentsMapKeyValue el = map.getElements().get(i);
         TypeResult type = this.exprEvaluator.eval(el.getValue());
         JvmTypeReference expectedTypeRef = this.helper.getPropertyType(el.getKey(), typeRef);
-        boolean _notEquals = (!Objects.equal(expectedTypeRef, null));
-        if (_notEquals) {
+        if ((expectedTypeRef != null)) {
           c.setExpectedTypeRef(expectedTypeRef);
         }
-        if (((((!Objects.equal(expectedTypeRef, null)) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
+        if (((((expectedTypeRef != null) && this.helper.isJvmArray(expectedTypeRef)) && (!type.isNull())) && (!this.helper.isJvmArray(type.getRef())))) {
           c.addImport(IQLUtils.class.getCanonicalName());
           boolean _isPrimitiveArray = this.helper.isPrimitiveArray(expectedTypeRef);
           if (_isPrimitiveArray) {
@@ -2227,13 +2222,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
       JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
       String _xifexpression = null;
-      if (((!Objects.equal(thisType, null)) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, field.getSimpleName()))) {
+      if (((thisType != null) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, field.getSimpleName()))) {
         String _xblockexpression_1 = null;
         {
           IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, field.getSimpleName());
           c.addImport(typeOps.getClass().getCanonicalName());
           String _xifexpression_1 = null;
-          if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+          if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               c.addImport(IQLUtils.class.getCanonicalName());
@@ -2269,7 +2264,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(field);
             String _xifexpression_2 = null;
-            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2327,7 +2322,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           boolean _isStatic = field.isStatic();
           if (_isStatic) {
             String _xifexpression_3 = null;
-            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2356,7 +2351,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _xifexpression_2 = _xifexpression_3;
           } else {
             String _xifexpression_4 = null;
-            if ((this.helper.isJvmArray(field.getType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((this.helper.isJvmArray(field.getType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_4 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2389,7 +2384,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLJvmElementCallExpression e, final IQLVariableDeclaration varDecl, final G c) {
     String _xifexpression = null;
-    if ((this.helper.isJvmArray(varDecl.getRef()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+    if ((this.helper.isJvmArray(varDecl.getRef()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
       String _xblockexpression = null;
       {
         c.addImport(IQLUtils.class.getCanonicalName());
@@ -2414,7 +2409,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLJvmElementCallExpression e, final JvmFormalParameter parameter, final G c) {
     String _xifexpression = null;
-    if ((this.helper.isJvmArray(parameter.getParameterType()) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+    if ((this.helper.isJvmArray(parameter.getParameterType()) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
       String _xblockexpression = null;
       {
         c.addImport(IQLUtils.class.getCanonicalName());
@@ -2443,8 +2438,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       c.addExceptions(method.getExceptions());
       List<IQLExpression> list = null;
       IQLArgumentsList _args = m.getArgs();
-      boolean _notEquals = (!Objects.equal(_args, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_args != null);
+      if (_tripleNotEquals) {
         list = m.getArgs().getElements();
       } else {
         ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
@@ -2455,13 +2450,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       JvmDeclaredType containerType = ((JvmDeclaredType) _eContainer);
       JvmTypeReference typeRef = this.typeUtils.createTypeRef(containerType);
       String _xifexpression = null;
-      if (((!Objects.equal(thisType, null)) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, method.getSimpleName(), list))) {
+      if (((thisType != null) && this.typeExtensionsDictionary.hasTypeExtensions(thisType, method.getSimpleName(), list))) {
         String _xblockexpression_1 = null;
         {
           IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(thisType, method.getSimpleName(), list);
           c.addImport(typeOps.getClass().getCanonicalName());
           String _xifexpression_1 = null;
-          if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+          if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
             String _xblockexpression_2 = null;
             {
               c.addImport(IQLUtils.class.getCanonicalName());
@@ -2535,7 +2530,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           {
             IIQLSystemTypeCompiler systemTypeCompiler = this.helper.getSystemTypeCompiler(method);
             String _xifexpression_2 = null;
-            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2593,7 +2588,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
           boolean _isStatic = method.isStatic();
           if (_isStatic) {
             String _xifexpression_3 = null;
-            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_3 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2629,7 +2624,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
             _xifexpression_2 = _xifexpression_3;
           } else {
             String _xifexpression_4 = null;
-            if ((((!Objects.equal(method.getReturnType(), null)) && this.helper.isJvmArray(method.getReturnType())) && (Objects.equal(c.getExpectedTypeRef(), null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
+            if ((((method.getReturnType() != null) && this.helper.isJvmArray(method.getReturnType())) && ((c.getExpectedTypeRef() == null) || (!this.helper.isJvmArray(c.getExpectedTypeRef()))))) {
               String _xblockexpression_4 = null;
               {
                 c.addImport(IQLUtils.class.getCanonicalName());
@@ -2642,8 +2637,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
                 _builder_1.append("(");
                 {
                   IQLArgumentsList _args_1 = m.getArgs();
-                  boolean _notEquals_1 = (!Objects.equal(_args_1, null));
-                  if (_notEquals_1) {
+                  boolean _tripleNotEquals_1 = (_args_1 != null);
+                  if (_tripleNotEquals_1) {
                     String _compile_2 = this.compile(m.getArgs(), method.getParameters(), c);
                     _builder_1.append(_compile_2);
                   }
@@ -2659,8 +2654,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               _builder_1.append("(");
               {
                 IQLArgumentsList _args_1 = m.getArgs();
-                boolean _notEquals_1 = (!Objects.equal(_args_1, null));
-                if (_notEquals_1) {
+                boolean _tripleNotEquals_1 = (_args_1 != null);
+                if (_tripleNotEquals_1) {
                   String _compile_2 = this.compile(m.getArgs(), method.getParameters(), c);
                   _builder_1.append(_compile_2);
                 }
@@ -2702,14 +2697,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLNewExpression e, final G c) {
     String _xifexpression = null;
-    if ((((!Objects.equal(e.getArgsList(), null)) && (!Objects.equal(e.getArgsMap(), null))) && (e.getArgsMap().getElements().size() > 0))) {
+    if ((((e.getArgsList() != null) && (e.getArgsMap() != null)) && (e.getArgsMap().getElements().size() > 0))) {
       String _xblockexpression = null;
       {
         JvmExecutable constructor = this.lookUp.findPublicConstructor(e.getRef(), e.getArgsList().getElements());
         c.addExceptions(constructor.getExceptions());
         String _xifexpression_1 = null;
-        boolean _notEquals = (!Objects.equal(constructor, null));
-        if (_notEquals) {
+        if ((constructor != null)) {
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("get");
           String _shortName = this.typeUtils.getShortName(e.getRef(), false);
@@ -2751,14 +2745,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       _xifexpression = _xblockexpression;
     } else {
       String _xifexpression_1 = null;
-      if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
+      if (((e.getArgsMap() != null) && (e.getArgsMap().getElements().size() > 0))) {
         String _xblockexpression_1 = null;
         {
           JvmTypeReference _ref = e.getRef();
           ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
           JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref, _arrayList);
-          boolean _notEquals = (!Objects.equal(constructor, null));
-          if (_notEquals) {
+          if ((constructor != null)) {
             c.addExceptions(constructor.getExceptions());
           }
           StringConcatenation _builder = new StringConcatenation();
@@ -2780,14 +2773,13 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       } else {
         String _xifexpression_2 = null;
         IQLArgumentsList _argsList = e.getArgsList();
-        boolean _notEquals = (!Objects.equal(_argsList, null));
-        if (_notEquals) {
+        boolean _tripleNotEquals = (_argsList != null);
+        if (_tripleNotEquals) {
           String _xblockexpression_2 = null;
           {
             JvmExecutable constructor = this.lookUp.findPublicConstructor(e.getRef(), e.getArgsList().getElements());
             String _xifexpression_3 = null;
-            boolean _notEquals_1 = (!Objects.equal(constructor, null));
-            if (_notEquals_1) {
+            if ((constructor != null)) {
               String _xblockexpression_3 = null;
               {
                 c.addExceptions(constructor.getExceptions());
@@ -2837,8 +2829,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
               JvmTypeReference _ref_1 = e.getRef();
               ArrayList<IQLExpression> _arrayList = new ArrayList<IQLExpression>();
               JvmExecutable constructor = this.lookUp.findPublicConstructor(_ref_1, _arrayList);
-              boolean _notEquals_1 = (!Objects.equal(constructor, null));
-              if (_notEquals_1) {
+              if ((constructor != null)) {
                 c.addExceptions(constructor.getExceptions());
               }
               StringConcatenation _builder = new StringConcatenation();
@@ -2861,7 +2852,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionDouble e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "doubleToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "doubleToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "doubleToType", e);
@@ -2879,8 +2870,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     } else {
       String _xifexpression_1 = null;
       JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_expectedTypeRef != null);
+      if (_tripleNotEquals) {
         String _xifexpression_2 = null;
         boolean _isFloat = this.typeUtils.isFloat(c.getExpectedTypeRef());
         if (_isFloat) {
@@ -2920,7 +2911,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionInt e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "intToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "intToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "intToType", e);
@@ -2938,8 +2929,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     } else {
       String _xifexpression_1 = null;
       JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_expectedTypeRef != null);
+      if (_tripleNotEquals) {
         String _xifexpression_2 = null;
         boolean _isFloat = this.typeUtils.isFloat(c.getExpectedTypeRef());
         if (_isFloat) {
@@ -2990,7 +2981,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionString e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "stringToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "stringToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "stringToType", e);
@@ -3008,8 +2999,8 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
     } else {
       String _xifexpression_1 = null;
       JvmTypeReference _expectedTypeRef = c.getExpectedTypeRef();
-      boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_expectedTypeRef != null);
+      if (_tripleNotEquals) {
         String _xifexpression_2 = null;
         boolean _isCharacter = this.typeUtils.isCharacter(c.getExpectedTypeRef());
         if (_isCharacter) {
@@ -3040,7 +3031,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionBoolean e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "booleanToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "booleanToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "booleanToType", e);
@@ -3082,7 +3073,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
       int _plus = (_lastIndexOf + 1);
       int to = Integer.parseInt(_value.substring(_plus, e.getValue().length()));
       String _xifexpression = null;
-      if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "rangeToType", e))) {
+      if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "rangeToType", e))) {
         String _xblockexpression_1 = null;
         {
           IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "rangeToType", e);
@@ -3132,7 +3123,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionList e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "listToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "listToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "listToType", e);
@@ -3177,7 +3168,7 @@ public abstract class AbstractIQLExpressionCompiler<H extends IIQLCompilerHelper
   
   public String compile(final IQLLiteralExpressionMap e, final G c) {
     String _xifexpression = null;
-    if (((!Objects.equal(c.getExpectedTypeRef(), null)) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "mapToType", e))) {
+    if (((c.getExpectedTypeRef() != null) && this.typeExtensionsDictionary.hasTypeExtensions(c.getExpectedTypeRef(), "mapToType", e))) {
       String _xblockexpression = null;
       {
         IIQLTypeExtensions typeOps = this.typeExtensionsDictionary.getTypeExtensions(c.getExpectedTypeRef(), "mapToType", e);

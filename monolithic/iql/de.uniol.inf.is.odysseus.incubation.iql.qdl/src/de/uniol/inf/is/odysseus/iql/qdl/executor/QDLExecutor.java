@@ -1,7 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.qdl.executor;
 
-
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +13,7 @@ import javax.inject.Inject;
 
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
-import org.eclipse.xtext.junit4.util.ParseHelper;
+import org.eclipse.xtext.testing.util.ParseHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

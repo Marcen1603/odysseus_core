@@ -306,42 +306,36 @@ public class CQLGenerator implements IGenerator2 {
     return model;
   }
   
-  public boolean prepareParsingSelect(final SimpleSelect select) {
+  public CharSequence prepareParsingSelect(final SimpleSelect select) {
     try {
-      boolean _xtrycatchfinallyexpression = false;
       try {
-        boolean _xifexpression = false;
         boolean _contains = this.registry_SimpleSelect.contains(select);
         boolean _not = (!_contains);
         if (_not) {
-          boolean _xblockexpression = false;
-          {
-            List<NestedSource> subQueries = this.registerAllSource(select);
-            for (final NestedSource subQuery : subQueries) {
-              {
-                this.prepareParsingSelect(subQuery.getStatement().getSelect());
-                CQLGeneratorUtil.getSubQuerySources().put(subQuery.getAlias().getName(), 
-                  CQLGeneratorUtil.getQueryAttributes(subQuery.getStatement().getSelect()).keySet());
-              }
+          List<NestedSource> subQueries = this.registerAllSource(select);
+          for (final NestedSource subQuery : subQueries) {
+            {
+              this.prepareParsingSelect(subQuery.getStatement().getSelect());
+              CQLGeneratorUtil.getSubQuerySources().put(subQuery.getAlias().getName(), 
+                CQLGeneratorUtil.getQueryAttributes(subQuery.getStatement().getSelect()).keySet());
             }
-            Map<String, List<String>> attributes2 = CollectionLiterals.<String, List<String>>newHashMap();
-            attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2);
-            List<SelectExpression> aggregations = this.extractAggregationsFromArgument(select.getArguments());
-            List<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(select.getArguments());
-            if ((aggregations != null)) {
-              CQLGeneratorUtil.addQueryAggregations(select, aggregations);
-            }
-            if ((expressions != null)) {
-              CQLGeneratorUtil.getQueryExpressions().put(select, expressions);
-            }
-            if ((attributes2 != null)) {
-              CQLGeneratorUtil.addQueryAttributes(select, attributes2);
-            }
-            _xblockexpression = this.registry_SimpleSelect.add(select);
           }
-          _xifexpression = _xblockexpression;
+          Map<String, List<String>> attributes2 = CollectionLiterals.<String, List<String>>newHashMap();
+          attributes2 = CQLGeneratorUtil.getSelectedAttributes(select, attributes2);
+          List<SelectExpression> aggregations = this.extractAggregationsFromArgument(select.getArguments());
+          List<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(select.getArguments());
+          if ((aggregations != null)) {
+            CQLGeneratorUtil.addQueryAggregations(select, aggregations);
+          }
+          if ((expressions != null)) {
+            CQLGeneratorUtil.getQueryExpressions().put(select, expressions);
+          }
+          if ((attributes2 != null)) {
+            CQLGeneratorUtil.addQueryAttributes(select, attributes2);
+          }
+          this.registry_SimpleSelect.add(select);
+          return null;
         }
-        _xtrycatchfinallyexpression = _xifexpression;
       } catch (final Throwable _t) {
         if (_t instanceof Exception) {
           final Exception e = (Exception)_t;
@@ -353,7 +347,7 @@ public class CQLGenerator implements IGenerator2 {
           throw Exceptions.sneakyThrow(_t);
         }
       }
-      return _xtrycatchfinallyexpression;
+      return null;
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
@@ -683,7 +677,6 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   public CharSequence parseSelectExpressionType(final List<Object> components) {
-    ArrayList<Object> list = CollectionLiterals.<Object>newArrayList();
     for (final Object comp : components) {
     }
     return "";
@@ -1308,22 +1301,6 @@ public class CQLGenerator implements IGenerator2 {
   private String buildJoin(final List<Source> sources) {
     String[] sourceStrings = new String[sources.size()];
     List<String> sourcenames = CollectionLiterals.<String>newArrayList();
-    final Predicate<Source> _function = (Source e) -> {
-      return (e instanceof SimpleSource);
-    };
-    final java.util.function.Function<Source, SimpleSource> _function_1 = (Source e) -> {
-      return ((SimpleSource) e);
-    };
-    List<SimpleSource> simpleSources = sources.stream().filter(_function).<SimpleSource>map(_function_1).collect(
-      Collectors.<SimpleSource>toList());
-    final Predicate<Source> _function_2 = (Source e) -> {
-      return (e instanceof NestedSource);
-    };
-    final java.util.function.Function<Source, NestedSource> _function_3 = (Source e) -> {
-      return ((NestedSource) e);
-    };
-    List<NestedSource> subQueries = sources.stream().filter(_function_2).<NestedSource>map(_function_3).collect(
-      Collectors.<NestedSource>toList());
     for (int i = 0; (i < sources.size()); i++) {
       {
         Source source = sources.get(i);
@@ -1332,16 +1309,12 @@ public class CQLGenerator implements IGenerator2 {
           int _minus = (_size - 1);
           SimpleSelect query = this.registry_SimpleSelect.get(_minus);
           Map<String, List<String>> queryAttributess = CQLGeneratorUtil.getQueryAttributes(query);
-          List<SelectExpression> queryAggregations = CQLGeneratorUtil.getQueryAggregations(query);
           SimpleSelect _select = ((NestedSource)source).getStatement().getSelect();
           SimpleSelect subQuery = ((SimpleSelect) _select);
           Map<String, List<String>> subQueryAttributes = CQLGeneratorUtil.getQueryAttributes(subQuery);
-          List<SelectExpression> subQueryAggregations = CQLGeneratorUtil.getQueryAggregations(subQuery);
           String lastOperator = this.registry_SubQueries.get(subQuery);
           ArrayList<String> inputs = CollectionLiterals.<String>newArrayList();
           List<String> attributeAliases = CQLGeneratorUtil.getAttributeAliasesAsList();
-          List<String> allQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(query);
-          List<String> allSubQuerAttributes = CQLGeneratorUtil.getAllQueryAttributes(subQuery);
           Set<Map.Entry<String, List<String>>> _entrySet = queryAttributess.entrySet();
           for (final Map.Entry<String, List<String>> entry : _entrySet) {
             {
@@ -1423,10 +1396,10 @@ public class CQLGenerator implements IGenerator2 {
         } else {
           if ((source instanceof SimpleSource)) {
             final String sourcename = ((SimpleSource)source).getName();
-            final Predicate<String> _function_4 = (String e) -> {
+            final Predicate<String> _function = (String e) -> {
               return e.equals(sourcename);
             };
-            final long count = sourcenames.stream().filter(_function_4).count();
+            final long count = sourcenames.stream().filter(_function).count();
             sourcenames.add(sourcename);
             this.sourcesDuringRename = sources;
             sourceStrings[i] = 
@@ -1697,7 +1670,7 @@ public class CQLGenerator implements IGenerator2 {
     return false;
   }
   
-  private boolean contains(final List<Attribute> list, final Attribute attribute) {
+  public boolean containsAttribute(final List<Attribute> list, final Attribute attribute) {
     for (final Attribute element : list) {
       boolean _isSame = this.isSame(attribute.getName(), element.getName());
       if (_isSame) {

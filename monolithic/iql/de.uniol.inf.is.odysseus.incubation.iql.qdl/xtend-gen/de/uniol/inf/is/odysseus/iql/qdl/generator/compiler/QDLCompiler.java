@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMap;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsMapKeyValue;
@@ -79,7 +78,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       String name = q.getSimpleName();
       String superClass = AbstractQDLQuery.class.getSimpleName();
       IQLMetadataList _metadataList = q.getMetadataList();
-      boolean metadata = (!Objects.equal(_metadataList, null));
+      boolean metadata = (_metadataList != null);
       IQLStatement _statements = q.getStatements();
       IQLStatementBlock block = ((IQLStatementBlock) _statements);
       Collection<IQLNewExpression> newExpressions = this.helper.getNewExpressions(q);
@@ -221,13 +220,13 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
           JvmTypeReference type = decl.getRef();
           _builder.newLineIfNotEmpty();
           {
-            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a.getInit() != null) && (a.getInit().getArgsMap() != null)) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod = this.createGetterMethod(type, a.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod, "\t");
               _builder.newLineIfNotEmpty();
             } else {
-              if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsList(), null))) && this.helper.isOperator(type))) {
+              if ((((a.getInit() != null) && (a.getInit().getArgsList() != null)) && this.helper.isOperator(type))) {
                 _builder.append("\t");
                 CharSequence _createGetterMethod_1 = this.createGetterMethod(type, a.getInit().getArgsMap(), context);
                 _builder.append(_createGetterMethod_1, "\t");
@@ -242,7 +241,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
+            if (((e.getArgsMap() != null) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod_2 = this.createGetterMethod(e.getRef(), e.getArgsMap(), context);
               _builder.append(_createGetterMethod_2, "\t");
@@ -302,7 +301,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append(_simpleName_1);
       _builder.append("> operators");
       {
-        if (((!Objects.equal(map, null)) && (map.getElements().size() > 0))) {
+        if (((map != null) && (map.getElements().size() > 0))) {
           _builder.append(", ");
           final Function1<IQLArgumentsMapKeyValue, String> _function = (IQLArgumentsMapKeyValue el) -> {
             return super.compile(el, typeRef, context);
@@ -317,8 +316,7 @@ public class QDLCompiler extends AbstractIQLCompiler<IQDLCompilerHelper, IQDLGen
       _builder.append("operators.add(type);");
       _builder.newLine();
       {
-        boolean _notEquals = (!Objects.equal(map, null));
-        if (_notEquals) {
+        if ((map != null)) {
           {
             EList<IQLArgumentsMapKeyValue> _elements = map.getElements();
             for(final IQLArgumentsMapKeyValue el : _elements) {

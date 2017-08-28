@@ -71,7 +71,7 @@ abstract class AbstractIQLMetadataAnnotationCompiler<H extends IIQLCompilerHelpe
 	}
 	
 	def String compile(IQLMetadataValueSingleString o, G c) {
-		if (c.expectedTypeRef != null) {
+		if (c.expectedTypeRef !== null) {
 			if (typeUtils.isCharacter(c.expectedTypeRef)) {
 				return "'"+o.value+"'"				
 			} else {

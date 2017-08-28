@@ -3,7 +3,6 @@
  */
 package de.uniol.inf.is.odysseus.eca.validation;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.eca.eCA.COMMANDACTION;
 import de.uniol.inf.is.odysseus.eca.eCA.ECAPackage;
 import de.uniol.inf.is.odysseus.eca.validation.AbstractECAValidator;
@@ -25,16 +24,16 @@ public class ECAValidator extends AbstractECAValidator {
     String actName = null;
     String actState = null;
     String _subActname = act.getSubActname();
-    boolean _notEquals = (!Objects.equal(_subActname, null));
-    if (_notEquals) {
+    boolean _tripleNotEquals = (_subActname != null);
+    if (_tripleNotEquals) {
       actName = act.getSubActname();
     }
     String _stateName = act.getFunctAction().getStateName();
-    boolean _notEquals_1 = (!Objects.equal(_stateName, null));
-    if (_notEquals_1) {
+    boolean _tripleNotEquals_1 = (_stateName != null);
+    if (_tripleNotEquals_1) {
       actState = act.getFunctAction().getStateName();
     }
-    if ((((!Objects.equal(act.getFunctAction().getStateName(), null)) && (!Objects.equal(actName, null))) && (!Objects.equal(actState, null)))) {
+    if ((((act.getFunctAction().getStateName() != null) && (actName != null)) && (actState != null))) {
       if ((actName.equals("startQuery") && (!actState.equals("INACTIVE")))) {
         String _stateName_1 = act.getFunctAction().getStateName();
         String _plus = ("Cannot start Query if state = " + _stateName_1);

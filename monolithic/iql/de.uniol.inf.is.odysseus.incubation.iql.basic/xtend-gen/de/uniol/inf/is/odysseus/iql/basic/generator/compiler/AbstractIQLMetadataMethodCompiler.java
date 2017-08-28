@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadata;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLMetadataValue;
@@ -65,8 +64,8 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
           _builder.newLineIfNotEmpty();
           {
             IQLMetadataValue _value = m.getValue();
-            boolean _notEquals = (!Objects.equal(_value, null));
-            if (_notEquals) {
+            boolean _tripleNotEquals = (_value != null);
+            if (_tripleNotEquals) {
               _builder.append("\t");
               String _compile = this.compile(m.getValue(), varName, counter, context);
               _builder.append(_compile, "\t");
@@ -161,8 +160,8 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleString o, final String varName, final G context) {
     String _xifexpression = null;
     JvmTypeReference _expectedTypeRef = context.getExpectedTypeRef();
-    boolean _notEquals = (!Objects.equal(_expectedTypeRef, null));
-    if (_notEquals) {
+    boolean _tripleNotEquals = (_expectedTypeRef != null);
+    if (_tripleNotEquals) {
       String _xifexpression_1 = null;
       boolean _isCharacter = this.typeUtils.isCharacter(context.getExpectedTypeRef());
       if (_isCharacter) {
