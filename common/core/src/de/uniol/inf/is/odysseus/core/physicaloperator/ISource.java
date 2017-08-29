@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  * @author Jonas Jacobi, Tobias Witt
  */
 public interface ISource<T> extends IPhysicalOperator,
-		ISubscribable<ISink<? super T>, AbstractPhysicalSubscription<ISink<? super T>>>, IHasMetaAttribute, ITransfer<T> {
+		ISubscribable<ISink<? super T>, AbstractPhysicalSubscription<ISink<? super T>,ISource<? super T>>>, IHasMetaAttribute, ITransfer<T> {
 	/**
 	 * Gets called initially once from every subscribed sink. Setup work should
 	 * be done in here.

@@ -65,7 +65,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private transient OwnerHandler ownerHandler;
 
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
-	protected List<LogicalSubscription> subscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+//	protected List<LogicalSubscription> subscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 
 	protected boolean recalcOutputSchemata = false;
 

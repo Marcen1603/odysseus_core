@@ -19,19 +19,26 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * 
- * This interface represents a link to another element.
+ * This interface represents a connection between a source and a sink.
  * 
  * @author Marco Grawunder
  *
- * @param <K>
+ * @param <I,O>
  */
 
-public interface ISubscription<K> {	
+public interface ISubscription<I,O> {	
+	
 	/**
-	 * Get the target/destination of this link
+	 * Get the source of this connection
 	 * @return
 	 */
-	public K getTarget();
+	I getSource();
+	
+	/**
+	 * Get the sink of this connection
+	 */
+	O getSink();
+	
 	
 	/**
 	 * Get the targets input port

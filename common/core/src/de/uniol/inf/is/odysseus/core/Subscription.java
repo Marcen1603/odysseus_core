@@ -28,13 +28,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @param <K>
  */
 
-public class Subscription<K> implements ISubscription<K>, Serializable{
+public class Subscription<I,O> implements ISubscription<I,O>, Serializable{
 
 	private static final long serialVersionUID = 5744808958349736195L;
 	/**
-	 * The target of the link
+	 * The the source
 	 */
-	private K target;
+	private I source;
+	
+	/**
+	 * The sink of the connection
+	 */
+	private O sink;
+	
 	/**
 	 * If the target has more than one input, this is the input number
 	 */
@@ -55,23 +61,25 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	 * @param sourceOutPort The output port of the source that is affected
 	 * @param schema The data schema of the elements that should be processed
 	 */
-	public Subscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		this.target = target;
+	public Subscription(I source, O sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		this.source = source;
+		this.sink = sink;
 		this.sinkInPort = sinkInPort;
 		this.sourceOutPort = sourceOutPort;
 		this.schema=schema;
 	}
 
 	@Override
-	public K getTarget() {
-		return target;
+	public O getSink() {
+		return sink;
 	}
 	
-	protected void setTarget(K target) {
-		this.target = target;
-	}	
 	
-	
+	@Override
+	public I getSource() {
+		return source;
+	}
+		
 	
 	@Override
 	public int getSinkInPort() {
@@ -103,7 +111,7 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 	
 	@Override
 	public String toString() {
-		return "target "+target+" inPort"+sinkInPort+" outPort "+sourceOutPort+" Schema "+schema;
+		return "source "+source+" inPort"+sinkInPort+" outPort "+sourceOutPort+" sink "+sink+" Schema "+schema;
 	}
 
 	// ACHTUNG: BEI DER GENERIERUNG VON HASHCODE UND EQUALS
@@ -119,7 +127,8 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 		int result = 1;
 		result = prime * result + sinkInPort;
 		result = prime * result + sourceOutPort;
-		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + ((sink == null) ? 0 : sink.hashCode());
+		result = prime * result + ((source == null) ? 0 : source.hashCode());
 		return result;
 	}
 
@@ -140,12 +149,24 @@ public class Subscription<K> implements ISubscription<K>, Serializable{
 			return false;
 		if (sourceOutPort != other.sourceOutPort)
 			return false;
-		if (target == null) {
-			if (other.target != null)
+		if (source == null) {
+			if (other.source != null) {
 				return false;
+			}
         // ACHTUNG. KEIN EQUALS AUF DER TARGET!!
-		} else if (!(target == other.target))
+		} else if (!(source == other.source)) {
 			return false;
+		}
+			
+		if (sink == null) {
+			if (other.sink != null) {
+				return false;
+			}
+        // ACHTUNG. KEIN EQUALS AUF DER TARGET!!
+		} else if (!(sink == other.sink)) {
+			return false;
+		}
+
 		return true;
 	}
 	

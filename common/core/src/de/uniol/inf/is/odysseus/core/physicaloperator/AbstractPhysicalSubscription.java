@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
+abstract public class AbstractPhysicalSubscription<I,O> extends Subscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>> {
 
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
@@ -30,9 +30,9 @@ abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
 
 	private int openCalls = 0;
 
-	public AbstractPhysicalSubscription(K target, int sinkInPort, int sourceOutPort,
+	public AbstractPhysicalSubscription(ISource<IStreamObject<?>> source, ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
-		super(target, sinkInPort, sourceOutPort, schema);
+		super(source, sink, sinkInPort, sourceOutPort, schema);
 		done = false;
 	}
 
@@ -85,9 +85,9 @@ abstract public class AbstractPhysicalSubscription<K> extends Subscription<K> {
 		sendObject(o);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	final protected void sendObject(IStreamObject o){
-		((ISink) getTarget()).process(o, getSinkInPort());
+		getSink().process(o, getSinkInPort());
 	}
 	
 	
