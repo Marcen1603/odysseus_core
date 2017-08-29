@@ -7,9 +7,9 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IExpressionParser;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpressionParser;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 abstract public class AbstractRelationalExpression<T extends IMetaAttribute> implements IRelationalExpression<T>, IPredicate<Tuple<T>> {
 
 	private static final long serialVersionUID = -3373856682130638058L;
-	final protected SDFExpression expression;
+	protected SDFExpression expression;
 	protected VarHelper[] variables;
 
 	final private Map<SDFAttribute, SDFAttribute> replacementMap = new HashMap<>();
@@ -51,11 +51,11 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 		return expression.getAttributeResolver();
 	}
 
-	public IExpressionParser getExpressionParser() {
+	public IMepExpressionParser getExpressionParser() {
 		return expression.getExpressionParser();
 	}
 
-	public IExpression<?> getMEPExpression() {
+	public IMepExpression<?> getMEPExpression() {
 		return expression.getMEPExpression();
 	}
 	
@@ -106,7 +106,7 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 				return vh;
 			}
 		}
-		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream!");
+		throw new RuntimeException("Cannot find attribute " + curAttribute + " in input stream! Schemata are "+schemata);
 	}
 
 	@Override
@@ -254,8 +254,8 @@ abstract public class AbstractRelationalExpression<T extends IMetaAttribute> imp
 	@Override
 	public boolean isContainedIn(IPredicate<?> predicate) {
 		if (predicate instanceof AbstractRelationalExpression) {
-			if (this.expression instanceof IFunction) {
-				return ((IFunction<T>) this.expression).isContainedIn(((AbstractRelationalExpression<T>) predicate).expression.getMEPExpression());
+			if (this.expression instanceof IMepFunction) {
+				return ((IMepFunction<T>) this.expression).isContainedIn(((AbstractRelationalExpression<T>) predicate).expression.getMEPExpression());
 			}
 		}
 		return false;

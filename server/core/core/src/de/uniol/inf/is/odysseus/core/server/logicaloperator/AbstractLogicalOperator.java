@@ -36,6 +36,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.ISerializeProperty;
 import de.uniol.inf.is.odysseus.core.logicaloperator.serialize.SerializeNode;
@@ -93,8 +94,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * Contains a value, if {@link #determineBaseTimeUnit()} has been called once; null else.
 	 */
 	private IMetaAttribute metaattribute = null;
-
-
+	
 	public AbstractLogicalOperator(AbstractLogicalOperator op) {
 //		for (IPredicate<?> pred : op.predicates) {
 //			this.predicates.add(pred.clone());
@@ -266,13 +266,19 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	@Override
 	public String getName() {
 		if (name == null) {
-			name = this.getClass().getSimpleName();
+			String name = this.getClass().getSimpleName();
 			if (name.endsWith("AO")) {
 				name = name.substring(0, name.length() - 2);
 			}
+			return name;
 		}
 
 		return name;
+	}
+	
+	@Override
+	public boolean isNameSet() {
+		return name != null;
 	}
 
 	@Override
@@ -864,4 +870,14 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public OperatorStateType getStateType() {
 		return OperatorStateType.UNKNOWN;
 	}
+	
+	/**
+	 * Requirements for input. In most cases this is STRICT. Could be overwritten in subclasses
+	 * 
+	 */
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.STRICT;
+	}
+	
 }

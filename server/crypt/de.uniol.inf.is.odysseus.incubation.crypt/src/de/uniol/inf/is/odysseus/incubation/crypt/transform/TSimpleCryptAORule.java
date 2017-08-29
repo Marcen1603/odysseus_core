@@ -10,6 +10,8 @@ import de.uniol.inf.is.odysseus.incubation.crypt.physicaloperator.SimpleCryptPO;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
 /**
+ * AORule of SimpleCrypt
+ * 
  * @author MarkMilster
  *
  */
@@ -20,14 +22,12 @@ public class TSimpleCryptAORule extends TAbstractCryptAORule<SimpleCryptAO> {
 		try {
 			super.execute(cryptAO, transformConfig);
 			try {
-				// TODO use Base64?
-				// TODO Ausblick: eigenen parameter fuer verfahren und
-				// schluesseltyp nehmen
+				//TODO make "AES" configurable
 				cryptor.setKey(new SecretKeySpec(cryptAO.getKey().getBytes("UTF-8"), "AES"));
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			SimpleCryptPO<?> cryptPO = new SimpleCryptPO<>(cryptor, inputSchema, restrictionList);
+			SimpleCryptPO<?> cryptPO = new SimpleCryptPO<>(cryptor, inputSchema, restrictionList, punctuationDelay);
 			defaultExecute(cryptAO, cryptPO, transformConfig, true, true);
 		} catch (RuleException e1) {
 			e1.printStackTrace();

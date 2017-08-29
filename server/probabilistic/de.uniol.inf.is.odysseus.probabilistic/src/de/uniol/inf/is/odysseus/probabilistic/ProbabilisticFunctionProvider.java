@@ -22,7 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticAndOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticNotOperator;
@@ -87,8 +87,8 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
      * @see de.uniol.inf.is.odysseus.mep.IFunctionProvider#getFunctions()
      */
     @Override
-    public final List<IFunction<?>> getFunctions() {
-        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+    public final List<IMepFunction<?>> getFunctions() {
+        final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
         try {
             /** Boolean functions for probabilistic values */
             functions.add(new ProbabilisticAndOperator());

@@ -68,7 +68,7 @@ public class TLeftJoinAORule extends AbstractIntervalTransformationRule<LeftJoin
 		joinPO.setCardinalities(joinAO.getCard());
 		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
 
-		if (joinAO.isAssureOrder()) {
+		if (joinAO.isAssureOrder() == null || joinAO.isAssureOrder()) {
 			joinPO.setTransferFunction(new TITransferArea());
 		} else {
 			joinPO.setTransferFunction(new DirectTransferArea());

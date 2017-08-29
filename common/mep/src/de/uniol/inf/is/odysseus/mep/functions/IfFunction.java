@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -47,7 +47,7 @@ public class IfFunction extends AbstractFunction<Object> {
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		// if then and else arguments have the same type, we are sure to return
 		// a value of that type
 		if (args != null && args.length == 3) {

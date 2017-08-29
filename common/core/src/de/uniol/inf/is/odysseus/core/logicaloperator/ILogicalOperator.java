@@ -61,6 +61,14 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	public void setName(String name);
 	
+	/**
+	 * getName will return a value in every case, isNameSet can be used
+	 * to determine if the name was set or if a default value is returned
+	 * 
+	 * @return true if the name of the logical operator is set by the user/query
+	 */
+	boolean isNameSet();
+	
 	public void setDebug(boolean debug);
 
 	/**
@@ -263,4 +271,18 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	public boolean isDebug();
 
 	boolean isSuppressPunctuations();
+	
+	/**
+	 * Out of order processing
+	 */
+	
+	/**
+	 * Define which way the input of the source should be treated
+	 * @param inputPort The port for which the input should be delivered
+	 * @return the input type
+	 */
+	InputOrderRequirement getInputOrderRequirement(int inputPort);
+
+
+	
 }

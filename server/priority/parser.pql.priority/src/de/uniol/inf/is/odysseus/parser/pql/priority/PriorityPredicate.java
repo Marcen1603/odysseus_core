@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,25 +19,25 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.AbstractPredicate;
 import de.uniol.inf.is.odysseus.priority.IPriority;
 
-public class PriorityPredicate extends
-		AbstractPredicate<IStreamObject<? extends IPriority>> {
+public class PriorityPredicate<T extends IStreamObject<M>, M extends  IPriority> extends
+		AbstractPredicate<T> {
 
 	private static final long serialVersionUID = -8530604545098107300L;
 
 	@Override
-	public PriorityPredicate clone() {
+	public PriorityPredicate<T,M> clone() {
 		return this;
 	}
 
 	@Override
-	public Boolean evaluate(IStreamObject<? extends IPriority> input) {
+	public Boolean evaluate(T input) {
 		return input.getMetadata().getPriority() > 0;
 	}
-	
+
 
 	@Override
-	public Boolean evaluate(IStreamObject<? extends IPriority> left,
-			IStreamObject<? extends IPriority> right) {
+	public Boolean evaluate(T left,
+			T right) {
 		throw new UnsupportedOperationException();
 	}
 

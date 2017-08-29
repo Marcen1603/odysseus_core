@@ -24,9 +24,9 @@ import com.google.common.base.Optional;
 
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.mep.IConstant;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepConstant;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.predicate.ComplexPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -131,7 +131,7 @@ public class PredicateSelectivityHelper {
 	private Optional<Double> evaluateRelationalPredicate(RelationalExpression<?> relationalPredicate) {
 		LOG.debug("Evaluate RelationalPredicate " + predicate);
 
-		IExpression<?> mepExpression = relationalPredicate.getMEPExpression();
+		IMepExpression<?> mepExpression = relationalPredicate.getMEPExpression();
 
 		if (mepExpression instanceof IBinaryOperator) {
 			return evaluateBinaryOperator((IBinaryOperator<?>) mepExpression);
@@ -149,7 +149,7 @@ public class PredicateSelectivityHelper {
 
 	private Optional<Double> evaluateBinaryOperator(IBinaryOperator<?> op) {
 
-		IExpression<?>[] args = op.getArguments();
+		IMepExpression<?>[] args = op.getArguments();
 
 		if (op instanceof GreaterThanOperator) {
 			return evaluateGreaterThanOperator(args[0], args[1]);
@@ -170,11 +170,11 @@ public class PredicateSelectivityHelper {
 	/***********************************************************************/
 	/** EQUALS **/
 	/***********************************************************************/
-	private Optional<Double> evaluateEqualsOperator(IExpression<?> arg0, IExpression<?> arg1) {
+	private Optional<Double> evaluateEqualsOperator(IMepExpression<?> arg0, IMepExpression<?> arg1) {
 		LOG.debug("Found EqualsOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof IConstant) {
+			if (arg0 instanceof IMepConstant) {
 				return evaluateEqualsOperator(arg1, arg0);
 			}
 
@@ -214,11 +214,11 @@ public class PredicateSelectivityHelper {
 	/***********************************************************************/
 	/** SMALLER-THAN **/
 	/***********************************************************************/
-	private Optional<Double> evaluateSmallerThanOperator(IExpression<?> arg0, IExpression<?> arg1) {
+	private Optional<Double> evaluateSmallerThanOperator(IMepExpression<?> arg0, IMepExpression<?> arg1) {
 		LOG.debug("Found SmallerThanOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof IConstant) {
+			if (arg0 instanceof IMepConstant) {
 				return evaluateGreaterThanOperator(arg1, arg0);
 			}
 
@@ -259,11 +259,11 @@ public class PredicateSelectivityHelper {
 	/** GREATER-THAN **/
 	/***********************************************************************/
 
-	private Optional<Double> evaluateGreaterThanOperator(IExpression<?> arg0, IExpression<?> arg1) {
+	private Optional<Double> evaluateGreaterThanOperator(IMepExpression<?> arg0, IMepExpression<?> arg1) {
 		LOG.debug("Found GreaterThanOperator");
 
 		if (isOnlyOneAttribute(arg0, arg1)) {
-			if (arg0 instanceof IConstant) {
+			if (arg0 instanceof IMepConstant) {
 				return evaluateSmallerThanOperator(arg1, arg0);
 			}
 
@@ -302,10 +302,10 @@ public class PredicateSelectivityHelper {
 	/** HELPER-METHODS **/
 	/***********************************************************************/
 
-	private Optional<HistogramPair> getRelativeHistograms(IExpression<?> arg0, IExpression<?> arg1) {
+	private Optional<HistogramPair> getRelativeHistograms(IMepExpression<?> arg0, IMepExpression<?> arg1) {
 		// Get Attributes
-		String firstAttribute = ((IVariable) arg0).getIdentifier();
-		String secondAttribute = ((IVariable) arg1).getIdentifier();
+		String firstAttribute = ((IMepVariable) arg0).getIdentifier();
+		String secondAttribute = ((IMepVariable) arg1).getIdentifier();
 
 		Optional<IHistogram> optFirstHist = getHistogram(firstAttribute);
 		Optional<IHistogram> optSecondHist = getHistogram(secondAttribute);
@@ -323,14 +323,14 @@ public class PredicateSelectivityHelper {
 		return Optional.of(new HistogramPair(firstHistRelative, secondHistRelative));
 	}
 
-	public Optional<HistogramValuePair> getHistogramAndValue(IExpression<?> arg0, IExpression<?> arg1) {
+	public Optional<HistogramValuePair> getHistogramAndValue(IMepExpression<?> arg0, IMepExpression<?> arg1) {
 		String attribute = null;
 		Double value = null;
 
 		try {
-			attribute = ((IVariable) arg0).getIdentifier();
+			attribute = ((IMepVariable) arg0).getIdentifier();
 			//Changed from typecast to call of toNumeric to avoid ClassCast Exceptions
-			value = toNumeric(((IConstant<?>) arg1).getValue());
+			value = toNumeric(((IMepConstant<?>) arg1).getValue());
 		} catch (Throwable ex) {
 			LOG.warn("Operator is more complex than expected here...", ex);
 			return Optional.absent();
@@ -364,8 +364,8 @@ public class PredicateSelectivityHelper {
 		return Optional.absent();
 	}
 
-	private static boolean isOnlyOneAttribute(IExpression<?> arg0, IExpression<?> arg1) {
-		if (arg0 instanceof IVariable && arg1 instanceof IVariable)
+	private static boolean isOnlyOneAttribute(IMepExpression<?> arg0, IMepExpression<?> arg1) {
+		if (arg0 instanceof IMepVariable && arg1 instanceof IMepVariable)
 			return false;
 		return true;
 	}

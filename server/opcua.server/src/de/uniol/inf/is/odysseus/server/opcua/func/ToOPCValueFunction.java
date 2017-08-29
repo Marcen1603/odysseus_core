@@ -15,7 +15,7 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.server.opcua.func;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.opcua.common.core.OPCValue;
@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype;
 /**
  * This function creates an OPC value.
  */
-public class ToOPCValueFunction extends AbstractFunction<OPCValue<Double>> implements IFunction<OPCValue<Double>> {
+public class ToOPCValueFunction extends AbstractFunction<OPCValue<Double>> implements IMepFunction<OPCValue<Double>> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4024328742545051468L;

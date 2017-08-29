@@ -22,6 +22,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -33,7 +34,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Marco Grawunder
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc = "Make a projection on the input object (i.e. filter attributes)", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Project+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "PROJECT", doc = "Make a projection on the input object (i.e. filter attributes)", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Project+operator", category = {
+		LogicalOperatorCategory.BASE })
 public class ProjectAO extends UnaryLogicalOp {
 	private static final long serialVersionUID = 5487345119018834806L;
 	private List<SDFAttribute> attributes = new ArrayList<>();
@@ -47,8 +49,7 @@ public class ProjectAO extends UnaryLogicalOp {
 		this.attributes = new ArrayList<>(ao.attributes);
 	}
 
-	public @Override
-	ProjectAO clone() {
+	public @Override ProjectAO clone() {
 		return new ProjectAO(this);
 	}
 
@@ -58,7 +59,7 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	// Must be another name than setOutputSchema, else this method is not found!
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", aliasname="PATHS", optional = false, isList = true, doc ="A list of attributes that should be used.")
+	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "ATTRIBUTES", aliasname = "PATHS", optional = false, isList = true, doc = "A list of attributes that should be used.")
 	public void setOutputSchemaWithList(List<SDFAttribute> outputSchema) {
 		attributes = outputSchema;
 	}
@@ -72,15 +73,25 @@ public class ProjectAO extends UnaryLogicalOp {
 	}
 
 	public SDFSchema getOutputSchemaIntern() {
-		return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
+		try {
+			if (getInputSchema().getType().newInstance().isSchemaLess()) {
+				return getInputSchema();
+			} else {
+				return SDFSchemaFactory.createNewWithAttributes(attributes, getInputSchema());
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator
-	 * #getOutputSchemaIntern(int)
+	 * @see de.uniol.inf.is.odysseus.core.server.logicaloperator.
+	 * AbstractLogicalOperator #getOutputSchemaIntern(int)
 	 */
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
@@ -90,7 +101,16 @@ public class ProjectAO extends UnaryLogicalOp {
 	@Override
 	public void initialize() {
 		/// WTF ???
-		///setOutputSchema(new SDFSchema(getInputSchema().getURI(), getOutputSchema()));
+		/// setOutputSchema(new SDFSchema(getInputSchema().getURI(),
+		/// getOutputSchema()));
+	}
+
+	/**
+	 * There should be no restriction for stateless operators
+	 */
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.NONE;
 	}
 
 }

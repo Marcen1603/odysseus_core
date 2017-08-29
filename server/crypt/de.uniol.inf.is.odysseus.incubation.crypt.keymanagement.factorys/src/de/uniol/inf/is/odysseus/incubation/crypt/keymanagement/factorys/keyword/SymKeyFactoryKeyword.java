@@ -18,6 +18,12 @@ import de.uniol.inf.is.odysseus.incubation.crypt.keymanagement.secret.ISymKeyVau
 import de.uniol.inf.is.odysseus.script.parser.AbstractPreParserKeyword;
 import de.uniol.inf.is.odysseus.script.parser.OdysseusScriptException;
 
+/**
+ * A PreParserKeyword, to create a symmetric Key
+ * 
+ * @author MarkMilster
+ *
+ */
 public class SymKeyFactoryKeyword extends AbstractPreParserKeyword {
 
 	public static final String NAME = "CREATESYMKEY";
@@ -38,6 +44,7 @@ public class SymKeyFactoryKeyword extends AbstractPreParserKeyword {
 		return null;
 	}
 
+	@Override
 	public Collection<String> getAllowedParameters(ISession caller) {
 		return new ArrayList<String>(Arrays.asList(DefaultSymKeyFactory.ALGORITHMS));
 	}

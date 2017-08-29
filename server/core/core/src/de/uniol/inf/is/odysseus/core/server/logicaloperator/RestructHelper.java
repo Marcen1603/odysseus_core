@@ -187,9 +187,10 @@ public class RestructHelper {
 	 * @return
 	 */
 	public static Collection<ILogicalOperator> insertOperatorBefore(
-			ILogicalOperator toInsert, ILogicalOperator before,  int sinkInPort, int sourceOutPort) {
+			ILogicalOperator toInsert, ILogicalOperator before,  int sinkInPort, int sourceOutPort, int insertOpInputPort) {
 		List<ILogicalOperator> ret = new ArrayList<>();
 		Collection<LogicalSubscription> subs = before.getSubscriptions();
+
 		for (LogicalSubscription sub : subs) {
 			if(sourceOutPort == sub.getSourceOutPort()){
 				before.unsubscribeSink(sub);
@@ -199,7 +200,7 @@ public class RestructHelper {
 				ret.add(sub.getTarget());
 			}
 		}
-		toInsert.subscribeToSource(before, sinkInPort, sourceOutPort, before.getOutputSchema());
+		toInsert.subscribeToSource(before, insertOpInputPort, sourceOutPort, before.getOutputSchema());
 		ret.add(before);
 		ret.add(toInsert);
 		return ret;

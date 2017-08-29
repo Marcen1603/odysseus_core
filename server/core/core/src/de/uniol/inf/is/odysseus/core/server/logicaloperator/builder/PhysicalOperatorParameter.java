@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import java.util.List;
+import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -40,12 +41,41 @@ public class PhysicalOperatorParameter extends AbstractParameter<IPhysicalOperat
 		IPhysicalQuery query = executor.getExecutionPlan(getCaller())
 				.getQueryByName(Resource.specialCreateResource(queryName, getCaller().getUser()), getCaller());
 		if (query == null) {
-			throw new ParameterException("Query with name " + queryName + " not found for operator ");
+			// Try to find by number:
+			try {
+				int queryID = Integer.parseInt(queryName);
+				query = executor.getExecutionPlan(getCaller()).getQueryById(queryID, getCaller());
+			} catch (NumberFormatException e) {
+				throw new ParameterException("Query with name/id " + queryName + " not found for operator ");
+			}
+		}
+
+		if (query == null) {
+			throw new ParameterException("Query with name/id " + queryName + " not found for operator ");
 		}
 
 		IPhysicalOperator op = null;
 		if (opName != null) {
 			op = query.getOperator(opName);
+
+			// try to find operator by hash code
+			if (op == null) {
+
+				try {
+					int hashCode = Integer.parseInt(opName);
+					Set<IPhysicalOperator> roots = query.getAllOperators();
+					for (IPhysicalOperator po : roots) {
+						if (po.hashCode() == hashCode) {
+							op = po;
+							break;
+						}
+					}
+				} catch (NumberFormatException e) {
+					throw new ParameterException(
+							"Operator with name " + opName + " not found. " + opName + " is no hash code either.");
+				}
+			}
+
 		} else {
 			List<IPhysicalOperator> roots = query.getRoots();
 			if (roots.size() > 1) {

@@ -24,10 +24,12 @@ import java.util.Iterator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IParallelizableOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
+import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -41,12 +43,12 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * 
  */
 @LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Join+operator", category = { LogicalOperatorCategory.BASE })
-public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO, IParallelizableOperator {
+public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO, IParallelizableOperator, IOutOfOrderHandler {
 
 	private static final long serialVersionUID = 3710951139395164614L;
 
 	Cardinalities card = null;
-	private boolean assureOrder = true;
+	private Boolean assureOrder = null;
 
 	private IPredicate<?> predicate;
 	private String sweepAreaName; 
@@ -83,10 +85,12 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		return sweepAreaName;
 	}
 	
-	public boolean isAssureOrder() {
+	@Override
+	public Boolean isAssureOrder() {
 		return assureOrder;
 	}
 
+	@Override
 	@Parameter(type = BooleanParameter.class, optional = true, doc = "If set to false, the operator will not garantee order in output. Default is true")
 	public void setAssureOrder(boolean assureOrder) {
 		this.assureOrder = assureOrder;
@@ -119,8 +123,12 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		SDFSchema left = iter.next().getSchema();
 		SDFSchema right = iter.next().getSchema();
 		SDFSchema outputSchema = SDFSchema.join(left, right);
-		setOutputSchema(outputSchema);
-		return outputSchema;
+		
+		boolean outOfOrder = !(left.isInOrder() && right.isInOrder()) || (assureOrder != null && !assureOrder); 
+		
+		SDFSchema outputSchemaWithOrder = SDFSchemaFactory.createNewWithOutOfOrder(outOfOrder, outputSchema);
+		
+		return outputSchemaWithOrder;
 	}
 	
 	@Override
@@ -131,6 +139,11 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	@Override
 	public boolean isParallelizable() {
 		return true;
+	}
+	
+	@Override
+	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
+		return InputOrderRequirement.SELFHANDLED;
 	}
 
 }

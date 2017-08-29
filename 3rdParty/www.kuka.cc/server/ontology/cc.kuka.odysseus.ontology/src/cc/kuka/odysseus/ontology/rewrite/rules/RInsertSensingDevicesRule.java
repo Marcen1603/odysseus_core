@@ -22,15 +22,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.math3.util.FastMath;
+// import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
 import cc.kuka.odysseus.ontology.Activator;
+import cc.kuka.odysseus.ontology.common.SensorOntologyService;
 import cc.kuka.odysseus.ontology.common.model.MeasurementCapability;
 import cc.kuka.odysseus.ontology.common.model.SensingDevice;
 import cc.kuka.odysseus.ontology.common.model.condition.Condition;
@@ -66,335 +69,360 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
  * @version $Id$
  *
  */
+@SuppressWarnings("null")
 public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
-	/** The Logger. */
-	private static final Logger LOG = LoggerFactory.getLogger(RInsertSensingDevicesRule.class);
+    /** The Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(RInsertSensingDevicesRule.class);
 
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+    @Override
+    public int getPriority() {
+        return 0;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public final void execute(final QualityAO operator, final RewriteConfiguration config) {
-		Objects.requireNonNull(operator);
-		Objects.requireNonNull(operator.getInputSchema());
-		Objects.requireNonNull(operator.getProperties());
-		Objects.requireNonNull(config);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void execute(final QualityAO operator, final RewriteConfiguration config) {
+        RInsertSensingDevicesRule.LOG.trace("execute({}, {})", operator, config);
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema());
+        Objects.requireNonNull(operator.getProperties());
+        Objects.requireNonNull(config);
 
-		final SDFSchema schema = operator.getInputSchema();
-		final List<SDFAttribute> attributes = operator.getAttributes();
+        final SDFSchema schema = operator.getInputSchema();
+        final List<SDFAttribute> attributes = operator.getAttributes();
 
-		final Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<>();
-		final Map<String, Double> frequencies = new HashMap<>();
-		for (final SDFAttribute attribute : attributes) {
+        final Map<String, List<SDFAttribute>> toJoinStreams = new HashMap<>();
+        final Map<String, Double> frequencies = new HashMap<>();
+        for (final SDFAttribute attribute : attributes) {
 
-			final List<SensingDevice> sensingDevices = Activator.getSensorOntologyService().sensingDevices(
-					SDFUtils.getFeatureOfInterestLabel(attribute), SDFUtils.getSensingDeviceLabel(attribute),
-					attribute.getAttributeName());
-			if (!sensingDevices.isEmpty()) {
-				// FIXME What happens if there are more than one sensing
-				// device?
-				final SensingDevice sensingDevice = sensingDevices.get(0);
-				final List<MeasurementCapability> measurementCapabilities = sensingDevice
-						.hasMeasurementCapabilities(attribute.getAttributeName());
-				for (final MeasurementCapability measurementCapability : measurementCapabilities) {
-					final List<Condition> conditions = measurementCapability.inConditions();
-					final List<MeasurementProperty> measurementProperties = measurementCapability
-							.hasMeasurementProperties();
+            final SensorOntologyService ontologyService = Activator.getSensorOntologyService();
+            if (ontologyService != null) {
+                final List<SensingDevice> sensingDevices = ontologyService.sensingDevices(
+                        SDFUtils.getFeatureOfInterestLabel(attribute), SDFUtils.getSensingDeviceLabel(attribute),
+                        attribute.getAttributeName());
+                if (!sensingDevices.isEmpty()) {
+                    // FIXME What happens if there are more than one sensing
+                    // device?
+                    final SensingDevice sensingDevice = sensingDevices.get(0);
+                    final List<MeasurementCapability> measurementCapabilities = sensingDevice
+                            .hasMeasurementCapabilities(attribute.getAttributeName());
+                    for (final MeasurementCapability measurementCapability : measurementCapabilities) {
+                        final List<Condition> conditions = measurementCapability.inConditions();
+                        final List<MeasurementProperty> measurementProperties = measurementCapability
+                                .hasMeasurementProperties();
 
-					double frequency = 0.0;
-					for (final MeasurementProperty measurementProperty : measurementProperties) {
-						if ((measurementProperty != null)
-								&& (measurementProperty.resource().equalsIgnoreCase(Frequency.RESOURCE))) {
-							frequency = Double.parseDouble(measurementProperty.expression());
-						}
-					}
-					for (final Condition condition : conditions) {
-						final List<String> observerAttributeUris = Activator.getSensorOntologyService()
-								.attributes(condition);
-						final List<SDFAttribute> observerAttributes = new ArrayList<>();
-						for (final String uri : observerAttributeUris) {
-							final String[] split = SDFElement.splitURI(uri);
-							observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE));
-						}
-						boolean inSchema = false;
-						if (!observerAttributes.isEmpty()) {
-							for (final SDFAttribute observerAttribute : observerAttributes) {
-								if (schema.contains(observerAttribute)) {
-									inSchema = true;
-									break;
-								}
-							}
-							if (!inSchema) {
-								if (!toJoinStreams.containsKey(observerAttributes.get(0).getSourceName())) {
-									toJoinStreams.put(observerAttributes.get(0).getSourceName(),
-											new ArrayList<SDFAttribute>());
-								}
-								if (!frequencies.containsKey(observerAttributes.get(0).getSourceName())) {
-									frequencies.put(observerAttributes.get(0).getSourceName(), new Double(0.0));
-								}
-								toJoinStreams.get(observerAttributes.get(0).getSourceName())
-										.add(observerAttributes.get(0));
-								frequencies
-										.put(observerAttributes.get(0).getSourceName(),
-												new Double(FastMath.max(frequencies
-														.get(observerAttributes.get(0).getSourceName()).doubleValue(),
-														frequency)));
-							}
-						}
-					}
+                        double frequency = 0.0;
+                        for (final MeasurementProperty measurementProperty : measurementProperties) {
+                            if ((measurementProperty != null)
+                                    && measurementProperty.resource().equalsIgnoreCase(Frequency.RESOURCE)) {
+                                frequency = Double.parseDouble(measurementProperty.expression());
+                            }
+                        }
+                        for (final Condition condition : conditions) {
+                            final List<String> observerAttributeUris = ontologyService.attributes(condition);
+                            final List<SDFAttribute> observerAttributes = new ArrayList<>();
+                            for (final String uri : observerAttributeUris) {
+                                final String[] split = SDFElement.splitURI(uri);
+                                observerAttributes.add(new SDFAttribute(split[0], split[1], SDFDatatype.DOUBLE));
+                            }
+                            boolean inSchema = false;
+                            if (!observerAttributes.isEmpty()) {
+                                for (final SDFAttribute observerAttribute : observerAttributes) {
+                                    if (schema.contains(observerAttribute)) {
+                                        inSchema = true;
+                                        break;
+                                    }
+                                }
+                                if (!inSchema) {
+                                    if (!toJoinStreams.containsKey(observerAttributes.get(0).getSourceName())) {
+                                        toJoinStreams.put(observerAttributes.get(0).getSourceName(),
+                                                new ArrayList<SDFAttribute>());
+                                    }
+                                    if (!frequencies.containsKey(observerAttributes.get(0).getSourceName())) {
+                                        frequencies.put(observerAttributes.get(0).getSourceName(), new Double(0.0));
+                                    }
+                                    toJoinStreams.get(observerAttributes.get(0).getSourceName())
+                                            .add(observerAttributes.get(0));
+                                    frequencies.put(observerAttributes.get(0).getSourceName(),
+                                            new Double(FastMath.max(frequencies
+                                                    .get(observerAttributes.get(0).getSourceName()).doubleValue(),
+                                                    frequency)));
+                                }
+                            }
+                        }
 
-				}
-			} else {
-				RInsertSensingDevicesRule.LOG.warn("No sensing devices observe {}", attribute.getAttributeName());
-			}
-		}
-		this.concatConditionObserverStreams(operator, toJoinStreams, frequencies);
+                    }
+                }
+                else {
+                    RInsertSensingDevicesRule.LOG.warn("No sensing devices observe {}", attribute.getAttributeName());
+                }
+            }
+        }
+        this.concatConditionObserverStreams(operator, toJoinStreams, frequencies);
 
-		final MapAO mapAO = RInsertSensingDevicesRule.insertMapAO(operator);
+        final MapAO mapAO = RInsertSensingDevicesRule.insertMapAO(operator);
 
-		final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
-		for (final ILogicalOperator o : toUpdate) {
-			this.update(o);
-		}
-		this.update(mapAO);
-		mapAO.initialize();
-		this.retract(operator);
+        final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+        for (final ILogicalOperator o : toUpdate) {
+            this.update(o);
+        }
+        this.update(mapAO);
+        mapAO.initialize();
+        this.retract(operator);
 
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isExecutable(final QualityAO operator, final RewriteConfiguration config) {
-		Objects.requireNonNull(operator);
-		Objects.requireNonNull(config);
-		return operator.getInputSchema().getType().isAssignableFrom(Tuple.class);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isExecutable(final QualityAO operator, final RewriteConfiguration config) {
+        RInsertSensingDevicesRule.LOG.trace("isExecutable({}, {})", operator, config);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return RewriteRuleFlowGroup.DELETE;
-	}
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(config);
+        return operator.getInputSchema().getType().isAssignableFrom(Tuple.class);
+    }
 
-	/**
-	 * Concatenates the condition observing sensing devices to this stream.
-	 *
-	 * @param operator
-	 *            The {@link QualityAO} operator
-	 * @param observers
-	 *            The map of sensing devices and the necessary properties.
-	 * @param frequencies
-	 *            The list of frequencies of each sensing device used to
-	 *            calculate the required window size
-	 */
-	private void concatConditionObserverStreams(final ILogicalOperator operator,
-			final Map<String, List<SDFAttribute>> observers, final Map<String, Double> frequencies) {
-		Objects.requireNonNull(operator);
-		Objects.requireNonNull(operator.getInputSchema(0));
-		Objects.requireNonNull(observers);
-		Objects.requireNonNull(frequencies);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IRuleFlowGroup getRuleFlowGroup() {
+        return RewriteRuleFlowGroup.DELETE;
+    }
 
-		for (final String sourceName : observers.keySet()) {
-			final JoinAO joinAO = RInsertSensingDevicesRule.insertCrossproductAO(operator);
-			joinAO.setName("Join " + sourceName);
-			final ILogicalOperator viewOrStream = this.insertViewOrStream(joinAO, sourceName);
-			final ProjectAO projectAO = RInsertSensingDevicesRule.insertProjectAO(joinAO, observers.get(sourceName));
-			// TODO Set frequency
-			final WindowAO windowAO = RInsertSensingDevicesRule.insertWindowAO(projectAO,
-					frequencies.get(sourceName).doubleValue());
+    /**
+     * Concatenates the condition observing sensing devices to this stream.
+     *
+     * @param operator
+     *            The {@link QualityAO} operator
+     * @param observers
+     *            The map of sensing devices and the necessary properties.
+     * @param frequencies
+     *            The list of frequencies of each sensing device used to
+     *            calculate the required window size
+     */
+    private void concatConditionObserverStreams(final ILogicalOperator operator,
+            final Map<String, List<SDFAttribute>> observers, final Map<String, Double> frequencies) {
+        RInsertSensingDevicesRule.LOG.trace("concatConditionObserverStreams({}, {}, {})", operator, observers,
+                frequencies);
 
-			viewOrStream.initialize();
-			this.insert(viewOrStream);
-			projectAO.initialize();
-			this.insert(projectAO);
-			windowAO.initialize();
-			this.insert(windowAO);
-			joinAO.initialize();
-			this.insert(joinAO);
+        Objects.requireNonNull(operator);
+        Objects.requireNonNull(operator.getInputSchema(0));
+        Objects.requireNonNull(observers);
+        Objects.requireNonNull(frequencies);
 
-		}
-	}
+        for (final String sourceName : observers.keySet()) {
+            final JoinAO joinAO = RInsertSensingDevicesRule.insertCrossproductAO(operator);
+            joinAO.setName(UUID.randomUUID() + "_Join " + sourceName);
+            final ILogicalOperator viewOrStream = this.insertViewOrStream(joinAO, sourceName);
+            final ProjectAO projectAO = RInsertSensingDevicesRule.insertProjectAO(joinAO, observers.get(sourceName));
+            final WindowAO windowAO = RInsertSensingDevicesRule.insertWindowAO(projectAO,
+                    frequencies.get(sourceName).doubleValue());
 
-	/**
-	 * Append the given source to the processing graph.
-	 *
-	 * @param parent
-	 *            The parent operator
-	 * @param sourceName
-	 *            The name of the source
-	 * @return The view or stream with the given name subscribed to the parent
-	 */
-	private ILogicalOperator insertViewOrStream(final ILogicalOperator parent, final String sourceName) {
-		Objects.requireNonNull(parent);
-		Objects.requireNonNull(sourceName);
+            viewOrStream.initialize();
+            this.insert(viewOrStream);
+            projectAO.initialize();
+            this.insert(projectAO);
+            windowAO.initialize();
+            this.insert(windowAO);
+            joinAO.initialize();
+            this.insert(joinAO);
 
-		final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller());
-		for (final IOperatorOwner owner : parent.getOwner()) {
-			viewOrStream.addOwner(owner);
-		}
-		parent.subscribeToSource(viewOrStream, 1, 0, viewOrStream.getOutputSchema());
-		RInsertSensingDevicesRule.LOG.debug("Insert view or stream: {}", viewOrStream.toString());
-		return viewOrStream;
-	}
+        }
+    }
 
-	/**
-	 * Inserts the {@link MapAO} operator to estimate the quality dimensions.
-	 *
-	 * @param parent
-	 *            The parent operator
-	 * @return The {@link MapAO} subscribed to the parent
-	 */
-	private static MapAO insertMapAO(final QualityAO parent) {
-		Objects.requireNonNull(parent);
-		Objects.requireNonNull(parent.getSubscribedToSource(0));
+    /**
+     * Append the given source to the processing graph.
+     *
+     * @param parent
+     *            The parent operator
+     * @param sourceName
+     *            The name of the source
+     * @return The view or stream with the given name subscribed to the parent
+     */
+    private ILogicalOperator insertViewOrStream(final ILogicalOperator parent, final String sourceName) {
+        RInsertSensingDevicesRule.LOG.trace("insertViewOrStream({}, {})", parent, sourceName);
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(sourceName);
 
-		final MapAO mapAO = new MapAO();
-		for (final IOperatorOwner owner : parent.getOwner()) {
-			mapAO.addOwner(owner);
-		}
-		final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+        final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller());
+        for (final IOperatorOwner owner : parent.getOwner()) {
+            viewOrStream.addOwner(owner);
+        }
+        parent.subscribeToSource(viewOrStream, 1, 0, viewOrStream.getOutputSchema());
+        RInsertSensingDevicesRule.LOG.debug("Insert view or stream: {}", viewOrStream.toString());
+        return viewOrStream;
+    }
 
-		final Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (final LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			mapAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-		}
-		mapAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+    /**
+     * Inserts the {@link MapAO} operator to estimate the quality dimensions.
+     *
+     * @param parent
+     *            The parent operator
+     * @return The {@link MapAO} subscribed to the parent
+     */
+    private static MapAO insertMapAO(final QualityAO parent) {
+        RInsertSensingDevicesRule.LOG.trace("insertMap({})", parent);
 
-		final List<NamedExpression> namedExpressions = new ArrayList<>();
-		for (int i = 0; i < parent.getOutputSchema().size(); i++) {
-			final SDFExpression expr = new SDFExpression(parent.getExpressions()[i].getMEPExpression().toString(),
-					parent.getExpressions()[i].getAttributeResolver(), MEP.getInstance());
-			namedExpressions.add(new NamedExpression(parent.getOutputSchema().get(i).getURI(), expr, null));
-		}
-		mapAO.setExpressions(namedExpressions);
-		if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
-			RInsertSensingDevicesRule.LOG.debug("Insert map operator: {}", mapAO.toString());
-			for (int i = 0; i < mapAO.getExpressions().size(); i++) {
-				RInsertSensingDevicesRule.LOG.debug("{}. {} ", new Integer(i), mapAO.getExpressions().get(i));
-			}
-		}
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(0));
 
-		return mapAO;
-	}
+        final MapAO mapAO = new MapAO();
+        for (final IOperatorOwner owner : parent.getOwner()) {
+            mapAO.addOwner(owner);
+        }
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
 
-	/**
-	 * Inserts the {@link JoinAO} operator to join the view or stream to the
-	 * current processing graph.
-	 *
-	 * @param parent
-	 *            The parent operator
-	 * @return The {@link JoinAO} subscribed to the parent
-	 */
-	private static JoinAO insertCrossproductAO(final ILogicalOperator parent) {
-		Objects.requireNonNull(parent);
-		Objects.requireNonNull(parent.getSubscribedToSource(0));
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            mapAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        mapAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
 
-		final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+        final List<NamedExpression> namedExpressions = new ArrayList<>();
+        for (int i = 0; i < parent.getOutputSchema().size(); i++) {
+            // @Nullable
+            final SDFExpression expression = parent.expressions()[i];
+            if (expression != null) {
+                final SDFExpression expr = new SDFExpression(expression.getMEPExpression().toString(),
+                        expression.getAttributeResolver(), MEP.getInstance());
+                namedExpressions.add(new NamedExpression(parent.getOutputSchema().get(i).getURI(), expr, null));
+            }
+            else {
+                namedExpressions.add(null);
+            }
+        }
+        mapAO.setExpressions(namedExpressions);
+        if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
+            RInsertSensingDevicesRule.LOG.debug("Insert map operator: {}", mapAO.toString());
+            for (int i = 0; i < mapAO.getExpressions().size(); i++) {
+                RInsertSensingDevicesRule.LOG.debug("{}. {} ", new Integer(i), mapAO.getExpressions().get(i));
+            }
+        }
 
-		final JoinAO joinAO = new JoinAO();
-		for (final IOperatorOwner owner : parent.getOwner()) {
-			joinAO.addOwner(owner);
-		}
-		final Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (final LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			// What about the source out port
-			joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-		}
-		joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
-		RInsertSensingDevicesRule.LOG.debug("Insert crossproduct operator: {}", joinAO.toString());
-		return joinAO;
-	}
+        return mapAO;
+    }
 
-	/**
-	 * Inserts the {@link ProjectAO} operator to project the stream to the
-	 * necessary attributes.
-	 *
-	 * @param parent
-	 *            The parent operator
-	 * @param attributes
-	 *            The list of {@link SDFAttribute} attributes
-	 * @return The {@link ProjectAO} subscribed to the parent
-	 */
-	private static ProjectAO insertProjectAO(final ILogicalOperator parent, final List<SDFAttribute> attributes) {
-		Objects.requireNonNull(parent);
-		Objects.requireNonNull(parent.getSubscribedToSource(1));
-		Objects.requireNonNull(attributes);
+    /**
+     * Inserts the {@link JoinAO} operator to join the view or stream to the
+     * current processing graph.
+     *
+     * @param parent
+     *            The parent operator
+     * @return The {@link JoinAO} subscribed to the parent
+     */
+    private static JoinAO insertCrossproductAO(final ILogicalOperator parent) {
+        RInsertSensingDevicesRule.LOG.trace("insertCrossproductAO({})", parent);
 
-		final ProjectAO projectAO = new ProjectAO();
-		for (final IOperatorOwner owner : parent.getOwner()) {
-			projectAO.addOwner(owner);
-		}
-		final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
-		final List<SDFAttribute> userAwareAttributes = new ArrayList<>();
-		for (final SDFAttribute attr : attributes) {
-			userAwareAttributes.add(child.getOutputSchema().findAttribute(attr.getAttributeName()));
-		}
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(0));
 
-		final Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (final LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-		}
-		projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
-		projectAO.setOutputSchemaWithList(userAwareAttributes);
-		if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
-			RInsertSensingDevicesRule.LOG.debug("Insert project operator: {}", projectAO.toString());
-			RInsertSensingDevicesRule.LOG.debug("{} -> {}", projectAO.getInputSchema().toString(),
-					projectAO.getOutputSchema().toString());
-		}
-		return projectAO;
-	}
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
 
-	/**
-	 * Inserts the {@link WindowAO} operator to set the end timestamp for the
-	 * crossproduct operation.
-	 *
-	 * @param parent
-	 *            The parent operator
-	 * @param frequency
-	 *            The frequency of the source
-	 * @return The {@link WindowAO} subscribed to the parent
-	 */
-	private static WindowAO insertWindowAO(final ILogicalOperator parent, final double frequency) {
-		Objects.requireNonNull(parent);
-		Objects.requireNonNull(parent.getSubscribedToSource(0));
-		Preconditions.checkArgument(frequency >= 0.0);
+        final JoinAO joinAO = new JoinAO();
+        for (final IOperatorOwner owner : parent.getOwner()) {
+            joinAO.addOwner(owner);
+        }
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            // What about the source out port
+            joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+        RInsertSensingDevicesRule.LOG.debug("Insert crossproduct operator: {}", joinAO.toString());
+        return joinAO;
+    }
 
-		final WindowAO windowAO = new WindowAO();
-		for (final IOperatorOwner owner : parent.getOwner()) {
-			windowAO.addOwner(owner);
-		}
-		final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+    /**
+     * Inserts the {@link ProjectAO} operator to project the stream to the
+     * necessary attributes.
+     *
+     * @param parent
+     *            The parent operator
+     * @param attributes
+     *            The list of {@link SDFAttribute} attributes
+     * @return The {@link ProjectAO} subscribed to the parent
+     */
+    private static ProjectAO insertProjectAO(final ILogicalOperator parent, final List<SDFAttribute> attributes) {
+        RInsertSensingDevicesRule.LOG.trace("insertProjectAO({}, {})", parent, attributes);
 
-		final Collection<LogicalSubscription> subs = child.getSubscriptions();
-		for (final LogicalSubscription sub : subs) {
-			child.unsubscribeSink(sub);
-			windowAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
-		}
-		windowAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(1));
+        Objects.requireNonNull(attributes);
 
-		if (frequency > 0.0) {
-			windowAO.setWindowType(WindowType.TIME);
-			windowAO.setWindowAdvance(new TimeValueItem(1L, null));
-			windowAO.setWindowSize(new TimeValueItem((long) (1.0 / frequency), null));
-			windowAO.setBaseTimeUnit(TimeUnit.MILLISECONDS);
-		} else {
-			windowAO.setWindowType(WindowType.TUPLE);
-			windowAO.setWindowAdvance(new TimeValueItem(1L, null));
-			windowAO.setWindowSize(new TimeValueItem(1L, null));
-		}
-		RInsertSensingDevicesRule.LOG.debug("Insert window operator: {}", windowAO.toString());
-		return windowAO;
-	}
+        final ProjectAO projectAO = new ProjectAO();
+        for (final IOperatorOwner owner : parent.getOwner()) {
+            projectAO.addOwner(owner);
+        }
+        final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
+        final List<SDFAttribute> userAwareAttributes = new ArrayList<>();
+        for (final SDFAttribute attr : attributes) {
+            userAwareAttributes.add(child.getOutputSchema().findAttribute(attr.getAttributeName()));
+        }
+
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+        projectAO.setOutputSchemaWithList(userAwareAttributes);
+        if (RInsertSensingDevicesRule.LOG.isDebugEnabled()) {
+            RInsertSensingDevicesRule.LOG.debug("Insert project operator: {}", projectAO.toString());
+            RInsertSensingDevicesRule.LOG.debug("{} -> {}", projectAO.getInputSchema().toString(),
+                    projectAO.getOutputSchema().toString());
+        }
+        return projectAO;
+    }
+
+    /**
+     * Inserts the {@link WindowAO} operator to set the end timestamp for the
+     * crossproduct operation.
+     *
+     * @param parent
+     *            The parent operator
+     * @param frequency
+     *            The frequency of the source
+     * @return The {@link WindowAO} subscribed to the parent
+     */
+    private static WindowAO insertWindowAO(final ILogicalOperator parent, final double frequency) {
+        RInsertSensingDevicesRule.LOG.trace("insertWindowAO({}, {})", parent, frequency);
+
+        Objects.requireNonNull(parent);
+        Objects.requireNonNull(parent.getSubscribedToSource(0));
+        Preconditions.checkArgument(frequency >= 0.0);
+
+        final WindowAO windowAO = new WindowAO();
+        for (final IOperatorOwner owner : parent.getOwner()) {
+            windowAO.addOwner(owner);
+        }
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+
+        final Collection<LogicalSubscription> subs = child.getSubscriptions();
+        for (final LogicalSubscription sub : subs) {
+            child.unsubscribeSink(sub);
+            windowAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+        }
+        windowAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
+
+        if (frequency > 0.0) {
+            windowAO.setWindowType(WindowType.TIME);
+            windowAO.setWindowAdvance(new TimeValueItem(1L, null));
+            windowAO.setWindowSize(new TimeValueItem((long) (1.0 / frequency), null));
+            windowAO.setBaseTimeUnit(TimeUnit.MILLISECONDS);
+        }
+        else {
+            windowAO.setWindowType(WindowType.TUPLE);
+            windowAO.setWindowAdvance(new TimeValueItem(1L, null));
+            windowAO.setWindowSize(new TimeValueItem(1L, null));
+        }
+        RInsertSensingDevicesRule.LOG.debug("Insert window operator: {}", windowAO.toString());
+        return windowAO;
+    }
 }

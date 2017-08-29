@@ -23,7 +23,7 @@ import java.util.Objects;
 
 import com.google.common.collect.ImmutableSet;
 
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
 /**
@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 public class FunctionStore {
     private static FunctionStore instance;
     private final Map<String, List<FunctionSignature>> symbols = new HashMap<String, List<FunctionSignature>>();
-    private final Map<FunctionSignature, IFunction<?>> signatures = new HashMap<FunctionSignature, IFunction<?>>();
+    private final Map<FunctionSignature, IMepFunction<?>> signatures = new HashMap<FunctionSignature, IMepFunction<?>>();
     private final List<Class<?>> deprecated = new ArrayList<Class<?>>();
     
     public static FunctionStore getInstance() {
@@ -58,8 +58,8 @@ public class FunctionStore {
         return this.signatures.containsKey(signature);
     }
 
-    public List<IFunction<?>> getFunctions(final String symbol) {
-        final List<IFunction<?>> functions = new ArrayList<IFunction<?>>();
+    public List<IMepFunction<?>> getFunctions(final String symbol) {
+        final List<IMepFunction<?>> functions = new ArrayList<IMepFunction<?>>();
         if ((symbol != null) && (!symbol.isEmpty())) {
             final List<FunctionSignature> signatures = this.symbols.get(symbol.toUpperCase());
             for (final FunctionSignature signature : signatures) {
@@ -69,12 +69,12 @@ public class FunctionStore {
         return functions;
     }
 
-    public IFunction<?> getFunction(final FunctionSignature signature) {
+    public IMepFunction<?> getFunction(final FunctionSignature signature) {
         return this.signatures.get(signature);
     }
 
-    public IFunction<?> getFunction(final String symbol, final List<SDFDatatype> parameter) {
-        IFunction<?> function = null;
+    public IMepFunction<?> getFunction(final String symbol, final List<SDFDatatype> parameter) {
+        IMepFunction<?> function = null;
         synchronized (symbols) {
             if ((symbol != null) && (!symbol.isEmpty())) {
                 final List<FunctionSignature> signatureList = this.symbols.get(symbol.toUpperCase());
@@ -93,7 +93,7 @@ public class FunctionStore {
         return this.symbols.isEmpty();
     }
 
-    public IFunction<?> put(final FunctionSignature signature, final IFunction<?> function) {
+    public IMepFunction<?> put(final FunctionSignature signature, final IMepFunction<?> function) {
         Objects.requireNonNull(signature);
         Objects.requireNonNull(function);
         Objects.requireNonNull(signature.getSymbol());
@@ -111,17 +111,17 @@ public class FunctionStore {
         return function;
     }
     
-    public void setDeprecated(final IFunction<?> function){
+    public void setDeprecated(final IMepFunction<?> function){
     	this.deprecated.add(function.getClass());
     }
     
-    public boolean isDeprecated(final IFunction<?> function){
+    public boolean isDeprecated(final IMepFunction<?> function){
     	return deprecated.contains(function.getClass());
     }
 
-    public synchronized IFunction<?> remove(final FunctionSignature signature) {
+    public synchronized IMepFunction<?> remove(final FunctionSignature signature) {
         Objects.requireNonNull(signature);
-        IFunction<?> function = null;
+        IMepFunction<?> function = null;
         synchronized (symbols) {
             function = this.signatures.remove(signature);
             final List<FunctionSignature> signaturesList = this.symbols.get(signature.getSymbol());

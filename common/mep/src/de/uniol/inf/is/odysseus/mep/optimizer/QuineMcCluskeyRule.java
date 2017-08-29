@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.mep.functions.bool.AndOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.NotOperator;
 import de.uniol.inf.is.odysseus.mep.functions.bool.OrOperator;
@@ -45,12 +45,12 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
      * {@inheritDoc}
      */
     @Override
-    public IExpression<?> execute(OrOperator expression) {
+    public IMepExpression<?> execute(OrOperator expression) {
         // Create disjunctive split of the expression
-        Set<IExpression<?>> split = getDisjunctiveSplit(expression);
+        Set<IMepExpression<?>> split = getDisjunctiveSplit(expression);
         Truthtable truthtable = new Truthtable(getVariables(expression));
         // Add terms to truthtable
-        for (IExpression<?> s : split) {
+        for (IMepExpression<?> s : split) {
             truthtable.add(s);
         }
         // Reduce terms
@@ -64,7 +64,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
      * {@inheritDoc}
      */
     @Override
-    public boolean isExecutable(IExpression<?> expression) {
+    public boolean isExecutable(IMepExpression<?> expression) {
         return expression instanceof OrOperator;
     }
 
@@ -75,12 +75,12 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
      *            The expression
      * @return A set of variables, constants, and non boolean functions
      */
-    private Collection<IExpression<?>> getVariables(IExpression<?> expression) {
-        Set<IExpression<?>> variables = new HashSet<>();
-        Stack<IExpression<?>> stack = new Stack<>();
+    private Collection<IMepExpression<?>> getVariables(IMepExpression<?> expression) {
+        Set<IMepExpression<?>> variables = new HashSet<>();
+        Stack<IMepExpression<?>> stack = new Stack<>();
         stack.push(expression);
         while (!stack.isEmpty()) {
-            IExpression<?> expr = stack.pop();
+            IMepExpression<?> expr = stack.pop();
             if (expr instanceof NotOperator) {
                 stack.push(expr.toFunction().getArgument(0));
             }
@@ -97,7 +97,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
 
     private class Truthtable {
         /** List of available variables used as index. */
-        List<IExpression<?>> variables;
+        List<IMepExpression<?>> variables;
         /** Disjunctive terms. */
         List<Entry> entries;
         /** Number of original terms in truthtable. */
@@ -110,7 +110,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
          * @param variables
          *            List of used {@link Variable}.
          */
-        public Truthtable(Collection<IExpression<?>> variables) {
+        public Truthtable(Collection<IMepExpression<?>> variables) {
             this.entries = new ArrayList<>();
             this.variables = new ArrayList<>(variables.size());
             this.variables.addAll(variables);
@@ -122,7 +122,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
          * @param term
          *            The term
          */
-        public void add(IExpression<?> term) {
+        public void add(IMepExpression<?> term) {
             this.terms++;
             this.entries.add(new Entry(term, new int[] { this.entries.size() }));
             // Sort entries according to the number of '1' in the bitString
@@ -155,9 +155,9 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
                             }
                         }
                         if (hammingDistance == 1) {
-                            List<IExpression<?>> newMinTerm = new ArrayList<>();
-                            Set<IExpression<?>> split = getConjunctiveSplit(this.entries.get(i).minterm);
-                            for (IExpression<?> s : split) {
+                            List<IMepExpression<?>> newMinTerm = new ArrayList<>();
+                            Set<IMepExpression<?>> split = getConjunctiveSplit(this.entries.get(i).minterm);
+                            for (IMepExpression<?> s : split) {
                                 int index = -1;
                                 if (s instanceof NotOperator) {
                                     index = this.variables.indexOf(s.toFunction().getArgument(0));
@@ -218,8 +218,8 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
             this.entries.addAll(selection);
         }
 
-        public IExpression<?> toExpression() {
-            List<IExpression<?>> expressions = new ArrayList<>();
+        public IMepExpression<?> toExpression() {
+            List<IMepExpression<?>> expressions = new ArrayList<>();
             for (Entry entry : this.entries) {
                 expressions.add(entry.minterm);
             }
@@ -239,7 +239,7 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
         }
 
         private class Entry {
-            IExpression<?> minterm;
+            IMepExpression<?> minterm;
             char[] bitString;
             int count;
             int[] base;
@@ -250,15 +250,15 @@ public class QuineMcCluskeyRule extends AbstractExpressionOptimizerRule<OrOperat
              * @param base
              *
              */
-            public Entry(IExpression<?> term, int[] base) {
+            public Entry(IMepExpression<?> term, int[] base) {
                 this.minterm = term;
                 this.base = base;
                 this.bitString = new char[Truthtable.this.variables.size()];
                 for (int i = 0; i < this.bitString.length; i++) {
                     this.bitString[i] = '-';
                 }
-                Set<IExpression<?>> split = getConjunctiveSplit(term);
-                for (IExpression<?> s : split) {
+                Set<IMepExpression<?>> split = getConjunctiveSplit(term);
+                for (IMepExpression<?> s : split) {
                     if (s instanceof NotOperator) {
                         this.bitString[Truthtable.this.variables.indexOf(s.toFunction().getArgument(0))] = '0';
                     }

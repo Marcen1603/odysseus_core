@@ -16,21 +16,26 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
+/**
+ * This is the abstract AORule of all Crypt operators
+ * 
+ * @author MarkMilster
+ *
+ * @param <C>
+ *            The logical operator
+ */
 public abstract class TAbstractCryptAORule<C extends AbstractCryptAO> extends AbstractTransformationRule<C> {
 
 	protected ICryptor cryptor;
 	protected List<SDFAttribute> restrictionList;
 	protected List<SDFAttribute> inputSchema;
+	protected Integer punctuationDelay;
 
 	@Override
 	public int getPriority() {
 		return 0;
 	}
 
-	/**
-	 * Es muss immer noch die Erzeugung des PO und der default Execute
-	 * aufegrufen werden!
-	 */
 	@Override
 	public void execute(C cryptAO, TransformationConfiguration transformConfig) throws RuleException {
 		cryptor = new Cryptor(cryptAO.getAlgorithm());
@@ -48,12 +53,11 @@ public abstract class TAbstractCryptAORule<C extends AbstractCryptAO> extends Ab
 		}
 		this.inputSchema = cryptAO.getInputSchema().getAttributes();
 		if (cryptAO.getAttributes() != null) {
-			// TODO was ist wenn man den parameter nicht nutzt --> null (nichts), nichts (nichts)
 			this.restrictionList = cryptAO.getAttributes();
 		} else {
 			this.restrictionList = new ArrayList<>();
 		}
-//		this.restrictionList = cryptAO.determineRestrictList();
+		this.punctuationDelay = cryptAO.getPunctuationDelay();
 	}
 
 	@Override

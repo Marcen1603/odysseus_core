@@ -17,8 +17,10 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 
-@SuppressWarnings({"rawtypes"})
+@SuppressWarnings({ "rawtypes" })
 public interface IHasPredicate {
-	
+
 	IPredicate getPredicate();
+
+	void setPredicate(IPredicate<?> predicate);
 }

@@ -25,8 +25,8 @@ import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IVariable;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepVariable;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -78,7 +78,7 @@ public class SDFAttributeHelper {
 		IPredicate<?> predicate = joinOperator.getPredicate();
 		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
-			IExpression<?> expression = relPredicate
+			IMepExpression<?> expression = relPredicate
 					.getMEPExpression();
 			IAttributeResolver resolver = relPredicate
 					.getAttributeResolver();
@@ -127,7 +127,7 @@ public class SDFAttributeHelper {
 		IPredicate<?> predicate = joinOperator.getPredicate();
 		if (predicate instanceof IRelationalExpression) {
 			RelationalExpression<?> relPredicate = (RelationalExpression<?>) predicate;
-			IExpression<?> expression = relPredicate
+			IMepExpression<?> expression = relPredicate
 					.getMEPExpression();
 			IAttributeResolver resolver = relPredicate
 					.getAttributeResolver();
@@ -163,7 +163,7 @@ public class SDFAttributeHelper {
 	 */
 	private Map<Integer, List<SDFAttribute>> getSDFAttributesFromEqualPredicates(
 			Map<Integer, List<SDFAttribute>> attributes,
-			IExpression<?> expression, IAttributeResolver resolver,
+			IMepExpression<?> expression, IAttributeResolver resolver,
 			JoinAO joinOperator) {
 		String symbol = expression.toFunction().getSymbol();
 
@@ -171,13 +171,13 @@ public class SDFAttributeHelper {
 		if (expression.isFunction() && (symbol.equalsIgnoreCase("&&"))) {
 
 			IBinaryOperator<?> binaryOperator = (IBinaryOperator<?>) expression;
-			IExpression<?> argument1 = binaryOperator.getArgument(0);
+			IMepExpression<?> argument1 = binaryOperator.getArgument(0);
 			if (argument1.isFunction()) {
 				// recursive call for left part of AND
 				getSDFAttributesFromEqualPredicates(attributes, argument1,
 						resolver, joinOperator);
 			}
-			IExpression<?> argument2 = binaryOperator.getArgument(1);
+			IMepExpression<?> argument2 = binaryOperator.getArgument(1);
 			if (argument2.isFunction()) {
 				// recursive call for right part of AND
 				getSDFAttributesFromEqualPredicates(attributes, argument2,
@@ -186,11 +186,11 @@ public class SDFAttributeHelper {
 		} else if ((expression.isFunction()) && (symbol.equalsIgnoreCase("="))) {
 			// if we have an EQUALS function
 			final IBinaryOperator<?> eq = (IBinaryOperator<?>) expression;
-			final IExpression<?> arg1 = eq.getArgument(0);
-			final IExpression<?> arg2 = eq.getArgument(1);
+			final IMepExpression<?> arg1 = eq.getArgument(0);
+			final IMepExpression<?> arg2 = eq.getArgument(1);
 			if ((arg1.isVariable()) && (arg2.isVariable())) {
 				// Resolve first attribute and get input port
-				SDFAttribute attr1 = resolver.getAttribute(((IVariable) arg1)
+				SDFAttribute attr1 = resolver.getAttribute(((IMepVariable) arg1)
 						.getIdentifier());
 
 				int attribute1port = -1;
@@ -203,7 +203,7 @@ public class SDFAttributeHelper {
 				}
 
 				// Resolve second attribute and get input port
-				SDFAttribute attr2 = resolver.getAttribute(((IVariable) arg2)
+				SDFAttribute attr2 = resolver.getAttribute(((IMepVariable) arg2)
 						.getIdentifier());
 
 				int attribute2port = -1;
@@ -246,7 +246,7 @@ public class SDFAttributeHelper {
 	 * @return true if the given expression contains stateful expressions
 	 */
 	public static boolean expressionContainsStatefulFunction(
-			IExpression<?> mepExpression) {
+			IMepExpression<?> mepExpression) {
 		if (mepExpression.isFunction()) {
 			if (mepExpression instanceof IStatefulFunction) {
 				return true;

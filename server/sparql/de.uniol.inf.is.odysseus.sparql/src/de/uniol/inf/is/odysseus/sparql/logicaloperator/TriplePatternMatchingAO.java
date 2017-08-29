@@ -309,4 +309,10 @@ public class TriplePatternMatchingAO extends AbstractLogicalOperator implements 
 		return getOutputSchema();
 	}
 
+	@Override
+	public void setPredicate(IPredicate<?> predicate) {
+		// TODO
+		
+	}
+
 }

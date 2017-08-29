@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
@@ -170,7 +170,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		if (predicate instanceof RelationalPredicate) {
 			SDFExpression expr = ((RelationalPredicate) predicate).expression;
 			AndOperator and = new AndOperator();
-			and.setArguments(new IExpression<?>[] {
+			and.setArguments(new IMepExpression<?>[] {
 					expression.getMEPExpression(), expr.getMEPExpression() });
             IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
 
@@ -189,7 +189,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 		if (predicate instanceof RelationalPredicate) {
 			SDFExpression expr = ((RelationalPredicate) predicate).expression;
 			OrOperator or = new OrOperator();
-			or.setArguments(new IExpression<?>[] {
+			or.setArguments(new IMepExpression<?>[] {
 					expression.getMEPExpression(), expr.getMEPExpression() });
             IAttributeResolver resolver = new DirectAttributeResolver(expression.getAttributeResolver().getSchema(), expr.getAttributeResolver().getSchema());
 			// We need to reparse the expression because of multiple instances
@@ -207,7 +207,7 @@ public class RelationalPredicate extends AbstractRelationalPredicate<Tuple<?>> {
 	@Override
 	public IPredicate<Tuple<?>> not() {
 		NotOperator not = new NotOperator();
-		not.setArguments(new IExpression<?>[] { expression.getMEPExpression() });
+		not.setArguments(new IMepExpression<?>[] { expression.getMEPExpression() });
 		RelationalPredicate notPredicate = new RelationalPredicate(
 				new SDFExpression(not.toString(), expression.getAttributeResolver(), MEP.getInstance()));
 		return notPredicate;

@@ -1,4 +1,4 @@
-/********************************************************************************** 
+/**********************************************************************************
   * Copyright 2011 The Odysseus Team
   *
   * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,16 +15,19 @@
   */
 package de.uniol.inf.is.odysseus.parser.pql.priority;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IPredicateBuilder;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AbstractExpressionBuilder;
 
-public class PriorityPredicateBuilder implements IPredicateBuilder {
+public class PriorityPredicateBuilder<T extends IStreamObject<M>, M extends IMetaAttribute> extends AbstractExpressionBuilder<T,M> {
 
 	@Override
-	public IPredicate<?> createPredicate(IAttributeResolver resolver,
+	public IPredicate<T> createPredicate(IAttributeResolver resolver,
 			String predicate) {
 		return new PriorityPredicate();
 	}
+
 
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniol.inf.is.odysseus.incubation.crypt.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
@@ -9,6 +6,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Paramete
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 /**
+ * This logical operator provides the function for cryptographic algorithms.
+ * 
  * @author MarkMilster
  *
  */
@@ -21,21 +20,38 @@ public class SimpleCryptAO extends AbstractCryptAO {
 	private String key;
 
 	/**
+	 * Returns the key in a String representation.
+	 * 
 	 * @return the key
 	 */
 	public String getKey() {
 		return key;
 	}
-	
+
+	/**
+	 * Default constructor
+	 */
 	public SimpleCryptAO() {
 		super();
 	}
 
+	/**
+	 * Copy constructor
+	 * 
+	 * @param cryptAO
+	 *            The SimpleCryptAO to copy
+	 */
 	public SimpleCryptAO(SimpleCryptAO cryptAO) {
 		super(cryptAO);
 		this.key = cryptAO.key;
 	}
 
+	/**
+	 * Sets the parameter Key
+	 * 
+	 * @param key
+	 *            The key to use in the cryptographic algorithm
+	 */
 	@Parameter(type = StringParameter.class, name = "key", optional = true)
 	public void setKey(String key) {
 		this.key = key;

@@ -15,8 +15,8 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.opcua.func;
 
-import de.uniol.inf.is.odysseus.core.mep.IExpression;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 import de.uniol.inf.is.odysseus.opcua.common.core.OPCValue;
@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.opcua.common.core.SDFOPCUADatatype;
  * @param <T>
  *            the generic type
  */
-public class ValueFunction<T> extends AbstractFunction<T> implements IFunction<T> {
+public class ValueFunction<T> extends AbstractFunction<T> implements IMepFunction<T> {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -354603068556899719L;
@@ -55,7 +55,7 @@ public class ValueFunction<T> extends AbstractFunction<T> implements IFunction<T
 	}
 
 	@Override
-	public SDFDatatype determineType(IExpression<?>[] args) {
+	public SDFDatatype determineType(IMepExpression<?>[] args) {
 		if (args.length == 1)
 			return args[0].getReturnType().getSubType();
 		return null;

@@ -61,7 +61,7 @@ import cc.kuka.odysseus.image.function.image.ToImageMatrixFunction;
 import cc.kuka.odysseus.image.function.image.ToMatrixFunction;
 import cc.kuka.odysseus.image.function.image.XYZToRGBFunction;
 import cc.kuka.odysseus.image.function.image.YxyToRGBFunction;
-import de.uniol.inf.is.odysseus.core.mep.IFunction;
+import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
@@ -80,9 +80,9 @@ public class ImageFunctionProvider implements IFunctionProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<IFunction<?>> getFunctions() {
+    public List<IMepFunction<?>> getFunctions() {
 
-        final List<IFunction<?>> functions = new ArrayList<>();
+        final List<IMepFunction<?>> functions = new ArrayList<>();
         functions.add(new RotateImageFunction());
         functions.add(new SubImageFunction());
         functions.add(new ResizeImageFunction());
