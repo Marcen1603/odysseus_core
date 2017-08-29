@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Securitypunctuation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.securitypunctuation
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.securitypunctuation.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.logicaloperator,
@@ -30,8 +29,7 @@ Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.aggregation
-Export-Package: de.uniol.inf.is.odysseus.securitypunctuation;uses:="org.osgi.framework",
- de.uniol.inf.is.odysseus.securitypunctuation.datatype;
+Export-Package: de.uniol.inf.is.odysseus.securitypunctuation.datatype;
   uses:="de.uniol.inf.is.odysseus.core.physicaloperator,
    de.uniol.inf.is.odysseus.core.sdf.schema,
    de.uniol.inf.is.odysseus.core.metadata,
