@@ -89,6 +89,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.sink.SocketSinkPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -142,9 +143,9 @@ public class WebserviceServer {
 
 	static final private Logger logger = LoggerFactory.getLogger(WebserviceServer.class);
 
-	private static final int SINK_MIN_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.minport",
+	private static final int SINK_MIN_PORT = OdysseusConfiguration.instance.getInt("webservice.queryconnect.sink.minport",
 			10000);
-	private static final int SINK_MAX_PORT = OdysseusConfiguration.getInt("webservice.queryconnect.sink.maxport",
+	private static final int SINK_MAX_PORT = OdysseusConfiguration.instance.getInt("webservice.queryconnect.sink.maxport",
 			20000);;
 
 	/**
@@ -167,8 +168,8 @@ public class WebserviceServer {
 	@WebResult(name = "securitytoken")
 	public StringResponse login(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password, @WebParam(name = "tenantname") String tenantname) {
-		ITenant tenant = UserManagementProvider.getTenant(tenantname);
-		ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ITenant tenant = UserManagementProvider.instance.getTenant(tenantname);
+		ISession user = SessionManagement.instance.login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -181,8 +182,8 @@ public class WebserviceServer {
 	@WebResult(name = "securitytoken")
 	public StringResponse login2(@WebParam(name = "username") String username,
 			@WebParam(name = "password") String password) {
-		ITenant tenant = UserManagementProvider.getDefaultTenant();
-		ISession user = UserManagementProvider.getSessionmanagement().login(username, password.getBytes(), tenant);
+		ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
+		ISession user = SessionManagement.instance.login(username, password.getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			StringResponse response = new StringResponse(token, true);
@@ -193,9 +194,9 @@ public class WebserviceServer {
 	}
 
 	public Response logout(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
-			UserManagementProvider.getSessionmanagement().logout(session);
+			SessionManagement.instance.logout(session);
 			for (Map<Integer, SocketSinkPO> entry : socketSinkMap.values()) {
 				for (SocketSinkPO po : entry.values()) {
 					po.removeAllowedSessionId(securityToken);
@@ -207,7 +208,7 @@ public class WebserviceServer {
 	}
 
 	public Response isValidSession(@WebParam(name = "securitytoken") String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
 			return new Response(getExecutor().isValid(session));
 		}
@@ -267,20 +268,20 @@ public class WebserviceServer {
 	}
 
 	public QueryState getQueryState(int queryID, String securityToken) {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		return ExecutorServiceBinding.getExecutor().getQueryState(queryID, session);
 	}
 
 	public ArrayList<QueryState> getQueryStates(ArrayList<Integer> queryIDs, List<String> securityTokens) {
 		List<ISession> sessions = new ArrayList<>();
 		for (String securityToken:securityTokens){
-			sessions.add(UserManagementProvider.getSessionmanagement().login(securityToken));
+			sessions.add(SessionManagement.instance.login(securityToken));
 		}
 		return new ArrayList<>(ExecutorServiceBinding.getExecutor().getQueryStates(queryIDs, sessions));
 	}
 
 	protected ISession loginWithSecurityToken(String securityToken) throws InvalidUserDataException {
-		ISession session = UserManagementProvider.getSessionmanagement().login(securityToken);
+		ISession session = SessionManagement.instance.login(securityToken);
 		if (session != null) {
 			return session;
 		}
@@ -594,8 +595,8 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues) throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true,
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, true,
 				sslClientAuthentication, true);
 	}
 
@@ -604,8 +605,8 @@ public class WebserviceServer {
 			@WebParam(name = "nullValues") boolean nullValues) throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues);
 	}
 
 	public ConnectionInformationResponse getConnectionInformationWithMetadata(
@@ -614,8 +615,8 @@ public class WebserviceServer {
 					throws InvalidUserDataException {
 
 		return getConnectionInformationWithPorts(securityToken, queryId, 0,
-				Integer.valueOf(OdysseusConfiguration.getInt("minSinkPort", SINK_MIN_PORT)),
-				Integer.valueOf(OdysseusConfiguration.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, false, false,
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("minSinkPort", SINK_MIN_PORT)),
+				Integer.valueOf(OdysseusConfiguration.instance.getInt("maxSinkPort", SINK_MAX_PORT)), nullValues, false, false,
 				withMetadata);
 	}
 
@@ -960,7 +961,7 @@ public class WebserviceServer {
 			@WebParam(name = "datamodel") @SuppressWarnings("rawtypes") Class<? extends IStreamObject> datamodel,
 			@WebParam(name = "securitytoken") String securityToken) throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<String> names = getExecutor().getRegisteredWrapperNames(user);
+		Set<String> names = getExecutor().getRegisteredAggregateFunctions(datamodel.getName(), user);
 		return new StringListResponse(names, true);
 	}
 

@@ -27,12 +27,12 @@ abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G extends I
 		var w = wrapper		
 		var result =""
 		var nodeText = helper.getNodeText(typeRef)		
-		if (typeRef == null) {
+		if (typeRef === null) {
 			return '''void'''
 		} 
 		if (typeRef instanceof IQLArrayTypeRef) {
 			w = true
-			if (nodeText != null) {
+			if (nodeText !== null) {
 				nodeText = nodeText.replace("[","").replace("]","").trim;				
 			}
 			var arrayTypeRef = typeRef as IQLArrayTypeRef

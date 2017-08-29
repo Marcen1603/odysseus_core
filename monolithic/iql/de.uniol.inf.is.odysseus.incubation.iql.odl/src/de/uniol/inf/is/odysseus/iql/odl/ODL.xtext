@@ -36,6 +36,7 @@ ODLMethod returns basiciql::IQLMethod:
 	body=IQLStatementBlock
 ;
 
+@Override 
 IQLJavaText:
 	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |

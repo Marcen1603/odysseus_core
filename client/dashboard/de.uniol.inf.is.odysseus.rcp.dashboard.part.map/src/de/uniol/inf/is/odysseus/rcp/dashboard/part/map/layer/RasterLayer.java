@@ -191,7 +191,7 @@ public class RasterLayer extends AbstractLayer<RasterLayerConfiguration> impleme
 		return configuration;
 	}
 
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	@Override
 	public void setConfiguration(LayerConfiguration configuration) {
 		if (configuration instanceof VectorLayerConfiguration) {

@@ -64,25 +64,25 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 		«text»
 		«ENDFOR»
 		@SuppressWarnings("all")
-		public class «name»«IF superClass != null» extends «typeCompiler.compile(superClass, context, true)»«ENDIF»«IF interfaces.size > 0» implements «interfaces.map[el | typeCompiler.compile(el, context, true)].join(",")»«ENDIF» {
+		public class «name»«IF superClass !== null» extends «typeCompiler.compile(superClass, context, true)»«ENDIF»«IF interfaces.size > 0» implements «interfaces.map[el | typeCompiler.compile(el, context, true)].join(",")»«ENDIF» {
 			«FOR m : c.members»			
 			«compile(m, context)»
 			«ENDFOR»
 			
 			«FOR e : newExpressions»
-				«IF e.argsMap != null && e.argsMap.elements.size > 0»
+				«IF e.argsMap !== null && e.argsMap.elements.size > 0»
 					«createGetterMethod(e.ref, e.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 			
 			«FOR a : attributes»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(a.type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 			
 			«FOR a : varStmts»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«var decl = a.^var as IQLVariableDeclaration»
 					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
@@ -142,7 +142,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	
 	def String compile(IQLAttribute a, G context) {
 		'''
-		public «typeCompiler.compile(a.type, context, false)» «a.simpleName»«IF a.init != null» = «stmtCompiler.compile(a.init, a.type, context)»«ENDIF»;
+		public «typeCompiler.compile(a.type, context, false)» «a.simpleName»«IF a.init !== null» = «stmtCompiler.compile(a.init, a.type, context)»«ENDIF»;
 		
 		'''
 	}
@@ -150,14 +150,14 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	def String compile(IQLMethod m, G context) {
 		var className = helper.getClassName(m);
 		var returnT = "";
-		if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
+		if (m.returnType !== null && !m.simpleName.equalsIgnoreCase(className)) {
 			returnT = typeCompiler.compile(m.returnType, context, false)
-		} else if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+		} else if (m.returnType === null && !m.simpleName.equalsIgnoreCase(className)) {
 			returnT = "void"
 		}
 		'''
 		«IF m.isOverride»@Override«ENDIF»
-		public «returnT» «m.simpleName»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
+		public «returnT» «m.simpleName»(«IF m.parameters !== null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
 		«stmtCompiler.compile(m.body, context)»
 		
 		'''	
@@ -193,7 +193,7 @@ abstract class AbstractIQLCompiler<H extends IIQLCompilerHelper, G extends IIQLG
 	
 	def String compile(IQLArgumentsMapKeyValue e, JvmTypeReference typeRef, G context) {	
 		var type = helper.getPropertyType(e.key, typeRef);
-		if (type != null) {
+		if (type !== null) {
 			'''«typeCompiler.compile(type, context, false)» «e.key.simpleName»'''			
 		} else {
 			''''''

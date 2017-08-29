@@ -89,6 +89,8 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	
 	protected OptimizationConfiguration configuration = new OptimizationConfiguration();
 
+	private OdysseusConfiguration odysseusConfiguration;
+
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -211,7 +213,7 @@ public abstract class AbstractOptimizer implements IOptimizer {
 
 
 	protected IElementCloningUpdater getElementCloningUpdater() {
-		String updater = OdysseusConfiguration.get(OdysseusConfiguration.CLONING_UPDATER).toLowerCase();
+		String updater = odysseusConfiguration.get(OdysseusConfiguration.CLONING_UPDATER).toLowerCase();
 		
 		IElementCloningUpdater ret = cloningUpdater.get(updater);
 		
@@ -369,6 +371,10 @@ public abstract class AbstractOptimizer implements IOptimizer {
 	@Override
 	public OptimizationConfiguration getConfiguration() {
 		return this.configuration;
+	}
+	
+	public void setOdysseusConfiguration(OdysseusConfiguration oConfiguration) {
+		this.odysseusConfiguration = oConfiguration;
 	}
 	
 }

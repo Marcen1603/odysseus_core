@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
 import org.osgi.service.component.ComponentContext;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.AbstractSchedulerFactory;
 import de.uniol.inf.is.odysseus.core.server.scheduler.IScheduler;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
@@ -30,6 +31,8 @@ import de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler.strategy.RoundRo
  */
 public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 	
+	private OdysseusConfiguration config;
+
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -54,7 +57,10 @@ public class SingleThreadSchedulerFactoryRR extends AbstractSchedulerFactory {
 		for(int i=0;i<scheduling.length;i++){
 			scheduling[i] = new RoundRobinPlanScheduling();
 		}
-		return new SimpleThreadSchedulerEachSourceThreaded(schedulingStrategy, scheduling);
+		return new SimpleThreadSchedulerEachSourceThreaded(schedulingStrategy, scheduling,config);
 	}
-
+	
+    public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
+	}
 }

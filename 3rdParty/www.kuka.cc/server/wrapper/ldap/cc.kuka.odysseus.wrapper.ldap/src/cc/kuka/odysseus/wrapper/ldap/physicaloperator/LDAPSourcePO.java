@@ -146,7 +146,7 @@ public class LDAPSourcePO extends AbstractSource<Tuple<?>> implements ActionList
             this.answer = dirContext.search(base, filter, ctls);
         }
 
-        @SuppressWarnings("synthetic-access")
+       // @SuppressWarnings("synthetic-access")
         @Override
         public void run() {
             long waitTime = 10l;

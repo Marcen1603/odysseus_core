@@ -1,14 +1,18 @@
 package de.uniol.inf.is.odysseus.report;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.google.common.base.Optional;
 
 public interface IReport {
 
-	public Optional<Throwable> getException();
+	Optional<Throwable> getException();
 	
-	public Collection<String> getTitles();
-	public Optional<String> getReportText( String title );
+	Collection<String> getTitles();
+	Optional<String> getReportText( String title );
+	
+	Map<String, String> getReportMap();
+	
 	
 }

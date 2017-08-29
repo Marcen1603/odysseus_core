@@ -88,7 +88,7 @@ public class ArgsTest extends TestCase {
 		assertEquals(10.12f, args.get("-value"));
 	}
 
-	@SuppressWarnings("cast")
+	//@SuppressWarnings("cast")
 	@Test
 	public void testChar() throws ArgsException {
 		Args args = new Args();

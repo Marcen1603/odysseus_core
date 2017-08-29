@@ -6,6 +6,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class CreateTenantCommand extends AbstractExecutorCommand {
@@ -22,7 +23,7 @@ public class CreateTenantCommand extends AbstractExecutorCommand {
 	@Override
 	public void execute(IDataDictionaryWritable dd,
 			IUserManagementWritable um, IServerExecutor executor) {
-		UserManagementProvider.createNewTenant(tenantname, getCaller());
+		OSGI.get(UserManagementProvider.class).createNewTenant(tenantname, getCaller());
 	}
 
 }

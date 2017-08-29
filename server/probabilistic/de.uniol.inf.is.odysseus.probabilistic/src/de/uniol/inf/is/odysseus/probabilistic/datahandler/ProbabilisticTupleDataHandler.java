@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.probabilistic.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -91,8 +92,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 	}
 
 	/**
-	 * Creates a new {@link ProbabilisticTuple} data handler with the given
-	 * schema.
+	 * Creates a new {@link ProbabilisticTuple} data handler with the given schema.
 	 * 
 	 * @param schema
 	 *            The schema
@@ -157,6 +157,15 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		}
 	}
 
+	@Override
+	public void setCharset(Charset charset) {
+		super.setCharset(charset);
+		if (dataHandlers != null) {
+			for (IDataHandler<?> handler : dataHandlers) {
+				handler.setCharset(charset);
+			}
+		}
+	}
 
 	@Override
 	public ProbabilisticTuple<IMetaAttribute> readData(InputStream inputStream, boolean handleMetaData)
@@ -166,24 +175,23 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#readData
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#readData
 	 * (java.util.List)
 	 */
 	@Override
 	public final ProbabilisticTuple<IMetaAttribute> readData(final Iterator<String> iterator, boolean handleMetaData) {
-				
+
 		ProbabilisticTuple<IMetaAttribute> r = null;
 		final Object[] attributes = new Object[this.dataHandlers.length];
 		for (int i = 0; i < attributes.length; i++) {
-			String value = iterator.hasNext()?iterator.next():null;
+			String value = iterator.hasNext() ? iterator.next() : null;
 			try {
 				attributes[i] = this.dataHandlers[i].readData(value);
 			} catch (final Exception e) {
-				ProbabilisticTupleDataHandler.LOG.warn("Error Parsing " + value + " with "
-						+ this.dataHandlers[i].getClass() + " " + e.getMessage());
-				System.err.println("Error Parsing " + value + " with " + this.dataHandlers[i].getClass() + " "
-						+ e.getMessage());
+				ProbabilisticTupleDataHandler.LOG.warn(
+						"Error Parsing " + value + " with " + this.dataHandlers[i].getClass() + " " + e.getMessage());
+				System.err.println(
+						"Error Parsing " + value + " with " + this.dataHandlers[i].getClass() + " " + e.getMessage());
 				throw e;
 			}
 		}
@@ -191,7 +199,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		int distributions = 0;
 		if (this.maxDistributions > 0) {
 			for (int i = 0; iterator.hasNext(); i++) {
-				String value = iterator.hasNext()?iterator.next():null;
+				String value = iterator.hasNext() ? iterator.next() : null;
 				try {
 					distribution[i] = this.probabilisticDistributionHandler.readData(value);
 				} catch (final Exception e) {
@@ -224,8 +232,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
 	 * nio.ByteBuffer)
 	 */
 	@Override
@@ -292,10 +299,10 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 
 		synchronized (output) {
 			for (int i = 0; i < this.dataHandlers.length; i++) {
-				this.dataHandlers[i].writeData(output, r.getAttribute(i),options);
+				this.dataHandlers[i].writeData(output, r.getAttribute(i), options);
 			}
 			for (int i = 0; i < r.getDistributions().length; i++) {
-				this.probabilisticDistributionHandler.writeData(output, r.getDistribution(i),options);
+				this.probabilisticDistributionHandler.writeData(output, r.getDistribution(i), options);
 			}
 		}
 	}
@@ -319,8 +326,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java
 	 * .nio.ByteBuffer, java.lang.Object)
 	 */
 	@Override
@@ -355,8 +361,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 
 	/*
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang
+	 * @see de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang
 	 * .Object)
 	 */
 	@Override

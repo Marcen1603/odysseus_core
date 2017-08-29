@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
 public class SimpleThreadSchedulerMSLimitThreads extends
@@ -10,8 +11,9 @@ public class SimpleThreadSchedulerMSLimitThreads extends
 
 	public SimpleThreadSchedulerMSLimitThreads(
 			ISchedulingFactory schedulingStrategy,
-			IPhysicalQueryScheduling[] scheduling, long numberOfThreads) {
-		super(schedulingStrategy, scheduling);
+			IPhysicalQueryScheduling[] scheduling, long numberOfThreads,
+			OdysseusConfiguration config) {
+		super(schedulingStrategy, scheduling, config);
 		this.maxNumberOfThreads = numberOfThreads;
 	}
 

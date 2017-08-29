@@ -81,7 +81,7 @@ public final class DashboardPartController implements IDashboardPartListener {
 		}
 	}
 
-	@SuppressWarnings({ "cast", "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static ITransferArea<IStreamObject<?>, IStreamObject<?>> createTransferArea() {
 		return (ITransferArea<IStreamObject<?>, IStreamObject<?>>)new TITransferArea();
 	}

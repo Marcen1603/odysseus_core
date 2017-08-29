@@ -1,15 +1,9 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
-import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
@@ -44,7 +38,6 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	private long applicationTimeDelay;
 	private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
 	private boolean sendAlwaysHeartbeat = false;
-	private boolean allowOutOfOrder = false;
 	private boolean startAtCurrentTime = false;
 	private boolean startTimerAfterFirstElement = false;
 	private boolean restartTimerForEveryInput = false;
@@ -59,7 +52,6 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		this.timeUnit = other.timeUnit;
 		this.sendAlwaysHeartbeat = other.sendAlwaysHeartbeat;
 		this.startAtCurrentTime = other.startAtCurrentTime;
-		this.allowOutOfOrder = other.allowOutOfOrder;
 		this.startTimerAfterFirstElement = other.startTimerAfterFirstElement;
 	}
 
@@ -99,9 +91,8 @@ public class HeartbeatAO extends UnaryLogicalOp {
 		this.sendAlwaysHeartbeat = sendAlwaysHeartbeat;
 	}
 
-	@Parameter(type = BooleanParameter.class, name = "AllowOutOfOrderCreation", aliasname="AllowOutOfOrder", optional = true, doc="Default: Suppress elements after a heartbeat with a given timestamp is send. Set this flag to true, to allow also elements to send, that are older than the last send heartbeat.")
+	@Parameter(type = BooleanParameter.class, name = "AllowOutOfOrderCreation", aliasname="AllowOutOfOrder", optional = true, doc="Deprecated. Value will be ignored!", deprecated=true)
 	public void setAllowOutOfOrder(boolean allowOutOfOrder) {
-		this.allowOutOfOrder = allowOutOfOrder;
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "startAtCurrentTime", optional = true)
@@ -121,18 +112,12 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	public void setStartTimerAfterFirstElement(boolean startTimerAfterFirstElement) {
 		this.startTimerAfterFirstElement = startTimerAfterFirstElement;
 	}
-
-	
 	
 	/**
 	 * @return the startTimerAfterFirstElement
 	 */
 	public boolean isStartTimerAfterFirstElement() {
 		return startTimerAfterFirstElement;
-	}
-
-	public boolean isAllowOutOfOrder() {
-		return allowOutOfOrder;
 	}
 	
 	public boolean isRestartTimerForEveryInput() {
@@ -142,16 +127,6 @@ public class HeartbeatAO extends UnaryLogicalOp {
 	@Parameter(type = BooleanParameter.class, name = "restartTimerForEveryInput", optional = true)
 	public void setRestartTimerForEveryInput(boolean restartTimerForEveryInput) {
 		this.restartTimerForEveryInput = restartTimerForEveryInput;
-	}
-
-	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos) {
-		if (getInputSchema() != null) {
-			return super.getOutputSchemaIntern(pos);
-		} else {
-			return SDFSchemaFactory.createNewTupleSchema("_created", new LinkedList<SDFAttribute>());
-		}
-
 	}
 
 	@Override

@@ -41,15 +41,14 @@ public class MovingObjectDataStructureProvider {
 	 *            attribute is.
 	 * @return A spatial data structure
 	 */
-	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition,
-			int idPosition, double distanePerMovingObject) {
+	public IMovingObjectDataStructure getOrCreateDataStructure(String name, String type, int geometryPosition, double distanePerMovingObject) {
 		if (!dataStructureExists(name)) {
 			Class<?> dataStructureClass = MovingObjectDataStructureRegistry.getDataStructureClass(type);
 			IMovingObjectDataStructure dataStrucure = null;
 			try {
 				dataStrucure = (IMovingObjectDataStructure) dataStructureClass
-						.getDeclaredConstructor(String.class, int.class, int.class, double.class)
-						.newInstance(name, geometryPosition, idPosition, distanePerMovingObject);
+						.getDeclaredConstructor(String.class, int.class, double.class)
+						.newInstance(name, geometryPosition, distanePerMovingObject);
 				addDataStructure(dataStrucure);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {

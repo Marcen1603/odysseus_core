@@ -240,7 +240,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Backgroundcolor
                 toolkit.createLabel(group, "Background");
                 final RGB backgroundColor = this.getDashboardPart().getBackgroundColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
@@ -266,7 +266,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
             {// Alpha
                 toolkit.createLabel(group, "Alpha");
                 final int alpha = this.getDashboardPart().getBackgroundAlpha();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Slider alphaSlide = new Slider(group, SWT.NONE);
                 alphaSlide.setMinimum(0);
                 alphaSlide.setMaximum(255);
@@ -285,7 +285,7 @@ public class CompassConfigurer extends AbstractDashboardPartConfigurer<CompassDa
                 toolkit.createLabel(group, "Foreground");
 
                 final RGB arrowColor = this.getDashboardPart().getColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text arrowColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B));
                 arrowColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) arrowColor.R, (int) arrowColor.G, (int) arrowColor.B)));
                 arrowColorText.setEditable(false);

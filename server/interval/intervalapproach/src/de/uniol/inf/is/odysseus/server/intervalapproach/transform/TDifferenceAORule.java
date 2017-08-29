@@ -15,23 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.server.intervalapproach.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
-import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.interval.TITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
-import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
-import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
 public class TDifferenceAORule extends AbstractIntervalTransformationRule<DifferenceAO> {
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(DifferenceAO differenceAO, TransformationConfiguration transformConfig) throws RuleException {
 		
