@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.generator.securitypunctuation;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
