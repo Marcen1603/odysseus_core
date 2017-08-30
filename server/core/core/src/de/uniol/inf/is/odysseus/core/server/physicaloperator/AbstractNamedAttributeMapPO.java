@@ -99,11 +99,11 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 								// Could be path
 								if (values[j] == null) {
 									List<Object> pathResult = object.path(currentVar);
-									if (pathResult.size() == 1) {
-										values[j] = pathResult.get(0);
-									} else {
+//									if (pathResult.size() == 1) {
+//										values[j] = pathResult.get(0);
+//									} else {
 										values[j] = pathResult;
-									}
+//									}
 
 								}
 							}
