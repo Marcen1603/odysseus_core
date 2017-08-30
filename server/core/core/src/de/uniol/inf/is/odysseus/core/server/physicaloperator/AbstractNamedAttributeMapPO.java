@@ -45,11 +45,13 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  *
  * @param <T>
  */
-abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>> extends AbstractPipe<T, T> {
+abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>>
+		extends AbstractPipe<T, T> {
 
 	static private Logger logger = LoggerFactory.getLogger(AbstractNamedAttributeMapPO.class);
 
 	protected String[][] variables; // Expression.Index
+	private boolean[] pathExpression;
 	private List<NamedExpression> expressions;
 	private final SDFSchema inputSchema;
 	final private boolean allowNull;
@@ -75,38 +77,45 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 			synchronized (this.expressions) {
 				for (int i = 0; i < this.expressions.size(); ++i) {
-					Object[] values = new Object[this.variables[i].length];
-					for (int j = 0; j < this.variables[i].length; ++j) {
-						if (this.variables[i][j].equals("$")) {
-							values[j] = object.clone();
-							((T)values[j]).setMetadata(null);
-						} else {
-							values[j] = object.getAttribute(this.variables[i][j]);
-							// Could be metadata value
-							if (values[j] == null) {
-								Pair<Integer, Integer> pos = getInputSchema()
-										.indexOfMetaAttribute(this.variables[i][j]);
-								if (pos != null) {
-									values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
-								}
-							}
-							// Could be path
-							if (values[j] == null) {
-								List<Object> pathResult = object.path(this.variables[i][j]);
-								if (pathResult.size() == 1) {
-									values[j] = pathResult.get(0);
-								} else {
-									values[j] = pathResult;
-								}
-							}
-						}
-					}
 					SDFExpression expr = this.expressions.get(i).expression;
 					String name = this.expressions.get(i).name;
 					try {
+						Object[] values = new Object[this.variables[i].length];
+						for (int j = 0; j < this.variables[i].length; ++j) {
+							String currentVar = this.variables[i][j];
 
-						expr.bindVariables(values);
-						Object val = expr.getValue();
+							if (currentVar.equals("$")) {
+								values[j] = object.clone();
+								((T) values[j]).setMetadata(null);
+							} else {
+								values[j] = object.getAttribute(currentVar);
+								// Could be metadata value
+								if (values[j] == null) {
+									Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(currentVar);
+									if (pos != null) {
+										values[j] = object.getMetadata().getValue(pos.getE1(), pos.getE2());
+									}
+								}
+								// Could be path
+								if (values[j] == null) {
+									List<Object> pathResult = object.path(currentVar);
+//									if (pathResult.size() == 1) {
+//										values[j] = pathResult.get(0);
+//									} else {
+										values[j] = pathResult;
+//									}
+
+								}
+							}
+						}
+
+						Object val = null;
+						if (pathExpression[i]) {
+							val = values;
+						} else {
+							expr.bindVariables(values);
+							val = expr.getValue();
+						}
 
 						outputVal.setAttribute(name, val);
 
@@ -136,35 +145,48 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	protected void initExpressions(List<NamedExpression> exprToInit) {
 		this.variables = new String[exprToInit.size()][];
+		this.pathExpression = new boolean[exprToInit.size()];
 		this.expressions = new ArrayList<>(exprToInit.size());
 		int i = 0;
 		for (NamedExpression expression : exprToInit) {
-			List<SDFAttribute> exprAttributes = expression.expression.getAllAttributes();
-			// Check, if there are some attributes from the meta schema and set datatype
-			List<SDFAttribute> neededAttributes = new ArrayList<>();
-			boolean changedSchema = false;
-			for (SDFAttribute a: exprAttributes){
-				Pair<Integer, Integer> pos = getInputSchema()
-						.indexOfMetaAttribute(a.getURI());
-				if (pos != null){
-					neededAttributes.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
-					changedSchema = true;
-				}else{
-					neededAttributes.add(a);
-				}
 
-			}
-			if (changedSchema){
-				SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(inputSchema, neededAttributes);
-				List<SDFSchema> schemaList = new ArrayList<>();
-				schemaList.add(newSchema);
-				expression.expression.setSchema(schemaList);
-			}
-			String[] newArray = new String[neededAttributes.size()];
-			this.variables[i++] = newArray;
-			int j = 0;
-			for (SDFAttribute curAttribute : neededAttributes) {
-				newArray[j++] = removePoint(curAttribute.toString());
+			// A little hack to allow path expressions in MAP, too
+			String expString = expression.expression.getExpressionString();
+			if (expString.startsWith("\"path")) {
+				this.pathExpression[i] = true;
+				String path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
+				String[] newArray = new String[1];
+				newArray[0] = path;
+				this.variables[i++] = newArray;
+			} else {
+				this.pathExpression[i] = false;
+				List<SDFAttribute> exprAttributes = expression.expression.getAllAttributes();
+				// Check, if there are some attributes from the meta schema and set datatype
+				List<SDFAttribute> neededAttributes = new ArrayList<>();
+				boolean changedSchema = false;
+				for (SDFAttribute a : exprAttributes) {
+					Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(a.getURI());
+					if (pos != null) {
+						neededAttributes
+								.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
+						changedSchema = true;
+					} else {
+						neededAttributes.add(a);
+					}
+
+				}
+				if (changedSchema) {
+					SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(inputSchema, neededAttributes);
+					List<SDFSchema> schemaList = new ArrayList<>();
+					schemaList.add(newSchema);
+					expression.expression.setSchema(schemaList);
+				}
+				String[] newArray = new String[neededAttributes.size()];
+				this.variables[i++] = newArray;
+				int j = 0;
+				for (SDFAttribute curAttribute : neededAttributes) {
+					newArray[j++] = removePoint(curAttribute.toString());
+				}
 			}
 			if (Strings.isNullOrEmpty(expression.name)) {
 				String newName = expression.expression.getExpressionString();
@@ -173,6 +195,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 			} else {
 				this.expressions.add(expression);
 			}
+
 		}
 	}
 
