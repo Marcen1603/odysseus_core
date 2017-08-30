@@ -16,6 +16,8 @@
 -->
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager.SingleSchedulerManager">
    <implementation class="de.uniol.inf.is.odysseus.scheduler.manager.singleschedulermanager.SingleSchedulerManager"/>
+   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
+   <reference bind="setConfig" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration" name="OdysseusConfiguration" policy="static"/>
    <reference bind="bindSchedulerFactory" cardinality="1..n" interface="de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory" name="ISchedulerFactory" policy="dynamic" unbind="unbindSchedulerFactory"/>
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager"/>

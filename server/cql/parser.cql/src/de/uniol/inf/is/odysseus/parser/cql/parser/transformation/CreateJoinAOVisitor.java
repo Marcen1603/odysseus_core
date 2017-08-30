@@ -136,6 +136,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return join;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object visit(ASTWhereClause node, Object data) throws QueryParseException {
 		AbstractLogicalOperator inputOp = (AbstractLogicalOperator) data;
@@ -176,6 +177,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return curInputAO;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean containsQuantification(IPredicate pred) {
 		if (pred instanceof QuantificationPredicate) {
 			return true;
@@ -189,6 +191,7 @@ public class CreateJoinAOVisitor extends AbstractDefaultVisitor {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	private AbstractLogicalOperator createQuantificationPlan(AbstractLogicalOperator curInputAO, IPredicate<Tuple<?>> pred) throws QueryParseException {
 		if (pred instanceof ComplexPredicate) {
 			AbstractLogicalOperator left = createQuantificationPlan(curInputAO, ((ComplexPredicate) pred).getLeft());

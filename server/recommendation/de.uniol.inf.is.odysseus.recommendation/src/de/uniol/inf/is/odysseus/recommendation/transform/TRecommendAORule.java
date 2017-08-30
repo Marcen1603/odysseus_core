@@ -46,6 +46,7 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(final RecommendAO operator,
 			final TransformationConfiguration config) throws RuleException {

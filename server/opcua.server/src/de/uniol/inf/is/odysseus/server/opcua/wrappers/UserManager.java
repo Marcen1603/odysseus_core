@@ -26,6 +26,7 @@ import com.xafero.turjumaan.server.java.api.NotCacheable;
 import com.xafero.turjumaan.server.java.api.ResponseFormat;
 
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagement;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
@@ -92,7 +93,7 @@ public class UserManager {
 	 * @return the manager
 	 */
 	protected IUserManagement getManager() {
-		return UserManagementProvider.getUsermanagement(true);
+		return UserManagementProvider.instance.getUsermanagement(true);
 	}
 
 	/**
@@ -101,6 +102,6 @@ public class UserManager {
 	 * @return the admin session
 	 */
 	protected ISession getAdminSession() {
-		return UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+		return SessionManagement.instance.loginSuperUser(null);
 	}
 }

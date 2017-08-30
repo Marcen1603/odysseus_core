@@ -44,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulerManagerEven
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -58,8 +58,6 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		IInfoProvider, IPlanModificationListener {
-
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	static Logger logger = LoggerFactory
 			.getLogger(SingleSchedulerManager.class);
@@ -88,6 +86,8 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 
 	private boolean shouldRun;
 
+	private SessionManagement sessionManagement;
+
 	/**
 	 * OSGi-Method: Is called when this object will be activated by OSGi (after
 	 * constructor and bind-methods). This method can be used to configure this
@@ -105,8 +105,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 		if (schedulers != null && strats != null) {
 
 			try {
-				File f = FileUtils.openOrCreateFile(OdysseusConfiguration
-						.get("schedulingConfigFile"));
+				File f = FileUtils.openOrCreateFile(config.get("schedulingConfigFile"));
 				FileInputStream in;
 				in = new FileInputStream(f);
 				props.load(in);
@@ -121,9 +120,7 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 							.hasNext() ? strats.iterator().next() : null);
 					FileOutputStream out;
 					try {
-						out = new FileOutputStream(
-								OdysseusConfiguration
-										.get("schedulingConfigFile"));
+						out = new FileOutputStream(config.get("schedulingConfigFile"));
 						props.store(out,
 								"--- Scheduling Property File edit only if you know what you are doing ---");
 						out.close();
@@ -158,9 +155,9 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 	public void setActiveScheduler(String schedulerToSet,
 			String schedulingStrategyToSet, IExecutionPlan executionPlan) {
 		List<IIterableSource<?>> leafSources = executionPlan != null ? executionPlan
-				.getLeafSources(superUser) : null;
+				.getLeafSources(superUser()) : null;
 		Collection<IPhysicalQuery> partialPlans = executionPlan != null ? executionPlan
-				.getQueries(superUser) : null;
+				.getQueries(superUser()) : null;
 		setActiveScheduler(schedulerToSet, schedulingStrategyToSet,
 				leafSources, partialPlans);
 	}
@@ -319,10 +316,10 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 			throws NoSchedulerLoadedException {
 		// Update Source/Query assignment
 		sourceUsage.clear();
-		for (IPhysicalQuery p : execPlan.getQueries(superUser)) {
+		for (IPhysicalQuery p : execPlan.getQueries(superUser())) {
 			increaseSourceUsage(p);
 		}
-		refreshScheduling(execPlan.getLeafSources(superUser), execPlan.getQueries(superUser));
+		refreshScheduling(execPlan.getLeafSources(superUser()), execPlan.getQueries(superUser()));
 	}
 
 	private void refreshScheduling(List<IIterableSource<?>> leafSources,
@@ -499,5 +496,12 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 					.planModificationEvent(eventArgs);
 		}
 	}
-
+	
+	
+	private ISession superUser() {
+		return sessionManagement.loginSuperUser(null);
+	}
+	public void setSessionManagement(SessionManagement sessionManagement) {
+		this.sessionManagement = sessionManagement;
+	}
 }

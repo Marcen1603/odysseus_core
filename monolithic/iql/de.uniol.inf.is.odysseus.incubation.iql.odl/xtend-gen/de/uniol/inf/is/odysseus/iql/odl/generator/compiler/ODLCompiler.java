@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.odl.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -471,7 +470,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
+            if (((e.getArgsMap() != null) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod = this.createGetterMethod(e.getRef(), e.getArgsMap(), context);
               _builder.append(_createGetterMethod, "\t");
@@ -485,7 +484,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLAttribute a : attributes) {
           {
-            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a.getInit() != null) && (a.getInit().getArgsMap() != null)) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod_1 = this.createGetterMethod(a.getType(), a.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod_1, "\t");
@@ -499,7 +498,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a_1.getInit() != null) && (a_1.getInit().getArgsMap() != null)) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -924,7 +923,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLNewExpression e : newExpressions) {
           {
-            if (((!Objects.equal(e.getArgsMap(), null)) && (e.getArgsMap().getElements().size() > 0))) {
+            if (((e.getArgsMap() != null) && (e.getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod = this.createGetterMethod(e.getRef(), e.getArgsMap(), context);
               _builder.append(_createGetterMethod, "\t");
@@ -938,7 +937,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLAttribute a : attributes) {
           {
-            if ((((!Objects.equal(a.getInit(), null)) && (!Objects.equal(a.getInit().getArgsMap(), null))) && (a.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a.getInit() != null) && (a.getInit().getArgsMap() != null)) && (a.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               CharSequence _createGetterMethod_1 = this.createGetterMethod(a.getType(), a.getInit().getArgsMap(), context);
               _builder.append(_createGetterMethod_1, "\t");
@@ -951,7 +950,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       {
         for(final IQLVariableStatement a_1 : varStmts) {
           {
-            if ((((!Objects.equal(a_1.getInit(), null)) && (!Objects.equal(a_1.getInit().getArgsMap(), null))) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
+            if ((((a_1.getInit() != null) && (a_1.getInit().getArgsMap() != null)) && (a_1.getInit().getArgsMap().getElements().size() > 0))) {
               _builder.append("\t");
               JvmIdentifiableElement _var = a_1.getVar();
               IQLVariableDeclaration decl = ((IQLVariableDeclaration) _var);
@@ -1003,8 +1002,8 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
     _builder.append(_simpleName);
     {
       IQLVariableInitialization _init = a.getInit();
-      boolean _notEquals = (!Objects.equal(_init, null));
-      if (_notEquals) {
+      boolean _tripleNotEquals = (_init != null);
+      if (_tripleNotEquals) {
         _builder.append(" = ");
         String _compile_1 = this.stmtCompiler.compile(a.getInit(), a.getType(), context);
         _builder.append(_compile_1);
@@ -1018,7 +1017,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
   
   public String compile(final ODLMethod m, final IODLGeneratorContext context) {
     String _xifexpression = null;
-    if ((m.isValidate() && (!Objects.equal(m.getSimpleName(), null)))) {
+    if ((m.isValidate() && (m.getSimpleName() != null))) {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("private boolean validate");
       String _simpleName = m.getSimpleName();
@@ -1034,7 +1033,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
       _xifexpression = _builder.toString();
     } else {
       String _xifexpression_1 = null;
-      if ((m.isValidate() && Objects.equal(m.getSimpleName(), null))) {
+      if ((m.isValidate() && (m.getSimpleName() == null))) {
         StringConcatenation _builder_1 = new StringConcatenation();
         _builder_1.append("protected boolean validate()");
         _builder_1.newLine();
@@ -1054,10 +1053,10 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
             String className = this.helper.getClassName(m);
             String returnT = "";
             IEventMethod eventMethod = EventMethodsFactory.getInstance().getEventMethod(context.isAo(), m.getSimpleName(), m.getParameters());
-            if (((!Objects.equal(m.getReturnType(), null)) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+            if (((m.getReturnType() != null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
               returnT = this.typeCompiler.compile(m.getReturnType(), context, false);
             } else {
-              if ((Objects.equal(m.getReturnType(), null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
+              if (((m.getReturnType() == null) && (!m.getSimpleName().equalsIgnoreCase(className)))) {
                 returnT = "void";
               }
             }
@@ -1077,8 +1076,8 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
             _builder_2.append("(");
             {
               EList<JvmFormalParameter> _parameters = m.getParameters();
-              boolean _notEquals = (!Objects.equal(_parameters, null));
-              if (_notEquals) {
+              boolean _tripleNotEquals = (_parameters != null);
+              if (_tripleNotEquals) {
                 final Function1<JvmFormalParameter, String> _function = (JvmFormalParameter p) -> {
                   return this.compile(p, context);
                 };
@@ -1179,7 +1178,7 @@ public class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGen
         _builder_4.append(varName);
         _builder_4.append(".get");
         _builder_4.append(pName);
-        _builder_4.append("() != null)");
+        _builder_4.append("() !== null)");
         _builder_4.newLineIfNotEmpty();
         _builder_4.append("\t");
         _builder_4.append(content, "\t");

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -15,10 +14,18 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectInterpolator;
-import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearInterpolator;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.IMovingObjectLocationPredictor;
+import de.uniol.inf.is.odysseus.spatial.interpolation.interpolator.MovingObjectLinearLocationPredictor;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOPredictionAO;
 
+/**
+ * This operator can use predictors to predict the locations of moving objects
+ * at certain points in time.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final int DATA_PORT = 0;
@@ -34,7 +41,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int courseOverGroundPosition;
 	private int speedOverGroundPosition;
 
-	private IMovingObjectInterpolator movingObjectInterpolator;
+	private IMovingObjectLocationPredictor movingObjectInterpolator;
 	private GeometryFactory geoFactory;
 
 	public MOPredictionPO(MOPredictionAO ao) {
@@ -48,10 +55,10 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 				.findAttributeIndex(ao.getCourseOverGroundAttribute());
 		this.speedOverGroundPosition = ao.getInputSchema(DATA_PORT)
 				.findAttributeIndex(ao.getSpeedOverGroundAttribute());
-		
-		// TODO Read basetimeunit from stream
-		this.movingObjectInterpolator = new MovingObjectLinearInterpolator(TimeUnit.MILLISECONDS);
-		
+
+		// Set the basetimeunit so that the passed time is correct
+		this.movingObjectInterpolator = new MovingObjectLinearLocationPredictor(ao.getBaseTimeUnit());
+
 		this.geoFactory = new GeometryFactory();
 	}
 
@@ -64,6 +71,12 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		}
 	}
 
+	/**
+	 * A new location of a moving object
+	 * 
+	 * @param object
+	 *            The tuple with the location information
+	 */
 	private void processTrajectoryTuple(T object) {
 		GeometryWrapper geometry = object.getAttribute(this.geometryPosition);
 
@@ -76,29 +89,37 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		LocationMeasurement locationMeasurement = new LocationMeasurement(latitude, longitude, courseOverGround,
 				speedOverGround, object.getMetadata().getStart(), id);
 
-		this.movingObjectInterpolator.addLocation(locationMeasurement);
+		this.movingObjectInterpolator.addLocation(locationMeasurement, object);
 	}
 
+	/**
+	 * Time progress, e.g. by a timer
+	 * 
+	 * @param object
+	 *            Tuple with time information
+	 */
+	@SuppressWarnings("unchecked")
 	private void processTimeTuple(T object) {
 		List<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
 		long timeStamp = object.getAttribute(this.pointInTimePosition);
 		PointInTime pointInTime = new PointInTime(timeStamp);
 
 		for (String movingObjectId : movingObjectIds) {
-			LocationMeasurement prediction = this.movingObjectInterpolator.calcLocation(movingObjectId, pointInTime);
+			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId, pointInTime);
 			Tuple<ITimeInterval> tuple = createTuple(prediction);
 			this.transfer((T) tuple);
 		}
 	}
 
 	private Tuple<ITimeInterval> createTuple(LocationMeasurement interpolatedLocationMeasurement) {
-		
-		Geometry geometry = this.geoFactory.createPoint(new Coordinate(interpolatedLocationMeasurement.getLatitude(), interpolatedLocationMeasurement.getLongitude()));
+		Geometry geometry = this.geoFactory.createPoint(new Coordinate(interpolatedLocationMeasurement.getLatitude(),
+				interpolatedLocationMeasurement.getLongitude()));
 		GeometryWrapper geoWrapper = new GeometryWrapper(geometry);
-		
-		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(5, false);
-		tupleWithInterpolatedLocation
-				.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime()));
+
+		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(4, false);
+		// The prediction is valid only one point in time
+		tupleWithInterpolatedLocation.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime(),
+				interpolatedLocationMeasurement.getMeasurementTime().plus(1)));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, geoWrapper);
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getSpeedInMetersPerSecond());

@@ -36,8 +36,8 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	 * This map stores all BufferPOs to their queries.
 	 * A list with measurements is assigned to each buffer. 
 	 */
-	private Map<IPhysicalQuery, Map<BufferPO, List<Integer>>> queuelengthsBufferPOs
-		= new HashMap<IPhysicalQuery, Map<BufferPO, List<Integer>>>();
+	private Map<IPhysicalQuery, Map<BufferPO<?>, List<Integer>>> queuelengthsBufferPOs
+		= new HashMap<IPhysicalQuery, Map<BufferPO<?>, List<Integer>>>();
 
 	
 	@Override
@@ -76,7 +76,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 		}
 		
 		for (IPhysicalQuery query : queuelengthsBufferPOs.keySet()) {
-			for (BufferPO buffer : queuelengthsBufferPOs.get(query).keySet()) {
+			for (BufferPO<?> buffer : queuelengthsBufferPOs.get(query).keySet()) {
 				List<Integer> list = queuelengthsBufferPOs.get(query).get(buffer);
 				list.add(buffer.size());
 				while (list.size() > QUEUE_MEASUREMENT_SIZE) {
@@ -106,7 +106,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 					}
 				}
 			}
-			for (BufferPO buffer : queuelengthsBufferPOs.get(query).keySet()) {
+			for (BufferPO<?> buffer : queuelengthsBufferPOs.get(query).keySet()) {
 				int tendency = estimateTendency(queuelengthsBufferPOs.get(query).get(buffer));
 
 				if (tendency > 0) {
@@ -130,13 +130,13 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	 */
 	private void getSubscriptionsAndBuffersForQuery(IPhysicalQuery query) {
 		Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>> subMap = new HashMap<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>();
-		Map<BufferPO, List<Integer>> bufferMap = new HashMap<BufferPO, List<Integer>>();
+		Map<BufferPO<?>, List<Integer>> bufferMap = new HashMap<>();
 		
 		queuelengthsSubscriptions.put(query, subMap);
 		queuelengthsBufferPOs.put(query, bufferMap);
 		for (IPhysicalOperator operator : query.getAllOperators()) {
 			if (operator instanceof BufferPO) {
-				queuelengthsBufferPOs.get(query).put((BufferPO) operator, new ArrayList<Integer>());
+				queuelengthsBufferPOs.get(query).put((BufferPO<?>) operator, new ArrayList<Integer>());
 			}
 			getOutgoingSubscriptions(operator, query);
 		}

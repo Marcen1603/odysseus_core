@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.admission.status.AdmissionStatusPlugIn;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class PriorityHandler {
@@ -20,8 +20,7 @@ public class PriorityHandler {
 	/**
 	 * The ISession superUser is used to get access to the execution plan of the queries.
 	 */
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement()
-			.loginSuperUser(null);
+	static private final ISession superUser = SessionManagement.instance.loginSuperUser(null);
 
 	/**
 	 * All queries are assigned to their priority in this map.

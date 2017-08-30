@@ -33,6 +33,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
@@ -41,24 +43,24 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	private static Logger LOG = LoggerFactory.getLogger(DefaultDataDictionary.class);
 
 	static private boolean useFilestore(){
-		return OdysseusConfiguration.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
+		return OdysseusConfiguration.instance.get("StoretypeDataDict").equalsIgnoreCase("Filestore");
 	}
 
 	static private boolean saveQueries(){
-		return OdysseusConfiguration.getBoolean("Filestore.StoreQueries");
+		return OdysseusConfiguration.instance.getBoolean("Filestore.StoreQueries");
 	}
 
 	public DefaultDataDictionary(){
-		super(null);
+		super(null, null);
 	}
 
-	public DefaultDataDictionary(ITenant t){
-		super(t);
+	public DefaultDataDictionary(ITenant t, UserManagementProvider ump){
+		super(t, ump);
 	}
 
 	@Override
 	public IDataDictionary createInstance(ITenant t) {
-		IDataDictionary dd = new DefaultDataDictionary(t);
+		IDataDictionary dd = new DefaultDataDictionary(t, OSGI.get(UserManagementProvider.class));
 		return dd;
 	}
 
@@ -158,7 +160,7 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 
 	private static <T extends Serializable & Comparable<? extends T>,U extends Serializable> IStore<T, U> tryCreateFileStore(String key, ITenant tenant){
 		try {
-			return new FileStore<T, U>(OdysseusConfiguration.getFileProperty(key,tenant.getName()));
+			return new FileStore<T, U>(OdysseusConfiguration.instance.getFileProperty(key,tenant.getName()));
 		} catch (IOException e) {
 			LOG.error("Could not create fileStore-Instance for key " + key, e);
 			return null;

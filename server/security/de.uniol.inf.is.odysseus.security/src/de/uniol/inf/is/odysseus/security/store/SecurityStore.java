@@ -103,13 +103,13 @@ public class SecurityStore {
 
 	private void init() throws Exception {
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-		String dir = OdysseusConfiguration.get("security.dir");
-		pfxFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.pfx"));
-		derFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.der"));
-		tstFile = new File(dir + File.separator + OdysseusConfiguration.get("security.default.tst"));
+		String dir = OdysseusConfiguration.instance.get("security.dir");
+		pfxFile = new File(dir + File.separator + OdysseusConfiguration.instance.get("security.default.pfx"));
+		derFile = new File(dir + File.separator + OdysseusConfiguration.instance.get("security.default.der"));
+		tstFile = new File(dir + File.separator + OdysseusConfiguration.instance.get("security.default.tst"));
 
-		password = OdysseusConfiguration.get("security.default.password");
-		alias = OdysseusConfiguration.get("security.default.pfx.alias");
+		password = OdysseusConfiguration.instance.get("security.default.password");
+		alias = OdysseusConfiguration.instance.get("security.default.pfx.alias");
 
 		keystore = KeyStore.getInstance("PKCS12", SECURITY_PROVIDER);
 		truststore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -153,8 +153,8 @@ public class SecurityStore {
 	private void createKeystore(String password, String alias) throws Exception {
 		keystore.load(null, password.toCharArray());
 
-		String applicationName = OdysseusConfiguration.get("security.applicationName");
-		String organisation = OdysseusConfiguration.get("security.organization");
+		String applicationName = OdysseusConfiguration.instance.get("security.applicationName");
+		String organisation = OdysseusConfiguration.instance.get("security.organization");
 
 		String hostName = InetAddress.getLocalHost().getHostName();
 		String applicationUri = "urn:" + hostName + ":" + applicationName;

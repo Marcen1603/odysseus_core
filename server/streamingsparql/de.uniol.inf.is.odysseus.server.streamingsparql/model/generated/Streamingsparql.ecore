@@ -17,8 +17,6 @@
         eType="#//Prefix" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="datasetClauses" upperBound="-1"
         eType="#//DatasetClause" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isDistinct" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isReduced" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
         eType="#//Variable" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="whereClause" eType="#//WhereClause"

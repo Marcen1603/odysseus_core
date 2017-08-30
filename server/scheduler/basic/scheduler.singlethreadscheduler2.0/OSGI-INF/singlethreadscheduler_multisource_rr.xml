@@ -5,4 +5,5 @@
    <service>
       <provide interface="de.uniol.inf.is.odysseus.core.server.scheduler.ISchedulerFactory"/>
    </service>
+   <reference bind="setConfig" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration" name="OdysseusConfiguration" policy="static"/>
 </scr:component>

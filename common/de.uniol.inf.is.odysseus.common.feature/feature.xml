@@ -150,7 +150,21 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.pmml"
+         id="de.uniol.inf.is.odysseus.bugreport"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.apache.commons.codec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.json"
          download-size="0"
          install-size="0"
          version="0.0.0"

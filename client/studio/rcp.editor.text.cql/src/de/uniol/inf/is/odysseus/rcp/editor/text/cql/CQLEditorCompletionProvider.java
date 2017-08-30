@@ -57,17 +57,20 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 		ISession caller = OdysseusRCPPlugIn.getActiveSession();
 		// add all parser tokens
 		List<Terminal> liste = new ArrayList<Terminal>();
-		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor().getQueryParserTokens(getSupportedParser(), caller);
-		for (String token : values.get("TOKEN")) {
-			if (!token.startsWith("<")) {
-				if (token.startsWith("\"")) {
-					token = token.substring(1, token.length());
-				}
-				if (token.endsWith("\"")) {
-					token = token.substring(0, token.length() - 1);
-				}
-				if (token.length() > 1 && !token.startsWith("\\")) {
-					liste.add(new Terminal(token, false));
+		Map<String, List<String>> values = OdysseusRCPEditorTextPlugIn.getExecutor()
+				.getQueryParserTokens(getSupportedParser(), caller);
+		if (values != null && values.size() > 0) {
+			for (String token : values.get("TOKEN")) {
+				if (!token.startsWith("<")) {
+					if (token.startsWith("\"")) {
+						token = token.substring(1, token.length());
+					}
+					if (token.endsWith("\"")) {
+						token = token.substring(0, token.length() - 1);
+					}
+					if (token.length() > 1 && !token.startsWith("\\")) {
+						liste.add(new Terminal(token, false));
+					}
 				}
 			}
 		}
@@ -75,12 +78,13 @@ public class CQLEditorCompletionProvider implements IEditorLanguagePropertiesPro
 		for (String dataType : OdysseusRCPEditorTextPlugIn.getDatatypeNames()) {
 			liste.add(new Terminal(dataType, false));
 		}
-		
+
 		return liste;
 	}
 
 	@Override
-	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String lastToken[], IExecutor executor, ISession iSession, IDocument document, int offset, Point selection) {
+	public List<ICompletionProposal> getCompletionSuggestions(String currentToken, String lastToken[],
+			IExecutor executor, ISession iSession, IDocument document, int offset, Point selection) {
 		return new ArrayList<ICompletionProposal>();
 	}
 

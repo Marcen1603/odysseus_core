@@ -47,6 +47,7 @@ import org.osgi.service.prefs.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.bugreport.BugreportSender;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
@@ -55,6 +56,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.event.error.ErrorEvent;
 import de.uniol.inf.is.odysseus.core.server.event.error.IErrorEventListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ICompilerListener;
@@ -70,8 +72,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterBufferPlacementStrategy;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterTransformationConfiguration;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.report.IReport;
+import de.uniol.inf.is.odysseus.report.IReportGenerator;
 import de.uniol.inf.is.odysseus.updater.FeatureUpdateUtility;
 
 @SuppressWarnings({ "rawtypes" })
@@ -88,6 +93,8 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 
 	private IServerExecutor executor;
 
+	private static IReportGenerator reportGenerator;
+	
 	private String parser = null;
 
 	// TODOO: CREATE SESSION!!
@@ -110,6 +117,18 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 	private Map<String, List<Command>> macros = new HashMap<String, List<Command>>();
 	private String currentMacro = null;
 
+	// called by OSGi-DS
+	public static void bindReportGenerator(IReportGenerator serv) {
+		reportGenerator = serv;
+	}
+
+	// called by OSGi-DS
+	public static void unbindReportGenerator(IReportGenerator serv) {
+		if (reportGenerator == serv) {
+			reportGenerator = null;
+		}
+	}
+	
 	private static class DelegateCommandInterpreter implements CommandInterpreter {
 		final private CommandInterpreter ci;
 		int i = 0;
@@ -255,7 +274,7 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		this.executor.addPlanExecutionListener(this);
 		this.executor.addPlanModificationListener(this);
 
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = SessionManagement.instance.loginSuperUser(null);
 	}
 
 	public void unbindExecutor(IExecutor executor) {
@@ -303,13 +322,13 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 		// } catch (Exception e) {
 		// ci.println(e.getMessage());
 		// }
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		currentUser = SessionManagement.instance.loginSuperUser(null);
 	}
 
 	@Help(parameter = "<logout>", description = "Logout current user.")
 	public void _logout(CommandInterpreter ci) {
 		try {
-			UserManagementProvider.getSessionmanagement().logout(currentUser);
+			SessionManagement.instance.logout(currentUser);
 			currentUser = null;
 			ci.println("Current user logged out ");
 		} catch (Exception e) {
@@ -1470,6 +1489,50 @@ public class OdysseusConsole implements CommandProvider, IPlanExecutionListener,
 			}
 		}
 	}
+
+	// ----------------------------------------------------
+	// Bug reporting
+	// ----------------------------------------------------
+	@Help(description = "send bug report")
+	public void _sendBugReport(CommandInterpreter ci) {
+		if (reportGenerator == null) {
+			ci.println("Error sending bug report. No reports found!");
+			return;
+		}
+		IReport report = reportGenerator.generateReport(currentUser);
+		Map<String, String> reportMap = report.getReportMap();
+		boolean result = false;
+		try {
+			result = BugreportSender.send(getJiraUser(), getJiraPassword(), getJiraUrl(), "Console Report", "", reportMap);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			if (result == true) {
+				ci.println("Bug report send successfully");
+			}else {
+				ci.println("Error sending bug report");
+			}
+
+		}
+	}
+	
+	//TODO!
+	
+	private String getJiraUser() {
+		return OdysseusConfiguration.instance.get("BUGREPORT_USER", "odysseus_studio");
+	}
+
+	private String getJiraPassword() {
+		return OdysseusConfiguration.instance.get("BUGREPORT_PASSWORD", "jhf4hdds673");
+	}
+	
+	private String getJiraUrl() {
+		return OdysseusConfiguration.instance.get("BUGREPORT_BASEURL",
+				"http://jira.odysseus.offis.uni-oldenburg.de/");
+	}
+	
+	
 
 	// Removed stuff from priority
 

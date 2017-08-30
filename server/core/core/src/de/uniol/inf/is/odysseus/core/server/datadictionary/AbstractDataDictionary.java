@@ -111,6 +111,8 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	transient private final Map<Resource, IPhysicalOperator> operators = Maps.newHashMap();
 
 	transient private final Map<Resource, List<IStreamObject<?>>> listStores = Maps.newHashMap();
+	
+	transient private final  UserManagementProvider userManagementProvider;
 
 	protected ITenant tenant;
 
@@ -118,11 +120,12 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		STREAM, VIEW, QUERY
 	};
 
-	public AbstractDataDictionary(ITenant t) {
+	public AbstractDataDictionary(ITenant t, UserManagementProvider ump) {
 		if (t != null) {
 			this.tenant = t;
 			init();
 		}
+		this.userManagementProvider = ump;
 	}
 
 	private void init() {
@@ -1150,16 +1153,16 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission, Resource objectURI) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission, objectURI.toString());
+		return userManagementProvider.getUsermanagement(true).hasPermission(caller, permission, objectURI.toString());
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission,
+		return userManagementProvider.getUsermanagement(true).hasPermission(caller, permission,
 				DataDictionaryPermission.objectURI);
 	}
 
 	private boolean hasPermission(ISession caller, IPermission permission, String uri) {
-		return UserManagementProvider.getUsermanagement(true).hasPermission(caller, permission, uri);
+		return userManagementProvider.getUsermanagement(true).hasPermission(caller, permission, uri);
 	}
 
 	/**
@@ -1534,5 +1537,10 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		}
 		return list;
 	}
+	
+
+	
+	
+	
 
 }

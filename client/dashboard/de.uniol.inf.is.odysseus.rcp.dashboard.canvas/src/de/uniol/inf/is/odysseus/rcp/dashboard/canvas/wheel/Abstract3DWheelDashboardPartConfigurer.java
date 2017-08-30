@@ -306,7 +306,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
             {// Backgroundcolor
                 toolkit.createLabel(group, "Background");
                 final RGB backgroundColor = this.getDashboardPart().getBackgroundColor();
-                @SuppressWarnings("boxing")
+               // //@SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
@@ -333,7 +333,7 @@ public abstract class Abstract3DWheelDashboardPartConfigurer<T extends Abstract3
                 toolkit.createLabel(group, "Foreground");
 
                 final RGB foregroundColor = this.getDashboardPart().getForegroundColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));

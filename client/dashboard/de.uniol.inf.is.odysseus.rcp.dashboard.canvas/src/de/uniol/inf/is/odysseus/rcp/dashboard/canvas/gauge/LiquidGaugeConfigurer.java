@@ -237,7 +237,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
             {// Backgroundcolor
                 toolkit.createLabel(group, "Background");
                 final RGB backgroundColor = this.getDashboardPart().getBackgroundColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
@@ -263,7 +263,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
             {// Alpha
                 toolkit.createLabel(group, "Alpha");
                 final int alpha = this.getDashboardPart().getBackgroundAlpha();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Slider alphaSlide = new Slider(group, SWT.NONE);
                 alphaSlide.setMinimum(0);
                 alphaSlide.setMaximum(255);
@@ -282,7 +282,7 @@ public class LiquidGaugeConfigurer extends AbstractDashboardPartConfigurer<Liqui
                 toolkit.createLabel(group, "Liquid");
 
                 final RGB liquidColor = this.getDashboardPart().getLiquidColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text liquidColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) liquidColor.R, (int) liquidColor.G, (int) liquidColor.B));
                 liquidColorText.setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) liquidColor.R, (int) liquidColor.G, (int) liquidColor.B)));
                 liquidColorText.setEditable(false);

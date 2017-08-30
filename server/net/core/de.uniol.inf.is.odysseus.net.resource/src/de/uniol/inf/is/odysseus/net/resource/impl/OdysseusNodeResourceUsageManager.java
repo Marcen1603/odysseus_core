@@ -16,6 +16,7 @@ import com.google.common.collect.Maps;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
@@ -28,7 +29,7 @@ import de.uniol.inf.is.odysseus.net.resource.IResourceUsage;
 
 public final class OdysseusNodeResourceUsageManager implements IOdysseusNodeResourceUsageManager, IOdysseusNodeCommunicatorListener {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser = SessionManagement.instance.loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(OdysseusNodeResourceUsageManager.class);
 

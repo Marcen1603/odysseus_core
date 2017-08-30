@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-console -debug -nl en -data @noDefault -clean -debug -profile OdysseusProfile
+      <programArgs>-console -clean -debug -nl en -profile OdysseusProfile -data @user.home
       </programArgs>
       <vmArgs>-Xms1000M -Xmx1000M -XX:+UseConcMarkSweepGC -Dosgi.console.enable.builtin=true
       </vmArgs>
@@ -19,7 +19,6 @@
 
    <launcher name="odysseus">
       <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
@@ -55,8 +54,8 @@
    </plugins>
 
    <features>
-      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>
@@ -64,7 +63,15 @@
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="1" />
-      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="0" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

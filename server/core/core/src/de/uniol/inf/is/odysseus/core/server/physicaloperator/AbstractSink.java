@@ -275,7 +275,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 
 
 
-	@SuppressWarnings("static-method")
+	//@SuppressWarnings("static-method")
 	private boolean containsSubscription(List<AbstractPhysicalSubscription<ISink<?>>> callPath, ISink<? super R> sink,
 			int sourcePort, int sinkPort) {
 		for (AbstractPhysicalSubscription<ISink<?>> sub : callPath) {

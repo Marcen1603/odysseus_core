@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 
-<plugin>
+<plugin
+>
 
     <extension
             point="org.eclipse.ui.editors">
@@ -222,8 +223,6 @@
             uriExtension="sparql">
         </resourceServiceProvider>
     </extension>
-
-
 	<!-- marker definitions for de.uniol.inf.is.odysseus.server.Streamingsparql -->
 	<extension
 	        id="streamingsparql.check.fast"
@@ -291,15 +290,44 @@
 			</command>
 		</menuContribution>
 	</extension>
-	<extension point="org.eclipse.ui.handlers">
-		<handler
-			class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
-			commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
-				<activeWhen>
-					<reference definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened" />
-				</activeWhen>
-		</handler>
-	</extension>
+    <extension point="org.eclipse.ui.ide.markerResolution">
+        <markerResolutionGenerator
+            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="de.uniol.inf.is.odysseus.eca.ui.eca.check.fast">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+           class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="de.uniol.inf.is.odysseus.server.streamingsparql.ui.streamingsparql.check.normal">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+        <markerResolutionGenerator
+            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="de.uniol.inf.is.odysseus.server.streamingsparql.ui.streamingsparql.check.expensive">
+            <attribute
+                name="FIXABLE_KEY"
+                value="true">
+            </attribute>
+        </markerResolutionGenerator>
+    </extension>
+	<extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.generator.trace.OpenGeneratedFileHandler"
+          commandId="org.eclipse.xtext.ui.OpenGeneratedFileCommand">
+       <activeWhen>
+          <reference
+                definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened">
+          </reference>
+       </activeWhen>
+    </handler>
+ </extension>
 
 	<!-- Quick Outline -->
 	<extension
@@ -322,80 +350,49 @@
 			name="Quick Outline">
 		</command>
 	</extension>
-	<extension point="org.eclipse.ui.menus">
-		<menuContribution
-			locationURI="popup:#TextEditorContext?after=group.open">
-			<command commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-				style="push"
-				tooltip="Open Quick Outline">
-				<visibleWhen checkEnabled="false">
-					<reference definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened"/>
-				</visibleWhen>
-			</command>
-		</menuContribution>
-	</extension>
+	<extension
+       point="org.eclipse.ui.menus">
+    <menuContribution
+          locationURI="popup:#TextEditorContext?after=group.open">
+       <command
+             commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
+             style="push"
+             tooltip="Open Quick Outline">
+          <visibleWhen
+                checkEnabled="false">
+             <reference
+                   definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened">
+             </reference>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+ </extension>
     <!-- quickfix marker resolution generator for de.uniol.inf.is.odysseus.server.Streamingsparql -->
-    <extension
-            point="org.eclipse.ui.ide.markerResolution">
-        <markerResolutionGenerator
-            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="de.uniol.inf.is.odysseus.server.ui.streamingsparql.check.fast">
-            <attribute
-                name="FIXABLE_KEY"
-                value="true">
-            </attribute>
-        </markerResolutionGenerator>
-        <markerResolutionGenerator
-            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="de.uniol.inf.is.odysseus.server.ui.streamingsparql.check.normal">
-            <attribute
-                name="FIXABLE_KEY"
-                value="true">
-            </attribute>
-        </markerResolutionGenerator>
-        <markerResolutionGenerator
-            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="de.uniol.inf.is.odysseus.server.ui.streamingsparql.check.expensive">
-            <attribute
-                name="FIXABLE_KEY"
-                value="true">
-            </attribute>
-        </markerResolutionGenerator>
-    </extension>
    	<!-- Rename Refactoring -->
-	<extension point="org.eclipse.ui.handlers">
-		<handler 
-			class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
-			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
-			<activeWhen>
-				<reference
-					definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened">
-				</reference>
-			</activeWhen>
-		</handler>
-	</extension>
-    <extension point="org.eclipse.ui.menus">
-         <menuContribution
-            locationURI="popup:#TextEditorContext?after=group.edit">
-         <command commandId="org.eclipse.xtext.ui.refactoring.RenameElement"
-               style="push">
-            <visibleWhen checkEnabled="false">
-               <reference
-                     definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened">
-               </reference>
-            </visibleWhen>
-         </command>
-      </menuContribution>
+	<extension
+       point="org.eclipse.ui.handlers">
+    <handler
+          class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+          commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
+       <activeWhen>
+          <reference
+                definitionId="de.uniol.inf.is.odysseus.server.Streamingsparql.Editor.opened">
+          </reference>
+       </activeWhen>
+    </handler>
+ </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="de.uniol.inf.is.odysseus.server.Streamingsparql"
+            class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+            id="de.uniol.inf.is.odysseus.server.Streamingsparql.refactoring"
+            name="Refactoring">
+         <keywordReference
+               id="de.uniol.inf.is.odysseus.server.ui.keyword_Streamingsparql">
+         </keywordReference>
+      </page>
    </extension>
-   <extension point="org.eclipse.ui.preferencePages">
-	    <page
-	        category="de.uniol.inf.is.odysseus.server.Streamingsparql"
-	        class="de.uniol.inf.is.odysseus.server.ui.StreamingsparqlExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="de.uniol.inf.is.odysseus.server.Streamingsparql.refactoring"
-	        name="Refactoring">
-	        <keywordReference id="de.uniol.inf.is.odysseus.server.ui.keyword_Streamingsparql"/>
-	    </page>
-	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="de.uniol.inf.is.odysseus.server.Streamingsparql.compare.contentViewers"

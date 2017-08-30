@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -117,6 +118,14 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 //		}
 
 		nullMode = false;
+	}
+	
+	@Override
+	public void setCharset(Charset charset) {
+		super.setCharset(charset);
+		if (this.handler != null) {
+			this.handler.setCharset(charset);
+		}
 	}
 
 	@Override

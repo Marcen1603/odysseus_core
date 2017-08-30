@@ -1,0 +1,1 @@
+operator_1 = MAP({expressions=[['DolToEur(bid.price)','expression_0']]},bid)

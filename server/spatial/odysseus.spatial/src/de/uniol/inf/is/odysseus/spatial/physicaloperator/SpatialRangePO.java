@@ -49,27 +49,6 @@ public class SpatialRangePO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		this.dataStructure.cleanUp(tuple.getMetadata().getStart());
 		List<Tuple<ITimeInterval>> neighbors = queryObject(tuple);
 
-		/*
-		 * TODO What to do with this? Give the option or better only filter
-		 * later? Right now I think this should not be part of this operator.
-		 * 
-		 * Other argument: Put it into the data structures. Why? Well, if all
-		 * elements within the range are from the same vessel (which is
-		 * especially the case with kNN) but I want results from all other
-		 * vessels but me, I end up having nothing.
-		 */
-
-		// IAttributeResolver attributeResolver = new
-		// DirectAttributeResolver(this.getOutputSchema());
-		// IPredicate test =
-		// OperatorBuilderFactory.getPredicateBuilder("RELATIONALPREDICATE")
-		// .createPredicate(attributeResolver, "MMSI != 316652310");
-
-		// Tuple[] tuples = neighbors.stream().filter(e ->
-		// test.evaluate(e)).toArray(size -> new Tuple[size]);
-		// List<Tuple> filteredNeighbors = new
-		// ArrayList<Tuple>(Arrays.asList(tuples));
-
 		Tuple<?> newTuple = tuple.append(neighbors);
 		transfer((T) newTuple);
 

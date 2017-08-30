@@ -456,6 +456,7 @@ BOOLEAN returns ecore::EBoolean:
 	'true' | 'false'
 ;
 
+@Override 
 terminal INT returns ecore::EInt: 
 	('0'..'9')+
 ;

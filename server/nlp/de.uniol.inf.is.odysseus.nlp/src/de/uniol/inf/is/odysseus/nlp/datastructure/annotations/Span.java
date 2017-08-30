@@ -1,9 +1,6 @@
 package de.uniol.inf.is.odysseus.nlp.datastructure.annotations;
 
-import java.util.HashSet;
-
 import de.uniol.inf.is.odysseus.core.IClone;
-import de.uniol.inf.is.odysseus.nlp.datastructure.annotations.implementations.NamedEntity;
 import de.uniol.inf.is.odysseus.nlp.datastructure.exception.InvalidSpanException;
 
 /**

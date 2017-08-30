@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.qdl.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArgumentsList;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLVariableInitialization;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.AbstractIQLStatementCompiler;
@@ -30,15 +29,14 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompi
     boolean _isOperator = this.helper.isOperator(typeRef);
     if (_isOperator) {
       String _xifexpression_1 = null;
-      if ((((!Objects.equal(init.getArgsList(), null)) && (!Objects.equal(init.getArgsMap(), null))) && (init.getArgsMap().getElements().size() > 0))) {
+      if ((((init.getArgsList() != null) && (init.getArgsMap() != null)) && (init.getArgsMap().getElements().size() > 0))) {
         String _xblockexpression = null;
         {
           JvmExecutable constructor = this.lookUp.findPublicConstructor(typeRef, init.getArgsList().getElements());
           int _size = init.getArgsList().getElements().size();
           boolean args = (_size > 0);
           String _xifexpression_2 = null;
-          boolean _notEquals = (!Objects.equal(constructor, null));
-          if (_notEquals) {
+          if ((constructor != null)) {
             StringConcatenation _builder = new StringConcatenation();
             _builder.append("getOperator");
             String _shortName = this.typeUtils.getShortName(typeRef, false);
@@ -96,7 +94,7 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompi
         _xifexpression_1 = _xblockexpression;
       } else {
         String _xifexpression_2 = null;
-        if (((!Objects.equal(init.getArgsMap(), null)) && (init.getArgsMap().getElements().size() > 0))) {
+        if (((init.getArgsMap() != null) && (init.getArgsMap().getElements().size() > 0))) {
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("getOperator");
           String _shortName = this.typeUtils.getShortName(typeRef, false);
@@ -117,16 +115,15 @@ public class QDLStatementCompiler extends AbstractIQLStatementCompiler<IQDLCompi
         } else {
           String _xifexpression_3 = null;
           IQLArgumentsList _argsList = init.getArgsList();
-          boolean _notEquals = (!Objects.equal(_argsList, null));
-          if (_notEquals) {
+          boolean _tripleNotEquals = (_argsList != null);
+          if (_tripleNotEquals) {
             String _xblockexpression_1 = null;
             {
               JvmExecutable constructor = this.lookUp.findPublicConstructor(typeRef, init.getArgsList().getElements());
               int _size = init.getArgsList().getElements().size();
               boolean args = (_size > 0);
               String _xifexpression_4 = null;
-              boolean _notEquals_1 = (!Objects.equal(constructor, null));
-              if (_notEquals_1) {
+              if ((constructor != null)) {
                 StringConcatenation _builder_1 = new StringConcatenation();
                 _builder_1.append("getOperator");
                 String _shortName_2 = this.typeUtils.getShortName(typeRef, false);

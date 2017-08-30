@@ -26,6 +26,7 @@ import org.eclipse.gef.ui.actions.UpdateAction;
  * @author DGeesen
  * 
  */
+@SuppressWarnings("deprecation")
 public class GraphEditorListener implements CommandStackListener {
 	private ActionRegistry actionRegistry;
 

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.IRuleProvider;
 
 public class RuleProvider implements IRuleProvider {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public List<IRule<?, ?>> getRules() {
 		final List<IRule<?, ?>> rules = new ArrayList<IRule<?, ?>>();

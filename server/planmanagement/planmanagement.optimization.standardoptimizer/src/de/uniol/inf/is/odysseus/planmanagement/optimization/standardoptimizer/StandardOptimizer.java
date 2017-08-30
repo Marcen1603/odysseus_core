@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.elementc
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -42,7 +43,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  */
 public class StandardOptimizer extends AbstractOptimizer {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser =  SessionManagement.instance.loginSuperUser(null);
 
 	protected static Logger LOG = LoggerFactory.getLogger(StandardOptimizer.class);;
 

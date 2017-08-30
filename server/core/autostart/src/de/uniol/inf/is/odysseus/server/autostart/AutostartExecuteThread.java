@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -22,7 +23,7 @@ public class AutostartExecuteThread extends Thread {
 	public AutostartExecuteThread(IExecutor executor, String queryText) {
 		this.executor = executor;
 		this.queryText = queryText;
-		this.user = UserManagementProvider.getSessionmanagement().loginSuperUser(null);
+		this.user = SessionManagement.instance.loginSuperUser(null);
 
 		setDaemon(true);
 		setName("Autostart execution thread");

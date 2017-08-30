@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.iql.basic.generator.compiler;
 
-import com.google.common.base.Objects;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayType;
 import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLArrayTypeRef;
 import de.uniol.inf.is.odysseus.iql.basic.generator.compiler.IIQLExpressionCompiler;
@@ -34,16 +33,14 @@ public abstract class AbstractIQLTypeCompiler<H extends IIQLCompilerHelper, G ex
     boolean w = wrapper;
     String result = "";
     String nodeText = this.helper.getNodeText(typeRef);
-    boolean _equals = Objects.equal(typeRef, null);
-    if (_equals) {
+    if ((typeRef == null)) {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("void");
       return _builder.toString();
     }
     if ((typeRef instanceof IQLArrayTypeRef)) {
       w = true;
-      boolean _notEquals = (!Objects.equal(nodeText, null));
-      if (_notEquals) {
+      if ((nodeText != null)) {
         nodeText = nodeText.replace("[", "").replace("]", "").trim();
       }
       IQLArrayTypeRef arrayTypeRef = ((IQLArrayTypeRef) typeRef);

@@ -37,7 +37,7 @@ public class SLAViolationLogger implements ISLAViolationEventListener {
 	/**
 	 * path of log file
 	 */
-	public static final String PATH = OdysseusConfiguration.getHomeDir();
+	public static final String PATH = OdysseusConfiguration.instance.getHomeDir();
 	/**
 	 * filewriter used for logging
 	 */

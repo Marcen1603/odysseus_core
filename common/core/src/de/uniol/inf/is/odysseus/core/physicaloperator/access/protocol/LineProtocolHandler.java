@@ -24,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,8 +41,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportExchangePattern;
 
 public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends AbstractProtocolHandler<T> {
-
-	protected static final Charset charset = Charset.forName("UTF-8");
 
 	public static final String NAME = "Line";
 	static final Runtime RUNTIME = Runtime.getRuntime();
@@ -329,15 +326,15 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 	@Override
 	public void write(T object) throws IOException {
 		if (writer == null)
-			getTransportHandler().send(object.toString().getBytes("UTF-8"));
+			getTransportHandler().send(object.toString().getBytes(getCharset().name()));
 		else
 			writer.write(object.toString());
 	}
 
-	private static String bb_to_str(ByteBuffer buffer) {
+	private String bb_to_str(ByteBuffer buffer) {
 		String data = "";
 		try {
-			data = charset.decode(buffer).toString();
+			data = getCharset().decode(buffer).toString();
 			// reset buffer's position to its original so it is not altered:
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -380,7 +377,7 @@ public class LineProtocolHandler<T extends IStreamObject<IMetaAttribute>> extend
 
 	}
 
-	protected void process(String token) {
+	public void process(String token) {
 		try {
 			T retValue = getDataHandler().readData(token);
 			getTransfer().transfer(retValue);

@@ -32,7 +32,7 @@ public class CheckpointManagerRegistry {
 	 * The default value for {@link #NAME_KEY} read out from
 	 * {@link OdysseusConfiguration}.
 	 */
-	public static final String NAME_VALUE_DEFAULT = OdysseusConfiguration.get("protectionpointDefaultManager");
+	public static final String NAME_VALUE_DEFAULT = OdysseusConfiguration.instance.get("protectionpointDefaultManager");
 
 	/**
 	 * The configuration key for the checkpoint unit to use.
@@ -44,7 +44,7 @@ public class CheckpointManagerRegistry {
 	 * {@link OdysseusConfiguration}.
 	 */
 	public static final CheckpointUnit UNIT_VALUE_DEFAULT = CheckpointUnit
-			.valueOf(OdysseusConfiguration.get("checkpointDefaultUnit"));
+			.valueOf(OdysseusConfiguration.instance.get("checkpointDefaultUnit"));
 
 	/**
 	 * The configuration key for the period between two checkpoints to use.
@@ -56,7 +56,7 @@ public class CheckpointManagerRegistry {
 	 * {@link OdysseusConfiguration}.
 	 */
 	public static final long PERIOD_VALUE_DEFAULT = Long
-			.parseLong(OdysseusConfiguration.get("checkpointDefaultPeriod"));
+			.parseLong(OdysseusConfiguration.instance.get("checkpointDefaultPeriod"));
 
 	/**
 	 * All bound implementations of {@link ICheckpointManager}.

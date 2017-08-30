@@ -38,7 +38,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.junit4.util.ParseHelper;
+import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.ExclusiveRange;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
@@ -100,12 +100,12 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       EList<DatasetClause> _datasetClauses = q.getDatasetClauses();
       for (final DatasetClause clause : _datasetClauses) {
         String _type = clause.getType();
-        boolean _equals = Objects.equal(_type, null);
-        if (_equals) {
+        boolean _tripleEquals = (_type == null);
+        if (_tripleEquals) {
           this.streamMap.put(clause.getName(), clause.getDataSet().getValue().replace(">", "").replace("<", ""));
         } else {
-          boolean _equals_1 = clause.getType().equals("TIME");
-          if (_equals_1) {
+          boolean _equals = clause.getType().equals("TIME");
+          if (_equals) {
             String _name = clause.getName();
             StringConcatenation _builder = new StringConcatenation();
             String _name_1 = clause.getName();
@@ -113,8 +113,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
             _builder.append(" = TIMEWINDOW({SIZE = ");
             {
               String _unit = clause.getUnit();
-              boolean _notEquals = (!Objects.equal(_unit, null));
-              if (_notEquals) {
+              boolean _tripleNotEquals = (_unit != null);
+              if (_tripleNotEquals) {
                 _builder.append("[");
                 int _size = clause.getSize();
                 _builder.append(_size);
@@ -129,8 +129,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
             }
             {
               int _advance = clause.getAdvance();
-              boolean _notEquals_1 = (_advance != 0);
-              if (_notEquals_1) {
+              boolean _tripleNotEquals_1 = (_advance != 0);
+              if (_tripleNotEquals_1) {
                 _builder.append(", advance = ");
                 int _advance_1 = clause.getAdvance();
                 _builder.append(_advance_1);
@@ -142,8 +142,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
             _builder.append(")");
             this.streamMap.put(_name, _builder.toString());
           } else {
-            boolean _equals_2 = clause.getType().equals("ELEMENT");
-            if (_equals_2) {
+            boolean _equals_1 = clause.getType().equals("ELEMENT");
+            if (_equals_1) {
               String _name_2 = clause.getName();
               StringConcatenation _builder_1 = new StringConcatenation();
               String _name_3 = clause.getName();
@@ -154,8 +154,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
               _builder_1.append(" ");
               {
                 int _advance_2 = clause.getAdvance();
-                boolean _notEquals_2 = (_advance_2 != 0);
-                if (_notEquals_2) {
+                boolean _tripleNotEquals_2 = (_advance_2 != 0);
+                if (_tripleNotEquals_2) {
                   _builder_1.append(", advance = ");
                   int _advance_3 = clause.getAdvance();
                   _builder_1.append(_advance_3);
@@ -181,8 +181,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
               if (_contains) {
                 String _xifexpression = null;
                 Variable _variable = propob.getObject().getVariable();
-                boolean _equals_3 = Objects.equal(_variable, null);
-                if (_equals_3) {
+                boolean _tripleEquals_1 = (_variable == null);
+                if (_tripleEquals_1) {
                   _xifexpression = propob.getObject().getLiteral();
                 } else {
                   String _name_4 = propob.getObject().getVariable().getUnnamed().getName();
@@ -202,8 +202,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
               } else {
                 String _xifexpression_1 = null;
                 Variable _variable_1 = propob.getObject().getVariable();
-                boolean _equals_4 = Objects.equal(_variable_1, null);
-                if (_equals_4) {
+                boolean _tripleEquals_2 = (_variable_1 == null);
+                if (_tripleEquals_2) {
                   _xifexpression_1 = propob.getObject().getLiteral();
                 } else {
                   String _name_8 = propob.getObject().getVariable().getUnnamed().getName();
@@ -262,7 +262,7 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       while ((!IteratorExtensions.isEmpty(duplicatesIterator))) {
         {
           final ArrayList<TripleToJoin> toAdd = this.listToJoinIteration(duplicatesIterator, varToPattern, listToJoin);
-          if (((!Objects.equal(toAdd, null)) && (!toAdd.isEmpty()))) {
+          if (((toAdd != null) && (!toAdd.isEmpty()))) {
             listToJoin.addAll(toAdd);
           }
           boolean _hasNext = duplicatesIterator.hasNext();
@@ -284,8 +284,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
           };
           final List<TripleToJoin> j = IterableExtensions.<TripleToJoin>toList(IterableExtensions.<TripleToJoin>filter(listToJoin, _function_1));
           int _size_4 = j.size();
-          boolean _equals_3 = (_size_4 == 1);
-          if (_equals_3) {
+          boolean _equals_2 = (_size_4 == 1);
+          if (_equals_2) {
             newlist.addAll(j);
           } else {
             if (((j.size() > 1) && (!listwithmorethanonepattern2.containsAll(j)))) {
@@ -378,8 +378,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       }
       String filter = "";
       Filterclause _filterclause = q.getFilterclause();
-      boolean _notEquals_3 = (!Objects.equal(_filterclause, null));
-      if (_notEquals_3) {
+      boolean _tripleNotEquals_3 = (_filterclause != null);
+      if (_tripleNotEquals_3) {
         StringConcatenation _builder_2 = new StringConcatenation();
         _builder_2.append("filter=SELECT({predicate=\'");
         String _name_4 = q.getFilterclause().getLeft().getUnnamed().getName();
@@ -398,15 +398,15 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       }
       String aggregate = "";
       Aggregate _aggregateClause = q.getAggregateClause();
-      boolean _notEquals_4 = (!Objects.equal(_aggregateClause, null));
-      if (_notEquals_4) {
+      boolean _tripleNotEquals_4 = (_aggregateClause != null);
+      if (_tripleNotEquals_4) {
         final Aggregate aggregateClause = q.getAggregateClause();
         String name = "aggregate";
         String aggregations = "";
         String groupBy = "";
         EList<Aggregation> _aggregations = aggregateClause.getAggregations();
-        boolean _notEquals_5 = (!Objects.equal(_aggregations, null));
-        if (_notEquals_5) {
+        boolean _tripleNotEquals_5 = (_aggregations != null);
+        if (_tripleNotEquals_5) {
           StringConcatenation _builder_3 = new StringConcatenation();
           _builder_3.append("AGGREGATIONS=[");
           {
@@ -430,8 +430,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
               _builder_3.append("\'");
               {
                 String _datatype = clause_1.getDatatype();
-                boolean _notEquals_6 = (!Objects.equal(_datatype, null));
-                if (_notEquals_6) {
+                boolean _tripleNotEquals_6 = (_datatype != null);
+                if (_tripleNotEquals_6) {
                   _builder_3.append(",\'");
                   String _datatype_1 = clause_1.getDatatype();
                   _builder_3.append(_datatype_1);
@@ -445,8 +445,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
           aggregations = _builder_3.toString();
         }
         GroupBy _groupby = aggregateClause.getGroupby();
-        boolean _notEquals_7 = (!Objects.equal(_groupby, null));
-        if (_notEquals_7) {
+        boolean _tripleNotEquals_7 = (_groupby != null);
+        if (_tripleNotEquals_7) {
           StringConcatenation _builder_4 = new StringConcatenation();
           _builder_4.append("group_by = [");
           {
@@ -471,16 +471,16 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
         _builder_5.append(name);
         _builder_5.append(" = AGGREGATE({");
         {
-          boolean _equals_3 = aggregations.equals("");
-          boolean _not = (!_equals_3);
+          boolean _equals_2 = aggregations.equals("");
+          boolean _not = (!_equals_2);
           if (_not) {
             _builder_5.append(" ");
             _builder_5.append(aggregations);
           }
         }
         {
-          boolean _equals_4 = groupBy.equals("");
-          boolean _not_1 = (!_equals_4);
+          boolean _equals_3 = groupBy.equals("");
+          boolean _not_1 = (!_equals_3);
           if (_not_1) {
             _builder_5.append(", ");
             _builder_5.append(groupBy);
@@ -517,8 +517,8 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
       final StringBuilder query = new StringBuilder();
       query.append("#PARSER PQL\n");
       String _method = q.getMethod();
-      boolean _notEquals_8 = (!Objects.equal(_method, null));
-      if (_notEquals_8) {
+      boolean _tripleNotEquals_8 = (_method != null);
+      if (_tripleNotEquals_8) {
         String _method_1 = q.getMethod();
         String _plus = (_method_1 + "\n");
         query.append(_plus);
@@ -553,19 +553,19 @@ public class StreamingSparqlParser implements IStreamingSparqlParser {
         query.append(_plus_4);
       }
       Filterclause _filterclause_1 = q.getFilterclause();
-      boolean _notEquals_9 = (!Objects.equal(_filterclause_1, null));
-      if (_notEquals_9) {
+      boolean _tripleNotEquals_9 = (_filterclause_1 != null);
+      if (_tripleNotEquals_9) {
         query.append((filter + "\n"));
       }
       Aggregate _aggregateClause_1 = q.getAggregateClause();
-      boolean _notEquals_10 = (!Objects.equal(_aggregateClause_1, null));
-      if (_notEquals_10) {
+      boolean _tripleNotEquals_10 = (_aggregateClause_1 != null);
+      if (_tripleNotEquals_10) {
         query.append((aggregate + "\n"));
       }
       query.append(projection);
       Filesinkclause _filesinkclause = q.getFilesinkclause();
-      boolean _notEquals_11 = (!Objects.equal(_filesinkclause, null));
-      if (_notEquals_11) {
+      boolean _tripleNotEquals_11 = (_filesinkclause != null);
+      if (_tripleNotEquals_11) {
         String _replace_3 = q.getFilesinkclause().getPath().replace("/", "\\");
         String _plus_5 = ("res = CSVFILESINK({SINK = \'sink\', FILENAME = \'" + _replace_3);
         String _plus_6 = (_plus_5 + "\'}, result)");

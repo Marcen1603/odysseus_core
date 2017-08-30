@@ -298,7 +298,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
             {// Backgroundcolor
                 toolkit.createLabel(group, "Background");
                 final RGB backgroundColor = this.getDashboardPart().getBackgroundColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text backgroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B));
                 backgroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) backgroundColor.R, (int) backgroundColor.G, (int) backgroundColor.B)));
@@ -324,7 +324,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
             {// Alpha
                 toolkit.createLabel(group, "Alpha");
                 final int alpha = this.getDashboardPart().getBackgroundAlpha();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Slider alphaSlide = new Slider(group, SWT.NONE);
                 alphaSlide.setMinimum(0);
                 alphaSlide.setMaximum(255);
@@ -343,7 +343,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
                 toolkit.createLabel(group, "Foreground");
 
                 final RGB foregroundColor = this.getDashboardPart().getForegroundColor();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text foregroundColorText = toolkit.createText(group, String.format("%s,%s,%s", (int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B));
                 foregroundColorText
                         .setBackground(new Color(group.getShell().getDisplay(), new org.eclipse.swt.graphics.RGB((int) foregroundColor.R, (int) foregroundColor.G, (int) foregroundColor.B)));
@@ -369,7 +369,7 @@ public class TrackConfigurer extends AbstractDashboardPartConfigurer<TrackDashbo
             {// Background image
                 toolkit.createLabel(group, "Background Image");
                 final String image = this.getDashboardPart().getImage();
-                @SuppressWarnings("boxing")
+                //@SuppressWarnings("boxing")
                 final Text imageText = toolkit.createText(group, image);
                 imageText.setEditable(true);
                 final Button imageButton = toolkit.createButton(group, "..", SWT.PUSH | SWT.BORDER);

@@ -19,7 +19,6 @@ public class THeartbeatAORule extends
 		physical.setApplicationTimeDelay(operator.getApplicationTimeDelay());
 		physical.setRealTimeDelay(operator.getRealTimeDelay(), operator.getTimeUnit());
 		physical.setSendAlwaysHeartbeat(operator.isSendAlwaysHeartbeat());
-		physical.setAllowOutOfOrder(operator.isAllowOutOfOrder());
 		physical.setStartTimerAfterFirstElement(operator.isStartTimerAfterFirstElement());
 		physical.setRestartTimerForEveryInput(operator.isRestartTimerForEveryInput());
 		defaultExecute(operator, physical, config, true, true);

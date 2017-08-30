@@ -94,7 +94,7 @@ public class EventHandler {
 	}
 
 	private EventHandler() {
-		initThreadPool((int) Math.max(1, OdysseusConfiguration.getLong(
+		initThreadPool((int) Math.max(1, OdysseusConfiguration.instance.getLong(
 				"EventHandlerDispatcherPoolSize", 10)));
 	}
 

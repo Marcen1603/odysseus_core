@@ -56,7 +56,7 @@ import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
 // public class RecordingStore extends FileStore<String, RecordEntry> {
 public class RecordingStore {
 
-	private static final String PATH_TO_STORE = OdysseusConfiguration.get("odysseusHome") + "recordings.store";
+	private static final String PATH_TO_STORE = OdysseusConfiguration.instance.get("odysseusHome") + "recordings.store";
 
 	private MemoryStore<String, RecordEntry> cache = new MemoryStore<String, RecordEntry>();
 
