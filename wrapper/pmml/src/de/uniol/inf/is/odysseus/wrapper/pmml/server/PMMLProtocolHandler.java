@@ -141,8 +141,8 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 	
 	@Override
 	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
-		logger.info("get next");
-		Tuple t = new Tuple(1, false);
+		//logger.info("get next");//Jens: no logging for every processed tuple!
+		Tuple<?> t = new Tuple(1, false);
 		t.setAttribute(0, this.pmml);
 		return t;
 	}

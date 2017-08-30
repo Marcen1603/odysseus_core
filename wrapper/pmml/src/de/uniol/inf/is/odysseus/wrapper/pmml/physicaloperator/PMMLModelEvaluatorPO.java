@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.pmml.physicaloperator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +10,6 @@ import java.util.Stack;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.AffinityDistribution;
-import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.InputField;
@@ -20,17 +17,13 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.association.Association;
-import org.jpmml.evaluator.clustering.ClusterAffinityDistribution;
-import org.jpmml.evaluator.tree.NodeScore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.wrapper.cosem.feature"
-      label="DLMS/COSEM Feature"
+      id="de.uniol.inf.is.odysseus.wrapper.pmml.feature"
+      label="PMML Feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -16,38 +16,34 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.kafka.feature"
-         version="0.0.0"/>
-
    <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.cosem"
+         id="de.uniol.inf.is.odysseus.wrapper.pmml"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.openmuc.jdlms"
+         id="org.jpmml"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="org.apache.commons.lang"
+         id="de.uniol.inf.is.odysseus.wrapper.web"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.junit"
+         id="org.apache.commons.collections15"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="org.hamcrest.core"
+         id="de.uniol.inf.is.odysseus.keyvalue.datatype"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -60,7 +56,13 @@
          version="0.0.0"/>
 
    <plugin
-         id="org.jpmml"
+         id="com.jayway.jsonpath"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.codehaus.woodstox.stax2-api"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
