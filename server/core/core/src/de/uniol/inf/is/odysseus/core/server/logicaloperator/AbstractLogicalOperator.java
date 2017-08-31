@@ -64,14 +64,16 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	private transient OwnerHandler ownerHandler;
 
+	// Connection to sources
 	protected Map<Integer, LogicalSubscription> subscribedToSource = new HashMap<Integer, LogicalSubscription>();
-//	protected List<LogicalSubscription> subscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
+	
+	protected List<LogicalSubscription> subscriptions = new CopyOnWriteArrayList<LogicalSubscription>();
 
 	protected boolean recalcOutputSchemata = false;
 
-	private Map<Integer, Subscription<IPhysicalOperator>> physSubscriptionTo = new HashMap<Integer, Subscription<IPhysicalOperator>>();
+	private Map<Integer, Subscription<IPhysicalOperator, ILogicalOperator>> physSubscriptionTo = new HashMap<>();
 	// cache access to bounded physOperators
-	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<Integer, IPhysicalOperator>();
+	private Map<Integer, IPhysicalOperator> physInputOperators = new HashMap<>();
 	private boolean recalcAllPhyInputSet = true;
 	private boolean cachedAllPhysicalInputSet = false;
 
@@ -85,7 +87,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	private String uniqueIdentifier = null;
 	private boolean suppressPunctuation = false;
 
-//	private List<IPredicate<?>> predicates = new LinkedList<IPredicate<?>>();
 
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 	private TimeUnit baseTimeUnit = null;
@@ -154,8 +155,9 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		SDFSchema ret = null;
 		if (s != null) {
 			ret = s.getSchema();
+			// TODO: Move to subscription
 			if (ret == null) {
-				ILogicalOperator op = s.getTarget();
+				ILogicalOperator op = s.getSource();
 				if (op != null) {
 					ret = op.getOutputSchema(s.getSourceOutPort());
 				}
@@ -424,19 +426,19 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@Override
-	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> subscription) {
+	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator, ILogicalOperator> subscription) {
 		this.physSubscriptionTo.put(subscription.getSinkInPort(), subscription);
-		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getTarget());
+		this.physInputOperators.put(subscription.getSinkInPort(), subscription.getSource());
 		this.recalcAllPhyInputSet = true;
 	}
 
 	@Override
 	public void setPhysSubscriptionTo(IPhysicalOperator op, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		setPhysSubscriptionTo(new Subscription<IPhysicalOperator>(op, sinkInPort, sourceOutPort, schema));
+		setPhysSubscriptionTo(new Subscription<IPhysicalOperator, ILogicalOperator>(op, this, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
-	public Collection<Subscription<IPhysicalOperator>> getPhysSubscriptionsTo() {
+	public Collection<Subscription<IPhysicalOperator, ILogicalOperator>> getPhysSubscriptionsTo() {
 		return physSubscriptionTo.values();
 	}
 
@@ -453,7 +455,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	 * #getPhysInputPO (int)
 	 */
 	@Override
-	public Subscription<IPhysicalOperator> getPhysSubscriptionTo(int port) {
+	public Subscription<IPhysicalOperator, ILogicalOperator> getPhysSubscriptionTo(int port) {
 		return this.physSubscriptionTo.get(port);
 	}
 
@@ -464,33 +466,36 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public void subscribeToSource(ILogicalOperator source, int sinkInPort, int sourceOutPort, SDFSchema inputSchema) {
-		LogicalSubscription sub = new LogicalSubscription(source, sinkInPort, sourceOutPort, inputSchema);
-		// Finde den maximalen verwendeten Port
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
+		LogicalSubscription sub = new LogicalSubscription(source, this, sinkInPort, sourceOutPort, inputSchema);
+		subscribeToSource(sub);
+	}
+
+	@Override
+	public void subscribeToSource(LogicalSubscription sub) {
 		synchronized (this.subscribedToSource) {
-			if (!this.subscribedToSource.containsKey(sinkInPort)) {
-				this.subscribedToSource.put(sinkInPort, sub);
-				source.subscribeSink(getInstance(), sinkInPort, sourceOutPort, inputSchema);
+			if (!this.subscribedToSource.containsKey(sub.getSinkInPort())) {
+				this.subscribedToSource.put(sub.getSinkInPort(), sub);
+				sub.getSource().subscribeSink(sub);
 				recalcOutputSchemata = true;
 				this.recalcAllPhyInputSet = true;
 			} else {
-				if( source != subscribedToSource.get(sinkInPort).getTarget()) {
-					throw new IllegalArgumentException("SinkInPort " + sinkInPort + " already bound to logical operator '" + subscribedToSource.get(sinkInPort).getTarget() + "'. Cannot bind '" + source + "'");
+				if( sub.getSource() != subscribedToSource.get(sub.getSinkInPort()).getSource()) {
+					throw new IllegalArgumentException("SinkInPort " + sub.getSinkInPort() + " already bound to logical operator '" + subscribedToSource.get(sub.getSinkInPort()).getSource() + "'. Cannot bind '" + sub.getSource() + "'");
 				}
 			}
 		}
 	}
 
-	private int getNextFreeSinkInPort() {
+	private synchronized int getNextFreeSinkInPort() {
 		int sinkInPort = -1;
 		for (Integer port : subscribedToSource.keySet()) {
 			if (port > sinkInPort) {
 				sinkInPort = port;
 			}
 		}
-		// und erh�he um eins
 		sinkInPort++;
 		return sinkInPort;
 	}
@@ -512,7 +517,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 				Entry<Integer, LogicalSubscription> next = it.next();
 				it.remove();
 				LogicalSubscription subscription = next.getValue();
-				subscription.getTarget().unsubscribeSink(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+				subscription.getSource().unsubscribeSink(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			}
 			recalcOutputSchemata = true;
 			this.recalcAllPhyInputSet = true;
@@ -521,7 +526,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	public void unsubscribeFromSource(LogicalSubscription subscription) {
-		unsubscribeFromSource(subscription.getTarget(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+		unsubscribeFromSource(subscription.getSource(), subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 	}
 
 	@Override
@@ -538,7 +543,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public Collection<LogicalSubscription> getSubscribedToSource(ILogicalOperator a) {
 		List<LogicalSubscription> subs = new ArrayList<LogicalSubscription>();
 		for (LogicalSubscription l : subscribedToSource.values()) {
-			if (l.getTarget() == a) {
+			if (l.getSource() == a) {
 				subs.add(l);
 			}
 		}
@@ -550,10 +555,10 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		if (sinkInPort == -1) {
 			sinkInPort = getNextFreeSinkInPort();
 		}
-		LogicalSubscription sub = new LogicalSubscription(sink, sinkInPort, sourceOutPort, inputSchema);
+		LogicalSubscription sub = new LogicalSubscription(this, sink, sinkInPort, sourceOutPort, inputSchema);
 		if (!this.subscriptions.contains(sub)) {
 			this.subscriptions.add(sub);
-			sink.subscribeToSource(this, sinkInPort, sourceOutPort, inputSchema);
+			sink.subscribeToSource(sub);
 			recalcOutputSchemata = true;
 			this.recalcAllPhyInputSet = true;
 		}
@@ -566,13 +571,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 
 	@Override
 	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new LogicalSubscription(sink, sinkInPort, sourceOutPort, schema));
+		unsubscribeSink(new LogicalSubscription(this, sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
 	public void unsubscribeSink(LogicalSubscription subscription) {
 		if (this.subscriptions.remove(subscription)) {
-			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
+			subscription.getSink().unsubscribeFromSource(this, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 			recalcOutputSchemata = true;
 			this.recalcAllPhyInputSet = true;
 		}

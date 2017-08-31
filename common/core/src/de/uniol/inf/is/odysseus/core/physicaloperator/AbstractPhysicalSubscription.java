@@ -22,7 +22,8 @@ import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-abstract public class AbstractPhysicalSubscription<I,O> extends Subscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>> {
+abstract public class AbstractPhysicalSubscription<I extends ISource<IStreamObject<?>>,O extends ISink<IStreamObject<?>>>
+		extends Subscription<I, O> {
 
 	private static final long serialVersionUID = -6266008340674321020L;
 	private boolean done;
@@ -30,8 +31,8 @@ abstract public class AbstractPhysicalSubscription<I,O> extends Subscription<ISo
 
 	private int openCalls = 0;
 
-	public AbstractPhysicalSubscription(ISource<IStreamObject<?>> source, ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort,
-			SDFSchema schema) {
+	public AbstractPhysicalSubscription(I source, O sink, int sinkInPort,
+			int sourceOutPort, SDFSchema schema) {
 		super(source, sink, sinkInPort, sourceOutPort, schema);
 		done = false;
 	}
@@ -43,15 +44,14 @@ abstract public class AbstractPhysicalSubscription<I,O> extends Subscription<ISo
 	public boolean isDone() {
 		return done;
 	}
-	
+
 	public void setNeedsClone(boolean needsClone) {
 		this.needsClone = needsClone;
 	}
-	
+
 	public boolean isNeedsClone() {
 		return needsClone;
 	}
-	
 
 	public synchronized void incOpenCalls() {
 		openCalls++;
@@ -73,22 +73,21 @@ abstract public class AbstractPhysicalSubscription<I,O> extends Subscription<ISo
 	public void setOpenCalls(int openCalls) {
 		this.openCalls = openCalls;
 	}
-	
-	@SuppressWarnings({ "rawtypes"})
+
+	@SuppressWarnings({ "rawtypes" })
 	final public void process(IStreamObject o) {
-		IStreamObject toProcess = needsClone?(IStreamObject)o.clone():o;
+		IStreamObject toProcess = needsClone ? (IStreamObject) o.clone() : o;
 		do_process(toProcess);
 	}
 
-	@SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes")
 	protected void do_process(IStreamObject o) {
 		sendObject(o);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	final protected void sendObject(IStreamObject o){
+	final protected void sendObject(IStreamObject o) {
 		getSink().process(o, getSinkInPort());
 	}
-	
-	
+
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.metadata.IHasMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 
 /**
@@ -31,57 +32,58 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  *
  * @author Jonas Jacobi, Tobias Witt
  */
-public interface ISource<T> extends IPhysicalOperator,
-		ISubscribable<ISink<? super T>, AbstractPhysicalSubscription<ISink<? super T>,ISource<? super T>>>, IHasMetaAttribute, ITransfer<T> {
+public interface ISource<T extends IStreamObject<?>> extends IPhysicalOperator,
+		ISubscribable<ISink<IStreamObject<?>>, AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>,
+		IHasMetaAttribute, ITransfer<T> {
 	/**
-	 * Gets called initially once from every subscribed sink. Setup work should
-	 * be done in here.
-	 * caller: who called open
-	 * sourcePort: on which output port of the source
-	 * sinkPort: on which inport port of the sink
-	 * callPath: Is needed to cope with cycles in the graph
+	 * Gets called initially once from every subscribed sink. Setup work should be
+	 * done in here. caller: who called open sourcePort: on which output port of the
+	 * source sinkPort: on which inport port of the sink callPath: Is needed to cope
+	 * with cycles in the graph
 	 *
 	 * @throws OpenFailedException
 	 *             if the source can't be initialised e.g. because some needed
 	 *             resources like socket connections can't be allocated.
 	 */
-	void open(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) throws OpenFailedException;
+	void open(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
+			throws OpenFailedException;
 
-	void start(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+	void start(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
 			throws StartFailedException;
 
 	/**
 	 * Close down the connection/do not read any more data
 	 */
-	void close(ISink<? super T> caller, int sourcePort, int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,  List<IOperatorOwner> forOwners);
-
-
+	void close(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners);
 
 	/**
 	 * Methods to mark (!) Operator as blocked. Can be used by scheduler
 	 */
 	void unblock();
+
 	void block();
+
 	boolean isBlocked();
 
 	/**
-	 * Suspending a source, when called from all owners the operator will be suspended
+	 * Suspending a source, when called from all owners the operator will be
+	 * suspended
+	 * 
 	 * @param owner
 	 */
 
-	void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners);
+	void suspend(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners);
 
 	/**
 	 * Resuming a source for this owner
+	 * 
 	 * @param owner
 	 */
-	void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners);
-
-
+	void resume(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners);
 
 }

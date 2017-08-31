@@ -23,7 +23,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
-public interface ISubscriber<T, S extends ISubscription<T>> {
+public interface ISubscriber<I, S extends ISubscription<I,?>> {
 	
 	/**
 	 * SubscribeTo will be called at a sink operator. The first
@@ -35,7 +35,8 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 * A -> B
 	 *
 	 */
-	public void subscribeToSource(T source, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void subscribeToSource(I source, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	void subscribeToSource(S Subscription);
 	
 	/**
 	 * Removes a subscription installed by the methods
@@ -43,17 +44,17 @@ public interface ISubscriber<T, S extends ISubscription<T>> {
 	 * {@link ISubscribable#subscribe(Object, int, int)}
 	 * @param subscription
 	 */
-	public void unsubscribeFromSource(S subscription);
+	void unsubscribeFromSource(S subscription);
 	
 	/**
 	 * Unsubscribes from alle Subscribed Sources
 	 */
-	public void unsubscribeFromAllSources();
+	void unsubscribeFromAllSources();
 	
 	/**
 	 * Removes a subscription installed by {@link ISubscriber#subscribeTo(Object, int, int)}.
 	 */
-	public void unsubscribeFromSource(T source, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	public Collection<S> getSubscribedToSource();
-	public S getSubscribedToSource(int i);
+	void unsubscribeFromSource(I source, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	Collection<S> getSubscribedToSource();
+	S getSubscribedToSource(int i);
 }

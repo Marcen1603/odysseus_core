@@ -23,16 +23,16 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
  * Interface for data sinks in a query graph.
  * 
  * New data get pushed into a sink from the {@link ISource sources} it is
- * subscribed to by calling {@link #process(Object, int)}. If a source
- * has no more data (and therefore wont call
- * {@link #process(Object, int)} again) {@link #done(int)} gets called.
- * Setup and cleanup work is done in {@link #open()} and {@link #close()}
- * respectively.
+ * subscribed to by calling {@link #process(Object, int)}. If a source has no
+ * more data (and therefore wont call {@link #process(Object, int)} again)
+ * {@link #done(int)} gets called. Setup and cleanup work is done in
+ * {@link #open()} and {@link #close()} respectively.
  * 
  * @author Jonas Jacobi, Marco Grawunder
  */
-public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, ISubscriber<ISource<? extends T>, AbstractPhysicalSubscription<ISource<? extends T>>> {
-	
+public interface ISink<T extends IStreamObject<?>>
+		extends IPhysicalOperator, ISubscriber<ISource<IStreamObject<?>>, AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> {
+
 	/**
 	 * Process an element.
 	 * 
@@ -51,17 +51,17 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 	 */
 	void done(int port);
 
-	
 	/**
 	 * Process a punctuation
+	 * 
 	 * @param punctuation
 	 * @param port
 	 */
 	void processPunctuation(IPunctuation punctuation, int port);
-	
-	
+
 	/**
 	 * Shared Sink can be opened for different owners (queries)
+	 * 
 	 * @param owner
 	 * @return
 	 */
@@ -69,22 +69,25 @@ public interface ISink<T extends IStreamObject<?>> extends IPhysicalOperator, IS
 
 	/**
 	 * Call suspend for a specific owner
+	 * 
 	 * @param id
 	 */
 	void suspend(IOperatorOwner id);
-	
+
 	/**
-	 * Call resume for a suspended owner 
+	 * Call resume for a suspended owner
+	 * 
 	 * @param id
 	 */
 	void resume(IOperatorOwner id);
-	
+
 	void partial(IOperatorOwner id, int sheddingFactor);
 
 	/**
 	 * How many input ports are available
+	 * 
 	 * @return
 	 */
 	int getInputPortCount();
-	
+
 }
