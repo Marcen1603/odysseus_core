@@ -190,7 +190,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 			}
 			if (Strings.isNullOrEmpty(expression.name)) {
 				String newName = expression.expression.getExpressionString();
-				newName = newName.replaceAll("(", "_").replaceAll(")", "_");
+				newName = SDFAttribute.replaceSpecialChars(newName);
 				this.expressions.add(new NamedExpression(newName, expression));
 			} else {
 				this.expressions.add(expression);
