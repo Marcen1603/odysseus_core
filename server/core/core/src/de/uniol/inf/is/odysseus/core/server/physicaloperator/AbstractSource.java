@@ -799,15 +799,20 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema,
 			boolean asActive, int openCount) {
 		// TODO: Make configurable
-		AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
+		subscribeSink(sub, asActive);
+	}
+
+	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub, boolean asActive) {
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
-			sink.subscribeToSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sub);
+			sub.getSink().subscribeToSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sub);
 			if (asActive) {
 				addActiveSubscription(sub);
 			}
@@ -818,10 +823,17 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	final public void subscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		subscribeSink((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) subscription, false);
+	}
 
 	@Override
 	public void connectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
 		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		// All connected sinks needs a cloned version as the sinks are connected
@@ -833,6 +845,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		connectedSinks.add(sub);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	final public void unsubscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
@@ -843,7 +856,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@Override
 	public void disconnectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
 				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		removeActiveSubscription(sub);
 		connectedSinks.remove(sub);
@@ -864,6 +878,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		return this.activeSinkSubscriptions.contains(subscription);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void unsubscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
 		getLogger().trace("Unsubscribe from Sink " + subscription.getSource());
@@ -873,36 +888,6 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			subscription.getSink().unsubscribeFromSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) subscription);
 		}
 	}
-
-	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-	// // Arrays (MG)
-	// @Override
-	// public void atomicReplaceSink(
-	// List<PhysicalSubscription<ISink<? super T>>> remove,
-	// ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-	// SDFSchema schema) {
-	// // synchronized (this.sinkSubscriptions) {
-	// for (PhysicalSubscription<ISink<? super T>> sub : remove) {
-	// unsubscribeSink(sub);
-	// }
-	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-	// // }
-	// }
-	//
-	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-	// // Arrays (MG)
-	// @Override
-	// public void atomicReplaceSink(
-	// PhysicalSubscription<ISink<? super T>> remove,
-	// List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-	// SDFSchema schema) {
-	// // synchronized (this.sinkSubscriptions) {
-	// unsubscribeSink(remove);
-	// for (ISink<? super T> sink : sinks) {
-	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-	// }
-	// // }
-	// }
 
 	@Override
 	final public List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getSubscriptions() {
