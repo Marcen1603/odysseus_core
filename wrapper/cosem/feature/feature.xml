@@ -16,19 +16,8 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.wrapper.kafka.feature"
-         version="0.0.0"/>
-
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.iec62056"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.wrapper.kafka"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -49,26 +38,6 @@
 
    <plugin
          id="org.hamcrest.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.datarate"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.jpmml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.latency"
          download-size="0"
          install-size="0"
          version="0.0.0"

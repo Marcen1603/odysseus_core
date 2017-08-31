@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 	"maxlstart",
 	"lend",
 	"latency",
-	"datarates"
+//	"datarates"
 })
 public abstract class Result {
 	
@@ -51,8 +51,8 @@ public abstract class Result {
 	@JsonProperty("latency")
 	private long latency;
 	
-	@JsonProperty("datarates")
-	private Map<String, Double> datarates;
+//	@JsonProperty("datarates")
+//	private Map<String, Double> datarates;
 	
 	@JsonGetter
 	public long getTimeintervalStart() {
@@ -84,10 +84,10 @@ public abstract class Result {
 		return latency;
 	}
 
-	@JsonGetter
-	public Map<String, Double> getDatarates() {
-		return datarates;
-	}
+//	@JsonGetter
+//	public Map<String, Double> getDatarates() {
+//		return datarates;
+//	}
 
 	@JsonSetter
 	public void setTimeintervalStart(long timeintervalStart) {
@@ -119,10 +119,10 @@ public abstract class Result {
 		this.latency = latency;
 	}
 
-	@JsonSetter
-	public void setDatarate(Map<String, Double> datarates) {
-		this.datarates = datarates;
-	}
+//	@JsonSetter
+//	public void setDatarate(Map<String, Double> datarates) {
+//		this.datarates = datarates;
+//	}
 	
 	/**
 	 * Sets values for json properties that are defined by the class.

@@ -32,7 +32,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
-import de.uniol.inf.is.odysseus.datarate.IDatarate;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.model.ProcessedData;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.model.Result;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.AbstractCOSEMParser;
@@ -303,9 +302,9 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 			lend = ((ILatency) meta).getLatencyEnd();
 			latency = ((ILatency) meta).getLatency();
 		}
-		if (meta instanceof IDatarate) {
-			datarates = ((IDatarate) meta).getDatarates();
-		}
+//		if (meta instanceof IDatarate) {
+//			datarates = ((IDatarate) meta).getDatarates();
+//		}
 		//set meta data
 		data.setTimeintervalStart(timeintervalStart);
 		data.setTimeintervalEnd(timeintervalEnd);
@@ -313,7 +312,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 		data.setMaxlStart(maxlStart != null ? maxlStart : -1);
 		data.setLend(lend != null ? lend : -1);
 		data.setLatency(latency != null ? latency : -1);
-		data.setDatarate(datarates);
+//		data.setDatarate(datarates);
 		Map<String, Object> values = new HashMap<String, Object>();
 		for(int i = 0; i < getSchema().size(); i++) {
 			values.put(getSchema().get(i).getAttributeName(), ((Tuple<?>) object).getAttribute(i));
