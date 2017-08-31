@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.eca.plugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
+
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
@@ -17,6 +19,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
+		OdysseusRCPPlugIn.waitForExecutor();
 	}
 
 	/*
