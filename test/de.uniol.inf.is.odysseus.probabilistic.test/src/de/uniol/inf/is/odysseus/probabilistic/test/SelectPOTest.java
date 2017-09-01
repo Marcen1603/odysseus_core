@@ -19,7 +19,7 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
