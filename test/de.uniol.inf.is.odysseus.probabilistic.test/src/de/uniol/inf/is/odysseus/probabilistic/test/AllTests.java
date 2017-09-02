@@ -27,13 +27,16 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ //
         SelectPOTest.class, //
-        SelectPOWithContinuousProbabilityDistributionsTest.class, //
+        
+        SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumbersTest.class, //
+        SelectPOCompareContinuousProbabilityDistributionsWithContinuousProbabilityDistributionsTest.class, //
+        SelectPOCompareMultiDimensionalContinuousProbabilityDistributionsWithDiscreteNumbersTest.class, //
        
         SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersTest.class, //
         SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteProbabilityDistributionsTest.class, //
         SelectPOCompareMultiDimensionalDiscreteProbabilityDistributionsWithDiscreteNumbersTest.class, //
 
-        SelectPOWithDeterministicNumbersTest.class,//
+        SelectPOCompareDeterministicNumbersWithDeterministicNumbersTest.class,//
 
 })
 public class AllTests {

@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSele
  *
  */
 @RunWith(Parameterized.class)
-public class SelectPOWithDeterministicNumbersTest extends AbstractSelectPOTest {
+public class SelectPOCompareDeterministicNumbersWithDeterministicNumbersTest extends AbstractSelectPOTest {
 
     @Parameters(name = "{index}: Predicate: {0}, Input: [{1},{2}], Existence: {5}")
     public static Collection<Object[]> data() {

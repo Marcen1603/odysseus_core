@@ -320,7 +320,7 @@ abstract public class AbstractOperatorTest {
             output.setMetadata(new Probabilistic(existence));
             assertThat("Created output tuple has an invalid existence metadata value", output.getMetadata().getExistence(), is(existence));
             assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
-                    is(closeTo(existence, 0.01)));
+                    is(closeTo(existence, 0.1)));
             assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
         }
     }
