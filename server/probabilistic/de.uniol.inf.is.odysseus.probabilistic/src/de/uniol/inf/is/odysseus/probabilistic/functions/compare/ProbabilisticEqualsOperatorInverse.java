@@ -23,58 +23,53 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Multivari
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 
 /**
- * Greater-Equals operator for continuous probabilistic values.
- * 
+ * Equals operator for continuous probabilistic values.
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public class ProbabilisticGreaterEqualsOperatorVector extends AbstractProbabilisticCompareOperator {
+public class ProbabilisticEqualsOperatorInverse extends AbstractProbabilisticCompareOperator {
 
     /**
-	 * 
-	 */
-    private static final long serialVersionUID = -9122605635777338549L;
-
-    public ProbabilisticGreaterEqualsOperatorVector() {
-        this(">=");
-    }
-
-    protected ProbabilisticGreaterEqualsOperatorVector(final String symbol) {
-        super(symbol, ProbabilisticGreaterEqualsOperatorVector.ACC_TYPES);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
+     *
      */
-    @Override
-    public final int getPrecedence() {
-        return 8;
+    private static final long serialVersionUID = 3957706587015923960L;
+
+    public ProbabilisticEqualsOperatorInverse() {
+        super("==", ProbabilisticEqualsOperatorInverse.ACC_TYPES);
     }
 
-    /**
-     * 
-     * {@inheritDoc}
+    /*
+     *
+     * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
     public final ProbabilisticBooleanResult getValue() {
-        final Object[] aVector = this.getInputValue(0);
-        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) aVector[0]).clone();
-
-        final double[][] b = (double[][]) this.getInputValue(1);
+        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
+        final int pos = getInputPosition(1);
+        final Double b = getNumericalInputValue(0);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
+        lowerBound[a.getDimension(pos)] = b;
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
+        upperBound[a.getDimension(pos)] = b;
 
-        return this.getValueInternal(a, lowerBound, upperBound);
+        return this.getValueInternal(a, lowerBound, upperBound,true,true);
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public int getPrecedence() {
+        return 9;
     }
 
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE },
-            { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE } };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.NUMBERS, SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS };
 
 }

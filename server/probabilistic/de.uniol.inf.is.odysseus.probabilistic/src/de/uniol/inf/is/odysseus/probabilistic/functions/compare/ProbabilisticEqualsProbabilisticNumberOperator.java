@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
@@ -12,12 +12,12 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProbabilisticCompareOperator {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 7656616835285616813L;
 
@@ -26,7 +26,7 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
     }
 
     /*
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.mep.IExpression#getValue()
      */
     @Override
@@ -41,16 +41,16 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
         System.arraycopy(b.getMean(), 0, lowerBound, 0, b.getMean().length);
 
-        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound);
+        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound,true,true);
         final double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
         // Assume symmetry
-        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() * 0.5);
+        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() );
         ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
         return scaledResult;
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override

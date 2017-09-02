@@ -186,6 +186,7 @@ public class SelectPOTest extends AbstractSelectPOTest {
 
         whenProcessPunctuationAt(new Date(0));
 
+        thenPunctuationEquals(new Date(0));
     }
 
     private void givenOtherProbabilisticSelectPO() {

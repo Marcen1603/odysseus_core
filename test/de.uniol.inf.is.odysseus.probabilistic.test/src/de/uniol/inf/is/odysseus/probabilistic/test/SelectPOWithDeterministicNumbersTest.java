@@ -37,12 +37,42 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSele
 @RunWith(Parameterized.class)
 public class SelectPOWithDeterministicNumbersTest extends AbstractSelectPOTest {
 
-    @Parameters(name = "{index}: Predicate: {0}, Input: {1}, Output: {2}, Existence: {3}")
+    @Parameters(name = "{index}: Predicate: {0}, Input: [{1},{2}], Existence: {5}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { //
-            { "x < y", new Object[] { 1, 2 }, new Object[] { 1, 2 }, 1.0 }, //
-            { "x < y", new Object[] { -1, 2 }, new Object[] { -1, 2 }, 1.0 }, //
-            { "x > y", new Object[] { 1, 2 }, null, 1.0 }, //
+                { "x < y", //
+                        -1, 1, -1, 1, 1.0 //
+                }, //
+                { "x <= y", //
+                        -1, 1, -1, 1, 1.0 //
+                }, //
+                { "y > x", //
+                        -1, 1, -1, 1, 1.0 //
+                }, //
+                { "y >= x", //
+                        -1, 1, -1, 1, 1.0 //
+                }, //
+                { "x > y", //
+                        1, -1, 1, -1, 1.0 //
+                }, //
+                { "x >= y", //
+                        1, -1, 1, -1, 1.0 //
+                }, //
+                { "y < x", //
+                        1, -1, 1, -1, 1.0 //
+                }, //
+                { "y <= x", //
+                        1, -1, 1, -1, 1.0 //
+                }, //
+                { "x > y", //
+                        -1, 1, null, null, 1.0 //
+                }, //
+                { "x == y", //
+                        1, 1, 1, 1, 1.0 //
+                }, //
+                { "y == x", //
+                        1, 1, 1, 1, 1.0 //
+                }, //
         });
 
     }
@@ -50,10 +80,14 @@ public class SelectPOWithDeterministicNumbersTest extends AbstractSelectPOTest {
     @Parameter(0)
     public String predicateString;
     @Parameter(1)
-    public Object[] input;
+    public Object inputX;
     @Parameter(2)
-    public Object[] output;
+    public Object inputY;
     @Parameter(3)
+    public Object outputX;
+    @Parameter(4)
+    public Object outputY;
+    @Parameter(5)
     public double existence;
 
     /**
@@ -65,15 +99,19 @@ public class SelectPOWithDeterministicNumbersTest extends AbstractSelectPOTest {
         givenSchema(//
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
-                );
+        );
 
         givenPredicate(this.predicateString);
         givenProbabilisticSelectPO();
-        givenInputTupleWithValues(this.input);
+        givenInputTupleWithValues(new Object[] { this.inputX, this.inputY });
 
         whenProcessTuple();
 
-        thenOutputEquals(this.existence, this.output);
+        if ((this.outputX == null) && (this.outputY == null)) {
+            thenOutputEquals(this.existence, (Object[]) null);
+        } else {
+            thenOutputEquals(this.existence, new Object[] { this.outputX, this.outputY });
+        }
     }
 
 }

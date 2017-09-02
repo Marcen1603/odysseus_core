@@ -21,14 +21,14 @@ package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ProbabilisticSmallerEqualsOperator extends ProbabilisticSmallerOperator {
+public class ProbabilisticSmallerEqualsOperatorInverse extends ProbabilisticSmallerOperatorInverse {
 
     /**
-     * 
+     *
      */
-    private static final long serialVersionUID = -9122605635777338549L;
+    private static final long serialVersionUID = 8417832098112718610L;
 
-    public ProbabilisticSmallerEqualsOperator() {
+    public ProbabilisticSmallerEqualsOperatorInverse() {
         super("<=", true, true);
     }
 

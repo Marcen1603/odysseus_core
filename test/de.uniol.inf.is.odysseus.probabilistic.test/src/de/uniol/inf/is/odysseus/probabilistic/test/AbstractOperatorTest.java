@@ -17,7 +17,6 @@ package de.uniol.inf.is.odysseus.probabilistic.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -79,8 +78,8 @@ abstract public class AbstractOperatorTest {
     protected Optional<AbstractPipe<ProbabilisticTuple<IProbabilistic>, ProbabilisticTuple<IProbabilistic>>> otherOperator;
     protected Optional<ProbabilisticTuple<IProbabilistic>> inputTuple = Optional.empty();
 
-    protected Optional<IPunctuation> lastPunctuation;
-    protected Optional<IStreamObject<?>> lastObject;
+    protected Optional<IPunctuation> lastPunctuation = Optional.empty();
+    protected Optional<IStreamObject<?>> lastObject = Optional.empty();
 
     protected boolean isSemanticallyEqual;
 
@@ -96,8 +95,7 @@ abstract public class AbstractOperatorTest {
         for (final ClassPath.ClassInfo classInfo : ClassPath.from(classLoader).getTopLevelClasses()) {
             if (classInfo.getName().startsWith("de.uniol.inf.is.odysseus.mep.functions.")) {
                 final Class<?> classObject = classInfo.load();
-                if (IMepFunction.class.isAssignableFrom(classObject)
-                        && !Modifier.isAbstract(classObject.getModifiers())) {
+                if (IMepFunction.class.isAssignableFrom(classObject) && !Modifier.isAbstract(classObject.getModifiers())) {
                     try {
                         MEP.registerFunction((IMepFunction<?>) classObject.newInstance());
                     } catch (InstantiationException | IllegalAccessException e) {
@@ -127,8 +125,8 @@ abstract public class AbstractOperatorTest {
      */
     @Before
     public void setUp() throws Exception {
-        this.lastPunctuation = null;
-        this.lastObject = null;
+        this.lastPunctuation = Optional.empty();
+        this.lastObject = Optional.empty();
     }
 
     /**
@@ -139,20 +137,17 @@ abstract public class AbstractOperatorTest {
     }
 
     protected void givenSchema(final SDFAttribute... attributes) {
-        this.schema = Optional
-                .of(SDFSchemaFactory.createNewSchema("test", ProbabilisticTuple.class, Arrays.asList(attributes)));
+        this.schema = Optional.of(SDFSchemaFactory.createNewSchema("test", ProbabilisticTuple.class, Arrays.asList(attributes)));
     }
 
     protected void givenOtherSchema(final SDFAttribute... attributes) {
-        this.otherSchema = Optional
-                .of(SDFSchemaFactory.createNewSchema("test", ProbabilisticTuple.class, Arrays.asList(attributes)));
+        this.otherSchema = Optional.of(SDFSchemaFactory.createNewSchema("test", ProbabilisticTuple.class, Arrays.asList(attributes)));
     }
 
     protected void givenPredicate(final String predicate) {
         final IAttributeResolver resolver = new DirectAttributeResolver(this.schema.get());
 
-        final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(
-                new SDFExpression(predicate, resolver, MEP.getInstance()));
+        final SDFProbabilisticExpression expression = new SDFProbabilisticExpression(new SDFExpression(predicate, resolver, MEP.getInstance()));
         this.predicate = Optional.of(new ProbabilisticRelationalPredicate(expression));
     }
 
@@ -166,17 +161,40 @@ abstract public class AbstractOperatorTest {
 
         final Object[] attributes = new Object[elements.length];
         final List<MultivariateMixtureDistribution> distributions = new ArrayList<>();
+        int dimension = 0;
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] instanceof MultivariateMixtureDistribution) {
-                distributions.add((MultivariateMixtureDistribution) elements[i]);
+                if (!distributions.contains(elements[i])) {
+                    distributions.add((MultivariateMixtureDistribution) elements[i]);
+                }
                 attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
+                ((MultivariateMixtureDistribution) elements[i]).setAttribute(i, dimension);
+                dimension++;
             } else {
                 attributes[i] = elements[i];
             }
         }
 
-        this.inputTuple = Optional.of(new ProbabilisticTuple<IProbabilistic>(attributes,
-                distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone));
+        this.inputTuple = Optional.of(new ProbabilisticTuple<IProbabilistic>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone));
+        this.inputTuple.get().setMetadata(new Probabilistic(1.0));
+    }
+
+    protected void givenInputTupleWithSeparateDistributions(final Object... elements) {
+        final boolean requiresDeepClone = true;
+
+        final Object[] attributes = new Object[elements.length];
+        final List<MultivariateMixtureDistribution> distributions = new ArrayList<>();
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] instanceof MultivariateMixtureDistribution) {
+                distributions.add((MultivariateMixtureDistribution) elements[i]);
+                attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
+                ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, 0);
+            } else {
+                attributes[i] = elements[i];
+            }
+        }
+
+        this.inputTuple = Optional.of(new ProbabilisticTuple<IProbabilistic>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone));
         this.inputTuple.get().setMetadata(new Probabilistic(1.0));
     }
 
@@ -184,17 +202,17 @@ abstract public class AbstractOperatorTest {
         System.out.println(String.format("process_next(%s,%s)", this.inputTuple.get(), 0));
 
         try {
-            final Method processNextMethod = this.operator.get().getClass().getDeclaredMethod("process_next",
-                    IStreamObject.class, int.class);
+            final Method processNextMethod = this.operator.get().getClass().getDeclaredMethod("process_next", IStreamObject.class, int.class);
 
             processNextMethod.setAccessible(true);
-            this.lastObject = null;
+            this.lastObject = Optional.empty();
 
             final Stopwatch timer = Stopwatch.createStarted();
 
             try {
                 processNextMethod.invoke(this.operator.get(), this.inputTuple.get(), 0);
             } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
                 fail(e.getMessage());
             }
             timer.stop();
@@ -208,7 +226,7 @@ abstract public class AbstractOperatorTest {
     protected void whenProcessPunctuationAt(final Date date) {
         System.out.println(String.format("processPunctuation(%s,%s)", date, 0));
         final IPunctuation punctuation = Heartbeat.createNewHeartbeat(date.getTime());
-        this.lastPunctuation = null;
+        this.lastPunctuation = Optional.empty();
 
         final Stopwatch timer = Stopwatch.createStarted();
 
@@ -222,8 +240,7 @@ abstract public class AbstractOperatorTest {
         System.out.println("process_open");
 
         try {
-            final Method processNextMethod = this.operator.get().getClass().getDeclaredMethod("process_open",
-                    new Class<?>[] {});
+            final Method processNextMethod = this.operator.get().getClass().getDeclaredMethod("process_open", new Class<?>[] {});
             processNextMethod.setAccessible(true);
 
             final Stopwatch timer = Stopwatch.createStarted();
@@ -254,49 +271,86 @@ abstract public class AbstractOperatorTest {
     }
 
     protected void thenOperatorsAreSemanticallyEqual() {
-        assertThat("Operators are not semantically equal",
-                this.operator.get().isSemanticallyEqual(this.otherOperator.get()), is(true));
+        assertThat("Operators are not semantically equal", this.operator.get().isSemanticallyEqual(this.otherOperator.get()), is(true));
     }
 
     protected void thenOperatorsAreNotSemanticallyEqual() {
-        assertThat("Operators are semantically equal",
-                this.operator.get().isSemanticallyEqual(this.otherOperator.get()), is(not(true)));
+        assertThat("Operators are semantically equal", this.operator.get().isSemanticallyEqual(this.otherOperator.get()), is(not(true)));
     }
 
     protected void thenProcess_isSemanticallyEqualReturns(final boolean value) {
         assertThat("process_isSemanticallyEqual for other operator is invalid", this.isSemanticallyEqual, is(value));
     }
 
+    protected void thenPunctuationEquals(final Date date) {
+        if (date == null) {
+            assertThat("Mismatching punctuation", this.lastPunctuation.isPresent(), is(false));
+        } else {
+            final IPunctuation punctuation = Heartbeat.createNewHeartbeat(date.getTime());
+            assertThat("Invalid emitted output punctuation", this.lastPunctuation.get().getTime(), is(punctuation.getTime()));
+            System.out.println(String.format("Result: %s", this.lastPunctuation.get()));
+        }
+    }
+
     @SuppressWarnings("unchecked")
     protected void thenOutputEquals(final double existence, final Object... elements) {
         if (elements == null) {
-            assertThat("Mismatching tuple", this.lastObject, is(nullValue()));
+            assertThat("Mismatching tuple", this.lastObject.isPresent(), is(false));
         } else {
+            assertThat("Missing output tuple", this.lastObject.isPresent(), is(true));
             final boolean requiresDeepClone = true;
+            final Object[] attributes = new Object[elements.length];
+            final List<MultivariateMixtureDistribution> distributions = new ArrayList<>();
+            int dimension = 0;
+            for (int i = 0; i < elements.length; i++) {
+                if (elements[i] instanceof MultivariateMixtureDistribution) {
+                    if (!distributions.contains(elements[i])) {
+                        distributions.add((MultivariateMixtureDistribution) elements[i]);
+                    }
+                    attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
+                    ((MultivariateMixtureDistribution) elements[i]).setAttribute(i, dimension);
+                    dimension++;
+                } else {
+                    attributes[i] = elements[i];
+                }
+            }
+            System.out.println(String.format("Result: %s", this.lastObject.get()));
 
+            final ProbabilisticTuple<IProbabilistic> output = new ProbabilisticTuple<>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone);
+            output.setMetadata(new Probabilistic(existence));
+            assertThat("Created output tuple has an invalid existence metadata value", output.getMetadata().getExistence(), is(existence));
+            assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
+                    is(closeTo(existence, 0.01)));
+            assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void thenOutputWithMultipleDistributionsEquals(final double existence, final Object... elements) {
+        if (elements == null) {
+            assertThat("Mismatching tuple", this.lastObject.isPresent(), is(false));
+        } else {
+            assertThat("Missing output tuple", this.lastObject.isPresent(), is(true));
+            final boolean requiresDeepClone = true;
             final Object[] attributes = new Object[elements.length];
             final List<MultivariateMixtureDistribution> distributions = new ArrayList<>();
             for (int i = 0; i < elements.length; i++) {
                 if (elements[i] instanceof MultivariateMixtureDistribution) {
                     distributions.add((MultivariateMixtureDistribution) elements[i]);
                     attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
+                    ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, 0);
                 } else {
                     attributes[i] = elements[i];
                 }
             }
+            System.out.println(String.format("Result: %s", this.lastObject.get()));
 
-            final ProbabilisticTuple<IProbabilistic> output = new ProbabilisticTuple<>(attributes,
-                    distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]),
-                    requiresDeepClone);
+            final ProbabilisticTuple<IProbabilistic> output = new ProbabilisticTuple<>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone);
             output.setMetadata(new Probabilistic(existence));
-
-            assertThat("Created output tuple has an invalid existence metadata value",
-                    output.getMetadata().getExistence(), is(existence));
-            assertThat("Last emitted output tuple has an invalid existence metadata value",
-                    ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
+            assertThat("Created output tuple has an invalid existence metadata value", output.getMetadata().getExistence(), is(existence));
+            assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
                     is(closeTo(existence, 0.01)));
             assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
-            System.out.println(String.format("Result: %s", this.lastObject.get()));
         }
     }
 

@@ -28,21 +28,18 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ProbabilisticGreaterOperator extends AbstractProbabilisticCompareOperator {
+public class ProbabilisticGreaterVectorOperatorInverse extends AbstractProbabilisticCompareOperator {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 796948165806227074L;
+    private static final long serialVersionUID = -2524539771244683448L;
     private final boolean leftInclusive;
     private final boolean rightInclusive;
 
-    public ProbabilisticGreaterOperator() {
-        this(">", false, true);
+    public ProbabilisticGreaterVectorOperatorInverse() {
+        this(">", true, false);
     }
 
-    protected ProbabilisticGreaterOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
-        super(symbol, ProbabilisticGreaterOperator.ACC_TYPES);
+    protected ProbabilisticGreaterVectorOperatorInverse(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+        super(symbol, ProbabilisticGreaterVectorOperatorInverse.ACC_TYPES);
         this.leftInclusive = leftInclusive;
         this.rightInclusive = rightInclusive;
     }
@@ -52,17 +49,8 @@ public class ProbabilisticGreaterOperator extends AbstractProbabilisticCompareOp
      * {@inheritDoc}
      */
     @Override
-    public final ProbabilisticBooleanResult getValue() {
-        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
-        final int pos = getInputPosition(0);
-        final Double b = getNumericalInputValue(1);
-        final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        lowerBound[a.getDimension(pos)] = b;
-        final double[] upperBound = new double[a.getDimension()];
-        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+    public final int getPrecedence() {
+        return 8;
     }
 
     /**
@@ -70,13 +58,24 @@ public class ProbabilisticGreaterOperator extends AbstractProbabilisticCompareOp
      * {@inheritDoc}
      */
     @Override
-    public int getPrecedence() {
-        return 8;
+    public final ProbabilisticBooleanResult getValue() {
+        final Object[] aVector = this.getInputValue(1);
+        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) aVector[0]).clone();
+
+        final double[][] b = (double[][]) this.getInputValue(0);
+        final double[] lowerBound = new double[a.getDimension()];
+        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
+        final double[] upperBound = new double[a.getDimension()];
+        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
+        System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
+
+        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
     }
 
     /**
      * Accepted data types.
      */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFDatatype.NUMBERS };
+    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { { SDFDatatype.MATRIX_BOOLEAN, SDFDatatype.MATRIX_BYTE, SDFDatatype.MATRIX_FLOAT, SDFDatatype.MATRIX_DOUBLE },
+            { SDFProbabilisticDatatype.VECTOR_PROBABILISTIC_DOUBLE } };
 
 }

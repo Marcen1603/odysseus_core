@@ -16,20 +16,20 @@
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
 /**
- * Smaller-Equals operator for continuous probabilistic values.
+ * Greater-Equals operator for continuous probabilistic values.
  *
  * @author Christian Kuka <christian@kuka.cc>
  *
  */
-public class ProbabilisticSmallerEqualsOperator extends ProbabilisticSmallerOperator {
+public class ProbabilisticGreaterEqualsVectorOperator extends ProbabilisticGreaterVectorOperator {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9122605635777338549L;
 
-    public ProbabilisticSmallerEqualsOperator() {
-        super("<=", true, true);
+    public ProbabilisticGreaterEqualsVectorOperator() {
+        super(">=", true, true);
     }
 
 }

@@ -41,26 +41,220 @@ import de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSele
 @RunWith(Parameterized.class)
 public class SelectPOWithContinuousProbabilityDistributionsTest extends AbstractSelectPOTest {
 
-    @Parameters(name = "{index}: Predicate: {0}, Input: {1}, Output: {2}, Existence: {3}")
+    @Parameters(name = "{index}: Predicate: {0}, Input: [{1}, {2}], Existence: {5}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { //
-            { "x < y", new Object[] { //
-                    new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
-                            new IMultivariateDistribution[] {
-                                    new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 }), //
-                                    new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                    }), //
-                    2 }, //
-                new Object[] { //
+                // Test selection operation on a standard normal distribution
+                { "x < y", //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x <= y", //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y > x",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y >= x",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x > y",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x >= y",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y < x",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y <= x",
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                // Test selection operation on a multivariate mixture
+                // distribution containing two standard normal distribution
+                { "x < y",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
-                                new IMultivariateDistribution[] {
-                                        new MultivariateNormalDistribution(new double[] { 1.0 },
-                                                new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 },
-                                                new double[] { 1.0 })//
-                        }), //
-                        2 }, //
-                0.84 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x <= y",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y > x",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y >= x",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x > y",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "x >= y",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y < x",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
+                { "y <= x",
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 },
+                                new IMultivariateDistribution[] { //
+                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                                }), //
+                        0, //
+                        0.5 }, //
         });
 
     }
@@ -68,10 +262,14 @@ public class SelectPOWithContinuousProbabilityDistributionsTest extends Abstract
     @Parameter(0)
     public String predicateString;
     @Parameter(1)
-    public Object[] input;
+    public Object inputX;
     @Parameter(2)
-    public Object[] output;
+    public Object inputY;
     @Parameter(3)
+    public Object outputX;
+    @Parameter(4)
+    public Object outputY;
+    @Parameter(5)
     public double existence;
 
     /**
@@ -84,14 +282,16 @@ public class SelectPOWithContinuousProbabilityDistributionsTest extends Abstract
         givenSchema(//
                 attribute("x").as(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
-                );
+        );
         givenPredicate(this.predicateString);
         givenProbabilisticSelectPO();
-        givenInputTupleWithValues(this.input);
+        givenInputTupleWithValues(new Object[] { this.inputX, this.inputY });
 
         whenProcessTuple();
-
-        thenOutputEquals(this.existence, this.output);
+        if ((this.outputX == null) && (this.outputY == null)) {
+            thenOutputEquals(this.existence, (Object[]) null);
+        } else {
+        thenOutputEquals(this.existence, new Object[] { this.outputX, this.outputY });}
     }
 
 }

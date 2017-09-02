@@ -61,7 +61,16 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
             this.support[i] = Interval.MAX;
         }
     }
-
+    public MultivariateMixtureDistribution(final double[] weights, final IMultivariateDistribution[] components, final Interval[] supports) {
+        this.distribution = components;
+        this.weight = weights;
+        this.scale = 1.0;
+        this.support = new Interval[components[0].getDimension()];
+        this.attributes = new int[components[0].getDimension()];
+        for (int i = 0; i < this.distribution[0].getDimension(); i++) {
+            this.support[i] = supports[i];
+        }
+    }
     public MultivariateMixtureDistribution(final double[] weights, final List<IMultivariateDistribution> components) {
         this.distribution = components.toArray(new IMultivariateDistribution[components.size()]);
         this.weight = weights;

@@ -1,7 +1,9 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
+
+import java.util.Arrays;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
@@ -13,12 +15,12 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBin
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 abstract public class AbstractProbabilisticCompareOperator extends AbstractProbabilisticBinaryOperator<ProbabilisticBooleanResult> {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7850744519118122850L;
 
@@ -27,12 +29,39 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound) {
-        final double probability = a.probability(lowerBound, upperBound);
+        return getValueInternal(a, lowerBound, upperBound, false, true);
+    }
+
+    protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound, final boolean leftInclusive,
+            final boolean rightInclusive) {
+        final double probability;
+        if (Arrays.equals(lowerBound, upperBound)) {
+            probability = a.probability(lowerBound, upperBound);
+        } else {
+            if (!leftInclusive && rightInclusive) {
+                // Estimate the probability in the given bounds: P(lowerBound <
+                // X <=
+                // upperBound)
+                probability = a.probability(lowerBound, upperBound);
+            } else if (leftInclusive && rightInclusive) {
+                // Estimate the probability in the given bounds:
+                // P(lowerBound <= X <= upperBound)
+                probability = a.probability(lowerBound, upperBound) + a.probability(lowerBound, lowerBound);
+            } else if (leftInclusive) {
+                // Estimate the probability in the given bounds: P(lowerBound <=
+                // X <
+                // upperBound)
+                probability = (a.probability(lowerBound, upperBound) + a.probability(lowerBound, lowerBound)) - a.probability(upperBound, upperBound);
+            } else {
+                // Estimate the probability in the given bounds: P(lowerBound <
+                // X < upperBound)
+                probability = a.probability(lowerBound, upperBound) - a.probability(upperBound, upperBound);
+            }
+        }
         final MultivariateMixtureDistribution result = a.clone();
         if (probability == 0.0) {
             result.setScale(Double.POSITIVE_INFINITY);
-        }
-        else {
+        } else {
             result.setScale(a.getScale() / probability);
         }
         final Interval[] support = new Interval[a.getDimension()];
@@ -46,7 +75,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -55,7 +84,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -64,7 +93,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -73,7 +102,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
@@ -82,7 +111,7 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      */
     @Override
