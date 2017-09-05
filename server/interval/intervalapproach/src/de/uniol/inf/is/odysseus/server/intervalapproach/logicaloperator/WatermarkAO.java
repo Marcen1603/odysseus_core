@@ -16,6 +16,8 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
@@ -68,6 +70,12 @@ public class WatermarkAO extends UnaryLogicalOp {
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new WatermarkAO(this);
+	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		setOutputSchema(SDFSchemaFactory.createNewWithOutOfOrder(false, getInputSchema()));
+		return getOutputSchema();
 	}
 
 }

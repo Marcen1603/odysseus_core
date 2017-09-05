@@ -9,16 +9,18 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMONoCleanupIndexStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MONoCleanupNoPointMapIndexStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.TrajectoryRadiusAO;
 
-public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends AbstractPipe<T, T> {
+public class TrajectoryRadiusPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final int TRAJECTORIES_ATTRIBUTE_POSITION = 0;
 
@@ -41,7 +43,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 		// 1. Create and fill an index structure so that we can work on this set of
 		// trajectories
 		// TODO Still need name and geometryPosition?
-		GeoHashMONoCleanupIndexStructure index = new GeoHashMONoCleanupIndexStructure("bla", 1);
+		MONoCleanupNoPointMapIndexStructure index = new MONoCleanupNoPointMapIndexStructure("bla", 1);
 		List<Tuple<ITimeInterval>> trajectories = object.getAttribute(TRAJECTORIES_ATTRIBUTE_POSITION);
 		for (Tuple<ITimeInterval> trajectoryTuple : trajectories) {
 			String movingObjectId = trajectoryTuple.getAttribute(0);
@@ -66,14 +68,14 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 					.queryCircleTrajectory(movingObjectIDToQuery, this.radiusMeters);
 
 			// Put the result into a tuple
-			Tuple<ITimeInterval> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
+			Tuple<IMetaAttribute> resultTupleForMovingObject = createTupleList(queryCircleTrajectory,
 					movingObjectIDToQuery);
-			resultTupleForMovingObject.setMetadata(object.getMetadata());
+			resultTupleForMovingObject.setMetadata(object.getMetadata().clone());
 			this.transfer((T) resultTupleForMovingObject);
 		}
 	}
 
-	private Tuple<ITimeInterval> createTupleList(
+	private Tuple<IMetaAttribute> createTupleList(
 			Map<String, List<SpatioTemporalQueryResult>> resultsForCircleTrajectory, String movingObjectID) {
 
 		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
@@ -99,7 +101,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 				Geometry otherGeometry = factory.createPoint(new Coordinate(
 						meetingPoint.getOtherLocation().getLatitude(), meetingPoint.getOtherLocation().getLongitude()));
 				resultTuple.addAttributeValue(3, otherGeometry);
-				
+
 				resultTuple.addAttributeValue(4, meetingPoint.getDistanceInMeters());
 
 				resultTuple.addAttributeValue(5, meetingPoint.getMeetingTime());
@@ -108,7 +110,7 @@ public class TrajectoryRadiusPO<T extends Tuple<ITimeInterval>> extends Abstract
 			}
 		}
 
-		Tuple<ITimeInterval> listTuple = new Tuple<>(2, false);
+		Tuple<IMetaAttribute> listTuple = new Tuple<>(2, false);
 		listTuple.addAttributeValue(0, movingObjectID);
 		listTuple.addAttributeValue(1, tupleList);
 		return listTuple;

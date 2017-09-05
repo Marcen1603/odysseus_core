@@ -17,10 +17,12 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 
 	private Map<String, LocationMeasurement> lastMovingObjectLocations;
 	private TimeUnit baseTimeUnit;
+	private GeodeticCalculator geodeticCalculator;
 
 	public MovingObjectLinearTrajectoryPredictor(TimeUnit baseTimeUnit) {
 		this.lastMovingObjectLocations = new HashMap<>();
 		this.baseTimeUnit = baseTimeUnit;
+		this.geodeticCalculator = new GeodeticCalculator();
 	}
 
 	@Override
@@ -32,8 +34,6 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 
 	@Override
 	public TrajectoryElement predictTrajectory(String movingObjectId, PointInTime endPointInTime, long timeStepMs) {
-
-		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 
 		// Get the last measurement
 		LocationMeasurement locationMeasurement = lastMovingObjectLocations.get(movingObjectId);
@@ -59,9 +59,9 @@ public class MovingObjectLinearTrajectoryPredictor implements IMovingObjectTraje
 			double distanceTravelledInMeters = locationMeasurement.getSpeedInMetersPerSecond() * (timeStepMs / 1000);
 
 			// Calculate the new in-between location
-			geodeticCalculator.setStartingGeographicPoint(lastLongitude, lastLatitude);
-			geodeticCalculator.setDirection(locationMeasurement.getHorizontalDirection(), distanceTravelledInMeters);
-			Point2D waypointDestination = geodeticCalculator.getDestinationGeographicPoint();
+			this.geodeticCalculator.setStartingGeographicPoint(lastLongitude, lastLatitude);
+			this.geodeticCalculator.setDirection(locationMeasurement.getHorizontalDirection(), distanceTravelledInMeters);
+			Point2D waypointDestination = this.geodeticCalculator.getDestinationGeographicPoint();
 			PointInTime timeOfLocation = new PointInTime(endPointInTime.getMainPoint() - (timeToTravelMs - timeTravelledMs));
 
 			// Save it as a part of a trajectory

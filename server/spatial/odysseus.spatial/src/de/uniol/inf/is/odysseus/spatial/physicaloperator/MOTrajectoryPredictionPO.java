@@ -8,11 +8,13 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -34,7 +36,7 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 	private static final int ENRICH_PORT = 1;
 
 	// TODO Make configurable
-	private int trajectoryTimeStepMs = 1000;
+	private int trajectoryTimeStepMs = 60000;
 
 	// On the enrich-port
 	private int pointInTimePosition;
@@ -111,18 +113,30 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 
 		// Collect the tuples and send them together
 		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
+//		List<KeyValueObject<ITimeInterval>> kvList = new ArrayList<>();
 		
 		for (String movingObjectId : movingObjectIds) {
 			TrajectoryElement trajectory = this.movingObjectTrajectoryPredictor.predictTrajectory(movingObjectId,
 					pointInTime, this.trajectoryTimeStepMs);
-			Tuple<ITimeInterval> tuple = createTuple(trajectory, pointInTime);
-
+			Tuple<ITimeInterval> tuple = createInnerTuple(trajectory, pointInTime);
+			
+//			KeyValueObject<ITimeInterval> innerELement = createInnerElement(trajectory, pointInTime);
+			
 			tupleList.add(tuple);
+//			kvList.add(innerELement);
 		}
 		
-		Tuple<ITimeInterval> tupleWithTupleList = new Tuple<ITimeInterval>(2, false);
-		tupleWithTupleList.setMetadata(new TimeInterval(pointInTime, pointInTime.plus(1)));
+		Tuple<IMetaAttribute> tupleWithTupleList = new Tuple<>(2, false);
+		tupleWithTupleList.setMetadata(object.getMetadata().clone());
+		((ITimeInterval) tupleWithTupleList.getMetadata()).setStart(pointInTime);
+		((ITimeInterval) tupleWithTupleList.getMetadata()).setEnd(pointInTime.plus(1));
 		tupleWithTupleList.setAttribute(0, tupleList);
+		
+//		KeyValueObject<ITimeInterval> elementWithElements = new KeyValueObject<>();
+//		elementWithElements.setMetadata(object.getMetadata());
+//		elementWithElements.getMetadata().setStart(pointInTime);
+//		elementWithElements.getMetadata().setEnd(pointInTime.plus(1));
+		
 		this.transfer((T) tupleWithTupleList);
 	}
 
@@ -133,7 +147,7 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 	 *            The point in time when the prediction was created
 	 * @return
 	 */
-	private Tuple<ITimeInterval> createTuple(TrajectoryElement trajectoryElement, PointInTime predictionTime) {
+	private Tuple<ITimeInterval> createInnerTuple(TrajectoryElement trajectoryElement, PointInTime predictionTime) {
 
 		List<Tuple<ITimeInterval>> tupleList = new ArrayList<>();
 		String movingObjectID = trajectoryElement.getMovingObjectID();
@@ -163,6 +177,41 @@ public class MOTrajectoryPredictionPO<T extends Tuple<? extends ITimeInterval>> 
 		tupleWithTrajectory.setAttribute(1, tupleList);
 
 		return tupleWithTrajectory;
+	}
+	
+	private KeyValueObject<ITimeInterval> createInnerElement(TrajectoryElement trajectoryElement, PointInTime predictionTime) {
+		List<KeyValueObject<ITimeInterval>> objectList = new ArrayList<>();
+		String movingObjectID = trajectoryElement.getMovingObjectID();
+		
+		do {
+			
+			KeyValueObject<ITimeInterval> kvObject = new KeyValueObject<>();
+			
+			kvObject.setAttribute(movingObjectID, trajectoryElement.getMovingObjectID());
+			kvObject.setAttribute("latitude", trajectoryElement.getLatitude());
+			kvObject.setAttribute("longitude", trajectoryElement.getLongitude());
+			
+			kvObject.setMetadata(new TimeInterval(trajectoryElement.getMeasurementTime(),
+					trajectoryElement.getMeasurementTime().plus(1)));
+			
+			objectList.add(kvObject);
+
+			// Go on with the next element of the trajectory
+			trajectoryElement = trajectoryElement.getNextElement();
+		} while (trajectoryElement != null);
+
+		// Create a tuple with the list of elements as its content
+//		Tuple<ITimeInterval> tupleWithTrajectory = new Tuple<ITimeInterval>(2, false);
+//		tupleWithTrajectory.setMetadata(new TimeInterval(predictionTime, predictionTime.plus(1)));
+//		tupleWithTrajectory.setAttribute(0, movingObjectID);
+//		tupleWithTrajectory.setAttribute(1, objectList);
+		
+		KeyValueObject<ITimeInterval> elementWithElements = new KeyValueObject<ITimeInterval>();
+		elementWithElements.setMetadata(new TimeInterval(predictionTime, predictionTime.plus(1)));
+		elementWithElements.setAttribute("movingObjectID", movingObjectID);
+		elementWithElements.setAttribute("elements", objectList);
+
+		return elementWithElements;
 	}
 
 	@Override
