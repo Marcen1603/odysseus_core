@@ -33,6 +33,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandlin
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.IQueryBuildSetting;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ParameterRecoveryConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -99,13 +100,13 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	 * new source).
 	 */
 	private void subscribeForDataDictionaries() {
-		for (ITenant tenant : UserManagementProvider.getTenants()) {
-			Optional<IDataDictionary> dd = Optional.fromNullable(DataDictionaryProvider.getDataDictionary(tenant));
+		for (ITenant tenant : UserManagementProvider.instance.getTenants()) {
+			Optional<IDataDictionary> dd = Optional.fromNullable(DataDictionaryProvider.instance.getDataDictionary(tenant));
 			DataDictionaryProviderListener listener = new DataDictionaryProviderListener(this);
 			if (dd.isPresent()) {
 				listener.newDatadictionary(dd.get());
 			}
-			DataDictionaryProvider.subscribe(tenant, listener);
+			DataDictionaryProvider.instance.subscribe(tenant, listener);
 			this.dictListeners.add(listener);
 		}
 	}
@@ -115,7 +116,7 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 	 */
 	private void unsubscribeForDataDictionaries() {
 		for (DataDictionaryProviderListener listener : this.dictListeners) {
-			DataDictionaryProvider.unsubscribe(listener);
+			DataDictionaryProvider.instance.unsubscribe(listener);
 		}
 	}
 
@@ -350,17 +351,17 @@ public class InstalledQueriesHandler implements IInstalledQueriesHandler, ISyste
 			return;
 		}
 		for (IExecutorCommand command : commands) {
-			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider
+			IUserManagementWritable userManagement = (IUserManagementWritable) UserManagementProvider.instance
 					.getUsermanagement(true);
-			ISession newSession = userManagement.getSessionManagement().loginAs(command.getCaller().getUser().getName(),
-					command.getCaller().getTenant(), userManagement.getSessionManagement().loginSuperUser(null));
+			ISession newSession = SessionManagement.instance.loginAs(command.getCaller().getUser().getName(),
+					command.getCaller().getTenant(), SessionManagement.instance.loginSuperUser(null));
 			if (command instanceof AddQueryCommand) {
 				AddQueryCommand addCommand = (AddQueryCommand) command;
 				executor.addQuery(addCommand.getQueryText(), addCommand.getParserId(), newSession,
 						addCommand.getTransCfgName(), addCommand.getContext(), addCommand.getAddSettings());
 				backup(addCommand, System.currentTimeMillis());
 			} else {
-				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(newSession.getTenant());
 				command.setCaller(newSession);
 				command.execute(dd, userManagement, executor);

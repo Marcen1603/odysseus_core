@@ -10,4 +10,5 @@ package de.uniol.inf.is.odysseus.parser.cql2.ui.contentassist
 class CQLProposalProvider extends AbstractCQLProposalProvider 
 {
 	
+	
 }

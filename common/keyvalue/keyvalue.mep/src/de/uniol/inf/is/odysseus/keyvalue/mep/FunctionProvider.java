@@ -13,9 +13,10 @@ public class FunctionProvider implements IFunctionProvider {
 		List<IMepFunction<?>> funcs = new ArrayList<IMepFunction<?>>();
 		funcs.add(new KvSelectFunction());
 		funcs.add(new KvPathFunction());
-		funcs.add(new ToKeyValueFuntion());
+		funcs.add(new ToKeyValueFromStringFunction());
 		funcs.add(new KVGetElementFunction());
 		funcs.add(new KVGetElementsFunction());
+		funcs.add(new AsKeyValueFunction());
 		return funcs;
 	}
 

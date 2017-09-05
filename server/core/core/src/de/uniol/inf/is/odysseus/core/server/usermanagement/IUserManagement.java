@@ -25,70 +25,67 @@ import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- *         
+ * 
  */
 public interface IUserManagement {
- 
-    /**
-     * @param name
-     * @param caller
-     * @return
-     */
-    IRole findRole(String name, ISession caller);
-    
-    /**
-     * Test if a user has a role
-     * @param name
-     * @param role
-     * @return
-     */
-    boolean hasRole(String name, String role, ISession caller);
 
-    /**
-     * @param roleId
-     * @param caller
-     * @return
-     */
-    IRole getRole(String roleId, ISession caller);
+	/**
+	 * @param name
+	 * @param caller
+	 * @return
+	 */
+	IRole findRole(String name, ISession caller);
 
-    /**
-     * @param caller
-     * @return
-     */
-    List<? extends IRole> getRoles(ISession caller);
+	/**
+	 * Test if a user has a role
+	 * 
+	 * @param name
+	 * @param role
+	 * @return
+	 */
+	boolean hasRole(String name, String role, ISession caller);
 
+	/**
+	 * @param roleId
+	 * @param caller
+	 * @return
+	 */
+	IRole getRole(String roleId, ISession caller);
 
-    /**
-     * @param name
-     * @param caller
-     * @return
-     */
-    IUser findUser(String name, ISession caller);
+	/**
+	 * @param caller
+	 * @return
+	 */
+	List<? extends IRole> getRoles(ISession caller);
 
-    /**
-     * @param userId
-     * @param caller
-     * @return
-     */
-    IUser getUser(String userId, ISession caller);
+	/**
+	 * @param name
+	 * @param caller
+	 * @return
+	 */
+	IUser findUser(String name, ISession caller);
 
-    /**
-     * @param caller
-     * @return
-     */
-    List<? extends IUser> getUsers(ISession caller);
+	/**
+	 * @param userId
+	 * @param caller
+	 * @return
+	 */
+	IUser getUser(String userId, ISession caller);
 
- 
-    /**
-     * @param caller
-     * @param permission
-     * @param objectURI
-     * @return
-     */
-    boolean hasPermission(ISession caller, IPermission permission, String objectURI);
+	/**
+	 * @param caller
+	 * @return
+	 */
+	List<? extends IUser> getUsers(ISession caller);
 
-    ISessionManagement getSessionManagement();
-    
+	/**
+	 * @param caller
+	 * @param permission
+	 * @param objectURI
+	 * @return
+	 */
+	boolean hasPermission(ISession caller, IPermission permission, String objectURI);
+
 	void addUserManagementListener(IUserManagementListener tenantView);
 
 	String getType();
@@ -96,5 +93,7 @@ public interface IUserManagement {
 	boolean isInitialized(ITenant tenant);
 
 	void initialize(ITenant tenant);
+
+	IUser findUser(ITenant tenant, String username);
 
 }

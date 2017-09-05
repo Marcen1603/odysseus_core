@@ -4,15 +4,12 @@
 package de.uniol.inf.is.odysseus.parser.cql2.validation;
 
 import de.uniol.inf.is.odysseus.parser.cql2.validation.AbstractCQLValidator;
-import de.uniol.inf.is.odysseus.parser.cql2.validation.CQLExpressionsValidator;
-import org.eclipse.xtext.validation.ComposedChecks;
 
 /**
  * This class contains custom validation rules.
  * 
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-@ComposedChecks(validators = { CQLExpressionsValidator.class })
 @SuppressWarnings("all")
 public class CQLValidator extends AbstractCQLValidator {
 }

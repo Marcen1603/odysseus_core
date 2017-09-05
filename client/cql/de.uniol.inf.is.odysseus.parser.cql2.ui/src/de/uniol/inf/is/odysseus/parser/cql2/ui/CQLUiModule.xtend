@@ -20,6 +20,5 @@ class CQLUiModule extends AbstractCQLUiModule {
 	def Class<? extends Cql2Activator> bindCqlActivator() {
 		return Activator
 	}
-	
 
 }

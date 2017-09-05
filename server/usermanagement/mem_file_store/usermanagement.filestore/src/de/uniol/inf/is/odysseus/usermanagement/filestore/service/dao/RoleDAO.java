@@ -35,10 +35,10 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 	static synchronized public RoleDAO getInstance(ITenant tenant) throws IOException{
 		RoleDAO dao = daos.get(tenant);
 		if (dao == null){
-			if (OdysseusConfiguration.get("StoretypeUserMgmt")
+			if (OdysseusConfiguration.instance.get("StoretypeUserMgmt")
 					.equalsIgnoreCase("Filestore")) {
 				dao = new RoleDAO(new FileStore<String, Role>(
-						OdysseusConfiguration.getFileProperty(
+						OdysseusConfiguration.instance.getFileProperty(
 								"roleStoreFilename", tenant.getName())),
 						new ArrayList<Role>());
 			} else {
@@ -52,7 +52,7 @@ public class RoleDAO extends AbstractStoreDAO<Role>{
 
 	public RoleDAO(IStore<String, Role> store,
 			ArrayList<Role> arrayList) {
-		super(store, arrayList);
+		init(store, arrayList);
 	}
 
 

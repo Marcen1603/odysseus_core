@@ -118,18 +118,20 @@ public class CQLParser implements IQueryParser {
 		// Get all parser tokens
 		List<String> list = new ArrayList<>();
 		URL url = null;
-		try {
-			url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-					"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
-		} catch (Exception e) {
-
-		}
-		if (url == null) {
+		if (Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2") != null) {
 			try {
 				url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
-						"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
-			}catch(Exception e) {
-				
+						"/src-gen/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+			} catch (Exception e) {
+
+			}
+			if (url == null) {
+				try {
+					url = Platform.getBundle("de.uniol.inf.is.odysseus.parser.cql2").getEntry(
+							"/bin/de/uniol/inf/is/odysseus/parser/cql2/parser/antlr/internal/InternalCQLParser.tokens");
+				} catch (Exception e) {
+
+				}
 			}
 		}
 		if (url != null) {
@@ -154,7 +156,7 @@ public class CQLParser implements IQueryParser {
 			} finally {
 				tokens = list.toArray(new String[list.size()]);
 			}
-		}else {
+		} else {
 			tokens = new String[1];
 			infoService.warning("Could not read tokens!");
 		}
@@ -201,10 +203,12 @@ public class CQLParser implements IQueryParser {
 						// create a new {@ IExecutorCommand}
 						for (Entry<String, CharSequence> e : generatePQL(component, fsa, null).entrySet()) {
 							if (e.getValue() != null && !e.getValue().equals("")) {
-								String pqlString = e.getValue().toString();
+								String pqlString = "#PARSER PQL\n";
+								pqlString += "#ADDQUERY\n";
+								pqlString += e.getValue().toString();
 								infoService.info("Generated following PQL String:\n " + pqlString);
-								executorCommands.add(new AddQueryCommand(pqlString, "PQL", user, null, context,
-										new ArrayList<>(), false));
+								executorCommands.add(new AddQueryCommand(pqlString, "OdysseusScript", user, null,
+										context, new ArrayList<>(), false));
 							}
 						}
 					} else if (component instanceof Command) {

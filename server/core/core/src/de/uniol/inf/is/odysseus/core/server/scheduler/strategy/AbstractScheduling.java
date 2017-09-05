@@ -44,7 +44,7 @@ public abstract class AbstractScheduling implements IScheduling,
 	static private Logger logger = LoggerFactory
 			.getLogger(AbstractScheduling.class);
 
-	static boolean sleepAllowed = OdysseusConfiguration
+	static boolean sleepAllowed = OdysseusConfiguration.instance
 			.getBoolean("Scheduler.sleepAllowed");
 
 	private List<ISchedulingEventListener> schedulingEventListener = new ArrayList<ISchedulingEventListener>();

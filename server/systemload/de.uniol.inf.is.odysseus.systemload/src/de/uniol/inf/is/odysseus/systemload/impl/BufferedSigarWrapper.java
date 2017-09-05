@@ -46,7 +46,7 @@ public class BufferedSigarWrapper {
 	}
 
 	private static void checkBufferTimeMillis() {
-		BUFFER_TIME_MILLIS = OdysseusConfiguration.getLong(BUFFER_TIME_SETTING_NAME, BUFFER_TIME_MILLIS_DEFAULT);
+		BUFFER_TIME_MILLIS = OdysseusConfiguration.instance.getLong(BUFFER_TIME_SETTING_NAME, BUFFER_TIME_MILLIS_DEFAULT);
 		if (BUFFER_TIME_MILLIS <= 0) {
 			BUFFER_TIME_MILLIS = BUFFER_TIME_MILLIS_DEFAULT;
 		}

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.recovery.checkpointing.CheckpointUnit;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.recovery.checkpointing.ICheckpointManager;
  */
 public class SystemTimeCheckpointManager implements ICheckpointManager {
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+	static private final ISession superUser =  SessionManagement.instance.loginSuperUser(null);
 
 
 	/**

@@ -31,12 +31,12 @@ public class BaDaStSender {
 	/**
 	 * The host name of the BaDaSt server.
 	 */
-	private static String cHost = OdysseusConfiguration.get("badast.host.name", "localhost");
+	private static String cHost = OdysseusConfiguration.instance.get("badast.host.name", "localhost");
 
 	/**
 	 * The port number of the BaDaSt server.
 	 */
-	private static int cPort = OdysseusConfiguration.getInt("badast.clientPort", 6789);
+	private static int cPort = OdysseusConfiguration.instance.getInt("badast.clientPort", 6789);
 
 	/**
 	 * Checks, if the BaDaSt application is available.

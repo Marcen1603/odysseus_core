@@ -5,6 +5,7 @@ import org.restlet.resource.Post;
 
 import org.restlet.resource.ResourceException;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
@@ -16,8 +17,8 @@ public class LoginServerResource extends AbstractServerResource {
 
 	@Post
 	public GenericResponseDTO<String> login(LoginRequestDTO loginRequestDTO) {
-		ITenant tenant = UserManagementProvider.getTenant(loginRequestDTO.getTenant());
-		ISession user = UserManagementProvider.getSessionmanagement().login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword().getBytes(), tenant);
+		ITenant tenant = UserManagementProvider.instance.getTenant(loginRequestDTO.getTenant());
+		ISession user = SessionManagement.instance.login(loginRequestDTO.getUsername(), loginRequestDTO.getPassword().getBytes(), tenant);
 		if (user != null) {
 			String token = user.getToken();
 			return new GenericResponseDTO<String>(token);

@@ -21,6 +21,7 @@ QDLQuery returns jvm::JvmGenericType:
 	statements=IQLStatementBlock
 ;
 
+@Override 
 IQLRelationalExpression returns basiciql::IQLExpression:
 	IQLSubscribeExpression
 	(=>({basiciql::IQLInstanceOfExpression.leftOperand=current} 'instanceof') targetRef=JvmTypeReference |
@@ -41,6 +42,7 @@ IQLSubscribe:
 	'->' | '<-'
 ;
 
+@Override 
 IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
 	{basiciql::IQLMetadataValueSingleInt} value = INT|
 	{basiciql::IQLMetadataValueSingleDouble} value = DOUBLE|
@@ -51,6 +53,7 @@ IQLMetadataValueSingle returns basiciql::IQLMetadataValue:
 	{basiciql::IQLMetadataValueSingleNull} 'null'	
 ;
 
+@Override 
 IQLJavaText:
 	(IQL_JAVA_KEYWORDS | WS | ID | BOOLEAN | DOUBLE | STRING | INT | ANY_OTHER |
 	'+'  | '+='  | '-'  | '-='  | '*'   | '*='   | '/' | '/=' | '%'  | '%=' |

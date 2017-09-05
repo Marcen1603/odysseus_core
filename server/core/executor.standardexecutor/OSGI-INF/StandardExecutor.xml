@@ -14,11 +14,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" deactivate="deactivate" immediate="false" name="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor">
    <implementation class="de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor"/>
    <service>
        <provide interface="de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor"/>
    </service>
+   <reference bind="setSessionManagement" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement" name="SessionManagement" policy="static"/>
+   <reference bind="setUserManagementProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider" name="UserManagementProvider" policy="static"/>
+   <reference bind="setDataDictionaryProvider" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider" name="DataDictionaryProvider" policy="static"/>
    <reference bind="bindCompiler" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.ICompiler" name="ICompiler" policy="dynamic" unbind="unbindCompiler"/>
    <reference bind="bindSchedulerManager" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager" name="ISchedulerManager" policy="dynamic" unbind="unbindSchedulerManager"/>
    <reference bind="bindOptimizer" cardinality="1..1" interface="de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IOptimizer" name="IOptimizer" policy="dynamic" unbind="unbindOptimizer"/>

@@ -86,8 +86,8 @@ public class QDLUiExecutor extends QDLExecutor implements IIQLUiExecutor{
 			IQDLQuery qdlQuery = loadQuery(query, resourceSet);
 						
 			ISession session = OdysseusRCPPlugIn.getActiveSession();
-			ITenant tenant = UserManagementProvider.getDefaultTenant();
-			IDataDictionary dd = DataDictionaryProvider.getDataDictionary(tenant);
+			ITenant tenant = UserManagementProvider.instance.getDefaultTenant();
+			IDataDictionary dd = DataDictionaryProvider.instance.getDataDictionary(tenant);
 			
 			String script = generator.createOdysseusScript(qdlQuery, dd, session);
 

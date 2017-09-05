@@ -6,7 +6,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
@@ -18,12 +18,14 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
  *
  */
 
-public class StandardElementCloningUpdater extends
-		AbstractElementCloningUpdater {
+public class StandardElementCloningUpdater extends AbstractElementCloningUpdater {
+	/**
+	 * use OSGi instead
+	 */
+	@Deprecated
+	static StandardElementCloningUpdater instance;
 
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
-
-	static final StandardElementCloningUpdater instance = new StandardElementCloningUpdater();
+	private ISession superUser;
 
 	public static IElementCloningUpdater getInstance() {
 		return instance;
@@ -32,6 +34,7 @@ public class StandardElementCloningUpdater extends
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void updateCloning(IExecutionPlan currentExecPlan) {
+
 		Collection<IPhysicalQuery> queries = currentExecPlan.getQueries(superUser);
 		GenericGraphWalker walker = new GenericGraphWalker();
 
@@ -44,5 +47,13 @@ public class StandardElementCloningUpdater extends
 				walker.prefixWalkPhysical(r, visitor);
 			}
 		}
+	}
+
+	public void setSessionManagement(SessionManagement sessionManagement) {
+		this.superUser = sessionManagement.loginSuperUser(null);
+	}
+
+	void setInstance() {
+		instance = this;
 	}
 }

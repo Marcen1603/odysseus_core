@@ -59,7 +59,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class ReloadLog implements IQueryAddedListener, IPlanModificationListener {
 
 	private static Logger logger = LoggerFactory.getLogger(ReloadLog.class);
-	public static final String LOG_FILENAME = OdysseusConfiguration.get("reloadLogStoreFilename");
+	public static final String LOG_FILENAME = OdysseusConfiguration.instance.get("reloadLogStoreFilename");
 
 	private List<QueryEntry> queries = new ArrayList<QueryEntry>();
 

@@ -18,12 +18,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.PlanModificationActi
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.ACQueryParameter;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>> {
-
-	static private final ISession superUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlanModificationActionPO.class);
 
@@ -88,6 +86,7 @@ public class PlanModificationActionPO extends AbstractSink<Tuple<IMetaAttribute>
 	}
 
 	private void tryExecuteCommand(String command, Integer queryID) {
+		ISession superUser =  SessionManagement.instance.loginSuperUser(null);
 		IPhysicalQuery physicalQuery = executor.getExecutionPlan(superUser).getQueryById(queryID, superUser);
 		if (physicalQuery == null) {
 			LOG.error("Query id {} does not exist", queryID);

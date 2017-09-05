@@ -82,7 +82,6 @@ public class UpdateRateSinkSLAConformancePlacement implements
 			
 			HeartbeatPO<?> heartbeat = new HeartbeatPO<>(true);
 			heartbeat.setSendAlwaysHeartbeat(true);
-			heartbeat.setAllowOutOfOrder(true);
 			heartbeat.setRealTimeDelay(SLAHelper.getHeartbeatInterval(), TimeUnit.MILLISECONDS);
 			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
 				((IOwnedOperator)heartbeat).addOwner(root.getOwner());
@@ -101,7 +100,6 @@ public class UpdateRateSinkSLAConformancePlacement implements
 				((IOwnedOperator)conformance).addOwner(root.getOwner());
 			HeartbeatPO<?> heartbeat = new HeartbeatPO<>(true);
 			heartbeat.setSendAlwaysHeartbeat(true);
-			heartbeat.setAllowOutOfOrder(true);
 			heartbeat.setRealTimeDelay(500, TimeUnit.MILLISECONDS);
 			if (((IOwnedOperator)heartbeat).getOwner().size() == 0)
 				((IOwnedOperator)heartbeat).addOwner(root.getOwner());

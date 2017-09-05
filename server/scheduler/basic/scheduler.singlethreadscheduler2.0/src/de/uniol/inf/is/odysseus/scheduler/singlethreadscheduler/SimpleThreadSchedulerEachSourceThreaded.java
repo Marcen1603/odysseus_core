@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.scheduler.singlethreadscheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
 
@@ -11,9 +12,9 @@ public class SimpleThreadSchedulerEachSourceThreaded extends
 
 	public SimpleThreadSchedulerEachSourceThreaded(
 			ISchedulingFactory schedulingStrategieFactory,
-			IPhysicalQueryScheduling[] planScheduling) {
-		super(schedulingStrategieFactory, planScheduling);
-		// TODO Auto-generated constructor stub
+			IPhysicalQueryScheduling[] planScheduling,
+			OdysseusConfiguration config) {
+		super(schedulingStrategieFactory, planScheduling, config);
 	}
 	
 	private void removeUnscheduledSources() {
