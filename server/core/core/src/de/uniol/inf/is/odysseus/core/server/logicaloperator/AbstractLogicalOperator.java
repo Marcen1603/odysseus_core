@@ -556,9 +556,14 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 			sinkInPort = getNextFreeSinkInPort();
 		}
 		LogicalSubscription sub = new LogicalSubscription(this, sink, sinkInPort, sourceOutPort, inputSchema);
+		subscribeSink(sub);
+	}
+
+	@Override
+	public void subscribeSink(LogicalSubscription sub) {
 		if (!this.subscriptions.contains(sub)) {
 			this.subscriptions.add(sub);
-			sink.subscribeToSource(sub);
+			sub.getSink().subscribeToSource(sub);
 			recalcOutputSchemata = true;
 			this.recalcAllPhyInputSet = true;
 		}
@@ -568,7 +573,7 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	public void subscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls) {
 		throw new IllegalArgumentException("This method cannot be called on Logical Operators");
 	}
-
+	
 	@Override
 	final public void unsubscribeSink(ILogicalOperator sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		unsubscribeSink(new LogicalSubscription(this, sink, sinkInPort, sourceOutPort, schema));

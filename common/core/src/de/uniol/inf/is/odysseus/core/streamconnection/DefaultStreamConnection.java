@@ -57,7 +57,7 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	private final Map<IPhysicalOperator, Integer> operatorPortMap;
 	private final Collection<IPhysicalOperator> connectedOperators = Lists
 			.newArrayList();
-	private final List<ISubscription<? extends ISource<In>>> subscriptions;
+	private final List<ISubscription<ISource<IStreamObject<?>>,?>> subscriptions;
 
 	private final ArrayList<In> collectedObjects = new ArrayList<In>();
 	private final ArrayList<Integer> collectedPorts = new ArrayList<Integer>();
@@ -92,13 +92,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		subscriptions = determineSubscriptions(operators);
 
 	}
-
+	
 	@Deprecated
-	@Override
-	public final ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions() {
+	public List<ISubscription<ISource<IStreamObject<?>>, ?>> getSubscriptions() {
 		return ImmutableList.copyOf(subscriptions);
 	}
-
+	
 	@Override
 	public ImmutableList<IPhysicalOperator> getConnectedOperators() {
 		return ImmutableList.copyOf(operators);
@@ -448,20 +447,20 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	private void connect(IPhysicalOperator operator) {
 		if (operator instanceof ISource) {
 			ISource<In> source = (ISource<In>) operator;
-			source.connectSink(this, operatorPortMap.get(operator), 0,
+			source.connectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator), 0,
 					operator.getOutputSchema());
 		} else {
 			ISink<?> sink = (ISink<?>) operator;
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 			for (Object sourceSub : subsToSource) {
-				AbstractPhysicalSubscription<ISource<In>> physSourceSub = (AbstractPhysicalSubscription<ISource<In>>) sourceSub;
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) sourceSub;
 
-				ISource<In> source = physSourceSub.getTarget();
+				ISource<In> source = (ISource<In>) physSourceSub.getSource();
 				int sourceOutPort = determineSourceOutPort(source, operator);
 
-				physSourceSub.getTarget().connectSink(this,
+				physSourceSub.getSource().connectSink((ISink<IStreamObject<?>>) this,
 						operatorPortMap.get(operator), sourceOutPort,
-						physSourceSub.getTarget().getOutputSchema());
+						physSourceSub.getSource().getOutputSchema());
 			}
 		}
 
@@ -470,10 +469,10 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	private int determineSourceOutPort(ISource<In> sourceOperator,
 			IPhysicalOperator targetOperator) {
-		Collection<AbstractPhysicalSubscription<ISink<? super In>>> subsToSinks = sourceOperator
+		Collection<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> subsToSinks = sourceOperator
 				.getSubscriptions();
-		for (AbstractPhysicalSubscription<ISink<? super In>> sinkSub : subsToSinks) {
-			if (sinkSub.getTarget().equals(targetOperator)) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sinkSub : subsToSinks) {
+			if (sinkSub.getSource().equals(targetOperator)) {
 				return sinkSub.getSourceOutPort();
 			}
 		}
@@ -484,21 +483,21 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	private void disconnect(IPhysicalOperator operator) {
 		if (operator instanceof ISource) {
 			ISource<In> source = (ISource<In>) operator;
-			source.disconnectSink(this, operatorPortMap.get(operator), 0,
+			source.disconnectSink((ISink<IStreamObject<?>>) this, operatorPortMap.get(operator), 0,
 					operator.getOutputSchema());
 		} else {
 			ISink<?> sink = (ISink<?>) operator;
 			Collection<?> subsToSource = sink.getSubscribedToSource();
 
 			for (Object sourceSub : subsToSource) {
-				AbstractPhysicalSubscription<ISource<In>> physSourceSub = (AbstractPhysicalSubscription<ISource<In>>) sourceSub;
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> physSourceSub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) sourceSub;
 
-				ISource<In> source = physSourceSub.getTarget();
+				ISource<In> source = (ISource<In>) physSourceSub.getSource();
 				int sourceOutPort = determineSourceOutPort(source, operator);
 
-				physSourceSub.getTarget().disconnectSink(this,
+				physSourceSub.getSource().disconnectSink((ISink<IStreamObject<?>>) this,
 						operatorPortMap.get(operator), sourceOutPort,
-						physSourceSub.getTarget().getOutputSchema());
+						physSourceSub.getSource().getOutputSchema());
 			}
 		}
 
@@ -525,37 +524,36 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(
+	private List<ISubscription<ISource<IStreamObject<?>>,?>> determineSubscriptions(
 			Collection<IPhysicalOperator> operators) {
-		List<ISubscription<? extends ISource<In>>> subscriptions = Lists
+		List<ISubscription<ISource<IStreamObject<?>>,?>> subscriptions = Lists
 				.newLinkedList();
 		for (IPhysicalOperator operator : operators) {
 			subscriptions
-					.addAll((Collection<? extends ISubscription<? extends ISource<In>>>) determineSubscriptions(operator));
+					.addAll(determineSubscriptions(operator));
 		}
 		return subscriptions;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <In> List<ISubscription<? extends ISource<In>>> determineSubscriptions(
+	private List<ISubscription<ISource<IStreamObject<?>>,?>> determineSubscriptions(
 			IPhysicalOperator operator) {
 		Preconditions.checkArgument(operator.isSink() || operator.isSource(),
 				"Operator must be sink and/or source!");
 
-		List<ISubscription<? extends ISource<In>>> subs = Lists.newLinkedList();
+		List<ISubscription<ISource<IStreamObject<?>>,?>> subs = Lists.newLinkedList();
 
 		if (operator.isSource()) {
-			subs.add((ISubscription<? extends ISource<In>>) new ControllablePhysicalSubscription<ISource<?>>(
-					(ISource<?>) operator, 0, 0, operator.getOutputSchema()));
+			subs.add((ISubscription<ISource<IStreamObject<?>>,?>) new ControllablePhysicalSubscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>>(
+					 (ISource<IStreamObject<?>>)operator, (ISink<IStreamObject<?>>)this, 0, 0, operator.getOutputSchema()));
 		} else {
 			Collection<?> subscriptions = ((ISink<?>) operator)
 					.getSubscribedToSource();
 
 			for (Object subscription : subscriptions) {
-				AbstractPhysicalSubscription<ISource<?>> sub = (AbstractPhysicalSubscription<ISource<?>>) subscription;
-				subs.add((ISubscription<? extends ISource<In>>) new ControllablePhysicalSubscription<ISource<?>>(
-						sub.getTarget(), sub.getSinkInPort(), sub
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub = (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>) subscription;
+				subs.add((ISubscription<ISource<IStreamObject<?>>,?>) new ControllablePhysicalSubscription<ISource<IStreamObject<?>>,ISink<IStreamObject<?>>>(
+						 sub.getSource(), (ISink<IStreamObject<?>>)this, sub.getSinkInPort(), sub
 								.getSourceOutPort(), sub.getSchema()));
 			}
 		}
@@ -625,6 +623,12 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 	public boolean isStarted() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void subscribeToSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> Subscription) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

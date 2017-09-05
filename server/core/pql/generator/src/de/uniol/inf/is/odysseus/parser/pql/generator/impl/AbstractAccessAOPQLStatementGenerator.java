@@ -155,7 +155,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
 
 	private static <T extends AbstractAccessAO> TimestampAO determineTimestampAO(T operator) {
 		try {
-			return (TimestampAO) operator.getSubscriptions().iterator().next().getTarget();
+			return (TimestampAO) operator.getSubscriptions().iterator().next().getSource();
 		} catch (final Throwable t) {
 			return null;
 		}

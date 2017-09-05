@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.streamconnection;
 import com.google.common.collect.ImmutableList;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -38,7 +39,7 @@ public interface IStreamConnection<In> {
 	public void removeStreamElementListener( IStreamElementListener<In> listener, String sinkName);
 	
 	public SDFSchema getOutputSchema();
-	public ImmutableList<ISubscription<? extends ISource<In>>> getSubscriptions();
+	public ImmutableList<ISubscription<ISource<IStreamObject<?>>,?>> getSubscriptions();
 	
 	public ImmutableList<IPhysicalOperator> getConnectedOperators();
 	public int getPortOfOperator( IPhysicalOperator operator );
