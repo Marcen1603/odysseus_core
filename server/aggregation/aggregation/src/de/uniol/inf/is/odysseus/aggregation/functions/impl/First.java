@@ -20,7 +20,6 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 
 	private T firstTuple;
 	private final SDFSchema subSchema;
-	private boolean alreadyReturned = false;;
 	
 	public First() {
 		super();
@@ -48,14 +47,12 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
 		if (outdatedElements.contains(this.firstTuple)) {
 			this.firstTuple = null;
-			this.alreadyReturned = false;
 		}
 	}
 
 	@Override
 	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		if (!this.alreadyReturned && this.firstTuple != null) {
-			this.alreadyReturned = true;
+		if (this.firstTuple != null) {
 			return this.firstTuple.getAttributes();
 		}
 		return new Tuple[] { };
