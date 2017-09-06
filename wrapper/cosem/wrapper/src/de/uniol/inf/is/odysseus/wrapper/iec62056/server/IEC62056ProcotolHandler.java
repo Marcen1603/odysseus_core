@@ -258,6 +258,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 			terminateParser();
 		} catch (IllegalArgumentException | NullPointerException e) {
 			logger.info("last message: " + Arrays.toString(message));
+			logger.error("exception occurred");
 			if (!isDone) {
 				try {
 					close();
@@ -265,6 +266,7 @@ public class IEC62056ProcotolHandler extends AbstractProtocolHandler<IStreamObje
 					e1.printStackTrace();
 				}
 			}
+			throw e;
 		}
 	}
 	
