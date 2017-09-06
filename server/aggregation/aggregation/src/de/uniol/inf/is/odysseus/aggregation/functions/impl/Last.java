@@ -16,6 +16,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * Returns the last known element on evaluation. Especially useful with a
+ * tumbling window.
+ * 
+ * @author Tobias Brandt
+ */
 public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
