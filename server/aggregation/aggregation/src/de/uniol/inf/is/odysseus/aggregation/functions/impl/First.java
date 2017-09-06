@@ -41,7 +41,7 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 
 	public First(final First<M, T> other) {
 		super(other);
-		this.subSchema = null;
+		this.subSchema = other.getSubSchema().clone();
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		if (outputName == null) {
-			outputName = "count";
+			outputName = "first";
 		}
 
 		return new First<>(null, outputName, attributeResolver.getSchema().get(0));
@@ -83,5 +83,10 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 		return true;
 	}
+	
+	public SDFSchema getSubSchema() {
+		return subSchema;
+	}
+
 
 }
