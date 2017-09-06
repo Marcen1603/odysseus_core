@@ -25,13 +25,14 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -65,7 +66,7 @@ public class PostOptimizationHandler {
 	 * @param transformationResults
 	 * @param optimizationAllowed
 	 */
-	public static void doPostOptimization(ILogicalOperator logicalPlan,
+	public static void doPostOptimization(ILogicalPlan logicalPlan,
 			ILogicalQuery query,
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
@@ -118,15 +119,11 @@ public class PostOptimizationHandler {
 	 * @param element
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static boolean processOptimization(ILogicalOperator logicalPlan,
+	private static boolean processOptimization(ILogicalPlan logicalPlan,
 			ILogicalQuery query, PostOptimizationElement element) {
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-				query);
-		GenericGraphWalker copyWalker = new GenericGraphWalker();
-		copyWalker.prefixWalk(logicalPlan, copyVisitor);
-		ILogicalOperator savedPlan = copyVisitor.getResult();
-
+		
+		ILogicalPlan savedPlan = logicalPlan.copyPlan();
+		
 		try {
 			ILogicalOperator unionOperator = element.getStartOperator();
 			ILogicalOperator fragmentOperator = element.getEndOperator();

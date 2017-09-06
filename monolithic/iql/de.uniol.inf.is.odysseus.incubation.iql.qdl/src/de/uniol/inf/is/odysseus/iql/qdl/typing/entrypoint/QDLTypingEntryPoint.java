@@ -5,10 +5,9 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-
-
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryListener;
@@ -65,8 +64,8 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 		dataDictionary.addListener(this);
 		OperatorsObservable.addListener(this);
 						
-		for (Entry<Resource, ILogicalOperator> entry : dataDictionary.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession())) {
-			builder.createSource(entry.getValue().getName(), entry.getValue());
+		for (Entry<Resource, ILogicalPlan> entry : dataDictionary.getStreamsAndViews(OdysseusRCPPlugIn.getActiveSession())) {
+			builder.createSource(entry.getValue().getRoot().getName(), entry.getValue().getRoot());
 		}
 	}
 	
@@ -95,14 +94,14 @@ public class QDLTypingEntryPoint extends AbstractIQLTypingEntryPoint<IQDLTypeBui
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op, boolean isView, ISession session) {
-		builder.createSource(name, op);
+	public void addedViewDefinition(IDataDictionary sender, String name,ILogicalPlan op, boolean isView, ISession session) {
+		builder.createSource(name, op.getRoot());
 		refresProjects();
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name,ILogicalOperator op, boolean isView, ISession session) {
-		builder.removeSource(name, op);
+	public void removedViewDefinition(IDataDictionary sender, String name,ILogicalPlan op, boolean isView, ISession session) {
+		builder.removeSource(name, op.getRoot());
 		refresProjects();
 	}
 

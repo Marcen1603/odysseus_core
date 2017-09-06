@@ -26,7 +26,9 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.FileHandler;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -146,9 +148,9 @@ public class DistributedDataSourceManager
 
 						ILogicalOperator streamOrViewAO = determineStreamOrViewAO(optTopAO.get());
 						if (isStream) {
-							getDataDictionary().setStream(sourceName, streamOrViewAO, getActiveSession());
+							getDataDictionary().setStream(sourceName, new LogicalPlan(streamOrViewAO), getActiveSession());
 						} else {
-							getDataDictionary().setView(sourceName, streamOrViewAO, getActiveSession());
+							getDataDictionary().setView(sourceName, new LogicalPlan(streamOrViewAO), getActiveSession());
 						}
 
 					} else {
@@ -205,16 +207,16 @@ public class DistributedDataSourceManager
 	public void newDatadictionary(IDataDictionary dd) {
 		dd.addListener(this);
 
-		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dd.getStreamsAndViews(getActiveSession());
-		for (Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews) {
+		Set<Entry<Resource, ILogicalPlan>> streamsAndViews = dd.getStreamsAndViews(getActiveSession());
+		for (Entry<Resource, ILogicalPlan> streamOrView : streamsAndViews) {
 			String name = streamOrView.getKey().getResourceName();
 			String username = streamOrView.getKey().getUser();
 
-			ILogicalOperator operator = streamOrView.getValue();
+			ILogicalPlan plan = streamOrView.getValue();
 
 			boolean isStream = (dd.getStreamForTransformation(streamOrView.getKey(), getActiveSession()) != null);
 
-			createDistributedData(name, operator, username, isStream, isStream);
+			createDistributedData(name, plan.getRoot(), username, isStream, isStream);
 		}
 	}
 
@@ -222,8 +224,8 @@ public class DistributedDataSourceManager
 	public void removedDatadictionary(IDataDictionary dd) {
 		dd.removeListener(this);
 
-		Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dd.getStreamsAndViews(getActiveSession());
-		for (Entry<Resource, ILogicalOperator> streamOrView : streamsAndViews) {
+		Set<Entry<Resource, ILogicalPlan>> streamsAndViews = dd.getStreamsAndViews(getActiveSession());
+		for (Entry<Resource, ILogicalPlan> streamOrView : streamsAndViews) {
 			String name = streamOrView.getKey().getResourceName();
 			String username = streamOrView.getKey().getUser();
 
@@ -232,18 +234,18 @@ public class DistributedDataSourceManager
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView,
 			ISession session) {
 		synchronized (importedSourcesBiMap) {
 			// FIXME Distributed views do not work. See ODY-1068
 			if (!importedSourcesBiMap.containsValue(name) && !isView) {
-				createDistributedData(name, op, session.getUser().getName(), !isView, !isView);
+				createDistributedData(name, op.getRoot(), session.getUser().getName(), !isView, !isView);
 			}
 		}
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView,
 			ISession session) {
 		synchronized (importedSourcesBiMap) {
 			if (!importedSourcesBiMap.containsValue(name)) {
@@ -380,7 +382,7 @@ public class DistributedDataSourceManager
 					}
 				}
 
-				ILogicalOperator op = query.getLogicalPlan();
+				ILogicalOperator op = query.getLogicalPlan().getRoot();
 				SDFSchema outputSchema = op.getOutputSchema();
 				// outputSchema.setMetaSchema(advertisement.getMetaSchemata());
 				op.setOutputSchema(outputSchema);
@@ -415,26 +417,7 @@ public class DistributedDataSourceManager
 	}
 
 	private static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
-		return getAllOperators(plan.getLogicalPlan());
-	}
-
-	private static Collection<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		collectOperatorsImpl(operator, operators);
-		return operators;
-	}
-
-	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator)) {
-			list.add(currentOperator);
-			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getSink(), list);
-			}
-
-			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getSource(), list);
-			}
-		}
+		return plan.getLogicalPlan().getOperators();
 	}
 
 	void setDataDictionaryProvider(DataDictionaryProvider ddp) {

@@ -28,17 +28,18 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
-import de.uniol.inf.is.odysseus.core.server.util.FindQueryRootsVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.FindQueryRootsVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -55,20 +56,22 @@ public class TransformationExecutor implements ITransformation {
 	}
 
 	@Override
-	public ArrayList<IPhysicalOperator> transform(ILogicalOperator logicalOp,
+	public ArrayList<IPhysicalOperator> transform(ILogicalPlan logicalPlan,
 			TransformationConfiguration config, ISession caller,
 			IDataDictionary dd) throws TransformationException {
-		LOGGER.info("Starting transformation of " + logicalOp + "...");
+		LOGGER.info("Starting transformation of " + logicalPlan + "...");
 		if (LOGGER.isTraceEnabled()){
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
 			LOGGER.debug("Before transformation: \n"
-					+ planPrinter.createString(logicalOp));
+					+ planPrinter.createString(logicalPlan.getRoot()));
 			
 		}else if (LOGGER.isDebugEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 			LOGGER.debug("Before transformation: \n"
-					+ planPrinter.createString(logicalOp));
+					+ planPrinter.createString(logicalPlan.getRoot()));
 		}
+		
+		ILogicalOperator logicalOp = logicalPlan.getRoot();
 		
 		ArrayList<IPhysicalOperator> resultPlan = new ArrayList<IPhysicalOperator>();
 		TopAO top = null;

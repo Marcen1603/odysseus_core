@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.initialization.strategies.IParallelizationIndividualConfiguration;
 
 /**
@@ -29,7 +29,7 @@ public class StandardPlanAnalyzer implements IPlanAnalyzer {
 		GenericGraphWalker<ILogicalOperator> graphWalker = new GenericGraphWalker<>();
 		FindParallelizationPossibilitiesVisitor<ILogicalOperator> parallelizeVisitor = new FindParallelizationPossibilitiesVisitor<>(
 				String.valueOf(query.getID()));
-		graphWalker.prefixWalk(query.getLogicalPlan(), parallelizeVisitor);
+		graphWalker.prefixWalk(query.getLogicalPlan().getRoot(), parallelizeVisitor);
 		return parallelizeVisitor.getResult();
 	}
 

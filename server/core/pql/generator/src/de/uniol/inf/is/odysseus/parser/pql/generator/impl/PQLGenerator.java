@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGeneratorPostProcessor;
@@ -59,6 +60,11 @@ public class PQLGenerator implements IPQLGenerator {
 		}
 	}
 
+	@Override
+	public String generatePQLStatement(ILogicalPlan plan) {
+		return generatePQLStatement(plan.getRoot());
+	}
+	
 	@Override
 	public String generatePQLStatement(ILogicalOperator startOperator) {
 		Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");

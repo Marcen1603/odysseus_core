@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
 public class SenderAOPQLStatementGenerator extends AbstractPQLStatementGenerator<SenderAO> {

@@ -42,6 +42,7 @@ import de.uniol.inf.is.odysseus.core.event.IEventListener;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
@@ -294,9 +295,9 @@ public class SensorOntologyServiceImpl
 	private void createStreamsAndViewsInOntology() {
 		final IDataDictionaryWritable dataDictionary = SensorOntologyServiceImpl.getExecutor()
 				.getDataDictionary(SensorOntologyServiceImpl.getActiveSession());
-		final Set<Entry<Resource, ILogicalOperator>> streamsAndViews = dataDictionary
+		final Set<Entry<Resource, ILogicalPlan>> streamsAndViews = dataDictionary
 				.getStreamsAndViews(SensorOntologyServiceImpl.getActiveSession());
-		for (final Entry<Resource, ILogicalOperator> streamAndView : streamsAndViews) {
+		for (final Entry<Resource, ILogicalPlan> streamAndView : streamsAndViews) {
 			final String name = streamAndView.getKey().getResourceName();
 			final SDFSchema schema = streamAndView.getValue().getOutputSchema();
 			this.createSensingDevice(name, schema);
@@ -307,7 +308,7 @@ public class SensorOntologyServiceImpl
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op,
+	public void addedViewDefinition(final IDataDictionary sender, final String name, final ILogicalPlan op,
 			boolean isView, ISession session) {
 		SensorOntologyServiceImpl.LOG.debug("Add view " + name + " to ontology");
 		this.createSensingDevice(name, op.getOutputSchema());
@@ -318,7 +319,7 @@ public class SensorOntologyServiceImpl
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalOperator op,
+	public void removedViewDefinition(final IDataDictionary sender, final String name, final ILogicalPlan op,
 			boolean isView, ISession session) {
 		final SDFSchema schema = op.getOutputSchema();
 		SensorOntologyServiceImpl.LOG.debug("Remove view: " + name + " " + schema);

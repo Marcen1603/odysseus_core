@@ -58,7 +58,7 @@ public class BenchmarkPreTransformationHandler extends
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters, Context context) {
-		ILogicalOperator topAO = query.getLogicalPlan();
+		ILogicalOperator topAO = query.getLogicalPlan().getRoot();
 
 		// get topAO
 		if (topAO instanceof TopAO) {

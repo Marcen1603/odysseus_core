@@ -87,7 +87,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 	 *             {@code IDataDictionary} with the given name.
 	 */
 	private AbstractAccessAO getSourceAccess(IDataDictionary dd) throws DataDictionaryException {
-		ILogicalOperator view = dd.getViewOrStream(this.viewname.getResourceName(), getCaller());
+		ILogicalOperator view = dd.getViewOrStream(this.viewname.getResourceName(), getCaller()).getRoot();
 		if (view == null) {
 			throw new DataDictionaryException(
 					"CreateBaDaStRecorderCommand: " + this.viewname.getResourceName() + " is an unknown view name!");
@@ -110,7 +110,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 			return (AbstractAccessAO) topOperator;
 		} else if (topOperator instanceof StreamAO) {
 			AbstractAccessAO sourceAccess = getSourceAccessRecursive(
-					dd.getStreamForTransformation(this.viewname, getCaller()), dd);
+					dd.getStreamForTransformation(this.viewname, getCaller()).getRoot(), dd);
 			if (sourceAccess != null) {
 				// Break condition success
 				return sourceAccess;

@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
@@ -50,8 +51,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configur
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**
@@ -261,18 +260,13 @@ public class StandardCompiler implements ICompiler {
 				+ " not registered.");
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public IPhysicalQuery transform(ILogicalQuery query,
 			TransformationConfiguration transformationConfiguration,
 			ISession caller, IDataDictionary dd) throws TransformationException {
 
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-				query);
-		GenericGraphWalker walker = new GenericGraphWalker();
-		walker.prefixWalk(query.getLogicalPlan(), copyVisitor);
-		ILogicalOperator copyPlan = copyVisitor.getResult();
-
+		ILogicalPlan copyPlan = query.getLogicalPlan().copyPlan();
+		
 		ArrayList<IPhysicalOperator> physicalPlan = this.transformation
 				.transform(copyPlan, transformationConfiguration, caller, dd);
 
@@ -339,7 +333,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan,
+	public ILogicalPlan rewritePlan(ILogicalPlan plan,
 			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		return rewrite.rewritePlan(plan, conf, caller, dd);
 	}
@@ -370,7 +364,7 @@ public class StandardCompiler implements ICompiler {
 	}
 
 	@Override
-	public List<ILogicalOperator> generatePlans(ILogicalOperator plan,
+	public List<ILogicalPlan> generatePlans(ILogicalPlan plan,
 			PlanGenerationConfiguration conf, IOperatorOwner owner) {
 		return planGenerator.generatePlans(plan, conf, owner);
 	}

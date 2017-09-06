@@ -17,13 +17,14 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.net.IOdysseusNode;
 import de.uniol.inf.is.odysseus.net.querydistribute.ILogicalQueryPart;
 import de.uniol.inf.is.odysseus.net.querydistribute.LogicalQueryPart;
@@ -67,24 +68,13 @@ public final class LogicalQueryHelper {
 	public static ILogicalQuery copyLogicalQuery(ILogicalQuery originQuery) {
 		Preconditions.checkNotNull(originQuery, "Logical query to copy must not be null!");
 
-		ILogicalQuery copy = new LogicalQuery(PQL_PARSER_ID, copyLogicalPlan(originQuery.getLogicalPlan()), originQuery.getPriority());
+		ILogicalQuery copy = new LogicalQuery(PQL_PARSER_ID, originQuery.getLogicalPlan().copyPlan(), originQuery.getPriority());
 
 		copy.setName(originQuery.getName());
 		copy.setQueryText(pqlGenerator.generatePQLStatement(copy.getLogicalPlan()));
 		copy.setUser(originQuery.getUser());
 
 		return copy;
-	}
-
-	public static ILogicalOperator copyLogicalPlan(ILogicalOperator originPlan) {
-		Preconditions.checkNotNull(originPlan, "Logical plan to copy must not be null!");
-
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(originPlan.getOwner());
-
-		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
-
-		walker.prefixWalk(originPlan, copyVisitor);
-		return copyVisitor.getResult();
 	}
 
 	public static String generatePQLStatementFromQueryPart(ILogicalQueryPart part) {
@@ -120,29 +110,6 @@ public final class LogicalQueryHelper {
 		}
 	}
 
-	public static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
-		return getAllOperators(plan.getLogicalPlan());
-	}
-
-	public static Collection<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		collectOperatorsImpl(operator, operators);
-		return operators;
-	}
-
-	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator)) {
-			list.add(currentOperator);
-			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getSink(), list);
-			}
-
-			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getSource(), list);
-			}
-		}
-	}
-
 	public static void removeTopAOs(Collection<ILogicalOperator> operators) {
 		List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
 
@@ -156,26 +123,6 @@ public final class LogicalQueryHelper {
 		for (ILogicalOperator operatorToRemove : operatorsToRemove) {
 			operators.remove(operatorToRemove);
 		}
-	}
-
-	public static Collection<ILogicalOperator> getSinks(Collection<ILogicalOperator> operators) {
-		Collection<ILogicalOperator> sinks = Lists.newArrayList();
-		for (ILogicalOperator operator : operators) {
-			if (operator.getSubscriptions().isEmpty()) {
-				sinks.add(operator);
-			}
-		}
-		return sinks;
-	}
-
-	public static Collection<ILogicalOperator> getSources(Collection<ILogicalOperator> operators) {
-		Collection<ILogicalOperator> sources = Lists.newArrayList();
-		for (ILogicalOperator operator : operators) {
-			if (operator.getSubscribedToSource().isEmpty()) {
-				sources.add(operator);
-			}
-		}
-		return sources;
 	}
 
 	public static Collection<ILogicalOperator> getRelativeSourcesOfLogicalQueryPart(final ILogicalQueryPart part) {
@@ -651,7 +598,7 @@ public final class LogicalQueryHelper {
 	public static ILogicalOperator appendTopAO(ILogicalQueryPart queryPart) {
 		Preconditions.checkNotNull(queryPart, "Query part to append TopAO must not be null!");
 
-		Collection<ILogicalOperator> sinks = getSinks(getAllOperators(queryPart.getOperators().iterator().next()));
+		Collection<ILogicalOperator> sinks = LogicalPlan.getSinks(LogicalPlan.getAllOperators(queryPart.getOperators().iterator().next()));
 
 		TopAO topAO = new TopAO();
 		int inputPort = 0;

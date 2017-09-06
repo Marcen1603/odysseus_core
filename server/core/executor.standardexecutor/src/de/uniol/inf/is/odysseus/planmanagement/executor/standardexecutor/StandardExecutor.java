@@ -100,9 +100,9 @@ import de.uniol.inf.is.odysseus.core.server.sla.SLADictionary;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.IUserManagementWritable;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SetOwnerVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.core.util.SetOwnerVisitor;
 
 /**
  * StandardExecutor is the standard implementation of {@link IExecutor}. The
@@ -717,8 +717,10 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 			ILogicalQuery query = new LogicalQuery(logicalPlan, prio);
 			setQueryName(params, query);
 			query.setUser(user);
+			
 			SetOwnerVisitor visitor = new SetOwnerVisitor(query);
 			AbstractTreeWalker.prefixWalk(logicalPlan, visitor);
+			
 			CreateQueryCommand cmd = new CreateQueryCommand(query, user);
 			newQueries.add(cmd);
 			setQueryBuildParameters(query, params);
@@ -816,7 +818,7 @@ public class StandardExecutor extends AbstractExecutor implements IQueryStarter 
 		IExecutorCommand cmd = commands.get(0);
 		if (cmd instanceof CreateQueryCommand) {
 			CreateQueryCommand qCmd = (CreateQueryCommand) cmd;
-			ILogicalOperator root = qCmd.getQuery().getLogicalPlan();
+			ILogicalOperator root = qCmd.getQuery().getLogicalPlan().getRoot();
 			return root.getOutputSchema(port);
 		}
 		return null;

@@ -88,7 +88,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 	 */
 	private void insertBaDaStSynchronizors(ILogicalQuery query, boolean recovery) {
 		final Set<String> recordedSources = BaDaStRecorderRegistry.getRecordedSources();
-		List<ILogicalOperator> operators = OperatorCollector.collect(query.getLogicalPlan());
+		List<ILogicalOperator> operators = OperatorCollector.collect(query.getLogicalPlan().getRoot());
 		new LogicalGraphWalker(operators).walk(op -> walkingStep(op, recordedSources, recovery));
 	}
 
@@ -109,7 +109,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 		} else if (operator instanceof StreamAO) {
 			List<ILogicalOperator> operators = OperatorCollector
 					.collect(DataDictionaryProvider.instance.getDataDictionary(UserManagementProvider.instance.getDefaultTenant())
-							.getStreamForTransformation(((StreamAO) operator).getStreamname(), getSession()));
+							.getStreamForTransformation(((StreamAO) operator).getStreamname(), getSession()).getRoot());
 			new LogicalGraphWalker(operators).walk(op -> walkingStep(op, recordedSources, recovery));
 		}
 	}

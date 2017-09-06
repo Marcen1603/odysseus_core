@@ -33,8 +33,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.MetadataUpdatePO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.ThreadedBufferPO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IWindow;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorPhysicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorPhysicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 
 /**
  * Helper class that provides useful methods on physical plans for an

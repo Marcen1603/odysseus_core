@@ -26,18 +26,20 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.OperatorIdLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelInterOperatorSetting;
+import de.uniol.inf.is.odysseus.parallelization.interoperator.configuration.ParallelOperatorConfiguration;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.parameter.InterOperatorGlobalKeywordParameter;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.postoptimization.PostOptimizationHandler;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
@@ -86,19 +88,15 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 
 		// Get logical plan and copy it, needed for revert if transformation
 		// fails
-		ILogicalOperator logicalPlan = query.getLogicalPlan();
+		ILogicalPlan logicalPlan = query.getLogicalPlan();
 
 		if (query.getInitialLogicalPlan() == null) {
-			CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor(query);
-			GenericGraphWalker walker = new GenericGraphWalker();
-			walker.prefixWalk(logicalPlan, copyVisitor);
-
-			query.setInitialLogicalPlan(copyVisitor.getResult());
+			query.setInitialLogicalPlan(logicalPlan.copyPlan());
 		}
 
 		// do transformations
 		List<TransformationResult> transformationResults = new ArrayList<TransformationResult>();
-		transformationResults = doTransformations(query, logicalPlan, transformationResults);
+		transformationResults = doTransformations(query, logicalPlan.getRoot(), transformationResults);
 
 		cleanupResults(transformationResults);
 
@@ -134,6 +132,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<TransformationResult> doTransformations(ILogicalQuery query, ILogicalOperator logicalPlan,
 			List<TransformationResult> transformationResults) {
+		
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(query);
 		GenericGraphWalker copyWalker = new GenericGraphWalker();
 		copyWalker.prefixWalk(logicalPlan, copyVisitor);
@@ -153,7 +152,7 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 			}
 		} catch (Exception e) {
 			// if something went wrong, revert plan and throw exception
-			query.setLogicalPlan(savedPlan, true);
+			query.setLogicalPlan(new LogicalPlan(savedPlan), true);
 			throw e;
 		}
 		return transformationResults;

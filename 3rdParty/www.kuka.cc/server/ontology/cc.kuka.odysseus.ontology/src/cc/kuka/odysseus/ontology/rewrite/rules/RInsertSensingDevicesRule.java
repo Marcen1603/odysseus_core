@@ -249,7 +249,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         Objects.requireNonNull(parent);
         Objects.requireNonNull(sourceName);
 
-        final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller());
+        final ILogicalOperator viewOrStream = this.getDataDictionary().getViewOrStream(sourceName, this.getCaller()).getRoot();
         for (final IOperatorOwner owner : parent.getOwner()) {
             viewOrStream.addOwner(owner);
         }

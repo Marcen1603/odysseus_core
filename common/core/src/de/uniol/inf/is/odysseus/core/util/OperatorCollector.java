@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscr
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 
 /**
  * Helper class to collect operators and subscriptions from plan.
@@ -27,6 +28,15 @@ public class OperatorCollector {
 	public static List<ILogicalOperator> collect(ILogicalOperator plan) {
 		List<ILogicalOperator> ops = new ArrayList<>();
 		collectRecursively(plan, ops);
+		return ops;
+	}
+	
+	/**
+	 * Collects all operators from a logical plan.
+	 */
+	public static List<ILogicalOperator> collect(ILogicalPlan plan) {
+		List<ILogicalOperator> ops = new ArrayList<>();
+		collectRecursively(plan.getRoot(), ops);
 		return ops;
 	}
 

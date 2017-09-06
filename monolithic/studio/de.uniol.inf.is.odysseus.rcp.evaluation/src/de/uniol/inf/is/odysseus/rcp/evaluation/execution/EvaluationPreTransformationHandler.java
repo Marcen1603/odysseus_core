@@ -15,12 +15,12 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
@@ -39,10 +39,10 @@ import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -88,7 +88,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 	}
 
-	private void addMetadataOperator(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
+	private void addMetadataOperator(ILogicalPlan logicalPlan, ISession caller, EvaluationRun run) {
 		SortedSet<String> types = new TreeSet<>();
 		EvaluationModel model = run.getContext().getModel();
 		types.addAll(logicalPlan.getOutputSchema().getMetaAttributeNames());
@@ -108,7 +108,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			
 			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(types);
 			// find all accessao and set metadata
-			List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalPlan);
+			List<ILogicalOperator> sources = logicalPlan.getSources();
 
 			for (ILogicalOperator o : sources) {
 				MetadataAO toInsert = new MetadataAO();
@@ -176,14 +176,15 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		return base.replace('.', '_');
 	}
 
-	private void addLatencyOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
-		if (logicalPlan instanceof TopAO) {
+	private void addLatencyOperators(ILogicalPlan logicalPlan, ISession caller, EvaluationRun run) {
+		ILogicalOperator planRoot = logicalPlan.getRoot();
+
+		if (planRoot instanceof TopAO) {
 
 			// dumpPlan(logicalPlan);
-
 			boolean usMaxLatency = run.getContext().getModel().isUseMaxLatency();
 			List<ILogicalOperator> newChilds = new ArrayList<>();
-			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
+			for (LogicalSubscription subscription : planRoot.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getSource();
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
 					root = root.getSubscribedToSource(0).getSource();
@@ -211,20 +212,20 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String sinkName = createSinkName(run.createLatencyResultPath(root));
-				dd.addSink(sinkName, fileAO, caller);
+				dd.addSink(sinkName, new LogicalPlan(fileAO), caller);
 				fileAO.setSink(dd.getResource(sinkName, caller));
 
 				newChilds.add(fileAO);
 			}
-			int inputPort = logicalPlan.getSubscribedToSource().size();
+			int inputPort = planRoot.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
-				logicalPlan.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
+				planRoot.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
 			}
 		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void addThroughputOperators(ILogicalOperator root, ISession caller, EvaluationRun run) {
+	private void addThroughputOperators(ILogicalPlan plan, ISession caller, EvaluationRun run) {
 
 		Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 		set.add(AbstractAccessAO.class);
@@ -232,7 +233,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		CollectOperatorLogicalGraphVisitor<ILogicalOperator> collVisitor = new CollectOperatorLogicalGraphVisitor<>(set,
 				true);
 		GenericGraphWalker collectWalker = new GenericGraphWalker();
-		collectWalker.prefixWalk(root, collVisitor);
+		collectWalker.prefixWalk(plan.getRoot(), collVisitor);
 		for (ILogicalOperator accessAO : collVisitor.getResult()) {
 
 			List<LogicalSubscription> nextSinks = new ArrayList<>(accessAO.getSubscriptions());
@@ -249,10 +250,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 
 
-	private void addResourceOperators(ILogicalOperator logicalPlan, ISession caller, EvaluationRun run) {
-		if (logicalPlan instanceof TopAO) {
+	private void addResourceOperators(ILogicalPlan logicalPlan, ISession caller, EvaluationRun run) {
+		ILogicalOperator planRoot = logicalPlan.getRoot();
+
+		if (planRoot instanceof TopAO) {
 			List<ILogicalOperator> newChilds = new ArrayList<>();
-			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
+			for (LogicalSubscription subscription : planRoot.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getSource();
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
 					root = root.getSubscribedToSource(0).getSource();
@@ -281,7 +284,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String cpuSinkName = createSinkName(run.createCPUResultPath(root));
-				dd.addSink(cpuSinkName, fileCPU, caller);
+				dd.addSink(cpuSinkName, new LogicalPlan(fileCPU), caller);
 				fileCPU.setSink(dd.getResource(cpuSinkName, caller));
 
 				newChilds.add(fileCPU);
@@ -297,14 +300,14 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				fileMemory.createDir(true);
 				fileMemory.subscribeToSource(memOnly, 0, 0, memOnly.getOutputSchema());
 				String MemSinkName = createSinkName(run.createMemoryResultPath(root));
-				dd.addSink(MemSinkName, fileMemory, caller);
+				dd.addSink(MemSinkName, new LogicalPlan(fileMemory), caller);
 				fileMemory.setSink(dd.getResource(MemSinkName, caller));
 
 				newChilds.add(fileMemory);
 			}
-			int inputPort = logicalPlan.getSubscribedToSource().size();
+			int inputPort = planRoot.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
-				logicalPlan.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
+				planRoot.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
 			}
 		}
 	}
