@@ -39,7 +39,7 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		return Collections.singleton(new SDFAttribute(null, "First",
+		return Collections.singleton(new SDFAttribute(null, "first",
 				SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, this.subSchema), null, null, null));
 	}
 
