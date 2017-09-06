@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -39,13 +40,19 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		return Collections.singleton(new SDFAttribute(null, "first",
+		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0],
 				SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, this.subSchema), null, null, null));
 	}
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		return new First<>(null, "", attributeResolver.getSchema().get(0));
+		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
+				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
+		if (outputName == null) {
+			outputName = "count";
+		}
+		
+		return new First<>(null, outputName, attributeResolver.getSchema().get(0));
 	}
 
 	@Override
