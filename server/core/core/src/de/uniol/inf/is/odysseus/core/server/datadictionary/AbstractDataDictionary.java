@@ -890,7 +890,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 		ILogicalOperator ret = sinkTop;
 		if (ret != null) {
 			while (ret.getSubscribedToSource().size() > 0) {
-				ret = ret.getSubscribedToSource(0).getTarget();
+				ret = ret.getSubscribedToSource(0).getSource();
 			}
 		}
 		return ret;

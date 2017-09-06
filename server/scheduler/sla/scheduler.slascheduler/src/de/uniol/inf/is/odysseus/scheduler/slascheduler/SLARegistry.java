@@ -21,10 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.IBuffer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.IPlanModificationListener;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.eventhandling.planmodification.event.AbstractPlanModificationEvent;
@@ -238,8 +239,8 @@ public class SLARegistry implements IPlanModificationListener {
 			
 			for (Object obj : subscriptions) {
 				@SuppressWarnings("unchecked")
-				AbstractPhysicalSubscription<ISink<?>> subscription = (AbstractPhysicalSubscription<ISink<?>>) obj;
-				ISink<?> target = subscription.getTarget();
+				AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>> subscription = (AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>) obj;
+				ISink<?> target = subscription.getSink();
 				
 				List<IPhysicalOperator> newPath = null; 
 				if (subscriptions.size() > 1) {

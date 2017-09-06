@@ -125,11 +125,11 @@ public class LogicalCostModelConsole implements CommandProvider {
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSink(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSource(), list);
 			}
 		}
 	}

@@ -594,7 +594,7 @@ public class SocketService extends Observable {
 				 * that the socket operator receives all the data the original operator receives
 				 */
 				for (ISubscription source : sources) {
-					Object target = source.getTarget();
+					Object target = source.getSource();
 					if (target instanceof ISource) {
 						final ISource<?> targetAsSource = (ISource<?>) target;
 						targetAsSource.subscribeSink((ISink) sink, 0, rootOutputPort,

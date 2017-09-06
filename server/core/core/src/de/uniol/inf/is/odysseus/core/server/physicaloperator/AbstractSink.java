@@ -261,7 +261,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 					sub.setDone(false);
 					callPath.add(
 							new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-									(ISource<IStreamObject<?>>) getInstance(), sub.getSink(), sub.getSinkInPort(),
+									sub.getSource(), (ISink<IStreamObject<?>>) getInstance(), sub.getSinkInPort(),
 									sub.getSourceOutPort(), null));
 					if (sub.getSource().isOwnedByAny(forOwners)) {
 						sub.getSource().open(getInstance(), sub.getSourceOutPort(), sub.getSinkInPort(), callPath,
@@ -348,7 +348,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 			// Check if callPath contains this call already to avoid cycles
 			if (!containsSubscription(callPath, getInstance(), sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-						(ISource<IStreamObject<?>>) getInstance(), sub.getSink(), sub.getSinkInPort(),
+						sub.getSource(), (ISink<IStreamObject<?>>) getInstance(), sub.getSinkInPort(),
 						sub.getSourceOutPort(), null));
 				if (sub.getSource().isOwnedByAny(forOwners)) {
 					sub.getSource().start(getInstance(), sub.getSourceOutPort(), sub.getSinkInPort(), callPath,
@@ -460,7 +460,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> sub : this.subscribedToSource) {
 			if (!containsSubscription(callPath, getInstance(), sub.getSourceOutPort(), sub.getSinkInPort())) {
 				callPath.add(new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-						(ISource<IStreamObject<?>>) getInstance(), sub.getSink(), sub.getSinkInPort(),
+						sub.getSource(), (ISink<IStreamObject<?>>) getInstance(), sub.getSinkInPort(),
 						sub.getSourceOutPort(), null));
 				try {
 					if (sub.getSource().isOwnedByAny(forOwners)) {
@@ -552,7 +552,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 				if (!containsSubscription(callPath, getInstance(), sub.getSourceOutPort(), sub.getSinkInPort())) {
 					callPath.add(
 							new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-									(ISource<IStreamObject<?>>) getInstance(), sub.getSink(), sub.getSinkInPort(),
+									sub.getSource(), (ISink<IStreamObject<?>>) getInstance(), sub.getSinkInPort(),
 									sub.getSourceOutPort(), null));
 					if (sub.getSource().isOwnedByAny(forOwners)) {
 						sub.getSource().suspend(getInstance(), sub.getSourceOutPort(), sub.getSinkInPort(), callPath,
@@ -592,7 +592,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 				if (!containsSubscription(callPath, getInstance(), sub.getSourceOutPort(), sub.getSinkInPort())) {
 					callPath.add(
 							new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-									(ISource<IStreamObject<?>>) getInstance(), sub.getSink(), sub.getSinkInPort(),
+									sub.getSource(), (ISink<IStreamObject<?>>) getInstance(), sub.getSinkInPort(),
 									sub.getSourceOutPort(), null));
 					if (sub.getSource().isOwnedByAny(forOwners)) {
 						sub.getSource().resume(getInstance(), sub.getSourceOutPort(), sub.getSinkInPort(), callPath,
@@ -790,7 +790,7 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 		}
 
 		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
-				source, (ISink<IStreamObject<?>>) this, sinkInPort, sourceOutPort, schema);
+				source, (ISink<IStreamObject<?>>) getInstance(), sinkInPort, sourceOutPort, schema);
 		subscribeToSource(sub);
 
 	}
@@ -802,6 +802,11 @@ public abstract class AbstractSink<R extends IStreamObject<?>> extends AbstractM
 			if (!sinkInPortFree(sub.getSinkInPort())) {
 				throw new IllegalArgumentException("SinkInPort " + sub.getSinkInPort() + " already bound ");
 			}
+		
+			if (sub.getSinkInPort() >= this.noInputPorts) {
+				setInputPortCount(sub.getSinkInPort() + 1);
+			}
+			
 			// getLogger().trace(
 			// this.getInstance() + " Subscribe To Source " + source
 			// + " to " + sinkInPort + " from " + sourceOutPort);

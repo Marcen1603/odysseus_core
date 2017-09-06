@@ -788,7 +788,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> findSinkInSubscription(IPhysicalOperator o,
 			int sourcePort, int sinkPort) {
 		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : this.sinkSubscriptions) {
-			if (sub.getSink() == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
+			IPhysicalOperator sink = sub.getSink();
+			if (sink == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
 				return sub;
 			}
 		}

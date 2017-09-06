@@ -137,17 +137,18 @@ public class GraphOutlineLabelProvider extends StyledCellLabelProvider {
 			String name = node.getModelNode().getContent().getName();
 			return styledString.append(name);
 		}
+		
 		if (element instanceof ISubscription) {
-			ISubscription<?> s = (ISubscription<?>) element;
-			if (s.getTarget() instanceof IPhysicalOperator) {
-				styledString.append(((IPhysicalOperator) s.getTarget()).getName());
+			ISubscription<?,?> s = (ISubscription<?,?>) element;
+			if (s.getSource() instanceof IPhysicalOperator) {
+				styledString.append(((IPhysicalOperator) s.getSource()).getName());
 			} else{
-				styledString.append(""+s.getTarget());
+				styledString.append(""+s.getSource());
 			}
 			styledString.append(" In("+s.getSinkInPort()).append(") out ("+s.getSourceOutPort()).append(")");
 
-			if (s.getTarget() instanceof IPhysicalOperator){
-				int open = ((AbstractPhysicalSubscription<?>) s).getOpenCalls();
+			if (s.getSource() instanceof IPhysicalOperator){
+				int open = ((AbstractPhysicalSubscription<?,?>) s).getOpenCalls();
 				if (open > 0){
 					styledString.append(" #Open: "+open);
 				}

@@ -62,7 +62,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 			tryEstimateOperator(resultMap, operator, histogramMap);
 
 			for (LogicalSubscription logSub : operator.getSubscriptions()) {
-				ILogicalOperator target = logSub.getTarget();
+				ILogicalOperator target = logSub.getSink();
 
 				if (!resultMap.containsKey(target) && areAllSourcesVisited(resultMap, target)) {
 					operatorsToVisit.add(target);
@@ -174,11 +174,11 @@ public class LogicalCostModel implements ILogicalCostModel {
 		Map<ILogicalOperator, DetailCost> prevCostMap = Maps.newHashMap();
 
 		for (LogicalSubscription logSub : visitingOperator.getSubscribedToSource()) {
-			DetailCost prevDetailCost = resultMap.get(logSub.getTarget());
+			DetailCost prevDetailCost = resultMap.get(logSub.getSource());
 			if (prevDetailCost == null) {
-				throw new RuntimeException("No detail cost of previous operator " + logSub.getTarget() + " available.");
+				throw new RuntimeException("No detail cost of previous operator " + logSub.getSource() + " available.");
 			}
-			prevCostMap.put(logSub.getTarget(), prevDetailCost);
+			prevCostMap.put(logSub.getSource(), prevDetailCost);
 		}
 		return prevCostMap;
 	}
@@ -195,7 +195,7 @@ public class LogicalCostModel implements ILogicalCostModel {
 	
 	private static boolean areAllSourcesVisited(Map<ILogicalOperator, DetailCost> resultMap, ILogicalOperator target) {
 		for (LogicalSubscription logSubToSource : target.getSubscribedToSource()) {
-			ILogicalOperator toSourceTarget = logSubToSource.getTarget();
+			ILogicalOperator toSourceTarget = logSubToSource.getSource();
 			if (!resultMap.containsKey(toSourceTarget)) {
 				return false;
 			}

@@ -29,14 +29,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscripti
 @SuppressWarnings({"unchecked","rawtypes"})
 public class AbstractTreeWalker {
 	
-	public static <R,T extends ISubscriber, H extends ISubscription<T>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
+	public static <R,T extends ISubscriber, H extends ISubscription<T,?>> R prefixWalk(ISubscriber<T, H> node, INodeVisitor<ISubscriber<T, H>, R> visitor) {
 		visitor.nodeAction(node);
 //		if (!(node instanceof ISubscriber)){
 //			return null;
 //		}
 		for (H s:node.getSubscribedToSource()){
-			visitor.descendAction(s.getTarget());
-			prefixWalk(s.getTarget(), visitor);
+			visitor.descendAction(s.getSource());
+			prefixWalk(s.getSource(), visitor);
 			visitor.ascendAction(node);
 		}
 		return visitor.getResult();
@@ -47,8 +47,8 @@ public class AbstractTreeWalker {
 		if (!node.isSink()) {
 			return null;
 		}
-		for (AbstractPhysicalSubscription<?> s : ((ISink<?>)node).getSubscribedToSource()){
-			IPhysicalOperator t = (IPhysicalOperator) s.getTarget();
+		for (AbstractPhysicalSubscription<?,?> s : ((ISink<?>)node).getSubscribedToSource()){
+			IPhysicalOperator t = (IPhysicalOperator) s.getSource();
 			visitor.descendAction(t);
 			prefixWalk2(t, visitor);
 			visitor.ascendAction(node);

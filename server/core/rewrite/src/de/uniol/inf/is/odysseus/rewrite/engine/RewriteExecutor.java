@@ -90,7 +90,7 @@ public class RewriteExecutor implements IRewrite {
 		final ILogicalOperator ret;
 		if (createdNewTopAO) {
 			LogicalSubscription sub = top.getSubscribedToSource(0);
-			ret = sub.getTarget();
+			ret = sub.getSource();
 			top.unsubscribeFromSource(ret, sub.getSinkInPort(),
 					sub.getSourceOutPort(), sub.getSchema());
 		} else {
@@ -116,10 +116,10 @@ public class RewriteExecutor implements IRewrite {
 			inserted.add(op);
 
 			for (LogicalSubscription sub : op.getSubscribedToSource()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSource(), inserted, env);
 			}
 			for (LogicalSubscription sub : op.getSubscriptions()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSink(), inserted, env);
 			}
 		}
 	}

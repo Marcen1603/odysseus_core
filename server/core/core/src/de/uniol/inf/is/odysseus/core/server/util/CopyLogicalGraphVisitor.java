@@ -91,7 +91,7 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 			for (LogicalSubscription sub : original.getSubscribedToSource()) {
 				// get the copy of each target
 				@SuppressWarnings("unchecked")
-				T targetCopy = this.nodeCopies.get((T)sub.getTarget());
+				T targetCopy = this.nodeCopies.get((T)sub.getSource());
 				// subscribe the target copy to the node copy
 				// if its in the same plan, add copy
 				if (targetCopy != null) {

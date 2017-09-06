@@ -472,7 +472,7 @@ public class WebserviceServer {
 	}
 
 	private GraphNode createGraphNode(LogicalSubscription subscription, Map<Integer, GraphNode> visitedOperators) {
-		ILogicalOperator operator = subscription.getTarget();
+		ILogicalOperator operator = subscription.getSource();
 		GraphNode newNode = new GraphNode();
 		newNode.setName(operator.getName());
 		newNode.setParameterInfos(operator.getParameterInfos());
@@ -491,7 +491,7 @@ public class WebserviceServer {
 
 		visitedOperators.put(operator.hashCode(), newNode);
 		for (LogicalSubscription subs : operator.getSubscribedToSource()) {
-			ILogicalOperator op = subs.getTarget();
+			ILogicalOperator op = subs.getSource();
 			GraphNode node = visitedOperators.get(op.hashCode());
 			if (node == null) {
 				newNode.addChild(this.createGraphNode(subs, visitedOperators), subs.getSourceOutPort());
@@ -707,7 +707,7 @@ public class WebserviceServer {
 		if (root.isSource()) {
 			rootAsSource = (ISource<?>) root;
 		} else {
-			rootAsSource = ((ISink<?>) root).getSubscribedToSource(0).getTarget();
+			rootAsSource = ((ISink<?>) root).getSubscribedToSource(0).getSource();
 		}
 
 		IStreamObjectDataHandler<?> handler = null;

@@ -119,7 +119,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			// Add Subscriptions to sources
 			if (node.getModelNode().getContent().isSink()) {
 				ISink<?> sink = (ISink<?>) node.getModelNode().getContent();
-				Collection<? extends ISubscription<?>> subs = sink
+				Collection<? extends ISubscription<?,?>> subs = sink
 						.getSubscribedToSource();
 				children.addAll(subs);
 			}
@@ -128,7 +128,7 @@ public class GraphOutlineContentProvider implements ITreeContentProvider {
 			if (node.getModelNode().getContent().isSource()) {
 				ISource<?> source = (ISource<?>) node.getModelNode()
 						.getContent();
-				Collection<? extends ISubscription<?>> subs = source
+				Collection<? extends ISubscription<?,?>> subs = source
 						.getSubscriptions();
 				children.addAll(subs);
 			}

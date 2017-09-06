@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.util.IGraphNodeVisitor;
  *
  * @param <S>
  */
-public class GenericDownstreamGraphWalker<S extends ISubscriber<S, ? extends ISubscription<S>> & ISubscribable<S, ? extends ISubscription<S>>>
+public class GenericDownstreamGraphWalker<S extends ISubscriber<S, ? extends ISubscription<S,?>> & ISubscribable<S, ? extends ISubscription<S,?>>>
 		extends GenericGraphWalker<S> {
 	
 	@Override
@@ -27,10 +27,10 @@ public class GenericDownstreamGraphWalker<S extends ISubscriber<S, ? extends ISu
 		
 		visitor.nodeAction(node);
 		
-		for(ISubscription<S> s: node.getSubscriptions()){
-			visitor.beforeFromSourceToSinkAction(node, s.getTarget());
-			prefixWalk(s.getTarget(), visitor);
-			visitor.afterFromSourceToSinkAction(node, s.getTarget());
+		for(ISubscription<?,S> s: node.getSubscriptions()){
+			visitor.beforeFromSourceToSinkAction(node, s.getSink());
+			prefixWalk(s.getSink(), visitor);
+			visitor.afterFromSourceToSinkAction(node, s.getSink());
 		}
 	}
 	
@@ -45,8 +45,8 @@ public class GenericDownstreamGraphWalker<S extends ISubscriber<S, ? extends ISu
 		visitor.nodeAction(node);
 			
 		if(node.isSource()){
-			for(AbstractPhysicalSubscription<?> s: ((ISource<?>)node).getSubscriptions()){
-				IPhysicalOperator t = (IPhysicalOperator)s.getTarget();
+			for(AbstractPhysicalSubscription<?,?> s: ((ISource<?>)node).getSubscriptions()){
+				IPhysicalOperator t = (IPhysicalOperator)s.getSink();
 				visitor.beforeFromSourceToSinkAction(node, t);
 				this.prefixWalkPhysical(t, visitor);
 				visitor.afterFromSourceToSinkAction(node, t);

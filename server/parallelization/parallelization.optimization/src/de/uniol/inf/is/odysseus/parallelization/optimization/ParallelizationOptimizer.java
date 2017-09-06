@@ -76,7 +76,7 @@ public class ParallelizationOptimizer {
 			return;
 		}
 		LogicalSubscription topSubscription = top.getSubscribedToSource().iterator().next();
-		ILogicalOperator sinkToRemove = topSubscription.getTarget();
+		ILogicalOperator sinkToRemove = topSubscription.getSource();
 		if (sinkToRemove.getSubscribedToSource().size() != 1) {
 			LOG.error("The sink must be subscribed to  exactly one operator.");
 			return;

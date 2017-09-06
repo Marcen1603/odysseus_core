@@ -275,12 +275,12 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         for (final IOperatorOwner owner : parent.getOwner()) {
             mapAO.addOwner(owner);
         }
-        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getSource();
 
         final Collection<LogicalSubscription> subs = child.getSubscriptions();
         for (final LogicalSubscription sub : subs) {
             child.unsubscribeSink(sub);
-            mapAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            mapAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
         mapAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
 
@@ -322,7 +322,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         Objects.requireNonNull(parent);
         Objects.requireNonNull(parent.getSubscribedToSource(0));
 
-        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getSource();
 
         final JoinAO joinAO = new JoinAO();
         for (final IOperatorOwner owner : parent.getOwner()) {
@@ -332,7 +332,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         for (final LogicalSubscription sub : subs) {
             child.unsubscribeSink(sub);
             // What about the source out port
-            joinAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            joinAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
         joinAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
         RInsertSensingDevicesRule.LOG.debug("Insert crossproduct operator: {}", joinAO.toString());
@@ -360,7 +360,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         for (final IOperatorOwner owner : parent.getOwner()) {
             projectAO.addOwner(owner);
         }
-        final ILogicalOperator child = parent.getSubscribedToSource(1).getTarget();
+        final ILogicalOperator child = parent.getSubscribedToSource(1).getSource();
         final List<SDFAttribute> userAwareAttributes = new ArrayList<>();
         for (final SDFAttribute attr : attributes) {
             userAwareAttributes.add(child.getOutputSchema().findAttribute(attr.getAttributeName()));
@@ -369,7 +369,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         final Collection<LogicalSubscription> subs = child.getSubscriptions();
         for (final LogicalSubscription sub : subs) {
             child.unsubscribeSink(sub);
-            projectAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            projectAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
         projectAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
         projectAO.setOutputSchemaWithList(userAwareAttributes);
@@ -402,12 +402,12 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
         for (final IOperatorOwner owner : parent.getOwner()) {
             windowAO.addOwner(owner);
         }
-        final ILogicalOperator child = parent.getSubscribedToSource(0).getTarget();
+        final ILogicalOperator child = parent.getSubscribedToSource(0).getSource();
 
         final Collection<LogicalSubscription> subs = child.getSubscriptions();
         for (final LogicalSubscription sub : subs) {
             child.unsubscribeSink(sub);
-            windowAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            windowAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
         windowAO.subscribeToSource(child, 0, 0, child.getOutputSchema());
 

@@ -88,7 +88,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       }
       for (LogicalSubscription sub : subscriptions)
       {
-        result.addAll(findRoots(sub.getTarget(), visited));
+        result.addAll(findRoots(sub.getSink(), visited));
       }
     }
     return result;
@@ -267,7 +267,7 @@ public class PQLParserImpl implements PQLParserImplConstants {
       ILogicalOperator namingOp = topOperator;
       if (topOperator instanceof TopAO)
       {
-        namingOp = topOperator.getSubscribedToSource(0).getTarget();
+        namingOp = topOperator.getSubscribedToSource(0).getSource();
       }
       //query.setName(namingOp.getName());
      // TODO:Find a better solution

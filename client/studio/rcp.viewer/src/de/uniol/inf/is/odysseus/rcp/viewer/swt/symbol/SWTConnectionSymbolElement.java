@@ -111,9 +111,9 @@ public abstract class SWTConnectionSymbolElement<C> extends
 				.getModelConnection();
 		if (modelConnection instanceof OdysseusConnectionModel) {
 			OdysseusConnectionModel odyCon = (OdysseusConnectionModel) modelConnection;
-			AbstractPhysicalSubscription<?> sub = odyCon.getSubscriptionToSink();
+			AbstractPhysicalSubscription<?,?> sub = odyCon.getSubscriptionToSink();
 			if (sub instanceof ControllablePhysicalSubscription){
-				return ((ControllablePhysicalSubscription<?>)sub).isSuspended();
+				return ((ControllablePhysicalSubscription<?,?>)sub).isSuspended();
 			}
 		}
 		return false;
@@ -124,9 +124,9 @@ public abstract class SWTConnectionSymbolElement<C> extends
 				.getModelConnection();
 		if (modelConnection instanceof OdysseusConnectionModel) {
 			OdysseusConnectionModel odyCon = (OdysseusConnectionModel) modelConnection;
-			AbstractPhysicalSubscription<?> sub = odyCon.getSubscriptionToSink();
+			AbstractPhysicalSubscription<?,?> sub = odyCon.getSubscriptionToSink();
 			if (sub instanceof ControllablePhysicalSubscription){
-				return ((ControllablePhysicalSubscription<?>)sub).getBufferSize();
+				return ((ControllablePhysicalSubscription<?,?>)sub).getBufferSize();
 			}
 		}
 		return 0;		
@@ -137,9 +137,9 @@ public abstract class SWTConnectionSymbolElement<C> extends
 				.getModelConnection();
 		if (modelConnection instanceof OdysseusConnectionModel) {
 			OdysseusConnectionModel odyCon = (OdysseusConnectionModel) modelConnection;
-			AbstractPhysicalSubscription<?> sub = odyCon.getSubscriptionToSink();
+			AbstractPhysicalSubscription<?,?> sub = odyCon.getSubscriptionToSink();
 			if (sub instanceof ControllablePhysicalSubscription){
-				return ((ControllablePhysicalSubscription<?>)sub).isShedding();
+				return ((ControllablePhysicalSubscription<?,?>)sub).isShedding();
 			}
 		}
 		return false;

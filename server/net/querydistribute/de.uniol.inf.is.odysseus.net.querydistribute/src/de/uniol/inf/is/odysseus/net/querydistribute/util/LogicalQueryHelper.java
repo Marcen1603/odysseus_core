@@ -111,11 +111,11 @@ public final class LogicalQueryHelper {
 			visitedOperators.add(operator);
 
 			for (LogicalSubscription sub : operator.getSubscribedToSource()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+				collectOperatorsWithSubscriptions(sub.getSource(), visitedOperators);
 			}
 
 			for (LogicalSubscription sub : operator.getSubscriptions()) {
-				collectOperatorsWithSubscriptions(sub.getTarget(), visitedOperators);
+				collectOperatorsWithSubscriptions(sub.getSink(), visitedOperators);
 			}
 		}
 	}
@@ -134,11 +134,11 @@ public final class LogicalQueryHelper {
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSink(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSource(), list);
 			}
 		}
 	}
@@ -196,7 +196,7 @@ public final class LogicalQueryHelper {
 
 			for (LogicalSubscription subToSource : operator.getSubscribedToSource()) {
 
-				if (!part.getOperators().contains(subToSource.getTarget())) {
+				if (!part.getOperators().contains(subToSource.getSource())) {
 
 					relativeSources.add(operator);
 					break;
@@ -237,7 +237,7 @@ public final class LogicalQueryHelper {
 
 			for (LogicalSubscription subToSink : operator.getSubscriptions()) {
 
-				if (!part.getOperators().contains(subToSink.getTarget())) {
+				if (!part.getOperators().contains(subToSink.getSink())) {
 
 					relativeSinks.add(operator);
 					break;
@@ -371,7 +371,7 @@ public final class LogicalQueryHelper {
 
 		for (LogicalSubscription subToReplace : subsToReplace.keySet()) {
 			ILogicalOperator sourceOperator = subsToReplace.get(subToReplace);
-			ILogicalOperator sinkOperator = subToReplace.getTarget();
+			ILogicalOperator sinkOperator = subToReplace.getSink();
 
 			ILogicalQueryPart sinkQueryPart = queryPartAssignment.get(sinkOperator);
 			ILogicalQueryPart sourceQueryPart = queryPartAssignment.get(sourceOperator);
@@ -416,7 +416,7 @@ public final class LogicalQueryHelper {
 
 			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
 			for (LogicalSubscription sinkSub : sinkSubs) {
-				ILogicalOperator targetOperator = sinkSub.getTarget();
+				ILogicalOperator targetOperator = sinkSub.getSink();
 
 				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
 				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
@@ -438,7 +438,7 @@ public final class LogicalQueryHelper {
 			Collection<LogicalSubscription> subsToRemove = Lists.newArrayList();
 			for (LogicalSubscription subcription : operator.getSubscriptions()) {
 
-				if (!operators.contains(subcription.getTarget())) {
+				if (!operators.contains(subcription.getSink())) {
 					subsToRemove.add(subcription);
 				}
 			}
@@ -450,7 +450,7 @@ public final class LogicalQueryHelper {
 			subsToRemove.clear();
 			for (LogicalSubscription subcription : operator.getSubscribedToSource()) {
 
-				if (!operators.contains(subcription.getTarget())) {
+				if (!operators.contains(subcription.getSource())) {
 					subsToRemove.add(subcription);
 				}
 			}
@@ -591,7 +591,7 @@ public final class LogicalQueryHelper {
 			ILogicalOperator originalOperator = operatorCopyMap.get(copyOperator);
 
 			for (LogicalSubscription sub : originalOperator.getSubscriptions()) {
-				ILogicalOperator originalTarget = sub.getTarget();
+				ILogicalOperator originalTarget = sub.getSink();
 				ILogicalOperator copyTarget = getCopyOfMap(originalTarget, operatorCopyMap);
 
 				if (copyTarget != null) {
@@ -600,7 +600,7 @@ public final class LogicalQueryHelper {
 			}
 
 			for (LogicalSubscription sub : originalOperator.getSubscribedToSource()) {
-				ILogicalOperator orginalSource = sub.getTarget();
+				ILogicalOperator orginalSource = sub.getSource();
 				ILogicalOperator copySource = getCopyOfMap(orginalSource, operatorCopyMap);
 
 				if (copySource == null) {

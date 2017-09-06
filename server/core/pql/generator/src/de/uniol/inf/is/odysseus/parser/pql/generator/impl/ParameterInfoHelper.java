@@ -101,7 +101,7 @@ public class ParameterInfoHelper {
 
 					List<SDFSchema> inputSchema = new LinkedList<>();
 					for (LogicalSubscription sub : operator.getSubscribedToSource()) {
-						inputSchema.add(sub.getTarget().getOutputSchema(sub.getSourceOutPort()));
+						inputSchema.add(sub.getSource().getOutputSchema(sub.getSourceOutPort()));
 					}
 					DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
 					listParameter.setAttributeResolver(attributeResolver);
@@ -123,7 +123,7 @@ public class ParameterInfoHelper {
 
 					List<SDFSchema> inputSchema = new LinkedList<>();
 					for (LogicalSubscription sub : operator.getSubscribedToSource()) {
-						inputSchema.add(sub.getTarget().getOutputSchema(sub.getSourceOutPort()));
+						inputSchema.add(sub.getSource().getOutputSchema(sub.getSourceOutPort()));
 					}
 					DirectAttributeResolver attributeResolver = new DirectAttributeResolver(inputSchema);
 

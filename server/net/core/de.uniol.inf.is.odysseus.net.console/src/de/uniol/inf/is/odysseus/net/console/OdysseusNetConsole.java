@@ -634,8 +634,8 @@ public class OdysseusNetConsole implements CommandProvider, IOdysseusNodeCommuni
 		b.append("(").append(sink.hashCode()).append(")");
 		b.append("[").append(sink.getName()).append("]\n");
 
-		for (AbstractPhysicalSubscription<? extends ISource<?>> source : sink.getSubscribedToSource()) {
-			dumpPlan(source.getTarget(), depth + 1, b);
+		for (AbstractPhysicalSubscription<? extends ISource<?>,?> source : sink.getSubscribedToSource()) {
+			dumpPlan(source.getSource(), depth + 1, b);
 		}
 	}
 

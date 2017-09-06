@@ -68,7 +68,7 @@ public abstract class AbstractTransformationRule<T> extends
 
 	protected boolean isLastOne(ILogicalOperator operator) {
 		if (operator.getSubscriptions().size() == 1) {
-			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
+			if (operator.getSubscriptions().iterator().next().getSink() instanceof TopAO) {
 				return true;
 			}
 		}
@@ -258,8 +258,8 @@ public abstract class AbstractTransformationRule<T> extends
 
 	protected TimestampAO getTimestampAOAsFather(ILogicalOperator operator) {
 		for (LogicalSubscription sub : operator.getSubscriptions()) {
-			if (sub.getTarget() instanceof TimestampAO) {
-				return (TimestampAO) sub.getTarget();
+			if (sub.getSink() instanceof TimestampAO) {
+				return (TimestampAO) sub.getSink();
 			}
 		}
 		return null;

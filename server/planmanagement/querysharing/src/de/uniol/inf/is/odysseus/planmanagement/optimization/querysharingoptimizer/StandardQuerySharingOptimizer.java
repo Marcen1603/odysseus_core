@@ -226,7 +226,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Ersetzen des Eingangsoperators bei allen angeschlossenen sinks
 		for (ISubscription sub : sinks) {
-			ISink s = (ISink) sub.getTarget();
+			ISink s = (ISink) sub.getSink();
 
 			// debug
 			// System.out.println("S-Name: " + s.getName());
@@ -259,10 +259,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		// angemeldet war
 		// (Sind die gleichen wie von op2, ansonsten h�tte
 		// op2.isSemanticallyEqual(op2) false ergeben)
-		Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(
+		Collection<ISubscription<?,?>> sources = new ArrayList<ISubscription<?,?>>(
 				((IPipe) toReplace).getSubscribedToSource());
-		for (ISubscription<?> sub : sources) {
-			ISource s = (ISource) sub.getTarget();
+		for (ISubscription<?,?> sub : sources) {
+			ISource s = (ISource) sub.getSource();
 			s.unsubscribeSink(sub);
 			((ISink) toReplace).unsubscribeFromSource(sub);
 
@@ -307,7 +307,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		Collection<ISubscription> sources = new ArrayList(
 				((IPipe) op1).getSubscribedToSource());
 		for (ISubscription sub : sources) {
-			ISource s = (ISource) sub.getTarget();
+			ISource s = (ISource) sub.getSource();
 			s.unsubscribeSink(sub);
 			((ISink) op1).unsubscribeFromSource(sub);
 			((IPipe) op2).subscribeSink(op1, sub.getSinkInPort(),

@@ -204,10 +204,10 @@ public class TransformationExecutor implements ITransformation {
 			inserted.add(op);
 
 			for (LogicalSubscription sub : op.getSubscribedToSource()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSource(), inserted, env);
 			}
 			for (LogicalSubscription sub : op.getSubscriptions()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSink(), inserted, env);
 			}
 		}
 	}

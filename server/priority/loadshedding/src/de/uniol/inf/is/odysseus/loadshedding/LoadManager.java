@@ -135,11 +135,11 @@ public class LoadManager {
 				|| sink.getSubscribedToSource().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (AbstractPhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
-				if (sub.getTarget().isSink()) {
-					findLeafs((ISink<?>) sub.getTarget(), leafs);
+			for (AbstractPhysicalSubscription<? extends ISource<?>,?> sub : sink.getSubscribedToSource()) {
+				if (sub.getSource().isSink()) {
+					findLeafs((ISink<?>) sub.getSource(), leafs);
 				} else {
-					leafs.add(sub.getTarget());
+					leafs.add(sub.getSource());
 				}
 			}
 		}

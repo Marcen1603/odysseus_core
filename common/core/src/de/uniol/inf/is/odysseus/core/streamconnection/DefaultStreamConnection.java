@@ -93,11 +93,6 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 
 	}
 	
-	@Deprecated
-	public List<ISubscription<ISource<IStreamObject<?>>, ?>> getSubscriptions() {
-		return ImmutableList.copyOf(subscriptions);
-	}
-	
 	@Override
 	public ImmutableList<IPhysicalOperator> getConnectedOperators() {
 		return ImmutableList.copyOf(operators);
@@ -631,4 +626,8 @@ public class DefaultStreamConnection<In extends IStreamObject<?>> extends
 		
 	}
 
+	@Override
+	public ImmutableList<ISubscription<ISource<IStreamObject<?>>, ?>> getSubscriptions() {
+		return ImmutableList.copyOf(subscriptions);
+	}
 }

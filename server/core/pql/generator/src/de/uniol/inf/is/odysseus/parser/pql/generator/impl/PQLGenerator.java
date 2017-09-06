@@ -112,7 +112,7 @@ public class PQLGenerator implements IPQLGenerator {
 
 			visitedOperators.add(operator);
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
-				ILogicalOperator target = subscription.getTarget();
+				ILogicalOperator target = subscription.getSink();
 				if (!visitedOperators.contains(target) && areAllSourceSubscriptionsVisited(target, visitedOperators)) {
 					operatorsToVisit.add(target);
 				}
@@ -124,7 +124,7 @@ public class PQLGenerator implements IPQLGenerator {
 
 	private static boolean areAllSourceSubscriptionsVisited(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
 		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
-			ILogicalOperator target = subscription.getTarget();
+			ILogicalOperator target = subscription.getSource();
 			if (!visitedOperators.contains(target)) {
 				return false;
 			}
@@ -151,11 +151,11 @@ public class PQLGenerator implements IPQLGenerator {
 			}
 
 			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperators(subscription.getTarget(), list);
+				collectOperators(subscription.getSink(), list);
 			}
 
 			for (LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperators(subscription.getTarget(), list);
+				collectOperators(subscription.getSource(), list);
 			}
 		}
 	}

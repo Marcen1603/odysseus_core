@@ -48,6 +48,7 @@ public class SimplePlanPrinter<T> {
 		return buff.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void dumpPlan(T object, int depth, StringBuffer builder) {
 
 		if (!contains(visited, object)) {
@@ -56,11 +57,11 @@ public class SimplePlanPrinter<T> {
 			builder.append('\n');
 			if (object instanceof ISubscriber) {
 				@SuppressWarnings("unchecked")
-				ISubscriber<?, ISubscription<T>> objectSub = (ISubscriber<?, ISubscription<T>>) object;
-				for (ISubscription<T> sub : objectSub.getSubscribedToSource()) {
+				ISubscriber<?, ISubscription<?,?>> objectSub = (ISubscriber<?, ISubscription<?,?>>) object;
+				for (ISubscription<?,?> sub : objectSub.getSubscribedToSource()) {
 					builder.append(getIndent(depth));
 					builder.append(sub.getSinkInPort() + " <- " + sub.getSourceOutPort() + " ");
-					dumpPlan(sub.getTarget(), depth + 1, builder);
+					dumpPlan((T)sub.getSource(), depth + 1, builder);
 				}
 			}
 		} else {

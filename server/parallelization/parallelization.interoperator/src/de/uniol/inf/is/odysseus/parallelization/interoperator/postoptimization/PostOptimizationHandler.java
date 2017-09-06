@@ -137,7 +137,7 @@ public class PostOptimizationHandler {
 
 			for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
 				ILogicalOperator unionSourceOperator = unionSourceSubscription
-						.getTarget();
+						.getSource();
 
 				// collect operators for splitting
 				ILogicalOperator currentNewOperator = null;
@@ -224,7 +224,7 @@ public class PostOptimizationHandler {
 		operatorSourceSubscriptions.addAll(currentOperator
 				.getSubscribedToSource());
 		for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
-			if (sourceSubscription.getTarget().equals(lastOperator)) {
+			if (sourceSubscription.getSource().equals(lastOperator)) {
 				// if target of subscription is last
 				// existing operator, set
 				// new cloned one
@@ -240,9 +240,9 @@ public class PostOptimizationHandler {
 								iteration);
 
 				currentNewOperator.subscribeToSource(
-						sourceSubscription.getTarget(),
+						sourceSubscription.getSource(),
 						sourceSubscription.getSinkInPort(), newSourceOutPort,
-						sourceSubscription.getTarget().getOutputSchema());
+						sourceSubscription.getSource().getOutputSchema());
 			}
 		}
 	}
@@ -285,7 +285,7 @@ public class PostOptimizationHandler {
 		List<LogicalSubscription> fragmentedOperatorSubscritpions = new ArrayList<LogicalSubscription>(
 				currentOperator.getSubscriptions());
 		ILogicalOperator bufferOperator = fragmentedOperatorSubscritpions.get(
-				iteration).getTarget();
+				iteration).getSink();
 		// we know, that a fragmentation is
 		// followed by a buffer operator
 		if (bufferOperator instanceof BufferAO) {
@@ -294,7 +294,7 @@ public class PostOptimizationHandler {
 			if (bufferSubscritpions.size() == 1) {
 				int sinkInPort = bufferSubscritpions.get(0).getSinkInPort();
 				ILogicalOperator destinationOperator = bufferSubscritpions.get(
-						0).getTarget();
+						0).getSink();
 
 				// remove existing subscriptions
 				destinationOperator.unsubscribeFromSource(bufferSubscritpions

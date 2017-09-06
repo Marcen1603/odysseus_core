@@ -50,6 +50,6 @@ public interface ITransformationHelper {
 	 * @param newFather The new lower operator. oldFather becomes the father of newFather
 	 * @return the modified children must be returned to update the drools working memory
 	 */
-	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather);
+	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<?,ISink>> children, IPipe newFather);
 
 }

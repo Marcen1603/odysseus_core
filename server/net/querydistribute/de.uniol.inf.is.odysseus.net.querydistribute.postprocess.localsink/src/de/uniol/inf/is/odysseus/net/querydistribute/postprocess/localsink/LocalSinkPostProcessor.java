@@ -92,7 +92,7 @@ public class LocalSinkPostProcessor implements IQueryDistributionPostProcessor {
 			}
 
 			for (LogicalSubscription subToSink : subscriptions) {
-				if (!operators.contains(subToSink.getTarget())) {
+				if (!operators.contains(subToSink.getSink())) {
 					relativeSinks.add(operator);
 					break;
 				}

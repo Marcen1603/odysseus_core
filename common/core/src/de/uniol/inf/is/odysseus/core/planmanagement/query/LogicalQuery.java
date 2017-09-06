@@ -375,9 +375,9 @@ public class LogicalQuery implements ILogicalQuery {
 			subNode.addPropertyValue("sinkInPort", sub.getSinkInPort());
 			subNode.addPropertyValue("sourceOutPort", sub.getSourceOutPort());
 			subNode.addPropertyValue("from", op.hashCode());
-			subNode.addPropertyValue("to", sub.getTarget().hashCode());
+			subNode.addPropertyValue("to", sub.getSource().hashCode());
 			list.addChild(subNode);
-			serializeWalker(sub.getTarget(), visitedOperators, list);
+			serializeWalker(sub.getSource(), visitedOperators, list);
 		}
 	}
 

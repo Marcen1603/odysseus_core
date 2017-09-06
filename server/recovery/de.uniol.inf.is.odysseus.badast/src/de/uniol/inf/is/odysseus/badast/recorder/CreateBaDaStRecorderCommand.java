@@ -118,7 +118,7 @@ public class CreateBaDaStRecorderCommand extends AbstractExecutorCommand {
 		}
 
 		for (LogicalSubscription subToSource : topOperator.getSubscribedToSource()) {
-			AbstractAccessAO sourceAccess = getSourceAccessRecursive(subToSource.getTarget(), dd);
+			AbstractAccessAO sourceAccess = getSourceAccessRecursive(subToSource.getSource(), dd);
 			if (sourceAccess != null) {
 				// Break condition success
 				return sourceAccess;

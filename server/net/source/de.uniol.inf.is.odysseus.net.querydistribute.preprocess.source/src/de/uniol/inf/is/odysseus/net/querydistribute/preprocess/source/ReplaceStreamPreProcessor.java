@@ -49,11 +49,11 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSink(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSource(), list);
 			}
 		}
 	}
@@ -125,7 +125,7 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 		}
 
 		for (LogicalSubscription subToSink : leafOp.getSubscriptions()) {
-			ILogicalOperator target = subToSink.getTarget();
+			ILogicalOperator target = subToSink.getSink();
 
 			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 			target.subscribeToSource(newOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());

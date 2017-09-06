@@ -87,8 +87,8 @@ public class MigrationHelper {
 			last = null;
 		}
 
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-			getPseudoSources(sources, (IPhysicalOperator) sub.getTarget(), last);
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+			getPseudoSources(sources, (IPhysicalOperator) sub.getSource(), last);
 		}
 	}
 
@@ -110,8 +110,8 @@ public class MigrationHelper {
 	private static void getOperatorsBeforeSources(List<IPhysicalOperator> list, IPhysicalOperator op,
 			List<ISource<?>> sources) {
 		for (ISource<?> source : sources) {
-			for (AbstractPhysicalSubscription<?> sub : source.getSubscriptions()) {
-				IPhysicalOperator target = (IPhysicalOperator) sub.getTarget();
+			for (AbstractPhysicalSubscription<?,?> sub : source.getSubscriptions()) {
+				IPhysicalOperator target = (IPhysicalOperator) sub.getSink();
 				// prevent from casting DataSourceObserverSink to Source
 				if (target.isSource()) {
 					if (op.hasOwner() == target.hasOwner()) {
@@ -132,8 +132,8 @@ public class MigrationHelper {
 	public static List<ISource<?>> getMetaDataUpdatePOs(List<ISource<?>> sources) {
 		List<ISource<?>> mdus = new ArrayList<ISource<?>>();
 		for (ISource<?> source : sources) {
-			for (AbstractPhysicalSubscription<?> sub : source.getSubscriptions()) {
-				ISource<?> target = (ISource<?>) sub.getTarget();
+			for (AbstractPhysicalSubscription<?,?> sub : source.getSubscriptions()) {
+				ISource<?> target = (ISource<?>) sub.getSink();
 				if (target instanceof MetadataUpdatePO) {
 					mdus.add(target);
 				}
@@ -186,8 +186,8 @@ public class MigrationHelper {
 		if (root instanceof IWindow) {
 			wMax = (IWindow) root;
 		}
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) root).getSubscribedToSource()) {
-			IWindow w = getLongestWindow((IPhysicalOperator) sub.getTarget());
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) root).getSubscribedToSource()) {
+			IWindow w = getLongestWindow((IPhysicalOperator) sub.getSource());
 			if (wMax == null || (w != null && w.getWindowSize() > wMax.getWindowSize())) {
 				wMax = w;
 			}
@@ -206,8 +206,8 @@ public class MigrationHelper {
 		if (op instanceof BufferPO<?>) {
 			return;
 		}
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-			drainTuples((IPhysicalOperator) sub.getTarget());
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+			drainTuples((IPhysicalOperator) sub.getSource());
 			if (op instanceof IIterableSource<?> && !(op instanceof BufferPO<?>) && op.isSink()) {
 				IIterableSource<?> iterableSource = (IIterableSource<?>) op;
 				while (iterableSource.hasNext()) {
@@ -227,8 +227,8 @@ public class MigrationHelper {
 		}
 		alreadyVisited.add(op);
 		if (op instanceof ISink<?>) {
-			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-				blockAllBuffers((IPhysicalOperator) sub.getTarget(),alreadyVisited);
+			for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+				blockAllBuffers((IPhysicalOperator) sub.getSource(),alreadyVisited);
 				if (op instanceof ThreadedBufferPO) {
 					((ThreadedBufferPO<?>) op).pauseRunner();
 					LOG.trace("Paused ThreadedBufferPO {}. It contained {} elements", op.getName(),
@@ -249,8 +249,8 @@ public class MigrationHelper {
 				return;
 			}
 			alreadyVisited.add(op);
-			for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) op).getSubscribedToSource()) {
-				unblockAllBuffers((IPhysicalOperator) sub.getTarget(),alreadyVisited);
+			for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) op).getSubscribedToSource()) {
+				unblockAllBuffers((IPhysicalOperator) sub.getSource(),alreadyVisited);
 				if (op instanceof ThreadedBufferPO) {
 					LOG.trace("Unpaused ThreadedBufferPO {}. It contained {} elements", op.getName(),
 							((ThreadedBufferPO<?>) op).getInputBufferSize()

@@ -137,7 +137,7 @@ public class LogicalGraphHelper {
 	public static int calculateNewSourceOutPort(
 			LogicalSubscription sourceSubscription, int iteration) {
 		Map<Integer, SDFSchema> outputSchemaMap = sourceSubscription
-				.getTarget().getOutputSchemaMap();
+				.getSource().getOutputSchemaMap();
 		int newSourceOutPort = outputSchemaMap.size() + iteration;
 		// if this source out port is already in use, try another one
 		while (outputSchemaMap.containsKey(newSourceOutPort)) {
@@ -229,7 +229,7 @@ public class LogicalGraphHelper {
 			throw new IllegalArgumentException(
 					"Splits between start and end operator are not allowed");
 		} else {
-			return subscriptions.get(0).getTarget();
+			return subscriptions.get(0).getSink();
 		}
 	}
 

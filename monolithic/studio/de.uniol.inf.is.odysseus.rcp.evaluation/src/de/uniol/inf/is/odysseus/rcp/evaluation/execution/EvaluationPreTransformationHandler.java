@@ -184,9 +184,9 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			boolean usMaxLatency = run.getContext().getModel().isUseMaxLatency();
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
-				ILogicalOperator root = subscription.getTarget();
+				ILogicalOperator root = subscription.getSource();
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
-					root = root.getSubscribedToSource(0).getTarget();
+					root = root.getSubscribedToSource(0).getSource();
 				}
 				CalcLatencyAO latency = new CalcLatencyAO();
 				latency.subscribeToSource(root, 0, 0, root.getOutputSchema());
@@ -242,7 +242,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			mt.subscribeToSource(accessAO, 0, 0, accessAO.getOutputSchema());
 			mt.setFilename(run.createThroughputResultPath(mt.getInputAO()));
 			for (LogicalSubscription sub : nextSinks) {
-				mt.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), mt.getOutputSchema());
+				mt.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), mt.getOutputSchema());
 			}
 		}
 	}
@@ -253,12 +253,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 		if (logicalPlan instanceof TopAO) {
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : logicalPlan.getSubscribedToSource()) {
-				ILogicalOperator root = subscription.getTarget();
+				ILogicalOperator root = subscription.getSource();
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
-					root = root.getSubscribedToSource(0).getTarget();
+					root = root.getSubscribedToSource(0).getSource();
 				}
 				if (root instanceof CalcLatencyAO) {
-					root = root.getSubscribedToSource(0).getTarget();
+					root = root.getSubscribedToSource(0).getSource();
 				}
 				SystemLoadAO systemload = new SystemLoadAO();
 				systemload.subscribeToSource(root, 0, 0, root.getOutputSchema());

@@ -50,20 +50,20 @@ public class RestructHelper {
         // Subscribe Child to every father of op
         for (LogicalSubscription father : fathers) {
             remove.unsubscribeSink(father);
-            left.getTarget().subscribeSink(father.getTarget(), father.getSinkInPort(), left.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : left.getTarget().getOutputSchema());
-            ret.add(father.getTarget());
+            left.getSource().subscribeSink(father.getSink(), father.getSinkInPort(), left.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : left.getSource().getOutputSchema());
+            ret.add(father.getSink());
         }
         for (LogicalSubscription father : fathers) {
             remove.unsubscribeSink(father);
-            right.getTarget().subscribeSink(father.getTarget(), father.getSinkInPort(), right.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : right.getTarget().getOutputSchema());
-            ret.add(father.getTarget());
+            right.getSource().subscribeSink(father.getSink(), father.getSinkInPort(), right.getSourceOutPort(), reserveOutputSchema ? remove.getOutputSchema() : right.getSource().getOutputSchema());
+            ret.add(father.getSink());
         }
         // prevents duplicate entry if child.getTarget=father.getTarget
-        if (!ret.contains(left.getTarget())) {
-            ret.add(left.getTarget());
+        if (!ret.contains(left.getSource())) {
+            ret.add(left.getSource());
         }
-        if (!ret.contains(right.getTarget())) {
-            ret.add(right.getTarget());
+        if (!ret.contains(right.getSource())) {
+            ret.add(right.getSource());
         }
         return ret;
     }
@@ -78,17 +78,17 @@ public class RestructHelper {
 		// Subscribe Child to every father of op
 		for (LogicalSubscription father : fathers) {
 			remove.unsubscribeSink(father);
-			child.getTarget().subscribeSink(
-					father.getTarget(),
+			child.getSource().subscribeSink(
+					father.getSink(),
 					father.getSinkInPort(),
 					child.getSourceOutPort(),
 					reserveOutputSchema ? remove.getOutputSchema() : child
-							.getTarget().getOutputSchema());
-			ret.add(father.getTarget());
+							.getSource().getOutputSchema());
+			ret.add(father.getSink());
 		}
 		// prevents duplicate entry if child.getTarget=father.getTarget
-		if (!ret.contains(child.getTarget())) {
-			ret.add(child.getTarget());
+		if (!ret.contains(child.getSource())) {
+			ret.add(child.getSource());
 		}
 		// for (LogicalSubscription a : child.getTarget().getSubscriptions()) {
 		// LoggerFactory.getLogger(RestructHelper.class).debug(
@@ -114,12 +114,12 @@ public class RestructHelper {
 			int toInsertsinkInPort, int toInsertsourceOutPort) {
 		List<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 		LogicalSubscription source = after.getSubscribedToSource(sinkInPort);
-		ret.add(source.getTarget());
+		ret.add(source.getSource());
 		after.unsubscribeFromSource(source);
-		source.getTarget()
+		source.getSource()
 				.subscribeSink(toInsert, toInsertsinkInPort,
 						source.getSourceOutPort(),
-						source.getTarget().getOutputSchema());
+						source.getSource().getOutputSchema());
 		toInsert.subscribeSink(after, sinkInPort, toInsertsourceOutPort,
 				toInsert.getOutputSchema());
 		ret.add(after);
@@ -141,9 +141,9 @@ public class RestructHelper {
 		for (LogicalSubscription sub : subs) {
 			before.unsubscribeSink(sub);
 			// What about the source out port
-			toInsert.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+			toInsert.subscribeSink(sub.getSink(), sub.getSinkInPort(),
 					sub.getSourceOutPort(), sub.getSchema());
-			ret.add(sub.getTarget());
+			ret.add(sub.getSink());
 		}
 		toInsert.subscribeToSource(before, 0, 0, before.getOutputSchema());
 		ret.add(before);
@@ -167,9 +167,9 @@ public class RestructHelper {
 		for (LogicalSubscription sub : subs) {
 			before.unsubscribeSink(sub);
 			// What about the source out port
-			toInsert.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+			toInsert.subscribeSink(sub.getSink(), sub.getSinkInPort(),
 					sub.getSourceOutPort(), toInsert.getInputSchema(0));
-			ret.add(sub.getTarget());
+			ret.add(sub.getSink());
 		}
 		toInsert.subscribeToSource(before, 0, 0, before.getOutputSchema());
 		ret.add(before);
@@ -195,9 +195,9 @@ public class RestructHelper {
 			if(sourceOutPort == sub.getSourceOutPort()){
 				before.unsubscribeSink(sub);
 				// What about the source out port
-				toInsert.subscribeSink(sub.getTarget(), sub.getSinkInPort(),
+				toInsert.subscribeSink(sub.getSink(), sub.getSinkInPort(),
 						sub.getSourceOutPort(), sub.getSchema());
-				ret.add(sub.getTarget());
+				ret.add(sub.getSink());
 			}
 		}
 		toInsert.subscribeToSource(before, insertOpInputPort, sourceOutPort, before.getOutputSchema());
@@ -234,17 +234,17 @@ public class RestructHelper {
 		LogicalSubscription toUp = father.getSubscriptions().iterator().next();
 		father.unsubscribeSink(toUp);
 
-		father.subscribeToSource(toDown.getTarget(), 0,
+		father.subscribeToSource(toDown.getSource(), 0,
 				toDown.getSourceOutPort(), toDown.getSchema());
 		father.subscribeSink(son, 0, 0, father.getOutputSchema());
 
-		son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0,
+		son.subscribeSink(toUp.getSink(), toUp.getSinkInPort(), 0,
 				son.getOutputSchema());
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>(
 				2);
-		toUpdate.add(toDown.getTarget());
-		toUpdate.add(toUp.getTarget());
+		toUpdate.add(toDown.getSource());
+		toUpdate.add(toUp.getSink());
 		return toUpdate;
 	}
 
@@ -264,18 +264,18 @@ public class RestructHelper {
 		// Replace subscriptions to sinks
 		for (LogicalSubscription s : subscriptions) {
 			oldOP.unsubscribeSink(s);
-			newOp.subscribeSink(s.getTarget(), s.getSinkInPort(),
+			newOp.subscribeSink(s.getSink(), s.getSinkInPort(),
 					s.getSourceOutPort(), s.getSchema());
-			touched.add(s.getTarget());
+			touched.add(s.getSink());
 		}
 
 		// Replace subscriptions to source
 		subscriptions = new ArrayList<>(oldOP.getSubscribedToSource());
 		for (LogicalSubscription s : subscriptions) {
 			oldOP.unsubscribeFromSource(s);
-			newOp.subscribeToSource(s.getTarget(), s.getSinkInPort(),
+			newOp.subscribeToSource(s.getSource(), s.getSinkInPort(),
 					s.getSourceOutPort(), s.getSchema());
-			touched.add(s.getTarget());
+			touched.add(s.getSource());
 		}
 
 		return touched;
@@ -300,7 +300,7 @@ public class RestructHelper {
 		// change all subscriptions, which were from oldOp to its targets
 		for (LogicalSubscription subToSink : leafOp.getSubscriptions()) {
 
-			ILogicalOperator target = subToSink.getTarget();
+			ILogicalOperator target = subToSink.getSink();
 
 			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(),
 					subToSink.getSourceOutPort(), subToSink.getSchema());
@@ -375,7 +375,7 @@ public class RestructHelper {
 
 		for (final LogicalSubscription subscription : source.getSubscriptions()) {
 
-			if (subscription.getTarget().equals(sink))
+			if (subscription.getSink().equals(sink))
 				return subscription;
 
 		}
@@ -429,11 +429,11 @@ public class RestructHelper {
 
 			for (final LogicalSubscription subscription : currentOperator
 					.getSubscriptions())
-				RestructHelper.collectOperators(subscription.getTarget(), list);
+				RestructHelper.collectOperators(subscription.getSink(), list);
 
 			for (final LogicalSubscription subscription : currentOperator
 					.getSubscribedToSource())
-				RestructHelper.collectOperators(subscription.getTarget(), list);
+				RestructHelper.collectOperators(subscription.getSource(), list);
 
 		}
 
@@ -475,10 +475,10 @@ public class RestructHelper {
 			planeToOperatorMap.put(currentOperator, currentPlane);
 
 			for(final LogicalSubscription subscription : currentOperator.getSubscriptions())
-				assignOperatorPlanes(subscription.getTarget(), currentPlane + 1, planeToOperatorMap);
+				assignOperatorPlanes(subscription.getSink(), currentPlane + 1, planeToOperatorMap);
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource())
-				assignOperatorPlanes(subscription.getTarget(), currentPlane - 1, planeToOperatorMap);
+				assignOperatorPlanes(subscription.getSource(), currentPlane - 1, planeToOperatorMap);
 
 		}
 

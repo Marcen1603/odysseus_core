@@ -44,7 +44,7 @@ public class TConvergenceDetectorAORule extends AbstractTransformationRule<Conve
 		AbstractConvergenceDetectorPO<?> physical = null;
 		try {
 			AbstractWindowAO windowAO = (AbstractWindowAO) logical.getSubscribedToSource().iterator().next()
-					.getTarget();
+					.getSource();
 			if (TimeWindowAO.class.isInstance(windowAO)) {
 				physical = new TWConvergenceDetectorPO<>(logical.getWindowWidth(), logical.getWindowAdvance());
 			} else if (ElementWindowAO.class.isInstance(windowAO)) {
@@ -70,7 +70,7 @@ public class TConvergenceDetectorAORule extends AbstractTransformationRule<Conve
 			return false;
 		}
 
-		ILogicalOperator source = logical.getSubscribedToSource().iterator().next().getTarget();
+		ILogicalOperator source = logical.getSubscribedToSource().iterator().next().getSource();
 		if (!TimeWindowAO.class.isInstance(source) && !ElementWindowAO.class.isInstance(source)) {
 			return false;
 		}

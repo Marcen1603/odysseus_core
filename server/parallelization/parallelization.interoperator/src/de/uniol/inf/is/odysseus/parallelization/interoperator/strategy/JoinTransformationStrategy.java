@@ -138,7 +138,7 @@ public class JoinTransformationStrategy extends
 		lastOperatorForParallelization.unsubscribeFromAllSinks();
 
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
+			downstreamOperatorSubscription.getSource().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),
 					union.getOutputSchema());
@@ -299,9 +299,9 @@ public class JoinTransformationStrategy extends
 			AbstractStaticFragmentAO fragmentAO) {
 		// unsubscribe the join and subscribe the fragemnt operator
 		operator.unsubscribeFromSource(upstreamOperatorSubscription);
-		fragmentAO.subscribeToSource(upstreamOperatorSubscription.getTarget(),
+		fragmentAO.subscribeToSource(upstreamOperatorSubscription.getSink(),
 				0, upstreamOperatorSubscription.getSourceOutPort(),
-				upstreamOperatorSubscription.getTarget().getOutputSchema());
+				upstreamOperatorSubscription.getSink().getOutputSchema());
 	}
 
 	/**

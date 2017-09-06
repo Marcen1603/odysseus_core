@@ -78,12 +78,12 @@ import de.uniol.inf.is.odysseus.rcp.dashboard.IDashboardPartQueryTextProvider;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSelectedAttributesAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.ChangeSettingsAction;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.action.SaveImageAction;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
-import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.ChartSetting.Type;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.IChartSettingChangeable;
 import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.config.MethodSetting;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.IViewableAttribute;
+import de.uniol.inf.is.odysseus.rcp.viewer.stream.chart.schema.ViewSchema;
 
 public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 		AbstractChart<T, M> implements IChartSettingChangeable, IDashboardPart {
@@ -496,7 +496,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 	protected void initConnection(
 			IStreamConnection<IStreamObject<?>> streamConnection) {
 
-		for (ISubscription<? extends ISource<?>> s : streamConnection
+		for (ISubscription<? extends ISource<?>,?> s : streamConnection
 				.getSubscriptions()) {
 			int port = s.getSinkInPort();
 			List<String> preChoosenAttributesOfPort = loadedChoosenAttributes
@@ -504,11 +504,13 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 			List<String> preGroupingAttributesOfPort = loadedGroupedAttributes
 					.get(port);
 
+
 			this.viewSchema
 					.put(port,
 							new ViewSchema<T>(
 									s.getSchema(),
-									s.getTarget().getMetaAttributeSchema(),
+									// TODO: Is this the right cast
+									((ISource)s.getSink()).getMetaAttributeSchema(),
 									port,
 									preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort
 											: Lists.<String> newArrayList(),

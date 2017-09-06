@@ -65,8 +65,8 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 
 			if (visitingOperator instanceof ISource) {
 				ISource<?> opAsSource = (ISource<?>) visitingOperator;
-				for (AbstractPhysicalSubscription<? extends ISink<?>> physSub : opAsSource.getSubscriptions()) {
-					ISink<?> target = physSub.getTarget();
+				for (AbstractPhysicalSubscription<?,? extends ISink<?>> physSub : opAsSource.getSubscriptions()) {
+					ISink<?> target = physSub.getSink();
 
 					if (!resultMap.containsKey(target) && areAllSourcesVisited(resultMap, target)) {
 						operatorsToVisit.add(target);
@@ -176,8 +176,8 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 	}
 
 	private static boolean areAllSourcesVisited(Map<IPhysicalOperator, DetailCost> resultMap, ISink<?> target) {
-		for (AbstractPhysicalSubscription<? extends ISource<?>> physSubToSource : target.getSubscribedToSource()) {
-			ISource<?> toSourceTarget = physSubToSource.getTarget();
+		for (AbstractPhysicalSubscription<? extends ISource<?>,?> physSubToSource : target.getSubscribedToSource()) {
+			ISource<?> toSourceTarget = physSubToSource.getSource();
 			if (!resultMap.containsKey(toSourceTarget)) {
 				return false;
 			}
@@ -190,8 +190,8 @@ public class PhysicalCostModel implements IPhysicalCostModel {
 
 		if (visitingOperator.isSink()) {
 			ISink<?> asSink = (ISink<?>) visitingOperator;
-			for (AbstractPhysicalSubscription<?> physSub : asSink.getSubscribedToSource()) {
-				IPhysicalOperator target = (IPhysicalOperator) physSub.getTarget();
+			for (AbstractPhysicalSubscription<?,?> physSub : asSink.getSubscribedToSource()) {
+				IPhysicalOperator target = (IPhysicalOperator) physSub.getSource();
 				DetailCost prevDetailCost = resultMap.get(target);
 				if (prevDetailCost == null) {
 					throw new RuntimeException("No detail cost of previous operator " + target + " available.");

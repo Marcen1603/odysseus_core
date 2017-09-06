@@ -171,7 +171,7 @@ public class DistributedDataSourceManager
 		if (topAO.getSubscribedToSource().isEmpty()) {
 			return topAO;
 		}
-		return topAO.getSubscribedToSource(0).getTarget();
+		return topAO.getSubscribedToSource(0).getSource();
 	}
 
 	@Override
@@ -428,11 +428,11 @@ public class DistributedDataSourceManager
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSink(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSource(), list);
 			}
 		}
 	}

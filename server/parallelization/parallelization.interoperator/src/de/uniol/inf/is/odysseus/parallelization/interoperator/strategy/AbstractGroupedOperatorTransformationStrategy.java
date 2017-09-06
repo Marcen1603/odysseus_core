@@ -55,7 +55,7 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 		lastOperatorForParallelization.unsubscribeFromAllSinks();
 
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
+			downstreamOperatorSubscription.getSink().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),
 					union.getOutputSchema());
@@ -130,10 +130,10 @@ public abstract class AbstractGroupedOperatorTransformationStrategy<T extends IL
 			operator.unsubscribeFromSource(upstreamOperatorSubscription);
 			// subscribe new fragement operator to these sources
 			fragmentAO.subscribeToSource(
-					upstreamOperatorSubscription.getTarget(),
+					upstreamOperatorSubscription.getSink(),
 					upstreamOperatorSubscription.getSinkInPort(),
 					upstreamOperatorSubscription.getSourceOutPort(),
-					upstreamOperatorSubscription.getTarget().getOutputSchema());
+					upstreamOperatorSubscription.getSink().getOutputSchema());
 		}
 	}
 

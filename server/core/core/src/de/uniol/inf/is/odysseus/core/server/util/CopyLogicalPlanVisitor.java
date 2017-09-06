@@ -78,7 +78,7 @@ public class CopyLogicalPlanVisitor
 		}
 		LogicalSubscription sub = null;
 		for (LogicalSubscription s : oldSink.getSubscribedToSource()) {
-			if (s.getTarget() == oldSource) {
+			if (s.getSource() == oldSource) {
 				sub = s;
 				break;
 			}

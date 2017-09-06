@@ -67,9 +67,9 @@ public class PhysicalRestructHelper {
 	 * @param child
 	 * @return Subscription parent -> child
 	 */
-	public static AbstractPhysicalSubscription<?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
-			if (sub.getTarget().equals(child)) {
+	public static AbstractPhysicalSubscription<?,?> removeSubscription(IPhysicalOperator parent, IPhysicalOperator child) {
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>)parent).getSubscribedToSource()) {
+			if (sub.getSource().equals(child)) {
 				((ISink<?>)parent).unsubscribeFromSource((AbstractPhysicalSubscription)sub);
 				return sub;
 			}
@@ -103,14 +103,14 @@ public class PhysicalRestructHelper {
 					sourceOutPort, source.getOutputSchema());
 		}
 		
-		Set<AbstractPhysicalSubscription<?>> toSinks = new HashSet<AbstractPhysicalSubscription<?>>();
-		Set<AbstractPhysicalSubscription<?>> toBuffer = new HashSet<AbstractPhysicalSubscription<?>>();
-		for(AbstractPhysicalSubscription<?> sub : ((ISource<?>)source).getSubscriptions()) {
-			if(sub.getTarget().equals(buffer)) {
+		Set<AbstractPhysicalSubscription<?,?>> toSinks = new HashSet<AbstractPhysicalSubscription<?,?>>();
+		Set<AbstractPhysicalSubscription<?,?>> toBuffer = new HashSet<AbstractPhysicalSubscription<?,?>>();
+		for(AbstractPhysicalSubscription<?,?> sub : ((ISource<?>)source).getSubscriptions()) {
+			if(sub.getSink().equals(buffer)) {
 				toBuffer.add(sub);
 				continue;
 			}
-			if(sinks.contains(sub.getTarget())) {
+			if(sinks.contains(sub.getSink())) {
 				toSinks.add(sub);
 			}
 		}
@@ -120,7 +120,7 @@ public class PhysicalRestructHelper {
 	}
 	
 	public static void replaceChild(IPhysicalOperator parent, IPhysicalOperator child, IPhysicalOperator newChild) {
-		AbstractPhysicalSubscription<?> sub = removeSubscription(parent, child);
+		AbstractPhysicalSubscription<?,?> sub = removeSubscription(parent, child);
 		((ISink<?>)parent).subscribeToSource((ISource)newChild, sub.getSinkInPort(), sub.getSourceOutPort(),
 				newChild.getOutputSchema());
 	}

@@ -67,7 +67,7 @@ public class BenchmarkPreTransformationHandler extends
 			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
 				// unsibscribe the topAO from all source subscriptions
 				ILogicalOperator sourceOperator = logicalSubscription
-						.getTarget();
+						.getSource();
 				topAO.unsubscribeFromSource(logicalSubscription);
 
 				// create ObserverBenchmark operator and connect to all existing sources

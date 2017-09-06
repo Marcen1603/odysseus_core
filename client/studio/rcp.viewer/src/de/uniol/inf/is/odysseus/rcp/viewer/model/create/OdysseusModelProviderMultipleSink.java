@@ -23,10 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IConnectionModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.IGraphModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
@@ -86,7 +86,7 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 	// Verarbeitet eine Senke und dessen Subscriptions
 	// Handelt es sich um eine ISource, so werden dessen Subscriptions ebenfalls
 	// verarbeitet
-	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, AbstractPhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
+	private <T extends IStreamObject<?>> void parse( IPhysicalOperator operator, AbstractPhysicalSubscription<?,?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back ) {
 		
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
@@ -130,25 +130,25 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		if( operator.isSink() ) {
 			@SuppressWarnings("unchecked")
 			ISink<T> sink = (ISink<T>)operator;
-			Collection< AbstractPhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
-			for( AbstractPhysicalSubscription< ISource<? extends T> > sub : sources ) {
-				if( sub.getTarget().isSink() ) {
-					parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, false );
+			Collection< AbstractPhysicalSubscription< ISource<IStreamObject<?>>,? >> sources = sink.getSubscribedToSource();
+			for( AbstractPhysicalSubscription< ISource<IStreamObject<?>>,?  > sub : sources ) {
+				if( sub.getSource().isSink() ) {
+					parse( (ISink<?>)sub.getSource(), sub, graphModel, node, false );
 				} else {
-					parse( sub.getTarget(), sub, graphModel, node, false );
+					parse( sub.getSource(), sub, graphModel, node, false );
 				}
 			}
 		}
 		
 		if( operator.isSource() ) {
-			for (AbstractPhysicalSubscription<? extends ISink<?>> sub: ((ISource<?>)operator).getSubscriptions() ){
-				parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, true );
+			for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub: ((ISource<?>)operator).getSubscriptions() ){
+				parse( (ISink<?>)sub.getSink(), sub, graphModel, node, true );
 			}
 		}
 	}
 	
 	// Verarbeitet eine Quelle und dessen Subscriptions
-	private <T> void parse( ISource< ? > source, AbstractPhysicalSubscription<?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back) {
+	private <T> void parse( ISource< ? > source, AbstractPhysicalSubscription<?,?> fromSub, IGraphModel<IPhysicalOperator> graphModel, INodeModel<IPhysicalOperator> srcNode, boolean back) {
 
 		// Suchen, ob der Objekt schon im Graphen ist.
 		// Ist dieser schon im Graphenmodell vorhanden, so wird der
@@ -189,8 +189,8 @@ public final class OdysseusModelProviderMultipleSink implements IModelProvider<I
 		traversedObjects.add( source );
 		
 		// Subscriptions folgen
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub: source.getSubscriptions() ){
-			parse( (ISink<?>)sub.getTarget(), sub, graphModel, node, true );
+		for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub: source.getSubscriptions() ){
+			parse( (ISink<?>)sub.getSink(), sub, graphModel, node, true );
 		}
 	}
 }

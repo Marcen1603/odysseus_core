@@ -104,7 +104,7 @@ public class BaDaStRecoveryComponent implements IRecoveryComponent {
 			operator.unsubscribeFromAllSinks();
 			sync.subscribeToSource(operator, 0, 0, operator.getOutputSchema());
 			for (LogicalSubscription sub : subs) {
-				sync.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+				sync.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
 			}
 		} else if (operator instanceof StreamAO) {
 			List<ILogicalOperator> operators = OperatorCollector

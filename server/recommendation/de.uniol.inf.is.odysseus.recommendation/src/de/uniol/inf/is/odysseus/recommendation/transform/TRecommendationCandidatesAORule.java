@@ -93,7 +93,7 @@ public class TRecommendationCandidatesAORule extends
 				operator.getSubscribedToSource());
 		for (final LogicalSubscription s : subscriptions) {
 			operator.unsubscribeFromSource(s);
-			join.subscribeToSource(s.getTarget(), s.getSinkInPort(),
+			join.subscribeToSource(s.getSource(), s.getSinkInPort(),
 					s.getSourceOutPort(), s.getSchema());
 		}
 		operator.subscribeToSource(join, 0, 0, join.getOutputSchema());
