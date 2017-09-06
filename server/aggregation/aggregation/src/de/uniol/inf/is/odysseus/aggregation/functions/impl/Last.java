@@ -42,7 +42,7 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 	public Last(final Last<M, T> other) {
 		super(other);
-		this.subSchema = null;
+		this.subSchema = other.getSubSchema().clone();
 	}
 
 	@Override
@@ -93,6 +93,10 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 	@Override
 	public AbstractIncrementalAggregationFunction<M, T> clone() {
 		return new Last<M, T>(this);
+	}
+
+	public SDFSchema getSubSchema() {
+		return subSchema;
 	}
 
 }
