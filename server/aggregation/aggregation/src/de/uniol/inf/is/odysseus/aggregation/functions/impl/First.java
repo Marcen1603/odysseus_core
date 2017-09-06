@@ -16,6 +16,12 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * Returns the first element of a window on evaluation. Especially useful with a
+ * tumbling window.
+ * 
+ * @author Tobias Brandt
+ */
 public class First<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNonIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
@@ -51,7 +57,7 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 		if (outputName == null) {
 			outputName = "count";
 		}
-		
+
 		return new First<>(null, outputName, attributeResolver.getSchema().get(0));
 	}
 
