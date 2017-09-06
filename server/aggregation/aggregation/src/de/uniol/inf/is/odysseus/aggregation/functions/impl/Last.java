@@ -6,6 +6,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -40,7 +41,13 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		return new Last<>(null, "", attributeResolver.getSchema().get(0));
+		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
+				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
+		if (outputName == null) {
+			outputName = "last";
+		}
+
+		return new Last<>(null, outputName, attributeResolver.getSchema().get(0));
 	}
 
 	@Override
@@ -68,7 +75,7 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		return Collections.singleton(new SDFAttribute(null, "last",
+		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0],
 				SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, this.subSchema), null, null, null));
 	}
 
