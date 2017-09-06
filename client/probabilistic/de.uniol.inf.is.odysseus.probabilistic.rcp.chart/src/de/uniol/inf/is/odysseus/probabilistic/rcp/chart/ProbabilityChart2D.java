@@ -341,8 +341,7 @@ public class ProbabilityChart2D extends AbstractJFreeChart<Object, IMetaAttribut
     @Override
     protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
         for (final ISubscription<? extends ISource<?>,?> s : streamConnection.getSubscriptions()) {
-			// TODO: check cast
-            this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<Object>(s.getSchema(), ((ISource)s.getSink()).getMetaAttributeSchema(), s.getSinkInPort()));
+            this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<Object>(s.getSchema(), (s.getSource()).getMetaAttributeSchema(), s.getSinkInPort()));
         }
         if (this.validate()) {
             streamConnection.addStreamElementListener(this);
