@@ -509,8 +509,7 @@ public abstract class AbstractJFreeChart<T, M extends IMetaAttribute> extends
 					.put(port,
 							new ViewSchema<T>(
 									s.getSchema(),
-									// TODO: Is this the right cast
-									((ISource)s.getSink()).getMetaAttributeSchema(),
+									s.getSource().getMetaAttributeSchema(),
 									port,
 									preChoosenAttributesOfPort != null ? preChoosenAttributesOfPort
 											: Lists.<String> newArrayList(),
