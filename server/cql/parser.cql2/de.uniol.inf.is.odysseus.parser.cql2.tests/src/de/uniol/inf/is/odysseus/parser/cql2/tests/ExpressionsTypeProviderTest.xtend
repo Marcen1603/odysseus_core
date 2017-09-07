@@ -1,21 +1,14 @@
 package de.uniol.inf.is.odysseus.parser.cql2.tests
 
-import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsType
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsTypeProvider
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(typeof(XtextRunner))
-@InjectWith(typeof(CQLInjectorProvider))
+//@RunWith(typeof(XtextRunner))
 @Deprecated
 class ExpressionsTypeProviderTest 
 {
-	@Inject extension ParseHelper<Model>
+//	@Inject extension ParseHelper<Model>
 	
 	@Test def void stringConstant1() 	{ "'hippo'".assertStringType }
 //	@Test def void stringConstant2() 	{ (""+"hippo"+"").assertStringType }
@@ -59,7 +52,7 @@ class ExpressionsTypeProviderTest
 	
 	def void assertType(CharSequence input, ExpressionsType type)	
 	{
-		var model = ("SELECT * FROM stream1 WHERE " + input).parse
+//		var model = ("SELECT * FROM stream1 WHERE " + input).parse
 //		type.assertSame(EcoreUtil2.eAllOfType(model, Expression).get(0).typeFor)//TODO missing ExpressionTypeProviderHelper
 	}
 	

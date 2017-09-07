@@ -61,7 +61,7 @@ public class SmileDetection {
 
         {// Load face cascade file
             try (InputStream is = new FileInputStream(new File(SmileDetection.FACE_CASCADE_FILE))) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), SmileDetection.FACE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), SmileDetection.FACE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];
@@ -79,7 +79,7 @@ public class SmileDetection {
         }
         {// Load smile cascade file
             try (InputStream is = new FileInputStream(new File(SmileDetection.SMILE_CASCADE_FILE))) {
-                final File tmp = File.createTempFile(OdysseusConfiguration.getHomeDir(), SmileDetection.SMILE_CASCADE_FILE.replace("/", "_"));
+                final File tmp = File.createTempFile(OdysseusConfiguration.instance.getHomeDir(), SmileDetection.SMILE_CASCADE_FILE.replace("/", "_"));
                 tmp.deleteOnExit();
                 try (FileOutputStream os = new FileOutputStream(tmp)) {
                     final byte[] buffer = new byte[4096];

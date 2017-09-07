@@ -7,6 +7,9 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
@@ -16,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.DataDictionaryProvider;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
@@ -50,7 +54,9 @@ import de.uniol.inf.is.odysseus.systemload.SystemLoad;
 import de.uniol.inf.is.odysseus.systemload.logicaloperator.SystemLoadAO;
 
 public class EvaluationPreTransformationHandler extends AbstractPreTransformationHandler {
-
+	
+	Logger LOG = LoggerFactory.getLogger(EvaluationPreTransformationHandler.class);	
+	
 	@Override
 	public String getName() {
 		return "EvaluationPreTransformation";
@@ -98,6 +104,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 		if (added) {
 
+			LOG.warn("ADDED METADATA WILL CURRENTLY NOT WORK FOR ALL CASES! In case of transformation error, please insert correct metadata (e.g. Systemload) manually"); 
+			
 			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(types);
 			// find all accessao and set metadata
 			List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalPlan);
@@ -108,6 +116,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				// TODO: Check why insertOperatorBefore seems to be right in
 				// other cases
 				RestructHelper.insertOperatorBefore2(toInsert, o);
+				// TODO: We need to update all output schema and subscriptions upstream ... 
 			}
 		}
 		 ///dumpPlan(logicalPlan);
@@ -199,7 +208,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				fileAO.setFilename(run.createLatencyResultPath(root));
 				fileAO.createDir(true);
 				fileAO.subscribeToSource(latencyOnly, 0, 0, latencyOnly.getOutputSchema());
-				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String sinkName = createSinkName(run.createLatencyResultPath(root));
 				dd.addSink(sinkName, fileAO, caller);
@@ -269,7 +278,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				fileCPU.setFilename(run.createCPUResultPath(fileCPU));
 				fileCPU.createDir(true);
 				fileCPU.subscribeToSource(cpuOnly, 0, 0, cpuOnly.getOutputSchema());
-				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider
+				IDataDictionaryWritable dd = (IDataDictionaryWritable) DataDictionaryProvider.instance
 						.getDataDictionary(caller.getTenant());
 				String cpuSinkName = createSinkName(run.createCPUResultPath(root));
 				dd.addSink(cpuSinkName, fileCPU, caller);

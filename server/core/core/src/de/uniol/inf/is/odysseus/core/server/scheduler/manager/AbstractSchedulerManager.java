@@ -80,6 +80,8 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 
 	final EventHandler eventHandler;
 
+	protected OdysseusConfiguration config;
+
 	/**
 	 * Creates a new manager and initializes the logger. Used by OSGi (no
 	 * parameter allowed).
@@ -315,7 +317,7 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 				.get(schedulingStrategy);
 		if (sf != null && ssf != null) {
 			// create the new scheduler
-			int executorThreadsCount = (int) OdysseusConfiguration.getLong(
+			int executorThreadsCount = (int) config.getLong(
 					"scheduler_simpleThreadScheduler_executorThreadsCount", -1);
 			if (executorThreadsCount <= 0) {
 				executorThreadsCount = Runtime.getRuntime()
@@ -352,6 +354,10 @@ public abstract class AbstractSchedulerManager implements ISchedulerManager {
 	@Override
 	public final void fire(IEvent<?, ?> event) {
 		eventHandler.fire(this, event);
+	}
+	
+	public void setConfig(OdysseusConfiguration config) {
+		this.config = config;
 	}
 
 }

@@ -40,7 +40,8 @@ SelectQuery:
 //;
 
 Aggregate:
-	'AGGREGATE(' ('aggregations = ['(aggregations+=Aggregation)*']')? ((',')?groupby=GroupBy)? ')'
+	{Aggregate}
+	'AGGREGATE(' ('aggregations' '=' '['(aggregations+=Aggregation)*']')? ((',')?groupby=GroupBy)? ')'
 ;
 
 GroupBy:
@@ -64,7 +65,7 @@ GroupClause:
 ;
 
 DatasetClause:
-	'FROM' dataSet=IRI 'AS' name=ID ('[TYPE ' type=WINDOWTYPE 'SIZE 'size=INT ('ADVANCE' advance=INT)? ('UNIT ' unit=UNITTYPE)? ']')?;
+	'FROM' dataSet=IRI 'AS' name=ID ('[' 'TYPE' type=WINDOWTYPE 'SIZE' size=INT ('ADVANCE' advance=INT)? ('UNIT' unit=UNITTYPE)? ']')?;
 
 WhereClause:
 	'WHERE' '{'  
@@ -159,6 +160,7 @@ terminal AGG_FUNCTION returns ecore::EString:
 terminal IRI_TERMINAL returns ecore::EString:
 	'<' ('a'..'z' | 'A'..'Z' | '_' | '-' | '0'..'9' | '/' | ':' | '.' | '#' | '?' | '@' | '$' | '&' | '=')* '>';
 
+@Override 
 terminal STRING returns ecore::EString:
 	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | '"' | "'" | '\\') | !('\\' | '"'))* '"';
 	

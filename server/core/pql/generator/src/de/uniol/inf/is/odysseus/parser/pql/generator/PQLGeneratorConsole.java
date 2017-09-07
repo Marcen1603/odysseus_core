@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
@@ -42,7 +43,7 @@ public class PQLGeneratorConsole implements CommandProvider {
 	
 	public static ISession getActiveSession() {
 		if( currentSession == null || !currentSession.isValid()) {
-			currentSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+			currentSession = SessionManagement.instance.loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 		return currentSession;
 	}

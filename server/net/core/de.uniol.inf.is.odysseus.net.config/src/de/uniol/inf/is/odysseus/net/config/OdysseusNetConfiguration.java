@@ -34,7 +34,7 @@ public class OdysseusNetConfiguration {
 	}
 
 	private static String determineOdysseusHomeDir() {
-		return OdysseusConfiguration.getHomeDir();
+		return OdysseusConfiguration.instance.getHomeDir();
 	}
 
 	private static void loadConfiguration() {
@@ -120,7 +120,7 @@ public class OdysseusNetConfiguration {
 		Object value = properties.get(key);
 		if( value == null ) {
 			// backwards compatible
-			value = OdysseusConfiguration.get(key);
+			value = OdysseusConfiguration.instance.get(key);
 
 			if( value != null ) {
 				set(key, (String)value);

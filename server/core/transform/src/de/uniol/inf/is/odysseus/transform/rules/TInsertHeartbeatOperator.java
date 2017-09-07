@@ -33,7 +33,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 				heartbeat.setRealTimeDelay(realTimeDelay);
 				heartbeat.setApplicationTimeDelay(applicationTimeDelay);
 				heartbeat.setSendAlwaysHeartbeat(true);
-				heartbeat.setAllowOutOfOrder(false);
+				heartbeat.setAllowOutOfOrder(true);
 				heartbeat.setRestartTimerForEveryInput(true);
 				
 				Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperatorBefore(heartbeat, operator,

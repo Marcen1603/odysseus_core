@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.net.querydistribute.activator;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.IOdysseusNodeManager;
@@ -29,7 +30,7 @@ public class QueryDistributionPlugIn implements BundleActivator {
 
 	public static ISession getActiveSession() {
 		if (activeSession == null || !activeSession.isValid()) {
-			activeSession = UserManagementProvider.getSessionmanagement().loginSuperUser(null, UserManagementProvider.getDefaultTenant().getName());
+			activeSession = SessionManagement.instance.loginSuperUser(null, UserManagementProvider.instance.getDefaultTenant().getName());
 		}
 
 		return activeSession;

@@ -7,16 +7,19 @@
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Time">
-    <eLiterals name="MILLISECOND" literal="MILLISECOND"/>
-    <eLiterals name="SECOND" value="1" literal="SECOND"/>
-    <eLiterals name="MINUTE" value="2" literal="MINUTE"/>
-    <eLiterals name="HOUR" value="3" literal="HOUR"/>
-    <eLiterals name="WEEK" value="4" literal="WEEK"/>
-    <eLiterals name="MILLISECONDS" value="5" literal="MILLISECONDS"/>
-    <eLiterals name="SECONDS" value="6" literal="SECONDS"/>
-    <eLiterals name="MINUTES" value="7" literal="MINUTES"/>
-    <eLiterals name="HOURS" value="8" literal="HOURS"/>
-    <eLiterals name="WEEKS" value="9" literal="WEEKS"/>
+    <eLiterals name="NULL" literal="NULL"/>
+    <eLiterals name="NANOSECOND" value="1" literal="NANOSECOND"/>
+    <eLiterals name="NANOSECONDS" value="2" literal="NANOSECONDS"/>
+    <eLiterals name="MILLISECOND" value="3" literal="MILLISECOND"/>
+    <eLiterals name="SECOND" value="4" literal="SECOND"/>
+    <eLiterals name="MINUTE" value="5" literal="MINUTE"/>
+    <eLiterals name="HOUR" value="6" literal="HOUR"/>
+    <eLiterals name="WEEK" value="7" literal="WEEK"/>
+    <eLiterals name="MILLISECONDS" value="8" literal="MILLISECONDS"/>
+    <eLiterals name="SECONDS" value="9" literal="SECONDS"/>
+    <eLiterals name="MINUTES" value="10" literal="MINUTES"/>
+    <eLiterals name="HOURS" value="11" literal="HOURS"/>
+    <eLiterals name="WEEKS" value="12" literal="WEEKS"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Query">
     <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"

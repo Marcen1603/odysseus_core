@@ -122,7 +122,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		'''
 		if(«exprCompiler.compile(s.predicate, c)»)
 			«compile(s.thenBody, c)»
-		«IF s.elseBody != null»
+		«IF s.elseBody !== null»
 		else
 			«compile(s.elseBody, c)»
 		«ENDIF»
@@ -194,7 +194,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			«FOR ca : s.cases»
 				«compile(ca, c)»
 			«ENDFOR»
-			«IF s.statements != null && s.statements.size > 0»
+			«IF s.statements !== null && s.statements.size > 0»
 				default :
 					«FOR stmt : s.statements»
 						«compile(stmt, c)»
@@ -230,7 +230,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	def String compile(IQLReturnStatement s, G c) {
 		var typeResult = exprEvaluator.eval(s.expression, c.expectedTypeRef);
 		var content = 
-		'''return «IF s.expression != null»«exprCompiler.compile(s.expression, c)»«ENDIF»;'''
+		'''return «IF s.expression !== null»«exprCompiler.compile(s.expression, c)»«ENDIF»;'''
 		if (c.hasException) {
 			'''
 			«createTryCatchBlock(content, c)»
@@ -242,7 +242,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	}
 	
 	def String getDefaultLiteral(JvmTypeReference typeRef) {
-		if (typeRef == null) {
+		if (typeRef === null) {
 			return "null";
 		} else if (typeUtils.isPrimitive(typeRef)) {
 			if (typeUtils.isByte(typeRef)) {
@@ -270,7 +270,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	def String compile(IQLConstructorCallStatement s, G c) {
 		var type = helper.getClass(s);
 		var content = "";
-		if (type != null) {
+		if (type !== null) {
 			var typeRef = typeUtils.createTypeRef(type) 
 			var JvmExecutable constructor = null;
 			if (s.isSuper) {
@@ -278,18 +278,18 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			} else {
 				constructor = lookUp.findDeclaredConstructor(typeRef, s.args.elements);
 			}
-			if (constructor != null && s.isSuper) {
+			if (constructor !== null && s.isSuper) {
 				c.addExceptions(constructor.exceptions)
-				content = '''super(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
-			} else if (constructor != null) {
+				content = '''super(«IF s.args!==null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+			} else if (constructor !== null) {
 				c.addExceptions(constructor.exceptions)
-				content = '''this(«IF s.args!=null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
+				content = '''this(«IF s.args!==null»«exprCompiler.compile(s.args,constructor.parameters, c)»«ENDIF»);'''					
 			}
  		} else {
  			if (s.isSuper) {
- 				content = '''super(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 				content = '''super(«IF s.args!==null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
  			} else {
- 				content = '''this(«IF s.args!=null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
+ 				content = '''this(«IF s.args!==null»«exprCompiler.compile(s.args, c)»«ENDIF»);''' 			
  			}
  		}
  		if (c.hasException) {
@@ -303,7 +303,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 		var leftVar = s.^var as IQLVariableDeclaration
 		var leftType = leftVar.ref
 		var content = "";
-		if (s.init != null && s.init.argsList == null && s.init.argsMap == null) {			
+		if (s.init !== null && s.init.argsList === null && s.init.argsMap === null) {			
 			var right = exprEvaluator.eval(s.init.value, leftType);
 			if (right.isNull || lookUp.isAssignable(leftType, right.ref)){
 				content =''' = «compile(s.init, leftType, c)»;'''
@@ -313,7 +313,7 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 			} else {
 				content =''' = «compile(s.init, leftType, c)»;'''				
 			}					
-		} else if (s.init != null) {
+		} else if (s.init !== null) {
 			content = ''' = «compile(s.init, leftType, c)»;'''
 			
 		} 
@@ -336,23 +336,23 @@ abstract class AbstractIQLStatementCompiler<H extends IIQLCompilerHelper, G exte
 	override String compile(IQLVariableInitialization init, JvmTypeReference typeRef, G context) {
 		var result = "";
 		context.expectedTypeRef = typeRef		
-		if (init.argsList != null && init.argsMap != null && init.argsMap.elements.size > 0) {
+		if (init.argsList !== null && init.argsMap !== null && init.argsMap.elements.size > 0) {
 			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
-			if (constructor != null) {
+			if (constructor !== null) {
 				context.addExceptions(constructor.exceptions)				
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, constructor.parameters,context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			} else {
 				result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList, context)»), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
 			}
-		} else if (init.argsMap != null && init.argsMap.elements.size > 0) {
+		} else if (init.argsMap !== null && init.argsMap.elements.size > 0) {
 			var constructor = lookUp.findPublicConstructor(typeRef, new ArrayList())
-			if (constructor != null) {
+			if (constructor !== null) {
 				context.addExceptions(constructor.exceptions)
 			}
 			result = '''get«typeUtils.getShortName(typeRef, false)»«typeRef.hashCode»(new «typeCompiler.compile(typeRef, context, true)»(), «exprCompiler.compile(init.argsMap, typeRef, context)»)'''
-		} else if (init.argsList != null) {
+		} else if (init.argsList !== null) {
 			var constructor = lookUp.findPublicConstructor(typeRef, init.argsList.elements)
-			if (constructor != null) {
+			if (constructor !== null) {
 				context.addExceptions(constructor.exceptions)	
 				result = '''new «typeCompiler.compile(typeRef, context, true)»(«exprCompiler.compile(init.argsList,constructor.parameters, context)»)'''			
 			} else {

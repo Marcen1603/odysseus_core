@@ -197,19 +197,19 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 			}
 			«ENDIF»
 			«FOR e : newExpressions»
-				«IF e.argsMap != null && e.argsMap.elements.size > 0»
+				«IF e.argsMap !== null && e.argsMap.elements.size > 0»
 					«createGetterMethod(e.ref, e.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 			
 			«FOR a : attributes»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(a.type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 			
 			«FOR a : varStmts»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«var decl = a.^var as IQLVariableDeclaration»
 					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
@@ -348,19 +348,19 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 			«ENDIF»
 			
 			«FOR e : newExpressions»
-				«IF e.argsMap != null && e.argsMap.elements.size > 0»
+				«IF e.argsMap !== null && e.argsMap.elements.size > 0»
 					«createGetterMethod(e.ref, e.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 			
 			«FOR a : attributes»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«createGetterMethod(a.type, a.init.argsMap, context)»
 				«ENDIF»				
 			«ENDFOR»
 		
 			«FOR a : varStmts»
-				«IF a.init != null && a.init.argsMap != null && a.init.argsMap.elements.size>0»
+				«IF a.init !== null && a.init.argsMap !== null && a.init.argsMap.elements.size>0»
 					«var decl = a.^var as IQLVariableDeclaration»
 					«var type = decl.ref»
 					«createGetterMethod(type, a.init.argsMap, context)»
@@ -383,20 +383,20 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 	
 	def String compile(ODLParameter a, IODLGeneratorContext context) {
 		'''
-		private «typeCompiler.compile(a.type, context, false)» «a.simpleName»«IF a.init != null» = «stmtCompiler.compile(a.init, a.type, context)»«ENDIF»;
+		private «typeCompiler.compile(a.type, context, false)» «a.simpleName»«IF a.init !== null» = «stmtCompiler.compile(a.init, a.type, context)»«ENDIF»;
 		
 		'''
 	}
 
 	
 	def String compile(ODLMethod m,IODLGeneratorContext context) {
-		if (m.validate && m.simpleName != null) {
+		if (m.validate && m.simpleName !== null) {
 			'''
 			private boolean validate«m.simpleName»()
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
-		} else if (m.validate && m.simpleName == null) {
+		} else if (m.validate && m.simpleName === null) {
 			'''
 			protected boolean validate()
 				«stmtCompiler.compile(m.body, context)»	
@@ -406,16 +406,16 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 			var className = helper.getClassName(m);
 			var returnT = "";
 			var eventMethod = EventMethodsFactory.getInstance.getEventMethod(context.ao, m.simpleName, m.parameters);
-			if (m.returnType != null && !m.simpleName.equalsIgnoreCase(className)) {
+			if (m.returnType !== null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = typeCompiler.compile(m.returnType, context, false)
-			} else if (m.returnType == null && !m.simpleName.equalsIgnoreCase(className)) {
+			} else if (m.returnType === null && !m.simpleName.equalsIgnoreCase(className)) {
 				returnT = "void"
 			}
 			'''
 			«IF eventMethod.isOverride»
 			@Override
 			«ENDIF»
-			public «returnT» «eventMethod.methodName»(«IF m.parameters != null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
+			public «returnT» «eventMethod.methodName»(«IF m.parameters !== null»«m.parameters.map[p | compile(p, context)].join(", ")»«ENDIF»)
 				«stmtCompiler.compile(m.body, context)»	
 			
 			'''	
@@ -445,7 +445,7 @@ class ODLCompiler extends AbstractIQLCompiler<IODLCompilerHelper, IODLGeneratorC
 		}
 		if (ifStmt) {
 			'''
-			if («varName».get«pName»() != null)
+			if («varName».get«pName»() !== null)
 				«content»
 			'''
 		} else {
