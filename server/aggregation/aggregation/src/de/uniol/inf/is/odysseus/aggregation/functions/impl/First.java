@@ -28,6 +28,8 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 	private static final long serialVersionUID = -2033932993111049995L;
 
 	private final SDFSchema subSchema;
+	@SuppressWarnings("unchecked")
+	private Tuple<M>[] emptyResult = new Tuple[] {};
 
 	public First() {
 		super();
@@ -71,7 +73,7 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 			tupleReturn[0] = elements.iterator().next();
 			return tupleReturn;
 		}
-		return new Tuple[] {};
+		return this.emptyResult;
 	}
 
 	@Override

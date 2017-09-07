@@ -29,6 +29,8 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 	private final SDFSchema subSchema;
 	private T lastElement;
+	@SuppressWarnings("unchecked")
+	private Tuple<M>[] emptyResult = new Tuple[] {};
 
 	public Last() {
 		super();
@@ -76,7 +78,7 @@ public class Last<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 			tupleReturn[0] = this.lastElement;
 			return tupleReturn;
 		}
-		return new Tuple[] {};
+		return this.emptyResult;
 	}
 
 	@Override
