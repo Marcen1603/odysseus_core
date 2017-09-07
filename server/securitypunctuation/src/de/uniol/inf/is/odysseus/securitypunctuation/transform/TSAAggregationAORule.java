@@ -50,10 +50,11 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 		for (int i = 0; i < groupingAttributes.size(); ++i) {
 			groupingAttributesIndices[i] = inputSchema.indexOf(groupingAttributes.get(i));
 		}
+		final int[] groupingAttributeIndicesOutputSchema = operator.getGroupingAttributeIndicesOnOutputSchema();
 
 		final SAAggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new SAAggregationPO<ITimeInterval,Tuple<ITimeInterval>>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone,
-				outputOnlyChanges, outputSchema, groupingAttributesIndices,tupleRangeAttribute,roles);
+				outputOnlyChanges, outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, tupleRangeAttribute, roles);
 		defaultExecute(operator, po, config, true, true);
 	}
 
