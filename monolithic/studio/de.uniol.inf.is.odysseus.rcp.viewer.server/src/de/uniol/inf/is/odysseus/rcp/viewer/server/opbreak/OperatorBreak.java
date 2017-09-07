@@ -57,7 +57,7 @@ public class OperatorBreak implements IBufferedPipeListener {
 
 			// Subscription erhalten, welchen wir ersetzen wollen
 			AbstractPhysicalSubscription subscription = operator.getSubscriptions().iterator().next();
-			sink = (ISink) subscription.getTarget();
+			sink = (ISink) subscription.getSink();
 			sourceOutPort = subscription.getSourceOutPort();
 			sinkInPort = subscription.getSinkInPort();
 

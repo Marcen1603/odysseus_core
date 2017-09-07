@@ -169,7 +169,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 		Objects.requireNonNull(operator.getSubscriptions());
 		boolean hasLinearRegressionMergeAOAsFather = false;
 		for (final LogicalSubscription sub : operator.getSubscriptions()) {
-			if (sub.getTarget() instanceof LinearRegressionMergeAO) {
+			if (sub.getSink() instanceof LinearRegressionMergeAO) {
 				hasLinearRegressionMergeAOAsFather = true;
 				break;
 			}
@@ -187,7 +187,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 			final ILogicalOperator operator, final int port) {
 		Objects.requireNonNull(operator);
 		final LogicalSubscription child = operator.getSubscribedToSource(port);
-		return (child.getTarget() instanceof LinearRegressionAO);
+		return (child.getSource() instanceof LinearRegressionAO);
 	}
 
 	private boolean isContinuousEquiJoin(final ILogicalOperator operator) {
@@ -295,7 +295,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 		linearRegressionAO.setName(operator.getName() + "_linearRegression");
 
 		RestructHelper.insertOperatorBefore(linearRegressionAO, operator
-				.getSubscribedToSource(port).getTarget());
+				.getSubscribedToSource(port).getSource());
 		linearRegressionAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(
 				linearRegressionAO.getOutputSchema());
@@ -368,7 +368,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 		sampleAO.setName(operator.getName() + "_sample");
 
 		RestructHelper.insertOperatorBefore(sampleAO, operator
-				.getSubscribedToSource(port).getTarget());
+				.getSubscribedToSource(port).getSource());
 		sampleAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(
 				sampleAO.getOutputSchema());

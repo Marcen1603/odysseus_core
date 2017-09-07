@@ -28,6 +28,7 @@ import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
@@ -37,7 +38,6 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
@@ -68,7 +68,7 @@ public abstract class AbstractTransformationRule<T> extends
 
 	protected boolean isLastOne(ILogicalOperator operator) {
 		if (operator.getSubscriptions().size() == 1) {
-			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
+			if (operator.getSubscriptions().iterator().next().getSink() instanceof TopAO) {
 				return true;
 			}
 		}
@@ -258,8 +258,8 @@ public abstract class AbstractTransformationRule<T> extends
 
 	protected TimestampAO getTimestampAOAsFather(ILogicalOperator operator) {
 		for (LogicalSubscription sub : operator.getSubscriptions()) {
-			if (sub.getTarget() instanceof TimestampAO) {
-				return (TimestampAO) sub.getTarget();
+			if (sub.getSink() instanceof TimestampAO) {
+				return (TimestampAO) sub.getSink();
 			}
 		}
 		return null;

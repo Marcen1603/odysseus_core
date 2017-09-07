@@ -18,8 +18,8 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamable;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 /**
  * Marker interface for all buffer pipes. A call to {@link #hasNext()} may not

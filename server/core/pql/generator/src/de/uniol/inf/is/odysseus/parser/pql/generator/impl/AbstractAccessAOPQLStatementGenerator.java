@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.MetaAttributeParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.parser.pql.generator.AbstractPQLStatementGenerator;
 
 public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
@@ -155,7 +155,7 @@ public class AbstractAccessAOPQLStatementGenerator<T extends AbstractAccessAO>
 
 	private static <T extends AbstractAccessAO> TimestampAO determineTimestampAO(T operator) {
 		try {
-			return (TimestampAO) operator.getSubscriptions().iterator().next().getTarget();
+			return (TimestampAO) operator.getSubscriptions().iterator().next().getSource();
 		} catch (final Throwable t) {
 			return null;
 		}

@@ -57,8 +57,8 @@ public abstract class AbstractProbabilityChart<T, M extends IMetaAttribute> exte
         }
 
         // initConnection
-        for (final ISubscription<? extends ISource<?>> s : this.connection.getSubscriptions()) {
-            this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<T>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
+        for (final ISubscription<? extends ISource<?>,?> s : this.connection.getSubscriptions()) {
+            this.viewSchema.put(s.getSinkInPort(), new ProbabilisticViewSchema<T>(s.getSchema(), (s.getSource()).getMetaAttributeSchema(), s.getSinkInPort()));
         }
         if (this.validate()) {
             this.connection.addStreamElementListener(this);

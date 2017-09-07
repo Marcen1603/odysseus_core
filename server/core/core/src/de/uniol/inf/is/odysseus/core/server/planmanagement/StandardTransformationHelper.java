@@ -23,12 +23,12 @@ import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class StandardTransformationHelper implements ITransformationHelper {
@@ -54,11 +54,11 @@ public class StandardTransformationHelper implements ITransformationHelper {
 	public Collection<ILogicalOperator> replace(ILogicalOperator logical, ISink physical, boolean ignoreSocketSinkPort) {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
-		for (Subscription<IPhysicalOperator> psub : logical.getPhysSubscriptionsTo()) {
-			physical.subscribeToSource(psub.getTarget(), (ignoreSocketSinkPort ? -1 : psub.getSinkInPort()), psub.getSourceOutPort(), psub.getSchema());
+		for (Subscription<?,?> psub : logical.getPhysSubscriptionsTo()) {
+			physical.subscribeToSource(psub.getSource(), (ignoreSocketSinkPort ? -1 : psub.getSinkInPort()), psub.getSourceOutPort(), psub.getSchema());
 		}
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			ILogicalOperator target = l.getTarget();
+			ILogicalOperator target = l.getSink();
 			if (target instanceof TopAO) {
 				((TopAO) target).setPhysSubscriptionTo(physical, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
 			}
@@ -77,8 +77,8 @@ public class StandardTransformationHelper implements ITransformationHelper {
 		Collection<ILogicalOperator> ret = new ArrayList<ILogicalOperator>();
 
 		for (LogicalSubscription l : logical.getSubscriptions()) {
-			l.getTarget().setPhysSubscriptionTo(physical, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
-			ret.add(l.getTarget());
+			l.getSink().setPhysSubscriptionTo(physical, l.getSinkInPort(), l.getSourceOutPort(), l.getSchema());
+			ret.add(l.getSink());
 		}
 		return ret;
 	}
@@ -104,9 +104,9 @@ public class StandardTransformationHelper implements ITransformationHelper {
 		// for every child, remove the connection between
 		// its old father and add it to its new father.
 		for (ILogicalOperator child : children) {
-			for (Subscription<IPhysicalOperator> subscription : child.getPhysSubscriptionsTo()) {
+			for (Subscription<IPhysicalOperator,?> subscription : child.getPhysSubscriptionsTo()) {
 				// if the following is true, we found the correct subscription
-				if (subscription.getTarget() == oldFather) {
+				if (subscription.getSink() == oldFather) {
 					child.setPhysSubscriptionTo(newFather, subscription.getSinkInPort(), subscription.getSourceOutPort(), subscription.getSchema());
 					modifiedChildren.add(child);
 				}
@@ -135,13 +135,13 @@ public class StandardTransformationHelper implements ITransformationHelper {
 	 *         working memory
 	 */
 	@Override
-	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather) {
+	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<?,ISink>> children, IPipe newFather) {
 		Collection<ISink> modifiedChildren = new ArrayList<ISink>();
 
 		// for every child, remove the connection between
 		// its old father and add it to its new father.
-		for (ISubscription<ISink> subscription : children) {
-			ISink child = subscription.getTarget();
+		for (ISubscription<?,ISink> subscription : children) {
+			ISink child = subscription.getSink();
 			int sinkInPort = subscription.getSinkInPort();
 			int sourceOutPort = subscription.getSourceOutPort();
 			SDFSchema schema = subscription.getSchema();

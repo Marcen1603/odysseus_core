@@ -58,7 +58,7 @@ public class BenchmarkPreTransformationHandler extends
 	public void preTransform(IServerExecutor executor, ISession caller,
 			ILogicalQuery query, QueryBuildConfiguration config,
 			List<Pair<String, String>> handlerParameters, Context context) {
-		ILogicalOperator topAO = query.getLogicalPlan();
+		ILogicalOperator topAO = query.getLogicalPlan().getRoot();
 
 		// get topAO
 		if (topAO instanceof TopAO) {
@@ -67,7 +67,7 @@ public class BenchmarkPreTransformationHandler extends
 			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
 				// unsibscribe the topAO from all source subscriptions
 				ILogicalOperator sourceOperator = logicalSubscription
-						.getTarget();
+						.getSource();
 				topAO.unsubscribeFromSource(logicalSubscription);
 
 				// create ObserverBenchmark operator and connect to all existing sources

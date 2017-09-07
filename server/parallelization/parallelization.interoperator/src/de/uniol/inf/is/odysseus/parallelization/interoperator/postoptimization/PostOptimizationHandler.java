@@ -25,13 +25,12 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.IStatefulAO;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BufferAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.helper.LogicalGraphHelper;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.transform.TransformationResult;
 import de.uniol.inf.is.odysseus.server.fragmentation.horizontal.logicaloperator.AbstractStaticFragmentAO;
@@ -65,7 +64,7 @@ public class PostOptimizationHandler {
 	 * @param transformationResults
 	 * @param optimizationAllowed
 	 */
-	public static void doPostOptimization(ILogicalOperator logicalPlan,
+	public static void doPostOptimization(ILogicalPlan logicalPlan,
 			ILogicalQuery query,
 			List<TransformationResult> transformationResults,
 			boolean optimizationAllowed) {
@@ -118,15 +117,11 @@ public class PostOptimizationHandler {
 	 * @param element
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static boolean processOptimization(ILogicalOperator logicalPlan,
+	private static boolean processOptimization(ILogicalPlan logicalPlan,
 			ILogicalQuery query, PostOptimizationElement element) {
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-				query);
-		GenericGraphWalker copyWalker = new GenericGraphWalker();
-		copyWalker.prefixWalk(logicalPlan, copyVisitor);
-		ILogicalOperator savedPlan = copyVisitor.getResult();
-
+		
+		ILogicalPlan savedPlan = logicalPlan.copyPlan();
+		
 		try {
 			ILogicalOperator unionOperator = element.getStartOperator();
 			ILogicalOperator fragmentOperator = element.getEndOperator();
@@ -137,7 +132,7 @@ public class PostOptimizationHandler {
 
 			for (LogicalSubscription unionSourceSubscription : unionSourceSubscriptions) {
 				ILogicalOperator unionSourceOperator = unionSourceSubscription
-						.getTarget();
+						.getSource();
 
 				// collect operators for splitting
 				ILogicalOperator currentNewOperator = null;
@@ -224,7 +219,7 @@ public class PostOptimizationHandler {
 		operatorSourceSubscriptions.addAll(currentOperator
 				.getSubscribedToSource());
 		for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
-			if (sourceSubscription.getTarget().equals(lastOperator)) {
+			if (sourceSubscription.getSource().equals(lastOperator)) {
 				// if target of subscription is last
 				// existing operator, set
 				// new cloned one
@@ -240,9 +235,9 @@ public class PostOptimizationHandler {
 								iteration);
 
 				currentNewOperator.subscribeToSource(
-						sourceSubscription.getTarget(),
+						sourceSubscription.getSource(),
 						sourceSubscription.getSinkInPort(), newSourceOutPort,
-						sourceSubscription.getTarget().getOutputSchema());
+						sourceSubscription.getSource().getOutputSchema());
 			}
 		}
 	}
@@ -285,7 +280,7 @@ public class PostOptimizationHandler {
 		List<LogicalSubscription> fragmentedOperatorSubscritpions = new ArrayList<LogicalSubscription>(
 				currentOperator.getSubscriptions());
 		ILogicalOperator bufferOperator = fragmentedOperatorSubscritpions.get(
-				iteration).getTarget();
+				iteration).getSink();
 		// we know, that a fragmentation is
 		// followed by a buffer operator
 		if (bufferOperator instanceof BufferAO) {
@@ -294,7 +289,7 @@ public class PostOptimizationHandler {
 			if (bufferSubscritpions.size() == 1) {
 				int sinkInPort = bufferSubscritpions.get(0).getSinkInPort();
 				ILogicalOperator destinationOperator = bufferSubscritpions.get(
-						0).getTarget();
+						0).getSink();
 
 				// remove existing subscriptions
 				destinationOperator.unsubscribeFromSource(bufferSubscritpions

@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -20,9 +21,9 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreTransformationHandler;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAAggregationAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAJoinAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAProjectAO;
@@ -45,11 +46,11 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 		return NAME;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query,
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
-		ILogicalOperator logicalOp = query.getLogicalPlan();
+		ILogicalPlan logicalPlan = query.getLogicalPlan();
 
 		Set<Class<? extends ILogicalOperator>> operatorClasses = new HashSet<>();
 
@@ -68,17 +69,19 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 		operatorClasses.add(ProjectAO.class);
 		operatorClasses.add(JoinAO.class);
 		operatorClasses.add(AggregationAO.class);
+		
+		replaceOperator(logicalPlan.findOpsFromType(operatorClasses, false));
 
-		CollectOperatorLogicalGraphVisitor visitor = new CollectOperatorLogicalGraphVisitor(operatorClasses, false);
-		GenericGraphWalker copyWalker = new GenericGraphWalker();
-		copyWalker.prefixWalk(logicalOp, visitor);
-		Set logicalPlan = visitor.getResult();
-		replaceOperator(logicalPlan);
+//		CollectOperatorLogicalGraphVisitor visitor = new CollectOperatorLogicalGraphVisitor(operatorClasses, false);
+//		GenericGraphWalker copyWalker = new GenericGraphWalker();
+//		copyWalker.prefixWalk(logicalOp, visitor);
+//		Set logicalPlan = visitor.getResult();
+//		replaceOperator(logicalPlan);
 
 		/*
 		 * finds the sources and places a SPAnalyzer behind it
 		 */
-		List<ILogicalOperator> sources = AbstractDataDictionary.findSources(logicalOp);
+		List<ILogicalOperator> sources = logicalPlan.getSources();
 
 		for (ILogicalOperator s : sources) {
 			SPAnalyzerAO toInsert = new SPAnalyzerAO();
@@ -86,6 +89,8 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 
 		}
 
+		ILogicalOperator logicalOp = logicalPlan.getRoot();
+		
 		// places a Security Shield Operator at the top of the logical query
 		// plan
 		if (logicalOp instanceof TopAO) {
@@ -93,7 +98,7 @@ public class SecurityPunctuationPreTransformationHandler extends AbstractPreTran
 					logicalOp.getSubscribedToSource());
 			for (LogicalSubscription logicalSubscription : sourceSubscriptions) {
 				// unsibscribe the topAO from all source subscriptions
-				ILogicalOperator sourceOperator = logicalSubscription.getTarget();
+				ILogicalOperator sourceOperator = logicalSubscription.getSource();
 				logicalOp.unsubscribeFromSource(logicalSubscription);
 
 				// create SecurityShieldAO operator and connect to all existing

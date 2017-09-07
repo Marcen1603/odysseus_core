@@ -22,10 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.monitoring.physicaloperator.MonitoringDataTypes;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -153,18 +154,16 @@ abstract public class AbstractExecListScheduling extends
 				}
 			}
 		}
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub: s.getSubscriptions() ){
-			if (sub.getTarget().isSource()){
-				getPathToRoot((ISource<?>)sub.getTarget(), schedulableOps, allOps, virtualOps);
-			}
+		for (AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>> sub: s.getSubscriptions() ){
+			getPathToRoot(sub.getSource(), schedulableOps, allOps, virtualOps);
 		}
 	}
 
-	static public void calcForLeafsPathsToRoots(List<ISink<?>> roots, Map<IIterableSource<?>, List<ISource<?>>> virtualOps,
+	static public void calcForLeafsPathsToRoots(List<ISink<IStreamObject<?>>> roots, Map<IIterableSource<?>, List<ISource<?>>> virtualOps,
 			List<List<IIterableSource<?>>> pathes) {
 				List<ISource<?>> leafs = new ArrayList<ISource<?>>();
 				List<ISource<?>> lleafs = new ArrayList<ISource<?>>();
-				for (ISink<?> sink : roots) {
+				for (ISink<IStreamObject<?>> sink : roots) {
 					findLeafs(sink, lleafs);
 				}
 				for (ISource<?> leaf : lleafs) {
@@ -180,17 +179,20 @@ abstract public class AbstractExecListScheduling extends
 				}
 			}
 
-	static public void findLeafs(ISink<?> sink, List<ISource<?>> leafs) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	static public void findLeafs(ISink<IStreamObject<?>> sink, List<ISource<?>> leafs) {
 		if (sink.getSubscribedToSource() == null
 				|| sink.getSubscribedToSource().size() == 0) {
 			leafs.add((ISource<?>) sink);
 		} else {
-			for (AbstractPhysicalSubscription<? extends ISource<?>> sub : sink.getSubscribedToSource()) {
-				if (sub.getTarget().isSink()) {
-					findLeafs((ISink<?>) sub.getTarget(), leafs);
+			for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub : sink.getSubscribedToSource()) {
+			
+				// A source could also be a sink if it has children
+				if (sub.getSource().isSink()) {
+					findLeafs((ISink)sub.getSource(), leafs);
 				} else {
 					// Only ISource
-					leafs.add(sub.getTarget());
+					leafs.add(sub.getSource());
 				}
 			}
 		}

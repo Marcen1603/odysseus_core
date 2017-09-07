@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
@@ -16,15 +16,19 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class First<M extends ITimeInterval, T extends Tuple<M>> extends AbstractIncrementalAggregationFunction<M, T>
+/**
+ * Returns the first element of a window on evaluation. Especially useful with a
+ * tumbling window.
+ * 
+ * @author Tobias Brandt
+ */
+public class First<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNonIncrementalAggregationFunction<M, T>
 		implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -2033932993111049995L;
 
-	private T firstTuple;
 	private final SDFSchema subSchema;
-	private boolean alreadyReturned = false;;
-	
+
 	public First() {
 		super();
 		this.subSchema = null;
@@ -37,51 +41,52 @@ public class First<M extends ITimeInterval, T extends Tuple<M>> extends Abstract
 
 	public First(final First<M, T> other) {
 		super(other);
-		this.subSchema = null;
-	}
-
-	@Override
-	public void addNew(T newElement) {
-		if (this.firstTuple == null) {
-			this.firstTuple = newElement;
-		}
-	}
-
-	@Override
-	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		if (outdatedElements.contains(this.firstTuple)) {
-			this.firstTuple = null;
-			this.alreadyReturned = false;
-		}
-	}
-
-	@Override
-	public Object[] evalute(T trigger, PointInTime pointInTime) {
-		if (!this.alreadyReturned && this.firstTuple != null) {
-			this.alreadyReturned = true;
-			return this.firstTuple.getAttributes();
-		}
-		return new Tuple[] { };
+		this.subSchema = other.getSubSchema().clone();
 	}
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		return subSchema.getAttributes();
+		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0],
+				SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, this.subSchema), null, null, null));
+	}
+
+	@Override
+	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
+		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
+				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
+		if (outputName == null) {
+			outputName = "first";
+		}
+
+		return new First<>(null, outputName, attributeResolver.getSchema().get(0));
+	}
+
+	@Override
+	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
+		if (!elements.isEmpty()) {
+			@SuppressWarnings("unchecked")
+			Tuple<M>[] tupleReturn = new Tuple[1];
+			/// Use the first element from the window (they are ordered, see
+			/// {@needsOrderedElements})
+			tupleReturn[0] = elements.iterator().next();
+			return tupleReturn;
+		}
+		return new Tuple[] {};
+	}
+
+	@Override
+	public boolean needsOrderedElements() {
+		return true;
 	}
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 		return true;
 	}
-
-	@Override
-	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		return new First<>(null, "", attributeResolver.getSchema().get(0));
+	
+	public SDFSchema getSubSchema() {
+		return subSchema;
 	}
 
-	@Override
-	public AbstractIncrementalAggregationFunction<M, T> clone() {
-		return new First<>(this);
-	}
 
 }

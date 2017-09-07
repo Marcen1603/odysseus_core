@@ -25,7 +25,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 	@Override
 	public void execute(AbstractAccessAO operator, TransformationConfiguration config) throws RuleException {
 		for (LogicalSubscription subscription : operator.getSubscriptions()) {
-			if (!(subscription.getTarget() instanceof HeartbeatAO)) {
+			if (!(subscription.getSink() instanceof HeartbeatAO)) {
 				HeartbeatAO heartbeat = new HeartbeatAO();
 				long realTimeDelay = operator.getRealTimeDelay();
 				long applicationTimeDelay = operator.getApplicationTimeDelay();
@@ -52,7 +52,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 	public boolean isExecutable(AbstractAccessAO operator, TransformationConfiguration config) {
 		if (!operator.getOutputSchema().isInOrder()) {
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
-				if (!(subscription.getTarget() instanceof HeartbeatAO)) {
+				if (!(subscription.getSink() instanceof HeartbeatAO)) {
 					return true;
 				}
 			}

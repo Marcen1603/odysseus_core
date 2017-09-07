@@ -21,11 +21,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
@@ -43,7 +43,7 @@ public interface IDataDictionary {
 	// View and Stream Management
 	// -------------------------------------------------------------------------
 
-	ILogicalOperator getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;
+	ILogicalPlan getViewOrStream(String viewname, ISession caller) throws DataDictionaryException;
 
 	Resource getViewOrStreamName(String sourceName, ISession caller);
 
@@ -51,7 +51,7 @@ public interface IDataDictionary {
 
 	boolean containsViewOrStream(Resource viewName, ISession user);
 
-	Set<Entry<Resource, ILogicalOperator>> getStreamsAndViews(ISession caller);
+	Set<Entry<Resource, ILogicalPlan>> getStreamsAndViews(ISession caller);
 
 	Set<Entry<Resource, IAccessAO>> getAccessAOs(ISession caller);
 
@@ -59,37 +59,35 @@ public interface IDataDictionary {
 	// View Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<Resource, ILogicalOperator>> getViews(ISession caller);
+	Set<Entry<Resource, ILogicalPlan>> getViews(ISession caller);
 
-	ILogicalOperator getView(String viewname, ISession caller);
+	ILogicalPlan getView(String viewname, ISession caller);
 
-	ILogicalOperator getView(Resource view, ISession caller);
+	ILogicalPlan getView(Resource view, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Stream Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<Resource, ILogicalOperator>> getStreams(ISession caller);
+	Set<Entry<Resource, ILogicalPlan>> getStreams(ISession caller);
 
 	StreamAO getStream(String viewname, ISession caller) throws DataDictionaryException;
 
-	ILogicalOperator getStreamForTransformation(Resource name, ISession caller);
+	ILogicalPlan getStreamForTransformation(Resource name, ISession caller);
 
-	ILogicalOperator getStreamForTransformation(String streamName, ISession caller);
+	ILogicalPlan getStreamForTransformation(String streamName, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
 
-	Set<Entry<Resource, ILogicalOperator>> getSinks(ISession caller);
+	Set<Entry<Resource, ILogicalPlan>> getSinks(ISession caller);
 
-	ILogicalOperator getSinkTop(String sinkname, ISession caller) throws DataDictionaryException;
+	ILogicalPlan getSinkTop(String sinkname, ISession caller) throws DataDictionaryException;
 
-	ILogicalOperator getSinkInput(String sinkname, ISession caller) throws DataDictionaryException;
+	ILogicalPlan getSinkForTransformation(Resource name, ISession caller);
 
-	ILogicalOperator getSinkForTransformation(Resource name, ISession caller);
-
-	ILogicalOperator getSinkForTransformation(String name, ISession caller);
+	ILogicalPlan getSinkForTransformation(String name, ISession caller);
 
 	boolean containsSink(Resource sinkname, ISession caller);
 

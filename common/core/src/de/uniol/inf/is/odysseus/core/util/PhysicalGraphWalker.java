@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 
 /**
  * Hilfsklasse, um einen physischen Operatorplan
@@ -78,16 +79,16 @@ public class PhysicalGraphWalker {
 				Collection<?> subscriptions = operatorAsSource.getSubscriptions();
 				
 				for( Object subscriptionAsObject : subscriptions ) {
-					AbstractPhysicalSubscription<ISink<?>> subscription = (AbstractPhysicalSubscription<ISink<?>>)subscriptionAsObject;
-					ISink<?> sink = subscription.getTarget();
+					AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>> subscription = (AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>)subscriptionAsObject;
+					ISink<?> sink = subscription.getSink();
 					if( !operatorsToVisit.contains(sink) && !operatorsVisited.contains(sink) && operators.contains(sink)) {
 						
 						// check
 						if( sink.getSubscribedToSource().size() > 1 ) {
 							
 							boolean ok = true;
-							for( AbstractPhysicalSubscription<?> sourceSubscription : sink.getSubscribedToSource() ) {
-								ISource<?> source = (ISource<?>)sourceSubscription.getTarget();
+							for( AbstractPhysicalSubscription<?,?> sourceSubscription : sink.getSubscribedToSource() ) {
+								ISource<?> source = (ISource<?>)sourceSubscription.getSource();
 								if( !operatorsVisited.contains(source)) {
 									ok = false;
 									break;

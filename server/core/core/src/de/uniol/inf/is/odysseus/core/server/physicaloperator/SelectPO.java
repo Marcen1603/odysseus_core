@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.UpdatePredicatePunctuation
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.predicate.OrPredicate;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 
 /**
  * @author Jonas Jacobi, Marco Grawunder

@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.CreateSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "CSVFileSource", category={LogicalOperatorCategory.SOURCE}, doc = "Allows to read input from a csv based file")
 public class CSVFileSource extends AbstractAccessAO {

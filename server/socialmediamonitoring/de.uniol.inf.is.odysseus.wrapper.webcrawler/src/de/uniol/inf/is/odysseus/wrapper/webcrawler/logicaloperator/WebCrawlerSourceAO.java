@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.webcrawler.physicaloperator.access.WebCrawlerTransportHandler;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "WebCrawler", category = {LogicalOperatorCategory.SOURCE}, doc = "Crawl your website with custom depth and fetch.")

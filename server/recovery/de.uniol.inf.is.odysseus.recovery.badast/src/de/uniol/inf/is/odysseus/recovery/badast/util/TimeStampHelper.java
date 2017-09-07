@@ -56,7 +56,7 @@ public class TimeStampHelper {
 			return null;
 		}
 		return searchMetaDataUpdatePO(
-				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getTarget());
+				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getSource());
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class TimeStampHelper {
 			return null;
 		}
 		return searchReceiverPO(
-				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getTarget());
+				(AbstractSource<?>) ((AbstractPipe<?, ?>) operator).getSubscribedToSource(0).getSource());
 	}
 
 	/**

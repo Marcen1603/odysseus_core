@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
@@ -20,10 +21,10 @@ public class CreateSinkCommand extends AbstractExecutorCommand {
 		this.name = name;
 		this.sinkAO = sinkAO;
 	}
-	
+
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
-		dd.addSink(name, sinkAO, getCaller());
+		dd.addSink(name, new LogicalPlan(sinkAO), getCaller());
 	}
 
 	public String getName() {

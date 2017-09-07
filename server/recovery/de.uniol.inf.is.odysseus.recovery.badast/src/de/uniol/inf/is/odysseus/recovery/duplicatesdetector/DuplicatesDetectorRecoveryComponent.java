@@ -94,7 +94,7 @@ public class DuplicatesDetectorRecoveryComponent implements IRecoveryComponent {
 					operator.unsubscribeFromAllSources();
 					SDFSchema schema = subs.iterator().next().getSchema();
 					for (LogicalSubscription sub : subs) {
-						updater.subscribeToSource(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
+						updater.subscribeToSource(sub.getSource(), sub.getSinkInPort(), sub.getSourceOutPort(),
 								sub.getSchema());
 					}
 					updater.subscribeSink(operator, 0, 0, schema);
@@ -118,7 +118,7 @@ public class DuplicatesDetectorRecoveryComponent implements IRecoveryComponent {
 			return true;
 		}
 		for (LogicalSubscription sub : operator.getSubscriptions()) {
-			if (!(sub.getTarget() instanceof TopAO)) {
+			if (!(sub.getSink() instanceof TopAO)) {
 				return false;
 			}
 		}

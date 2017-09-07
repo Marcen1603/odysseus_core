@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.util;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
+import de.uniol.inf.is.odysseus.core.util.INodeVisitor;
 
 /**
  * Builds an string representation of a physical plan.

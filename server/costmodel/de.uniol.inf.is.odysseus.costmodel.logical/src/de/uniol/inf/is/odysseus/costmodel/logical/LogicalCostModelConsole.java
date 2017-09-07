@@ -1,16 +1,13 @@
 package de.uniol.inf.is.odysseus.costmodel.logical;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -112,26 +109,7 @@ public class LogicalCostModelConsole implements CommandProvider {
 	}
 
 	private static Collection<ILogicalOperator> getAllOperators(ILogicalQuery plan) {
-		return getAllOperators(plan.getLogicalPlan());
-	}
-
-	private static Collection<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
-		List<ILogicalOperator> operators = Lists.newArrayList();
-		collectOperatorsImpl(operator, operators);
-		return operators;
-	}
-
-	private static void collectOperatorsImpl(ILogicalOperator currentOperator, Collection<ILogicalOperator> list) {
-		if (!list.contains(currentOperator)) {
-			list.add(currentOperator);
-			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
-			}
-
-			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
-			}
-		}
+		return plan.getLogicalPlan().getOperators();
 	}
 
 	public void _lsRegisteredLogicalEstimators( CommandInterpreter ci ) {

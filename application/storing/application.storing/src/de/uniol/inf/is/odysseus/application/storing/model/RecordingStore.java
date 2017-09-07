@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.application.storing.controller.RecordEntry;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.store.StoreException;
-import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.util.FileUtils;
 
 /**
  * 

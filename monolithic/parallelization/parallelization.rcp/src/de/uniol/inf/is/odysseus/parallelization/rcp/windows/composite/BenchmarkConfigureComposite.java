@@ -409,7 +409,7 @@ public class BenchmarkConfigureComposite extends AbstractBenchmarkComposite {
 							.getLogicalQueries()) {
 						logicalOperator = LogicalGraphHelper
 								.findOperatorWithId(splittedOperatorIds[i],
-										logicalQuery.getLogicalPlan());
+										logicalQuery.getLogicalPlan().getRoot());
 					}
 					if (logicalOperator == null) {
 						throw new IllegalArgumentException("OperatorId: "

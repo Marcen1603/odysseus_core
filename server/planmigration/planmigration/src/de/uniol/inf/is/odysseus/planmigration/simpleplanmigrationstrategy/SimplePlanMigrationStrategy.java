@@ -24,19 +24,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOwnedOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSink;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.buffer.BufferPO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.IMyLock;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.lock.LockingLock;
@@ -48,11 +48,11 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
-import de.uniol.inf.is.odysseus.core.server.util.AbstractTreeWalker;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
-import de.uniol.inf.is.odysseus.core.server.util.RemoveOwnersGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.AbstractTreeWalker;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalProjectPO;
 import de.uniol.inf.is.odysseus.planmigration.IMigrationEventSource;
@@ -298,17 +298,17 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		buffer.subscribeToSource(metadataUpdatePO, 0, 0, metadataUpdatePO.getOutputSchema());
 
 		// get the corresponding subscribtion
-		AbstractPhysicalSubscription<?> bufferSub = null;
-		for (AbstractPhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO).getSubscriptions()) {
-			if (sub.getTarget().equals(buffer)) {
+		AbstractPhysicalSubscription<?,?> bufferSub = null;
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISource<?>) metadataUpdatePO).getSubscriptions()) {
+			if (sub.getSource().equals(buffer)) {
 				bufferSub = sub;
 			}
 		}
 		// replace the activeSinkSubscriptions between updatePO and
 		// beforeSourceOperators with updatePO -> buffer
-		Set<AbstractPhysicalSubscription<?>> unSubscribe = new HashSet<AbstractPhysicalSubscription<?>>();
-		for (AbstractPhysicalSubscription<?> sub : ((ISource<?>) metadataUpdatePO).getSubscriptions()) {
-			IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
+		Set<AbstractPhysicalSubscription<?,?>> unSubscribe = new HashSet<AbstractPhysicalSubscription<?,?>>();
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISource<?>) metadataUpdatePO).getSubscriptions()) {
+			IPhysicalOperator op = (IPhysicalOperator) sub.getSink();
 			if (newPlanOperatorsBeforeSources.contains(op) || oldPlanOperatorsBeforeSources.contains(op)) {
 				// activate connection between source and buffer
 				// deactivate connection between source and subscriptions
@@ -321,8 +321,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		}
 		// unsubscribe all subscriptions from source
 		// subscribe all subscriptions to buffer
-		for (AbstractPhysicalSubscription<?> sub : unSubscribe) {
-			IPhysicalOperator op = (IPhysicalOperator) sub.getTarget();
+		for (AbstractPhysicalSubscription<?,?> sub : unSubscribe) {
+			IPhysicalOperator op = (IPhysicalOperator) sub.getSource();
 			((AbstractPipe) op).unsubscribeFromSource(metadataUpdatePO, 0, 0, metadataUpdatePO.getOutputSchema());
 
 			LOG.debug("Operator: " + op.getClass().getSimpleName() + " (" + op.hashCode()
@@ -350,11 +350,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		ISink<?> realSink = (ISink<?>) lastOperatorOldPlan;
 
 		// remove old projectpo which was inserted to preserve the outputschema
-		IPipe<?, ?> oldOpBeforeSink = (IPipe<?, ?>) realSink.getSubscribedToSource(0).getTarget();
+		IPipe<?, ?> oldOpBeforeSink = (IPipe<?, ?>) realSink.getSubscribedToSource(0).getSource();
 		if (oldOpBeforeSink instanceof RelationalProjectPO) {
 			LOG.debug("Removing old ProjectPO");
 			// remove the old ProjectPO
-			ISource<?> source = oldOpBeforeSink.getSubscribedToSource(0).getTarget();
+			ISource<?> source = oldOpBeforeSink.getSubscribedToSource(0).getSource();
 			List<ISink> sinks = new ArrayList<ISink>();
 			sinks.add(realSink);
 			List<Integer> sinkInPorts = new ArrayList<Integer>();
@@ -369,11 +369,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// collect the operators before the sink in the old plan.
 		List<AbstractSource<?>> oldOpsBeforeSink = new ArrayList<AbstractSource<?>>();
 		List<AbstractPhysicalSubscription> oldSubscriptions = new ArrayList<AbstractPhysicalSubscription>();
-		for (AbstractPhysicalSubscription<?> sub : realSink.getSubscribedToSource()) {
-			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getTarget();
+		for (AbstractPhysicalSubscription<?,?> sub : realSink.getSubscribedToSource()) {
+			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getSource();
 			oldOpsBeforeSink.add(beforeSink);
-			for (AbstractPhysicalSubscription<?> sinkSub : beforeSink.getSubscriptions()) {
-				if (sinkSub.getTarget().equals(realSink)) {
+			for (AbstractPhysicalSubscription<?,?> sinkSub : beforeSink.getSubscriptions()) {
+				if (sinkSub.getSink().equals(realSink)) {
 					oldSubscriptions.add(sinkSub);
 				}
 			}
@@ -384,18 +384,18 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			LOG.debug("Insert new ProjectPO");
 			RelationalProjectPO project = createProject(lastOperatorOldPlan.getOutputSchema(),
 					lastOperatorNewPlan.getOutputSchema());
-			ISource newOpBeforeSink = (ISource) ((ISink) lastOperatorNewPlan).getSubscribedToSource(0).getTarget();
+			ISource newOpBeforeSink = (ISource) ((ISink) lastOperatorNewPlan).getSubscribedToSource(0).getSource();
 			project.subscribeToSource(newOpBeforeSink, 0, 0, newOpBeforeSink.getOutputSchema());
 
 			AbstractPhysicalSubscription oldSub = null;
 			AbstractPhysicalSubscription newSub = null;
 
 			for (AbstractPhysicalSubscription sub : ((AbstractSource<?>) newOpBeforeSink).getSubscriptions()) {
-				if (sub.getTarget().equals(project)) {
+				if (sub.getSink().equals(project)) {
 					newSub = sub;
 					continue;
 				}
-				if (sub.getTarget().equals(lastOperatorNewPlan)) {
+				if (sub.getSource().equals(lastOperatorNewPlan)) {
 					oldSub = sub;
 				}
 			}
@@ -415,11 +415,11 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		// collect the operators before the sink in the new plan.
 		List<AbstractSource<?>> newOpsBeforeSink = new ArrayList<AbstractSource<?>>();
 		List<AbstractPhysicalSubscription> newSubscriptions = new ArrayList<AbstractPhysicalSubscription>();
-		for (AbstractPhysicalSubscription<?> sub : ((ISink<?>) lastOperatorNewPlan).getSubscribedToSource()) {
-			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getTarget();
+		for (AbstractPhysicalSubscription<?,?> sub : ((ISink<?>) lastOperatorNewPlan).getSubscribedToSource()) {
+			AbstractSource<?> beforeSink = (AbstractSource<?>) sub.getSource();
 			newOpsBeforeSink.add(beforeSink);
-			for (AbstractPhysicalSubscription<?> sinkSub : beforeSink.getSubscriptions()) {
-				if (sinkSub.getTarget().equals(lastOperatorNewPlan)) {
+			for (AbstractPhysicalSubscription<?,?> sinkSub : beforeSink.getSubscriptions()) {
+				if (sinkSub.getSink().equals(lastOperatorNewPlan)) {
 					newSubscriptions.add(sinkSub);
 				}
 			}
@@ -439,12 +439,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		router.block();
 
 		for (AbstractPhysicalSubscription sub : oldOpsBeforeSink.get(0).getSubscriptions()) {
-			if (sub.getTarget().equals(router)) {
+			if (sub.getSink().equals(router)) {
 				oldOpsBeforeSink.get(0).replaceActiveSubscription(oldSubscriptions.get(0), sub);
 			}
 		}
 		for (AbstractPhysicalSubscription sub : newOpsBeforeSink.get(0).getSubscriptions()) {
-			if (sub.getTarget().equals(router)) {
+			if (sub.getSink().equals(router)) {
 				newOpsBeforeSink.get(0).replaceActiveSubscription(newSubscriptions.get(0), sub);
 			}
 		}
@@ -560,16 +560,16 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 
 		LOG.debug("Disconnect old plan from buffer");
 		List<IPhysicalOperator> bufferParents = context.getOldPlanOperatorsBeforeSources();
-		List<AbstractPhysicalSubscription<?>> unSub = new ArrayList<AbstractPhysicalSubscription<?>>();
+		List<AbstractPhysicalSubscription<?,?>> unSub = new ArrayList<AbstractPhysicalSubscription<?,?>>();
 		for (BufferPO<?> buffer : context.getBufferPOs()) {
-			for (AbstractPhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-				IPhysicalOperator operator = (IPhysicalOperator) sub.getTarget();
+			for (AbstractPhysicalSubscription<?,?> sub : buffer.getSubscriptions()) {
+				IPhysicalOperator operator = (IPhysicalOperator) sub.getSink();
 				if (bufferParents.contains(operator)) {
 					unSub.add(sub);
 				}
 			}
-			for (AbstractPhysicalSubscription<?> sub : unSub) {
-				ISink sink = (ISink) sub.getTarget();
+			for (AbstractPhysicalSubscription<?,?> sub : unSub) {
+				ISink sink = (ISink) sub.getSink();
 				buffer.unsubscribeSink(sink, sub.getSinkInPort(), sub.getSourceOutPort(), buffer.getOutputSchema());
 			}
 		}
@@ -586,8 +586,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		List<AbstractSource<?>> blockedSources = new ArrayList<AbstractSource<?>>();
 		try {
 			for (BufferPO<?> buffer : context.getBufferPOs()) {
-				for (AbstractPhysicalSubscription<?> sub : buffer.getSubscribedToSource()) {
-					AbstractSource<?> source = (AbstractSource<?>) sub.getTarget();
+				for (AbstractPhysicalSubscription<?,?> sub : buffer.getSubscribedToSource()) {
+					AbstractSource<?> source = (AbstractSource<?>) sub.getSource();
 					if (source.isLocked()) {
 						LOG.error(source.getClass().getSimpleName() + " (" + source.hashCode()
 								+ ") is already locked by another thread");
@@ -615,12 +615,12 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 				List<Integer> parentInports = new ArrayList<Integer>();
 				List<ISource> children = new ArrayList<ISource>();
 				List<Integer> childOutports = new ArrayList<Integer>();
-				for (AbstractPhysicalSubscription<?> sub : buffer.getSubscribedToSource()) {
-					children.add((ISource) sub.getTarget());
+				for (AbstractPhysicalSubscription<?,?> sub : buffer.getSubscribedToSource()) {
+					children.add((ISource) sub.getSource());
 					childOutports.add(sub.getSourceOutPort());
 				}
-				for (AbstractPhysicalSubscription<?> sub : buffer.getSubscriptions()) {
-					parents.add((ISink) sub.getTarget());
+				for (AbstractPhysicalSubscription<?,?> sub : buffer.getSubscriptions()) {
+					parents.add((ISink) sub.getSink());
 					parentInports.add(sub.getSinkInPort());
 				}
 
@@ -693,9 +693,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		List<AbstractPhysicalSubscription> unSub = new ArrayList<AbstractPhysicalSubscription>();
 		unSub.addAll(router.getSubscribedToSource());
 		AbstractSource<?> newPlan = null;
-		for (AbstractPhysicalSubscription<?> sub : unSub) {
+		for (AbstractPhysicalSubscription<?,?> sub : unSub) {
 			// router.unsubscribeFromSource(sub);
-			AbstractSource<?> target = (AbstractSource<?>) sub.getTarget();
+			AbstractSource<?> target = (AbstractSource<?>) sub.getSource();
 			if (sub.getSinkInPort() == 1) {
 				// this is the new plan
 				newPlan = target;
@@ -717,7 +717,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		} else {
 			List<ISink> sinks = new ArrayList<ISink>();
 			for (AbstractPhysicalSubscription sub : ((AbstractSource<?>) router).getSubscriptions()) {
-				sinks.add((ISink) sub.getTarget());
+				sinks.add((ISink) sub.getSink());
 			}
 			for (IPhysicalOperator operator : sinks) {
 				ISink sink = (ISink) operator;
@@ -736,9 +736,9 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		List<ISource<?>> replace = new ArrayList<ISource<?>>();
 		for (ISource<?> mdu : metaDataUpdates) {
 			boolean replaced = false;
-			for (AbstractPhysicalSubscription<?> sub : mdu.getSubscriptions()) {
-				if (!replaced && sub.getTarget() instanceof BufferPO) {
-					replace.add((ISource<?>) sub.getTarget());
+			for (AbstractPhysicalSubscription<?,?> sub : mdu.getSubscriptions()) {
+				if (!replaced && sub.getSink() instanceof BufferPO) {
+					replace.add((ISource<?>) sub.getSink());
 					replaced = true;
 				}
 			}
@@ -784,8 +784,8 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 	}
 
 	private IPhysicalOperator getParent(IPhysicalOperator child) {
-		for (AbstractPhysicalSubscription<?> sub : ((AbstractSource<?>) child).getSubscriptions()) {
-			IPhysicalOperator subscribed = (IPhysicalOperator) sub.getTarget();
+		for (AbstractPhysicalSubscription<?,?> sub : ((AbstractSource<?>) child).getSubscriptions()) {
+			IPhysicalOperator subscribed = (IPhysicalOperator) sub.getSink();
 			if (subscribed.getOwner().contains(this.physicalQuery)) {
 				return subscribed;
 			}

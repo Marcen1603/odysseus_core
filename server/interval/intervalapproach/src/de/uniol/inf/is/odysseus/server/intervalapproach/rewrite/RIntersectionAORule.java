@@ -106,13 +106,13 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
             unionAO.addOwner(owner);
         }
 
-        final ILogicalOperator left = parent.getSubscribedToSource(0).getTarget();
-        final ILogicalOperator right = parent.getSubscribedToSource(1).getTarget();
+        final ILogicalOperator left = parent.getSubscribedToSource(0).getSource();
+        final ILogicalOperator right = parent.getSubscribedToSource(1).getSource();
 
         final Collection<LogicalSubscription> leftSubs = left.getSubscriptions();
         for (final LogicalSubscription sub : leftSubs) {
             left.unsubscribeSink(sub);
-            unionAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            unionAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
 
         unionAO.subscribeToSource(left, 0, 0, left.getOutputSchema());
@@ -120,7 +120,7 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
         final Collection<LogicalSubscription> rightSubs = right.getSubscriptions();
         for (final LogicalSubscription sub : rightSubs) {
             right.unsubscribeSink(sub);
-            unionAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            unionAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
 
         unionAO.subscribeToSource(right, 1, 0, right.getOutputSchema());
@@ -138,7 +138,7 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
         final Collection<LogicalSubscription> subs = child.getSubscriptions();
         for (final LogicalSubscription sub : subs) {
             child.unsubscribeSink(sub);
-            differenceAO.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
+            differenceAO.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(), sub.getSchema());
         }
 
         differenceAO.subscribeToSource(child, 0, 0, child.getOutputSchema());

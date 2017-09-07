@@ -199,15 +199,15 @@ public class UpdateRateSinkSingleConformance<R extends IStreamObject<?>, W exten
 		if (operator.isSink()) {
 			@SuppressWarnings("unchecked")
 			ISink<R> sink = (ISink<R>) operator;
-			Collection<AbstractPhysicalSubscription<ISource<? extends R>>> sources = sink
+			Collection<AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> sources = sink
 					.getSubscribedToSource();
-			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : sources) {
-				if (sub.getTarget().isSink()) {
-					if (getSelectivityMetadata(sub.getTarget()) == 0.0) {
+			for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub : sources) {
+				if (sub.getSource().isSink()) {
+					if (getSelectivityMetadata(sub.getSource()) == 0.0) {
 						isSelectivityNull = true;
 						break;
 					} else { 
-						parseQuery(sub.getTarget());
+						parseQuery(sub.getSource());
 					}
 				}
 			}

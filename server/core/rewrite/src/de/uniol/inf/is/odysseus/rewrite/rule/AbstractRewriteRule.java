@@ -43,7 +43,7 @@ public abstract class AbstractRewriteRule<T> extends
 	
 	protected boolean isLastOne(ILogicalOperator operator) {
 		if (operator.getSubscriptions().size() == 1) {
-			if (operator.getSubscriptions().iterator().next().getTarget() instanceof TopAO) {
+			if (operator.getSubscriptions().iterator().next().getSink() instanceof TopAO) {
 				return true;
 			}
 		}
@@ -64,7 +64,7 @@ public abstract class AbstractRewriteRule<T> extends
 			return null;
 		}
 		ILogicalOperator target = operator.getSubscriptions().iterator().next()
-				.getTarget();
+				.getSink();
 		if (desiredClass.isInstance(target)) {
 			return target;
 		}

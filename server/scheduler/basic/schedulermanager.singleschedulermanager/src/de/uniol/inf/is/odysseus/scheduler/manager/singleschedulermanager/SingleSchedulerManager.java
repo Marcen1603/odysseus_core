@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IInfoProvider;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.configuration.AppEnv;
@@ -45,7 +44,7 @@ import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoade
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.AbstractSchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.scheduler.manager.ISchedulerManager;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
-import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.util.FileUtils;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 /**

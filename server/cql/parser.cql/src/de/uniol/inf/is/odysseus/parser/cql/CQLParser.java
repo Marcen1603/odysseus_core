@@ -426,7 +426,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 						currentInputAO.getInputSchema(0), rightInputSchema);
 			}
 			for (int i = 0; i < currentInputAO.getSubscribedToSource().size(); ++i) {
-				initPredicates(currentInputAO.getSubscribedToSource(i).getTarget());
+				initPredicates(currentInputAO.getSubscribedToSource(i).getSource());
 			}
 		}
 	}

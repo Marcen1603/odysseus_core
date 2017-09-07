@@ -71,9 +71,9 @@ public abstract class AbstractFragmentUnionTransformationStrategy<T extends ILog
 			AbstractStaticFragmentAO fragmentAO) {
 		// unsubscribe the join and subscribe the fragemnt operator
 		operator.unsubscribeFromSource(upstreamOperatorSubscription);
-		fragmentAO.subscribeToSource(upstreamOperatorSubscription.getTarget(), 0,
+		fragmentAO.subscribeToSource(upstreamOperatorSubscription.getSource(), 0,
 				upstreamOperatorSubscription.getSourceOutPort(),
-				upstreamOperatorSubscription.getTarget().getOutputSchema());
+				upstreamOperatorSubscription.getSource().getOutputSchema());
 	}
 
 	protected void storeFragmentOperators(LogicalSubscription upstreamOperatorSubscription,
@@ -156,7 +156,7 @@ public abstract class AbstractFragmentUnionTransformationStrategy<T extends ILog
 		lastOperatorForParallelization.unsubscribeFromAllSinks();
 
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(union,
+			downstreamOperatorSubscription.getSink().subscribeToSource(union,
 					downstreamOperatorSubscription.getSinkInPort(), downstreamOperatorSubscription.getSourceOutPort(),
 					union.getOutputSchema());
 		}

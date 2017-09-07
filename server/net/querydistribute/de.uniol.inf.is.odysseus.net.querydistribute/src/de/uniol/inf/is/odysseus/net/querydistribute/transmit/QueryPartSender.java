@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.distribution.QueryDistributionException;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -403,13 +404,13 @@ public class QueryPartSender implements IOdysseusNodeCommunicatorListener {
 
 			Collection<ILogicalOperator> allOperators = Lists.newArrayList();
 			for (ILogicalOperator operator : partOperators) {
-				for (ILogicalOperator op : LogicalQueryHelper.getAllOperators(operator)) {
+				for (ILogicalOperator op : LogicalPlan.getAllOperators(operator)) {
 					if (!allOperators.contains(op)) {
 						allOperators.add(op);
 					}
 				}
 			}
-			sinks.addAll(LogicalQueryHelper.getSinks(allOperators));
+			sinks.addAll(LogicalPlan.getSinks(allOperators));
 		}
 		LOG.debug("Determined {} logical sinks", sinks.size());
 

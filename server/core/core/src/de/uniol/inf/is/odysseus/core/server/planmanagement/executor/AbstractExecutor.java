@@ -58,6 +58,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractPr
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -1109,13 +1110,13 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 	}
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView,
 			ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView,
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView,
 			ISession session) {
 		fireDataDictionaryEvent(sender);
 	}
@@ -1322,12 +1323,12 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	// DataDictionary Facade
 	@Override
-	public ILogicalOperator removeSink(String name, ISession caller) {
+	public ILogicalPlan removeSink(String name, ISession caller) {
 		return getDataDictionary(caller).removeSink(name, caller);
 	}
 
 	@Override
-	public ILogicalOperator removeSink(Resource name, ISession caller) {
+	public ILogicalPlan removeSink(Resource name, ISession caller) {
 		return getDataDictionary(caller).removeSink(name, caller);
 	}
 
@@ -1343,9 +1344,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public List<ViewInformation> getStreamsAndViewsInformation(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> source = getDataDictionary(caller).getStreamsAndViews(caller);
+		Set<Entry<Resource, ILogicalPlan>> source = getDataDictionary(caller).getStreamsAndViews(caller);
 		List<ViewInformation> ret = new ArrayList<>();
-		for (Entry<Resource, ILogicalOperator> s : source) {
+		for (Entry<Resource, ILogicalPlan> s : source) {
 			ViewInformation vi = new ViewInformation();
 			vi.setName(s.getKey());
 			vi.setOutputSchema(s.getValue().getOutputSchema());
@@ -1367,9 +1368,9 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 
 	@Override
 	public List<SinkInformation> getSinks(ISession caller) {
-		Set<Entry<Resource, ILogicalOperator>> sinks = getDataDictionary(caller).getSinks(caller);
+		Set<Entry<Resource, ILogicalPlan>> sinks = getDataDictionary(caller).getSinks(caller);
 		List<SinkInformation> ret = new ArrayList<>();
-		for (Entry<Resource, ILogicalOperator> s : sinks) {
+		for (Entry<Resource, ILogicalPlan> s : sinks) {
 			SinkInformation si = new SinkInformation();
 			si.setName(s.getKey());
 			si.setOutputSchema(s.getValue().getOutputSchema());
@@ -1523,16 +1524,16 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 		}
 		// treat special cases
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SOURCES")) {
-			Set<Entry<Resource, ILogicalOperator>> v = getDataDictionary(caller).getViews(caller);
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getStreams(caller);
+			Set<Entry<Resource, ILogicalPlan>> v = getDataDictionary(caller).getViews(caller);
+			Set<Entry<Resource, ILogicalPlan>> s = getDataDictionary(caller).getStreams(caller);
 			List<String> ret = new LinkedList<>();
 			if (v != null) {
-				for (Entry<Resource, ILogicalOperator> e : v) {
+				for (Entry<Resource, ILogicalPlan> e : v) {
 					ret.add(e.getKey().toString());
 				}
 			}
 			if (s != null) {
-				for (Entry<Resource, ILogicalOperator> e : s) {
+				for (Entry<Resource, ILogicalPlan> e : s) {
 					ret.add(e.getKey().toString());
 				}
 			}
@@ -1543,10 +1544,10 @@ public abstract class AbstractExecutor implements IServerExecutor, ISettingChang
 			return new LinkedList<>(s);
 		}
 		if (param.getPossibleValueMethod().equalsIgnoreCase("__DD_SINKS")) {
-			Set<Entry<Resource, ILogicalOperator>> s = getDataDictionary(caller).getSinks(caller);
+			Set<Entry<Resource, ILogicalPlan>> s = getDataDictionary(caller).getSinks(caller);
 			List<String> ret = new LinkedList<>();
 			if (s != null) {
-				for (Entry<Resource, ILogicalOperator> e : s) {
+				for (Entry<Resource, ILogicalPlan> e : s) {
 					ret.add(e.getKey().toString());
 				}
 			}

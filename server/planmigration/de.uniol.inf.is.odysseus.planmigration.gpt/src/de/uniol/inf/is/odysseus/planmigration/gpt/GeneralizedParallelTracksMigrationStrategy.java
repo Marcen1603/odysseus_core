@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
 import de.uniol.inf.is.odysseus.planmigration.AbstractPlanMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.exception.MigrationException;

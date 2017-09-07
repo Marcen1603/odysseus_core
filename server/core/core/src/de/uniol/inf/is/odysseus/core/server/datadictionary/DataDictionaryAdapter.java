@@ -15,17 +15,17 @@
   */
 package de.uniol.inf.is.odysseus.core.server.datadictionary;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class DataDictionaryAdapter implements IDataDictionaryListener {
 
 	@Override
-	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void addedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView, ISession session) {
 	}
 
 	@Override
-	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalOperator op, boolean isView, ISession session) {
+	public void removedViewDefinition(IDataDictionary sender, String name, ILogicalPlan op, boolean isView, ISession session) {
 	}
 
 	@Override

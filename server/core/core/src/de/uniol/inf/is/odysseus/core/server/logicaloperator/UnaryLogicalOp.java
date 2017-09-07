@@ -46,10 +46,10 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 //	}
 
 	public ILogicalOperator getInputAO(){
-		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getTarget();
+		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getSource();
 	}
 	
-	public Subscription<IPhysicalOperator> getPhysSubscriptionTo() {
+	public Subscription<IPhysicalOperator,?> getPhysSubscriptionTo() {
 		return getPhysSubscriptionTo(PORTNUMBER);
 	}
 	

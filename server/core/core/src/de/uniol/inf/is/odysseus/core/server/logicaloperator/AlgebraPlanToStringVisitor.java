@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import de.uniol.inf.is.odysseus.core.ISubscriber;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
-import de.uniol.inf.is.odysseus.core.server.util.INodeVisitor;
+import de.uniol.inf.is.odysseus.core.util.INodeVisitor;
 
 /**
  * Builds an string representation of a logical algebra tree 
