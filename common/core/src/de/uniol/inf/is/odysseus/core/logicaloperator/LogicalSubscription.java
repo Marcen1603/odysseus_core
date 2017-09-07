@@ -22,25 +22,74 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 /**
  * This class represents a link to another logical Operators
+ * 
  * @author Marco Grawunder
  *
  */
 
-public class LogicalSubscription extends Subscription<ILogicalOperator, ILogicalOperator> implements Serializable{
+public class LogicalSubscription extends Subscription<ILogicalOperator, ILogicalOperator> implements Serializable {
 
 	private static final long serialVersionUID = 678442733825703258L;
-	
+
 	/**
 	 * Create a new logical Subscription
-	 * @param target What is the link target (could be a source or a sink!)
-	 * @param sinkInPort The input port of the sink that is affected
-	 * @param sourceOutPort The output port of the source that is affected
-	 * @param schema The data schema of the elements that should be processed
+	 * 
+	 * @param target
+	 *            What is the link target (could be a source or a sink!)
+	 * @param sinkInPort
+	 *            The input port of the sink that is affected
+	 * @param sourceOutPort
+	 *            The output port of the source that is affected
+	 * @param schema
+	 *            The data schema of the elements that should be processed
 	 */
-	public LogicalSubscription(ILogicalOperator source, ILogicalOperator sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	public LogicalSubscription(ILogicalOperator source, ILogicalOperator sink, int sinkInPort, int sourceOutPort,
+			SDFSchema schema) {
 		super(source, sink, sinkInPort, sourceOutPort, schema);
 	}
-		
+
+	/**
+	 * Sets a schema only if the schema is different that the output schema of the source
+	 */
+	@Override
+	public void setSchema(SDFSchema inputSchema) {
+		if (inputSchema == null) {
+			super.setSchema(null);
+		} else {
+			SDFSchema sourceOutputSchema = getSource().getOutputSchema();
+			if (sourceOutputSchema != null && sourceOutputSchema.equals(inputSchema)) {
+				super.setSchema(null);
+			} else {
+				super.setSchema(inputSchema);
+			}
+		}
+	}
+
+	/**
+	 * Return the schema of this subscription. If the schema is not set, the output
+	 * schema of the source is used
+	 */
+	@Override
+	public SDFSchema getSchema() {
+		if (super.getSchema() == null) {
+			SDFSchema schema;
+			try{
+				schema = getSource().getOutputSchema(getSourceOutPort());
+			}catch(Exception e) {
+				schema = null;
+			}
+			return schema;
+		}
+		return super.getSchema();
+	}
+
+	/**
+	 * This method does not try to retrieve the schema from the former input
+	 * Useful in cases where the source is not fully connected.
+	 * @return
+	 */
+	public SDFSchema getRealSchema() {
+		return super.getSchema();
+	}
 		
 }
