@@ -13,7 +13,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMONoCleanupIndexStructure;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MONoCleanupNoPointMapIndexStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
@@ -58,7 +57,7 @@ public class TrajectoryRadiusPO<T extends Tuple<? extends ITimeInterval>> extend
 				index.add(location, predictedLocation);
 			}
 		}
-
+		
 		// 2. Query the radius for the given IDs
 		if (this.queryAllMovingObjects) {
 			this.movingObjectsToQuery = new ArrayList<>(index.getAllMovingObjectIds());

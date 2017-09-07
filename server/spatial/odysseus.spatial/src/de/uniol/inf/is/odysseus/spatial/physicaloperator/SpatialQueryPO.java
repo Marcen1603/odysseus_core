@@ -35,7 +35,6 @@ public class SpatialQueryPO<T extends Tuple<?>> extends AbstractPipe<T, T> {
 		LinearRing ring = factory.createLinearRing(
 				polygonPoints.stream().map(p -> p.getCoordinate()).toArray(size -> new Coordinate[size]));
 		this.polygon = factory.createPolygon(ring, null);
-
 	}
 
 	@Override
