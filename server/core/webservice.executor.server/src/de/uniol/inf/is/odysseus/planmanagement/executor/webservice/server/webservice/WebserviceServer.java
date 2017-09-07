@@ -66,6 +66,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.Transport
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
@@ -462,7 +463,7 @@ public class WebserviceServer {
 		if (logicalQuery == null) {
 			throw new QueryNotExistsException("Could not find query with id "+queryID);
 		}
-		ILogicalOperator operator = logicalQuery.getLogicalPlan();
+		ILogicalOperator operator = logicalQuery.getLogicalPlan().getRoot();
 		Map<Integer, GraphNode> visitedOperators = new HashMap<Integer, GraphNode>();
 		SimpleGraph graph = new SimpleGraph();
 		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
@@ -840,15 +841,15 @@ public class WebserviceServer {
 	public SourceListResponse getSources(@WebParam(name = "securitytoken") String securityToken)
 			throws InvalidUserDataException {
 		ISession user = loginWithSecurityToken(securityToken);
-		Set<Entry<Resource, ILogicalOperator>> sources = ExecutorServiceBinding.getExecutor().getDataDictionary(user)
+		Set<Entry<Resource, ILogicalPlan>> sources = ExecutorServiceBinding.getExecutor().getDataDictionary(user)
 				.getStreamsAndViews(user);
 		List<SourceInformation> sourceInfos = new ArrayList<SourceInformation>();
-		for (Entry<Resource, ILogicalOperator> source : sources) {
+		for (Entry<Resource, ILogicalPlan> source : sources) {
 			SDFSchema schema = source.getValue().getOutputSchema();
 			SDFSchemaInformation schemaInfo = SDFSchemaInformation.createSchemaInformation(schema);
 			// FIXME: Use Resource
 			sourceInfos.add(
-					new SourceInformation(schemaInfo, source.getKey().toString(), source.getValue().getOwnerIDs()));
+					new SourceInformation(schemaInfo, source.getKey().toString(), source.getValue().getRoot().getOwnerIDs()));
 		}
 		return new SourceListResponse(sourceInfos, true);
 	}
@@ -970,7 +971,7 @@ public class WebserviceServer {
 		ISession user = loginWithSecurityToken(securityToken);
 		ILogicalOperator logicalOperator = null;
 		try {
-			logicalOperator = getExecutor().removeSink(name, user);
+			logicalOperator = getExecutor().removeSink(name, user).getRoot();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -982,7 +983,7 @@ public class WebserviceServer {
 		ISession user = loginWithSecurityToken(securityToken);
 		ILogicalOperator logicalOperator = null;
 		try {
-			logicalOperator = getExecutor().removeSink(new Resource(ri.getUser(), ri.getResourceName()), user);
+			logicalOperator = getExecutor().removeSink(new Resource(ri.getUser(), ri.getResourceName()), user).getRoot();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

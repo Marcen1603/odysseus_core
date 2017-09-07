@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
 public class LogicalPlan implements ILogicalPlan {
 
 	private static final long serialVersionUID = -2654431767993962751L;
-	private ILogicalOperator root;
+	final private ILogicalOperator root;
 	private List<ILogicalOperator> sources;
 	private List<ILogicalOperator> sinks;
 
@@ -93,7 +93,7 @@ public class LogicalPlan implements ILogicalPlan {
 	@Override
 	public ILogicalPlan copyPlan() {
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-				(IOperatorOwner) null);
+				root.getOwner());
 		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
 		walker.prefixWalk(root, copyVisitor);
 		return new LogicalPlan(copyVisitor.getResult());

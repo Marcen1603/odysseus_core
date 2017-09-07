@@ -22,7 +22,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
@@ -40,9 +39,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -70,7 +66,6 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	 * .uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration
 	 * .OptimizationConfiguration, Set<String>)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public IPhysicalQuery optimizeQuery(IServerExecutor executor,
 			ILogicalQuery query, OptimizationConfiguration parameters,

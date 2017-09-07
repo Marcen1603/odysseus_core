@@ -70,6 +70,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListene
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
@@ -852,14 +853,14 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 	}
 
 	@Override
-	public ILogicalOperator removeSink(String name, ISession caller) {
+	public ILogicalPlan removeSink(String name, ISession caller) {
 		assureLogin(caller);
 		if (getWebserviceServer(caller.getConnectionName()) != null) {
 			try {
 				ILogicalOperator result = (ILogicalOperator) getWebserviceServer(caller.getConnectionName())
 						.removeSinkByName(name, caller.getToken()).getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-				return result;
+				return new LogicalPlan(result);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}
@@ -876,7 +877,7 @@ public class WsClient implements IExecutor, IClientExecutor, IOperatorOwner {
 				ILogicalOperator result = (ILogicalOperator) getWebserviceServer(caller.getConnectionName())
 						.removeSinkByResource(ri, caller.getToken()).getResponseValue();
 				fireUpdateEvent(IUpdateEventListener.DATADICTIONARY);
-				return result;
+				return new LogicalPlan(result);
 			} catch (InvalidUserDataException_Exception e) {
 				throw new PlanManagementException(e);
 			}

@@ -195,6 +195,7 @@ public class LogicalQuery implements ILogicalQuery {
 	 */
 	@Override
 	public void setLogicalPlan(ILogicalPlan logicalPlan, boolean setOwner) {
+		this.logicalPlan = logicalPlan;
 		if (setOwner) {
 			logicalPlan.setOwner(this);
 		} else {
