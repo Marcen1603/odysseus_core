@@ -16,7 +16,8 @@ public interface ILogicalPlan extends Serializable{
 	List<ILogicalOperator> getSinks();
 	
 	Set<ILogicalOperator> findOpsFromType(Class<? extends ILogicalOperator> toFind);
-	
+	Set<ILogicalOperator> findOpsFromType(Set<Class<? extends ILogicalOperator>> toFind, boolean checkAssignabale);
+
 	SDFSchema getOutputSchema();
 
 	ILogicalPlan copyPlan();
