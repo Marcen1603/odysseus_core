@@ -35,11 +35,11 @@ public class SAAggregationPO<M extends ITimeInterval, T extends Tuple<M>> extend
 	public SAAggregationPO(List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			List<IIncrementalAggregationFunction<M, T>> incrementalFunctions, boolean evaluateAtOutdatingElements,
 			boolean evaluateBeforeRemovingOutdatingElements, boolean evaluateAtNewElement, boolean evaluateAtDone,
-			boolean outputOnlyChanges, SDFSchema outputSchema, int[] groupingAttributesIndices,
+			boolean outputOnlyChanges, SDFSchema outputSchema, int[] groupingAttributesIndices, int[] groupingAttributeIndicesOutputSchema,
 			String tupleRangeAttribute, List<? extends IRole> roles) {
 		super(nonIncrementalFunctions, incrementalFunctions, evaluateAtOutdatingElements,
 				evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone, outputOnlyChanges,
-				outputSchema, groupingAttributesIndices);
+				outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema);
 		this.roles = new ArrayList<String>();
 		this.tupleRangeAttribute = tupleRangeAttribute;
 		addRoles(roles);

@@ -88,6 +88,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * key.
 	 */
 	protected final int[] groupingAttributesIndices;
+	
+	/**
+	 * The attribute indices of the outgoing elements that form the grouping key.
+	 */
+	protected final int[] groupingAttributesIndicesOutputSchema;
 
 	/**
 	 * A list of functions that get all valid elements of a point in time to
@@ -189,12 +194,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The output schema of this operator.
 	 * @param groupingAttributesIdx
 	 *            The indices that form the grouping attributes.
+	 * @param groupingAttributesIdxOutputSchema   
+	 * 			  The indices that form the grouping attributes on the output schema
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
 			final boolean evaluateAtOutdatingElements, final boolean evaluateBeforeRemovingOutdatingElements,
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
-			final SDFSchema outputSchema, final int[] groupingAttributesIdx) {
+			final SDFSchema outputSchema, final int[] groupingAttributesIdx, final int[] groupingAttributesIdxOutputSchema) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -212,6 +219,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 		this.outputSchema = outputSchema;
 		this.groupingAttributesIndices = groupingAttributesIdx;
+		this.groupingAttributesIndicesOutputSchema = groupingAttributesIdxOutputSchema;
 
 		this.hasFunctionsThatNeedStartTsOrder = this.nonIncrementalFunctions.stream()
 				.anyMatch(e -> e.needsOrderedElements());
@@ -236,6 +244,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.outputSchema = other.outputSchema;
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
+		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
 	}
 
 	@Override
@@ -670,7 +679,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		boolean output = true;
 		if (outputOnlyChanges) {
-			final Object groupKey = getGroupKey(result, groupingAttributesIndices, defaultGroupingKey);
+			final Object groupKey = getGroupKey(result, groupingAttributesIndicesOutputSchema, defaultGroupingKey);
 			final T last = lastOutput.get(groupKey);
 			output = !result.equals(last);
 			if (output) {

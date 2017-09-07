@@ -74,10 +74,11 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		for (int i = 0; i < groupingAttributes.size(); ++i) {
 			groupingAttributesIndices[i] = inputSchema.indexOf(groupingAttributes.get(i));
 		}
+		final int[] groupingAttributeIndicesOutputSchema = operator.getGroupingAttributeIndicesOnOutputSchema();
 
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone,
-				outputOnlyChanges, outputSchema, groupingAttributesIndices);
+				outputOnlyChanges, outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema);
 		defaultExecute(operator, po, config, true, true);
 	}
 
