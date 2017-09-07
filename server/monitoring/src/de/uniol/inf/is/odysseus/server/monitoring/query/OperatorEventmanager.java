@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
+package de.uniol.inf.is.odysseus.server.monitoring.query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.IPOEventListener;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.Monitor;
 
 public class OperatorEventmanager implements IPOEventListener {
 
