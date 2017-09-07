@@ -28,7 +28,7 @@ public class TSaseAOToPatternDetectAORule extends AbstractTransformationRule<Sas
 		// I know there is only one operator
 		IExecutorCommand cmd = op.get(0);
 		if (cmd instanceof CreateQueryCommand) {
-			newOp = (PatternDetectAO<?>) ((CreateQueryCommand)cmd).getQuery().getLogicalPlan();
+			newOp = (PatternDetectAO<?>) ((CreateQueryCommand)cmd).getQuery().getLogicalPlan().getRoot();
 			newOp.setOneMatchPerInstance(operator.isOneMatchPerInstance());
 			newOp.setHeartbeatRate(operator.getHeartbeatrate());
 			//Init Schema (and other things)
