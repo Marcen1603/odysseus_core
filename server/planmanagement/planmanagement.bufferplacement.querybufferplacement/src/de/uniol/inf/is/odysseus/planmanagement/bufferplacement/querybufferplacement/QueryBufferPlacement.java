@@ -50,14 +50,14 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 	@SuppressWarnings({"rawtypes","unchecked"})
 	protected void placeBuffer(IBuffer buffer, ISource<?> source) {
 		getLogger().debug("Place Buffer "+buffer+" sink "+source );
-		Collection<? extends AbstractPhysicalSubscription<? extends ISink<?>>> subscriptions = source.getSubscriptions();
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub: subscriptions){
+		Collection<? extends AbstractPhysicalSubscription<?, ? extends ISink<?>>> subscriptions = source.getSubscriptions();
+		for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub: subscriptions){
 		// Place only if not already buffer there
-		if (!(sub.getTarget() instanceof IBuffer)){
-			sub.getTarget().unsubscribeFromSource((ISource) source, sub.getSinkInPort(),
+		if (!(sub.getSink() instanceof IBuffer)){
+			sub.getSink().unsubscribeFromSource((ISource) source, sub.getSinkInPort(),
 					sub.getSourceOutPort(), sub.getSchema());
 			buffer.subscribeToSource(source, sub.getSinkInPort(), 0, sub.getSchema());
-			sub.getTarget().subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(),
+			sub.getSink().subscribeToSource(buffer, sub.getSinkInPort(), sub.getSourceOutPort(),
 					sub.getSchema());
 			}
 		}
@@ -73,11 +73,11 @@ public class QueryBufferPlacement implements IBufferPlacementStrategy{
 		}else{
 			if (plan.isSink()){
 				ISink sink = (ISink)plan;
-				Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscription = sink
+				Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>,?>> subscription = sink
 						.getSubscribedToSource();
 
-				for (AbstractPhysicalSubscription<? extends ISource<?>> sub:subscription){
-					addBuffers(sub.getTarget());
+				for (AbstractPhysicalSubscription<? extends ISource<?>,?> sub:subscription){
+					addBuffers(sub.getSource());
 				}
 			}
 		}

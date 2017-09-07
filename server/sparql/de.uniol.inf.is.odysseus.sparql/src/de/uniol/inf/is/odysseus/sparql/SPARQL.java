@@ -27,15 +27,16 @@ import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateQueryCommand;
-import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.ASTQuery;
 import de.uniol.inf.is.odysseus.sparql.parser.ast.SPARQLParser;
 import de.uniol.inf.is.odysseus.sparql.parser.visitor.SPARQLCreateLogicalPlanVisitor;
@@ -113,7 +114,7 @@ public class SPARQL implements IQueryParser{
 			if(!visitor.isCreateStatement()){
 				ILogicalQuery query = new LogicalQuery();
 				query.setParserId(getLanguage());
-				query.setLogicalPlan(logicalOp, true);
+				query.setLogicalPlan(new LogicalPlan(logicalOp), true);
 				CreateQueryCommand cmd = new CreateQueryCommand(query, user);
 				listOfQueries.add(cmd);
 			}

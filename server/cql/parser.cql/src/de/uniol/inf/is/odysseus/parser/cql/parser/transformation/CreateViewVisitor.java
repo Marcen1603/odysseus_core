@@ -61,7 +61,7 @@ public class CreateViewVisitor extends AbstractDefaultVisitor {
 		if (result instanceof CreateQueryCommand) {
 
 			ILogicalOperator operator = ((CreateQueryCommand) result)
-					.getQuery().getLogicalPlan();
+					.getQuery().getLogicalPlan().getRoot();
 
 			// we add an additional rename, so that the view has this names...
 			RenameAO rename = new RenameAO();

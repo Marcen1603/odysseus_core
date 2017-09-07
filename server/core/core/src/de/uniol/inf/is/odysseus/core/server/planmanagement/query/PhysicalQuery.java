@@ -28,7 +28,6 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.ISubscribable;
 import de.uniol.inf.is.odysseus.core.collection.IdentityArrayList;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
@@ -86,12 +85,11 @@ public class PhysicalQuery implements IPhysicalQuery {
 	private static int idCounter = 0;
 
 	/**
-	 * Unique id of an ID. Used for identification of an query. Not final
-	 * anymore, because there might arise the need to change it in rare cases.
-	 * (i.e. creating a physical query based on a logical one and then later
-	 * trying to construct one via a physical plan First one would take the
-	 * logical query's ID, while the next constructor would start at the
-	 * idCounter's current value)
+	 * Unique id of an ID. Used for identification of an query. Not final anymore,
+	 * because there might arise the need to change it in rare cases. (i.e. creating
+	 * a physical query based on a logical one and then later trying to construct
+	 * one via a physical plan First one would take the logical query's ID, while
+	 * the next constructor would start at the idCounter's current value)
 	 */
 	private int id;
 
@@ -99,14 +97,14 @@ public class PhysicalQuery implements IPhysicalQuery {
 	};
 
 	/**
-	 * List of all direct physical child operators. Stored separate because a
-	 * root can contain operators which are part of an other query.
+	 * List of all direct physical child operators. Stored separate because a root
+	 * can contain operators which are part of an other query.
 	 */
 	transient private ArrayList<IPhysicalOperator> physicalChilds = new ArrayList<IPhysicalOperator>();
 
 	/**
-	 * Physical root operators of this query. Since we do not have trees any
-	 * more, there can be more than one query.
+	 * Physical root operators of this query. Since we do not have trees any more,
+	 * there can be more than one query.
 	 */
 	transient private List<IPhysicalOperator> roots;
 
@@ -184,8 +182,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	private int sheddingFactor;
 
 	/**
-	 * Creates a query based on a physical plan and
-	 * {@link QueryBuildConfiguration}
+	 * Creates a query based on a physical plan and {@link QueryBuildConfiguration}
 	 *
 	 * @param physicalPlan
 	 *            physical operator plan
@@ -207,8 +204,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * @param physicalPlan
 	 *            The physical plan
 	 */
-	public PhysicalQuery(ILogicalQuery query,
-			ArrayList<IPhysicalOperator> physicalPlan) {
+	public PhysicalQuery(ILogicalQuery query, ArrayList<IPhysicalOperator> physicalPlan) {
 		// logical and physical query must have the same id!
 		id = query.getID();
 		this.query = query;
@@ -217,9 +213,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 		this.currentPriority = query.getPriority();
 		this.containsCycles = query.containsCycles();
 		Object parameter = getLogicalQuery().getServerParameter(ACQueryParameter.class.getSimpleName());
-		if( parameter != null && parameter instanceof ACQueryParameter ) {
-			this.acQuery = ((ACQueryParameter)parameter).getValue();
-		}else{
+		if (parameter != null && parameter instanceof ACQueryParameter) {
+			this.acQuery = ((ACQueryParameter) parameter).getValue();
+		} else {
 			this.acQuery = false;
 		}
 		initializePhysicalRoots(physicalPlan);
@@ -233,10 +229,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 *
 	 * @param physicalPlan
 	 */
-	private void determineIteratableSourcesAndLeafs(
-			List<IPhysicalOperator> physicalPlan) {
-		List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(
-				getPhysicalChilds());
+	private void determineIteratableSourcesAndLeafs(List<IPhysicalOperator> physicalPlan) {
+		List<IPhysicalOperator> queryOps = new ArrayList<IPhysicalOperator>(getPhysicalChilds());
 		queryOps.addAll(getRoots());
 		iterableSources.clear();
 		iteratableLeafSources.clear();
@@ -249,8 +243,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 			if (operator instanceof IIterableSource) {
 				iterableSource = (IIterableSource<?>) operator;
 				// IterableSource is a Pipe
-				if (iterableSource.isSink()
-						&& !iterableSources.contains(iterableSource)) {
+				if (iterableSource.isSink() && !iterableSources.contains(iterableSource)) {
 					iterableSources.add(iterableSource);
 				} else if (!iterableSource.isSink() // IterableSource
 													// is a
@@ -286,8 +279,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getRoot
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#getRoot
 	 * ()
 	 */
 	@Override
@@ -302,18 +294,18 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.query.IQuery#setRoot
 	 * (de.uniol.inf.is.odysseus.core.server.IPhysicalOperator)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List<IPhysicalOperator> setRoots(List<IPhysicalOperator> roots) {
 		List<IPhysicalOperator> newRoots = new ArrayList<>();
-		for(IPhysicalOperator p:roots){
-			// there are sometimes cases where root operators are not really root operators (e.g. when using append_to in PQL)
-			if (p instanceof ISource){
-				if (((ISource)p).getSubscriptions() != null && ((ISource)p).getSubscriptions().size() > 0){
+		for (IPhysicalOperator p : roots) {
+			// there are sometimes cases where root operators are not really root operators
+			// (e.g. when using append_to in PQL)
+			if (p instanceof ISource) {
+				if (((ISource) p).getSubscriptions() != null && ((ISource) p).getSubscriptions().size() > 0) {
 					continue;
 				}
 			}
@@ -326,8 +318,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
-	 * getPhysicalChilds()
+	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery# getPhysicalChilds()
 	 */
 	@Override
 	public ArrayList<IPhysicalOperator> getPhysicalChilds() {
@@ -357,8 +348,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ArrayList<IPhysicalOperator> getChildren(
-			IPhysicalOperator root) {
+	private static ArrayList<IPhysicalOperator> getChildren(IPhysicalOperator root) {
 		ArrayList<IPhysicalOperator> children = new ArrayList<IPhysicalOperator>();
 		Stack<IPhysicalOperator> operators = new Stack<IPhysicalOperator>();
 		Set<IPhysicalOperator> visitedOps = new HashSet<IPhysicalOperator>();
@@ -370,10 +360,10 @@ public class PhysicalQuery implements IPhysicalQuery {
 			visitedOps.add(curOp);
 			if (curOp.isSink()) {
 				@SuppressWarnings("rawtypes")
-				Collection<AbstractPhysicalSubscription<ISource<?>>> subsriptions = ((ISink) curOp)
+				Collection<AbstractPhysicalSubscription<? extends ISource<?>,?>> subsriptions = ((ISink) curOp)
 						.getSubscribedToSource();
-				for (AbstractPhysicalSubscription<ISource<?>> subscription : subsriptions) {
-					ISource<?> target = subscription.getTarget();
+				for (AbstractPhysicalSubscription<? extends ISource<?>,?> subscription : subsriptions) {
+					ISource<?> target = subscription.getSource();
 					if (!visitedOps.contains(target)) {
 						operators.push(target);
 					}
@@ -392,16 +382,15 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return pos;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<? extends IPhysicalOperator> getNonSharedFathers(
-			IPhysicalOperator s) {
+	private List<? extends IPhysicalOperator> getNonSharedFathers(IPhysicalOperator s) {
 		List<IPhysicalOperator> pos = new ArrayList<IPhysicalOperator>();
 		if (s.getOwner().size() == 1 && s.isSink()) {
 			pos.add(s);
 		} else {
-			for (AbstractPhysicalSubscription<IPhysicalOperator> father : ((ISubscribable<IPhysicalOperator, AbstractPhysicalSubscription<IPhysicalOperator>>) s)
-					.getSubscriptions()) {
-				pos.addAll(getNonSharedFathers(father.getTarget()));
+			if (s instanceof ISource) {
+				for (AbstractPhysicalSubscription<?, ?> father : ((ISource<?>)s).getSubscriptions()) {
+					pos.addAll(getNonSharedFathers(father.getSink()));
+				}
 			}
 		}
 		return pos;
@@ -409,16 +398,16 @@ public class PhysicalQuery implements IPhysicalQuery {
 
 	/**
 	 * Sets the physical children of this query. These children are the physical
-	 * operators which are necessary for the execution of this query. It also
-	 * sets the owner relationship between the query and the operators.
+	 * operators which are necessary for the execution of this query. It also sets
+	 * the owner relationship between the query and the operators.
 	 *
-	 * This method should be only used if special optimizations are processed.
-	 * For initial setting the physical plan use
+	 * This method should be only used if special optimizations are processed. For
+	 * initial setting the physical plan use
 	 * {@link #initializePhysicalPlan(IPhysicalOperator)}.
 	 *
 	 * @param physicalChilds
-	 *            Physical operators which are necessary for the execution of
-	 *            this query.
+	 *            Physical operators which are necessary for the execution of this
+	 *            query.
 	 */
 	private void addPhysicalChildren(ArrayList<IPhysicalOperator> children) {
 		synchronized (this.physicalChilds) {
@@ -446,9 +435,9 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	/**
-	 * replace an physical operator of the query plan with another operator
-	 * operator subscription are not touched, so correct subscriptions need to
-	 * be set before replacement
+	 * replace an physical operator of the query plan with another operator operator
+	 * subscription are not touched, so correct subscriptions need to be set before
+	 * replacement
 	 *
 	 * @param oldOp
 	 * @param newOp
@@ -457,12 +446,12 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public void replaceOperator(IPhysicalOperator oldOp, IPhysicalOperator newOp) {
 		if (removeChild(oldOp)) {
 			addChild(newOp);
-		}// TODO: Exception werfen?
+		} // TODO: Exception werfen?
 	}
 
 	/**
-	 * Replaces a Root in the Query with another Physical Operator (Has no
-	 * effect, if the oldRoot-argument is no root for this Query)
+	 * Replaces a Root in the Query with another Physical Operator (Has no effect,
+	 * if the oldRoot-argument is no root for this Query)
 	 *
 	 * @param oldRoot
 	 *            The root that is being replaced
@@ -474,8 +463,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	public void replaceRoot(IPhysicalOperator oldRoot, IPhysicalOperator newRoot) {
 
 		if (this.roots.contains(oldRoot)) {
-			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(
-					this.roots);
+			ArrayList<IPhysicalOperator> oldRoots = new ArrayList<IPhysicalOperator>(this.roots);
 			oldRoots.remove(oldRoot);
 			oldRoots.add(newRoot);
 			this.setRoots(oldRoots);
@@ -503,8 +491,8 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public IPhysicalOperator getOperator(String name) {
 		Set<IPhysicalOperator> allOps = this.getAllOperators();
-		for (IPhysicalOperator p:allOps){
-			if (p.getName().equals(name)){
+		for (IPhysicalOperator p : allOps) {
+			if (p.getName().equals(name)) {
 				return p;
 			}
 		}
@@ -514,8 +502,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery#
-	 * removeOwnerschip()
+	 * @seede.uniol.inf.is.odysseus.planmanagement.query.IQuery# removeOwnerschip()
 	 */
 	@Override
 	public void removeOwnerschip() {
@@ -530,21 +517,20 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void start(IQueryStarter queryListener) throws OpenFailedException {
 		try {
-			QueryState nextState = QueryState.next(queryState,
-					QueryFunction.START);
+			QueryState nextState = QueryState.next(queryState, QueryFunction.START);
 
 			this.markedToStopped = false;
 			this.isStarting = true;
 			doneRoots.clear();
 			this.queryListener = queryListener;
-			_logger.debug("Calling open on query "+getID());
+			_logger.debug("Calling open on query " + getID());
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open/started, the
 				// following roots will not be called any more.
 				curRoot.open(this);
 			}
-			_logger.debug("Calling start on query "+getID());
+			_logger.debug("Calling start on query " + getID());
 			queryStartedTS = System.currentTimeMillis();
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
@@ -552,7 +538,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 				// following roots will not be called any more.
 				curRoot.start(this);
 			}
-			_logger.debug("Query "+getID()+" started.");
+			_logger.debug("Query " + getID() + " started.");
 			setState(nextState);
 			this.isStarting = false;
 		} catch (IllegalStateException e) {
@@ -563,8 +549,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void suspend() {
 		try {
-			QueryState nextState = QueryState.next(queryState,
-					QueryFunction.SUSPEND);
+			QueryState nextState = QueryState.next(queryState, QueryFunction.SUSPEND);
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
@@ -583,8 +568,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void resume() {
 		try {
-			QueryState nextState = QueryState.next(queryState,
-					QueryFunction.RESUME);
+			QueryState nextState = QueryState.next(queryState, QueryFunction.RESUME);
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already open, the
@@ -622,8 +606,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	@Override
 	public void stop() {
 		try {
-			QueryState nextState = QueryState.next(queryState,
-					QueryFunction.STOP);
+			QueryState nextState = QueryState.next(queryState, QueryFunction.STOP);
 			for (IPhysicalOperator curRoot : getRoots()) {
 				// this also works for cyclic plans,
 				// since if an operator is already closed, the
@@ -662,7 +645,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 		return queryState;
 	}
 
-	protected final void setState( QueryState state ) {
+	protected final void setState(QueryState state) {
 		queryState = state;
 
 		queryStateChangeTS = System.currentTimeMillis();
@@ -674,7 +657,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public final long getQueryStartTS(){
+	public final long getQueryStartTS() {
 		return queryStartedTS;
 	}
 
@@ -686,15 +669,13 @@ public class PhysicalQuery implements IPhysicalQuery {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
+	 * @see de.uniol.inf.is.odysseus.core.server.planmanagement.IReoptimizeRequester
 	 * #reoptimize ()
 	 */
 	@Override
 	public void reoptimize() {
 		// FIXME: Reoptimization currently not supported
-		throw new IllegalArgumentException(
-				"Reoptimization currently not implemented");
+		throw new IllegalArgumentException("Reoptimization currently not implemented");
 		// for (IQueryReoptimizeListener reoptimizeListener :
 		// this.queryReoptimizeListener) {
 		// reoptimizeListener.reoptimize(this);
@@ -708,8 +689,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * addReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void addReoptimizeListener(
-			IQueryReoptimizeListener reoptimizationListener) {
+	public void addReoptimizeListener(IQueryReoptimizeListener reoptimizationListener) {
 		synchronized (this.queryReoptimizeListener) {
 			if (!this.queryReoptimizeListener.contains(reoptimizationListener)) {
 				this.queryReoptimizeListener.add(reoptimizationListener);
@@ -724,8 +704,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	 * removeReoptimizeListener(java.lang.Object)
 	 */
 	@Override
-	public void removeReoptimizeListener(
-			IQueryReoptimizeListener reoptimizationListener) {
+	public void removeReoptimizeListener(IQueryReoptimizeListener reoptimizationListener) {
 		synchronized (this.queryReoptimizeListener) {
 			this.queryReoptimizeListener.remove(reoptimizationListener);
 		}
@@ -813,9 +792,7 @@ public class PhysicalQuery implements IPhysicalQuery {
 	}
 
 	@Override
-	public void createAndAddMonitoringData(
-			@SuppressWarnings("rawtypes") IPeriodicalMonitoringData item,
-			long period) {
+	public void createAndAddMonitoringData(@SuppressWarnings("rawtypes") IPeriodicalMonitoringData item, long period) {
 		mdP.createAndAddMonitoringData(item, period);
 	}
 

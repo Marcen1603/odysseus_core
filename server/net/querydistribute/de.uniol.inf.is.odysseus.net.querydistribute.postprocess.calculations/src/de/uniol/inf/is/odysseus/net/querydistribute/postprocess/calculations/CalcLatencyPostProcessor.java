@@ -72,7 +72,7 @@ public class CalcLatencyPostProcessor implements IQueryDistributionPostProcessor
 	 */
 	private static CalcLatencyAO insertCalcLatencyAO(ILogicalOperator sink, LogicalSubscription subToSink) {
 		CalcLatencyAO calcLatencyAO = new CalcLatencyAO();
-		calcLatencyAO.subscribeToSource(subToSink.getTarget(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
+		calcLatencyAO.subscribeToSource(subToSink.getSource(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
 		sink.subscribeToSource(calcLatencyAO, subToSink.getSinkInPort(), 0, subToSink.getSchema());
 		return calcLatencyAO;
 	}

@@ -41,7 +41,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateStreamCommand;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.parser.cql.CQLParser;
 import de.uniol.inf.is.odysseus.parser.cql.IVisitor;
@@ -136,7 +136,7 @@ public class CreateStreamVisitor extends AbstractDefaultVisitor {
 		parser.setUser(caller);
 		parser.setDataDictionary(dd);
 		operator = ((List<ILogicalQuery>) parser.visit(node, null)).get(0)
-				.getLogicalPlan();
+				.getLogicalPlan().getRoot();
 		SDFSchema otherAttributes = operator.getOutputSchema();
 
 		if (otherAttributes.size() != this.attributes.size()) {

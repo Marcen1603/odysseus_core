@@ -98,12 +98,15 @@ public class TestRunnerApplication implements IApplication {
                     oneFailed = true;
                 }
             }
+            if (oneFailed) {
+                printAdditionalInfos();
+            }
+            
             printReports(reports);
 
             if (oneFailed) {
                 LOG.debug("At least one test failed!");
                 
-                printAdditionalInfos();
         		
                 return -1;
             }

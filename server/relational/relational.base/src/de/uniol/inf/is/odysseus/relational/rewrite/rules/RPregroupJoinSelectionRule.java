@@ -64,9 +64,9 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 	private static void findSelectionsToPlaceAfterRecursive(JoinAO join, ILogicalOperator currentOperator,
 			Collection<SelectAO> foundSelections, boolean selectAOTrace) {
 		for (LogicalSubscription sub : currentOperator.getSubscriptions()) {
-			if (SelectAO.class.isInstance(sub.getTarget()) && !join.equals(currentOperator)) {
+			if (SelectAO.class.isInstance(sub.getSink()) && !join.equals(currentOperator)) {
 				// Second clause is to avoid selecting the same selection over and over again.
-				SelectAO select = (SelectAO) sub.getTarget();
+				SelectAO select = (SelectAO) sub.getSink();
 				// 1. If all operators between the join and selection are selections, don't change the order of the selections (endless loop of rule execution)
 				// 2. Selection is executable direct behind the join
 				// 3. Selection can not be switched with the join.
@@ -75,7 +75,7 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 				}
 			}
 			// selectAOTrace = true <=> All operators between the join and the current operator are selections
-			findSelectionsToPlaceAfterRecursive(join, sub.getTarget(), foundSelections, selectAOTrace && SelectAO.class.isInstance(sub.getTarget()));
+			findSelectionsToPlaceAfterRecursive(join, sub.getSink(), foundSelections, selectAOTrace && SelectAO.class.isInstance(sub.getSink()));
 		}
 	}
 

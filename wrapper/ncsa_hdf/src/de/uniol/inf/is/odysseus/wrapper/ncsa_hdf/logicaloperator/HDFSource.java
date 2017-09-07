@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.FileNameParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.ncsa_hdf.NcsaHDFTransportHandler;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "HDFSource", category={LogicalOperatorCategory.SOURCE}, doc = "Allows to read input from a nsca hdf(5) based file")

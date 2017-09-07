@@ -32,7 +32,7 @@ public class CachePO<R extends IStreamObject<IMetaAttribute>> extends AbstractPi
 	}
 
 	@Override
-	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super R>> sink){
+	protected void newReceiver(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink){
 		synchronized(cache){
 			ListIterator<R> iter = cache.listIterator();
 			while (iter.hasNext()){

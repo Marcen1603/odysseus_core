@@ -7,8 +7,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IAccessAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.AbstractExecutorCommand;
-import de.uniol.inf.is.odysseus.core.server.util.FindSourcesLogicalVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.FindSourcesLogicalVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public abstract class AbstractCreateStreamOrViewCommand extends AbstractExecutorCommand {

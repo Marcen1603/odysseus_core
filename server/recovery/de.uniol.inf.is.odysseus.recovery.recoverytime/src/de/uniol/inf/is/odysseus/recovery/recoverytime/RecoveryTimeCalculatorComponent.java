@@ -85,7 +85,7 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 				}
 				Collection<LogicalSubscription> subscriptions = operator.getSubscriptions();
 				return subscriptions.isEmpty()
-						|| (subscriptions.size() == 1 && subscriptions.iterator().next().getTarget() instanceof TopAO);
+						|| (subscriptions.size() == 1 && subscriptions.iterator().next().getSink() instanceof TopAO);
 			}
 		});
 	}
@@ -104,7 +104,7 @@ public class RecoveryTimeCalculatorComponent implements IRecoveryComponent {
 	 */
 	private static void insertRecoveryTimeCalculator(ILogicalOperator sink, LogicalSubscription subToSink,
 			RecoveryTimeCalculatorAO calculator) {
-		calculator.subscribeToSource(subToSink.getTarget(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
+		calculator.subscribeToSource(subToSink.getSink(), 0, subToSink.getSourceOutPort(), subToSink.getSchema());
 		sink.subscribeToSource(calculator, subToSink.getSinkInPort(), 0, subToSink.getSchema());
 	}
 

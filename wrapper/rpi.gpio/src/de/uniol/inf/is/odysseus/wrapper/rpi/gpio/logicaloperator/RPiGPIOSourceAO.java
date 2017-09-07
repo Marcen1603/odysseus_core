@@ -18,7 +18,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.wrapper.rpi.gpio.RPiGPIOTransportHandler;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "RPiGPIOSource", doc="Source for Raspberry Pi GPIO-Port", category={LogicalOperatorCategory.SOURCE})

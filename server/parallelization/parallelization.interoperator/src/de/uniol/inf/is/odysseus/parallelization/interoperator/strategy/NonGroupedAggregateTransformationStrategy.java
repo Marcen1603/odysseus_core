@@ -152,7 +152,7 @@ public class NonGroupedAggregateTransformationStrategy extends
 		operator.unsubscribeFromAllSinks();
 
 		for (LogicalSubscription downstreamOperatorSubscription : downstreamOperatorSubscriptions) {
-			downstreamOperatorSubscription.getTarget().subscribeToSource(
+			downstreamOperatorSubscription.getSink().subscribeToSource(
 					combinePAAggregateOperator,
 					downstreamOperatorSubscription.getSinkInPort(),
 					downstreamOperatorSubscription.getSourceOutPort(),
@@ -294,10 +294,10 @@ public class NonGroupedAggregateTransformationStrategy extends
 		for (LogicalSubscription upstreamOperatorSubscription : upstreamOperatorSubscriptions) {
 			operator.unsubscribeFromSource(upstreamOperatorSubscription);
 			fragmentAO.subscribeToSource(
-					upstreamOperatorSubscription.getTarget(),
+					upstreamOperatorSubscription.getSource(),
 					upstreamOperatorSubscription.getSinkInPort(),
 					upstreamOperatorSubscription.getSourceOutPort(),
-					upstreamOperatorSubscription.getTarget().getOutputSchema());
+					upstreamOperatorSubscription.getSource().getOutputSchema());
 		}
 	}
 

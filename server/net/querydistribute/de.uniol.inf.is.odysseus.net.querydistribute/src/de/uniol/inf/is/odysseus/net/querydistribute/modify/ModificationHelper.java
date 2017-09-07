@@ -137,7 +137,7 @@ public class ModificationHelper {
 		for (LogicalSubscription subToSource : op1.getSubscribedToSource()) {
 
 			if (ModificationHelper.isOperatorAboveOrEqual(
-					subToSource.getTarget(), op2))
+					subToSource.getSource(), op2))
 				return true;
 
 		}
@@ -166,7 +166,7 @@ public class ModificationHelper {
 		}
 
 		ILogicalOperator target = operator.getSubscriptions().iterator().next()
-				.getTarget();
+				.getSink();
 		if (target instanceof RenameAO) {
 
 			return target;
@@ -247,7 +247,7 @@ public class ModificationHelper {
 		for (LogicalSubscription subToSource : op1.getSubscribedToSource()) {
 
 			if (ModificationHelper.isOperatorAboveOrEqual(
-					subToSource.getTarget(), op2))
+					subToSource.getSource(), op2))
 				return true;
 
 		}

@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParam
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "CSVFileSink", category={LogicalOperatorCategory.SINK}, doc = "Allows to write tp a csv based file")
 public class CSVFileSink extends AbstractSenderAO {

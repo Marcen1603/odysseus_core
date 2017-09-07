@@ -58,7 +58,7 @@ public class SourceBufferPlacementStrategy extends AbstractBufferPlacementStrate
 
 	@Override
 	protected boolean bufferNeeded(
-			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>,?>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
 		boolean setBuffer = sink instanceof IMetadataInitializer;
 		if (setBuffer){

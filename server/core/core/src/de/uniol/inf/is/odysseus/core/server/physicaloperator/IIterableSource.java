@@ -15,6 +15,7 @@
   */
 package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 
 /**
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
  * it is not allowed to block for buffers.
  * @author Jonas Jacobi
  */
-public interface IIterableSource<T> extends ISource<T>, IIterableSchedulerSource {
+public interface IIterableSource<T extends IStreamObject<?>> extends ISource<T>, IIterableSchedulerSource {
 	/**
 	 * Get whether a call to transferNext() will be successful.
 	 * @return true, if an element can be transfered. 

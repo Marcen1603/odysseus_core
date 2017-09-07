@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.GetParam
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.incubation.graph.physicaloperator.access.transport.GraphTransportHandler;
 
 /**

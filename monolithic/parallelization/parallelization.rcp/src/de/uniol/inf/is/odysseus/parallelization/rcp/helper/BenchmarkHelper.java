@@ -21,8 +21,8 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.IParallelTransformationStrategy;
 import de.uniol.inf.is.odysseus.parallelization.interoperator.strategy.registry.ParallelTransformationStrategyRegistry;
 import de.uniol.inf.is.odysseus.parallelization.rcp.data.BenchmarkDataHandler;
@@ -57,7 +57,7 @@ public class BenchmarkHelper {
 
 		// for each logical query, search possible operators
 		for (ILogicalQuery logicalQuery : logicalQueries) {
-			ILogicalOperator logicalPlan = logicalQuery.getLogicalPlan();
+			ILogicalOperator logicalPlan = logicalQuery.getLogicalPlan().getRoot();
 			Set<Class<? extends ILogicalOperator>> set = new HashSet<>();
 			List<Class<? extends ILogicalOperator>> validTypes = ParallelTransformationStrategyRegistry
 					.getValidTypes();

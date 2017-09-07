@@ -16,17 +16,17 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterDoRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.util.AppendUniqueIdLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.AppendUniqueIdLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.planmanagement.executor.standardexecutor.StandardExecutor;
 import de.uniol.inf.is.odysseus.planmigration.IMigrationStrategy;
 import de.uniol.inf.is.odysseus.planmigration.MigrationStrategyRegistry;
@@ -55,18 +55,18 @@ public class ParallelizationOptimizer {
 		// copy initial logical plan an rename it to avoid duplicate uniqueids
 		GenericGraphWalker walker0 = new GenericGraphWalker();
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<>(logicalQuery);
-		walker0.prefixWalk(logicalQuery.getInitialLogicalPlan(), copyVisitor);
-		logicalQuery.setLogicalPlan(copyVisitor.getResult(), false);
+		walker0.prefixWalk(logicalQuery.getInitialLogicalPlan().getRoot(), copyVisitor);
+		logicalQuery.setLogicalPlan(new LogicalPlan(copyVisitor.getResult()), false);
 		walker0.clearVisited();
 		AppendUniqueIdLogicalGraphVisitor<ILogicalOperator> appendVisitor = new AppendUniqueIdLogicalGraphVisitor(
 				"_migrate" + parallelizationNumber);
 		parallelizationNumber++;
-		walker0.prefixWalk(logicalQuery.getLogicalPlan(), appendVisitor);
+		walker0.prefixWalk(logicalQuery.getLogicalPlan().getRoot(), appendVisitor);
 
 		// remove sinks and make the operator which it is subscribed to the new
 		// root
 		// only works if the sink is subscribed to only one source
-		ILogicalOperator top = logicalQuery.getLogicalPlan();
+		ILogicalOperator top = logicalQuery.getLogicalPlan().getRoot();
 		if (!(top instanceof TopAO)) {
 			LOG.error("The top of the plan is not of Type TopAO");
 			return;
@@ -76,7 +76,7 @@ public class ParallelizationOptimizer {
 			return;
 		}
 		LogicalSubscription topSubscription = top.getSubscribedToSource().iterator().next();
-		ILogicalOperator sinkToRemove = topSubscription.getTarget();
+		ILogicalOperator sinkToRemove = topSubscription.getSource();
 		if (sinkToRemove.getSubscribedToSource().size() != 1) {
 			LOG.error("The sink must be subscribed to  exactly one operator.");
 			return;

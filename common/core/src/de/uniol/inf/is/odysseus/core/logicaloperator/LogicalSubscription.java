@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  *
  */
 
-public class LogicalSubscription extends Subscription<ILogicalOperator> implements Serializable{
+public class LogicalSubscription extends Subscription<ILogicalOperator, ILogicalOperator> implements Serializable{
 
 	private static final long serialVersionUID = 678442733825703258L;
 	
@@ -37,9 +37,9 @@ public class LogicalSubscription extends Subscription<ILogicalOperator> implemen
 	 * @param sourceOutPort The output port of the source that is affected
 	 * @param schema The data schema of the elements that should be processed
 	 */
-	public LogicalSubscription(ILogicalOperator target, int sinkInPort,
+	public LogicalSubscription(ILogicalOperator source, ILogicalOperator sink, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
-		super(target, sinkInPort, sourceOutPort, schema);
+		super(source, sink, sinkInPort, sourceOutPort, schema);
 	}
 		
 		

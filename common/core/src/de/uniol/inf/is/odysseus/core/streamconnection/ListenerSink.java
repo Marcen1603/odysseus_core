@@ -27,21 +27,21 @@ import de.uniol.inf.is.odysseus.core.event.IEventType;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.OwnerHandler;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHandler implements ISink<In>, IStreamConnection<In>{
-
+public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHandler
+		implements ISink<In>, IStreamConnection<In> {
 
 	@Override
 	public DefaultStreamConnection<In> clone() {
 		throw new RuntimeException("Clone Not implemented for DefaultStreamConnection");
 	}
-	
+
 	@Override
 	public final boolean isSource() {
 		return false;
@@ -93,7 +93,6 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 	@Override
 	public void setOutputSchema(SDFSchema outputSchema, int port) {
 	}
-	
 
 	@Override
 	public Collection<String> getProvidedMonitoringData() {
@@ -143,11 +142,12 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 	}
 
 	@Override
-	public void subscribeToSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void subscribeToSource(ISource<IStreamObject<?>> source, int sinkInPort, int sourceOutPort,
+			SDFSchema schema) {
 	}
 
 	@Override
-	public void unsubscribeFromSource(AbstractPhysicalSubscription<ISource<? extends In>> subscription) {
+	public void unsubscribeFromSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> subscription) {
 	}
 
 	@Override
@@ -155,28 +155,31 @@ public abstract class ListenerSink<In extends IStreamObject<?>> extends OwnerHan
 	}
 
 	@Override
-	public void unsubscribeFromSource(ISource<? extends In> source, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void unsubscribeFromSource(ISource<IStreamObject<?>> source, int sinkInPort, int sourceOutPort,
+			SDFSchema schema) {
 	}
 
 	@Override
-	public Collection<AbstractPhysicalSubscription<ISource<? extends In>>> getSubscribedToSource() {
-		return Lists.newArrayList();
-	}
-
-	@Override
-	public AbstractPhysicalSubscription<ISource<? extends In>> getSubscribedToSource(int i) {
+	public Collection<AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>> getSubscribedToSource() {
+		// TODO Auto-generated method stub
 		return null;
 	}
-	
-//	@Override
-//	public void process(Collection<? extends In> object, int port) {
-//		for (In obj : object) {
-//			process(obj, port);
-//		}
-//	}
+
+	@Override
+	public AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?> getSubscribedToSource(int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// @Override
+	// public void process(Collection<? extends In> object, int port) {
+	// for (In obj : object) {
+	// process(obj, port);
+	// }
+	// }
 
 	@Override
 	public void done(int port) {
 	}
-	
+
 }

@@ -48,7 +48,7 @@ public class StandardBufferPlacementStrategy
 	
 	@Override
 	protected boolean bufferNeeded(
-			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>,?>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
 		return !(sink instanceof IMetadataInitializer);
 	}

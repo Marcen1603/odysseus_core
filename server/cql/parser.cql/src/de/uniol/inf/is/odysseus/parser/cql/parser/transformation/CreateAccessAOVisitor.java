@@ -91,7 +91,7 @@ public class CreateAccessAOVisitor extends AbstractDefaultVisitor {
 		Resource originalName = dd.getViewOrStreamName(srcName, caller);
 		String sourceName = srcName;
 		try {
-			access = dd.getViewOrStream(srcName, caller);
+			access = dd.getViewOrStream(srcName, caller).getRoot();
 			if (access instanceof AbstractAccessAO) {
 				((AbstractAccessAO) access)
 						.setDataHandler(new TupleDataHandler()

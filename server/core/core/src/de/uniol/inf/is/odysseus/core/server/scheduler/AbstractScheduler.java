@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent;
 import de.uniol.inf.is.odysseus.core.server.scheduler.event.SchedulingEvent.SchedulingEventType;
 import de.uniol.inf.is.odysseus.core.server.scheduler.strategy.factory.ISchedulingFactory;
-import de.uniol.inf.is.odysseus.core.server.util.OSGI;
+import de.uniol.inf.is.odysseus.core.util.OSGI;
 
 /**
  * Base class for scheduler. Contains Methodes for setting the scheduling state

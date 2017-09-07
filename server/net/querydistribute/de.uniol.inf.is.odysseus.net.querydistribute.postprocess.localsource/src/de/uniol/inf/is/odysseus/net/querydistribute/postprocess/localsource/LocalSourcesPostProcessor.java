@@ -93,9 +93,10 @@ public class LocalSourcesPostProcessor implements IQueryDistributionPostProcesso
 			if(operator instanceof AbstractAccessAO || operator instanceof StreamAO ) {
 				
 				sources.add(operator);
+				// What is this for? 
 				for(LogicalSubscription subToSink : operator.getSubscriptions()) {
-					if(subToSink.getTarget() instanceof RenameAO) {
-						sources.add(subToSink.getTarget());
+					if(subToSink.getSink() instanceof RenameAO) {
+						sources.add(subToSink.getSink());
 					}
 				}
 				

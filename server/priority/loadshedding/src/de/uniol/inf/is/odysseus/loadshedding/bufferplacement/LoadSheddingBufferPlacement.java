@@ -35,7 +35,7 @@ public class LoadSheddingBufferPlacement extends
 
 	@Override
 	protected boolean bufferNeeded(
-			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>>> subscriptions,
+			Collection<? extends AbstractPhysicalSubscription<? extends ISource<?>,?>> subscriptions,
 			ISink<?> childSink, ISink<?> sink) {
 
 		if (childSink instanceof PriorityPO) {

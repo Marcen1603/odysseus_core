@@ -20,7 +20,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 
-public interface ISubscribable<T, S extends ISubscription<T>> {
+public interface ISubscribable<O, S extends ISubscription<?,O>> {
 	/**
 	 * SubscribeSink will be called at a source operator. The first
 	 * parameter of this method call will be the sink.
@@ -33,13 +33,14 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 * Subscription is initial inactive, call open to active, close to deactivate
 	 *
 	 */
-	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	public void subscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls);
+	public void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	public void subscribeSink(S subscription);
+	public void subscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema, boolean asActive, int openCalls);
 	
 	/**
 	 * Removes a subscription installed by {@link ISubscribable#subscribe(Object, int, int)}
 	 */
-	public void unsubscribeSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	public void unsubscribeSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	
 	/**
 	 * Removes a subscription installed by the methods
@@ -61,7 +62,7 @@ public interface ISubscribable<T, S extends ISubscription<T>> {
 	 * @param sourceOutPort
 	 * @param schema
 	 */
-	public void connectSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
-	public void disconnectSink(T sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	public void connectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
+	public void disconnectSink(O sink, int sinkInPort, int sourceOutPort, SDFSchema schema);
 	
 }

@@ -25,14 +25,16 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IRewrite;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.rewrite.flow.IRewriteRuleProvider;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 
@@ -41,10 +43,12 @@ public class RewriteExecutor implements IRewrite {
 	public static final Logger LOGGER = LoggerFactory.getLogger("rewrite");
 
 	@Override
-	public ILogicalOperator rewritePlan(ILogicalOperator plan,
+	public ILogicalPlan rewritePlan(ILogicalPlan logicalPlan,
 			RewriteConfiguration conf, ISession caller, IDataDictionary dd) {
 		LOGGER.info("Starting rewriting...");
 
+		ILogicalOperator root = logicalPlan.getRoot();
+		
 		Set<String> rulesToApply = conf.getRulesToApply();
 
 		final RewriteInventory rewriteInventory;
@@ -61,13 +65,13 @@ public class RewriteExecutor implements IRewrite {
 
 		TopAO top = null;
 		final boolean createdNewTopAO;
-		if (plan instanceof TopAO) {
-			top = (TopAO) plan;
+		if (root instanceof TopAO) {
+			top = (TopAO) root;
 			createdNewTopAO = false;
 		} else {
 			top = new TopAO();
-			SDFSchema outputSchema = plan.getOutputSchema();
-			plan.subscribeSink(top, 0, 0, outputSchema);
+			SDFSchema outputSchema = root.getOutputSchema();
+			root.subscribeSink(top, 0, 0, outputSchema);
 			createdNewTopAO = true;
 		}
 
@@ -77,7 +81,7 @@ public class RewriteExecutor implements IRewrite {
 		if (LOGGER.isTraceEnabled()) {
 			SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>();
 			LOGGER.trace("Before rewriting: \n"
-					+ planPrinter.createString(plan));
+					+ planPrinter.createString(root));
 			LOGGER.trace("Processing rules...");
 		}
 		// start transformation
@@ -90,7 +94,7 @@ public class RewriteExecutor implements IRewrite {
 		final ILogicalOperator ret;
 		if (createdNewTopAO) {
 			LogicalSubscription sub = top.getSubscribedToSource(0);
-			ret = sub.getTarget();
+			ret = sub.getSource();
 			top.unsubscribeFromSource(ret, sub.getSinkInPort(),
 					sub.getSourceOutPort(), sub.getSchema());
 		} else {
@@ -102,7 +106,7 @@ public class RewriteExecutor implements IRewrite {
 		}
 		LOGGER.info("Rewriting finished.");
 		env.getWorkingMemory().clear();
-		return ret;
+		return new LogicalPlan(ret);
 	}
 
 	private void addLogicalOperator(ILogicalOperator op,
@@ -116,10 +120,10 @@ public class RewriteExecutor implements IRewrite {
 			inserted.add(op);
 
 			for (LogicalSubscription sub : op.getSubscribedToSource()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSource(), inserted, env);
 			}
 			for (LogicalSubscription sub : op.getSubscriptions()) {
-				addLogicalOperator(sub.getTarget(), inserted, env);
+				addLogicalOperator(sub.getSink(), inserted, env);
 			}
 		}
 	}

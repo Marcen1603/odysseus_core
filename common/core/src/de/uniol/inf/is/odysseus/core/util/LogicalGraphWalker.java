@@ -79,7 +79,7 @@ public class LogicalGraphWalker {
 			Collection<LogicalSubscription> subscriptions = operator.getSubscriptions();
 
 			for (LogicalSubscription subscription : subscriptions) {
-				ILogicalOperator sink = subscription.getTarget();
+				ILogicalOperator sink = subscription.getSink();
 				if (!operatorsToVisit.contains(sink) && !operatorsVisited.contains(sink) && operators.contains(sink)) {
 
 					// check
@@ -87,7 +87,7 @@ public class LogicalGraphWalker {
 
 						boolean ok = true;
 						for (LogicalSubscription sourceSubscription : sink.getSubscribedToSource()) {
-							if (!operatorsVisited.contains(sourceSubscription.getTarget())) {
+							if (!operatorsVisited.contains(sourceSubscription.getSource())) {
 								ok = false;
 								break;
 							}

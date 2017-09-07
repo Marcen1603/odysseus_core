@@ -1,7 +1,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
 
 public class SourceParameter extends AbstractParameter<AccessAO> {
@@ -15,7 +15,7 @@ public class SourceParameter extends AbstractParameter<AccessAO> {
 			return;
 		}
 		
-		ILogicalOperator source = getDataDictionary().getViewOrStream((String) this.inputValue, getCaller());
+		ILogicalPlan source = getDataDictionary().getViewOrStream((String) this.inputValue, getCaller());
 		AccessAO accessAO = new AccessAO();
 		if (Resource.containsUser(getCaller().getUser(), (String) this.inputValue)) {
 			accessAO.setAccessAOName(new Resource((String) this.inputValue));

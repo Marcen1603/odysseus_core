@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.util.OsgiObjectInputStream;
 import de.uniol.inf.is.odysseus.recovery.RecoveryConfiguration;
@@ -86,13 +86,13 @@ public class ProcessingImageStore {
 	 * Stores the state of all {@link ControllablePhysicalSubscription}s of a
 	 * query.
 	 */
-	public static void storeQueues(List<ControllablePhysicalSubscription<? extends IPhysicalOperator>> queues,
+	public static void storeQueues(List<ControllablePhysicalSubscription<ISource<IStreamObject<?>>,?>> queues,
 			int queryId) throws Exception {
 		File file = getFile(queryId, false);
 		try (FileOutputStream fout = new FileOutputStream(file);
 				ObjectOutputStream oos = new ObjectOutputStream(fout)) {
 			for (int i = 0; i < queues.size(); i++) {
-				ControllablePhysicalSubscription<? extends IPhysicalOperator> queue = queues.get(i);
+				ControllablePhysicalSubscription<ISource<IStreamObject<?>>,?> queue = queues.get(i);
 				@SuppressWarnings("rawtypes")
 				List<IStreamObject> state = queue.getBufferedElements();
 				if (state != null && !state.isEmpty()) {
@@ -129,7 +129,7 @@ public class ProcessingImageStore {
 	 * query.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void loadQueues(List<ControllablePhysicalSubscription<? extends IPhysicalOperator>> queues,
+	public static void loadQueues(List<ControllablePhysicalSubscription<ISource<IStreamObject<?>>,?>> queues,
 			int queryId) throws Exception {
 		File file = getFile(queryId, false);
 		if (!file.exists()) {
@@ -140,7 +140,7 @@ public class ProcessingImageStore {
 				OsgiObjectInputStream ois = new OsgiObjectInputStream(fin)) {
 			while (ois.available() > 0) {
 				int i = ois.readInt();
-				ControllablePhysicalSubscription<? extends IPhysicalOperator> queue = queues.get(i);
+				ControllablePhysicalSubscription<ISource<IStreamObject<?>>,?> queue = queues.get(i);
 				queue.setBufferedElements((ImmutableList<IStreamObject>) ois.readObject());
 				LOG.debug("Loaded state of '{}' from file '{}'", queue, file.getName());
 			}

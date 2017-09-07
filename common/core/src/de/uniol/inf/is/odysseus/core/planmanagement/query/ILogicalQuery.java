@@ -99,6 +99,20 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 	 * @throws IllegalArgumentException
 	 *             if setOwner is false and no owners are set
 	 */
+	void setLogicalPlan(ILogicalPlan logicalPlan, boolean setOwner);
+
+	/**
+	 * Set the logical plan of this query.
+	 *
+	 * @param logicalPlan
+	 *            The new logical plan of this query
+	 * @setOwner: Sets all connected operators in the logical plan as owned by
+	 *            this query. Attention: If there are operators that are
+	 *            connected but not part of this query, owner need to be set
+	 *            manually!
+	 * @throws IllegalArgumentException
+	 *             if setOwner is false and no owners are set
+	 */
 	void setLogicalPlan(ILogicalOperator logicalPlan, boolean setOwner);
 
 	/**
@@ -106,7 +120,7 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 	 *
 	 * @return The logical plan of this query.
 	 */
-	ILogicalOperator getLogicalPlan();
+	ILogicalPlan getLogicalPlan();
 
 	/**
 	 * Set a list of alternative logical plans for this query.
@@ -116,14 +130,14 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 	 *
 	 *            TODO: setOwner checken!
 	 */
-	void setAlternativeLogicalPlans(List<ILogicalOperator> altPlans);
+	void setAlternativeLogicalPlans(List<ILogicalPlan> altPlans);
 
 	/**
 	 * Returns the list of alternative logical plans for this query.
 	 *
 	 * @return The list of alternative logical plans for this query.
 	 */
-	List<ILogicalOperator> getAlternativeLogicalPlans();
+	List<ILogicalPlan> getAlternativeLogicalPlans();
 
 	/**
 	 * @return true if this plan contains cycles, typically the graph is cycle
@@ -184,8 +198,8 @@ public interface ILogicalQuery extends IOperatorOwner, Serializable,
 
 	String getNotice();
 
-	ILogicalOperator getInitialLogicalPlan();
+	ILogicalPlan getInitialLogicalPlan();
 
-	void setInitialLogicalPlan(ILogicalOperator initialPlan);
+	void setInitialLogicalPlan(ILogicalPlan initialPlan);
 
 }

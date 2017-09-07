@@ -29,7 +29,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 		Collection<LogicalSubscription> sources = operator.getSubscribedToSource();
 		if (sources.size() == 1) {
 			LogicalSubscription sub = sources.iterator().next();
-			ILogicalOperator target = sub.getTarget();
+			ILogicalOperator target = sub.getSource();
 			if (target instanceof IOutOfOrderHandler) {
 				((IOutOfOrderHandler) target).setAssureOrder(true);
 			}
@@ -51,7 +51,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 			// operator that is not reflected inside the subscription ... Maybe we should
 			// add a phase where we recalc
 			// subscription schemata?
-			ILogicalOperator target = sub.getTarget();
+			ILogicalOperator target = sub.getSource();
 			return target.getOutputSchema().isInOrder()
 					|| (target instanceof IOutOfOrderHandler && ((IOutOfOrderHandler) target).isAssureOrder() == null);
 		}
