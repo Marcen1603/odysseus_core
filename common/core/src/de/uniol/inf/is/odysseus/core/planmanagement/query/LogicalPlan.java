@@ -91,6 +91,15 @@ public class LogicalPlan implements ILogicalPlan {
 	}
 
 	@Override
+	public Set<ILogicalOperator> findOpsFromType(Set<Class<? extends ILogicalOperator>> toFind, boolean checkAssignabale) {
+		CollectOperatorLogicalGraphVisitor<ILogicalOperator> visitor = new CollectOperatorLogicalGraphVisitor<ILogicalOperator>(
+				toFind, checkAssignabale);
+		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<ILogicalOperator>();
+		walker.prefixWalk(root, visitor);
+		return visitor.getResult();
+	}
+	
+	@Override
 	public ILogicalPlan copyPlan() {
 		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
 				root.getOwner());
