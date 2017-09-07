@@ -94,9 +94,11 @@ public class CopyLogicalGraphVisitor<T extends ILogicalOperator> implements
 				T targetCopy = this.nodeCopies.get((T)sub.getSource());
 				// subscribe the target copy to the node copy
 				// if its in the same plan, add copy
+				// schema could be null, in this case getSchema would call getSource().getOutputSchema() but 
+				// the source may not be connected. --> sub.isSchemaSet
 				if (targetCopy != null) {
 					copy.subscribeToSource(targetCopy, sub.getSinkInPort(),
-							sub.getSourceOutPort(), sub.getSchema());			
+							sub.getSourceOutPort(),  sub.getRealSchema());			
 				}
 			} 
 		}

@@ -155,13 +155,6 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 		SDFSchema ret = null;
 		if (s != null) {
 			ret = s.getSchema();
-			// TODO: Move to subscription
-			if (ret == null) {
-				ILogicalOperator op = s.getSource();
-				if (op != null) {
-					ret = op.getOutputSchema(s.getSourceOutPort());
-				}
-			}
 		}
 		return ret;
 	}

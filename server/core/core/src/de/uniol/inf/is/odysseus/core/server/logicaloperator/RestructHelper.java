@@ -265,7 +265,7 @@ public class RestructHelper {
 		for (LogicalSubscription s : subscriptions) {
 			oldOP.unsubscribeSink(s);
 			newOp.subscribeSink(s.getSink(), s.getSinkInPort(),
-					s.getSourceOutPort(), s.getSchema());
+					s.getSourceOutPort(), s.getRealSchema());
 			touched.add(s.getSink());
 		}
 
@@ -274,7 +274,7 @@ public class RestructHelper {
 		for (LogicalSubscription s : subscriptions) {
 			oldOP.unsubscribeFromSource(s);
 			newOp.subscribeToSource(s.getSource(), s.getSinkInPort(),
-					s.getSourceOutPort(), s.getSchema());
+					s.getSourceOutPort(), s.getRealSchema());
 			touched.add(s.getSource());
 		}
 

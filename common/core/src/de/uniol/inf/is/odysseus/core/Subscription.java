@@ -66,7 +66,7 @@ public class Subscription<I,O> implements ISubscription<I,O>, Serializable{
 		this.sink = sink;
 		this.sinkInPort = sinkInPort;
 		this.sourceOutPort = sourceOutPort;
-		this.schema=schema;
+		setSchema(schema);
 	}
 
 	@Override
