@@ -49,7 +49,7 @@ public class LogicalSubscription extends Subscription<ILogicalOperator, ILogical
 	}
 
 	/**
-	 * Sets a schema only if the schema is different that the output schema of the source
+	 * Sets a schema only if the schema is different than the output schema of the source
 	 */
 	@Override
 	public void setSchema(SDFSchema inputSchema) {
@@ -85,7 +85,9 @@ public class LogicalSubscription extends Subscription<ILogicalOperator, ILogical
 
 	/**
 	 * This method does not try to retrieve the schema from the former input
-	 * Useful in cases where the source is not fully connected.
+	 * Useful in cases where the source is not fully connected and the source
+	 * should could not create an output schema (because it needs an input schema
+	 * from the previous operator)
 	 * @return
 	 */
 	public SDFSchema getRealSchema() {
