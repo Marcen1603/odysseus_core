@@ -8,6 +8,7 @@ public class Monitor implements Runnable {
 	private ArrayList<Double> cpuUsages;
 	private ArrayList<Integer> ramUsages;
 	private volatile boolean running = true;
+	private static final int sleep = 500;
 
 	public Monitor() {
 		this.setCpuUsages(new ArrayList<Double>());
@@ -44,7 +45,7 @@ public class Monitor implements Runnable {
 		while (running) {
 			this.cpuUsages.add(su.getCurrentCPUUsage());
 			try {
-				Thread.sleep(500);
+				Thread.sleep(sleep);
 			} catch (Exception e) {
 				Thread.currentThread().interrupt();
 				return;
