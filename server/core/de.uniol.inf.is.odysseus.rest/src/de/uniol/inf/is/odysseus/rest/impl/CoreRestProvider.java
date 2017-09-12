@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.rest.serverresources.GetAllOperatorInformationSe
 import de.uniol.inf.is.odysseus.rest.serverresources.GetDatatypesServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetOperatorInformationServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetQueryIdsServerResource;
+import de.uniol.inf.is.odysseus.rest.serverresources.GetQueryInformationServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetResultStreamInformationServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.GetViewsServerResource;
 import de.uniol.inf.is.odysseus.rest.serverresources.LoginServerResource;
@@ -45,6 +46,7 @@ public class CoreRestProvider implements IRestProvider{
 		router.attach("/"+GetDatatypesServerResource.PATH, GetDatatypesServerResource.class);
 		router.attach("/"+GetAggregateFunctionsServerResource.PATH, GetAggregateFunctionsServerResource.class);
 		router.attach("/"+DetermineOutputSchemaServerResource.PATH, DetermineOutputSchemaServerResource.class);
+		router.attach("/"+GetQueryInformationServerResource.PATH, GetQueryInformationServerResource.class);
 			
 	}
 
