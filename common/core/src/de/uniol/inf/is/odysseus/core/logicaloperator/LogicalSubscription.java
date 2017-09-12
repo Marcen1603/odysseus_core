@@ -49,14 +49,20 @@ public class LogicalSubscription extends Subscription<ILogicalOperator, ILogical
 	}
 
 	/**
-	 * Sets a schema only if the schema is different than the output schema of the source
+	 * Sets a schema only if the schema is different than the output schema of the
+	 * source
 	 */
 	@Override
 	public void setSchema(SDFSchema inputSchema) {
 		if (inputSchema == null) {
 			super.setSchema(null);
 		} else {
-			SDFSchema sourceOutputSchema = getSource().getOutputSchema();
+			SDFSchema sourceOutputSchema = null;
+			try {
+				sourceOutputSchema = getSource().getOutputSchema();
+			} catch (Exception e) {
+				// Input source may not be connected, will be computed later 
+			}
 			if (sourceOutputSchema != null && sourceOutputSchema.equals(inputSchema)) {
 				super.setSchema(null);
 			} else {
@@ -73,9 +79,9 @@ public class LogicalSubscription extends Subscription<ILogicalOperator, ILogical
 	public SDFSchema getSchema() {
 		if (super.getSchema() == null) {
 			SDFSchema schema;
-			try{
+			try {
 				schema = getSource().getOutputSchema(getSourceOutPort());
-			}catch(Exception e) {
+			} catch (Exception e) {
 				schema = null;
 			}
 			return schema;
@@ -84,14 +90,15 @@ public class LogicalSubscription extends Subscription<ILogicalOperator, ILogical
 	}
 
 	/**
-	 * This method does not try to retrieve the schema from the former input
-	 * Useful in cases where the source is not fully connected and the source
-	 * should could not create an output schema (because it needs an input schema
-	 * from the previous operator)
+	 * This method does not try to retrieve the schema from the former input Useful
+	 * in cases where the source is not fully connected and the source should could
+	 * not create an output schema (because it needs an input schema from the
+	 * previous operator)
+	 * 
 	 * @return
 	 */
 	public SDFSchema getRealSchema() {
 		return super.getSchema();
 	}
-		
+
 }
