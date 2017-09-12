@@ -75,7 +75,6 @@ public class InterOperatorParallelizationPreTransformationHandler implements
 	/**
 	 * do the transformation of the logical plan
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void preTransform(IServerExecutor executor, ISession caller, ILogicalQuery query,
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {

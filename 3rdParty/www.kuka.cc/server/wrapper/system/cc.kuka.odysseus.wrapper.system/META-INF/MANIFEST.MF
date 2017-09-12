@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: System Wrapper
 Bundle-SymbolicName: cc.kuka.odysseus.wrapper.system
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: cc.kuka.odysseus.wrapper.system.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.osgi.framework,
  org.slf4j
@@ -11,3 +10,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0"
 Service-Component: OSGI-INF/SystemTransportHandler.xml,  
  OSGI-INF/PingTransportHandler.xml
+Bundle-ActivationPolicy: lazy

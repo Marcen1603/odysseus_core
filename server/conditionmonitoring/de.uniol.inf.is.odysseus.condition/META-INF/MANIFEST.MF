@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Condition Monitoring
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.condition
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: de.uniol.inf.is.odysseus.condition.Activator
 Bundle-Vendor: Brandt
 Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.core.server,
@@ -27,3 +26,4 @@ Import-Package: com.google.gson,
  org.osgi.framework;version="1.6.0"
 Export-Package: de.uniol.inf.is.odysseus.condition.logicaloperator
 Service-Component: OSGI-INF/ConditionRuleProvider.xml
+Bundle-ActivationPolicy: lazy

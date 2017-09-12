@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Statistic
 Bundle-SymbolicName: cc.kuka.odysseus.statistic
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: cc.kuka.odysseus.statistic.Activator
 Bundle-Vendor: Christian Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.uniol.inf.is.odysseus.core.server;bundle-version="1.0.0",
@@ -30,3 +29,4 @@ Import-Package: de.uniol.inf.is.odysseus.mep,
  org.slf4j
 Service-Component: OSGI-INF/StatisticFunctionProvider.xml,
  OSGI-INF/StatisticAggregationFunctionBuilder.xml
+Bundle-ActivationPolicy: lazy
