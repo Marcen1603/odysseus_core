@@ -12,6 +12,5 @@ Service-Component: OSGI-INF/admissionRuleServiceBinder.xml,OSGI-INF/admissionCon
  OSGI-INF/admissionActions.xml
 Import-Package: org.eclipse.osgi.framework.console;version="1.1.0",
  org.osgi.framework
-Bundle-Activator: de.uniol.inf.is.odysseus.admission.activator.AdmissionPlugIn
 Bundle-ActivationPolicy: lazy
 Export-Package: de.uniol.inf.is.odysseus.admission
