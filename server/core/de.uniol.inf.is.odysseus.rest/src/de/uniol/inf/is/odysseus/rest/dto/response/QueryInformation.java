@@ -9,11 +9,13 @@ public class QueryInformation {
 	
 	private String name;
 	private String parser;
+	private String state;
 
-	public QueryInformation(String name, String parser) {
+	public QueryInformation(String name, String parser, String state) {
 		super();
 		this.name = name;
 		this.parser = parser;
+		this.state = state;
 	}
 
 	public String getName() {
@@ -22,5 +24,9 @@ public class QueryInformation {
 
 	public String getParser() {
 		return parser;
+	}
+	
+	public String getState() {
+		return state;
 	}
 }

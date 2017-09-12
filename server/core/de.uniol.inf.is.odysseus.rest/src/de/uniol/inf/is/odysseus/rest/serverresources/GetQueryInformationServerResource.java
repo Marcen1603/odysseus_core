@@ -38,7 +38,9 @@ public class GetQueryInformationServerResource extends AbstractSessionServerReso
 		String name = ExecutorServiceBinding.getExecutor().getLogicalQueryById(queryId, session).getName()
 				.getResourceName();
 		String parser = ExecutorServiceBinding.getExecutor().getLogicalQueryById(queryId, session).getParserId();
-		QueryInformation queryInformation = new QueryInformation(name, parser);
+		String state = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryById(queryId, session).getState().toString();
+		
+		QueryInformation queryInformation = new QueryInformation(name, parser, state);
 		return new GenericResponseDTO<QueryInformation>(queryInformation);
 	}
 }
