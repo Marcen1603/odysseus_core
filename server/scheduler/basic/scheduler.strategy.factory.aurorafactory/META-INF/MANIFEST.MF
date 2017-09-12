@@ -18,4 +18,3 @@ Service-Component: OSGI-INF/AuroraMinCostIterFactory.xml, OSGI-INF/AuroraMinLate
 Export-Package: de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory,
  de.uniol.inf.is.odysseus.scheduler.strategy.factory.aurorafactory.impl
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Bundle-ActivationPolicy: lazy

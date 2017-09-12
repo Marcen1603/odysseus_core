@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
+import de.uniol.inf.is.odysseus.core.server.datadictionary.AbstractDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
@@ -21,6 +22,8 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.AbstractPreT
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
+import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAAggregationAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAJoinAO;
 import de.uniol.inf.is.odysseus.securitypunctuation.logicaloperator.SAProjectAO;

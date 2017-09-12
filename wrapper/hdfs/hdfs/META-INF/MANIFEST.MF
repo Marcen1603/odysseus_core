@@ -75,4 +75,3 @@ Bundle-ClassPath: .,
  lib/xmlenc-0.52.jar,
  lib/xz-1.0.jar,
  lib/zookeeper-3.4.6.jar
-Bundle-ActivationPolicy: lazy

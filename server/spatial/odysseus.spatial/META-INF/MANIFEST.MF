@@ -38,4 +38,3 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.keyvalue.datatype,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational
-Bundle-ActivationPolicy: lazy

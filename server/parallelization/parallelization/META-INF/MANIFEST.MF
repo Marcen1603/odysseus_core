@@ -26,4 +26,3 @@ Export-Package: de.uniol.inf.is.odysseus.parallelization.autodetect,
  de.uniol.inf.is.odysseus.parallelization.helper,
  de.uniol.inf.is.odysseus.parallelization.keyword,
  de.uniol.inf.is.odysseus.parallelization.preexecution
-Bundle-ActivationPolicy: lazy

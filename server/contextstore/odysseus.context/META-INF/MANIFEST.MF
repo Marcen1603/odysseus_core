@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Context Store
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.context;singleton:=true
 Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.context.Activator
 Import-Package: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.is.odysseus.core.logicaloperator,
  de.uniol.inf.is.odysseus.core.mep,
@@ -34,4 +35,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.mep;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.sweeparea;bundle-version="1.0.0"
 Service-Component: OSGI-INF/StoreService.xml
-Bundle-ActivationPolicy: lazy

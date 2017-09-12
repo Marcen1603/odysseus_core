@@ -13,4 +13,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.net.data;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.net.communication;bundle-version="1.0.0"
 Service-Component: OSGI-INF/OdysseusNetLoggingComponent.xml,
  OSGI-INF/LogDestinationDistributedDataListener.xml
-Bundle-ActivationPolicy: lazy

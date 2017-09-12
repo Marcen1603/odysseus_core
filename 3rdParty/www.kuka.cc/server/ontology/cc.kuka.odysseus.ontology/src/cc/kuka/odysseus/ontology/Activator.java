@@ -16,6 +16,9 @@
  *******************************************************************************/
 package cc.kuka.odysseus.ontology;
 
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
 import cc.kuka.odysseus.ontology.common.SensorOntologyService;
 
 /**
@@ -24,9 +27,32 @@ import cc.kuka.odysseus.ontology.common.SensorOntologyService;
  * @version $Id$
  *
  */
-public class Activator  {
+public class Activator implements BundleActivator {
 
+    private static BundleContext context;
     private static SensorOntologyService sensorOntologyService;
+
+    static BundleContext getContext() {
+        return Activator.context;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void start(final BundleContext bundleContext) throws Exception {
+        Activator.context = bundleContext;
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop(final BundleContext bundleContext) throws Exception {
+        Activator.context = null;
+    }
 
     //@SuppressWarnings("static-method")
     protected void bindSensorOntologyService(final SensorOntologyService service) {

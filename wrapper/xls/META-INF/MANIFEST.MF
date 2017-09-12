@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: XLS wrapper
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.xls
 Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.wrapper.xls.Activator
 Bundle-Vendor: Christian Kuka
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.core.collection,
@@ -16,4 +17,3 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Bundle-ClassPath: lib/OpenXLS.jar,
  .
 Service-Component: OSGI-INF/XLSProtocolHandler.xml
-Bundle-ActivationPolicy: lazy

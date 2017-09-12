@@ -26,6 +26,9 @@ import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+
 import de.uniol.inf.is.odysseus.cep.epa.symboltable.relational.RelationalSymbolTableOperationFactory;
 import de.uniol.inf.is.odysseus.cep.metamodel.CepVariable;
 import de.uniol.inf.is.odysseus.core.collection.Context;
@@ -39,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecu
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.IExecutorCommand;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class SaseBuilder implements IQueryParser {
+public class SaseBuilder implements IQueryParser, BundleActivator {
 
 	private ISession user;
 	private IDataDictionary dd;
@@ -49,6 +52,14 @@ public class SaseBuilder implements IQueryParser {
 		return "SASE_Relational";
 	}
 
+	@Override
+	public void start(BundleContext arg0) throws Exception {
+
+	}
+
+	@Override
+	public void stop(BundleContext arg0) throws Exception {
+	}
 
 	public void printTree(CommonTree t, int indent) {
 		if (t != null) {

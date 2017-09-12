@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Aggregation
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.aggregation
 Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.aggregation.Activator
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: com.google.common.collect,
@@ -14,8 +15,8 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  fastutil;bundle-version="7.0.2",
  de.uniol.inf.is.odysseus.ruleengine;bundle-version="1.0.0"
 Service-Component: OSGI-INF/*
-Export-Package: de.uniol.inf.is.odysseus.aggregation.functions,
+Export-Package: de.uniol.inf.is.odysseus.aggregation,
+ de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.aggregation.logicaloperator,
  de.uniol.inf.is.odysseus.aggregation.physicaloperator
-Bundle-ActivationPolicy: lazy

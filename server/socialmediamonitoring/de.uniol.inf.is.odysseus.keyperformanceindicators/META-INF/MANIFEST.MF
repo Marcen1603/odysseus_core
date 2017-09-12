@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Keyperformanceindicators
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.keyperformanceindicators
 Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.keyperformanceindicators.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: de.uniol.inf.is.odysseus.core.server.logicaloperator,
  de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations,
@@ -29,4 +30,3 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.cep.transform;bundle-version="1.0.0"
 Service-Component: OSGI-INF/KPIRegistry.xml,OSGI-INF/ConversationReachKPI.xml,OSGI-INF/AudienceEngagementKPI.xml,
  OSGI-INF/ShareOfVoiceKPI.xml
-Bundle-ActivationPolicy: lazy

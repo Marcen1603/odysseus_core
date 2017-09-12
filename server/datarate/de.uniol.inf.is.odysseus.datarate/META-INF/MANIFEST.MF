@@ -18,4 +18,3 @@ Import-Package: de.uniol.inf.is.odysseus.core.server.metadata,
 Export-Package: de.uniol.inf.is.odysseus.datarate,
  de.uniol.inf.is.odysseus.datarate.logicaloperator,
  de.uniol.inf.is.odysseus.datarate.physicaloperator
-Bundle-ActivationPolicy: lazy

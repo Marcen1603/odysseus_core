@@ -3,8 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Finance
 Bundle-SymbolicName: de.uniol.inf.is.odysseus.finance
 Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: de.uniol.inf.is.odysseus.finance.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: de.uniol.inf.is.odysseus.aggregation.functions,
+Import-Package: de.uniol.inf.is.odysseus.aggregation,
+ de.uniol.inf.is.odysseus.aggregation.functions,
  de.uniol.inf.is.odysseus.aggregation.functions.factory,
  de.uniol.inf.is.odysseus.mep,
  de.uniol.inf.is.odysseus.probabilistic,
@@ -27,4 +29,3 @@ Export-Package: de.uniol.inf.is.odysseus.finance,
  de.uniol.inf.is.odysseus.finance.risk.var.estimator,
  de.uniol.inf.is.odysseus.finance.risk.var.model,
  de.uniol.inf.is.odysseus.finance.simulation
-Bundle-ActivationPolicy: lazy
