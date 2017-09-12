@@ -13,4 +13,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.spatial;bundle-version="1.0.0",
 Import-Package: com.vividsolutions.jts.geom,
  de.uniol.inf.is.odysseus.core.server.datadictionary,
  org.osgi.framework;version="1.6.0"
-Bundle-Activator: de.uniol.inf.is.odysseus.database.spatial.Activator
+Bundle-ActivationPolicy: lazy

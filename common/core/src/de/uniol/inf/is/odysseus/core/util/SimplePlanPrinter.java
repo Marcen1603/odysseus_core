@@ -55,7 +55,6 @@ public class SimplePlanPrinter<T> {
 			builder.append(getObjectName(object, printDetails));
 			builder.append('\n');
 			if (object instanceof ISubscriber) {
-				@SuppressWarnings("unchecked")
 				ISubscriber<?, ISubscription<?,?>> objectSub = (ISubscriber<?, ISubscription<?,?>>) object;
 				for (ISubscription<?,?> sub : objectSub.getSubscribedToSource()) {
 					builder.append(getIndent(depth));
