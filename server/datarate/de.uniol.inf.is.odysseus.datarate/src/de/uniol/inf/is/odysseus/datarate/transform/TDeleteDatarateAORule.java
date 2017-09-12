@@ -18,7 +18,7 @@ package de.uniol.inf.is.odysseus.datarate.transform;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.datarate.IDatarate;
 import de.uniol.inf.is.odysseus.datarate.logicaloperator.DatarateAO;
@@ -38,7 +38,7 @@ public class TDeleteDatarateAORule extends
 	@Override
 	public void execute(DatarateAO rename,
 			TransformationConfiguration transformConfig) throws RuleException {
-		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(
+		Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(
 				rename, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);

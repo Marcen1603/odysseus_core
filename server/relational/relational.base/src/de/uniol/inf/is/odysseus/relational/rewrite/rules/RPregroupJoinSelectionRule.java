@@ -8,12 +8,10 @@ import com.google.common.collect.Lists;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
@@ -25,7 +23,7 @@ import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
  * @author Michael Brand
  *
  */
-public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
+public class RPregroupJoinSelectionRule extends AbstractRelationalRewriteRule<JoinAO> {
 
 	@Override
 	public void execute(JoinAO join, RewriteConfiguration config) throws RuleException {
@@ -38,8 +36,8 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 	private void moveSelectionBehind(SelectAO select, JoinAO join) {
 		SelectAO newSelect = new SelectAO();
 		newSelect.setPredicate(select.getPredicate());
-		RelationalRestructHelper.removeOperator(select);
-		Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperatorBefore(newSelect, join);
+		removeOperator(select);
+		Collection<ILogicalOperator> toUpdate = LogicalPlan.insertOperatorBefore(newSelect, join);
 		retract(select);
 		insert(newSelect);
 		for (ILogicalOperator operator : toUpdate) {
@@ -80,7 +78,7 @@ public class RPregroupJoinSelectionRule extends AbstractRewriteRule<JoinAO> {
 	}
 
 	private static boolean isExecutableAfter(SelectAO select, JoinAO join) {
-		return RelationalRestructHelper.subsetPredicate(select.getPredicate(), join.getOutputSchema());
+		return subsetPredicate(select.getPredicate(), join.getOutputSchema());
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ToTupleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.RenameAttribute;
@@ -50,7 +50,7 @@ public class TToTupleAORule extends AbstractTransformationRule<ToTupleAO> {
 		// Two cases: Input schema is same than output schema --> remove
 		// operator
 		if (SDFSchema.compatible(toTuple.getOutputSchema(), toTuple.getInputSchema())) {
-			Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(toTuple, false);
+			Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(toTuple, false);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}
@@ -64,7 +64,7 @@ public class TToTupleAORule extends AbstractTransformationRule<ToTupleAO> {
 						new SDFExpression(attribute.getAttribute().getAttributeName(), resolver, MEP.getInstance())));
 			}
 			map.setExpressions(namedExpressions);
-			RestructHelper.replace(toTuple, map);
+			LogicalPlan.replace(toTuple, map);
 			insert(map);
 		}
 		retract(toTuple);

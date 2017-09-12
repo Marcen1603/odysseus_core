@@ -28,7 +28,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.CSVFileSink;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MetadataAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ToTupleAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
@@ -115,7 +114,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				toInsert.setLocalMetaAttribute(metaAttribute);
 				// TODO: Check why insertOperatorBefore seems to be right in
 				// other cases
-				RestructHelper.insertOperatorBefore2(toInsert, o);
+				LogicalPlan.insertOperatorBefore2(toInsert, o);
 				// TODO: We need to update all output schema and subscriptions upstream ... 
 			}
 		}

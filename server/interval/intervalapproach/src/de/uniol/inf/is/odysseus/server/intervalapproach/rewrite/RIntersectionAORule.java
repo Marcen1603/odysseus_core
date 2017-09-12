@@ -74,7 +74,7 @@ public class RIntersectionAORule extends AbstractRewriteRule<IntersectionAO> {
 //        right.initialize();
 //        this.insert(right);
 //
-//        final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+//        final Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(operator, true);
 //        for (final ILogicalOperator o : toUpdate) {
 //            this.update(o);
 //        }

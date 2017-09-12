@@ -15,7 +15,14 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 
 /**
  * Ist nur eine Hilfsklasse um den obersten Knoten eines Plans eindeutig
@@ -49,5 +56,53 @@ public class TopAO extends AbstractLogicalOperator {
 	@Override
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
+	}
+	
+	/**
+	 * Creates a new {@link TopAO} on top of the sinks.
+	 *
+	 * @param sinks
+	 *            The {@link ILogicalOperator}s which shall be subscribed to new
+	 *            {@link TopAO}.
+	 * @return The new {@link TopAO}.
+	 */
+	public static TopAO generateTopAO(final Collection<ILogicalOperator> sinks) {
+
+		final TopAO topAO = new TopAO();
+		int inputPort = 0;
+		for (ILogicalOperator sink : sinks)
+			topAO.subscribeToSource(sink, inputPort++, 0,
+					sink.getOutputSchema());
+
+		return topAO;
+
+	}
+
+	/**
+	 * Removes all {@link TopAO} logical operators from a list of
+	 * {@link ILogicalOperator}s representing an {@link ILogicalQuery}.
+	 *
+	 * @param operators
+	 *            The list of {@link ILogicalOperator}s representing an
+	 *            {@link ILogicalQuery}.
+	 */
+	public static void removeTopAOs(List<ILogicalOperator> operators) {
+
+		final List<ILogicalOperator> operatorsToRemove = Lists.newArrayList();
+
+		for (final ILogicalOperator operator : operators) {
+
+			if (operator instanceof TopAO) {
+
+				operator.unsubscribeFromAllSources();
+				operatorsToRemove.add(operator);
+
+			}
+
+		}
+
+		for (final ILogicalOperator operatorToRemove : operatorsToRemove)
+			operators.remove(operatorToRemove);
+
 	}
 }

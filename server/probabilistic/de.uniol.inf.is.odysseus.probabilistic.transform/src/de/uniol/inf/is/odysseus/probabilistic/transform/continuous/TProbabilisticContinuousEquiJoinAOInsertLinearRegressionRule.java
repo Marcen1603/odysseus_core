@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -244,7 +244,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		linearRegressionMergeAO.setName(operator.getName()
 				+ "_linearRegressionMerge");
-		RestructHelper.insertOperatorBefore(linearRegressionMergeAO, operator);
+		LogicalPlan.insertOperatorBefore(linearRegressionMergeAO, operator);
 		linearRegressionMergeAO.initialize();
 		this.insert(linearRegressionMergeAO);
 	}
@@ -294,7 +294,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		linearRegressionAO.setName(operator.getName() + "_linearRegression");
 
-		RestructHelper.insertOperatorBefore(linearRegressionAO, operator
+		LogicalPlan.insertOperatorBefore(linearRegressionAO, operator
 				.getSubscribedToSource(port).getSource());
 		linearRegressionAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(
@@ -367,7 +367,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		sampleAO.setName(operator.getName() + "_sample");
 
-		RestructHelper.insertOperatorBefore(sampleAO, operator
+		LogicalPlan.insertOperatorBefore(sampleAO, operator
 				.getSubscribedToSource(port).getSource());
 		sampleAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(

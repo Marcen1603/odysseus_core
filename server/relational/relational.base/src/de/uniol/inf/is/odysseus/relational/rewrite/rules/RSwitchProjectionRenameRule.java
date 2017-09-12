@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchProjectionRenameRule extends
 		AbstractSwitchProjectionRule<RenameAO> {
@@ -31,8 +30,7 @@ public class RSwitchProjectionRenameRule extends
 		ProjectAO proj = (ProjectAO) getSubscribingOperatorAndCheckType(rename,
 				ProjectAO.class);
 		if (proj != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(proj, rename);
+			Collection<ILogicalOperator> toUpdate = switchOperator(proj, rename);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}

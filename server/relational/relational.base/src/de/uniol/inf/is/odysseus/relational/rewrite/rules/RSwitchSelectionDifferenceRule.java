@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 /**
  * 
@@ -38,7 +37,7 @@ public class RSwitchSelectionDifferenceRule extends AbstractSwitchSelectionRule<
         if (sel != null) {
             Collection<ILogicalOperator> toInsert = new ArrayList<>();
             Collection<ILogicalOperator> toRemove = new ArrayList<>();
-            Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.switchOperator(sel, difference, toInsert, toRemove);
+            Collection<ILogicalOperator> toUpdate = switchOperator(sel, difference, toInsert, toRemove);
             for (ILogicalOperator o : toInsert) {
                 insert(o);
             }
@@ -60,7 +59,7 @@ public class RSwitchSelectionDifferenceRule extends AbstractSwitchSelectionRule<
     }
 
     private static boolean canSwitch(SelectAO sel, DifferenceAO difference) {
-        return RelationalRestructHelper.subsetPredicate(sel.getPredicate(), difference.getInputSchema(0)) || RelationalRestructHelper.subsetPredicate(sel.getPredicate(), difference.getInputSchema(1));
+        return subsetPredicate(sel.getPredicate(), difference.getInputSchema(0)) || subsetPredicate(sel.getPredicate(), difference.getInputSchema(1));
     }
 
     @Override

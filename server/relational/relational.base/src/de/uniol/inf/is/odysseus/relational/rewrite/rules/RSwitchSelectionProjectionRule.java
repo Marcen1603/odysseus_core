@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchSelectionProjectionRule extends
 		AbstractSwitchSelectionRule<ProjectAO> {
@@ -31,8 +30,7 @@ public class RSwitchSelectionProjectionRule extends
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(proj,
 				SelectAO.class);
 		if (sel != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(sel, proj);
+			Collection<ILogicalOperator> toUpdate = switchOperator(sel, proj);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}

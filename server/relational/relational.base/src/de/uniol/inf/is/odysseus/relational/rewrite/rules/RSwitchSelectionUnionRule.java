@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchSelectionUnionRule extends
 		AbstractSwitchSelectionRule<UnionAO> {
@@ -34,8 +33,7 @@ public class RSwitchSelectionUnionRule extends
 		if (sel != null) {
 			Collection<ILogicalOperator> toInsert = new ArrayList<ILogicalOperator>();
 			Collection<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(sel, union, toInsert);
+			Collection<ILogicalOperator> toUpdate = switchOperator(sel, union, toInsert);
 			for (ILogicalOperator o : toInsert) {
 				insert(o);
 			}

@@ -53,7 +53,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
@@ -164,7 +164,7 @@ public class RInsertSensingDevicesRule extends AbstractRewriteRule<QualityAO> {
 
         final MapAO mapAO = RInsertSensingDevicesRule.insertMapAO(operator);
 
-        final Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+        final Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(operator, true);
         for (final ILogicalOperator o : toUpdate) {
             this.update(o);
         }

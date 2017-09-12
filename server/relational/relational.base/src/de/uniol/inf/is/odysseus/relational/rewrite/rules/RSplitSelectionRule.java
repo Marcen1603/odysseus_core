@@ -23,7 +23,7 @@ import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
@@ -49,7 +49,7 @@ public class RSplitSelectionRule extends AbstractRewriteRule<SelectAO> {
             SelectAO newSel = createNewSelect(sel, preds.get(i));
             RestructParameterInfoUtil.updatePredicateParameterInfo(newSel, newSel.getParameterInfos(), newSel.getPredicate());
 
-            RestructHelper.insertOperator(newSel, sel, 0, 0, 0);
+            LogicalPlan.insertOperator(newSel, sel, 0, 0, 0);
             insert(newSel);
         }
         sel.setPredicate(preds.get(preds.size() - 1));

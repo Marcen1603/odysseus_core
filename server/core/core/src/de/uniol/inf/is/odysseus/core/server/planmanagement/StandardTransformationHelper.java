@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -42,7 +42,7 @@ public class StandardTransformationHelper implements ITransformationHelper {
 	@Override
 	public Collection<ILogicalOperator> replace(ILogicalOperator oldLogical,
 			ILogicalOperator newLogical) {
-		return RestructHelper.replace(oldLogical, newLogical);
+		return LogicalPlan.replace(oldLogical, newLogical);
 	}
 
 	@Override

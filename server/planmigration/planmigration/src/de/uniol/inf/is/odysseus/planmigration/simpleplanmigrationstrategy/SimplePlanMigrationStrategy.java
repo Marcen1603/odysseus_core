@@ -47,9 +47,9 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.IPlanMig
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exception.QueryOptimizationException;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.query.PhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.scheduler.exception.NoSchedulerLoadedException;
 import de.uniol.inf.is.odysseus.core.server.util.PhysicalPlanToStringVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.PhysicalRestructHelper;
 import de.uniol.inf.is.odysseus.core.util.AbstractTreeWalker;
 import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.RemoveOwnersGraphVisitor;
@@ -360,7 +360,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			List<Integer> sinkInPorts = new ArrayList<Integer>();
 			sinkInPorts.add(0);
 
-			PhysicalRestructHelper.removeOperator(source, oldOpBeforeSink.getSubscribedToSource(0).getSourceOutPort(),
+			PhysicalQuery.removeOperator(source, oldOpBeforeSink.getSubscribedToSource(0).getSourceOutPort(),
 					sinks, sinkInPorts, oldOpBeforeSink);
 		} else {
 			LOG.debug("No old ProjectPO existing, so nothing removed");
@@ -431,7 +431,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 			LOG.error("Sink is subscribed to more than one operator");
 		}
 		// append the router to the operators before the sink.
-		PhysicalRestructHelper.appendBinaryOperator(router, oldOpsBeforeSink.get(0), newOpsBeforeSink.get(0));
+		PhysicalQuery.appendBinaryOperator(router, oldOpsBeforeSink.get(0), newOpsBeforeSink.get(0));
 
 		// block router before we change the active sink connections.
 		IMyLock locker = new LockingLock();
@@ -506,7 +506,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 		} else {
 			LOG.debug("No ProjectPO needed");
 		}
-		PhysicalRestructHelper.appendBinaryOperator(router, (ISource) lastOperatorOldPlan,
+		PhysicalQuery.appendBinaryOperator(router, (ISource) lastOperatorOldPlan,
 				(ISource) lastOperatorNewPlan);
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Router " + router.getClass().getSimpleName() + " appended to child1: "
@@ -624,7 +624,7 @@ public class SimplePlanMigrationStrategy implements IPlanMigrationStrategy {
 					parentInports.add(sub.getSinkInPort());
 				}
 
-				PhysicalRestructHelper.removeOperator(children.get(0), 0, parents, parentInports, buffer);
+				PhysicalQuery.removeOperator(children.get(0), 0, parents, parentInports, buffer);
 				for (ISink<?> sink : parents) {
 					sink.open(physicalQuery);
 				}

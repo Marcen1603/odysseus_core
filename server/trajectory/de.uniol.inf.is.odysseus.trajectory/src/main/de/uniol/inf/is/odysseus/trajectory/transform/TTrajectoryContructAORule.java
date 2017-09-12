@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.PredicateWindowAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.AggregateItem;
@@ -79,7 +79,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 			}
 		}
 		
-		RestructHelper.removeOperator(operator, false);
+		LogicalPlan.removeOperator(operator, false);
 		this.retract(operator);
 	}
 
@@ -102,7 +102,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		predicateWindowAO.setEndCondition(predEnd);
 		predicateWindowAO.setOutputSchema(operatorBefore.getInputSchema());
 		
-		RestructHelper.insertOperatorBefore(predicateWindowAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(predicateWindowAO, operatorBefore);
 		this.insert(predicateWindowAO);
 		
 		return predicateWindowAO;
@@ -115,7 +115,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		
 		final AggregateAO aggregateAO = new AggregateAO();
 		
-		RestructHelper.insertOperatorBefore(aggregateAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(aggregateAO, operatorBefore);
 		
 		aggregateAO.setGroupingAttributes(groupBy);
 		aggregateAO.setAggregationItems(aggregates);
@@ -128,7 +128,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 	private final UnaryLogicalOp insertTrajectoryIdEnrichAO(final UnaryLogicalOp operatorBefore) {
 		final UnaryLogicalOp trajectoryConstructAO = new TrajectoryIdEnrichAO();
 		
-		RestructHelper.insertOperatorBefore(trajectoryConstructAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(trajectoryConstructAO, operatorBefore);
 		this.insert(trajectoryConstructAO);
 		
 		return trajectoryConstructAO;
@@ -141,7 +141,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		levelDBEnrichAO.setOut(out);
 		levelDBEnrichAO.setLevelDBPath(levelDBPath);
 		
-		RestructHelper.insertOperatorBefore(levelDBEnrichAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(levelDBEnrichAO, operatorBefore);
 		this.insert(levelDBEnrichAO);
 		
 		return levelDBEnrichAO;
@@ -152,7 +152,7 @@ public class TTrajectoryContructAORule extends AbstractTransformationRule<Trajec
 		timestampAO.setName(timestampAO.getStandardName());
 		timestampAO.setClearEnd(true);
 				
-		RestructHelper.insertOperatorBefore(timestampAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(timestampAO, operatorBefore);
 		this.insert(timestampAO);
 		
 		return timestampAO;

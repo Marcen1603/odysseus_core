@@ -1,19 +1,4 @@
-/********************************************************************************** 
- * Copyright 2011 The Odysseus Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package de.uniol.inf.is.odysseus.relational.rewrite;
+package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +16,7 @@ import de.uniol.inf.is.odysseus.core.expression.AbstractRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.IRelationalExpression;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
@@ -42,23 +28,16 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnionAO;
 import de.uniol.inf.is.odysseus.core.server.predicate.ComplexPredicateHelper;
 import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
-import de.uniol.inf.is.odysseus.relational.rewrite.rules.RestructParameterInfoUtil;
+import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 
-/**
- * This class provides functions to support Restructuring Aspects
- * 
- * @author Marco Grawunder
- * 
- */
-public class RelationalRestructHelper {
-
-	private static final Logger LOG = LoggerFactory.getLogger(RelationalRestructHelper.class);
+public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRule<T> {
+	
+	static final Logger LOG = LoggerFactory.getLogger(AbstractRelationalRewriteRule.class); 
 
 	public static boolean containsAllSources(ILogicalOperator op, Set<?> sources) {
 		Collection<SDFAttribute> schema = op.getOutputSchema().getAttributes();
@@ -148,7 +127,7 @@ public class RelationalRestructHelper {
 	}
 
 	public static Collection<ILogicalOperator> switchOperator(SelectAO father, AbstractWindowAO son) {
-		return RestructHelper.simpleOperatorSwitch(father, son);
+		return LogicalPlan.simpleOperatorSwitch(father, son);
 	}
 
 	public static Collection<ILogicalOperator> switchOperator(final ProjectAO father, final RenameAO son) {
@@ -187,69 +166,16 @@ public class RelationalRestructHelper {
 		son.setOutputSchema(SDFSchemaFactory.createNewWithAttributes(newOutputAttributes, son.getOutputSchema()));
 		RestructParameterInfoUtil.updateAliasesParameterInfo(son.getParameterInfos(), newAliases);
 
-		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);
+		Collection<ILogicalOperator> ret = LogicalPlan.simpleOperatorSwitch(father, son);
 		return ret;
 	}
 
-	// public static Collection<ILogicalOperator> switchOperator(ProjectAO
-	// father, RenameAO son) {
-	//
-	// SDFSchema inputSchema = son.getInputSchema();
-	// SDFSchema renameOutputSchema = son.getOutputSchema();
-	// SDFSchema oldOutputSchema = father.getOutputSchema();
-	// LogicalSubscription toDown = son.getSubscribedToSource(0);
-	// // TODO: Can there be more than one father??
-	// LogicalSubscription toUp = father.getSubscriptions().iterator().next();
-	//
-	// son.unsubscribeFromSource(toDown);
-	// father.unsubscribeFromSource(son, 0, 0, son.getOutputSchema());
-	// father.unsubscribeSink(toUp);
-	//
-	// father.subscribeTo(toDown.getTarget(), toDown.getSchema());
-	//
-	// // change attribute names for projection
-	// List<SDFAttribute> newOutputAttributes = new ArrayList<SDFAttribute>();
-	// for (SDFAttribute a : oldOutputSchema) {
-	// int pos = son.getOutputSchema().indexOf(a);
-	// newOutputAttributes.add(inputSchema.get(pos));
-	// }
-	// SDFSchema newOutputSchema = new SDFSchema(oldOutputSchema,
-	// newOutputAttributes);
-	// father.setOutputSchema(newOutputSchema);
-	//
-	// father.subscribeSink(son, 0, 0, father.getOutputSchema());
-	//
-	// // remove attributes from rename operator that get projected away
-	// Iterator<SDFAttribute> inIt = inputSchema.iterator();
-	// Iterator<SDFAttribute> outIt = renameOutputSchema.iterator();
-	// List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-	// while (inIt.hasNext()) {
-	// SDFAttribute nextIn = inIt.next();
-	// SDFAttribute nextOut = outIt.next();
-	// if (newOutputSchema.contains(nextIn)) {
-	// attrs.add(nextOut);
-	// }
-	// }
-	// SDFSchema newRenameSchema = new SDFSchema(inputSchema.getURI(),
-	// inputSchema.getType(), attrs);
-	// son.setOutputSchema(newRenameSchema);
-	//
-	// son.subscribeSink(toUp.getTarget(), toUp.getSinkInPort(), 0,
-	// son.getOutputSchema());
-	//
-	// Collection<ILogicalOperator> toUpdate = new
-	// ArrayList<ILogicalOperator>(2);
-	// toUpdate.add(toDown.getTarget());
-	// toUpdate.add(toUp.getTarget());
-	// return toUpdate;
-	// }
-
 	public static Collection<ILogicalOperator> switchOperator(ProjectAO father, AbstractWindowAO son) {
-		return RestructHelper.simpleOperatorSwitch(father, son);
+		return LogicalPlan.simpleOperatorSwitch(father, son);
 	}
 
 	public static Collection<ILogicalOperator> switchOperator(SelectAO father, ProjectAO son) {
-		return RestructHelper.simpleOperatorSwitch(father, son);
+		return LogicalPlan.simpleOperatorSwitch(father, son);
 	}
 
 	private static Collection<ILogicalOperator> switchOperatorInternal(SelectAO father, AbstractLogicalOperator son,
@@ -267,7 +193,7 @@ public class RelationalRestructHelper {
 		// TODO: check if 0,0 as last param is ok should be retrieved from
 		// father subscription?
 		for (int i = 0; i < son.getNumberOfInputs(); i++) {
-			ret.addAll(RestructHelper.insertOperator(toAdd[i], son, i, 0, 0));
+			ret.addAll(LogicalPlan.insertOperator(toAdd[i], son, i, 0, 0));
 		}
 		return ret;
 	}
@@ -288,7 +214,7 @@ public class RelationalRestructHelper {
 		// TODO: check if 0,0 as last param is ok should be retrieved from
 		// father subscription?
 		for (int i = 0; i < son.getNumberOfInputs(); i++) {
-			ret.addAll(RestructHelper.insertOperator(toAdd[i], son, i, 0, 0));
+			ret.addAll(LogicalPlan.insertOperator(toAdd[i], son, i, 0, 0));
 		}
 		return ret;
 	}
@@ -329,7 +255,7 @@ public class RelationalRestructHelper {
 		// set
 		// one selection as input on both ports
 		// if (hasSameInput) {
-		// ret.addAll(RestructHelper.insertOperator(newSel, join, 1, 0, 0));
+		// ret.addAll(LogicalPlan.insertOperator(newSel, join, 1, 0, 0));
 		// } else {
 		// newSel = createSelection(sel, join, 1, ret);
 		// if (newSel != null) {
@@ -349,7 +275,7 @@ public class RelationalRestructHelper {
 		}
 		SelectAO newSel = new SelectAO();
 		newSel.setPredicate(select.getPredicate());
-		ret.addAll(RestructHelper.insertOperator(newSel, join, port, 0, 0));
+		ret.addAll(LogicalPlan.insertOperator(newSel, join, port, 0, 0));
 		return newSel;
 	}
 
@@ -379,12 +305,12 @@ public class RelationalRestructHelper {
 		}
 		SelectAO newSel = new SelectAO();
 		newSel.setPredicate(select.getPredicate());
-		ret.addAll(RestructHelper.insertOperator(newSel, difference, port, 0, 0));
+		ret.addAll(LogicalPlan.insertOperator(newSel, difference, port, 0, 0));
 		return newSel;
 	}
 
 	public static Collection<ILogicalOperator> switchOperator(final SelectAO father, final RenameAO son) {
-		Collection<ILogicalOperator> ret = RestructHelper.simpleOperatorSwitch(father, son);
+		Collection<ILogicalOperator> ret = LogicalPlan.simpleOperatorSwitch(father, son);
 		ComplexPredicateHelper.visitPredicates(father.getPredicate(), new IUnaryFunctor<IPredicate<?>>() {
 			@Override
 			public void call(IPredicate<?> curPred) {
@@ -404,12 +330,12 @@ public class RelationalRestructHelper {
 
 	// public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
 	// LoggerHelper.getInstance(LOGGER_NAME).debug("removing rename:" + op);
-	// return RestructHelper.removeOperator(op, true);
+	// return LogicalPlan.removeOperator(op, true);
 	// }
 
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
 		LOG.debug("removing operator:" + op);
-		return RestructHelper.removeOperator(op, false);
+		return LogicalPlan.removeOperator(op, false);
 	}
 
 }
