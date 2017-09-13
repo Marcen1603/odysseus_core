@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchSelectionWindowRule extends
 		AbstractSwitchSelectionRule<AbstractWindowAO> {
@@ -32,8 +31,7 @@ public class RSwitchSelectionWindowRule extends
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(win,
 				SelectAO.class);
 		if (sel != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(sel, win);
+			Collection<ILogicalOperator> toUpdate = switchOperator(sel, win);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}

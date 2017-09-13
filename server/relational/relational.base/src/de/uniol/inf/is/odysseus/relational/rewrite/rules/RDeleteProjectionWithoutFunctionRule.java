@@ -21,13 +21,11 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public class RDeleteProjectionWithoutFunctionRule extends
-		AbstractRewriteRule<ProjectAO> {
+		AbstractRelationalRewriteRule<ProjectAO> {
 
 	@Override
 	public int getPriority() {
@@ -36,8 +34,7 @@ public class RDeleteProjectionWithoutFunctionRule extends
 
 	@Override
 	public void execute(ProjectAO proj, RewriteConfiguration transformConfig) {
-		Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-				.removeOperator(proj);
+		Collection<ILogicalOperator> toUpdate = removeOperator(proj);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}

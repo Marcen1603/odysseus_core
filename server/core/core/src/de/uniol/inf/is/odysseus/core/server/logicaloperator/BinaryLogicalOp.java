@@ -15,11 +15,12 @@
   */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
+import de.uniol.inf.is.odysseus.core.logicaloperator.IBinaryLogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 
 
 
-public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
+public abstract class BinaryLogicalOp extends AbstractLogicalOperator implements IBinaryLogicalOperator{
 
 	private static final long serialVersionUID = 1558576598140153762L;
 	public static final int LEFT = 0;
@@ -33,27 +34,14 @@ public abstract class BinaryLogicalOp extends AbstractLogicalOperator {
 		super();
 	}
 	
+	@Override
 	public ILogicalOperator getLeftInput(){
 		return getSubscribedToSource(LEFT).getSource();
 	}
 	
+	@Override
 	public ILogicalOperator getRightInput(){
 		return getSubscribedToSource(RIGHT).getSource();
 	}
 
-//	public void setLeftInput(ILogicalOperator source, SDFSchema inputSchema) {
-//		subscribeTo(source, LEFT, 0, inputSchema);
-//	}
-//
-//	public void setRightInput(ILogicalOperator source, SDFSchema inputSchema) {
-//		subscribeTo(source, RIGHT, 0, inputSchema);
-//	}	
-	
-//	private ISource<?> getLeftPhysInput(){
-//		return getPhysSubscriptionTo(LEFT)==null?null:getPhysSubscriptionTo(LEFT).getTarget();
-//	}
-//
-//	private ISource<?> getRightPhysInput(){
-//		return getPhysSubscriptionTo(RIGHT)==null?null:getPhysSubscriptionTo(RIGHT).getTarget();
-//	}
 }

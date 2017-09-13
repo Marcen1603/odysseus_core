@@ -20,12 +20,10 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<SelectAO> {
+public class RDeleteSelectionWithoutPredicate extends AbstractRelationalRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
@@ -34,7 +32,7 @@ public class RDeleteSelectionWithoutPredicate extends AbstractRewriteRule<Select
 
 	@Override
 	public void execute(SelectAO sel, RewriteConfiguration transformConfig) {
-		Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);		
+		Collection<ILogicalOperator> toUpdate = removeOperator(sel);		
 		for (ILogicalOperator o:toUpdate){
 			update(o);
 		}

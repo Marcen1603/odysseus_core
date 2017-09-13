@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchProjectionWindowRule extends
 		AbstractSwitchProjectionRule<AbstractWindowAO> {
@@ -32,8 +31,7 @@ public class RSwitchProjectionWindowRule extends
 		ProjectAO proj = (ProjectAO) getSubscribingOperatorAndCheckType(win,
 				ProjectAO.class);
 		if (proj != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(proj, win);
+			Collection<ILogicalOperator> toUpdate = switchOperator(proj, win);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}

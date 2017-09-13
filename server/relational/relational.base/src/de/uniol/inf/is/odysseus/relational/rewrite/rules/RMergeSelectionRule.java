@@ -28,12 +28,10 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.ParameterPredicateOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.mep.optimizer.BooleanExpressionOptimizer;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
-public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
+public class RMergeSelectionRule extends AbstractRelationalRewriteRule<SelectAO> {
 
 	@Override
 	public int getPriority() {
@@ -71,7 +69,7 @@ public class RMergeSelectionRule extends AbstractRewriteRule<SelectAO> {
 				RestructParameterInfoUtil.updatePredicateParameterInfo(operator, operator.getParameterInfos(),
 						operator.getPredicate());
 
-				Collection<ILogicalOperator> toUpdate = RelationalRestructHelper.removeOperator(sel);
+				Collection<ILogicalOperator> toUpdate = removeOperator(sel);
 				for (ILogicalOperator o : toUpdate) {
 					update(o);
 				}

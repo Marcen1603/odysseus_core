@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.incubation.graph.functions.BestPost;
 import de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.BestPostAO;
@@ -49,9 +49,9 @@ public class TBestPostAORule extends AbstractTransformationRule<BestPostAO> {
 		aggregationAo.setAggregations(aggregations);
 
 
-		RestructHelper.insertOperatorBefore(aggregationAo, ao);
+		LogicalPlan.insertOperatorBefore(aggregationAo, ao);
 		insert(aggregationAo);
-		RestructHelper.removeOperator(ao, false);
+		LogicalPlan.removeOperator(ao, false);
 		retract(ao);
 	}
 

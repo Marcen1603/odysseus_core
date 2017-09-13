@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.CountNodesAO;
@@ -37,9 +37,9 @@ public class TCountNodesAORule extends AbstractTransformationRule<CountNodesAO> 
 		List<NamedExpression> expressions = new ArrayList<NamedExpression>();
 		expressions.add(namedExpression);
 		mapAo.setExpressions(expressions);
-		RestructHelper.insertOperatorBefore(mapAo, ao);
+		LogicalPlan.insertOperatorBefore(mapAo, ao);
 		insert(mapAo);
-		RestructHelper.removeOperator(ao, false);
+		LogicalPlan.removeOperator(ao, false);
 		retract(ao);
 	}
 

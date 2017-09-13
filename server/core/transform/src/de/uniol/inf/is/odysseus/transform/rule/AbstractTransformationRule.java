@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -251,7 +251,7 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 		// timestampAO.subscribeTo(operator, operator.getOutputSchema());
 		timestampAO.setName(timestampAO.getStandardName());
-		RestructHelper.insertOperatorBefore(timestampAO, operator);
+		LogicalPlan.insertOperatorBefore(timestampAO, operator);
 		insert(timestampAO);
 		return timestampAO;
 	}

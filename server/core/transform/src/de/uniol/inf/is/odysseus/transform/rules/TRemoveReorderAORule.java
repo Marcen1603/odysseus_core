@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IOutOfOrderHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -35,7 +35,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 			}
 		}
 
-		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+		Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(operator, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}

@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.WindowAO;
@@ -115,7 +115,7 @@ public class TTestPredictionAORule extends
 			// ,COUNT_OF_SQUARE_ERROR_ATTRIBUTE_NAME
 					}, rmseMapFunction, aggregateAO);
 
-			RestructHelper.removeOperator(operator, false);
+			LogicalPlan.removeOperator(operator, false);
 			retract(operator);
 		} else {
 			throw new IllegalArgumentException("Metric " + operator.getMetric()
@@ -140,7 +140,7 @@ public class TTestPredictionAORule extends
 			windowAO.setWindowSize(timeValueItem);
 		}
 
-		RestructHelper.insertOperatorBefore(windowAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(windowAO, operatorBefore);
 		insert(windowAO);
 		return windowAO;
 	}
@@ -154,7 +154,7 @@ public class TTestPredictionAORule extends
 		final AggregateAO aggregateAO = new AggregateAO();
 		aggregateAO.setName(operatorName);
 
-		RestructHelper.insertOperatorBefore(aggregateAO, operatorBefore);
+		LogicalPlan.insertOperatorBefore(aggregateAO, operatorBefore);
 
 		final SDFAttribute modelErrorAttribute = FindAttributeHelper
 				.findAttributeByName(aggregateAO, SQUARE_ERROR_ATTRIBUTE_NAME);
@@ -205,8 +205,8 @@ public class TTestPredictionAORule extends
 
 		mapAO.setExpressions(namedExpressions);
 		System.out.println("mapAO: " + mapAO);
-		// RestructHelper.replace(operatorBefore, mapAO);
-		RestructHelper.insertOperatorBefore(mapAO, operatorBefore);
+		// LogicalPlan.replace(operatorBefore, mapAO);
+		LogicalPlan.insertOperatorBefore(mapAO, operatorBefore);
 		insert(mapAO);
 		return mapAO;
 	}

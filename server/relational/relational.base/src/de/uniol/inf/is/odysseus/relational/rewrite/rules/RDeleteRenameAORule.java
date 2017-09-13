@@ -20,7 +20,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
@@ -36,7 +36,7 @@ public class RDeleteRenameAORule extends AbstractRewriteRule<RenameAO> {
 
 	@Override
 	public void execute(RenameAO rename, RewriteConfiguration transformConfig) throws RuleException {
-		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(rename, true);
+		Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(rename, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}

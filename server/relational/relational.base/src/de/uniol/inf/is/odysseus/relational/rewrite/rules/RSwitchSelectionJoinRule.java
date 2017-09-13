@@ -22,7 +22,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchSelectionJoinRule extends
 		AbstractSwitchSelectionRule<JoinAO> {
@@ -34,8 +33,7 @@ public class RSwitchSelectionJoinRule extends
 		if (sel != null) {
 			Collection<ILogicalOperator> toInsert = new ArrayList<ILogicalOperator>();
 			Collection<ILogicalOperator> toRemove = new ArrayList<ILogicalOperator>();
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(sel, join, toInsert, toRemove);
+			Collection<ILogicalOperator> toUpdate = switchOperator(sel, join, toInsert, toRemove);
 			for (ILogicalOperator o : toInsert) {
 				insert(o);
 			}
@@ -58,9 +56,9 @@ public class RSwitchSelectionJoinRule extends
 	}
 
 	public static boolean canSwitch(SelectAO sel, JoinAO join) {
-		return RelationalRestructHelper.subsetPredicate(sel.getPredicate(),
+		return subsetPredicate(sel.getPredicate(),
 				join.getInputSchema(0))
-				|| RelationalRestructHelper.subsetPredicate(sel.getPredicate(),
+				|| subsetPredicate(sel.getPredicate(),
 						join.getInputSchema(1));
 	}
 

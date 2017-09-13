@@ -21,7 +21,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopKAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
@@ -85,8 +85,8 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			topKAo.setSuppressDuplicates(false);
 			topKAo.setTriggerByPunctuation(true);
 
-			RestructHelper.insertOperatorBefore(topKAo, operator);
-			// RestructHelper.replace(operator, topKAo);
+			LogicalPlan.insertOperatorBefore(topKAo, operator);
+			// LogicalPlan.replace(operator, topKAo);
 			insert(topKAo);
 		}
 
@@ -101,11 +101,11 @@ public class TRecommendAORule extends AbstractTransformationRule<RecommendAO> {
 			final SelectAO selectAo = new SelectAO(predicate);
 			// selectAo.setName(selectAo.getClass().getSimpleName());
 			selectAo.setOutputSchema(operator.getInputSchema());
-			RestructHelper.insertOperatorBefore(selectAo, operator);
+			LogicalPlan.insertOperatorBefore(selectAo, operator);
 			insert(selectAo);
 		}
 
-		RestructHelper.removeOperator(operator, false);
+		LogicalPlan.removeOperator(operator, false);
 		retract(operator);
 	}
 

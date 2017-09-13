@@ -21,7 +21,6 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.RewriteConfiguration;
-import de.uniol.inf.is.odysseus.relational.rewrite.RelationalRestructHelper;
 
 public class RSwitchSelectionRenameRule extends
 		AbstractSwitchSelectionRule<RenameAO> {
@@ -31,8 +30,7 @@ public class RSwitchSelectionRenameRule extends
 		SelectAO sel = (SelectAO) getSubscribingOperatorAndCheckType(rename,
 				SelectAO.class);
 		if (sel != null) {
-			Collection<ILogicalOperator> toUpdate = RelationalRestructHelper
-					.switchOperator(sel, rename);
+			Collection<ILogicalOperator> toUpdate = switchOperator(sel, rename);
 			for (ILogicalOperator o : toUpdate) {
 				update(o);
 			}

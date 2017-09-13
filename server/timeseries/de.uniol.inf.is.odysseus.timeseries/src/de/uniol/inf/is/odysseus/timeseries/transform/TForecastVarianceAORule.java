@@ -86,8 +86,8 @@ public class TForecastVarianceAORule extends AbstractTransformationRule<Forecast
 	private void insertJoinBefore(final ForecastVarianceAO operator) {
 		final JoinAO join = new JoinAO();
 
-		// RestructHelper.insertOperator(join, operator, 0, 0, 0);
-		// RestructHelper.insertOperator(join, operator, 1, 1, 0);
+		// LogicalPlan.insertOperator(join, operator, 0, 0, 0);
+		// LogicalPlan.insertOperator(join, operator, 1, 1, 0);
 
 		final Collection<LogicalSubscription> subscriptions = new ArrayList<>(operator.getSubscribedToSource());
 		for (final LogicalSubscription s : subscriptions) {

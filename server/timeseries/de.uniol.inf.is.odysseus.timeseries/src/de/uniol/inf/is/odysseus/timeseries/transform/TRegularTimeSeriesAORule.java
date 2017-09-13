@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractWindowWithWidthAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunction;
@@ -36,12 +36,12 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 		timewindowAO.setWindowSize(timeValueItem);
 		timewindowAO.setWindowSlide(timeValueItem);
 		
-		RestructHelper.insertOperatorBefore(timewindowAO, operator); 
+		LogicalPlan.insertOperatorBefore(timewindowAO, operator); 
 		insert(timewindowAO);
 		
 		// Aggregation to the last elements of TimeWindow-Intervall
 		AggregateAO aggregateAO = new AggregateAO();
-		RestructHelper.insertOperatorBefore(aggregateAO, timewindowAO); 
+		LogicalPlan.insertOperatorBefore(aggregateAO, timewindowAO); 
 
 		SDFSchema inputSchema = operator.getInputSchema();
 		List<SDFAttribute> inputAttributes =  inputSchema.getAttributes();
@@ -53,7 +53,7 @@ public class TRegularTimeSeriesAORule extends AbstractTransformationRule<Regular
 		
 		insert(aggregateAO);
 		
-		RestructHelper.removeOperator(operator, false);
+		LogicalPlan.removeOperator(operator, false);
 		retract(operator);
 
 	}
