@@ -7,10 +7,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class QueryEventListener implements IPOEventListener {
-	private Measurements measurement;
+	private Measurement measurement;
 
-	public QueryEventListener(IPhysicalQuery query) {
-		this.measurement = new Measurements(query);
+	public QueryEventListener(IPhysicalQuery query, Measurement m) {
+		this.measurement = m;
 		for (IPhysicalOperator o : query.getPhysicalChilds()) {
 			if (!query.getLeafSources().contains(o) && !query.getIterableSources().contains(o)
 					&& !query.getIteratableLeafSources().contains(o)) {
@@ -22,6 +22,6 @@ public class QueryEventListener implements IPOEventListener {
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
-		new ThreadCalculateLatency(this.measurement, event, nanoTimestamp).start();
+		new ThreadCalculateLatency(this.measurement, event, nanoTimestamp);
 	}
 }
