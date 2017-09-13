@@ -229,12 +229,6 @@ public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRu
 		return switchOperatorInternal(father, son, toInsert);
 	}
 
-	// invalid. simple switch may reduce the difference set
-	// public static Collection<ILogicalOperator> switchOperator(SelectAO
-	// father, DifferenceAO son, Collection<ILogicalOperator> toInsert) {
-	// return switchOperatorInternal(father, son, toInsert);
-	// }
-
 	public static Collection<ILogicalOperator> switchOperator(SelectAO father, JoinAO son,
 			Collection<ILogicalOperator> toInsert, Collection<ILogicalOperator> toRemove) {
 		final JoinAO join = son;
@@ -242,26 +236,11 @@ public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRu
 		toRemove.add(sel);
 		Collection<ILogicalOperator> ret = removeOperator(sel);
 
-		// hasSameInput does not work, because it is forbidden for joins to have
-		// same inputs.
-		// boolean hasSameInput = (join.getLeftInput() == join.getRightInput());
 		SelectAO newSel = createSelection(sel, join, 0, ret);
 		if (newSel != null) {
 			toInsert.add(newSel);
 		}
-		// if the join is a self join and has the same input operator on both
-		// sides,
-		// we don't want to create two separate selections as new inputs, but
-		// set
-		// one selection as input on both ports
-		// if (hasSameInput) {
-		// ret.addAll(LogicalPlan.insertOperator(newSel, join, 1, 0, 0));
-		// } else {
-		// newSel = createSelection(sel, join, 1, ret);
-		// if (newSel != null) {
-		// toInsert.add(newSel);
-		// }
-		// }
+
 		newSel = createSelection(sel, join, 1, ret);
 		if (newSel != null) {
 			toInsert.add(newSel);
@@ -327,11 +306,6 @@ public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRu
 		});
 		return ret;
 	}
-
-	// public static Collection<ILogicalOperator> removeOperator(RenameAO op) {
-	// LoggerHelper.getInstance(LOGGER_NAME).debug("removing rename:" + op);
-	// return LogicalPlan.removeOperator(op, true);
-	// }
 
 	public static Collection<ILogicalOperator> removeOperator(UnaryLogicalOp op) {
 		LOG.debug("removing operator:" + op);
