@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.logicaloperator.builder;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,8 +98,9 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 	}
 
 	@SuppressWarnings("unchecked")
-	public static SDFAttribute determineAttribute(List<?> l1, IDataDictionary dd){
-
+	public static SDFAttribute determineAttribute(List<?> in, IDataDictionary dd){
+		List<?> l1 = new ArrayList<>(in);
+		
 		List<List<String>> constraintList = null;
 
 		if (l1.get(l1.size() - 1) instanceof List) {

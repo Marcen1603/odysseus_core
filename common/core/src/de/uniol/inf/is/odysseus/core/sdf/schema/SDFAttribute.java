@@ -136,7 +136,7 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	public SDFAttribute(String sourceName, String attributeName,
 			SDFDatatype attribType, SDFUnit unit,
-			Collection<SDFConstraint> dtConstraints, List<?> annotations) {
+			Collection<SDFConstraint> dtConstraints, List<?> addInfo) {
 		super(sourceName, attributeName);
 		this.datatype = attribType;
 		this.unit = unit;
@@ -146,7 +146,7 @@ public class SDFAttribute extends SDFElement implements
 				this.dtConstraints.put(c.getURI(), c);
 			}
 		}
-		this.annotations = annotations;
+		this.annotations = addInfo;
 	}
 
 	/**
@@ -167,6 +167,7 @@ public class SDFAttribute extends SDFElement implements
 		this.datatype = sdfAttribute.datatype;
 		this.dtConstraints = sdfAttribute.dtConstraints;
 		this.unit = sdfAttribute.unit;
+		this.annotations = sdfAttribute.annotations;
 	}
 
 	public SDFAttribute(String name, String attributeName, SDFAttribute a,
