@@ -11,6 +11,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.NonBlockingTcpServerHandler_Netty;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.QuerySourceAO;
@@ -150,6 +151,7 @@ public class WebsocketManager {
 
 				// 3. Connect to the stream from the operator
 				QuerySourceAO querySource = new QuerySourceAO();
+				ILogicalOperator sourceForSender = querySource;
 
 				PhysicalOperatorParameter physicalParam = new PhysicalOperatorParameter();
 				List<String> inputParameters = new ArrayList<>(2);
@@ -166,11 +168,12 @@ public class WebsocketManager {
 				if (!root.getOutputSchema().isEmpty()) {
 					ToKeyValueAO toKeyValueAO = new ToKeyValueAO();
 					toKeyValueAO.subscribeToSource(querySource, 0, 0, querySource.getOutputSchema());
+					sourceForSender = toKeyValueAO;
 				}
 
 				// Create sender with WebSocket
 				SenderAO sender = new SenderAO();
-				sender.subscribeToSource(querySource, 0, 0, querySource.getOutputSchema());
+				sender.subscribeToSource(sourceForSender, 0, 0, querySource.getOutputSchema());
 				sender.setProtocolHandler("JSON");
 				sender.setTransportHandler("TCPServer");
 				sender.setDataHandler("KeyValueObject");
