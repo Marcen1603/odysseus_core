@@ -9,7 +9,6 @@ import org.geotools.geometry.jts.WKTReader2;
 import org.geotools.geometry.jts.WKTWriter2;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
@@ -17,7 +16,6 @@ import com.vividsolutions.jts.io.ParseException;
 import de.uniol.inf.is.odysseus.core.IClone;
 
 @JsonSerialize(using = GeometrySerializer.class)
-@JsonDeserialize(using = GeometryDeserializer.class)
 public class GeometryWrapper implements IClone, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 461297214516089892L;
