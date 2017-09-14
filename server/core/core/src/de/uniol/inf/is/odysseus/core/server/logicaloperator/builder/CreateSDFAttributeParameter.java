@@ -121,16 +121,20 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 	public static SDFAttribute determineAttribute(String sourcename, String attributeName, String dataTypeName, List<List<String>> constraintList, IDataDictionary dd) {
 		try {
 			SDFUnit unit = null;
+			List<String> addInfo = new LinkedList<>();
 			List<SDFConstraint> dtList = new LinkedList<>();
 			if (constraintList != null && constraintList.size() > 0) {
 				for (List<String> pair : constraintList) {
-					if (pair.size() != 2) {
+					if (pair.size() == 1) {
+						addInfo.add(pair.get(0));
+					} else if (pair.size() != 2) {
 						throw new IllegalArgumentException("Wrong Constraint definition part. Use ['type', 'value']");
-					}
-					if (pair.get(0).equalsIgnoreCase(SDFUnit.class.getSimpleName()) || pair.get(0).equalsIgnoreCase("Unit")) {
-						unit = new SDFUnit(pair.get(1));
 					} else {
-						dtList.add(new SDFConstraint(pair.get(0).toLowerCase(), pair.get(1)));
+						if (pair.get(0).equalsIgnoreCase(SDFUnit.class.getSimpleName()) || pair.get(0).equalsIgnoreCase("Unit")) {
+							unit = new SDFUnit(pair.get(1));
+						} else {
+							dtList.add(new SDFConstraint(pair.get(0).toLowerCase(), pair.get(1)));
+						}
 					}
 				}
 			}
@@ -158,7 +162,7 @@ public class CreateSDFAttributeParameter extends AbstractParameter<SDFAttribute>
 				dataType = dd.getDatatype(upperType, subTypeList);
 				return new SDFAttribute(sourcename, attributeName, dataType, unit, dtList);
 			}
-			return new SDFAttribute(sourcename, attributeName, dd.getDatatype(dataTypeName), unit, dtList);
+			return new SDFAttribute(sourcename, attributeName, dd.getDatatype(dataTypeName), unit, dtList, addInfo);
 		} catch (DataDictionaryException e) {
 			throw new QueryParseException(e);
 		}
