@@ -10,12 +10,14 @@ public class QueryInformation {
 	private String name;
 	private String parser;
 	private String state;
+	private String queryText;
 
-	public QueryInformation(String name, String parser, String state) {
+	public QueryInformation(String name, String parser, String state, String queryText) {
 		super();
 		this.name = name;
 		this.parser = parser;
 		this.state = state;
+		this.queryText = queryText;
 	}
 
 	public String getName() {
@@ -28,5 +30,9 @@ public class QueryInformation {
 	
 	public String getState() {
 		return state;
+	}
+	
+	public String getQueryText() {
+		return queryText;
 	}
 }
