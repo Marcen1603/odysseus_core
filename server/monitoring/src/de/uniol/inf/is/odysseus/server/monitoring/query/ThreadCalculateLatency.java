@@ -6,11 +6,11 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 
 public class ThreadCalculateLatency extends Thread {
 
-	Measurements measurement;
+	Measurement measurement;
 	private IEvent<?, ?> event;
 	private long nanoTimeStamp;
 
-	public ThreadCalculateLatency(Measurements m, IEvent<?, ?> e, long nanoTimestamp) {
+	public ThreadCalculateLatency(Measurement m, IEvent<?, ?> e, long nanoTimestamp) {
 		this.measurement = m;
 		this.event = e;
 		this.nanoTimeStamp = nanoTimestamp;
@@ -19,7 +19,7 @@ public class ThreadCalculateLatency extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("Event fired: " + this.event.toString() + " Zeit: " + this.nanoTimeStamp);
+		printEvent();
 		IPhysicalOperator o = (IPhysicalOperator) this.event.getSender();
 		if (event.getEventType().equals(POEventType.ProcessInit)) {
 			this.measurement.createNewTempLatency(o.toString(), this.nanoTimeStamp);
@@ -27,5 +27,10 @@ public class ThreadCalculateLatency extends Thread {
 		if (event.getEventType().equals(POEventType.PushInit)) {
 			this.measurement.calcTemporaryOperatorLatency(o.toString(), this.nanoTimeStamp);
 		}
+	}
+	
+	private synchronized void printEvent(){
+
+		System.out.println(nanoTimeStamp + event.toString());
 	}
 }
