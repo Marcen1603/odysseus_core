@@ -19,6 +19,11 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+/**
+ * Converts a GeometryWrapper object to a valid GeoJSON string. 
+ * @author Tobias Brandt
+ *
+ */
 public class GeometrySerializer extends StdSerializer<GeometryWrapper> {
 
 	private static final long serialVersionUID = -4694861226023038689L;
@@ -37,8 +42,10 @@ public class GeometrySerializer extends StdSerializer<GeometryWrapper> {
 	public void serialize(GeometryWrapper geometryWrapper, JsonGenerator generator, SerializerProvider provider)
 			throws IOException, JsonGenerationException {
 		Geometry geometry = geometryWrapper.getGeometry();
+		
 		// For proper GeoJSON we need to have longitude / latitude
 		if (geometryWrapper.getGeometry() instanceof Point) {
+			// Switch lat / lng to lng / lat
 			Point point = (Point) geometryWrapper.getGeometry();
 			double latitude = point.getX();
 			double longitude = point.getY();
