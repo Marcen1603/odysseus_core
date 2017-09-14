@@ -45,7 +45,7 @@ public class SDFAttribute extends SDFElement implements
 	/**
 	 * additional info that can be added to this attribute
 	 */
-	private List<?> addInfo;
+	private List<?> annotations;
 
 	/**
 	 * The data type of the attribute
@@ -146,7 +146,7 @@ public class SDFAttribute extends SDFElement implements
 				this.dtConstraints.put(c.getURI(), c);
 			}
 		}
-		this.addInfo = addInfo;
+		this.annotations = addInfo;
 	}
 
 	/**
@@ -167,6 +167,7 @@ public class SDFAttribute extends SDFElement implements
 		this.datatype = sdfAttribute.datatype;
 		this.dtConstraints = sdfAttribute.dtConstraints;
 		this.unit = sdfAttribute.unit;
+		this.annotations = sdfAttribute.annotations;
 	}
 
 	public SDFAttribute(String name, String attributeName, SDFAttribute a,
@@ -207,8 +208,8 @@ public class SDFAttribute extends SDFElement implements
 	 *
 	 * @return
 	 */
-	public List<?> getAddInfo() {
-		return Collections.unmodifiableList(this.addInfo);
+	public List<?> getAnnotations() {
+		return Collections.unmodifiableList(this.annotations);
 	}
 
 	/**
@@ -274,7 +275,7 @@ public class SDFAttribute extends SDFElement implements
 				* result
 				+ ((getAttributeName() == null) ? 0 : getAttributeName()
 						.hashCode());
-		result = prime * result + ((addInfo == null) ? 0 : addInfo.hashCode());
+		result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
 		result = prime * result
 				+ ((getSourceName() == null) ? 0 : getSourceName().hashCode());
 		return result;
@@ -294,10 +295,10 @@ public class SDFAttribute extends SDFElement implements
 				return false;
 		} else if (!getAttributeName().equals(other.getAttributeName()))
 			return false;
-		if (addInfo == null) {
-			if (other.addInfo != null)
+		if (annotations == null) {
+			if (other.annotations != null)
 				return false;
-		} else if (!addInfo.equals(other.addInfo))
+		} else if (!annotations.equals(other.annotations))
 			return false;
 		// attribute names are equal and only one attribute has a source
 		// same as equalsCQL
