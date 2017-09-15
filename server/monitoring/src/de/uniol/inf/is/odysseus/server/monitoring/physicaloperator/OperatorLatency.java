@@ -1,11 +1,9 @@
 package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
 
 public class OperatorLatency implements IMeasurableValue {
-	private long startTime = 0;
-	private long latency;
-	private long endTime;
+	private long startTime, latency, endTime;
 	private String operatorName;
-	private boolean done, started, stopped, confirmed;
+	private boolean done, confirmed;
 
 	public OperatorLatency(String opName) {
 		setConfirmed(false);
@@ -82,11 +80,10 @@ public class OperatorLatency implements IMeasurableValue {
 	public boolean isDone() {
 		return done;
 	}
-	
-	public void setDone() {
-		this.done=true;
-	}
 
+	public void setDone() {
+		this.done = true;
+	}
 
 	public boolean isStopped() {
 		if (this.endTime != 0) {
