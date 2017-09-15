@@ -6,6 +6,6 @@ public interface IMeasurableValue {
 	
 	public void stopMeasurement(long timestamp);
 	
-	public boolean isCalculated();
+	public boolean isConfirmed();
 
 }

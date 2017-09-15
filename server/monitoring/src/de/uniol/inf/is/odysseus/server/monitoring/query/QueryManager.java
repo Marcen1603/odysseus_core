@@ -29,13 +29,14 @@ public class QueryManager implements IUpdateEventListener {
 		// IExecutor executor = QueryManager.getExecutor();
 		// executor.addUpdateEventListener(this, IUpdateEventListener.QUERY,
 		// null);
+//		query.getRoots().get(0).
 	}
 
 	private void devideQuery() {
 		// TODO: Threaded Buffer splitting the plan
 		 ILogicalQuery q = query.getLogicalQuery();
 		for (LogicalSubscription o : q.getLogicalPlan().getSubscriptions()){
-			System.out.println("Subscription: "+q.toString());
+			System.out.println("Subscription: "+o.toString());
 		}
 		subquerys.put(query, new Measurement(query));
 	}
@@ -58,7 +59,7 @@ public class QueryManager implements IUpdateEventListener {
 	 * Calculates latency over the last 20 tupel for the whole Query
 	 */
 	private void calcAverageLatency() {
-		long averageLatency=0;
+		this.averageLatency=0;
 		lastLatencys[pointer]=this.getTotalQueryLatency();
 		for (int i = 0; i < lastLatencys.length; i++) {
 			this.setAverageLatency(this.getAverageLatency() + lastLatencys[i]);
