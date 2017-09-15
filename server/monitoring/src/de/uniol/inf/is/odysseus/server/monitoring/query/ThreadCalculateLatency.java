@@ -1,34 +1,19 @@
 package de.uniol.inf.is.odysseus.server.monitoring.query;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.Queue;
-
-import javax.swing.text.html.HTMLDocument.Iterator;
 
 import de.uniol.inf.is.odysseus.core.event.IEvent;
-import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.IMeasurableValue;
-import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.OperatorLatency;
 
 public class ThreadCalculateLatency extends Thread {
 
-	Measurement measurement;
-	private PriorityQueue<MyEvent> queue;
+	private PriorityQueue<LatencyEvent> queue;
 	private volatile boolean running = true;
-	Comparator<MyEvent> comparator = new MyComparator();
-
-	public ThreadCalculateLatency(Measurement m) {
-	}
+	Comparator<LatencyEvent> comparator = new EventComparator();
 
 	public ThreadCalculateLatency() {
-		// TODO Auto-generated constructor stub
-
 		this.setName("Calculating_Latencys");
-		this.queue = new PriorityQueue<MyEvent>(comparator);
+		this.queue = new PriorityQueue<LatencyEvent>(comparator);
 	}
 
 	public void shutdown() {
@@ -36,11 +21,12 @@ public class ThreadCalculateLatency extends Thread {
 	}
 
 	/**
-	 * Looks at queue for new Events
+	 * Looks at queue for new events
 	 */
 	@Override
 	public void run() {
 		while (running) {
+			//TODO: Remove size>5? : Has to be for very short querys.
 			if (!queue.isEmpty() && queue.size()>5) {
 				processEvent();
 			}
@@ -48,7 +34,7 @@ public class ThreadCalculateLatency extends Thread {
 	}
 
 	private void processEvent() {
-		MyEvent e = removeEvent();
+		LatencyEvent e = removeEvent();
 		long time = e.getNanoTimestamp();
 		IEvent<?, ?> event = e.getEvent();
 		Measurement m = e.getMeasurement();
@@ -62,21 +48,21 @@ public class ThreadCalculateLatency extends Thread {
 
 	public void addEvent(Measurement m, IEvent<?, ?> e, long nanoTimestamp) {
 		synchronized (queue) {
-			queue.add(new MyEvent(m, e, nanoTimestamp));
+			queue.add(new LatencyEvent(m, e, nanoTimestamp));
 		}
 	}
 
-	public MyEvent removeEvent() {
+	public LatencyEvent removeEvent() {
 		synchronized (queue) {
 			return queue.poll();
 		}
 	}
 }
 
-class MyComparator implements Comparator<MyEvent> {
+class EventComparator implements Comparator<LatencyEvent> {
 
 	@Override
-	public int compare(MyEvent o1, MyEvent o2) {
+	public int compare(LatencyEvent o1, LatencyEvent o2) {
 		if (o1.getNanoTimestamp() < o2.getNanoTimestamp()) {
 			return -1;
 		}
@@ -87,12 +73,12 @@ class MyComparator implements Comparator<MyEvent> {
 	}
 }
 
-class MyEvent {
+class LatencyEvent {
 	private IEvent<?, ?> event;
 	private long nanoTimestamp;
 	private Measurement measurement;
 
-	protected MyEvent(Measurement m, IEvent<?, ?> e, long nanoTimeStamp) {
+	protected LatencyEvent(Measurement m, IEvent<?, ?> e, long nanoTimeStamp) {
 		this.setEvent(e);
 		this.setNanoTimestamp(nanoTimeStamp);
 		this.setMeasurement(m);
