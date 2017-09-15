@@ -55,7 +55,7 @@ public class OperatorCPUUsage implements IMeasurableValue {
 		
 	}
 	@Override
-	public boolean isCalculated() {
+	public boolean isConfirmed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
