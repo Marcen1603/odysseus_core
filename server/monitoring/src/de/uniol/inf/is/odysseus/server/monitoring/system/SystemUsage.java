@@ -10,66 +10,75 @@ import java.util.Map;
 
 import javax.management.*;
 
-public class SystemUsage implements Runnable{
+public class SystemUsage implements Runnable {
 	private static MBeanServer mbs;
-	private static int interval = 100;
-	private static double currentCPUUsage =5;
+	private static double currentCPUUsage = 5;
 	private static SystemUsage systemUsage;
-	
-		private int sampleTime = 10000;
-		private ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
-		private RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-		private OperatingSystemMXBean osMxBean = ManagementFactory.getOperatingSystemMXBean();
-		private Map<Long, Long> threadInitialCPU = new HashMap<Long, Long>();
-		private Map<Long, Float> threadCPUUsage = new HashMap<Long, Float>();
-		private long initialUptime = runtimeMxBean.getUptime();
-		
-	public void getThreadUsage(){
+
+	private int sampleTime = 1000;
+	private ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
+	private RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+	private OperatingSystemMXBean osMxBean = ManagementFactory.getOperatingSystemMXBean();
+	private Map<Long, Long> threadInitialCPU = new HashMap<Long, Long>();
+	private Map<Long, Float> threadCPUUsage = new HashMap<Long, Float>();
+	private long initialUptime = runtimeMxBean.getUptime();
+
+	public void getThreadUsage() {
 		ThreadInfo[] threadInfos = threadMxBean.dumpAllThreads(false, false);
 		for (ThreadInfo info : threadInfos) {
 			threadInitialCPU.put(info.getThreadId(), threadMxBean.getThreadCpuTime(info.getThreadId()));
 		}
-		try {Thread.sleep(sampleTime);} catch (InterruptedException e) {}
+		try {
+			Thread.sleep(sampleTime);
+		} catch (InterruptedException e) {
+		}
 
 		long upTime = runtimeMxBean.getUptime();
 
 		Map<Long, Long> threadCurrentCPU = new HashMap<Long, Long>();
 		threadInfos = threadMxBean.dumpAllThreads(false, false);
 		for (ThreadInfo info : threadInfos) {
-		    threadCurrentCPU.put(info.getThreadId(), threadMxBean.getThreadCpuTime(info.getThreadId()));
+			threadCurrentCPU.put(info.getThreadId(), threadMxBean.getThreadCpuTime(info.getThreadId()));
 		}
 
 		// CPU over all processes
-		int nrCPUs = osMxBean.getAvailableProcessors();
-		// total CPU: CPU % can be more than 100% (devided over multiple cpus)
-		//long nrCPUs = 1;
+		// int nrCPUs = osMxBean.getAvailableProcessors();
+		// total CPU: CPU % can be more than 100% (devided over multiple
+		// cpus)
+		long nrCPUs = 1;
 		// elapsedTime is in ms.
+		long sum=0;
 		long elapsedTime = (upTime - initialUptime);
 		for (ThreadInfo info : threadInfos) {
-		    Long initialCPU = threadInitialCPU.get(info.getThreadId());
-		    if (initialCPU != null) {
-		        long elapsedCpu = threadCurrentCPU.get(info.getThreadId()) - initialCPU;
-		        float cpuUsage = elapsedCpu / (elapsedTime * 1000000F * nrCPUs);
-		        threadCPUUsage.put(info.getThreadId(), cpuUsage);
-		    }
+			Long initialCPU = threadInitialCPU.get(info.getThreadId());
+			if (initialCPU != null) {
+				long elapsedCpu = threadCurrentCPU.get(info.getThreadId()) - initialCPU;
+				float cpuUsage = elapsedCpu / (elapsedTime * 10000f * nrCPUs);
+				sum+=cpuUsage;
+				threadCPUUsage.put(info.getThreadId(), cpuUsage);
+			}
 		}
+		
 
 		// threadCPUUsage contains cpu % per thread
 		System.out.println(threadCPUUsage);
-		// You can use osMxBean.getThreadInfo(theadId) to get information on every thread reported in threadCPUUsage and analyze the most CPU intensive threads
+		System.out.println("Summe: " + sum);
+		// You can use osMxBean.getThreadInfo(theadId) to get information on
+		// every thread reported in threadCPUUsage and analyze the most CPU
+		// intensive threads
 	}
-	public SystemUsage(){
-		//openMBeanConnection();
+
+	public SystemUsage() {
+
 	}
-	
-	public static SystemUsage getInstance(){
-		if (systemUsage ==null){
+
+	public static SystemUsage getInstance() {
+		if (systemUsage == null) {
 			systemUsage = new SystemUsage();
 		}
 		return systemUsage;
 	}
 
-	
 	private void openMBeanConnection() {
 		if (mbs == null) {
 			mbs = ManagementFactory.getPlatformMBeanServer();
@@ -78,7 +87,7 @@ public class SystemUsage implements Runnable{
 			try {
 				while (true) {
 					setCurrentCPUUsage(getSystemCPULoad());
-					Thread.sleep(interval);
+					Thread.sleep(sampleTime);
 				}
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -86,11 +95,12 @@ public class SystemUsage implements Runnable{
 		}).start();
 	}
 
-	private double getSystemCPULoad() throws MalformedObjectNameException, NullPointerException, InstanceNotFoundException, ReflectionException {
+	private double getSystemCPULoad()
+			throws MalformedObjectNameException, NullPointerException, InstanceNotFoundException, ReflectionException {
 		AttributeList list = new AttributeList();
-			ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
-			list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
-		
+		ObjectName name = ObjectName.getInstance("java.lang:type=OperatingSystem");
+		list = mbs.getAttributes(name, new String[] { "ProcessCpuLoad" });
+
 		if (list.isEmpty()) {
 			return -1.0;
 		}
@@ -111,11 +121,12 @@ public class SystemUsage implements Runnable{
 	public void setCurrentCPUUsage(double usage) {
 		currentCPUUsage = usage;
 	}
+
 	@Override
 	public void run() {
-		while(true){
+		while (true) {
 			getThreadUsage();
 		}
-		
+
 	}
 }
