@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.probabilistic.test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.arrayContainingInAnyOrder;
 import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -188,7 +189,7 @@ abstract public class AbstractOperatorTest {
             if (elements[i] instanceof MultivariateMixtureDistribution) {
                 distributions.add((MultivariateMixtureDistribution) elements[i]);
                 attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
-                ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, 0);
+                ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, i);
             } else {
                 attributes[i] = elements[i];
             }
@@ -252,6 +253,7 @@ abstract public class AbstractOperatorTest {
             timer.stop();
             System.out.println("Test took: " + timer);
         } catch (NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
             fail(e.getMessage());
         }
     }
@@ -314,14 +316,25 @@ abstract public class AbstractOperatorTest {
                     attributes[i] = elements[i];
                 }
             }
-            System.out.println(String.format("Result: %s", this.lastObject.get()));
-
             final ProbabilisticTuple<IProbabilistic> output = new ProbabilisticTuple<>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone);
             output.setMetadata(new Probabilistic(existence));
+
+            System.out.println(String.format("Expected: %s", output));
+            System.out.println(String.format("Result: %s", this.lastObject.get()));
+
             assertThat("Created output tuple has an invalid existence metadata value", output.getMetadata().getExistence(), is(existence));
             assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
                     is(closeTo(existence, 0.1)));
             assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
+            assertThat("Invalid emitted output distributions", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions(), arrayContainingInAnyOrder(output.getDistributions()));
+
+            for (MultivariateMixtureDistribution distribution : ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions()) {
+                final double[] lowerBound = new double[distribution.getDimension()];
+                Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
+                final double[] upperBound = new double[distribution.getDimension()];
+                Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
+                assertThat(String.format("Probability of %s is not equals to 1", distribution), distribution.probability(lowerBound, upperBound) * distribution.getScale(), is(closeTo(1.0, 0.01)));
+            }
         }
     }
 
@@ -338,19 +351,31 @@ abstract public class AbstractOperatorTest {
                 if (elements[i] instanceof MultivariateMixtureDistribution) {
                     distributions.add((MultivariateMixtureDistribution) elements[i]);
                     attributes[i] = new ProbabilisticDouble(distributions.size() - 1);
-                    ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, 0);
+                    ((MultivariateMixtureDistribution) elements[i]).setAttribute(0, i);
                 } else {
                     attributes[i] = elements[i];
                 }
             }
-            System.out.println(String.format("Result: %s", this.lastObject.get()));
 
             final ProbabilisticTuple<IProbabilistic> output = new ProbabilisticTuple<>(attributes, distributions.toArray(new MultivariateMixtureDistribution[distributions.size()]), requiresDeepClone);
             output.setMetadata(new Probabilistic(existence));
+
+            System.out.println(String.format("Expected: %s", output));
+            System.out.println(String.format("Result: %s", this.lastObject.get()));
+
             assertThat("Created output tuple has an invalid existence metadata value", output.getMetadata().getExistence(), is(existence));
             assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
                     is(closeTo(existence, 0.01)));
             assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
+            assertThat("Invalid emitted output distributions", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions(), arrayContainingInAnyOrder(output.getDistributions()));
+
+            for (MultivariateMixtureDistribution distribution : ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions()) {
+                final double[] lowerBound = new double[distribution.getDimension()];
+                Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
+                final double[] upperBound = new double[distribution.getDimension()];
+                Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
+                assertThat(String.format("Probability of %s is not equals to 1", distribution), distribution.probability(lowerBound, upperBound) * distribution.getScale(), is(1.0));
+            }
         }
     }
 

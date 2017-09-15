@@ -53,17 +53,10 @@ public class ProbabilisticGreaterProbabilisticNumberOperator extends AbstractPro
         final MultivariateMixtureDistribution b = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
 
         final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b.getMean(), 0, lowerBound, 0, b.getMean().length);
+        Arrays.fill(lowerBound, 0.0);
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-
-        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
-        final double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
-        // Assume symmetry
-        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() );
-        ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
-        return scaledResult;
+        return this.getValueInternal(a, b, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
     }
 
     /**

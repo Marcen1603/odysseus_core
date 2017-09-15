@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.core.IClone;
 public interface IMultivariateDistribution extends Serializable, Cloneable, IClone {
     /**
      * For a random variable {@code X} whose values are distributed according to
-     * this distribution, this method returns {@code P(a < X <= b)}.
+     * this distribution, this method returns {@code P(a <= X <= b)}.
      * 
      * @param a
      *            the point at which the CDF is evaluated

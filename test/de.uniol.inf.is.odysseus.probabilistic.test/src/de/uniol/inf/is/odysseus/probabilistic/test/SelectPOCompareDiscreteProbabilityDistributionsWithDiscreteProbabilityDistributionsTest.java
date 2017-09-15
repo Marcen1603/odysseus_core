@@ -112,7 +112,7 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteProbabil
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
                                 }), // , //
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
                                 }), //
@@ -134,7 +134,7 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteProbabil
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
                                 }), // , //
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new MultivariateMixtureDistribution(new double[] {1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
                                 }), //

@@ -20,9 +20,13 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
      *
      */
     private static final long serialVersionUID = 7656616835285616813L;
+    private final boolean leftInclusive;
+    private final boolean rightInclusive;
 
     public ProbabilisticEqualsProbabilisticNumberOperator() {
         super("==", ProbabilisticEqualsProbabilisticNumberOperator.ACC_TYPES);
+        this.leftInclusive = true;
+        this.rightInclusive = true;
     }
 
     /*
@@ -35,18 +39,11 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
         final MultivariateMixtureDistribution b = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
 
         final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b.getMean(), 0, lowerBound, 0, b.getMean().length);
+        Arrays.fill(lowerBound, 0.0);
         final double[] upperBound = new double[a.getDimension()];
-        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        System.arraycopy(b.getMean(), 0, lowerBound, 0, b.getMean().length);
+        Arrays.fill(upperBound, 0.0);
+        return this.getValueInternal(a, b, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
 
-        final ProbabilisticBooleanResult result = this.getValueInternal(a, lowerBound, upperBound,true,true);
-        final double scale = ((MultivariateMixtureDistribution) result.getDistribution()).getScale();
-        // Assume symmetry
-        final ProbabilisticBooleanResult scaledResult = new ProbabilisticBooleanResult(result.getDistribution(), result.getProbability() );
-        ((MultivariateMixtureDistribution) scaledResult.getDistribution()).setScale(scale * 0.5);
-        return scaledResult;
     }
 
     /**

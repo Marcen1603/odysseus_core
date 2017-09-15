@@ -38,23 +38,24 @@ import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivar
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateEnumeratedDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.Sample;
 
 /**
  * Distribution handler to read and write continuous probabilistic distributions
  * as Gaussian mixtures.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class ProbabilisticDistributionHandler extends AbstractDataHandler<MultivariateMixtureDistribution> {
     /** The logger. */
     private static final Logger LOG = LoggerFactory.getLogger(ProbabilisticDistributionHandler.class);
     /** The supported data types. */
-    private static final List<String> TYPES = new ArrayList<String>();
+    private static final List<String> TYPES = new ArrayList<>();
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
      * nio.ByteBuffer)
@@ -66,7 +67,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         MultivariateMixtureDistribution distributionMixture = null;
         final int size = buffer.getInt();
         if (size > 0) {
-            final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<Pair<Double, IMultivariateDistribution>>();
+            final List<Pair<Double, IMultivariateDistribution>> mixtures = new ArrayList<>();
             final int dimension = buffer.getInt();
             for (int m = 0; m < size; m++) {
                 final double weight = buffer.getDouble();
@@ -80,9 +81,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
                 }
                 try {
                     final IMultivariateDistribution distribution = new MultivariateNormalDistribution(mean, CovarianceMatrixUtils.toMatrix(entries).getData());
-                    mixtures.add(new Pair<Double, IMultivariateDistribution>(weight, distribution));
-                }
-                catch (final Exception e) {
+                    mixtures.add(new Pair<>(weight, distribution));
+                } catch (final Exception e) {
                     ProbabilisticDistributionHandler.LOG.warn(e.getMessage(), e);
                 }
 
@@ -102,7 +102,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#readData(java.
      * lang.String)
@@ -127,7 +127,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         int startIndex = 0;
         int index = 0;
         for (int i = 0; i < string.length(); i++) {
-            String token = string.substring(i, i + 1);
+            final String token = string.substring(i, i + 1);
             if ((token.equals("D")) || (token.equals("N"))) {
                 if (!inFunction) {
                     inFunction = true;
@@ -137,8 +137,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
                     }
                     if ((token.equalsIgnoreCase("D"))) {
                         continuous = false;
-                    }
-                    else {
+                    } else {
                         continuous = true;
                     }
                 }
@@ -149,8 +148,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
             if (token.equals(")")) {
                 if (continuous) {
                     distribution = readContinuousDistribution(string.substring(startIndex, i));
-                }
-                else {
+                } else {
                     distribution = readDiscreteDistribution(string.substring(startIndex, i));
                 }
                 if (inFunction) {
@@ -190,7 +188,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
             }
             index++;
         }
-        int[] reference = readReference(string.substring(startIndex));
+        final int[] reference = readReference(string.substring(startIndex));
 
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(distributions);
         mixture.setScale(scale);
@@ -201,8 +199,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         return mixture;
     }
 
-    private IMultivariateDistribution readContinuousDistribution(String string) {
-        List<double[]> variance = new LinkedList<double[]>();
+    private IMultivariateDistribution readContinuousDistribution(final String string) {
+        final List<double[]> variance = new LinkedList<>();
         double[] mean = null;
         boolean readMean = true;
         boolean row = false;
@@ -212,19 +210,17 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
             if (string.substring(i, i + 1).equals("[")) {
                 if (readMean) {
                     beginIndex = i + 1;
-                }
-                else {
+                } else {
                     if (row) {
                         row = false;
-                    }
-                    else {
+                    } else {
                         beginIndex = i + 1;
                     }
                 }
             }
             if (string.substring(i, i + 1).equals("]")) {
                 if (readMean) {
-                    String[] parameter = string.substring(beginIndex, i).split(",");
+                    final String[] parameter = string.substring(beginIndex, i).split(",");
                     mean = new double[parameter.length];
                     for (int j = 0; j < parameter.length; j++) {
                         mean[j] = Double.parseDouble(parameter[j]);
@@ -232,11 +228,10 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
                     readMean = false;
                     rows = mean.length;
                     row = true;
-                }
-                else {
+                } else {
                     if (!row) {
-                        String[] parameter = string.substring(beginIndex, i).split(",");
-                        double[] varianceEntry = new double[parameter.length];
+                        final String[] parameter = string.substring(beginIndex, i).split(",");
+                        final double[] varianceEntry = new double[parameter.length];
                         for (int j = 0; j < parameter.length; j++) {
                             varianceEntry[j] = Double.parseDouble(parameter[j]);
                         }
@@ -255,8 +250,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         return distribution;
     }
 
-    private IMultivariateDistribution readDiscreteDistribution(String string) {
-        final List<Pair<double[], Double>> samples = new ArrayList<>();
+    private IMultivariateDistribution readDiscreteDistribution(final String string) {
+        final List<Sample> samples = new ArrayList<>();
         double[] sample = null;
         double probability = 0.0;
 
@@ -269,7 +264,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
                 readSample = true;
             }
             if (string.substring(i, i + 1).equals("]")) {
-                String[] parameter = string.substring(beginIndex, i).split(",");
+                final String[] parameter = string.substring(beginIndex, i).split(",");
                 sample = new double[parameter.length];
                 for (int j = 0; j < parameter.length; j++) {
                     sample[j] = Double.parseDouble(parameter[j]);
@@ -281,9 +276,8 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
                     if (readProbability) {
                         readProbability = false;
                         probability = Double.parseDouble(string.substring(beginIndex, i));
-                        samples.add(new Pair<>(sample, probability));
-                    }
-                    else {
+                        samples.add(new Sample(sample, probability));
+                    } else {
                         readProbability = true;
                         beginIndex = i + 1;
                     }
@@ -292,35 +286,33 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         }
         if (readProbability) {
             probability = Double.parseDouble(string.substring(beginIndex));
-            samples.add(new Pair<>(sample, probability));
+            samples.add(new Sample(sample, probability));
         }
         final MultivariateEnumeratedDistribution distribution = new MultivariateEnumeratedDistribution(samples);
         return distribution;
     }
 
-    private Interval[] readSupport(String string) {
-        List<Interval> support = new LinkedList<Interval>();
+    private Interval[] readSupport(final String string) {
+        final List<Interval> support = new LinkedList<>();
         int beginIndex = 0;
         for (int i = 0; i < string.length(); i++) {
             if (string.substring(i, i + 1).equals("[")) {
                 beginIndex = i + 1;
             }
             if (string.substring(i, i + 1).equals("]")) {
-                String[] parameter = string.substring(beginIndex, i).split(",");
-                String infString = parameter[0];
-                String supString = parameter[1];
+                final String[] parameter = string.substring(beginIndex, i).split(",");
+                final String infString = parameter[0];
+                final String supString = parameter[1];
                 double inf = 0.0;
                 double sup = 0.0;
                 if (infString.equalsIgnoreCase("-oo")) {
                     inf = Double.NEGATIVE_INFINITY;
-                }
-                else {
+                } else {
                     inf = Double.parseDouble(infString);
                 }
                 if (supString.equalsIgnoreCase("oo")) {
                     sup = Double.POSITIVE_INFINITY;
-                }
-                else {
+                } else {
                     sup = Double.parseDouble(supString);
                 }
                 support.add(new Interval(inf, sup));
@@ -329,9 +321,9 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         return support.toArray(new Interval[support.size()]);
     }
 
-    private int[] readReference(String string) {
-        String[] parameter = string.substring(1, string.length() - 1).split(",");
-        int[] ref = new int[parameter.length];
+    private int[] readReference(final String string) {
+        final String[] parameter = string.substring(1, string.length() - 1).split(",");
+        final int[] ref = new int[parameter.length];
         for (int i = 0; i < parameter.length; i++) {
             ref[i] = Integer.parseInt(parameter[i].trim());
         }
@@ -340,7 +332,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#writeData(java
      * .nio.ByteBuffer, java.lang.Object)
@@ -375,7 +367,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.datahandler.IDataHandler#memSize(java.lang
      * .Object)
@@ -400,7 +392,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#getInstance
      * (de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema)
@@ -412,7 +404,7 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler#
      * getSupportedDataTypes()
      */
@@ -426,17 +418,17 @@ public class ProbabilisticDistributionHandler extends AbstractDataHandler<Multiv
         return MultivariateMixtureDistribution.class;
     }
 
-    public static void main(String[] args) {
-        String discreteDistributionString1 = "1.0D([-198.0],0.81):1.0[[-oo,oo]]->[4]";
-        String discreteDistributionString2 = "1.0D([-28.0, -28.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
-        String discreteDistributionString3 = "1.0D([NaN],0.81):1.0[[0.0,0.0]]->[3]";
-        String discreteDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
-        String continuousDistributionString1 = "1.0N([-67.0, -67.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
-        String continuousDistributionString2 = "1.0N(-99.0,1.0):1.0[[-oo,oo]]->[0]";
-        String continuousDistributionString3 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,0.0], [-oo,oo]]->[1, 2]";
-        String continuousDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
-        String discreteDistributionString5 = "1.0D([3.0, 3.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[1, 2]|1.1111111111111112D([3.0, 3.0],0.9):1.0[[-oo,3.0], [-oo,oo]]->[4, 5]|1.1111111111111112D([2.0, 2.0],0.9):1.0[[-oo,2.0], [-oo,oo]]->[7, 8]";
-        ProbabilisticDistributionHandler dataHandler = new ProbabilisticDistributionHandler();
+    public static void main(final String[] args) {
+        final String discreteDistributionString1 = "1.0D([-198.0],0.81):1.0[[-oo,oo]]->[4]";
+        final String discreteDistributionString2 = "1.0D([-28.0, -28.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
+        final String discreteDistributionString3 = "1.0D([NaN],0.81):1.0[[0.0,0.0]]->[3]";
+        final String discreteDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
+        final String continuousDistributionString1 = "1.0N([-67.0, -67.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[0, 1]";
+        final String continuousDistributionString2 = "1.0N(-99.0,1.0):1.0[[-oo,oo]]->[0]";
+        final String continuousDistributionString3 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,0.0], [-oo,oo]]->[1, 2]";
+        final String continuousDistributionString4 = "1.0N([-99.0, -99.0],[[1.0, 0.5],[0.5, 1.0]]):1.0[[-oo,oo], [-oo,oo]]->[1, 2]";
+        final String discreteDistributionString5 = "1.0D([3.0, 3.0],0.9):1.0[[-oo,oo], [-oo,oo]]->[1, 2]|1.1111111111111112D([3.0, 3.0],0.9):1.0[[-oo,3.0], [-oo,oo]]->[4, 5]|1.1111111111111112D([2.0, 2.0],0.9):1.0[[-oo,2.0], [-oo,oo]]->[7, 8]";
+        final ProbabilisticDistributionHandler dataHandler = new ProbabilisticDistributionHandler();
         System.out.println(dataHandler.readData(discreteDistributionString1));
         System.out.println(dataHandler.readData(discreteDistributionString2));
         System.out.println(dataHandler.readData(discreteDistributionString3));

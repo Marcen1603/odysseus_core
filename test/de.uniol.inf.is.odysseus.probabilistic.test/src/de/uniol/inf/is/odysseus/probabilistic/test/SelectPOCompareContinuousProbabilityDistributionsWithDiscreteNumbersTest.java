@@ -25,6 +25,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateNormalDistribution;
@@ -58,7 +59,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, 0.5 }, //
                 // Given the expression x <= y, with x being a continuous
                 // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
@@ -72,7 +73,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })///
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y > x, with x being a continuous
@@ -87,7 +88,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, 0.5 }, //
                 // Given the expression y >= x, with x being a continuous
                 // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
@@ -101,7 +102,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x > y, with x being a continuous
@@ -116,7 +117,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x >= y, with x being a continuous
@@ -131,7 +132,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y < x, with x being a continuous
@@ -146,7 +147,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y <= x, with x being a continuous
@@ -161,7 +162,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(0.0,Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x == y, with x being a continuous
@@ -207,7 +208,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x <= y, with x being two continuous
@@ -225,7 +226,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y > x, with x being two continuous
@@ -243,7 +244,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y >= x, with x being two continuous
@@ -261,7 +262,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x > y, with x being two continuous
@@ -279,7 +280,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x >= y, with x being two continuous
@@ -297,7 +298,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y < x, with x being two continuous
@@ -315,7 +316,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y <= x, with x being two continuous
@@ -333,7 +334,7 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x == y, with x being two continuous

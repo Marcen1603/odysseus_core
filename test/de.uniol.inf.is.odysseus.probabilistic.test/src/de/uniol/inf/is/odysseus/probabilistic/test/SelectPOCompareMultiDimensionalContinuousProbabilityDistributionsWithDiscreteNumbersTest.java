@@ -62,7 +62,7 @@ public class SelectPOCompareMultiDimensionalContinuousProbabilityDistributionsWi
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0, 0.0 }, new double[][] { { 0.5, 1.0 }, { 1.0, 0.5 } })//
-                                }), //
+                                },2.474), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
                 // Given the expression as2DVector(x1,x2) <=[y1,y2], with x

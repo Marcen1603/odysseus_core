@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.IOperator;
 import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
 import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
+import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
 import de.uniol.inf.is.odysseus.probabilistic.functions.AbstractProbabilisticBinaryOperator;
@@ -32,6 +33,53 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
         return getValueInternal(a, lowerBound, upperBound, false, true);
     }
 
+    protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final MultivariateMixtureDistribution b, final double[] lowerBound, final double[] upperBound,
+            final boolean leftInclusive, final boolean rightInclusive) {
+        final double probability;
+        final MultivariateMixtureDistribution c = a.subtract(b);
+
+        if (Arrays.equals(lowerBound, upperBound)) {
+            probability = c.probability(lowerBound, upperBound);
+        } else {
+            if (!leftInclusive && rightInclusive) {
+                // Estimate the probability in the given bounds: P(lowerBound <
+                // X <=
+                // upperBound)
+                probability = c.probability(lowerBound, upperBound) - c.probability(lowerBound, lowerBound);
+            } else if (leftInclusive && rightInclusive) {
+                // Estimate the probability in the given bounds:
+                // P(lowerBound <= X <= upperBound)
+                probability = c.probability(lowerBound, upperBound);
+            } else if (leftInclusive) {
+                // Estimate the probability in the given bounds: P(lowerBound <=
+                // X <
+                // upperBound)
+                probability = c.probability(lowerBound, upperBound) - c.probability(upperBound, upperBound);
+            } else {
+                // Estimate the probability in the given bounds: P(lowerBound <
+                // X < upperBound)
+                probability = c.probability(lowerBound, upperBound) - c.probability(lowerBound, lowerBound) - c.probability(upperBound, upperBound);
+            }
+        }
+        final MultivariateMixtureDistribution aResult = a.clone();
+        final MultivariateMixtureDistribution bResult = b.clone();
+
+        if (probability == 0.0) {
+            aResult.setScale(Double.POSITIVE_INFINITY);
+            bResult.setScale(Double.POSITIVE_INFINITY);
+        } else {
+            aResult.setScale(a.getScale());
+            bResult.setScale(b.getScale());
+        }
+        // final Interval[] support = new Interval[c.getDimension()];
+        // for (int i = 0; i < c.getDimension(); i++) {
+        // final Interval interval = new Interval(lowerBound[i], upperBound[i]);
+        // support[i] = c.getSupport(i).intersection(interval);
+        // }
+        // aResult.setSupport(support);
+        return new ProbabilisticBooleanResult(new IMultivariateDistribution[] { aResult, bResult }, probability);
+    }
+
     protected final ProbabilisticBooleanResult getValueInternal(final MultivariateMixtureDistribution a, final double[] lowerBound, final double[] upperBound, final boolean leftInclusive,
             final boolean rightInclusive) {
         final double probability;
@@ -42,20 +90,20 @@ abstract public class AbstractProbabilisticCompareOperator extends AbstractProba
                 // Estimate the probability in the given bounds: P(lowerBound <
                 // X <=
                 // upperBound)
-                probability = a.probability(lowerBound, upperBound);
+                probability = a.probability(lowerBound, upperBound) - a.probability(lowerBound, lowerBound);
             } else if (leftInclusive && rightInclusive) {
                 // Estimate the probability in the given bounds:
                 // P(lowerBound <= X <= upperBound)
-                probability = a.probability(lowerBound, upperBound) + a.probability(lowerBound, lowerBound);
+                probability = a.probability(lowerBound, upperBound);
             } else if (leftInclusive) {
                 // Estimate the probability in the given bounds: P(lowerBound <=
                 // X <
                 // upperBound)
-                probability = (a.probability(lowerBound, upperBound) + a.probability(lowerBound, lowerBound)) - a.probability(upperBound, upperBound);
+                probability = a.probability(lowerBound, upperBound) - a.probability(upperBound, upperBound);
             } else {
                 // Estimate the probability in the given bounds: P(lowerBound <
                 // X < upperBound)
-                probability = a.probability(lowerBound, upperBound) - a.probability(upperBound, upperBound);
+                probability = a.probability(lowerBound, upperBound) - a.probability(lowerBound, lowerBound) - a.probability(upperBound, upperBound);
             }
         }
         final MultivariateMixtureDistribution result = a.clone();

@@ -26,12 +26,16 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ //
+        MapPOTest.class, //
+
+        MapPOExpressionsWithContinuousProbabilityDistributionTest.class, //
+
         SelectPOTest.class, //
-        
+
         SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumbersTest.class, //
         SelectPOCompareContinuousProbabilityDistributionsWithContinuousProbabilityDistributionsTest.class, //
         SelectPOCompareMultiDimensionalContinuousProbabilityDistributionsWithDiscreteNumbersTest.class, //
-       
+
         SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersTest.class, //
         SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteProbabilityDistributionsTest.class, //
         SelectPOCompareMultiDimensionalDiscreteProbabilityDistributionsWithDiscreteNumbersTest.class, //
