@@ -544,7 +544,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		for (AbstractPhysicalSubscription<?,?> s1 : thisSubs) {
 			boolean foundmatch = false;
 			for (AbstractPhysicalSubscription<?,?> s2 : otherSubs) {
-				// This will not work anymore, as subscriptions now contains sink and source!
+				// This will not work anymore, as subscriptions now contain sink and source!
 				// if (s1.equals(s2)) {
 
 				if (( s1.getSource() == s2.getSource())
