@@ -10,9 +10,8 @@ public class QueryEventListener implements IPOEventListener {
 	private Measurement measurement;
 	ThreadCalculateLatency thread;
 
-	public QueryEventListener(IPhysicalQuery query, Measurement m) {
-		this.thread= new ThreadCalculateLatency();
-		this.thread.start();
+	public QueryEventListener(IPhysicalQuery query, Measurement m, ThreadCalculateLatency t) {
+		this.thread= t;
 		this.measurement = m;
 		for (IPhysicalOperator o : query.getPhysicalChilds()) {
 			if (!query.getLeafSources().contains(o) && !query.getIterableSources().contains(o)
