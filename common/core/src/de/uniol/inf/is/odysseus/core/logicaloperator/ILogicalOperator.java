@@ -283,6 +283,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 */
 	InputOrderRequirement getInputOrderRequirement(int inputPort);
 
+	public void recalcOutputSchema();
+
 
 	
 }

@@ -33,29 +33,36 @@ class BasicTripleSelectionAO extends SelectAO {
 
 	public BasicTripleSelectionAO(Triple t) {
 		this.triple = t;
-		calcOutElements();
 	}
 
 	public void calcOutElements() {
 		List<SDFAttribute> l = new ArrayList<SDFAttribute>();
 
 		if (triple.getSubject().isVariable()) {
-			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getSubject().getName(), SDFDatatype.STRING, null, null, null));
+			l.add(new SDFAttribute(null, this.hashCode() + "#" + triple.getSubject().getName(), SDFDatatype.STRING,
+					null, null, null));
 		}
 		if (triple.getPredicate().isVariable()) {
-			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getPredicate().getName(), SDFDatatype.STRING, null, null, null));
+			l.add(new SDFAttribute(null, this.hashCode() + "#" + triple.getPredicate().getName(), SDFDatatype.STRING,
+					null, null, null));
 		}
 		if (triple.getObject().isVariable()) {
-			l.add(new SDFAttribute(null, this.hashCode() + "#"
-					+ triple.getObject().getName(), SDFDatatype.STRING, null, null, null));
+			l.add(new SDFAttribute(null, this.hashCode() + "#" + triple.getObject().getName(), SDFDatatype.STRING, null,
+					null, null));
 		}
 		if (getInputAO() != null && getInputSchema() != null) {
 			l.addAll(getInputSchema().getAttributes());
 		}
-		SDFSchema schema = SDFSchemaFactory.createNewTupleSchema("", l);
+		SDFSchema schema = SDFSchemaFactory.createNewWithAttributes(l, getInputSchema());
 		this.setOutputSchema(schema);
+	}
+
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int pos) {
+		if (getOutputSchema() == null || recalcOutputSchemata) {
+			calcOutElements();
+		}
+		return getOutputSchema();
 	}
 
 	public BasicTripleSelectionAO(BasicTripleSelectionAO selection) {

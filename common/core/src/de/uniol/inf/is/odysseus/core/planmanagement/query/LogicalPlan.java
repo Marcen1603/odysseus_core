@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.util.FindSourcesLogicalVisitor;
 import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.util.RemoveOwnersGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.SetOwnerGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 
 public class LogicalPlan implements ILogicalPlan {
 	
@@ -123,11 +124,29 @@ public class LogicalPlan implements ILogicalPlan {
 		GenericGraphWalker<ILogicalOperator> walker = new GenericGraphWalker<>();
 		walker.prefixWalk(root, visitor);
 	}
+	
+	@Override
+	public String getPlanAsString(boolean detailed) {
+		return getPlanAsString(this, detailed);
+	}
 
 	// ----------------------------------------------------------------------------------------------------
 	// Static helper methods
 	// ----------------------------------------------------------------------------------------------------
 
+	/**
+	 * Update all output schema the reads input from startAt logical operator
+	 * @param toInsert
+	 */
+	public static void recalcOutputSchemas(ILogicalOperator startAt) {
+		startAt.recalcOutputSchema();
+		Collection<LogicalSubscription> targets = startAt.getSubscriptions();
+		for (LogicalSubscription sub: targets) {
+			recalcOutputSchemas(sub.getSink());
+		}
+		
+	}
+	
 	public static List<ILogicalOperator> getAllOperators(ILogicalOperator operator) {
 		List<ILogicalOperator> operators = Lists.newArrayList();
 		collectOperatorsImpl(operator, operators);
@@ -473,5 +492,11 @@ public class LogicalPlan implements ILogicalPlan {
 		return null;
 
 	}
+	
+	static public String getPlanAsString(ILogicalPlan logicalPlan, boolean detailed) {
+		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(detailed);
+		return planPrinter.createString(logicalPlan.getRoot());
+	}
+
 
 }

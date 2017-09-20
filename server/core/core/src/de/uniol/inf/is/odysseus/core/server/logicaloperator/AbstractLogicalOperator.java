@@ -178,6 +178,13 @@ public abstract class AbstractLogicalOperator implements Serializable, ILogicalO
 	}
 
 	@Override
+	public void recalcOutputSchema() {
+		recalcOutputSchemata = true;
+		outputSchema.clear();
+		getOutputSchema();		
+	}
+
+	@Override
 	public void setMetadata(IMetaAttribute metaattribute) {
 		this.metaattribute = metaattribute;
 	}

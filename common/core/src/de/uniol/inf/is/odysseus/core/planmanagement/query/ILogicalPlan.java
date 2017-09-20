@@ -27,5 +27,7 @@ public interface ILogicalPlan extends Serializable{
 
 	void setOwner(IOperatorOwner owner);
 
+	String getPlanAsString(boolean detailed);
+
 
 }

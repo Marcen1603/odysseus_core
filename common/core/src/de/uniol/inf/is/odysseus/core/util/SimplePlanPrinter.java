@@ -86,6 +86,7 @@ public class SimplePlanPrinter<T> {
 		}
 		if (withDetails) {
 			if (object instanceof ILogicalOperator) {
+				name.append(" " + ((ILogicalOperator) object).getOutputSchema());
 				name.append(" " + ((ILogicalOperator) object).getParameterInfos());
 			}
 		}
