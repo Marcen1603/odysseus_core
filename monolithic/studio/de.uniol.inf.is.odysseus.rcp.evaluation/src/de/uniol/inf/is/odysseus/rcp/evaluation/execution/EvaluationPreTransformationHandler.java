@@ -41,7 +41,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparam
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.util.CollectOperatorLogicalGraphVisitor;
 import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
-import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.latency.Latency;
 import de.uniol.inf.is.odysseus.logicaloperator.latency.CalcLatencyAO;
 import de.uniol.inf.is.odysseus.mep.MEP;
@@ -56,6 +55,8 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 	
 	Logger LOG = LoggerFactory.getLogger(EvaluationPreTransformationHandler.class);	
 	
+	private List<ILogicalOperator> manuallyAdded;
+	
 	@Override
 	public String getName() {
 		return "EvaluationPreTransformation";
@@ -66,6 +67,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			QueryBuildConfiguration config, List<Pair<String, String>> handlerParameters, Context context) {
 		Object modelObject = context.get(EvaluationRun.class.getName());
 		EvaluationRun run = (EvaluationRun) modelObject;
+		this.manuallyAdded = new ArrayList<>();
 		if (run != null) {
 			// Add metadata operator for all metadata that is needed and not
 			// available
@@ -178,6 +180,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : planRoot.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getSource();
+				
+				// Check, if we added the operator here to avoid adding sinks twice
+				if (this.manuallyAdded.contains(root)) {
+					continue;
+				}
+				
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
 					root = root.getSubscribedToSource(0).getSource();
 				}
@@ -209,6 +217,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 				newChilds.add(fileAO);
 			}
+			this.manuallyAdded.addAll(newChilds);
 			int inputPort = planRoot.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
 				planRoot.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
@@ -249,6 +258,12 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 			List<ILogicalOperator> newChilds = new ArrayList<>();
 			for (LogicalSubscription subscription : planRoot.getSubscribedToSource()) {
 				ILogicalOperator root = subscription.getSource();
+				
+				// Check, if we added the operator here to avoid adding sinks twice
+				if (this.manuallyAdded.contains(root)) {
+					continue;
+				}
+				
 				if (root instanceof CSVFileSink || root instanceof AbstractSenderAO) {
 					root = root.getSubscribedToSource(0).getSource();
 				}
@@ -297,6 +312,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 				newChilds.add(fileMemory);
 			}
+			this.manuallyAdded.addAll(newChilds);
 			int inputPort = planRoot.getSubscribedToSource().size();
 			for (ILogicalOperator newChild : newChilds) {
 				planRoot.subscribeToSource(newChild, inputPort++, 0, newChild.getOutputSchema());
