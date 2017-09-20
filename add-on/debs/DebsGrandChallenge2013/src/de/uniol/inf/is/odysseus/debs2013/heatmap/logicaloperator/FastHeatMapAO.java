@@ -132,6 +132,15 @@ public class FastHeatMapAO extends UnaryLogicalOp {
 		return valueAttribute;
 	}
 	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int port) {
+		if (recalcOutputSchemata || getOutputSchema() == null) {
+			initOutputSchema();
+		}
+		return getOutputSchema();
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	public void initOutputSchema() {
 		
