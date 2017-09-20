@@ -825,7 +825,7 @@ abstract public class AbstractDataDictionary implements IDataDictionary, IDataDi
 			fireSinkAddEvent(sinkname, sink, caller);
 			fireDataDictionaryChangedEvent();
 		} else {
-			throw new DataDictionaryException("Sink name already used");
+			throw new DataDictionaryException("Sink name " + sinkname.getResourceName() + " already used");
 		}
 
 	}
