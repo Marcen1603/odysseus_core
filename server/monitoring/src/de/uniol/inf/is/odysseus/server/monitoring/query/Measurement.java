@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.OperatorLaten
 public class Measurement {
 
 	private Map<String, OperatorLatency> latencys;
-	private long currentLatency;
+	private long currentLatency, averageLatency;
 	private Map<Integer, HashMap<String, OperatorLatency>> temporaryLatencys;
 	private List<String> roots;
 
@@ -92,7 +92,7 @@ public class Measurement {
 				}
 				if (!added) {
 					// No matching Event found, a new one has to be created
-					addInitialInnerHashMap(operatorName, nanoTimestamp, event, i);
+					addInitialInnerHashMap(operatorName, nanoTimestamp, event, i+1);
 				}
 			}
 		} else {
@@ -171,8 +171,13 @@ public class Measurement {
 			latency += this.latencys.get(o).getLatency();
 			System.out.println(o + " Latenz: " + this.latencys.get(o).getLatency());
 		}
+		if (getCurrentLatency()!=0){
+			setAverageLatency((latency + getCurrentLatency()) /2);
+		}
+	
 		System.out.println("Total Latency: " + latency);
 		setCurrentLatency(latency);
+		//TODO:Maybe error handling could be implemented
 		if (latency <= 0) {
 			System.out.println("Fehler");
 		}
@@ -184,6 +189,14 @@ public class Measurement {
 
 	public synchronized long getCurrentLatency() {
 		return this.currentLatency;
+	}
+
+	public synchronized long getAverageLatency() {
+		return averageLatency;
+	}
+
+	public synchronized void setAverageLatency(long averageLatency) {
+		this.averageLatency = averageLatency;
 	}
 
 }
