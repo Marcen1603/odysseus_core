@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.core.event.IEvent;
 
 public class ThreadCalculateLatency extends Thread {
 
+	private static final int minQueueLength = 5;
 	private PriorityQueue<LatencyEvent> queue;
 	private volatile boolean running = true;
 	Comparator<LatencyEvent> comparator = new EventComparator();
@@ -27,7 +28,7 @@ public class ThreadCalculateLatency extends Thread {
 	public void run() {
 		while (running) {
 			//TODO: Remove size>5? : Has to be for very short querys.
-			if (!queue.isEmpty() && queue.size()>5) {
+			if (!queue.isEmpty() && queue.size()>minQueueLength) {
 				processEvent();
 			}
 		}
