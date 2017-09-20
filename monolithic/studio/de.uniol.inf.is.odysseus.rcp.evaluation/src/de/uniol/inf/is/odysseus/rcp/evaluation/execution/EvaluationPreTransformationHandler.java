@@ -103,7 +103,7 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 
 		if (added) {
 
-			LOG.warn("ADDED METADATA WILL CURRENTLY NOT WORK FOR ALL CASES! In case of transformation error, please insert correct metadata (e.g. Systemload) manually"); 
+			//LOG.warn("ADDED METADATA WILL CURRENTLY NOT WORK FOR ALL CASES! In case of transformation error, please insert correct metadata (e.g. Systemload) manually"); 
 			
 			IMetaAttribute metaAttribute = MetadataRegistry.getMetadataType(types);
 			// find all accessao and set metadata
@@ -115,18 +115,11 @@ public class EvaluationPreTransformationHandler extends AbstractPreTransformatio
 				// TODO: Check why insertOperatorBefore seems to be right in
 				// other cases
 				LogicalPlan.insertOperatorBefore2(toInsert, o);
-				// TODO: We need to update all output schema and subscriptions upstream ... 
+				LogicalPlan.recalcOutputSchemas(toInsert);
 			}
 		}
-		 ///dumpPlan(logicalPlan);
+		//System.err.println(logicalPlan.getPlanAsString(true));
 	}
-
-	@SuppressWarnings("unused")
-	private void dumpPlan(ILogicalOperator logicalPlan) {
-		SimplePlanPrinter<ILogicalOperator> planPrinter = new SimplePlanPrinter<ILogicalOperator>(true);
-		System.err.println(planPrinter.createString(logicalPlan));
-	}
-
 
 	private static MapAO createMapAndTupleOperator(String expressionName, String expression, ILogicalOperator source) {
 		// Need to convert to tuples for csv file sink

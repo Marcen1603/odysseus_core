@@ -36,14 +36,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 /**
  * @author Jonas Jacobi, Marco Grawunder
  */
-@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1, doc = "Renames the attributes", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Rename+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(name = "RENAME", minInputPorts = 1, maxInputPorts = 1, doc = "Renames the attributes", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Rename+operator", category = {
+		LogicalOperatorCategory.BASE })
 public class RenameAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 4218605858465342011L;
 	private List<String> aliases = new ArrayList<>();
 	private boolean aliasesAsPairs;
 	private String typeName;
-	private boolean calculated;
+//	private boolean calculated;
 	private boolean noOp;
 	private boolean keepPosition = false;
 
@@ -86,13 +87,13 @@ public class RenameAO extends UnaryLogicalOp {
 		this.aliasesAsPairs = aliasesAsPairs;
 	}
 
-	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=true)
-	public void setNoOpOld( boolean isNoOp ) {
+	@Parameter(name = "isNoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated = true)
+	public void setNoOpOld(boolean isNoOp) {
 		this.noOp = isNoOp;
 	}
 
-	@Parameter(name = "NoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated=false)
-	public void setNoOp( boolean isNoOp ) {
+	@Parameter(name = "NoOp", type = BooleanParameter.class, optional = true, doc = "A flag to avoid removing this operator even if nothing in the schema is changed.", deprecated = false)
+	public void setNoOp(boolean isNoOp) {
 		this.noOp = isNoOp;
 	}
 
@@ -119,78 +120,83 @@ public class RenameAO extends UnaryLogicalOp {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		if (!calculated) {
-			SDFSchema output = super.getOutputSchema(pos);
-			SDFSchema input = super.getInputSchema();
-			List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
-			// check, if types are equal
-			for (int i = 0; i < output.size(); i++) {
-				newOutput.add(output.get(i).clone(input.get(i).getDatatype()));
-			}
+		if (recalcOutputSchemata ||  super.getOutputSchemaIntern(pos) == null) {
+			initialize();
 		}
+//		if (!calculated) {
+//			SDFSchema output = super.getOutputSchema(pos);
+//			SDFSchema input = super.getInputSchema();
+//			List<SDFAttribute> newOutput = new ArrayList<SDFAttribute>();
+//			// check, if types are equal
+//			for (int i = 0; i < output.size(); i++) {
+//				newOutput.add(output.get(i).clone(input.get(i).getDatatype()));
+//			}
+//		}
 		return super.getOutputSchemaIntern(pos);
 	}
 
 	@Override
 	public void initialize() {
 		SDFSchema inputSchema = getInputSchema();
-	//	if((inputSchema.getType() != KeyValueObject.class)) {
-			if (!aliasesAsPairs) {
-				if (!aliases.isEmpty()) {
-					if (inputSchema.size() != aliases.size()) {
-						throw new IllegalArgumentException("number of aliases does not match number of input attributes for rename");
-					}
-					Iterator<SDFAttribute> it = inputSchema.iterator();
-					List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
-					for (String str : aliases) {
-						// use clone, so we have a datatype etc.
-						SDFAttribute attribute = it.next().clone(null, str);
-						attrs.add(attribute);
-					}
-					String uri = typeName != null ? typeName : inputSchema.getURI();
-					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
-				} else {
-					//
-					if (typeName != null) {
-						// only set type name!
-						List<SDFAttribute> attrs = Lists.newArrayList();
-						for (SDFAttribute oldAttr : inputSchema) {
-							SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
-							attrs.add(newOne);
-						}
-						setOutputSchema(SDFSchemaFactory.createNewWithAttributes(typeName, attrs, inputSchema));
-					} else {
-						setOutputSchema(inputSchema);
-					}
+		// if((inputSchema.getType() != KeyValueObject.class)) {
+		if (!aliasesAsPairs) {
+			if (!aliases.isEmpty()) {
+				if (inputSchema.size() != aliases.size()) {
+					throw new IllegalArgumentException(
+							"number of aliases does not match number of input attributes for rename");
 				}
+				Iterator<SDFAttribute> it = inputSchema.iterator();
+				List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+				for (String str : aliases) {
+					// use clone, so we have a datatype etc.
+					SDFAttribute attribute = it.next().clone(null, str);
+					attrs.add(attribute);
+				}
+				String uri = typeName != null ? typeName : inputSchema.getURI();
+				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
 			} else {
-				if (aliases.isEmpty()) {
-					throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
-				}
-				if (aliases.size() % 2 != 0) {
-					throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
-				}
-
-				Map<String, String> aliasesMap = toMap(aliases);
-				List<SDFAttribute> attrs = Lists.newArrayList();
-				for (SDFAttribute oldAttr : inputSchema) {
-					String alias = aliasesMap.get(oldAttr.getAttributeName());
-					if (alias != null) {
-						// alias found!
-						SDFAttribute newAttr = oldAttr.clone(null, alias);
-						attrs.add(newAttr);
-					} else {
-						attrs.add(oldAttr.clone());
+				//
+				if (typeName != null) {
+					// only set type name!
+					List<SDFAttribute> attrs = Lists.newArrayList();
+					for (SDFAttribute oldAttr : inputSchema) {
+						SDFAttribute newOne = new SDFAttribute(typeName, oldAttr.getAttributeName(), oldAttr);
+						attrs.add(newOne);
 					}
-					String uri = typeName != null ? typeName : inputSchema.getURI();
-					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
+					setOutputSchema(SDFSchemaFactory.createNewWithAttributes(typeName, attrs, inputSchema));
+				} else {
+					setOutputSchema(inputSchema);
 				}
 			}
-//		} else {
-//			String uri = typeName != null ? typeName : inputSchema.getURI();
-//			List<SDFAttribute> attrs = Lists.newArrayList();
-//			setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
-//		}
+		} else {
+			if (aliases.isEmpty()) {
+				throw new IllegalArgumentException("number of aliases interpreted as pairs must be at least two");
+			}
+			if (aliases.size() % 2 != 0) {
+				throw new IllegalArgumentException("number of aliases interpreted as pairs must be even");
+			}
+
+			Map<String, String> aliasesMap = toMap(aliases);
+			List<SDFAttribute> attrs = Lists.newArrayList();
+			for (SDFAttribute oldAttr : inputSchema) {
+				String alias = aliasesMap.get(oldAttr.getAttributeName());
+				if (alias != null) {
+					// alias found!
+					SDFAttribute newAttr = oldAttr.clone(null, alias);
+					attrs.add(newAttr);
+				} else {
+					attrs.add(oldAttr.clone());
+				}
+				String uri = typeName != null ? typeName : inputSchema.getURI();
+				setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs, inputSchema));
+			}
+		}
+		// } else {
+		// String uri = typeName != null ? typeName : inputSchema.getURI();
+		// List<SDFAttribute> attrs = Lists.newArrayList();
+		// setOutputSchema(SDFSchemaFactory.createNewWithAttributes(uri, attrs,
+		// inputSchema));
+		// }
 	}
 
 	@Override
