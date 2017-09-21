@@ -32,26 +32,51 @@ public class FromWKT extends AbstractFunction<GeometryWrapper> {
 	private static final long serialVersionUID = -8850032331081355095L;
 
 	public FromWKT() {
-		super("FromWKT",1,accTypes,SDFSpatialDatatype.SPATIAL_GEOMETRY);
+		super("FromWKT", 1, accTypes, SDFSpatialDatatype.SPATIAL_GEOMETRY);
 	}
-	
-    public static final SDFDatatype[][] accTypes = new SDFDatatype[][]{{
-    	SDFDatatype.STRING
-    }};
-	
-	/* (non-Javadoc)
+
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.STRING } };
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see de.uniol.inf.is.odysseus.mep.IExpression#getValue()
 	 */
 	@Override
 	public GeometryWrapper getValue() {
-		Geometry g;
+		Geometry g = null;
+		GeometryWrapper wrapper;
 		try {
-			g = new WKTReader().read((String)this.getInputValue(0));
+			// See if we have more info in here
+			String wkt = (String) this.getInputValue(0);
+			int srid = 0;
+
+			// SRID must be first if there's also an ID
+			if (wkt.contains("SRID")) {
+				int split = wkt.indexOf(";");
+				srid = Integer.parseInt(wkt.substring(5, split));
+				wkt = wkt.substring(split + 1);
+			}
+
+			// ID (not part of EWKT but necessary to have the id of that geo-object, if we
+			// later put this into a geoJSON object automatically)
+			int id = -1;
+			if (wkt.contains("ID")) {
+				int split = wkt.indexOf(";");
+				id = Integer.parseInt(wkt.substring(3, split));
+				wkt = wkt.substring(split + 1);
+			}
+
+			g = new WKTReader().read(wkt);
+			g.setSRID(srid);
+			
+			wrapper = new GeometryWrapper(g);
+			wrapper.setId(id);
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
-		return new GeometryWrapper(g);
-	
+		return wrapper;
+
 	}
 
 }

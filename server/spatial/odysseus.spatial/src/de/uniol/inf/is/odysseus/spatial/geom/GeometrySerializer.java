@@ -60,7 +60,7 @@ public class GeometrySerializer extends StdSerializer<GeometryWrapper> {
 		StringWriter writer = new StringWriter();
 		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(this.type);
 		builder.add(geometry);
-		SimpleFeature simpleFeature = builder.buildFeature("geometry");
+		SimpleFeature simpleFeature = builder.buildFeature("" + geometryWrapper.getId());
 
 		fjson.writeFeature(simpleFeature, writer);
 		String json = writer.toString();
@@ -72,7 +72,7 @@ public class GeometrySerializer extends StdSerializer<GeometryWrapper> {
 	private SimpleFeatureType createSimpleFeatureType() {
 		SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
 
-		// set the name
+		// set the name / the id of the geoJSON object
 		b.setName("geometry");
 
 		// add a geometry property

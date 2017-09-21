@@ -22,6 +22,15 @@ public class GeometryWrapper implements IClone, Cloneable, Serializable {
 
 	@JsonIgnore
 	private transient Geometry geometry;
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public GeometryWrapper(Geometry geometry) {
 		this.geometry = (Geometry) geometry.clone();
