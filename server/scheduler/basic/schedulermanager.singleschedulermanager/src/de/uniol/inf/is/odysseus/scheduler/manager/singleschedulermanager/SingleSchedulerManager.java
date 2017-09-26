@@ -113,10 +113,11 @@ public class SingleSchedulerManager extends AbstractSchedulerManager implements
 				if (props.getProperty("defaultScheduler") == null
 						|| props.getProperty("defaultScheduler").length() == 0) {
 					logger.info("No Scheduler-Config-File found.");
-					props.setProperty("defaultScheduler", schedulers.iterator()
-							.hasNext() ? schedulers.iterator().next() : null);
-					props.setProperty("defaultStrat", strats.iterator()
-							.hasNext() ? strats.iterator().next() : null);
+					// the first scheduler that is found, is not the best one typically
+					// set defaults to fixed values that should always be part of Odysseus
+					
+					props.setProperty("defaultScheduler", "Single Thread Scheduler RR Multi Source");
+					props.setProperty("defaultStrat", "Aurora Min Latency");
 					FileOutputStream out;
 					try {
 						out = new FileOutputStream(config.get("schedulingConfigFile"));
