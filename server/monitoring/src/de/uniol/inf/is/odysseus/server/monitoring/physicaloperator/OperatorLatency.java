@@ -1,28 +1,33 @@
 package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
 
 public class OperatorLatency implements IMeasurableValue {
-	private long startTime = 0;
-	private long latency;
-	private long endTime;
+	private long startTime, latency, endTime;
+	private String operatorName;
+	private boolean done, confirmed;
 
-	// True if Latency has been calculated
-	private boolean committed;
+	public OperatorLatency(String opName) {
+		setConfirmed(false);
+		setOperatorName(opName);
+	}
 
 	public OperatorLatency() {
-		this.committed = false;
+		setConfirmed(false);
 	}
 
 	public long getLatency() {
 		return latency;
 	}
 
-	private void setCommitted(boolean committed) {
-		this.committed = committed;
+	public void setConfirmed(boolean committed) {
+		this.confirmed = committed;
 	}
 
 	@Override
-	public void startMeasurement(long timestamp) {
-		setStartTime(timestamp);
+	public void startMeasurement(long nanoTimestamp) {
+		setStartTime(nanoTimestamp);
+		if (isStopped()) {
+			stopMeasurement(this.endTime);
+		}
 	}
 
 	private void setStartTime(long timestamp) {
@@ -31,14 +36,13 @@ public class OperatorLatency implements IMeasurableValue {
 
 	@Override
 	public void stopMeasurement(long timestamp) {
-		latency = timestamp - startTime;
-		setEndTime(timestamp);
-		setCommitted(true);
-	}
-
-	@Override
-	public boolean isCalculated() {
-		return this.committed;
+		if (isStarted()) {
+			this.latency = timestamp - this.startTime;
+			setEndTime(timestamp);
+			setConfirmed(true);
+		} else {
+			setEndTime(timestamp);
+		}
 	}
 
 	public long getStartTime() {
@@ -51,5 +55,40 @@ public class OperatorLatency implements IMeasurableValue {
 
 	private void setEndTime(long endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
+
+	@Override
+	public boolean isConfirmed() {
+		return this.confirmed;
+	}
+
+	public boolean isStarted() {
+		if (this.startTime != 0) {
+			return true;
+		} else
+			return false;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone() {
+		this.done = true;
+	}
+
+	public boolean isStopped() {
+		if (this.endTime != 0) {
+			return true;
+		} else
+			return false;
 	}
 }

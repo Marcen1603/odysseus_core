@@ -1,62 +1,37 @@
 package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
 
-import java.awt.List;
-import java.util.ArrayList;
-
-import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.server.monitoring.system.SystemUsage;
-
 public class OperatorCPUUsage implements IMeasurableValue {
 
-	private int id;
-	private static final int sleep = 500;
+	private String operatorName;
+	private boolean confirmed;
 
-	public OperatorCPUUsage(IPhysicalOperator o) {
-		// TODO Auto-generated constructor stub
-		id = o.hashCode();
-	}
-	public void start(long timestamp) {
-		// start Thread ,measure CPU-Usage , increase counter
-		new Thread(() -> {
-			SystemUsage su = SystemUsage.getInstance();
-			ArrayList<Double> usages = new ArrayList<Double>();
-			try {
-				while (true) {
-					usages.add(su.getCurrentCPUUsage());
-					Thread.sleep(sleep);
-				}
-			} catch (Exception e) {
-				System.out.println(e.toString());
-			}
-		}).start();
-		System.out.println();
+	public OperatorCPUUsage(String operatorName) {
+		this.setOperatorName(operatorName);
+		this.setConfirmed(false);
 	}
 
-	public void stop(long timestamp) {
-		// Berchne
-
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 	@Override
 	public void startMeasurement(long timestamp) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void stopMeasurement(long timestamp) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public boolean isCalculated() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
+	}
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
 	}
 }
