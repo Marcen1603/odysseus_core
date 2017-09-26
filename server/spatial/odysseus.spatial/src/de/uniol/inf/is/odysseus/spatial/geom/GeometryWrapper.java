@@ -22,6 +22,7 @@ public class GeometryWrapper implements IClone, Cloneable, Serializable {
 
 	@JsonIgnore
 	private transient Geometry geometry;
+	private int id;
 
 	public GeometryWrapper(Geometry geometry) {
 		this.geometry = (Geometry) geometry.clone();
@@ -33,6 +34,14 @@ public class GeometryWrapper implements IClone, Cloneable, Serializable {
 
 	public void setGeometry(Geometry geometry) {
 		this.geometry = geometry;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	@Override
@@ -50,6 +59,7 @@ public class GeometryWrapper implements IClone, Cloneable, Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((geometry == null) ? 0 : geometry.hashCode());
+		result = prime * result + id;
 		return result;
 	}
 
@@ -67,10 +77,13 @@ public class GeometryWrapper implements IClone, Cloneable, Serializable {
 				return false;
 		} else if (!geometry.equals(other.geometry))
 			return false;
+		if (id != other.id)
+			return false;
 		return true;
 	}
 
 	public void writeObject(ObjectOutputStream oos) throws IOException {
+		// To be compatible with standard WKT, the ID is ignored here
 		// default serialization
 		oos.defaultWriteObject();
 
