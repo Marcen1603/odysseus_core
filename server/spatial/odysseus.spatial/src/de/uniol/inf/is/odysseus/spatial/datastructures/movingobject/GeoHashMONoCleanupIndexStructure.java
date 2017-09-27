@@ -18,6 +18,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import ch.hsr.geohash.BoundingBox;
 import ch.hsr.geohash.GeoHash;
@@ -28,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
@@ -211,6 +213,24 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		return results;
 	}
 
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+		Map<String, List<ResultElement>> results = new HashMap<>();
+
+		// Get the latest known location of the moving object to search the neighbors
+		// for
+		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(movingObjectID);
+		if (centerElement == null) {
+			return results;
+		}
+
+		Geometry centerGeometry = new Point(
+				new CoordinateArraySequence(
+						new Coordinate[] { new Coordinate(centerElement.getLatitude(), centerElement.getLongitude()) }),
+				new GeometryFactory());
+		return this.queryCircle(centerGeometry, radius, new TimeInterval(PointInTime.ZERO, PointInTime.INFINITY),
+				movingObjectID);
+	}
+
 	@Override
 	public Map<String, List<SpatioTemporalQueryResult>> queryCircleTrajectory(String movingObjectID, double radius) {
 		// TODO Maybe add start and end time for the query?
@@ -249,7 +269,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 					results.get(otherMovingObjectID).add(queryResultElement);
 				}
 			}
-			
+
 			// Go on with the previous / older element we know
 			centerElement = centerElement.getPreviousElement();
 		} while (centerElement != null);

@@ -3,13 +3,20 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
+import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
+import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
+import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
 
 public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
@@ -18,26 +25,30 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private static final int ENRICH_PORT = 1;
 
 	private int pointInTimePosition;
-	// private IMovingObjectDataStructure index;
+	private GeoHashMODataStructure index;
 
 	private Set<String> allIds;
 
 	private int idAttributeIndex;
 	private int centerMovingObjectAttributeIndex;
-	// private int geometryAttributeIndex;
+	private int geometryAttributeIndex;
+
+	private double radius;
+	private static final double radiusExtension = 1000;
 
 	public MOEstimationPO(MOEstimationAO ao) {
-		// this.geometryAttributeIndex =
-		// ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
+		this.geometryAttributeIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
 		this.idAttributeIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getIdAttribute());
 		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
 		this.centerMovingObjectAttributeIndex = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getCenterMovingObjectAttribute());
 
-		// TODO Name and "length" is not correct here.
-		// this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(),
-		// this.geometryAttributeIndex, 1000);
+		// TODO Name and "length" is not correct here. Remove length and use a time
+		// window.
+		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
 		this.allIds = new HashSet<>();
+
+		this.radius = ao.getRadius();
 	}
 
 	@Override
@@ -50,8 +61,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	}
 
 	private void processTrajectoryTuple(T object) {
-		// Geometry geometry = ((GeometryWrapper)
-		// object.getAttribute(this.geometryAttributeIndex)).getGeometry();
+		Geometry geometry = ((GeometryWrapper) object.getAttribute(this.geometryAttributeIndex)).getGeometry();
 		String id = "";
 		if (object.getAttribute(this.idAttributeIndex) instanceof Long) {
 			id = String.valueOf((Long) object.getAttribute(this.idAttributeIndex));
@@ -63,10 +73,9 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		this.allIds.add(id);
 
-		// LocationMeasurement locationMeasurement = new
-		// LocationMeasurement(geometry.getCoordinate().x,
-		// geometry.getCoordinate().y, 0, 0, object.getMetadata().getStart(), id);
-		// this.index.add(locationMeasurement, object);
+		LocationMeasurement locationMeasurement = new LocationMeasurement(geometry.getCoordinate().x,
+				geometry.getCoordinate().y, 0, 0, object.getMetadata().getStart(), id);
+		this.index.add(locationMeasurement, object);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -83,7 +92,10 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		// As a first attempt get a list with all known moving objects
 		List<String> allIdsAsList = new ArrayList<>();
-		allIdsAsList.addAll(this.allIds);
+
+		Map<String, List<ResultElement>> queryCircleWOPrediction = this.index
+				.queryCircleWOPrediction("" + centerMovingObjectId, this.radius + radiusExtension);
+		allIdsAsList.addAll(queryCircleWOPrediction.keySet());
 
 		// And put out a tuple with the name of the dataStructure
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);
