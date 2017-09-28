@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
 
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+
 public class OperatorLatency implements IMeasurableValue {
 	private long startTime, latency, endTime;
-	private String operatorName;
 	private boolean done, confirmed;
+	private IPhysicalOperator operator;
 
-	public OperatorLatency(String opName) {
+	public OperatorLatency(IPhysicalOperator o) {
 		setConfirmed(false);
-		setOperatorName(opName);
+		this.setOperator(o);
 	}
 
 	public OperatorLatency() {
@@ -57,14 +59,6 @@ public class OperatorLatency implements IMeasurableValue {
 		this.endTime = endTime;
 	}
 
-	public String getOperatorName() {
-		return operatorName;
-	}
-
-	public void setOperatorName(String operatorName) {
-		this.operatorName = operatorName;
-	}
-
 	@Override
 	public boolean isConfirmed() {
 		return this.confirmed;
@@ -90,5 +84,13 @@ public class OperatorLatency implements IMeasurableValue {
 			return true;
 		} else
 			return false;
+	}
+
+	public IPhysicalOperator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(IPhysicalOperator operator) {
+		this.operator = operator;
 	}
 }
