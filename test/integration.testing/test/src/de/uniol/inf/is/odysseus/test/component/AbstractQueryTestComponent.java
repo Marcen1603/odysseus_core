@@ -7,7 +7,7 @@ import java.util.List;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
-import de.uniol.inf.is.odysseus.core.server.util.SimplePlanPrinter;
+import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.test.StatusCode;
 import de.uniol.inf.is.odysseus.test.context.ITestContext;
 import de.uniol.inf.is.odysseus.test.set.QueryTestSet;

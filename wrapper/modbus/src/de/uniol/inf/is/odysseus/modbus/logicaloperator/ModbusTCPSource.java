@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BitVectorPar
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 import de.uniol.inf.is.odysseus.modbus.ModbusTCPTransportHandler;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "ModbusTCPSource", category={LogicalOperatorCategory.SOURCE}, doc = "Allows to read from a Modbus TCP connections.")

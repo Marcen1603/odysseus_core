@@ -32,6 +32,7 @@ package de.uniol.inf.is.odysseus.core.physicaloperator;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,8 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
  *
  * @author Merlin Wasmann, Marco Grawunder
  */
-public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implements ISource<W>,
-		IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
+public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>>
+		implements ISource<W>, IAccessConnectionListener<R>, ITransferHandler<W>, IPhysicalOperator {
 
 	final public int ERRORPORT = Integer.MAX_VALUE;
 
@@ -78,17 +79,34 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	private String name = null;
 	private Map<Integer, SDFSchema> outputSchema = new HashMap<Integer, SDFSchema>();
 
+	final private Map<Integer, Integer> consumerCount = new HashMap<>();
+
 	final private OwnerHandler ownerHandler;
 
 	private AtomicBoolean blocked = new AtomicBoolean(false);
 
-	final private List<AbstractPhysicalSubscription<ISink<? super W>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super W>>>();
+	final private List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>();
 	// Only active subscription are served on transfer
-	final private List<AbstractPhysicalSubscription<ISink<? super W>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super W>>>();
+	final private List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>();
 
 	private Map<String, String> infos = new TreeMap<String, String>();
 
 	private boolean suppressPunctuations;
+
+	final private Comparator<AbstractPhysicalSubscription<?, ?>> sortByCloneComparator = new Comparator<AbstractPhysicalSubscription<?, ?>>() {
+
+		@Override
+		public int compare(AbstractPhysicalSubscription<?, ?> left, AbstractPhysicalSubscription<?, ?> right) {
+			if (left.isNeedsClone() == right.isNeedsClone()) {
+				return 0;
+			}
+			if (left.isNeedsClone() && !right.isNeedsClone()) {
+				return -1;
+			}
+			return 1;
+		}
+
+	};
 
 	// --------------------------------------------------------------------
 	// Logging
@@ -139,8 +157,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	@Override
 	public String getName() {
 		if (name == null) {
-			return this.getClass().getSimpleName() + "(" + this.hashCode()
-					+ ")";
+			return this.getClass().getSimpleName() + "(" + this.hashCode() + ")";
 		}
 		return this.name;
 	}
@@ -268,8 +285,7 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void createAndAddMonitoringData(IPeriodicalMonitoringData item,
-			long period) {
+	public void createAndAddMonitoringData(IPeriodicalMonitoringData item, long period) {
 	}
 
 	/**
@@ -350,10 +366,10 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 
 	@Override
 	public void transfer(W object, int sourceOutPort) {
-		for (AbstractPhysicalSubscription<ISink<? super W>> sink : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink : this.activeSinkSubscriptions) {
 			if (sink.getSourceOutPort() == sourceOutPort) {
 				try {
-					sink.getTarget().process(object, sink.getSinkInPort());
+					sink.getSink().process(object, sink.getSinkInPort());
 				} catch (Exception e) {
 					// Send object that could not be processed to the error port
 					e.printStackTrace();
@@ -380,19 +396,17 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
 		if (!suppressPunctuations) {
-			for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-				sub.getTarget().processPunctuation(punctuation,
-						sub.getSinkInPort());
+			for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : this.activeSinkSubscriptions) {
+				sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
 			}
 		}
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : this.activeSinkSubscriptions) {
 			if (sub.getSourceOutPort() == outPort) {
-				sub.getTarget().processPunctuation(punctuation,
-						sub.getSinkInPort());
+				sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
 			}
 		}
 	}
@@ -425,77 +439,107 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema, boolean asActive, int openCount) {
-		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
-				sink, sinkInPort, sourceOutPort, schema);
+	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema,
+			boolean asActive, int openCount) {
+		// TODO: Make configurable
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
+		subscribeSink(sub, asActive);
+	}
+
+	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub,
+			boolean asActive) {
 		if (!this.sinkSubscriptions.contains(sub)) {
-			// getLogger().debug(
+			// getLogger().trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
-			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
+			sub.getSink().subscribeToSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sub);
 			if (asActive) {
-				activeSinkSubscriptions.add(sub);
+				addActiveSubscription(sub);
 			}
 		}
 	}
 
 	@Override
-	public void subscribeSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
+	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void unsubscribeSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(new ControllablePhysicalSubscription<ISink<? super W>>(
-				sink, sinkInPort, sourceOutPort, schema));
+	final public void subscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		subscribeSink((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) subscription,
+				false);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void unsubscribeSink(
-			AbstractPhysicalSubscription<ISink<? super W>> subscription) {
-		getLogger().debug("Unsubscribe from Sink " + subscription.getTarget());
+	public void unsubscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		getLogger().debug("Unsubscribe from Sink " + subscription.getSink());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		if (subContained) {
-			subscription.getTarget().unsubscribeFromSource(this,
-					subscription.getSinkInPort(),
+			subscription.getSink().unsubscribeFromSource((ISource<IStreamObject<?>>) this, subscription.getSinkInPort(),
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
 	}
 
+	private void addActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub) {
+		// Handle multiple open calls{
+		if (!activeSinkSubscriptions.contains(sub)) {
+			this.activeSinkSubscriptions.add(sub);
+			Integer currentCount;
+			if ((currentCount = consumerCount.get(sub.getSourceOutPort())) == null) {
+				currentCount = 0;
+			}
+			consumerCount.put(sub.getSourceOutPort(), currentCount + 1);
+
+			// the subscriptions must be ordered. All elements that clone need
+			// to be the first in the list
+			Collections.sort(activeSinkSubscriptions, this.sortByCloneComparator);
+
+			newReceiver(sub);
+		}
+	}
+
+	protected void newReceiver(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink) {
+		// can be overwritten if needed
+	}
+
 	@Override
-	public Collection<AbstractPhysicalSubscription<ISink<? super W>>> getSubscriptions() {
+	public Collection<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getSubscriptions() {
 		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
 	@Override
-	public void connectSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
-				sink, sinkInPort, sourceOutPort, schema);
-		this.activeSinkSubscriptions.add(sub);
+	public void connectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
+		// All connected sinks needs a cloned version as the sinks are connected
+		// without
+		// running the query translation phase
+		sub.setNeedsClone(true);
+		sink.addOwner(this.getOwner());
+		addActiveSubscription(sub);
 	}
 
 	@Override
-	public void disconnectSink(ISink<? super W> sink, int sinkInPort,
-			int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		AbstractPhysicalSubscription<ISink<? super W>> sub = new ControllablePhysicalSubscription<ISink<? super W>>(
-				sink, sinkInPort, sourceOutPort, schema);
-		this.activeSinkSubscriptions.remove(sub);
-		if (activeSinkSubscriptions.size() == 0) {
-			try {
-				this.protocolHandler.close();
-				this.done.set(true);
-				done();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public void disconnectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
+		removeActiveSubscription(sub);
+	}
+
+	private void removeActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub) {
+		if (activeSinkSubscriptions.contains(sub)) {
+			consumerCount.put(sub.getSourceOutPort(), consumerCount.get(sub.getSourceOutPort()) - 1);
+			this.activeSinkSubscriptions.remove(sub);
 		}
 	}
 
@@ -529,15 +573,13 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")"
-				+ (blocked.get() ? "b" : "");
+		return this.getClass().getSimpleName() + "(" + this.hashCode() + ")" + (blocked.get() ? "b" : "");
 	}
 
-	private AbstractPhysicalSubscription<ISink<? super W>> findSinkInSubscription(
-			IPhysicalOperator o, int sourcePort, int sinkPort) {
-		for (AbstractPhysicalSubscription<ISink<? super W>> sub : this.sinkSubscriptions) {
-			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort
-					&& sub.getSinkInPort() == sinkPort) {
+	private AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> findSinkInSubscription(IPhysicalOperator o,
+			int sourcePort, int sinkPort) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : this.sinkSubscriptions) {
+			if (sub.getSink() == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
 				return sub;
 			}
 		}
@@ -560,9 +602,9 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 		if (isOpen()) {
 			// fire(this.doneEvent);
 			this.process_done();
-			for (AbstractPhysicalSubscription<ISink<? super W>> sub : sinkSubscriptions) {
+			for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : sinkSubscriptions) {
 				if (!sub.isDone()) {
-					sub.getTarget().done(sub.getSinkInPort());
+					sub.getSink().done(sub.getSinkInPort());
 				}
 			}
 			for (IOperatorOwner owner : getOwner()) {
@@ -593,26 +635,24 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	}
 
 	@Override
-	synchronized public void open(IOperatorOwner owner)
-			throws OpenFailedException {
+	synchronized public void open(IOperatorOwner owner) throws OpenFailedException {
 		// do nothing
 	}
 
 	@Override
-	public void open(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) throws OpenFailedException {
+	public void open(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
+			throws OpenFailedException {
 		// Hint: ignore callPath on sources because the source does not call any
 		// subscription
 
 		// o can be null, if operator is top operator
 		// otherwise top operator cannot be opened
 		if (caller != null) {
-			AbstractPhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
-					caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+					sinkPort);
 			if (sub == null) {
-				throw new OpenFailedException(
-						"Open called from an unsubscribed sink " + caller);
+				throw new OpenFailedException("Open called from an unsubscribed sink " + caller);
 			}
 			// Handle multiple open calls
 			if (!activeSinkSubscriptions.contains(sub)) {
@@ -647,15 +687,13 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void close(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
-		AbstractPhysicalSubscription<ISink<? super W>> sub = findSinkInSubscription(
-				caller, sourcePort, sinkPort);
+	public void close(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
+		AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+				sinkPort);
 		getLogger().trace("CLOSE " + getName());
 		if (sub == null) {
-			throw new RuntimeException(
-					"Close called from an unsubscribed sink ");
+			throw new RuntimeException("Close called from an unsubscribed sink ");
 		}
 		sub.decOpenCalls();
 		if (sub.getOpenCalls() == 0) {
@@ -776,17 +814,15 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	}
 
 	@Override
-	public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
+	public void suspend(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
-			List<IOperatorOwner> forOwners) {
+	public void resume(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		// TODO Auto-generated method stub
 
 	}
@@ -816,10 +852,17 @@ public class ClientReceiver<R, W extends IStreamObject<IMetaAttribute>> implemen
 	}
 
 	@Override
-	public void start(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+	public void start(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
 			throws StartFailedException {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void unsubscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -77,7 +77,7 @@ public class CalcDataratePostProcessor implements IQueryDistributionPostProcesso
 			int updateRate) {
 		DatarateAO calcDatarateAO = new DatarateAO();
 		calcDatarateAO.setUpdateRate(updateRate);
-		calcDatarateAO.subscribeSink(subFromSource.getTarget(), subFromSource.getSinkInPort(), 0,
+		calcDatarateAO.subscribeSink(subFromSource.getSink(), subFromSource.getSinkInPort(), 0,
 				subFromSource.getSchema());
 		source.subscribeSink(calcDatarateAO, 0, subFromSource.getSinkInPort(), subFromSource.getSchema());
 		return calcDatarateAO;

@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "TIMER", category={LogicalOperatorCategory.SOURCE}, doc = "A trigger with time events")
 public class TimerSource extends AbstractAccessAO {

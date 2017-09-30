@@ -203,7 +203,7 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @param sub
 	 *            the subscription to add
 	 */
-	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator> sub);
+	public void setPhysSubscriptionTo(Subscription<IPhysicalOperator, ILogicalOperator> sub);
 
 	/**
 	 * Creates a new physical subscription
@@ -232,14 +232,14 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 *            the input port
 	 * @return the physical subscription of the inputPort
 	 */
-	public Subscription<IPhysicalOperator> getPhysSubscriptionTo(int inputPort);
+	public Subscription<IPhysicalOperator, ILogicalOperator> getPhysSubscriptionTo(int inputPort);
 
 	/**
 	 * Get the collection of all physical subscriptions
 	 * 
 	 * @return
 	 */
-	public Collection<Subscription<IPhysicalOperator>> getPhysSubscriptionsTo();
+	public Collection<Subscription<IPhysicalOperator, ILogicalOperator>> getPhysSubscriptionsTo();
 
 	// Currently needed for Transformation --> we should get rid of this!
 	public Collection<IPhysicalOperator> getPhysInputPOs();
@@ -282,6 +282,8 @@ public interface ILogicalOperator extends IOwnedOperator, ISubscribable<ILogical
 	 * @return the input type
 	 */
 	InputOrderRequirement getInputOrderRequirement(int inputPort);
+
+	public void recalcOutputSchema();
 
 
 	

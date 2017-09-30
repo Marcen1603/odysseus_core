@@ -468,7 +468,7 @@ public class SaseAST extends TreeParser {
                 	for (String sn : sourceNames) {
                 		getLogger().debug("Bind " + sn + " to Port " + port);
                 		try {
-                			ILogicalOperator ao = dd.getViewOrStream(sn, user);
+                			ILogicalOperator ao = dd.getViewOrStream(sn, user).getRoot();
                 			patternDetectAO
                 					.subscribeToSource(ao, port, 0, ao.getOutputSchema());
                 			patternDetectAO.setInputTypeName(port, sn);

@@ -103,6 +103,15 @@ public class DBEnrichAO extends AbstractEnrichAO {
 			}
 		}
 	}
+	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int port) {
+		if (recalcOutputSchemata || getOutputSchema() == null) {
+			initialize();
+		}
+		return getOutputSchema();
+	}
+
 
 	private static String sdfSchemaToString(SDFSchema schema, String identifier) {
 		StringBuilder sb = new StringBuilder(140);

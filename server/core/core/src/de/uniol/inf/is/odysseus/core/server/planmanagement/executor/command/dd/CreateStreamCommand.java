@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd;
 
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
@@ -20,7 +21,7 @@ public class CreateStreamCommand extends AbstractCreateStreamOrViewCommand {
 	@Override
 	public void execute(IDataDictionaryWritable dd, IUserManagementWritable um, IServerExecutor executor) {
 		checkAccessAONames(dd);
-		dd.setStream(name, rootAO, getCaller());		
+		dd.setStream(name, new LogicalPlan(rootAO), getCaller());		
 	}
 
 	public void setOutputSchema(SDFSchema sdfSchema) {

@@ -618,7 +618,7 @@ public class SDFSchema extends SDFSchemaElementSet<SDFAttribute> implements
 
 	@Override
 	public String toString() {
-		return super.toString() + " " + type + " c: " + constraints;
+		return super.toString() + " " + type + " c: " + constraints +" meta: "+metaschema;
 	}
 
 	/**

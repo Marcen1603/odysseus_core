@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
-public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscription<K> {
+public class ControllablePhysicalSubscription<I extends ISource<IStreamObject<?>>,O extends ISink<IStreamObject<?>>> extends AbstractPhysicalSubscription<I,O> {
 
 	private static final long serialVersionUID = -9102495312187048754L;
 
@@ -18,19 +18,19 @@ public class ControllablePhysicalSubscription<K> extends AbstractPhysicalSubscri
 	private int currentSheddingValue = 0;
 	private int suspendCalls = 0;
 
-	public ControllablePhysicalSubscription(K target, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		super(target, sinkInPort, sourceOutPort, schema);
+	public ControllablePhysicalSubscription(I source, O sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+		super(source, sink, sinkInPort, sourceOutPort, schema);
 	}
 
-	@Override
-	public void setTarget(K target) {
-		super.setTarget(target);
-	}
-
-	@Override
-	public void setSinkInPort(int port) {
-		super.setSinkInPort(port);
-	}
+//	@Override
+//	public void setTarget(K target) {
+//		super.setTarget(target);
+//	}
+//
+//	@Override
+//	public void setSinkInPort(int port) {
+//		super.setSinkInPort(port);
+//	}
 
 	public boolean isSuspended() {
 		return getOpenCalls() == suspendCalls;

@@ -18,12 +18,13 @@ import de.uniol.inf.is.odysseus.rest.provider.IRestProvider;
 
 public class RestService {
 
-	public static Component component = new Component();
-
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(RestService.class);
 
-	private static int port;
+	public Component component = new Component();
+
+
+
+	private int port;
 
 	private Map<IRestProvider, RestApplication> restApplications = Maps.newHashMap();
 
@@ -50,7 +51,7 @@ public class RestService {
 		}
 	}
 
-	public static void start() throws Exception {
+	public void start() throws Exception {
 		int webServicePort = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.Port"))+10;
 		int maxPort = Integer.parseInt(OdysseusConfiguration.instance.get("WebService.MaxPort"));
 		while (webServicePort <= maxPort ){
@@ -68,12 +69,12 @@ public class RestService {
 		}
 	}
 
-	public static void stop() throws Exception {
+	public void stop() throws Exception {
 		component.stop();
 	}
 
 
-	public static int getPort() {
+	public int getPort() {
 		return port;
 	}
 

@@ -45,13 +45,14 @@ public class TrajectoryElement {
 	}
 
 	public TrajectoryElement(TrajectoryElement previousElement, String movingObjectID, GeoHash geoHash,
-			IStreamObject<? extends IMetaAttribute> streamElement) {
+			PointInTime measurementTime, IStreamObject<? extends IMetaAttribute> streamElement) {
 		this.previousElement = previousElement;
 		if (this.previousElement != null) {
 			this.previousElement.nextElement = this;
 		}
 		this.movingObjectID = movingObjectID;
 		this.geoHash = geoHash;
+		this.measurementTime = measurementTime;
 		this.streamElement = streamElement;
 
 		// Calculate distance to previous element
@@ -109,11 +110,11 @@ public class TrajectoryElement {
 	public void setMovingObjectID(String movingObjectID) {
 		this.movingObjectID = movingObjectID;
 	}
-	
+
 	public double getLatitude() {
 		return this.geoHash.getPoint().getLatitude();
 	}
-	
+
 	public double getLongitude() {
 		return this.geoHash.getPoint().getLongitude();
 	}

@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscripti
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
@@ -87,7 +88,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		@Override
-		public void close(List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+		public void close(List<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> callPath,
 				List<IOperatorOwner> forOwners) {
 			logger.trace("Closing "+getName()+" for "+forOwners);
 			internal_close(callPath, forOwners, false);
@@ -118,7 +119,7 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 
 		@Override
 		protected void sourceUnsubscribed(
-				AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
+				AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> subscription) {
 			AbstractPipe.this.sourceUnsubscribed(subscription);
 		}
 
@@ -207,8 +208,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final synchronized public void open(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+	final synchronized public void open(ISink<? extends W> caller, int sourcePort,
+			int sinkPort, List<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		didNotPropagateDoneBefore = true;
 		// First: Call open for the source part. Activate subscribers and call
@@ -251,8 +252,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	}
 
 	@Override
-	final synchronized public void start(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+	final synchronized public void start(ISink<? extends W> caller, int sourcePort,
+			int sinkPort, List<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> callPath,
 			List<IOperatorOwner> forOwners) throws OpenFailedException {
 		super.start(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.start(callPath, forOwners);
@@ -271,16 +272,16 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// SUSPEND/RESUME
 	// ------------------------------------------------------------------------
 	@Override
-	final public void suspend(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+	final public void suspend(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		super.suspend(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.suspend(callPath, forOwners);
 	}
 
 	@Override
-	final public void resume(ISink<? super W> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+	final public void resume(ISink<? extends W> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?,ISink<IStreamObject<?>>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		super.resume(caller, sourcePort, sinkPort, callPath, forOwners);
 		this.delegateSink.resume(callPath, forOwners);
@@ -317,8 +318,8 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public void close(ISink<? super W> caller, int sourcePort,
-			int sinkPort, List<AbstractPhysicalSubscription<ISink<?>>> callPath,
+	final public void close(ISink<? extends W> caller, int sourcePort,
+			int sinkPort, List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath,
 			List<IOperatorOwner> forOwners) {
 		// logger.trace("CLOSE "+getName());
 		this.delegateSink.close(callPath, forOwners);
@@ -418,42 +419,46 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	// ------------------------------------------------------------------------
 
 	@Override
-	public void subscribeToSource(ISource<? extends R> source, int sinkInPort,
+	public void subscribeToSource(ISource<IStreamObject<?>> source, int sinkInPort,
 			int sourceOutPort, SDFSchema schema) {
 		this.delegateSink.subscribeToSource(source, sinkInPort, sourceOutPort,
 				schema);
 	}
+	
+	public void subscribeToSource(AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub) {
+		this.delegateSink.subscribeToSource(sub);
+	}
 
 	protected void newSourceSubscribed(
-			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub) {
 		// Override if needed
 	}
 
 	@Override
 	public void unsubscribeFromSource(
-			AbstractPhysicalSubscription<ISource<? extends R>> subscription) {
+			AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> subscription) {
 		this.delegateSink.unsubscribeFromSource(subscription);
 		// Override if needed
 	}
 
 	protected void sourceUnsubscribed(
-			AbstractPhysicalSubscription<ISource<? extends R>> sub) {
+			AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub) {
 	}
 
 	@Override
-	public AbstractPhysicalSubscription<ISource<? extends R>> getSubscribedToSource(
+	public AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> getSubscribedToSource(
 			int port) {
 		return this.delegateSink.getSubscribedToSource(port);
 	}
 
 	@Override
-	final public List<AbstractPhysicalSubscription<ISource<? extends R>>> getSubscribedToSource() {
+	final public List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> getSubscribedToSource() {
 		return Collections.unmodifiableList(delegateSink
 				.getSubscribedToSource());
 	}
 
 	@Override
-	public void unsubscribeFromSource(ISource<? extends R> source,
+	public void unsubscribeFromSource(ISource<IStreamObject<?>> source,
 			int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		this.delegateSink.unsubscribeFromSource(source, sinkInPort,
 				sourceOutPort, schema);
@@ -525,9 +530,9 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		@SuppressWarnings("unchecked")
 		AbstractPipe<R, W> other = (AbstractPipe<R, W>) o;
 
-		Collection<AbstractPhysicalSubscription<ISource<? extends R>>> thisSubs = this
+		Collection<AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> thisSubs = this
 				.getSubscribedToSource();
-		Collection<AbstractPhysicalSubscription<ISource<? extends R>>> otherSubs = other
+		Collection<AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> otherSubs = other
 				.getSubscribedToSource();
 
 		// Unterschiedlich viele Quellen
@@ -536,20 +541,16 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		}
 
 		// Iteration �ber die Subscriptions zu Quellen
-		for (AbstractPhysicalSubscription<?> s1 : thisSubs) {
+		for (AbstractPhysicalSubscription<?,?> s1 : thisSubs) {
 			boolean foundmatch = false;
-			for (AbstractPhysicalSubscription<?> s2 : otherSubs) {
-				if (s1.equals(s2)) {
+			for (AbstractPhysicalSubscription<?,?> s2 : otherSubs) {
+				// This will not work anymore, as subscriptions now contain sink and source!
+				// if (s1.equals(s2)) {
 
-					// // Subscription enth�lt gleiche Quelle und gleiche
-					// Ports
-					// if (((ISource<?>) s1.getTarget()) == ((ISource<?>) s2
-					// .getTarget())
-					// && s1.getSinkInPort() == s2.getSinkInPort()
-					// && s1.getSourceOutPort() == s2.getSourceOutPort()
-					// && ((s1.getSchema() == null && s2.getSchema() == null) ||
-					// (s1
-					// .getSchema().compareTo(s2.getSchema())) == 0)) {
+				if (( s1.getSource() == s2.getSource())
+						&& s1.getSinkInPort() == s2.getSinkInPort() && s1.getSourceOutPort() == s2.getSourceOutPort()
+						&& ((s1.getSchema() == null && s2.getSchema() == null)
+								|| (s1.getSchema().compareTo(s2.getSchema())) == 0)) {
 					foundmatch = true;
 				}
 			}
@@ -568,10 +569,10 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 	@Override
 	public SDFMetaAttributeList getMetaAttributeSchema() {
 		if (!this.metadataCalculated) {
-			for (AbstractPhysicalSubscription<ISource<? extends R>> sub : this
+			for (AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub : this
 					.getSubscribedToSource()) {
 				this.metadataAttributeSchema = SDFMetaAttributeList.union(
-						this.metadataAttributeSchema, sub.getTarget()
+						this.metadataAttributeSchema, sub.getSource()
 								.getMetaAttributeSchema());
 			}
 			this.metadataCalculated = true;

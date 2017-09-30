@@ -38,7 +38,7 @@ public class OperatorCloudPartitioner implements IQueryPartitioner {
 				continue;
 
 			final ILogicalOperator renameAO = part.getOperators().iterator().next();
-			final ILogicalOperator source = renameAO.getSubscribedToSource().iterator().next().getTarget();
+			final ILogicalOperator source = renameAO.getSubscribedToSource().iterator().next().getSource();
 
 			Optional<ILogicalQueryPart> partOfSource = determineQueryPart(source, parts);
 			if (!partOfSource.isPresent())

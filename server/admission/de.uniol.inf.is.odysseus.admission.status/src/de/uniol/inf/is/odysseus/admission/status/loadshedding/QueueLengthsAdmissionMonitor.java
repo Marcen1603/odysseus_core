@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -29,8 +30,8 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	 * This map stores all subscriptions with buffers to their queries.
 	 * A list with measurements is assigned to each subscription. 
 	 */
-	private Map<IPhysicalQuery, Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>> queuelengthsSubscriptions
-		= new HashMap<IPhysicalQuery, Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>>();
+	private Map<IPhysicalQuery, Map<ControllablePhysicalSubscription<?,ISink<IStreamObject<?>>>, List<Integer>>> queuelengthsSubscriptions
+		= new HashMap<IPhysicalQuery, Map<ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>, List<Integer>>>();
 	
 	/**
 	 * This map stores all BufferPOs to their queries.
@@ -65,7 +66,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 			return;
 		}
 		for (IPhysicalQuery query : queuelengthsSubscriptions.keySet()) {
-			for (ControllablePhysicalSubscription<ISink<?>> subscription : queuelengthsSubscriptions.get(query).keySet()) {
+			for (ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>> subscription : queuelengthsSubscriptions.get(query).keySet()) {
 				List<Integer> list = queuelengthsSubscriptions.get(query).get(subscription);
 				list.add(subscription.getBufferSize());
 				while (list.size() > QUEUE_MEASUREMENT_SIZE) {
@@ -92,7 +93,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 
 		Map<IPhysicalQuery, Integer> map = new HashMap<>();
 		for (IPhysicalQuery query : queuelengthsSubscriptions.keySet()) {
-			for (ControllablePhysicalSubscription<ISink<?>> subscription : queuelengthsSubscriptions.get(query).keySet()) {
+			for (ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>> subscription : queuelengthsSubscriptions.get(query).keySet()) {
 				
 				int tendency = estimateTendency(queuelengthsSubscriptions.get(query).get(subscription));
 
@@ -129,7 +130,7 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 	 * @param query
 	 */
 	private void getSubscriptionsAndBuffersForQuery(IPhysicalQuery query) {
-		Map<ControllablePhysicalSubscription<ISink<?>>, List<Integer>> subMap = new HashMap<ControllablePhysicalSubscription<ISink<?>>, List<Integer>>();
+		Map<ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>, List<Integer>> subMap = new HashMap<ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>, List<Integer>>();
 		Map<BufferPO<?>, List<Integer>> bufferMap = new HashMap<>();
 		
 		queuelengthsSubscriptions.put(query, subMap);
@@ -155,8 +156,8 @@ public class QueueLengthsAdmissionMonitor implements IAdmissionMonitor {
 			
 			for (Object obj : subscriptions) {
 				@SuppressWarnings("unchecked")
-				ControllablePhysicalSubscription<ISink<?>> subscription = (ControllablePhysicalSubscription<ISink<?>>) obj;
-				IPhysicalOperator target = subscription.getTarget();
+				ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>> subscription = (ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>) obj;
+				IPhysicalOperator target = subscription.getSink();
 				if (query.getAllOperators().contains(target)) {
 					queuelengthsSubscriptions.get(query).put(subscription, new ArrayList<Integer>());
 				}

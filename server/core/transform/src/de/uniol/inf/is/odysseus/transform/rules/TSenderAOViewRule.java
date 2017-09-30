@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractSenderAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.ITransformation;
@@ -42,14 +42,15 @@ public class TSenderAOViewRule extends AbstractTransformationRule<AbstractSender
 	@Override
 	public void execute(AbstractSenderAO senderAO, TransformationConfiguration transformConfig) throws RuleException {
 		Resource sinkName = senderAO.getSinkname();
-		ILogicalOperator view = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
-		ILogicalOperator cPlan = view;
+		
+		ILogicalPlan cPlan = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());;
 
 		ITransformation transformation = new TransformationExecutor();
 
 		ArrayList<IPhysicalOperator> roots = transformation.transform(cPlan, transformConfig, getCaller(), getDataDictionary());
 		// Clean up physical subscription for this plan!
-		cPlan.clearPhysicalSubscriptions();
+		cPlan.removePhysicalSubscriptions();
+		
 		// get the first root, since this is the physical operator for the
 		// passed plan and this will be the connection to the current plan.
 		if (roots.get(0).isSink()) {
@@ -81,7 +82,7 @@ public class TSenderAOViewRule extends AbstractTransformationRule<AbstractSender
 	@Override
 	public boolean isExecutable(AbstractSenderAO senderAO, TransformationConfiguration transformConfig) {
 		if (getDataDictionary().getSinkplan(senderAO.getSinkname()) == null) {
-			ILogicalOperator stream = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
+			ILogicalPlan stream = getDataDictionary().getSinkForTransformation(senderAO.getSinkname(), getCaller());
 			// is there a suitable stream to transform and is this a view
 			if (stream != null && (senderAO.getWrapper() == null || senderAO.getWrapper().isEmpty())) {
 				return true;

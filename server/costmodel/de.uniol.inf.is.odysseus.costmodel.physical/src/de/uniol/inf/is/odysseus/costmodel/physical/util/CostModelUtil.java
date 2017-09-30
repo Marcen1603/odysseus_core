@@ -36,15 +36,15 @@ public class CostModelUtil {
 			
 			if( currentOperator instanceof ISink ) {
 				ISink<?> opAsSink = (ISink<?>)currentOperator;
-				for( AbstractPhysicalSubscription<?> physSub : opAsSink.getSubscribedToSource() ) {
-					collectPhysicalOperators((IPhysicalOperator)physSub.getTarget(), collectedOperators);
+				for( AbstractPhysicalSubscription<?,?> physSub : opAsSink.getSubscribedToSource() ) {
+					collectPhysicalOperators((IPhysicalOperator)physSub.getSource(), collectedOperators);
 				}
 			}
 			
 			if( currentOperator instanceof ISource ) {
 				ISource<?> opAsSource = (ISource<?>)currentOperator;
-				for( AbstractPhysicalSubscription<?> physSub : opAsSource.getSubscriptions() ) {
-					collectPhysicalOperators((IPhysicalOperator)physSub.getTarget(), collectedOperators);
+				for( AbstractPhysicalSubscription<?,?> physSub : opAsSource.getSubscriptions() ) {
+					collectPhysicalOperators((IPhysicalOperator)physSub.getSink(), collectedOperators);
 				}
 			}
 		}

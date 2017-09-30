@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.InputOrderRequirement;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -35,7 +35,7 @@ public class TInsertReorderAORule extends AbstractTransformationRule<ILogicalOpe
 					&& !subscription.getSchema().isInOrder()) {
 
 				ReOrderAO reorder = new ReOrderAO();
-				Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperator(reorder, operator,
+				Collection<ILogicalOperator> toUpdate = LogicalPlan.insertOperator(reorder, operator,
 						subscription.getSinkInPort(), 0, subscription.getSourceOutPort());
 				
 				insert(reorder);

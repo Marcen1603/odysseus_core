@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscr
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.physicaloperator.StartFailedException;
@@ -72,15 +73,15 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private IMyLock locker = new NonLockingLock();
 	private ReentrantLock openCloseLock = new ReentrantLock();
 
-	final private List<AbstractPhysicalSubscription<ISink<? super T>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
+	final private List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> sinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>();
 	// Only active subscription are served on transfer
-	final private List<AbstractPhysicalSubscription<ISink<? super T>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
-	final private List<AbstractPhysicalSubscription<ISink<? super T>>> connectedSinks = new CopyOnWriteArrayList<AbstractPhysicalSubscription<ISink<? super T>>>();
+	final private List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> activeSinkSubscriptions = new CopyOnWriteArrayList<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>();
+	final private List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> connectedSinks = new CopyOnWriteArrayList<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>>();
 
-	final private Comparator<AbstractPhysicalSubscription<?>> sortByCloneComparator = new Comparator<AbstractPhysicalSubscription<?>>() {
+	final private Comparator<AbstractPhysicalSubscription<?, ?>> sortByCloneComparator = new Comparator<AbstractPhysicalSubscription<?, ?>>() {
 
 		@Override
-		public int compare(AbstractPhysicalSubscription<?> left, AbstractPhysicalSubscription<?> right) {
+		public int compare(AbstractPhysicalSubscription<?, ?> left, AbstractPhysicalSubscription<?, ?> right) {
 			if (left.isNeedsClone() == right.isNeedsClone()) {
 				return 0;
 			}
@@ -109,8 +110,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	private ILogicalOperator definingOp;
 
 	/**
-	 * For stateful operators, this flag signals, that an operator state has
-	 * been loaded.
+	 * For stateful operators, this flag signals, that an operator state has been
+	 * loaded.
 	 */
 	private boolean operatorStateLoaded = false;
 
@@ -344,8 +345,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	public void open(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+	public void open(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
 			throws OpenFailedException {
 
 		openCloseLock.lock();
@@ -359,8 +360,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 			// otherwise top operator cannot be opened
 			if (caller != null) {
 				// Find subscription for caller
-				AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort,
-						sinkPort);
+				AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller,
+						sourcePort, sinkPort);
 				if (sub == null) {
 					throw new OpenFailedException("Open called from an unsubscribed sink " + caller);
 				}
@@ -410,7 +411,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	protected void reconnectSinks() {
 		if (connectedSinks.size() > 0 && !readdedConnectedSinks) {
 			// re-add all connected sinks
-			for (AbstractPhysicalSubscription<ISink<? super T>> s : connectedSinks) {
+			for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> s : connectedSinks) {
 				if (!activeSinkSubscriptions.contains(s)) {
 					activeSinkSubscriptions.add(s);
 				}
@@ -419,7 +420,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 	}
 
-	private void addActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> sub) {
+	private void addActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub) {
 		// Handle multiple open calls{
 		if (!activeSinkSubscriptions.contains(sub)) {
 			this.activeSinkSubscriptions.add(sub);
@@ -437,19 +438,19 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		}
 	}
 
-	protected void newReceiver(AbstractPhysicalSubscription<ISink<? super T>> sink) {
+	protected void newReceiver(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink) {
 		// can be overwritten if needed
 	}
 
-	private void removeActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> sub) {
+	private void removeActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub) {
 		if (activeSinkSubscriptions.contains(sub)) {
 			consumerCount.put(sub.getSourceOutPort(), consumerCount.get(sub.getSourceOutPort()) - 1);
 			this.activeSinkSubscriptions.remove(sub);
 		}
 	}
 
-	public void replaceActiveSubscription(AbstractPhysicalSubscription<ISink<? super T>> oldSub,
-			AbstractPhysicalSubscription<ISink<? super T>> newSub) {
+	public void replaceActiveSubscription(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> oldSub,
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> newSub) {
 		// necessary to not lose tuples here
 		locker.lock();
 		removeActiveSubscription(oldSub);
@@ -457,13 +458,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		locker.unlock();
 	}
 
-	public void replaceActiveSubscriptions(Set<AbstractPhysicalSubscription<ISink<? super T>>> oldSubs,
-			Set<AbstractPhysicalSubscription<ISink<? super T>>> newSubs) {
+	public void replaceActiveSubscriptions(Set<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> oldSubs,
+			Set<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> newSubs) {
 		locker.lock();
-		for (AbstractPhysicalSubscription<ISink<? super T>> oldSub : oldSubs) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> oldSub : oldSubs) {
 			removeActiveSubscription(oldSub);
 		}
-		for (AbstractPhysicalSubscription<ISink<? super T>> newSub : newSubs) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> newSub : newSubs) {
 			addActiveSubscription(newSub);
 		}
 		locker.unlock();
@@ -483,8 +484,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	public void start(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners)
+	public void start(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners)
 			throws StartFailedException {
 
 		// Hint: ignore callPath on sources because the source does not call
@@ -494,7 +495,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		// otherwise top operator cannot be opened
 		if (caller != null) {
 			// Find subscription for caller
-			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+					sinkPort);
 			if (sub == null) {
 				throw new StartFailedException("Start called from an unsubscribed sink " + caller);
 			}
@@ -522,21 +524,30 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
+		if (!suppressPunctuation) {
+			for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+				sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
+			}
 		}
 	}
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		if (!suppressPunctuation) {
-			for (AbstractPhysicalSubscription<? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-				if (sub.getSourceOutPort() == outPort) {
-					sub.getTarget().processPunctuation(punctuation, sub.getSinkInPort());
-				}
+			for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+				sendPunctuation(punctuation, outPort, sub);
 			}
 		}
 	}
+
+	protected void sendPunctuation(IPunctuation punctuation, int outPort,
+			AbstractPhysicalSubscription<?, ? extends ISink<?>> sub) {
+		if (sub.getSourceOutPort() == outPort) {
+			sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
+		}
+	}
+	
+	
 
 	// ------------------------------------------------------------------------
 	// TRANSFER
@@ -547,14 +558,15 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		fire(this.pushInitEvent);
 		// necessary to not lose tuples in a plan migration
 		locker.lock();
-		for (AbstractPhysicalSubscription<ISink<? super T>> sink : this.activeSinkSubscriptions) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink : this.activeSinkSubscriptions) {
 			transfer(object, sourceOutPort, sink);
 		}
 		locker.unlock();
 		fire(this.pushDoneEvent);
 	}
 
-	protected void transfer(T object, int sourceOutPort, AbstractPhysicalSubscription<ISink<? super T>> sink) {
+	protected void transfer(T object, int sourceOutPort,
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sink) {
 		if (sink.getSourceOutPort() == sourceOutPort) {
 			try {
 
@@ -603,13 +615,14 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	public void close(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
+	public void close(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		try {
 			openCloseLock.lock();
 
 			getLogger().trace("CLOSE " + getName());
-			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+					sinkPort);
 			if (sub == null) {
 				throw new RuntimeException("Close called from an unsubscribed sink ");
 			}
@@ -682,9 +695,9 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		if (isOpen()) {
 			fire(this.doneEvent);
 			this.process_done();
-			for (AbstractPhysicalSubscription<ISink<? super T>> sub : activeSinkSubscriptions) {
+			for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : activeSinkSubscriptions) {
 				if (!sub.isDone()) {
-					sub.getTarget().done(sub.getSinkInPort());
+					sub.getSink().done(sub.getSinkInPort());
 				}
 			}
 		}
@@ -750,12 +763,13 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// SUSPEND/RESUME
 	// ------------------------------------------------------------------------
 	@Override
-	public void suspend(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
+	public void suspend(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
 		if (isOpen()) {
-			AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
+			AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+					sinkPort);
 			if (sub instanceof ControllablePhysicalSubscription) {
-				((ControllablePhysicalSubscription<ISink<? super T>>) sub).suspend();
+				((ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>) sub).suspend();
 			} else {
 				sendError("This query cannot be suspended", new RuntimeException("Query is not in controllable mode!"));
 			}
@@ -763,11 +777,12 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	public void resume(ISink<? super T> caller, int sourcePort, int sinkPort,
-			List<AbstractPhysicalSubscription<ISink<?>>> callPath, List<IOperatorOwner> forOwners) {
-		AbstractPhysicalSubscription<ISink<? super T>> sub = findSinkInSubscription(caller, sourcePort, sinkPort);
+	public void resume(ISink<? extends T> caller, int sourcePort, int sinkPort,
+			List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> callPath, List<IOperatorOwner> forOwners) {
+		AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub = findSinkInSubscription(caller, sourcePort,
+				sinkPort);
 		if (sub instanceof ControllablePhysicalSubscription) {
-			ControllablePhysicalSubscription<ISink<? super T>> csub = (ControllablePhysicalSubscription<ISink<? super T>>) sub;
+			ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>> csub = (ControllablePhysicalSubscription<?, ISink<IStreamObject<?>>>) sub;
 			if (csub.isSuspended()) {
 				csub.resume();
 			}
@@ -780,10 +795,11 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// Subscription management
 	// ------------------------------------------------------------------------
 
-	private AbstractPhysicalSubscription<ISink<? super T>> findSinkInSubscription(IPhysicalOperator o, int sourcePort,
-			int sinkPort) {
-		for (AbstractPhysicalSubscription<ISink<? super T>> sub : this.sinkSubscriptions) {
-			if (sub.getTarget() == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
+	private AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> findSinkInSubscription(IPhysicalOperator o,
+			int sourcePort, int sinkPort) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> sub : this.sinkSubscriptions) {
+			IPhysicalOperator sink = sub.getSink();
+			if (sink == o && sub.getSourceOutPort() == sourcePort && sub.getSinkInPort() == sinkPort) {
 				return sub;
 			}
 		}
@@ -791,18 +807,24 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema,
+	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema,
 			boolean asActive, int openCount) {
 		// TODO: Make configurable
-		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
-				sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		sub.setOpenCalls(openCount);
+		subscribeSink(sub, asActive);
+	}
+
+	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub,
+			boolean asActive) {
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
 			// + " from " + sourceOutPort);
 			this.sinkSubscriptions.add(sub);
-			sink.subscribeToSource(this, sinkInPort, sourceOutPort, schema);
+			sub.getSink().subscribeToSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) sub);
 			if (asActive) {
 				addActiveSubscription(sub);
 			}
@@ -810,15 +832,23 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	}
 
 	@Override
-	final public void subscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void connectSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	final public void subscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		subscribeSink((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) subscription,
+				false);
+	}
+
+	@Override
+	public void connectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
-				sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		// All connected sinks needs a cloned version as the sinks are connected
 		// without
 		// running the query translation phase
@@ -828,17 +858,20 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		connectedSinks.add(sub);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	final public void unsubscribeSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
-		unsubscribeSink(
-				new ControllablePhysicalSubscription<ISink<? super T>>(sink, sinkInPort, sourceOutPort, schema));
+	final public void unsubscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort,
+			SDFSchema schema) {
+		unsubscribeSink(new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
-	public void disconnectSink(ISink<? super T> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
+	public void disconnectSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		// unsubscribeSink(sink, sinkInPort, sourceOutPort, schema);
-		AbstractPhysicalSubscription<ISink<? super T>> sub = new ControllablePhysicalSubscription<ISink<? super T>>(
-				sink, sinkInPort, sourceOutPort, schema);
+		@SuppressWarnings("unchecked")
+		AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub = new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema);
 		removeActiveSubscription(sub);
 		connectedSinks.remove(sub);
 	}
@@ -854,53 +887,24 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		activeSinkSubscriptions.clear();
 	}
 
-	public boolean isActive(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
+	public boolean isActive(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
 		return this.activeSinkSubscriptions.contains(subscription);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void unsubscribeSink(AbstractPhysicalSubscription<ISink<? super T>> subscription) {
-		getLogger().trace("Unsubscribe from Sink " + subscription.getTarget());
+	public void unsubscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
+		getLogger().trace("Unsubscribe from Sink " + subscription.getSource());
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
 		if (subContained) {
-			subscription.getTarget().unsubscribeFromSource(this, subscription.getSinkInPort(),
-					subscription.getSourceOutPort(), subscription.getSchema());
+			subscription.getSink()
+					.unsubscribeFromSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) subscription);
 		}
 	}
 
-	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-	// // Arrays (MG)
-	// @Override
-	// public void atomicReplaceSink(
-	// List<PhysicalSubscription<ISink<? super T>>> remove,
-	// ISink<? super T> sink, int sinkInPort, int sourceOutPort,
-	// SDFSchema schema) {
-	// // synchronized (this.sinkSubscriptions) {
-	// for (PhysicalSubscription<ISink<? super T>> sub : remove) {
-	// unsubscribeSink(sub);
-	// }
-	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-	// // }
-	// }
-	//
-	// // Das folgende macht eigentlich keinen Sinn mehr mit CopyOnWrite
-	// // Arrays (MG)
-	// @Override
-	// public void atomicReplaceSink(
-	// PhysicalSubscription<ISink<? super T>> remove,
-	// List<ISink<? super T>> sinks, int sinkInPort, int sourceOutPort,
-	// SDFSchema schema) {
-	// // synchronized (this.sinkSubscriptions) {
-	// unsubscribeSink(remove);
-	// for (ISink<? super T> sink : sinks) {
-	// subscribeSink(sink, sinkInPort, sourceOutPort, schema);
-	// }
-	// // }
-	// }
-
 	@Override
-	final public List<AbstractPhysicalSubscription<ISink<? super T>>> getSubscriptions() {
+	final public List<AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>>> getSubscriptions() {
 		return Collections.unmodifiableList(this.sinkSubscriptions);
 	}
 
@@ -912,7 +916,7 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public void unsubscribeFromAllSinks() {
-		for (AbstractPhysicalSubscription<ISink<? super T>> s : this.sinkSubscriptions) {
+		for (AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> s : this.sinkSubscriptions) {
 			unsubscribeSink(s);
 		}
 		sinkSubscriptions.clear();
@@ -1109,8 +1113,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// see IStatefulPO
 
 	/**
-	 * Default implementation of {@link #setState(Serializable)} that does
-	 * nothing. Override it for stateful operators.
+	 * Default implementation of {@link #setState(Serializable)} that does nothing.
+	 * Override it for stateful operators.
 	 */
 	protected void setStateInternal(Serializable state) {
 	}

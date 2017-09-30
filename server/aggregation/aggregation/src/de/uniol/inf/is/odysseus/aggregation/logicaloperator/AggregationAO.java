@@ -53,22 +53,22 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	private List<IAggregationFunction> functions;
 
 	/**
-	 * This flag is set if this operator should output new elements when
-	 * elements get outdated.
+	 * This flag is set if this operator should output new elements when elements
+	 * get outdated.
 	 */
 	private boolean evaluateAtOutdatingElements = true;
 
 	private boolean evaluateBeforeRemovingOutdatingElements = false;
 
 	/**
-	 * This flag is set if this operator should output new elements when
-	 * elements get valid.
+	 * This flag is set if this operator should output new elements when elements
+	 * get valid.
 	 */
 	private boolean evaluateAtNewElement = true;
 
 	/**
-	 * This flag is set if this operator should output the last output element
-	 * at done. This can be used when you want only the final aggr. value in an
+	 * This flag is set if this operator should output the last output element at
+	 * done. This can be used when you want only the final aggr. value in an
 	 * evaluation. E. g., the final AVG of the latency.
 	 */
 	private boolean evaluateAtDone = false;
@@ -118,6 +118,19 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 			return Collections.emptyList();
 		}
 		return Collections.unmodifiableList(groupingAttributes);
+	}
+
+	public int[] getGroupingAttributeIndicesOnOutputSchema() {
+		if (groupingAttributes == null) {
+			return new int[] {};
+		}
+		int[] groupingAttributeIndices = new int[groupingAttributes.size()];
+		for (int i = 0; i < groupingAttributes.size(); i++) {
+			// The grouping attributes in the output schema are always at the beginning of
+			// the tuple
+			groupingAttributeIndices[i] = i;
+		}
+		return groupingAttributeIndices;
 	}
 
 	@Parameter(name = "AGGREGATIONS", type = AggregationItemParameter.class, isList = true)
@@ -196,7 +209,6 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return outputOnlyChanges;
 	}
 
-
 	@Parameter(name = "OUTPUT_ONLY_CHANGES", type = BooleanParameter.class, optional = true)
 	public void setOutputOnlyChanges(final boolean outputOnlyChanges) {
 		this.outputOnlyChanges = outputOnlyChanges;
@@ -234,7 +246,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 			return SDFSchemaFactory.createNewSchema("<tmp>", Tuple.class, outAttribs);
 		}
 	}
-	
+
 	@Override
 	public OperatorStateType getStateType() {
 		if (this.groupingAttributes.isEmpty()) {
@@ -246,7 +258,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 
 	@Override
 	public boolean isParallelizable() {
-		//FIXME check predicate
+		// FIXME check predicate
 		return true;
 	}
 }

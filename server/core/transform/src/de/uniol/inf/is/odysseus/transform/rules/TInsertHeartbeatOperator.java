@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.HeartbeatAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -25,7 +25,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 	@Override
 	public void execute(AbstractAccessAO operator, TransformationConfiguration config) throws RuleException {
 		for (LogicalSubscription subscription : operator.getSubscriptions()) {
-			if (!(subscription.getTarget() instanceof HeartbeatAO)) {
+			if (!(subscription.getSink() instanceof HeartbeatAO)) {
 				HeartbeatAO heartbeat = new HeartbeatAO();
 				long realTimeDelay = operator.getRealTimeDelay();
 				long applicationTimeDelay = operator.getApplicationTimeDelay();
@@ -36,7 +36,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 				heartbeat.setAllowOutOfOrder(true);
 				heartbeat.setRestartTimerForEveryInput(true);
 				
-				Collection<ILogicalOperator> toUpdate = RestructHelper.insertOperatorBefore(heartbeat, operator,
+				Collection<ILogicalOperator> toUpdate = LogicalPlan.insertOperatorBefore(heartbeat, operator,
 						subscription.getSinkInPort(), subscription.getSourceOutPort(),0);
 
 				insert(heartbeat);
@@ -52,7 +52,7 @@ public class TInsertHeartbeatOperator extends AbstractTransformationRule<Abstrac
 	public boolean isExecutable(AbstractAccessAO operator, TransformationConfiguration config) {
 		if (!operator.getOutputSchema().isInOrder()) {
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
-				if (!(subscription.getTarget() instanceof HeartbeatAO)) {
+				if (!(subscription.getSink() instanceof HeartbeatAO)) {
 					return true;
 				}
 			}

@@ -123,7 +123,7 @@ public class ConvergenceDetectorComponent implements IRecoveryComponent {
 		windowAO.unsubscribeFromAllSinks();
 		convergenceDetector.subscribeToSource(windowAO, 0, 0, windowAO.getInputSchema());
 		for (LogicalSubscription sub : subs) {
-			convergenceDetector.subscribeSink(sub.getTarget(), sub.getSinkInPort(), sub.getSourceOutPort(),
+			convergenceDetector.subscribeSink(sub.getSink(), sub.getSinkInPort(), sub.getSourceOutPort(),
 					sub.getSchema());
 		}
 	}

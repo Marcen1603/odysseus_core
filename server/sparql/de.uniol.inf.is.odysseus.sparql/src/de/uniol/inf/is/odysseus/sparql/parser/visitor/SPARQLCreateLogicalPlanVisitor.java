@@ -667,7 +667,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 							ILogicalOperator accessAO;
 							try {
 								accessAO = this.dd.getViewOrStream(namedStream,
-										this.user);
+										this.user).getRoot();
 							} catch (DataDictionaryException e) {
 								throw new QueryParseException(e.getMessage());
 							}
@@ -718,7 +718,7 @@ public class SPARQLCreateLogicalPlanVisitor implements SPARQLParserVisitor {
 											.getViewOrStream(
 													this.defaultStreams.get(di)
 															.getStreamName(),
-													this.user);
+													this.user).getRoot();
 								} catch (DataDictionaryException e) {
 									throw new QueryParseException(
 											e.getMessage());

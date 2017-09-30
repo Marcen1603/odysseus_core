@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.OdysseusConfiguration;
@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.store.FileStore;
 import de.uniol.inf.is.odysseus.core.server.store.IStore;
 import de.uniol.inf.is.odysseus.core.server.store.MemoryStore;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.server.util.OSGI;
+import de.uniol.inf.is.odysseus.core.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ITenant;
 import de.uniol.inf.is.odysseus.core.usermanagement.IUser;
 
@@ -65,7 +65,7 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<Resource, ILogicalOperator> createStreamDefinitionsStore() {
+	protected IStore<Resource, ILogicalPlan> createStreamDefinitionsStore() {
 		return createStore("streamDefinitionsFilename", tenant);
 	}
 
@@ -75,7 +75,7 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<Resource, ILogicalOperator> createViewDefinitionsStore() {
+	protected IStore<Resource, ILogicalPlan> createViewDefinitionsStore() {
 		return createStore("viewDefinitionsFilename", tenant);
 	}
 
@@ -110,7 +110,7 @@ public class DefaultDataDictionary extends AbstractDataDictionary {
 	}
 
 	@Override
-	protected IStore<Resource, ILogicalOperator> createSinkDefinitionsStore() {
+	protected IStore<Resource, ILogicalPlan> createSinkDefinitionsStore() {
 		return createStore("sinkDefinitionsFilename", tenant);
 	}
 

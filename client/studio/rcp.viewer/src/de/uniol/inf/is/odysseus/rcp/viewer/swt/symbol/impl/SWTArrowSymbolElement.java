@@ -156,8 +156,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		}
 
 		ISource<?> source = (ISource<?>) startObject;
-		for (AbstractPhysicalSubscription<?> subscription : source.getSubscriptions()) {
-			if (subscription.getTarget() == endObject) {
+		for (AbstractPhysicalSubscription<?,?> subscription : source.getSubscriptions()) {
+			if (subscription.getSink() == endObject) {
 				return subscription.getSourceOutPort();
 			}
 		}
@@ -170,8 +170,8 @@ public class SWTArrowSymbolElement<C> extends SWTConnectionSymbolElement<C> {
 		Object endObject = view.getModelConnection().getEndNode().getContent();
 
 		ISink<?> sink = (ISink<?>) endObject;
-		for (AbstractPhysicalSubscription<?> subscription : sink.getSubscribedToSource()) {
-			if (subscription.getTarget() == startObject) {
+		for (AbstractPhysicalSubscription<?,?> subscription : sink.getSubscribedToSource()) {
+			if (subscription.getSource() == startObject) {
 				return subscription.getSinkInPort();
 			}
 		}

@@ -22,13 +22,13 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.QueryState;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
@@ -400,7 +400,7 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return The operator of the sink that was removed
 	 */
-	public ILogicalOperator removeSink(String name, ISession caller);
+	public ILogicalPlan removeSink(String name, ISession caller);
 
 	/**
 	 * Removes a sink using its resource name
@@ -411,7 +411,7 @@ public interface IExecutor extends IClientPlanManager {
 	 *            The current user
 	 * @return The operator of the sink that was removed
 	 */
-	public ILogicalOperator removeSink(Resource name, ISession caller);
+	public ILogicalPlan removeSink(Resource name, ISession caller);
 
 	/**
 	 * Removes a view or stream using its simple name

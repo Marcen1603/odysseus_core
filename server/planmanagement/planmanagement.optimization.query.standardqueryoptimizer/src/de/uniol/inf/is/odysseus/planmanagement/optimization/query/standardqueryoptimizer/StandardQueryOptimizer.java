@@ -22,8 +22,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
@@ -39,9 +39,6 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.exceptio
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.query.IQueryOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.CollectOperatorLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
 
 /**
  * QueryRestructOptimizer is the standard query optimizer for odysseus. This
@@ -69,7 +66,6 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 	 * .uniol.inf.is.odysseus.planmanagement.optimization.OptimizationConfiguration
 	 * .OptimizationConfiguration, Set<String>)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public IPhysicalQuery optimizeQuery(IServerExecutor executor,
 			ILogicalQuery query, OptimizationConfiguration parameters,
@@ -89,23 +85,14 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 		ParameterDoPlanGeneration planGeneration = parameters.getParameterDoPlanGeneration();
 
 		// if a logical rewrite should be processed.
-		ILogicalOperator originalPlan = query.getLogicalPlan();
-
-		CopyLogicalGraphVisitor<ILogicalOperator> copyVisitor = new CopyLogicalGraphVisitor<ILogicalOperator>(
-				query);
-		@SuppressWarnings("rawtypes")
-		GenericGraphWalker walker = new GenericGraphWalker();
-		walker.prefixWalk(originalPlan, copyVisitor);
-		ILogicalOperator copiedPlan = copyVisitor.getResult();
+		ILogicalPlan originalPlan = query.getLogicalPlan();
+		ILogicalPlan copiedPlan = originalPlan.copyPlan();
 		
 		boolean createAlternativePlans = copiedPlan != null && planGeneration != null && query.getAlternativeLogicalPlans().isEmpty()
 				&& planGeneration == ParameterDoPlanGeneration.TRUE;
 		if(createAlternativePlans) {
-			@SuppressWarnings("rawtypes")
-			CollectOperatorLogicalGraphVisitor joinVisitor = new CollectOperatorLogicalGraphVisitor(JoinAO.class);
-			walker.clearVisited();
-			walker.prefixWalk(copiedPlan, joinVisitor);
-			if(joinVisitor.getResult().isEmpty()) {
+		
+			if( copiedPlan.findOpsFromType(JoinAO.class).isEmpty()) {
 				LOG.debug("Query can not be adapted because it does not contain any joins");
 				// query can not be adapted because there are no alternative plans
 				query.setParameter("noAdaption", true);
@@ -113,7 +100,7 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 				LOG.debug("Creating alternative logical plans");
 				PlanGenerationConfiguration generationConfig = parameters
 						.getPlanGenerationConfiguration();
-				List<ILogicalOperator> alternativePlans = compiler
+				List<ILogicalPlan> alternativePlans = compiler
 						.generatePlans(copiedPlan, generationConfig, query);
 				query.setAlternativeLogicalPlans(alternativePlans);
 				// this should be the best
@@ -134,17 +121,17 @@ public class StandardQueryOptimizer implements IQueryOptimizer {
 			LOG.debug("Start rewriting of query...");
 			RewriteConfiguration rewriteConfig = parameters.getRewriteConfiguration();
 			rewriteConfig.setQueryBuildConfiguration(cb);
-			ILogicalOperator newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig, query.getUser(), dd);
+			ILogicalPlan newPlan = compiler.rewritePlan(copiedPlan,rewriteConfig, query.getUser(), dd);
 			LOG.debug("Rewriting of query done.");
 			// set new logical plan.
 			query.setLogicalPlan(newPlan, false);
 			// do the same for all alternative plans if any
 			// TODO: nochmal von marco gegenchecken lassen.
 			if(createAlternativePlans) {
-				List<ILogicalOperator> alternativePlans = query.getAlternativeLogicalPlans();
+				List<ILogicalPlan> alternativePlans = query.getAlternativeLogicalPlans();
 				alternativePlans.set(0, query.getLogicalPlan());
 				for(int i = 1; i < alternativePlans.size(); i++) {
-					ILogicalOperator alternativePlan = alternativePlans.get(i);
+					ILogicalPlan alternativePlan = alternativePlans.get(i);
 					alternativePlans.set(i, compiler.rewritePlan(alternativePlan, rewriteConfig, query.getUser(), dd));
 				}
 			}

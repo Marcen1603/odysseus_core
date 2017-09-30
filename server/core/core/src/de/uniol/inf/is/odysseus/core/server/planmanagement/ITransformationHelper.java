@@ -19,9 +19,9 @@ import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 @SuppressWarnings({"rawtypes"})
 public interface ITransformationHelper {
 	
@@ -50,6 +50,6 @@ public interface ITransformationHelper {
 	 * @param newFather The new lower operator. oldFather becomes the father of newFather
 	 * @return the modified children must be returned to update the drools working memory
 	 */
-	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<ISink>> children, IPipe newFather);
+	public Collection<ISink> insertNewFatherPhysical(ISource oldFather, Collection<ISubscription<?,ISink>> children, IPipe newFather);
 
 }

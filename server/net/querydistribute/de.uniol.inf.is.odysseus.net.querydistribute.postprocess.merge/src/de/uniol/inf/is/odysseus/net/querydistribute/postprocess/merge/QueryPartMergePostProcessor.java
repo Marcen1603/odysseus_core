@@ -36,7 +36,7 @@ public class QueryPartMergePostProcessor implements IQueryDistributionPostProces
 
 		for (LogicalSubscription sub : subs.keySet()) {
 			ILogicalOperator startOperator = subs.get(sub);
-			ILogicalOperator targetOperator = sub.getTarget();
+			ILogicalOperator targetOperator = sub.getSink();
 
 			ILogicalQueryPart startQueryPart = queryPartAssignment.get(startOperator);
 			ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);
@@ -78,7 +78,7 @@ public class QueryPartMergePostProcessor implements IQueryDistributionPostProces
 
 			Collection<LogicalSubscription> sinkSubs = currentOperator.getSubscriptions();
 			for (LogicalSubscription sinkSub : sinkSubs) {
-				ILogicalOperator targetOperator = sinkSub.getTarget();
+				ILogicalOperator targetOperator = sinkSub.getSink();
 
 				ILogicalQueryPart currentQueryPart = queryPartAssignment.get(currentOperator);
 				ILogicalQueryPart targetQueryPart = queryPartAssignment.get(targetOperator);

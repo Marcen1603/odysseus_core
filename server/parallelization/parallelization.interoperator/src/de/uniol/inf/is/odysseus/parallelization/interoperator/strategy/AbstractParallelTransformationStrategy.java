@@ -172,7 +172,7 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 			operatorSourceSubscriptions.addAll(currentExistingOperator
 					.getSubscribedToSource());
 			for (LogicalSubscription sourceSubscription : operatorSourceSubscriptions) {
-				if (sourceSubscription.getTarget().equals(lastExistingOperator)) {
+				if (sourceSubscription.getSource().equals(lastExistingOperator)) {
 					// if target of subscription is last existing operator, set
 					// new cloned one
 					currentClonedOperator.subscribeToSource(lastClonedOperator,
@@ -186,8 +186,8 @@ public abstract class AbstractParallelTransformationStrategy<T extends ILogicalO
 									iteration);
 
 					currentClonedOperator.subscribeToSource(sourceSubscription
-							.getTarget(), sourceSubscription.getSinkInPort(),
-							newSourceOutPort, sourceSubscription.getTarget()
+							.getSource(), sourceSubscription.getSinkInPort(),
+							newSourceOutPort, sourceSubscription.getSource()
 									.getOutputSchema());
 				}
 			}

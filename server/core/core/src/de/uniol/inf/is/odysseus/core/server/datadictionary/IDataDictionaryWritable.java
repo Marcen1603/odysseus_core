@@ -3,11 +3,11 @@ package de.uniol.inf.is.odysseus.core.server.datadictionary;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Resource;
-import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalQuery;
 import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -22,36 +22,36 @@ public interface IDataDictionaryWritable extends IDataDictionary{
 	// View and Stream Management
 	// -------------------------------------------------------------------------
 
-	ILogicalOperator removeViewOrStream(String viewname, ISession caller);
-	ILogicalOperator removeViewOrStream(Resource viewname, ISession caller);
+	ILogicalPlan removeViewOrStream(String viewname, ISession caller);
+	ILogicalPlan removeViewOrStream(Resource viewname, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// View Management
 	// -------------------------------------------------------------------------
 
-	void setView(String viewname, ILogicalOperator topOperator, ISession caller)
+	void setView(String viewname, ILogicalPlan topOperator, ISession caller)
 			throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Stream Management
 	// -------------------------------------------------------------------------
 
-	void setStream(String streamname, ILogicalOperator plan, ISession caller)
+	void setStream(String streamname, ILogicalPlan plan, ISession caller)
 			throws DataDictionaryException;
 
 	// -------------------------------------------------------------------------
 	// Sink Management
 	// -------------------------------------------------------------------------
 
-	void addSink(String sinkname, ILogicalOperator sink, ISession caller)
+	void addSink(String sinkname, ILogicalPlan sink, ISession caller)
 			throws DataDictionaryException;
 
-	void addSink(Resource sinkname, ILogicalOperator sink, ISession caller)
+	void addSink(Resource sinkname, ILogicalPlan sink, ISession caller)
 			throws DataDictionaryException;
 
-	ILogicalOperator removeSink(String name, ISession caller);
+	ILogicalPlan removeSink(String name, ISession caller);
 
-	ILogicalOperator removeSink(Resource name, ISession caller);
+	ILogicalPlan removeSink(Resource name, ISession caller);
 
 	// -------------------------------------------------------------------------
 	// Query Management

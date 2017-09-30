@@ -28,11 +28,11 @@ public class CostModelUtil {
 			allOperators.add(logicalOperator);
 			
 			for( LogicalSubscription logSub : logicalOperator.getSubscriptions() ) {
-				collectLogicalOperators(logSub.getTarget(), allOperators);
+				collectLogicalOperators(logSub.getSink(), allOperators);
 			}
 			
 			for( LogicalSubscription logSub : logicalOperator.getSubscribedToSource() ) {
-				collectLogicalOperators(logSub.getTarget(), allOperators);
+				collectLogicalOperators(logSub.getSource(), allOperators);
 			}
 		}
 	}

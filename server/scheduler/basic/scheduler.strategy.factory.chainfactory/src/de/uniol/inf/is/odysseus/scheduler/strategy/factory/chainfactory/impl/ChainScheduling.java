@@ -26,6 +26,7 @@ import java.util.PriorityQueue;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.collection.FESortedPair;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.monitoring.IMonitoringData;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
@@ -41,6 +42,7 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		super(plan);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected List<IIterableSource<?>> calculateExecutionList(
 			IPhysicalQuery plan) {
@@ -49,10 +51,10 @@ public class ChainScheduling extends AbstractExecListScheduling {
 		Map<IIterableSource<?>, List<ISource<?>>> virtualOps = new HashMap<IIterableSource<?>, List<ISource<?>>>();
 		List<List<IIterableSource<?>>> pathes = new ArrayList<List<IIterableSource<?>>>();
 		
-		List<ISink<?>> sinkRoots = new ArrayList<ISink<?>>();
+		List<ISink<IStreamObject<?>>> sinkRoots = new ArrayList<ISink<IStreamObject<?>>>();
 		for(IPhysicalOperator curRoot : plan.getRoots()){
 			if(curRoot.isSink()){
-				sinkRoots.add((ISink<?>)curRoot);
+				sinkRoots.add((ISink<IStreamObject<?>>)curRoot);
 			}
 		}
 		calcForLeafsPathsToRoots(sinkRoots, virtualOps, pathes);

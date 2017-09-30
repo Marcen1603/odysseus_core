@@ -46,7 +46,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 	private boolean isStarted;
 	final private IObjectHandler objectHandler;
 	final private boolean withMetadata;
-	private AbstractPhysicalSubscription<ISource<? extends IStreamObject<?>>> subscription;
+	private AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> subscription;
 	private int serverPort;
 
 	public SocketSinkPO(int serverPort, String host,
@@ -97,7 +97,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 		Integer port = reserverNextFreePort();
 		
 		if (subscription == null) {
-			List<AbstractPhysicalSubscription<ISource<? extends IStreamObject<?>>>> s = getSubscribedToSource();
+			List<AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?>> s = getSubscribedToSource();
 			if (s.size() != 1) {
 				logger.error("MORE THAN ONE SUBSCRIPTION");
 			}
@@ -108,7 +108,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 			// +1 --> next port
 			// +1 --> Number of ports
 			setInputPortCount(getMaxPort()+2);
-			subscription.getTarget().connectSink(this, port,
+			subscription.getSource().connectSink(this, port,
 					subscription.getSourceOutPort(), subscription.getSchema());
 		}
 		subscribe.put(port, temp);
@@ -157,7 +157,7 @@ public class SocketSinkPO extends AbstractSink<IStreamObject<?>> {
 				} catch (IOException e) {
 					e.getMessage();
 					logger.debug(e.getMessage());
-					subscription.getTarget().disconnectSink(this,port,subscription.getSourceOutPort(), subscription.getSchema());
+					subscription.getSource().disconnectSink(this,port,subscription.getSourceOutPort(), subscription.getSchema());
 					subscribe.remove(port);
 				}
 			}

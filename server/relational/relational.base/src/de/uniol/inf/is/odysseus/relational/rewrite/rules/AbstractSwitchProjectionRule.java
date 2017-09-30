@@ -1,11 +1,10 @@
 package de.uniol.inf.is.odysseus.relational.rewrite.rules;
 
 import de.uniol.inf.is.odysseus.rewrite.flow.RewriteRuleFlowGroup;
-import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 
 public abstract class AbstractSwitchProjectionRule<Operator> extends
-		AbstractRewriteRule<Operator> {
+		AbstractRelationalRewriteRule<Operator> {
 
 	@Override
 	public int getPriority() {

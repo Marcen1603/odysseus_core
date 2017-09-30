@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.access.WrapperRegistry;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 
 @LogicalOperator(maxInputPorts = 0, minInputPorts = 0, name = "RETRIEVE", doc="Generic operator to connect to an input which input must be retrieved (i.e. pulled from source).", category={LogicalOperatorCategory.SOURCE})
 public class RetrieveAO extends AbstractAccessAO {

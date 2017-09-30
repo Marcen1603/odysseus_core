@@ -1,14 +1,11 @@
 package de.uniol.inf.is.odysseus.admission.event;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-
 import de.uniol.inf.is.odysseus.admission.IAdmissionControl;
 import de.uniol.inf.is.odysseus.admission.event.generation.ExecutorAdmissionEventGenerator;
 import de.uniol.inf.is.odysseus.admission.event.generation.TimingAdmissionEventGenerator;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 
-public class AdmissionEventPlugIn implements BundleActivator {
+public class AdmissionEventPlugIn {
 
 	private static final long TIMING_INTERVAL_MILLIS = 5 * 1000;
 	private static final ExecutorAdmissionEventGenerator EXECUTOR_EVENT_GENERATOR = new ExecutorAdmissionEventGenerator();
@@ -36,25 +33,17 @@ public class AdmissionEventPlugIn implements BundleActivator {
 	// called by OSGi-DS
 	public static void bindAdmissionControl(IAdmissionControl serv) {
 		admissionControl = serv;
+		TIMING_EVENT_GENERATOR.start();
 	}
 
 	// called by OSGi-DS
 	public static void unbindAdmissionControl(IAdmissionControl serv) {
 		if (admissionControl == serv) {
 			admissionControl = null;
+			TIMING_EVENT_GENERATOR.stopRunning();
 		}
 	}
 	
-	@Override
-	public void start(BundleContext context) throws Exception {
-		TIMING_EVENT_GENERATOR.start();
-	}
-
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		TIMING_EVENT_GENERATOR.stopRunning();
-	}
-
 	public static IServerExecutor getExecutor() {
 		return executor;
 	}

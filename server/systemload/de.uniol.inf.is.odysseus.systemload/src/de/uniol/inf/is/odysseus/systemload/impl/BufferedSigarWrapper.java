@@ -34,6 +34,8 @@ public class BufferedSigarWrapper {
 	private long netInTimestamp;
 	private long netOutTimestamp;
 
+	private OdysseusConfiguration config;
+
 	public BufferedSigarWrapper() {
 		sigar = new Sigar();
 
@@ -45,8 +47,10 @@ public class BufferedSigarWrapper {
 		}
 	}
 
-	private static void checkBufferTimeMillis() {
-		BUFFER_TIME_MILLIS = OdysseusConfiguration.instance.getLong(BUFFER_TIME_SETTING_NAME, BUFFER_TIME_MILLIS_DEFAULT);
+	private void checkBufferTimeMillis() {
+		if (config != null) {
+			BUFFER_TIME_MILLIS = config.getLong(BUFFER_TIME_SETTING_NAME, BUFFER_TIME_MILLIS_DEFAULT);
+		}
 		if (BUFFER_TIME_MILLIS <= 0) {
 			BUFFER_TIME_MILLIS = BUFFER_TIME_MILLIS_DEFAULT;
 		}
@@ -144,5 +148,9 @@ public class BufferedSigarWrapper {
 			LOG.warn("Could not get net output rate from sigar", t);
 			return 0.0;
 		}
+	}
+
+	public void setConfig(OdysseusConfiguration c) {
+		config = c;
 	}
 }

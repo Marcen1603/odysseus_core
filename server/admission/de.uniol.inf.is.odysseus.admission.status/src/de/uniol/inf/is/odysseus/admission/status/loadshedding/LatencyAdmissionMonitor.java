@@ -159,7 +159,7 @@ public class LatencyAdmissionMonitor implements IAdmissionMonitor {
 				
 				for (Object obj : subscriptions) {
 					ISubscription subscription = (ISubscription) obj;
-					IPhysicalOperator targetOperator = (IPhysicalOperator) subscription.getTarget();
+					IPhysicalOperator targetOperator = (IPhysicalOperator) subscription.getSink();
 					if(targetOperator.equals(operator)) {
 						return source;
 					}

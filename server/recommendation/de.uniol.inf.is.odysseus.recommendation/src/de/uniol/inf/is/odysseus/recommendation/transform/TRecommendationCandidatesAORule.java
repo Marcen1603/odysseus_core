@@ -86,14 +86,14 @@ public class TRecommendationCandidatesAORule extends
 	private void insertJoinBefore(final RecommendationCandidatesAO operator) {
 		final JoinAO join = new JoinAO();
 
-		// RestructHelper.insertOperator(join, operator, 0, 0, 0);
-		// RestructHelper.insertOperator(join, operator, 1, 1, 0);
+		// LogicalPlan.insertOperator(join, operator, 0, 0, 0);
+		// LogicalPlan.insertOperator(join, operator, 1, 1, 0);
 
 		final Collection<LogicalSubscription> subscriptions = new ArrayList<>(
 				operator.getSubscribedToSource());
 		for (final LogicalSubscription s : subscriptions) {
 			operator.unsubscribeFromSource(s);
-			join.subscribeToSource(s.getTarget(), s.getSinkInPort(),
+			join.subscribeToSource(s.getSource(), s.getSinkInPort(),
 					s.getSourceOutPort(), s.getSchema());
 		}
 		operator.subscribeToSource(join, 0, 0, join.getOutputSchema());

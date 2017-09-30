@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
-import de.uniol.inf.is.odysseus.core.server.util.Constants;
+import de.uniol.inf.is.odysseus.core.util.Constants;
 
 /**
  * Helper class to create a protocol handler for BaDaSt.

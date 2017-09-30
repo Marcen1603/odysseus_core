@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.JoinAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.LeftJoinAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -169,7 +169,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 		Objects.requireNonNull(operator.getSubscriptions());
 		boolean hasLinearRegressionMergeAOAsFather = false;
 		for (final LogicalSubscription sub : operator.getSubscriptions()) {
-			if (sub.getTarget() instanceof LinearRegressionMergeAO) {
+			if (sub.getSink() instanceof LinearRegressionMergeAO) {
 				hasLinearRegressionMergeAOAsFather = true;
 				break;
 			}
@@ -187,7 +187,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 			final ILogicalOperator operator, final int port) {
 		Objects.requireNonNull(operator);
 		final LogicalSubscription child = operator.getSubscribedToSource(port);
-		return (child.getTarget() instanceof LinearRegressionAO);
+		return (child.getSource() instanceof LinearRegressionAO);
 	}
 
 	private boolean isContinuousEquiJoin(final ILogicalOperator operator) {
@@ -244,7 +244,7 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		linearRegressionMergeAO.setName(operator.getName()
 				+ "_linearRegressionMerge");
-		RestructHelper.insertOperatorBefore(linearRegressionMergeAO, operator);
+		LogicalPlan.insertOperatorBefore(linearRegressionMergeAO, operator);
 		linearRegressionMergeAO.initialize();
 		this.insert(linearRegressionMergeAO);
 	}
@@ -294,8 +294,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		linearRegressionAO.setName(operator.getName() + "_linearRegression");
 
-		RestructHelper.insertOperatorBefore(linearRegressionAO, operator
-				.getSubscribedToSource(port).getTarget());
+		LogicalPlan.insertOperatorBefore(linearRegressionAO, operator
+				.getSubscribedToSource(port).getSource());
 		linearRegressionAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(
 				linearRegressionAO.getOutputSchema());
@@ -367,8 +367,8 @@ public class TProbabilisticContinuousEquiJoinAOInsertLinearRegressionRule
 
 		sampleAO.setName(operator.getName() + "_sample");
 
-		RestructHelper.insertOperatorBefore(sampleAO, operator
-				.getSubscribedToSource(port).getTarget());
+		LogicalPlan.insertOperatorBefore(sampleAO, operator
+				.getSubscribedToSource(port).getSource());
 		sampleAO.initialize();
 		operator.getSubscribedToSource(port).setSchema(
 				sampleAO.getOutputSchema());

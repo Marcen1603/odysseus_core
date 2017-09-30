@@ -569,8 +569,8 @@ public class ProbabilityChart3D extends AbstractProbabilityChart<MultivariateMix
 
     @Override
     protected final void initConnection(final IStreamConnection<IStreamObject<?>> streamConnection) {
-        for (final ISubscription<? extends ISource<?>> s : streamConnection.getSubscriptions()) {
-            this.viewSchema.put(s.getSinkInPort(), new ViewSchema<MultivariateMixtureDistribution>(s.getSchema(), s.getTarget().getMetaAttributeSchema(), s.getSinkInPort()));
+        for (final ISubscription<? extends ISource<?>,?> s : streamConnection.getSubscriptions()) {
+        	this.viewSchema.put(s.getSinkInPort(), new ViewSchema<MultivariateMixtureDistribution>(s.getSchema(), (s.getSource()).getMetaAttributeSchema(), s.getSinkInPort()));
         }
 
         if (this.validate()) {

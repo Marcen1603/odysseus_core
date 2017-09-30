@@ -7,9 +7,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
@@ -34,6 +34,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	// On the enrich-port
 	private int pointInTimePosition;
 	private int movingObjectListPosition;
+	private int centerMovingObjectIdAttribute;
 
 	// On the data-port
 	private int geometryPosition;
@@ -48,6 +49,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
 		this.movingObjectListPosition = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getMovingObjectListAttribute());
+		this.centerMovingObjectIdAttribute = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getCentermovingObjectIdAttribute());
 
 		this.geometryPosition = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
 		this.idPosition = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getIdAttribute());
@@ -106,24 +108,27 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		for (String movingObjectId : movingObjectIds) {
 			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId, pointInTime);
-			Tuple<ITimeInterval> tuple = createTuple(prediction);
+			Tuple<IMetaAttribute> tuple = createTuple(prediction, object);
 			this.transfer((T) tuple);
 		}
 	}
 
-	private Tuple<ITimeInterval> createTuple(LocationMeasurement interpolatedLocationMeasurement) {
+	private Tuple<IMetaAttribute> createTuple(LocationMeasurement interpolatedLocationMeasurement, T triggerTuple) {
 		Geometry geometry = this.geoFactory.createPoint(new Coordinate(interpolatedLocationMeasurement.getLatitude(),
 				interpolatedLocationMeasurement.getLongitude()));
 		GeometryWrapper geoWrapper = new GeometryWrapper(geometry);
 
-		Tuple<ITimeInterval> tupleWithInterpolatedLocation = new Tuple<ITimeInterval>(4, false);
+		Tuple<IMetaAttribute> tupleWithInterpolatedLocation = new Tuple<IMetaAttribute>(5, false);
 		// The prediction is valid only one point in time
-		tupleWithInterpolatedLocation.setMetadata(new TimeInterval(interpolatedLocationMeasurement.getMeasurementTime(),
-				interpolatedLocationMeasurement.getMeasurementTime().plus(1)));
+		tupleWithInterpolatedLocation.setMetadata(triggerTuple.getMetadata().clone());
+//		((T) tupleWithInterpolatedLocation).getMetadata().setStart(interpolatedLocationMeasurement.getMeasurementTime());
+//		((T) tupleWithInterpolatedLocation).getMetadata().setEnd(interpolatedLocationMeasurement.getMeasurementTime().plus(1));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, geoWrapper);
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getSpeedInMetersPerSecond());
 		tupleWithInterpolatedLocation.setAttribute(3, interpolatedLocationMeasurement.getHorizontalDirection());
+		// Keep the center
+		tupleWithInterpolatedLocation.setAttribute(4, triggerTuple.getAttribute(this.centerMovingObjectIdAttribute));
 		return tupleWithInterpolatedLocation;
 	}
 

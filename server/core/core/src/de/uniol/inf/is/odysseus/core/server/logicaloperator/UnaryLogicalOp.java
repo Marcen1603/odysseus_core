@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.Subscription;
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
+import de.uniol.inf.is.odysseus.core.logicaloperator.IUnaryLogicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
@@ -24,7 +25,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  * @author Marco Grawunder
  */
 
-public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
+public abstract class UnaryLogicalOp extends AbstractLogicalOperator implements IUnaryLogicalOperator{
 
 	private static final long serialVersionUID = 1L;
 	private static final int PORTNUMBER = 0;
@@ -41,15 +42,11 @@ public abstract class UnaryLogicalOp extends AbstractLogicalOperator {
 		return getInputSchema(PORTNUMBER);
 	}
 
-//	public void setInputSchema(SDFSchema schema) {
-//		setInputSchema(PORTNUMBER, schema);
-//	}
-
 	public ILogicalOperator getInputAO(){
-		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getTarget();
+		return getSubscribedToSource(PORTNUMBER)==null?null:getSubscribedToSource(PORTNUMBER).getSource();
 	}
 	
-	public Subscription<IPhysicalOperator> getPhysSubscriptionTo() {
+	public Subscription<IPhysicalOperator,?> getPhysSubscriptionTo() {
 		return getPhysSubscriptionTo(PORTNUMBER);
 	}
 	

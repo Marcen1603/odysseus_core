@@ -83,11 +83,13 @@ public class MapAO extends UnaryLogicalOp {
 	private void calcOutputSchema() {
 
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
+		SDFSchema inputSchema = getInputSchema();
+		
 		if (keepInput) {
 			if (removeAttributes == null || removeAttributes.size() == 0) {
-				attrs.addAll(getInputSchema().getAttributes());
+				attrs.addAll(inputSchema.getAttributes());
 			} else {
-				for (SDFAttribute keepAttribute : getInputSchema().getAttributes()) {
+				for (SDFAttribute keepAttribute : inputSchema.getAttributes()) {
 					if (!removeAttributes.contains(keepAttribute)) {
 						attrs.add(keepAttribute);
 					}
@@ -193,8 +195,8 @@ public class MapAO extends UnaryLogicalOp {
 
 			}
 
-			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory.createNewWithAttributes(attrs, getInputSchema()),
-					getInputSchema().getURI(), false);
+			SDFSchema s = SDFSchema.changeSourceName(SDFSchemaFactory.createNewWithAttributes(attrs, inputSchema),
+					inputSchema.getURI(), false);
 			// check if all attributes are distinct
 			Set<String> amNames = s.checkNames();
 			if (amNames.size() > 0) {

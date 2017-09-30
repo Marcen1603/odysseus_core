@@ -17,11 +17,15 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParame
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "MovingObjectEstimation", doc = "Enriches the point in time (input 2) with an estimation, which moving objects need to be predicted.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class MOEstimationAO extends BinaryLogicalOp {
+	
+	private static final int LOCATION_INPUT_PORT = 0;
+	private static final int TIMER_INPUT_PORT = 1;
 
 	private static final long serialVersionUID = -7299499368889774372L;
 	private String geometryAttribute;
 	private String idAttribute;
 	private String pointInTimeAttribute;
+	private String centerMovingObjectAttribute;
 
 	public MOEstimationAO() {
 		super();
@@ -32,6 +36,7 @@ public class MOEstimationAO extends BinaryLogicalOp {
 		this.geometryAttribute = ao.getGeometryAttribute();
 		this.idAttribute = ao.getIdAttribute();
 		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
+		this.centerMovingObjectAttribute = ao.getCenterMovingObjectAttribute();
 	}
 
 	public String getGeometryAttribute() {
@@ -70,19 +75,30 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	protected SDFSchema getOutputSchemaIntern(int pos) {
 
 		// Use old schema from the input
-		SDFSchema inputSchema = getInputSchema(pos);
+		SDFSchema inputSchema = getInputSchema(LOCATION_INPUT_PORT);
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
 		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "PointInTime", SDFDatatype.TIMESTAMP);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectIds", SDFDatatype.LIST);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.LONG);
+		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectIds", SDFDatatype.LIST);
 
 		attributes.add(attribute1);
 		attributes.add(attribute2);
-
+		attributes.add(attribute3);
+		
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
+	}
+
+	public String getCenterMovingObjectAttribute() {
+		return centerMovingObjectAttribute;
+	}
+
+	@Parameter(name = "centerMovingObjectAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the center id.")
+	public void setCenterMovingObjectAttribute(String centerMovingObjectAttribute) {
+		this.centerMovingObjectAttribute = centerMovingObjectAttribute;
 	}
 
 }

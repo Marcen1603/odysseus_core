@@ -14,8 +14,8 @@ import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritab
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.StreamAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.querybuiltparameter.QueryBuildConfiguration;
-import de.uniol.inf.is.odysseus.core.server.util.CopyLogicalGraphVisitor;
-import de.uniol.inf.is.odysseus.core.server.util.GenericGraphWalker;
+import de.uniol.inf.is.odysseus.core.util.CopyLogicalGraphVisitor;
+import de.uniol.inf.is.odysseus.core.util.GenericGraphWalker;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.net.querydistribute.IQueryDistributionPreProcessor;
 import de.uniol.inf.is.odysseus.net.querydistribute.QueryDistributionPreProcessorException;
@@ -33,7 +33,7 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 
 	@Override
 	public void preProcess(IServerExecutor serverExecutor, ISession caller, ILogicalQuery queryToDistribute, QueryBuildConfiguration config) throws QueryDistributionPreProcessorException {
-		ILogicalOperator logicalOperator = queryToDistribute.getLogicalPlan();
+		ILogicalOperator logicalOperator = queryToDistribute.getLogicalPlan().getRoot();
 
 		Collection<ILogicalOperator> operators = getAllOperators(logicalOperator);
 		replaceStreamAOs(operators, serverExecutor, caller);
@@ -49,11 +49,11 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 		if (!list.contains(currentOperator)) {
 			list.add(currentOperator);
 			for (final LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSink(), list);
 			}
 
 			for (final LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperatorsImpl(subscription.getTarget(), list);
+				collectOperatorsImpl(subscription.getSource(), list);
 			}
 		}
 	}
@@ -70,9 +70,9 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 				IDataDictionaryWritable dataDictionary = serverExecutor.getDataDictionary(activeSession.getTenant());
 				Resource streamname = ((StreamAO) operator).getStreamname();
 				
-				ILogicalOperator streamPlan = dataDictionary.getStreamForTransformation(streamname, activeSession);
+				ILogicalOperator streamPlan = dataDictionary.getStreamForTransformation(streamname, activeSession).getRoot();
 				if( streamPlan == null ) {
-					streamPlan = dataDictionary.getView(streamname, activeSession);
+					streamPlan = dataDictionary.getView(streamname, activeSession).getRoot();
 				}
 				if( streamPlan == null ) {
 					throw new QueryDistributionPreProcessorException("Could not find stream/view " + streamname);
@@ -125,7 +125,7 @@ public class ReplaceStreamPreProcessor implements IQueryDistributionPreProcessor
 		}
 
 		for (LogicalSubscription subToSink : leafOp.getSubscriptions()) {
-			ILogicalOperator target = subToSink.getTarget();
+			ILogicalOperator target = subToSink.getSink();
 
 			target.unsubscribeFromSource(leafOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());
 			target.subscribeToSource(newOp, subToSink.getSinkInPort(), subToSink.getSourceOutPort(), subToSink.getSchema());

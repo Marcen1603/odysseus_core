@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.ILogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGenerator;
 import de.uniol.inf.is.odysseus.parser.pql.generator.IPQLGeneratorPostProcessor;
@@ -59,6 +60,11 @@ public class PQLGenerator implements IPQLGenerator {
 		}
 	}
 
+	@Override
+	public String generatePQLStatement(ILogicalPlan plan) {
+		return generatePQLStatement(plan.getRoot());
+	}
+	
 	@Override
 	public String generatePQLStatement(ILogicalOperator startOperator) {
 		Preconditions.checkNotNull(startOperator, "Operator for generating pql-statement must not be null!");
@@ -112,7 +118,7 @@ public class PQLGenerator implements IPQLGenerator {
 
 			visitedOperators.add(operator);
 			for (LogicalSubscription subscription : operator.getSubscriptions()) {
-				ILogicalOperator target = subscription.getTarget();
+				ILogicalOperator target = subscription.getSink();
 				if (!visitedOperators.contains(target) && areAllSourceSubscriptionsVisited(target, visitedOperators)) {
 					operatorsToVisit.add(target);
 				}
@@ -124,7 +130,7 @@ public class PQLGenerator implements IPQLGenerator {
 
 	private static boolean areAllSourceSubscriptionsVisited(ILogicalOperator operator, List<ILogicalOperator> visitedOperators) {
 		for (LogicalSubscription subscription : operator.getSubscribedToSource()) {
-			ILogicalOperator target = subscription.getTarget();
+			ILogicalOperator target = subscription.getSource();
 			if (!visitedOperators.contains(target)) {
 				return false;
 			}
@@ -151,11 +157,11 @@ public class PQLGenerator implements IPQLGenerator {
 			}
 
 			for (LogicalSubscription subscription : currentOperator.getSubscriptions()) {
-				collectOperators(subscription.getTarget(), list);
+				collectOperators(subscription.getSink(), list);
 			}
 
 			for (LogicalSubscription subscription : currentOperator.getSubscribedToSource()) {
-				collectOperators(subscription.getTarget(), list);
+				collectOperators(subscription.getSource(), list);
 			}
 		}
 	}

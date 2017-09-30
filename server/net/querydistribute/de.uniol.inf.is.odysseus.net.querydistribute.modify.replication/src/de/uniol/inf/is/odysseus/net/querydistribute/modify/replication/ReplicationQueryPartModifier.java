@@ -361,7 +361,7 @@ public class ReplicationQueryPartModifier implements IQueryPartModificator {
 		Preconditions.checkNotNull(bundle.getCopyMap(), "Copy map must be not null!");
 		Preconditions.checkNotNull(bundle.getOriginStartOperator(), "The origin start operator must be not null!");
 
-		ILogicalOperator originalTarget = subscription.getTarget();
+		ILogicalOperator originalTarget = subscription.getSource();
 		Collection<ILogicalOperator> copiedTargets = Lists.newArrayList();
 		ImmutableList<ILogicalOperator> copiedSources = ImmutableList
 				.copyOf(ModificationHelper.findCopies(originalSource, bundle.getCopyMap()));

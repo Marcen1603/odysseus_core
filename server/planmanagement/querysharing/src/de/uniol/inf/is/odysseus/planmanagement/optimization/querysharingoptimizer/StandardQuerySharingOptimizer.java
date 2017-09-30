@@ -23,16 +23,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.uniol.inf.is.odysseus.core.ISubscription;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
+import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISink;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
-import de.uniol.inf.is.odysseus.core.physicaloperator.AbstractPhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IPipe;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.configuration.OptimizationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.optimization.querysharing.IQuerySharingOptimizer;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
@@ -132,7 +132,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					// Schritt 1: Entfernen von identischen Operatoren
 
 					// Operatoren sind semantisch gleiche Pipes, die identische Quellen haben
-					if (op1 instanceof IPipe && ((AbstractPipe)op1).hasSameSources(op2) &&  haveSameNames(op1,op2) &&op1.isSemanticallyEqual(op2)) {
+					if (op1 instanceof IPipe && 
+							((AbstractPipe)op1).hasSameSources(op2) &&  
+							haveSameNames(op1,op2) 
+							&& op1.isSemanticallyEqual(op2)) {
 						// Der erste Operator ist nicht neu, der zweite
 						// allerdings schon und eine Umstrukturierung des alten
 						// Plans ist untersagt
@@ -226,7 +229,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 
 		// Ersetzen des Eingangsoperators bei allen angeschlossenen sinks
 		for (ISubscription sub : sinks) {
-			ISink s = (ISink) sub.getTarget();
+			ISink s = (ISink) sub.getSink();
 
 			// debug
 			// System.out.println("S-Name: " + s.getName());
@@ -259,10 +262,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		// angemeldet war
 		// (Sind die gleichen wie von op2, ansonsten h�tte
 		// op2.isSemanticallyEqual(op2) false ergeben)
-		Collection<ISubscription<IPhysicalOperator>> sources = new ArrayList<ISubscription<IPhysicalOperator>>(
+		Collection<ISubscription<?,?>> sources = new ArrayList<ISubscription<?,?>>(
 				((IPipe) toReplace).getSubscribedToSource());
-		for (ISubscription<?> sub : sources) {
-			ISource s = (ISource) sub.getTarget();
+		for (ISubscription<?,?> sub : sources) {
+			ISource s = (ISource) sub.getSource();
 			s.unsubscribeSink(sub);
 			((ISink) toReplace).unsubscribeFromSource(sub);
 
@@ -307,7 +310,7 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 		Collection<ISubscription> sources = new ArrayList(
 				((IPipe) op1).getSubscribedToSource());
 		for (ISubscription sub : sources) {
-			ISource s = (ISource) sub.getTarget();
+			ISource s = (ISource) sub.getSource();
 			s.unsubscribeSink(sub);
 			((ISink) op1).unsubscribeFromSource(sub);
 			((IPipe) op2).subscribeSink(op1, sub.getSinkInPort(),

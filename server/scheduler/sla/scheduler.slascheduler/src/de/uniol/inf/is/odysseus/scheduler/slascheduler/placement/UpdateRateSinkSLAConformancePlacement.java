@@ -59,15 +59,15 @@ public class UpdateRateSinkSLAConformancePlacement implements
 		if (root.isSource()) { // Source or Pipe
 			op = root;
 		} else if (root.isSink() && !root.isSource()) { // Sink
-			AbstractPhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
-			op = s.getTarget();
+			AbstractPhysicalSubscription<? extends ISource<?>,?> s = ((ISink<?>) root).getSubscribedToSource().iterator().next();
+			op = s.getSource();
 		} else
 			throw new RuntimeException("Cannot connect SLA conformance operator to query root: " + root);
 		
 		// TODO: Find another solution
 		if (op.getClass().getName().endsWith("BenchmarkResultPO")) {
-			AbstractPhysicalSubscription<? extends ISource<?>> s = ((ISink<?>) op).getSubscribedToSource().iterator().next();
-			op = s.getTarget();
+			AbstractPhysicalSubscription<? extends ISource<?>,?> s = ((ISink<?>) op).getSubscribedToSource().iterator().next();
+			op = s.getSource();
 		}
 		
 		ArrayList<IPhysicalOperator> operatorsToAdd = new ArrayList<IPhysicalOperator>();

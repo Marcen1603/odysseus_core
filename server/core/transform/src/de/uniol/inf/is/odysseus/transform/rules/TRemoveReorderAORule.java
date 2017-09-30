@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.ILogicalOperator;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalSubscription;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.IOutOfOrderHandler;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ReOrderAO;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RestructHelper;
+import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -29,13 +29,13 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 		Collection<LogicalSubscription> sources = operator.getSubscribedToSource();
 		if (sources.size() == 1) {
 			LogicalSubscription sub = sources.iterator().next();
-			ILogicalOperator target = sub.getTarget();
+			ILogicalOperator target = sub.getSource();
 			if (target instanceof IOutOfOrderHandler) {
 				((IOutOfOrderHandler) target).setAssureOrder(true);
 			}
 		}
 
-		Collection<ILogicalOperator> toUpdate = RestructHelper.removeOperator(operator, true);
+		Collection<ILogicalOperator> toUpdate = LogicalPlan.removeOperator(operator, true);
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
@@ -51,7 +51,7 @@ public class TRemoveReorderAORule extends AbstractTransformationRule<ReOrderAO> 
 			// operator that is not reflected inside the subscription ... Maybe we should
 			// add a phase where we recalc
 			// subscription schemata?
-			ILogicalOperator target = sub.getTarget();
+			ILogicalOperator target = sub.getSource();
 			return target.getOutputSchema().isInOrder()
 					|| (target instanceof IOutOfOrderHandler && ((IOutOfOrderHandler) target).isAssureOrder() == null);
 		}

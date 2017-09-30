@@ -24,7 +24,7 @@ public class TAppendQueryAORule extends
 		Collection<LogicalSubscription> subs = operator.getSubscriptions();
 
 		for (LogicalSubscription s : subs) {
-			s.getTarget().setPhysSubscriptionTo(op, s.getSinkInPort(), port,
+			s.getSink().setPhysSubscriptionTo(op, s.getSinkInPort(), port,
 					op.getOutputSchema());
 		}
 	}

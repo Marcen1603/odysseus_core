@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
-import de.uniol.inf.is.odysseus.core.server.util.FileUtils;
-import de.uniol.inf.is.odysseus.core.server.util.OSGI;
+import de.uniol.inf.is.odysseus.core.util.FileUtils;
+import de.uniol.inf.is.odysseus.core.util.OSGI;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.core.usermanagement.PermissionException;
 
@@ -37,7 +37,7 @@ public class OdysseusConfiguration {
 	 * use osgi injection instead
 	 */
 	@Deprecated
-	public static OdysseusConfiguration instance = new OdysseusConfiguration();
+	public static OdysseusConfiguration instance;
 
 	public static final String CLONING_UPDATER = "CloningUpdater";
 	public static final String DEFAULT_UPDATE_SITE = "Update.DefaultUpdateSite";

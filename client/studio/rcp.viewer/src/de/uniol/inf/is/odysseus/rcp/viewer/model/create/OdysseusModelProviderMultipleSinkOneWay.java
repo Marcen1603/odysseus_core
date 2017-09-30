@@ -127,12 +127,12 @@ public final class OdysseusModelProviderMultipleSinkOneWay implements IModelProv
 		if( operator.isSink() ) {
 			@SuppressWarnings("unchecked")
 			ISink<T> sink = (ISink<T>)operator;
-			Collection< AbstractPhysicalSubscription< ISource<? extends T> >> sources = sink.getSubscribedToSource();
-			for( AbstractPhysicalSubscription< ISource<? extends T> > sub : sources ) {
-				if( sub.getTarget().isSink() ) {
-					parse( (ISink<?>)sub.getTarget(), graphModel, node);
+			Collection< AbstractPhysicalSubscription< ISource<IStreamObject<?>>,?>> sources = sink.getSubscribedToSource();
+			for( AbstractPhysicalSubscription<ISource<IStreamObject<?>>,?> sub : sources ) {
+				if( sub.getSource().isSink() ) {
+					parse( (ISink<?>)sub.getSource(), graphModel, node);
 				} else {
-					parse( sub.getTarget(), graphModel, node);
+					parse( sub.getSource(), graphModel, node);
 				}
 			}
 		}
