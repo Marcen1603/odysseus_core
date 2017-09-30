@@ -27,8 +27,7 @@ public class ThreadCalculateLatency extends Thread {
 	@Override
 	public void run() {
 		while (running) {
-			//TODO: Remove size>5? : Has to be for very short querys.
-			if (!queue.isEmpty() && queue.size()>minQueueLength) {
+			if (!queue.isEmpty() && queue.size()>=minQueueLength) {
 				processEvent();
 			}
 		}
