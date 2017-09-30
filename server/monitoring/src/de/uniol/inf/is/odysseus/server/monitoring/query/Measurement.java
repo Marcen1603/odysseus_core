@@ -15,24 +15,22 @@ public class Measurement {
 	private Map<IPhysicalOperator, OperatorLatency> latencys;
 	private long currentLatency, averageLatency;
 	private List<HashMap<IPhysicalOperator, OperatorLatency>> temporaryLatencys;
-	private List<IPhysicalOperator> roots;
+	private IPhysicalOperator root;
 
 	public Measurement(IPhysicalOperator root) {
 		this.temporaryLatencys = new ArrayList<HashMap<IPhysicalOperator, OperatorLatency>>();
 		this.latencys = new HashMap<IPhysicalOperator, OperatorLatency>();
-		this.roots = new ArrayList<IPhysicalOperator>();
 
-		this.roots.add(root);
+		this.root = root;
 	}
 
 	public Measurement() {
 		this.temporaryLatencys = new ArrayList<HashMap<IPhysicalOperator, OperatorLatency>>();
 		this.latencys = new HashMap<IPhysicalOperator, OperatorLatency>();
-		this.roots = new ArrayList<IPhysicalOperator>();
 	}
 
 	public synchronized void addRoot(IPhysicalOperator root) {
-		this.roots.add(root);
+		this.root = root;
 	}
 
 	/**
@@ -67,6 +65,14 @@ public class Measurement {
 				if (event.getEventType().equals(POEventType.PushInit)) {
 					if (entrys.containsKey(operator)) {
 						if (entrys.get(operator).isStopped()) {
+							if (entrys.get(operator).isStarted()) {
+								OperatorLatency l = new OperatorLatency(operator);
+								l.stopMeasurement(nanoTimestamp);
+								long lastPushInitEvent = entrys.get(operator).getEndTime();
+								l.startMeasurement(lastPushInitEvent);
+								entrys.put(operator, l);
+								break loop;
+							}
 							continue;
 						} else {
 							entrys.get(operator).stopMeasurement(nanoTimestamp);
@@ -117,7 +123,7 @@ public class Measurement {
 			tempMap.put(operator, l);
 			this.temporaryLatencys.add(tempMap);
 		}
-		//TODO: Maybe remove this for the Join Operator
+		// TODO: Maybe remove this for the Join Operator
 		if (event.getEventType().equals(POEventType.PushInit)) {
 			OperatorLatency l = new OperatorLatency(operator);
 			l.stopMeasurement(nanoTimestamp);
@@ -147,14 +153,12 @@ public class Measurement {
 			}
 			if (count == this.temporaryLatencys.get(i).size()) {
 				boolean deleted = false;
-				for (IPhysicalOperator o : roots) {
-					if (this.temporaryLatencys.get(i).containsKey(o)
-							&& this.temporaryLatencys.get(i).get(o).isConfirmed()) {
-						this.latencys.putAll(this.temporaryLatencys.get(i));
-						this.temporaryLatencys.remove(i);
-						calcQueryLatency();
-						deleted = true;
-					}
+				if (this.temporaryLatencys.get(i).containsKey(root)
+						&& this.temporaryLatencys.get(i).get(root).isConfirmed()) {
+					this.latencys.putAll(this.temporaryLatencys.get(i));
+					this.temporaryLatencys.remove(i);
+					calcQueryLatency();
+					deleted = true;
 				}
 				if (!deleted) {
 					this.temporaryLatencys.remove(i);

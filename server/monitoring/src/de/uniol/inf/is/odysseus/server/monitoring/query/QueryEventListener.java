@@ -10,6 +10,10 @@ public class QueryEventListener implements IPOEventListener {
 	private Measurement measurement;
 	ThreadCalculateLatency thread;
 
+	/**
+	 * Adds required Events (PushInit, ProcessInit and ProcessDone) for an Operator
+	 * @param o Operator which will be subscribed to the Events.
+	 */
 	public void addOperator(IPhysicalOperator o) {
 		o.subscribe(this, POEventType.PushInit);
 		o.subscribe(this, POEventType.ProcessInit);
@@ -17,7 +21,6 @@ public class QueryEventListener implements IPOEventListener {
 	}
 
 	public QueryEventListener(Measurement m, ThreadCalculateLatency t) {
-		// TODO Auto-generated constructor stub	
 		this.thread = t;
 		this.measurement = m;
 	}
@@ -27,6 +30,10 @@ public class QueryEventListener implements IPOEventListener {
 		this.thread.addEvent(this.measurement, event, nanoTimestamp);
 	}
 	
+	/**
+	 * Removes all Eventsubsciptions for the given Operator
+	 * @param o IPhysicalOperator
+	 */
 	public void removeOperator(IPhysicalOperator o) {
 		o.unSubscribeFromAll(this);
 	}
