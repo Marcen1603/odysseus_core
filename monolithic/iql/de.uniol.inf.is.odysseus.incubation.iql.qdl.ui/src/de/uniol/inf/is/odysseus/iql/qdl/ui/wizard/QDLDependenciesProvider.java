@@ -7,15 +7,15 @@ import org.osgi.framework.Bundle;
 
 import com.google.inject.Injector;
 
+import de.uniol.inf.is.odysseus.incubation.iql.qdl.ui.internal.QdlActivator;
 import de.uniol.inf.is.odysseus.iql.basic.ui.wizard.IIQLDependenciesProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.typing.dictionary.IQDLTypeDictionary;
-import de.uniol.inf.is.odysseus.iql.qdl.ui.internal.QDLActivator;
 
 public class QDLDependenciesProvider implements IIQLDependenciesProvider{
 
 	@Override
 	public Collection<String> getRequiredBundles() {
-		Injector injector =  QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
+		Injector injector =  QdlActivator.getInstance().getInjector(QdlActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
 		IQDLTypeDictionary typeDictionary = injector.getInstance(IQDLTypeDictionary.class);
 		
 		Collection<String> result = new HashSet<>();
@@ -27,7 +27,7 @@ public class QDLDependenciesProvider implements IIQLDependenciesProvider{
 
 	@Override
 	public Collection<String> getImportedPackages() {
-		Injector injector =  QDLActivator.getInstance().getInjector(QDLActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
+		Injector injector =  QdlActivator.getInstance().getInjector(QdlActivator.DE_UNIOL_INF_IS_ODYSSEUS_IQL_QDL_QDL);
 		IQDLTypeDictionary typeDictionary = injector.getInstance(IQDLTypeDictionary.class);
 		
 		Collection<String> result = new HashSet<>();

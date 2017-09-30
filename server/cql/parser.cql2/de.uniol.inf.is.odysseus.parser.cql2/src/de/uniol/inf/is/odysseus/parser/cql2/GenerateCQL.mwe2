@@ -67,6 +67,12 @@ Workflow {
 			serializer = {
 				generateStub = false
 			}
+			
+			fragment = ui.projectWizard.SimpleProjectWizardFragment2 {
+				generate = false
+				pluginProject = false
+				
+			}
 
 			// For insensitive case letters for scoping elements. Add this to the scope provider
 			//			mwe2 scopeProvider = {

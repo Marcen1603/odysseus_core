@@ -33,7 +33,6 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 		super(generatorContext, compiler);
 	}
 
-	@Override
 	public void doGenerate(Resource input, IFileSystemAccess fsa) {
 		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(input);
 		if (fsa instanceof EclipseResourceFileSystemAccess2) {
@@ -42,7 +41,7 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 		doGenerate(input, fsa, outputFolder);
 	}
 	
-	@Override
+
 	public void doGenerate(IQLModelElement element, IFileSystemAccess fsa) {
 		URI outputFolder = BasicIQLUiTypeUtils.getOutputPath(element.eResource());
 		if (fsa instanceof EclipseResourceFileSystemAccess2) {
@@ -51,7 +50,6 @@ public class BasicIQLUiGenerator extends BasicIQLGenerator{
 		doGenerate(element, fsa, outputFolder);
 	}
 	
-	@Override
 	protected String getPackage(IQLModelElement element) {
 		String packageName = BasicIQLUiTypeUtils.getPackage(element.eResource());
 		if (packageName != null && packageName.length() > 0) {
