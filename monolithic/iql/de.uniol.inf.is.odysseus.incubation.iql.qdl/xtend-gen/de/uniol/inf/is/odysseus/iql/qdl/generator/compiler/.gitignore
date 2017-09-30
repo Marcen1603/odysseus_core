@@ -4,12 +4,6 @@
 /.QDLMetadataMethodCompiler.java._trace
 /.QDLStatementCompiler.java._trace
 /.QDLTypeCompiler.java._trace
-/QDLCompiler.java
-/QDLExpressionCompiler.java
-/QDLMetadataAnnotationCompiler.java
-/QDLMetadataMethodCompiler.java
-/QDLStatementCompiler.java
-/QDLTypeCompiler.java
 /.QDLCompiler.xtendbin
 /.QDLExpressionCompiler.xtendbin
 /.QDLMetadataAnnotationCompiler.xtendbin
