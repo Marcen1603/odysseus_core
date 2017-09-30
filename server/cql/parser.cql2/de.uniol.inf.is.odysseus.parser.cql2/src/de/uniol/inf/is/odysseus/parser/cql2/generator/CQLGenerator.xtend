@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator
 
 import de.uniol.inf.is.odysseus.mep.FunctionStore
 import de.uniol.inf.is.odysseus.mep.MEP
-import de.uniol.inf.is.odysseus.parser.cql2.builder.PQLStringBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.AccessFramework
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.BoolConstant
@@ -53,6 +52,17 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilder
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO
+import java.sql.DatabaseMetaData
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -73,7 +83,6 @@ class CQLGenerator implements IGenerator2 {
 //	var Map<SimpleSelect, List<SelectExpression>> queryAggregations = newHashMap
 	/** Contains string representations of all attributes mapped by their corresponding sources.*/
 //	var public Map<SimpleSelect, Map<String, List<String>>> queryAttributes = newHashMap
-
 	var private operatorCounter = 0
 	var private aggregationCounter = 0
 	var private expressionCounter = 0
@@ -83,7 +92,7 @@ class CQLGenerator implements IGenerator2 {
 	var private String expressionString = null
 	var private firstJoinInQuery = true
 	// Provides different names e.g. to identify valid names for aggregations and map functions 
-	var private PQLStringBuilder builder = PQLStringBuilder.getInstance()
+	var private PQLOperatorBuilder builder = new PQLOperatorBuilder();
 
 	var Map<String, String> databaseConnections = newHashMap
 
@@ -346,11 +355,11 @@ class CQLGenerator implements IGenerator2 {
 		var select = ''
 		if (!predicate.equals(''))
 			select = registerOperator(
-				builder.buildOperator('SELECT', newLinkedHashMap('predicate' -> predicate, 'input' -> selectInput)))
+				builder.build(typeof(SelectAO), newLinkedHashMap('predicate' -> predicate, 'input' -> selectInput)))
 		else {
 			var Map<String, String> newArgs = registry_existenceOperators.get(0)
 			newArgs.put('input', newArgs.get('input') + ',' + selectInput)
-			registerOperator(builder.buildOperator("EXISTENCE", newArgs))
+			registerOperator(builder.build(typeof(ExistenceAO), newArgs))
 			return registerOperator(buildProjection(stmt, 'JOIN(' + getLastOperator() + ',' + selectInput + ')'))
 		}
 
@@ -372,7 +381,7 @@ class CQLGenerator implements IGenerator2 {
 				for (Map<String, String> args : registry_existenceOperators) {
 					var Map<String, String> newArgs = args
 					newArgs.put('input', args.get('input') + ',' + selectInput)
-					registerOperator(builder.buildOperator("EXISTENCE", newArgs))
+					registerOperator(builder.build(typeof(ExistenceAO), newArgs))
 				}
 				var t = registry_Operators.get(select)
 				registry_Operators.put(select,
@@ -384,7 +393,7 @@ class CQLGenerator implements IGenerator2 {
 				for (Map<String, String> args : registry_existenceOperators) {
 					var Map<String, String> newArgs = args
 					newArgs.put('input', args.get('input') + ',' + selectInput)
-					registerOperator(builder.buildOperator("EXISTENCE", newArgs))
+					registerOperator(builder.build(typeof(ExistenceAO), newArgs))
 				}
 			}
 		}
@@ -419,6 +428,7 @@ class CQLGenerator implements IGenerator2 {
 		}
 		return str
 	}
+
 //TODO Remove this method
 	def CharSequence parseSelectExpressionType(List<Object> components) {
 //		var list = newArrayList
@@ -480,8 +490,9 @@ class CQLGenerator implements IGenerator2 {
 				args.put('drop', 'true')
 			else
 				args.put('truncate', 'true')
-		var operator = builder.buildOperator("DATABASESINK", args)
-		registry_Sinks.put(sink.name, operator)
+	// TODO not working 
+//		var operator = builder.build(typeof(DatabasesinkAO), args)
+//		registry_Sinks.put(sink.name, operator)
 	}
 
 	def private CharSequence extractSchema(SchemaDefinition schema) {
@@ -521,7 +532,8 @@ class CQLGenerator implements IGenerator2 {
 		var waitMillis = getTimeInMilliseconds(stream.unit.getName, stream.size).toString
 		if (!waitMillis.equals('0.0'))
 			args.put('waiteach', waitMillis)
-		operator = builder.buildOperator("DATABASESOURCE", args)
+		// TODO not working
+//		operator = builder.build(typeof(DatabasesourceAO), args)
 		return registerOperator(operator, VIEW + stream.attributes.name)
 	}
 
@@ -534,7 +546,7 @@ class CQLGenerator implements IGenerator2 {
 		args.put('datahandler', 'Tuple')
 		args.put('schema', extractSchema(file.attributes).toString)
 		args.put('options', '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]''')
-		var operator = builder.buildOperator("ACCESS", args)
+		var operator = builder.build(typeof(AccessAO), args)
 		return registerOperator(operator, VIEW + file.attributes.name)
 	}
 
@@ -547,7 +559,7 @@ class CQLGenerator implements IGenerator2 {
 		args.put('datahandler', 'Tuple')
 		args.put('schema', extractSchema(channel.attributes).toString)
 		args.put('options', '''['port','«channel.port»'],['host', '«channel.host»']''')
-		var operator = builder.buildOperator("ACCESS", args)
+		var operator = builder.build(typeof(AccessAO), args)
 		return registerOperator(operator, VIEW + channel.attributes.name)
 	}
 
@@ -636,7 +648,7 @@ class CQLGenerator implements IGenerator2 {
 			// Return a join operator that aggregate operator and a rename operator that renames the group attributes
 			return buildJoin(
 				#[
-					builder.buildOperator('RENAME',
+					builder.build(typeof(RenameAO),
 						newHashMap('pairs' -> 'true', 'aliases' -> generateListString(groupAttributes),
 							'input' -> aggregateOperator)), join])
 
@@ -656,14 +668,14 @@ class CQLGenerator implements IGenerator2 {
 			args.put('size', window.size.toString + ",'" + var3 + "'")
 			args.put('advance', var1 + ",'" + var2 + "'")
 			args.put('input', source.name)
-			return builder.buildOperator('TIMEWINDOW', args)
+			return builder.build(typeof(TimeWindowAO), args)
 		} else if (window instanceof TuplebasedWindow) {
 			log.error("build element window")
 			args.put('size', window.size.toString)
 			args.put('advance', (if(window.advance_size != 0) window.advance_size else 1).toString)
 			args.put('partition', if(window.partition_attribute !== null) window.partition_attribute.name else null)
 			args.put('input', source.name)
-			return builder.buildOperator('ELEMENTWINDOW', args)
+			return builder.build(typeof(ElementWindowAO), args)
 		} else {
 			return source.name
 		}
@@ -698,10 +710,11 @@ class CQLGenerator implements IGenerator2 {
 		}
 //		Collections.sort(attributeNames)
 		return #[attributeNames,
-			builder.buildOperator('MAP', newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
+			builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
 	}
 
-	def private Object[] buildAggregateOP(List<SelectExpression> aggAttr, List<Attribute> orderAttr, CharSequence input) {
+	def private Object[] buildAggregateOP(List<SelectExpression> aggAttr, List<Attribute> orderAttr,
+		CharSequence input) {
 		var argsstr = ''
 		var List<String> args = newArrayList
 		var List<String> aliases = newArrayList
@@ -717,12 +730,11 @@ class CQLGenerator implements IGenerator2 {
 					Attribute: {
 						attributename = getAttributename(comp.name)
 						datatype = getDataTypeFrom(attributename)
-						
+
 					}
 					Starthing: {
 						attributename = '*'
 					}
-					
 				}
 			} else {
 				var mapOperator = buildMapOperator(#[aggregation.value as SelectExpression], input.toString)
@@ -742,7 +754,7 @@ class CQLGenerator implements IGenerator2 {
 			aliases.add(alias)
 
 			if(datatype != '') args.add(datatype)
-			//CQLGeneratorUtil.getRegisteredAggregationAttributes().add(alias)
+			// CQLGeneratorUtil.getRegisteredAggregationAttributes().add(alias)
 			CQLGeneratorUtil.addAggregationAttribute(aggAttr.get(i), alias)
 			args.add(',')
 			argsstr += generateKeyValueString(args)
@@ -755,7 +767,7 @@ class CQLGenerator implements IGenerator2 {
 			groupby +=
 				generateListString(orderAttr.stream.map(e|getAttributename(e.name, null)).collect(Collectors.toList))
 		return #[aliases,
-			builder.buildOperator('AGGREGATE',
+			builder.build(typeof(AggregateAO),
 				newHashMap('aggregations' -> argsstr, 'group_by' -> if(groupby != '') groupby else null,
 					'input' -> if(mapName != '') mapName else input.toString))] // '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «IF mapName != ''»«mapName»«ELSE»«»«input»«ENDIF»)''']
 	}
@@ -765,12 +777,16 @@ class CQLGenerator implements IGenerator2 {
 	}
 
 	def private CharSequence buildCreate1(String type, AccessFramework pars, SchemaDefinition schema, String name) {
-		var t = ''
+		var Class<?> t = null
 		var input = "--INPUT--"
-		if(type.equals("ACCESS")) t = 'source' else t = 'sink'
+		if(type.equals("ACCESS")) t = typeof(AccessAO) else t = typeof(SenderAO)
 		if(registry_StreamTo.keySet.contains(name)) input = registry_StreamTo.get(name)
 		var Map<String, String> argss = newHashMap
-		argss.put(t, name)
+		if (t.equals(typeof(AccessAO))) {
+			argss.put('source', name)
+		} else {
+			argss.put('sink', name)
+		}
 		argss.put('wrapper', pars.wrapper)
 		argss.put('protocol', pars.protocol)
 		argss.put('transport', pars.transport)
@@ -778,7 +794,7 @@ class CQLGenerator implements IGenerator2 {
 		argss.put('schema', if(t.equals("source")) extractSchema(schema).toString else null)
 		argss.put('options', generateKeyValueString(pars.keys, pars.values, ','))
 		argss.put('input', if(t.equals("sink")) input else null)
-		return builder.buildOperator(type, argss)
+		return builder.build(t, argss)
 	}
 
 	def private String buildJoin(List<Source> sources) {
@@ -789,7 +805,6 @@ class CQLGenerator implements IGenerator2 {
 //			Collectors.toList)
 //		var subQueries = sources.stream.filter(e|e instanceof NestedSource).map(e|e as NestedSource).collect(
 //			Collectors.toList)
-
 		for (var i = 0; i < sources.size; i++) {
 			var source = sources.get(i)
 			if (source instanceof NestedSource) {
@@ -829,7 +844,7 @@ class CQLGenerator implements IGenerator2 {
 							}
 						inputs.add(
 							registerOperator(
-								builder.buildOperator('RENAME',
+								builder.build(typeof(RenameAO),
 									newHashMap('aliases' -> generateListString(aliasses), 'pairs' -> 'true',
 										'input' -> lastOperator))))
 					}
@@ -837,23 +852,24 @@ class CQLGenerator implements IGenerator2 {
 				// build rename operator for sub query alias
 				var aliasses = newArrayList
 				var subQueryAlias = source.alias.name
-				for(String name : CQLGeneratorUtil.getAllQueryAttributes(subQuery)) {
+				for (String name : CQLGeneratorUtil.getAllQueryAttributes(subQuery)) {
 					var realName = name
-					if(realName.contains(".")) {
+					if (realName.contains(".")) {
 						realName = realName.substring(realName.indexOf(".") + 1, realName.length)
 						aliasses.add(name.replace(".", "_"))
 					} else {
 						aliasses.add(name)
 					}
-					if(CQLGeneratorUtil.isAggregationAttribute(name)) {
+					if (CQLGeneratorUtil.isAggregationAttribute(name)) {
 						aliasses.add(subQueryAlias + "." + realName)
 					} else {
 						aliasses.add(subQueryAlias + "." + realName)
 					}
-				}		
-				var op = builder.buildOperator('RENAME', newHashMap('aliases' -> generateListString(aliasses), 'pairs' -> 'true', 'input' -> lastOperator))
+				}
+				var op = builder.build(typeof(RenameAO),
+					newHashMap('aliases' -> generateListString(aliasses), 'pairs' -> 'true', 'input' -> lastOperator))
 				inputs.add(registerOperator(op))
-				
+
 //				if (inputs.size == 0) {
 //					inputs.add(lastOperator)
 //				}
@@ -937,7 +953,7 @@ class CQLGenerator implements IGenerator2 {
 		for (var j = 0; j < listOfLists.size; j++)
 			renames.add(
 				registerOperator(
-					builder.buildOperator('RENAME',
+					builder.build(typeof(RenameAO),
 						newLinkedHashMap('aliases' -> generateListString(listOfLists.get(j)), 'pairs' -> 'true',
 							'input' -> input.toString))))
 		if (renames.size > 1)
@@ -997,7 +1013,7 @@ class CQLGenerator implements IGenerator2 {
 			CQLGeneratorUtil.getSource(sourcename).findbyName(attributename).aliases.remove(alias)
 		}
 		var argument = generateListString(list).replace("'['", "['").replace("']'", "']")
-		return builder.buildOperator('MAP', newLinkedHashMap('expressions' -> argument, 'input' -> operator.toString))
+		return builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> argument, 'input' -> operator.toString))
 	}
 
 	def boolean checkIfSelectAll(List<Attribute> attributes) {
@@ -1088,7 +1104,8 @@ class CQLGenerator implements IGenerator2 {
 					var aggregation = a.expression.expressions.get(0)
 					var function = aggregation.value
 					if (function instanceof Function) {
-						if (CQLGeneratorUtil.isMEPFunction(function.name, parseSelectExpression(a.expression as SelectExpression).toString))
+						if (CQLGeneratorUtil.isMEPFunction(function.name,
+							parseSelectExpression(a.expression as SelectExpression).toString))
 							list.add(a.expression)
 					} else
 						list.add(a.expression)
@@ -1211,7 +1228,7 @@ class CQLGenerator implements IGenerator2 {
 						return attr.datatype
 			}
 		}
-		return "Double"//TODO change to null if you are done with debugging
+		return "Double" // TODO change to null if you are done with debugging
 	}
 
 //////rrmove
@@ -1253,7 +1270,7 @@ class CQLGenerator implements IGenerator2 {
 		}
 		// //
 		if (source !== null) {
-			if(CQLGeneratorUtil.isAggregationAttribute( attribute)) {
+			if (CQLGeneratorUtil.isAggregationAttribute(attribute)) {
 				return attribute
 			}
 			var isAlias = CQLGeneratorUtil.isAttributeAlias(attribute)
@@ -1310,8 +1327,8 @@ class CQLGenerator implements IGenerator2 {
 				var sourceStruct = CQLGeneratorUtil.getSource(containedBySources.get(0).sourcename)
 				if (!sourceStruct.aliases.empty) {
 					var renames = registry_RenamedAttributes.get(attribute)
-					if(renames === null || renames.empty) {
-						return attribute 
+					if (renames === null || renames.empty) {
+						return attribute
 					}
 					return sourceStruct.aliases.get(0) + '.' + attributename
 				}

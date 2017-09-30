@@ -5,9 +5,17 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO;
 import de.uniol.inf.is.odysseus.mep.FunctionStore;
 import de.uniol.inf.is.odysseus.mep.MEP;
-import de.uniol.inf.is.odysseus.parser.cql2.builder.PQLStringBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.AccessFramework;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
@@ -49,6 +57,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGeneratorUtil;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLPredicateParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLOperatorBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,7 +129,7 @@ public class CQLGenerator implements IGenerator2 {
   
   private boolean firstJoinInQuery = true;
   
-  private PQLStringBuilder builder = PQLStringBuilder.getInstance();
+  private PQLOperatorBuilder builder = new PQLOperatorBuilder();
   
   private Map<String, String> databaseConnections = CollectionLiterals.<String, String>newHashMap();
   
@@ -494,14 +503,14 @@ public class CQLGenerator implements IGenerator2 {
       Pair<String, String> _mappedTo = Pair.<String, String>of("predicate", predicate);
       Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", selectInput);
       select = this.registerOperator(
-        this.builder.buildOperator("SELECT", CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1)));
+        this.builder.build(SelectAO.class, CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1)));
     } else {
       Map<String, String> newArgs = this.registry_existenceOperators.get(0);
       String _get = newArgs.get("input");
       String _plus = (_get + ",");
       String _plus_1 = (_plus + selectInput);
       newArgs.put("input", _plus_1);
-      this.registerOperator(this.builder.buildOperator("EXISTENCE", newArgs));
+      this.registerOperator(this.builder.build(ExistenceAO.class, newArgs));
       String _lastOperator = this.getLastOperator();
       String _plus_2 = ("JOIN(" + _lastOperator);
       String _plus_3 = (_plus_2 + ",");
@@ -540,7 +549,7 @@ public class CQLGenerator implements IGenerator2 {
             String _plus = (_get + ",");
             String _plus_1 = (_plus + selectInput);
             newArgs.put("input", _plus_1);
-            this.registerOperator(this.builder.buildOperator("EXISTENCE", newArgs));
+            this.registerOperator(this.builder.build(ExistenceAO.class, newArgs));
           }
         }
         String t = this.registry_Operators.get(select);
@@ -568,7 +577,7 @@ public class CQLGenerator implements IGenerator2 {
             String _plus_6 = (_get + ",");
             String _plus_7 = (_plus_6 + selectInput);
             newArgs.put("input", _plus_7);
-            this.registerOperator(this.builder.buildOperator("EXISTENCE", newArgs));
+            this.registerOperator(this.builder.build(ExistenceAO.class, newArgs));
           }
         }
       }
@@ -749,18 +758,20 @@ public class CQLGenerator implements IGenerator2 {
       }
       args.put("type", type);
       args.put("input", this.SINK_INPUT_KEYWORD);
+      String _xifexpression = null;
       String _option = sink.getOption();
       boolean _tripleNotEquals = (_option != null);
       if (_tripleNotEquals) {
+        String _xifexpression_1 = null;
         boolean _equals = sink.getOption().toUpperCase().equals("DROP");
         if (_equals) {
-          args.put("drop", "true");
+          _xifexpression_1 = args.put("drop", "true");
         } else {
-          args.put("truncate", "true");
+          _xifexpression_1 = args.put("truncate", "true");
         }
+        _xifexpression = _xifexpression_1;
       }
-      String operator = this.builder.buildOperator("DATABASESINK", args);
-      _xblockexpression = this.registry_Sinks.put(sink.getName(), operator);
+      _xblockexpression = _xifexpression;
     }
     return _xblockexpression;
   }
@@ -819,7 +830,6 @@ public class CQLGenerator implements IGenerator2 {
     if (_not) {
       args.put("waiteach", waitMillis);
     }
-    operator = this.builder.buildOperator("DATABASESOURCE", args);
     String _name = stream.getAttributes().getName();
     String _plus = (this.VIEW + _name);
     return this.registerOperator(operator, _plus);
@@ -839,7 +849,7 @@ public class CQLGenerator implements IGenerator2 {
     _builder.append(_filename);
     _builder.append("\'],[\'delimiter\',\';\'],[\'textDelimiter\',\"\'\"]");
     args.put("options", _builder.toString());
-    String operator = this.builder.buildOperator("ACCESS", args);
+    String operator = this.builder.build(AccessAO.class, args);
     String _name = file.getAttributes().getName();
     String _plus = (this.VIEW + _name);
     return this.registerOperator(operator, _plus);
@@ -862,7 +872,7 @@ public class CQLGenerator implements IGenerator2 {
     _builder.append(_host);
     _builder.append("\']");
     args.put("options", _builder.toString());
-    String operator = this.builder.buildOperator("ACCESS", args);
+    String operator = this.builder.build(AccessAO.class, args);
     String _name = channel.getAttributes().getName();
     String _plus = (this.VIEW + _name);
     return this.registerOperator(operator, _plus);
@@ -1007,10 +1017,10 @@ public class CQLGenerator implements IGenerator2 {
       String _generateListString = this.generateListString(groupAttributes);
       Pair<String, String> _mappedTo_1 = Pair.<String, String>of("aliases", _generateListString);
       Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", aggregateOperator);
-      String _buildOperator = this.builder.buildOperator("RENAME", 
+      String _build = this.builder.build(RenameAO.class, 
         CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2));
       return this.buildJoin(
-        new String[] { _buildOperator, join });
+        new String[] { _build, join });
     }
     return output;
   }
@@ -1070,7 +1080,7 @@ public class CQLGenerator implements IGenerator2 {
       args.put("size", _plus_2);
       args.put("advance", (((var1 + ",\'") + var2) + "\'"));
       args.put("input", source.getName());
-      return this.builder.buildOperator("TIMEWINDOW", args);
+      return this.builder.build(TimeWindowAO.class, args);
     } else {
       if ((window instanceof TuplebasedWindow)) {
         this.log.error("build element window");
@@ -1094,7 +1104,7 @@ public class CQLGenerator implements IGenerator2 {
         }
         args.put("partition", _xifexpression_5);
         args.put("input", source.getName());
-        return this.builder.buildOperator("ELEMENTWINDOW", args);
+        return this.builder.build(ElementWindowAO.class, args);
       } else {
         return source.getName();
       }
@@ -1141,8 +1151,8 @@ public class CQLGenerator implements IGenerator2 {
     }
     Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", expressionArgument);
     Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", input);
-    String _buildOperator = this.builder.buildOperator("MAP", CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1));
-    return new Object[] { attributeNames, _buildOperator };
+    String _build = this.builder.build(MapAO.class, CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1));
+    return new Object[] { attributeNames, _build };
   }
   
   private Object[] buildAggregateOP(final List<SelectExpression> aggAttr, final List<Attribute> orderAttr, final CharSequence input) {
@@ -1243,9 +1253,9 @@ public class CQLGenerator implements IGenerator2 {
       _xifexpression_1 = input.toString();
     }
     Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", _xifexpression_1);
-    String _buildOperator = this.builder.buildOperator("AGGREGATE", 
+    String _build = this.builder.build(AggregateAO.class, 
       CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2));
-    return new Object[] { aliases, _buildOperator };
+    return new Object[] { aliases, _build };
   }
   
   private Object[] buildAggregateOP(final List<SelectExpression> list, final List<Attribute> list2, final List<Source> srcs) {
@@ -1253,27 +1263,32 @@ public class CQLGenerator implements IGenerator2 {
   }
   
   private CharSequence buildCreate1(final String type, final AccessFramework pars, final SchemaDefinition schema, final String name) {
-    String t = "";
+    Class<?> t = null;
     String input = "--INPUT--";
     boolean _equals = type.equals("ACCESS");
     if (_equals) {
-      t = "source";
+      t = AccessAO.class;
     } else {
-      t = "sink";
+      t = SenderAO.class;
     }
     boolean _contains = this.registry_StreamTo.keySet().contains(name);
     if (_contains) {
       input = this.registry_StreamTo.get(name);
     }
     Map<String, String> argss = CollectionLiterals.<String, String>newHashMap();
-    argss.put(t, name);
+    boolean _equals_1 = t.equals(AccessAO.class);
+    if (_equals_1) {
+      argss.put("source", name);
+    } else {
+      argss.put("sink", name);
+    }
     argss.put("wrapper", pars.getWrapper());
     argss.put("protocol", pars.getProtocol());
     argss.put("transport", pars.getTransport());
     argss.put("datahandler", pars.getDatahandler());
     String _xifexpression = null;
-    boolean _equals_1 = t.equals("source");
-    if (_equals_1) {
+    boolean _equals_2 = t.equals("source");
+    if (_equals_2) {
       _xifexpression = this.extractSchema(schema).toString();
     } else {
       _xifexpression = null;
@@ -1281,14 +1296,14 @@ public class CQLGenerator implements IGenerator2 {
     argss.put("schema", _xifexpression);
     argss.put("options", this.generateKeyValueString(pars.getKeys(), pars.getValues(), ","));
     String _xifexpression_1 = null;
-    boolean _equals_2 = t.equals("sink");
-    if (_equals_2) {
+    boolean _equals_3 = t.equals("sink");
+    if (_equals_3) {
       _xifexpression_1 = input;
     } else {
       _xifexpression_1 = null;
     }
     argss.put("input", _xifexpression_1);
-    return this.builder.buildOperator(type, argss);
+    return this.builder.build(t, argss);
   }
   
   private String buildJoin(final List<Source> sources) {
@@ -1350,7 +1365,7 @@ public class CQLGenerator implements IGenerator2 {
                 Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", lastOperator);
                 inputs.add(
                   this.registerOperator(
-                    this.builder.buildOperator("RENAME", 
+                    this.builder.build(RenameAO.class, 
                       CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2))));
               }
             }
@@ -1382,7 +1397,8 @@ public class CQLGenerator implements IGenerator2 {
           Pair<String, String> _mappedTo = Pair.<String, String>of("aliases", _generateListString);
           Pair<String, String> _mappedTo_1 = Pair.<String, String>of("pairs", "true");
           Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", lastOperator);
-          String op = this.builder.buildOperator("RENAME", CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2));
+          String op = this.builder.build(RenameAO.class, 
+            CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2));
           inputs.add(this.registerOperator(op));
           final ArrayList<String> _converted_inputs = (ArrayList<String>)inputs;
           sourceStrings[i] = this.buildJoin(((String[])Conversions.unwrapArray(_converted_inputs, String.class))).toString();
@@ -1484,7 +1500,7 @@ public class CQLGenerator implements IGenerator2 {
       Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", _string);
       renames.add(
         this.registerOperator(
-          this.builder.buildOperator("RENAME", 
+          this.builder.build(RenameAO.class, 
             CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1, _mappedTo_2))));
     }
     int _size = renames.size();
@@ -1583,7 +1599,7 @@ public class CQLGenerator implements IGenerator2 {
     Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", argument);
     String _string = operator.toString();
     Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", _string);
-    return this.builder.buildOperator("MAP", CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1));
+    return this.builder.build(MapAO.class, CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1));
   }
   
   public boolean checkIfSelectAll(final List<Attribute> attributes) {
@@ -1721,7 +1737,8 @@ public class CQLGenerator implements IGenerator2 {
           EObject function = aggregation.getValue();
           if ((function instanceof Function)) {
             SelectExpression _expression_1 = a.getExpression();
-            boolean _isMEPFunction = CQLGeneratorUtil.isMEPFunction(((Function)function).getName(), this.parseSelectExpression(((SelectExpression) _expression_1)).toString());
+            boolean _isMEPFunction = CQLGeneratorUtil.isMEPFunction(((Function)function).getName(), 
+              this.parseSelectExpression(((SelectExpression) _expression_1)).toString());
             if (_isMEPFunction) {
               list.add(a.getExpression());
             }
