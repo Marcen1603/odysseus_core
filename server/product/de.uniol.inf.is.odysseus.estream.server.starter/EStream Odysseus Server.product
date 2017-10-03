@@ -17,14 +17,14 @@
 
    <windowImages/>
 
-      <vm>
+   <vm>
       <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
 
    <license>
         <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         <text>
- /********************************************************************************** 
+   /********************************************************************************** 
  * Copyright 2012 The Odysseus Team
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -42,13 +42,16 @@
          </text>
    </license>
 
+   <plugins>
+   </plugins>
+
    <features>
-      <feature id="de.uniol.inf.is.odysseus.wrapper.kafka.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datatype.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.rest.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.pmml.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.wrapper.kafka.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.wrapper.iec62056.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.platform.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.server.feature" version="1.0.0.qualifier"/>
