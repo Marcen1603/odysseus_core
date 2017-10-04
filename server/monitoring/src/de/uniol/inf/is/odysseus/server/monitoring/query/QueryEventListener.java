@@ -19,6 +19,11 @@ public class QueryEventListener implements IPOEventListener {
 		o.subscribe(this, POEventType.ProcessInit);
 		o.subscribe(this, POEventType.ProcessDone);
 	}
+	
+	public void addBuffer(IPhysicalOperator o){
+		o.subscribe(this, POEventType.ProcessInit);
+		o.subscribe(this, POEventType.ProcessDone);
+	}
 
 	public QueryEventListener(Measurement m, ThreadCalculateLatency t) {
 		this.thread = t;
@@ -35,6 +40,8 @@ public class QueryEventListener implements IPOEventListener {
 	 * @param o IPhysicalOperator
 	 */
 	public void removeOperator(IPhysicalOperator o) {
-		o.unSubscribeFromAll(this);
+		o.unsubscribe(this, POEventType.PushInit);
+		o.unsubscribe(this, POEventType.ProcessInit);
+		o.unsubscribe(this, POEventType.ProcessDone);
 	}
 }
