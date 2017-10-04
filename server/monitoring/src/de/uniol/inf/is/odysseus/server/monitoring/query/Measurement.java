@@ -87,11 +87,16 @@ public class Measurement {
 				}
 
 				if (event.getEventType().equals(POEventType.ProcessDone)) {
+					// TODO: Handle Buffer
+
 					if (entrys.containsKey(operator)) {
 						if (entrys.get(operator).isDone()) {
 							continue;
 						} else {
 							entrys.get(operator).setDone();
+							if (operator.getName().contains("Buffer")) {
+								entrys.get(operator).stopMeasurement(nanoTimestamp);
+							}
 							break loop;
 						}
 					} else {
