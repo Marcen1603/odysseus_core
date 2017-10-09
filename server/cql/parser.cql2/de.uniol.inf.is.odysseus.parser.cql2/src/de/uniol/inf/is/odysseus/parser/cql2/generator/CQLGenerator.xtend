@@ -125,13 +125,7 @@ class CQLGenerator implements IGenerator2 {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		CQLGeneratorUtil.getInstance(this);
-		var i = 0;
-		for (e : resource.allContents.toIterable.filter(typeof(Query))) {
-			fsa.generateFile(
-				"" + i++,
-				e.parseStatement()
-			)
-		}
+		fsa.generateFile("" + 1, resource.allContents.toIterable.filter(typeof(Query)).get(0).parseStatement())
 	}
 
 	def CharSequence parseStatement(Query stmt) {

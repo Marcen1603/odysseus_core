@@ -170,14 +170,7 @@ public class CQLGenerator implements IGenerator2 {
   @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
     CQLGeneratorUtil.getInstance(this);
-    int i = 0;
-    Iterable<Query> _filter = Iterables.<Query>filter(IteratorExtensions.<EObject>toIterable(resource.getAllContents()), Query.class);
-    for (final Query e : _filter) {
-      int _plusPlus = i++;
-      String _plus = ("" + Integer.valueOf(_plusPlus));
-      fsa.generateFile(_plus, 
-        this.parseStatement(e));
-    }
+    fsa.generateFile(("" + Integer.valueOf(1)), this.parseStatement(((Query[])Conversions.unwrapArray(Iterables.<Query>filter(IteratorExtensions.<EObject>toIterable(resource.getAllContents()), Query.class), Query.class))[0]));
   }
   
   public CharSequence parseStatement(final Query stmt) {
