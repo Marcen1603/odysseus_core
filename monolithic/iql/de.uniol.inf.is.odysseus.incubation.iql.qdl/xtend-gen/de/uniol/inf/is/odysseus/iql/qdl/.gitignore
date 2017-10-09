@@ -3,3 +3,5 @@
 /.QDLRuntimeModule.xtendbind
 /.QDLStandaloneSetup.xtendbin
 
+/QDLRuntimeModule.java
+/QDLStandaloneSetup.java
