@@ -21,8 +21,7 @@ Require-Bundle: de.uniol.inf.is.odysseus.server.streamingsparql,
  de.uniol.inf.is.odysseus.server.streamingsparql.ide,
  org.eclipse.xtend.lib;resolution:=optional,
  org.eclipse.ui.editors,
- org.eclipse.ui.ide,
- org.eclipse.core.resources.source;bundle-version="3.10.1"
+ org.eclipse.ui.ide
 Import-Package: org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.server.streamingsparql.ui.internal,

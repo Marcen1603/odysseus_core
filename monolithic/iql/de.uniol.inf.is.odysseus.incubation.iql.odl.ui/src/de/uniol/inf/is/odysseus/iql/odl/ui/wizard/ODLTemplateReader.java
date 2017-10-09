@@ -11,7 +11,8 @@ import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.iql.odl.ui.internal.ODLActivator;
+import de.uniol.inf.is.odysseus.incubation.iql.odl.ui.internal.OdlActivator;
+
 
 
 public class ODLTemplateReader {
@@ -29,7 +30,7 @@ public class ODLTemplateReader {
 	}
 	
 	public static String readTemplate(String path) {
-		try (InputStream inputStream = ODLActivator.getInstance().getBundle().getEntry(path).openStream()) {
+		try (InputStream inputStream = OdlActivator.getInstance().getBundle().getEntry(path).openStream()) {
 		    return IOUtils.toString(inputStream);
 		} catch (Exception e) {			
 			LOG.error("Could not read template "+path, e);
