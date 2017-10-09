@@ -10,21 +10,38 @@ public class QueryEventListener implements IPOEventListener {
 	private Measurement measurement;
 	ThreadCalculateLatency thread;
 
-	public QueryEventListener(IPhysicalQuery query, Measurement m, ThreadCalculateLatency t) {
-		this.thread= t;
+	/**
+	 * Adds required Events (PushInit, ProcessInit and ProcessDone) for an Operator
+	 * @param o Operator which will be subscribed to the Events.
+	 */
+	public void addOperator(IPhysicalOperator o) {
+		o.subscribe(this, POEventType.PushInit);
+		o.subscribe(this, POEventType.ProcessInit);
+		o.subscribe(this, POEventType.ProcessDone);
+	}
+	
+	public void addBuffer(IPhysicalOperator o){
+		o.subscribe(this, POEventType.ProcessInit);
+		o.subscribe(this, POEventType.ProcessDone);
+	}
+
+	public QueryEventListener(Measurement m, ThreadCalculateLatency t) {
+		this.thread = t;
 		this.measurement = m;
-		for (IPhysicalOperator o : query.getPhysicalChilds()) {
-			if (!query.getLeafSources().contains(o) && !query.getIterableSources().contains(o)
-					&& !query.getIteratableLeafSources().contains(o)) {
-				o.subscribe(this, POEventType.PushInit);
-				o.subscribe(this, POEventType.ProcessInit);
-				o.subscribe(this, POEventType.ProcessDone);
-			}
-		}
 	}
 
 	@Override
 	public void eventOccured(IEvent<?, ?> event, long nanoTimestamp) {
 		this.thread.addEvent(this.measurement, event, nanoTimestamp);
+	}
+	
+	/**
+	 * Removes all Eventsubsciptions for the given Operator
+	 * @param o IPhysicalOperator
+	 */
+	public void removeOperator(IPhysicalOperator o) {
+		o.unsubscribe(this, POEventType.PushInit);
+		o.unsubscribe(this, POEventType.ProcessInit);
+		o.unsubscribe(this, POEventType.ProcessDone);
 	}
 }

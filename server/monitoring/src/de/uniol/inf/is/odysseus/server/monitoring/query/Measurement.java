@@ -8,24 +8,29 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.OperatorLatency;
 
 public class Measurement {
 
-	private Map<String, OperatorLatency> latencys;
+	private Map<IPhysicalOperator, OperatorLatency> latencys;
 	private long currentLatency, averageLatency;
-	private Map<Integer, HashMap<String, OperatorLatency>> temporaryLatencys;
-	private List<String> roots;
+	private List<HashMap<IPhysicalOperator, OperatorLatency>> temporaryLatencys;
+	private IPhysicalOperator root;
 
-	public Measurement(IPhysicalQuery query) {
-		this.temporaryLatencys = new HashMap<Integer, HashMap<String, OperatorLatency>>();
-		this.latencys = new HashMap<String, OperatorLatency>();
-		this.roots = new ArrayList<String>();
+	public Measurement(IPhysicalOperator root) {
+		this.temporaryLatencys = new ArrayList<HashMap<IPhysicalOperator, OperatorLatency>>();
+		this.latencys = new HashMap<IPhysicalOperator, OperatorLatency>();
 
-		for (IPhysicalOperator o : query.getRoots()) {
-			this.roots.add(o.toString());
-		}
+		this.root = root;
+	}
+
+	public Measurement() {
+		this.temporaryLatencys = new ArrayList<HashMap<IPhysicalOperator, OperatorLatency>>();
+		this.latencys = new HashMap<IPhysicalOperator, OperatorLatency>();
+	}
+
+	public synchronized void addRoot(IPhysicalOperator root) {
+		this.root = root;
 	}
 
 	/**
@@ -37,69 +42,72 @@ public class Measurement {
 	 *            Timestamp of the PushInitEvent in ns.
 	 */
 	public synchronized void processEvent(IEvent<?, ?> event, long nanoTimestamp) {
-		String operatorName = event.getSender().toString();
-		boolean added = false;
+		IPhysicalOperator operator = (IPhysicalOperator) event.getSender();
 
 		if (!this.temporaryLatencys.isEmpty()) {
-			outerloop: for (Integer i : this.temporaryLatencys.keySet()) {
-				HashMap<String, OperatorLatency> entrys = this.temporaryLatencys.get(i);
+			loop: for (HashMap<IPhysicalOperator, OperatorLatency> entrys : this.temporaryLatencys) {
 				if (event.getEventType().equals(POEventType.ProcessInit)) {
-					if (entrys.containsKey(operatorName)) {
-						if (entrys.get(operatorName).isStarted()) {
+					if (entrys.containsKey(operator)) {
+						if (entrys.get(operator).isStarted()) {
 							continue;
 						} else {
-							entrys.get(operatorName).startMeasurement(nanoTimestamp);
-							added = true;
-							break outerloop;
+							entrys.get(operator).startMeasurement(nanoTimestamp);
+							break loop;
 						}
 					} else {
-						OperatorLatency l = new OperatorLatency();
+						OperatorLatency l = new OperatorLatency(operator);
 						l.startMeasurement(nanoTimestamp);
-						entrys.put(operatorName, l);
-						added = true;
-						break outerloop;
+						entrys.put(operator, l);
+						break loop;
 					}
 				}
 
 				if (event.getEventType().equals(POEventType.PushInit)) {
-					if (entrys.containsKey(operatorName)) {
-						if (entrys.get(operatorName).isStopped()) {
+					if (entrys.containsKey(operator)) {
+						if (entrys.get(operator).isStopped()) {
+							if (entrys.get(operator).isStarted()) {
+								OperatorLatency l = new OperatorLatency(operator);
+								l.stopMeasurement(nanoTimestamp);
+								long lastPushInitEvent = entrys.get(operator).getEndTime();
+								l.startMeasurement(lastPushInitEvent);
+								entrys.put(operator, l);
+								break loop;
+							}
 							continue;
 						} else {
-							entrys.get(operatorName).stopMeasurement(nanoTimestamp);
-							added = true;
-							break outerloop;
+							entrys.get(operator).stopMeasurement(nanoTimestamp);
+							break loop;
 						}
 					} else {
-						OperatorLatency l = new OperatorLatency();
+						OperatorLatency l = new OperatorLatency(operator);
 						l.stopMeasurement(nanoTimestamp);
-						entrys.put(operatorName, l);
-						added = true;
-						break outerloop;
+						entrys.put(operator, l);
+						break loop;
 					}
 				}
 
 				if (event.getEventType().equals(POEventType.ProcessDone)) {
-					if (entrys.containsKey(operatorName)) {
-						if (entrys.get(operatorName).isDone()) {
+					// TODO: Handle Buffer
+
+					if (entrys.containsKey(operator)) {
+						if (entrys.get(operator).isDone()) {
 							continue;
 						} else {
-							entrys.get(operatorName).setDone();
-							added = true;
-							break outerloop;
+							entrys.get(operator).setDone();
+							if (operator.getName().contains("Buffer")) {
+								entrys.get(operator).stopMeasurement(nanoTimestamp);
+							}
+							break loop;
 						}
+					} else {
+						addInitialInnerHashMap(operator, nanoTimestamp, event);
 					}
-				}
-				if (!added) {
-					// No matching Event found, a new one has to be created
-					addInitialInnerHashMap(operatorName, nanoTimestamp, event, i+1);
 				}
 			}
 		} else {
-			addInitialInnerHashMap(operatorName, nanoTimestamp, event, 0);
+			addInitialInnerHashMap(operator, nanoTimestamp, event);
 		}
-		if (event.getEventType().equals(POEventType.PushInit)
-				||event.getEventType().equals(POEventType.ProcessDone)) {
+		if (event.getEventType().equals(POEventType.ProcessDone)) {
 			checkForRemovableEntrys();
 		}
 	}
@@ -107,53 +115,55 @@ public class Measurement {
 	/**
 	 * Initializes and adds a new entry to temporaryLatencys
 	 * 
-	 * @param operatorName
+	 * @param operator
 	 * @param nanoTimestamp
 	 * @param event
 	 */
-	private void addInitialInnerHashMap(String operatorName, long nanoTimestamp, IEvent<?, ?> event, int position) {
-		HashMap<String, OperatorLatency> tempMap = new HashMap<String, OperatorLatency>();
+	private void addInitialInnerHashMap(IPhysicalOperator operator, long nanoTimestamp, IEvent<?, ?> event) {
+		HashMap<IPhysicalOperator, OperatorLatency> tempMap = new HashMap<IPhysicalOperator, OperatorLatency>();
 
 		if (event.getEventType().equals(POEventType.ProcessInit)) {
 			OperatorLatency l = new OperatorLatency();
 			l.startMeasurement(nanoTimestamp);
-			tempMap.put(operatorName, l);
-			this.temporaryLatencys.put(position, tempMap);
+			tempMap.put(operator, l);
+			this.temporaryLatencys.add(tempMap);
 		}
+		// TODO: Maybe remove this for the Join Operator
 		if (event.getEventType().equals(POEventType.PushInit)) {
-			OperatorLatency l = new OperatorLatency(operatorName);
+			OperatorLatency l = new OperatorLatency(operator);
 			l.stopMeasurement(nanoTimestamp);
-			tempMap.put(operatorName, l);
-			this.temporaryLatencys.put(position, tempMap);
+			tempMap.put(operator, l);
+			this.temporaryLatencys.add(tempMap);
 		}
-		if (event.getEventType().equals(POEventType.PushInit)) {
-			OperatorLatency l = new OperatorLatency(operatorName);
+		if (event.getEventType().equals(POEventType.ProcessDone)) {
+			OperatorLatency l = new OperatorLatency(operator);
 			l.setDone();
-			tempMap.put(operatorName, l);
-			this.temporaryLatencys.put(position, tempMap);
+			tempMap.put(operator, l);
+			this.temporaryLatencys.add(tempMap);
 		}
 	}
 
+	/**
+	 * Runs through temporaryLatencys and searches for completed entries to
+	 * delete them.
+	 */
 	private synchronized void checkForRemovableEntrys() {
-		int count = 0;
-		for (Integer i : this.temporaryLatencys.keySet()) {
-			for (String s : this.temporaryLatencys.get(i).keySet()) {
-				OperatorLatency l = this.temporaryLatencys.get(i).get(s);
+		for (int i = 0; i < this.temporaryLatencys.size(); i++) {
+			int count = 0;
+			for (IPhysicalOperator o : this.temporaryLatencys.get(i).keySet()) {
+				OperatorLatency l = this.temporaryLatencys.get(i).get(o);
 				if (l.isDone() && l.isStarted()) {
 					count++;
 				}
 			}
 			if (count == this.temporaryLatencys.get(i).size()) {
 				boolean deleted = false;
-				for (String o : roots) {
-					if (this.temporaryLatencys.get(i).containsKey(o)) {
-						if (this.temporaryLatencys.get(i).get(o).isConfirmed()) {
-							this.latencys.putAll(this.temporaryLatencys.get(i));
-							this.temporaryLatencys.remove(i);
-							calcQueryLatency();
-							deleted = true;
-						}
-					}
+				if (this.temporaryLatencys.get(i).containsKey(root)
+						&& this.temporaryLatencys.get(i).get(root).isConfirmed()) {
+					this.latencys.putAll(this.temporaryLatencys.get(i));
+					this.temporaryLatencys.remove(i);
+					calcQueryLatency();
+					deleted = true;
 				}
 				if (!deleted) {
 					this.temporaryLatencys.remove(i);
@@ -167,17 +177,17 @@ public class Measurement {
 	 */
 	private synchronized void calcQueryLatency() {
 		long latency = 0;
-		for (String o : this.latencys.keySet()) {
+		for (IPhysicalOperator o : this.latencys.keySet()) {
 			latency += this.latencys.get(o).getLatency();
 			System.out.println(o + " Latenz: " + this.latencys.get(o).getLatency());
 		}
-		if (getCurrentLatency()!=0){
-			setAverageLatency((latency + getCurrentLatency()) /2);
+		if (getCurrentLatency() != 0) {
+			setAverageLatency((latency + getCurrentLatency()) / 2);
 		}
-	
+
 		System.out.println("Total Latency: " + latency);
 		setCurrentLatency(latency);
-		//TODO:Maybe error handling could be implemented
+		// TODO:Maybe error handling could be implemented
 		if (latency <= 0) {
 			System.out.println("Fehler");
 		}

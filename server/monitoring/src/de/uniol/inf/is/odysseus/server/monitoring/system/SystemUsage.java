@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.management.*;
 
 public class SystemUsage implements Runnable {
+	
 	private static MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 	private static SystemUsage systemUsage;
 	private volatile boolean running = true;
@@ -18,7 +19,11 @@ public class SystemUsage implements Runnable {
 	private static final int sampleTime = 10000;
 	private ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
 	private Map<Long, Double> threadCPUUsage = new HashMap<Long, Double>();
+	
 
+	/**
+	 * Calculates a CPU-Usage for every Thread based on the CPU-Time of every Thread.
+	 */
 	public void getThreadUsage() {
 		// Collect initial readings
 		ThreadInfo[] infos = threadMxBean.dumpAllThreads(false, false);
@@ -65,7 +70,6 @@ public class SystemUsage implements Runnable {
 				}
 			}
 		}
-
 		System.out.println("Summe: " + sum);
 	}
 
@@ -79,7 +83,11 @@ public class SystemUsage implements Runnable {
 		}
 		return systemUsage;
 	}
-
+	
+	/**
+	 * Asks MBeanServer for the the CPU-Usage of the Java process 
+	 * @return CPU-Usage of the Java process
+	 */
 	private double getSystemCPULoad() {
 		AttributeList list = new AttributeList();
 		ObjectName name;
@@ -112,10 +120,15 @@ public class SystemUsage implements Runnable {
 		}
 	}
 
+	
 	public void shutdown() {
 		this.running = false;
 	}
-
+	/**
+	 * 
+	 * @param threadID ID of a current active Thread
+	 * @return CPU-Usage for a Thread. -1 if Thread has finished.
+	 */
 	public double getCPUUsageforThread(long threadID) {
 		if (threadCPUUsage.containsKey(threadID)) {
 			return threadCPUUsage.get(threadID);
