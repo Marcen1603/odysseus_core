@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -13,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "MovingObjectEstimation", doc = "Enriches the point in time (input 2) with an estimation, which moving objects need to be predicted.", category = {
@@ -29,6 +32,8 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	private String pointInTimeAttribute;
 	private String centerMovingObjectAttribute;
 	private double radius;
+	private final OptionMap optionsMap = new OptionMap();
+	private List<Option> optionsList;
 
 	public MOEstimationAO() {
 		super();
@@ -41,6 +46,11 @@ public class MOEstimationAO extends BinaryLogicalOp {
 		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
 		this.centerMovingObjectAttribute = ao.getCenterMovingObjectAttribute();
 		this.radius = ao.getRadius();
+		
+		optionsMap.addAll(ao.optionsMap);
+		if (ao.optionsList != null) {
+			this.optionsList = new ArrayList<>(ao.optionsList);
+		}
 	}
 
 	public String getGeometryAttribute() {
@@ -77,6 +87,18 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	@Parameter(name = "radius", optional = false, type = DoubleParameter.class, isList = false, doc = "The radius for estimation around the center moving object. E.g. the same radius as the following radius select operator.")
 	public void setRadius(double radius) {
 		this.radius = radius;
+	}
+	
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	public void setOptions(List<Option> value) {
+		for (Option option : value) {
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
+		}
+		optionsList = value;
+	}
+
+	public List<Option> getOptions() {
+		return optionsList;
 	}
 
 	@Override

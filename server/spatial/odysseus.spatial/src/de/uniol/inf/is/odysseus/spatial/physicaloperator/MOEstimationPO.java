@@ -93,9 +93,14 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// As a first attempt get a list with all known moving objects
 		List<String> allIdsAsList = new ArrayList<>();
 
+		// Within this extended circle, we will predict all objects
 		Map<String, List<ResultElement>> queryCircleWOPrediction = this.index
 				.queryCircleWOPrediction("" + centerMovingObjectId, this.radius + radiusExtension);
 		allIdsAsList.addAll(queryCircleWOPrediction.keySet());
+
+		// Test: make a bigger circle in an approximate manner and add those elements
+		// which may also need to be predicted
+		//this.index.approximateCircle(geometry, centerMovingObjectId, t, movingObjectIdToIgnore)
 
 		// And put out a tuple with the name of the dataStructure
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);

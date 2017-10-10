@@ -104,6 +104,15 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 	@Override
 	public Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			String movingObjectIdToIgnore) {
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateCircle(geometry, radius, t, movingObjectIdToIgnore);
+
+		return queryCircle(geometry, radius, t, candidateCollection, movingObjectIdToIgnore);
+	}
+
+	public Map<GeoHash, List<Tuple<ITimeInterval>>> approximateCircle(Geometry geometry, double radius, ITimeInterval t,
+			String movingObjectIdToIgnore) {
 		// Get the rectangular envelope for the circle
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(geometry.getCentroid().getCoordinate(),
 				radius);
@@ -115,8 +124,8 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		// approximation)
 		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
 				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
-
-		return queryCircle(geometry, radius, t, candidateCollection, movingObjectIdToIgnore);
+		
+		return candidateCollection;
 	}
 
 	private Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
