@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
@@ -98,12 +99,8 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		List<String> allIdsAsList = new ArrayList<>();
 
 		// Within this extended circle, we will predict all objects
-		allIdsAsList.addAll(this.predictionEstimator.estimateObjectsToPredict("" + centerMovingObjectId, this.radius));
-
-		// Test: make a bigger circle in an approximate manner and add those elements
-		// which may also need to be predicted
-		// this.index.approximateCircle(geometry, centerMovingObjectId, t,
-		// movingObjectIdToIgnore)
+		allIdsAsList.addAll(this.predictionEstimator.estimateObjectsToPredict("" + centerMovingObjectId, this.radius,
+				new PointInTime(pointInTime)));
 
 		// And put out a tuple with the name of the dataStructure
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);

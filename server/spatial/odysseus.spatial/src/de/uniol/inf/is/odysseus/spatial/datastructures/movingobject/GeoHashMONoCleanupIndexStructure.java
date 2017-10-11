@@ -106,7 +106,8 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 			String movingObjectIdToIgnore) {
 		// Get all elements within that bounding box (filter step, just an
 		// approximation)
-		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateCircle(geometry, radius, t, movingObjectIdToIgnore);
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateCircle(geometry, radius, t,
+				movingObjectIdToIgnore);
 
 		return queryCircle(geometry, radius, t, candidateCollection, movingObjectIdToIgnore);
 	}
@@ -124,7 +125,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		// approximation)
 		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
 				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
-		
+
 		return candidateCollection;
 	}
 
@@ -238,6 +239,28 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 				new GeometryFactory());
 		return this.queryCircle(centerGeometry, radius, new TimeInterval(PointInTime.ZERO, PointInTime.INFINITY),
 				movingObjectID);
+	}
+
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius, TimeInterval t) {
+		
+		Map<String, List<ResultElement>> notFiltered = this.queryCircleWOPrediction(movingObjectID, radius);
+		Map<String, List<ResultElement>> filtered = notFiltered;
+		
+		for (String key : filtered.keySet()) {
+			List<ResultElement> value = filtered.get(key);
+			for (ResultElement element : value) {
+				if (!t.includes(element.getTrajectoryElement().getMeasurementTime())) {
+					// This element is not within the result
+					value.remove(element);
+					if(value.size() == 0) {
+						// The list is now empty
+						filtered.remove(key);
+					}
+				}
+			}
+		}
+		
+		return filtered;
 	}
 
 	@Override

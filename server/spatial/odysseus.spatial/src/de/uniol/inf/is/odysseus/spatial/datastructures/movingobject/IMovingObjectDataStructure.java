@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
@@ -147,5 +148,7 @@ public interface IMovingObjectDataStructure {
 	public Set<String> getAllMovingObjectIds();
 	
 	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius);
+	
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius, TimeInterval t);
 
 }
