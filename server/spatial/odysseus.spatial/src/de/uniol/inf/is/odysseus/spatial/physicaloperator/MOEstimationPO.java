@@ -3,7 +3,6 @@ package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -15,7 +14,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
-import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
+import de.uniol.inf.is.odysseus.spatial.estimation.Estimator;
+import de.uniol.inf.is.odysseus.spatial.estimation.ExtendedRadiusEstimatior;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
 
@@ -34,7 +34,9 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int geometryAttributeIndex;
 
 	private double radius;
-	private static final double radiusExtension = 1000;
+	private static final double radiusExtensionFactor = 3;
+
+	private Estimator predictionEstimator;
 
 	public MOEstimationPO(MOEstimationAO ao) {
 		this.geometryAttributeIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
@@ -49,6 +51,8 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.allIds = new HashSet<>();
 
 		this.radius = ao.getRadius();
+
+		this.predictionEstimator = new ExtendedRadiusEstimatior(index, radiusExtensionFactor);
 	}
 
 	@Override
@@ -94,13 +98,12 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		List<String> allIdsAsList = new ArrayList<>();
 
 		// Within this extended circle, we will predict all objects
-		Map<String, List<ResultElement>> queryCircleWOPrediction = this.index
-				.queryCircleWOPrediction("" + centerMovingObjectId, this.radius + radiusExtension);
-		allIdsAsList.addAll(queryCircleWOPrediction.keySet());
+		allIdsAsList.addAll(this.predictionEstimator.estimateObjectsToPredict("" + centerMovingObjectId, this.radius));
 
 		// Test: make a bigger circle in an approximate manner and add those elements
 		// which may also need to be predicted
-		//this.index.approximateCircle(geometry, centerMovingObjectId, t, movingObjectIdToIgnore)
+		// this.index.approximateCircle(geometry, centerMovingObjectId, t,
+		// movingObjectIdToIgnore)
 
 		// And put out a tuple with the name of the dataStructure
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);

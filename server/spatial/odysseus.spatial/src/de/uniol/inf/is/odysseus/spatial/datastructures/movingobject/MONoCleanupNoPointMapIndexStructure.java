@@ -443,5 +443,10 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 	public Set<String> getAllMovingObjectIds() {
 		return this.latestTrajectoryElementMap.keySet();
 	}
+	
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+		// TODO Implement this method
+		return null;
+	}
 
 }

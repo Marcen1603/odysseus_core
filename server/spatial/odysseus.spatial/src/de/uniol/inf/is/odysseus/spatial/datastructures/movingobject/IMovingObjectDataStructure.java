@@ -145,5 +145,7 @@ public interface IMovingObjectDataStructure {
 	 * @return The Ids from all moving objects currently in the data structure.
 	 */
 	public Set<String> getAllMovingObjectIds();
+	
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius);
 
 }
