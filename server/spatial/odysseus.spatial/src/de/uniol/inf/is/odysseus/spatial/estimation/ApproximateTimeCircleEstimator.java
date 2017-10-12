@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjec
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
 public class ApproximateTimeCircleEstimator implements Estimator {
+	
+	private static final int SECONDS_TO_MS = 1000;
 
 	private IMovingObjectDataStructure index;
 	private double radiusExtensionFactor;
@@ -31,49 +33,57 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 		// TODO Use methods in the index which only approximated circle calculations to
 		// avoid distance calculations
 
-		// TODO Use the number of extensions: make this more generic by using a loop
-		// instead of a fixed number of extensions
-
 		Set<String> objectsToPredict = new HashSet<>();
 
 		// First circle is simply an extension without the consideration of time
-		double radiusFirstExtendedCircle = radius * this.radiusExtensionFactor;
+		double radiusLastExtendedCircle = radius * this.radiusExtensionFactor;
 		Map<String, List<ResultElement>> extendedInnerCircleResults = this.index.queryCircleWOPrediction(centerObjectId,
-				radiusFirstExtendedCircle);
+				radiusLastExtendedCircle);
 		Set<String> extendedInnerCircle = extendedInnerCircleResults.keySet();
 		objectsToPredict.addAll(extendedInnerCircle);
 
 		/*
 		 * Second and more circles take time into consideration without calculation of
 		 * the distance between the objects and the center (because we want to avoid
-		 * slow calculations)
+		 * slow calculations).
 		 */
-		double distanceRadiusToFirstCircle = (radius * this.radiusExtensionFactor) - radius;
+		for (int extensionNum = 0; extensionNum < this.numberOfExtensions; extensionNum++) {
+			/*
+			 * Here we need to calculate the distance to the query radius from the outer
+			 * radius of the PREVIOUS iteration. Because we use the shortest possible
+			 * distance as an approximation for the distance to avoid distance calculation
+			 * for each single object.
+			 */
+			double distanceToQueryCircle = radiusLastExtendedCircle - radius;
 
-		// Define the outer limit of the bigger circle (the second extension)
-		double outerCircle = radiusFirstExtendedCircle * this.radiusExtensionFactor;
+			// Define the outer limit of the bigger circle (the second extension)
+			double outerCircle = radiusLastExtendedCircle * this.radiusExtensionFactor;
 
-		/*
-		 * How much older must they be at minimum? This is the time they need at minimum
-		 * to get from the outer donut to the inner circle of the query (not the
-		 * extended circle). In fact, we calculate the time from the border from the
-		 * first extension to the real radius because this in the minimum distance the
-		 * objects need to travel.
-		 */
-		long travelTimeMs = (long) ((distanceRadiusToFirstCircle / this.maxSpeedMeterPerSecond) * 1000);
+			/*
+			 * How much older must they be at minimum? This is the time they need at minimum
+			 * to get from the outer donut to the inner circle of the query (not the
+			 * extended circle). In fact, we calculate the time from the border from the
+			 * first extension to the real radius because this in the minimum distance the
+			 * objects need to travel.
+			 */
+			long travelTimeMs = (long) ((distanceToQueryCircle / this.maxSpeedMeterPerSecond) * SECONDS_TO_MS);
 
-		// Make this to a timestamp by subtracting this from the current timestamp
-		PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
-		PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
-		Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerObjectId,
-				outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
+			// Make this to a timestamp by subtracting this from the current timestamp
+			PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
+			PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
+			Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerObjectId,
+					outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
 
-		/*
-		 * Add the new keys to the exiting set. We do not need to actually do the
-		 * subtraction to have a donut query as we only add the elements which are not
-		 * already in the result set.
-		 */
-		objectsToPredict.addAll(bigCircleTimeFiltered.keySet());
+			/*
+			 * Add the new keys to the exiting set. We do not need to actually do the
+			 * subtraction to have a donut query as we only add the elements which are not
+			 * already in the result set.
+			 */
+			objectsToPredict.addAll(bigCircleTimeFiltered.keySet());
+
+			// Extend the radius for the next iteration
+			radiusLastExtendedCircle = outerCircle;
+		}
 		return objectsToPredict;
 	}
 
