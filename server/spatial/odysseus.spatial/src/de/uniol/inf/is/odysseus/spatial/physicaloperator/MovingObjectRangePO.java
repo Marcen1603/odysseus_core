@@ -8,14 +8,14 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndex;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MovingObjectRangeAO;
 
 public class MovingObjectRangePO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private IMovingObjectDataStructure dataStructure;
+	private MovingObjectIndex dataStructure;
 	private int idPosition;
 	private double range;
 

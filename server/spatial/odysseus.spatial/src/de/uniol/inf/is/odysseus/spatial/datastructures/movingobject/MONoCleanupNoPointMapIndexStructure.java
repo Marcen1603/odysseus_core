@@ -40,7 +40,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @author Tobias Brandt
  *
  */
-public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStructure {
+public class MONoCleanupNoPointMapIndexStructure implements MovingObjectIndex {
 
 	public static final int BIT_PRECISION = 64;
 	public static final String TYPE = "mo_no_cleanup_geohash";

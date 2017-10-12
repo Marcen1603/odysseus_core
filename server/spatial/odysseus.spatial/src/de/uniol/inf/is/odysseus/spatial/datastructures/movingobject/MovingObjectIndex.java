@@ -16,7 +16,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
-public interface IMovingObjectDataStructure {
+public interface MovingObjectIndex {
 
 	/**
 	 * Adds an object to the data structure

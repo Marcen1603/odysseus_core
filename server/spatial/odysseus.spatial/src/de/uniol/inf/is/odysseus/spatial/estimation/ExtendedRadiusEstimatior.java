@@ -5,15 +5,15 @@ import java.util.Map;
 import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndex;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
 public class ExtendedRadiusEstimatior implements Estimator {
 	
-	private IMovingObjectDataStructure index;
+	private MovingObjectIndex index;
 	private double radiusExtensionFactor;
 	
-	public ExtendedRadiusEstimatior(IMovingObjectDataStructure index, double radiusExtensionFactor) {
+	public ExtendedRadiusEstimatior(MovingObjectIndex index, double radiusExtensionFactor) {
 		this.index = index;
 		this.radiusExtensionFactor = radiusExtensionFactor;
 	}

@@ -45,7 +45,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @author Tobias Brandt
  *
  */
-public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStructure {
+public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndex {
 
 	public static final int BIT_PRECISION = 64;
 	public static final String TYPE = "mo_no_cleanup_geohash";
@@ -120,6 +120,39 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 		GeometryFactory factory = new GeometryFactory(geometry.getPrecisionModel(), geometry.getSRID());
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
 		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
+				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
+
+		return candidateCollection;
+	}
+
+	public Map<GeoHash, List<Tuple<ITimeInterval>>> approximateCircle(String centerMovingObjectID, double radius,
+			ITimeInterval t) {
+
+		TrajectoryElement centerElement = this.latestTrajectoryElementMap.get(centerMovingObjectID);
+
+		// Get the rectangular envelope for the circle
+		Coordinate centerCoord = new Coordinate(centerElement.getLatitude(), centerElement.getLongitude());
+		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerCoord, radius);
+		GeometryFactory factory = new GeometryFactory();
+		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
+		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+		// Get all elements within that bounding box (filter step, just an
+		// approximation)
+		Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection = approximateBoundinBox(
+				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
+
+		return candidateCollection;
+	}
+
+	private Map<GeoHash, List<Tuple<ITimeInterval>>> approximateCircle(Envelope approximateEnvelope, ITimeInterval t) {
+		GeometryFactory factory = new GeometryFactory();
+		Point topLeft = factory.createPoint(new Coordinate(approximateEnvelope.getMaxX(), approximateEnvelope.getMaxY()));
+		Point lowerRight = factory.createPoint(new Coordinate(approximateEnvelope.getMinX(), approximateEnvelope.getMinY()));
 
 		// Get all elements within that bounding box (filter step, just an
 		// approximation)
