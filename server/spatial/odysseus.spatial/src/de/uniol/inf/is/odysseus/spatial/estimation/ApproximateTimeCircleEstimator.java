@@ -10,14 +10,14 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.IMovingObjectDataStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
-public class TimeCircleEstimator implements Estimator {
+public class ApproximateTimeCircleEstimator implements Estimator {
 
 	private IMovingObjectDataStructure index;
 	private double radiusExtensionFactor;
 	private int numberOfExtensions;
 	private double maxSpeedMeterPerSecond;
 
-	public TimeCircleEstimator(IMovingObjectDataStructure index, double radiusExtensionFactor, int numberOfExtensions,
+	public ApproximateTimeCircleEstimator(IMovingObjectDataStructure index, double radiusExtensionFactor, int numberOfExtensions,
 			double maxSpeedMeterPerSecond) {
 		this.index = index;
 		this.radiusExtensionFactor = radiusExtensionFactor;
@@ -27,6 +27,9 @@ public class TimeCircleEstimator implements Estimator {
 
 	@Override
 	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
+
+		// TODO Use methods in the index which only approximated circle calculations to
+		// avoid distance calculations
 
 		// TODO Use the number of extensions: make this more generic by using a loop
 		// instead of a fixed number of extensions

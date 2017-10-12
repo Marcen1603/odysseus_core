@@ -224,6 +224,12 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 	}
 
 	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+		return this.queryCircleWOPrediction(movingObjectID, radius,
+				new TimeInterval(PointInTime.ZERO, PointInTime.INFINITY));
+	}
+
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius,
+			TimeInterval t) {
 		Map<String, List<ResultElement>> results = new HashMap<>();
 
 		// Get the latest known location of the moving object to search the neighbors
@@ -237,30 +243,7 @@ public class GeoHashMONoCleanupIndexStructure implements IMovingObjectDataStruct
 				new CoordinateArraySequence(
 						new Coordinate[] { new Coordinate(centerElement.getLatitude(), centerElement.getLongitude()) }),
 				new GeometryFactory());
-		return this.queryCircle(centerGeometry, radius, new TimeInterval(PointInTime.ZERO, PointInTime.INFINITY),
-				movingObjectID);
-	}
-
-	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius, TimeInterval t) {
-		
-		Map<String, List<ResultElement>> notFiltered = this.queryCircleWOPrediction(movingObjectID, radius);
-		Map<String, List<ResultElement>> filtered = notFiltered;
-		
-		for (String key : filtered.keySet()) {
-			List<ResultElement> value = filtered.get(key);
-			for (ResultElement element : value) {
-				if (!t.includes(element.getTrajectoryElement().getMeasurementTime())) {
-					// This element is not within the result
-					value.remove(element);
-					if(value.size() == 0) {
-						// The list is now empty
-						filtered.remove(key);
-					}
-				}
-			}
-		}
-		
-		return filtered;
+		return this.queryCircle(centerGeometry, radius, t, movingObjectID);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODat
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.estimation.Estimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.ExtendedRadiusEstimatior;
+import de.uniol.inf.is.odysseus.spatial.estimation.TimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
 
@@ -53,7 +54,11 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		this.radius = ao.getRadius();
 
-		this.predictionEstimator = new ExtendedRadiusEstimatior(index, radiusExtensionFactor);
+		if (ao.getOptions().get(0).getValue().equals("timeCircle")) {
+			this.predictionEstimator = new TimeCircleEstimator(index, radiusExtensionFactor, 1, 15);
+		} else {			
+			this.predictionEstimator = new ExtendedRadiusEstimatior(index, radiusExtensionFactor);
+		}
 	}
 
 	@Override
