@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -54,9 +55,19 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		this.radius = ao.getRadius();
 
-		if (ao.getOptions().get(0).getValue().equals("timeCircle")) {
-			this.predictionEstimator = new TimeCircleEstimator(index, radiusExtensionFactor, 1, 15);
-		} else {			
+		Option estimatorOption = null;
+		long numberOfIterations = 0;
+		for (Option option : ao.getOptions()) {
+			if (option.getName().equals("estimator")) {
+				estimatorOption = option;
+			} else if (option.getName().equals("iterations")) {
+				numberOfIterations = (long) ao.getOptions().get(1).getValue();
+			}
+		}
+
+		if (estimatorOption.getValue().equals("timeCircle")) {
+			this.predictionEstimator = new TimeCircleEstimator(index, radiusExtensionFactor, (int) numberOfIterations, 15);
+		} else {
 			this.predictionEstimator = new ExtendedRadiusEstimatior(index, radiusExtensionFactor);
 		}
 	}
