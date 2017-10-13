@@ -12,10 +12,10 @@ public class MovingObjectDataStructureProvider {
 	static Logger logger = LoggerFactory.getLogger(MovingObjectDataStructureProvider.class);
 
 	private static MovingObjectDataStructureProvider instance;
-	private Map<String, MovingObjectIndex> dataStructureMap;
+	private Map<String, MovingObjectIndexOld> dataStructureMap;
 
 	private MovingObjectDataStructureProvider() {
-		this.dataStructureMap = new HashMap<String, MovingObjectIndex>();
+		this.dataStructureMap = new HashMap<String, MovingObjectIndexOld>();
 	}
 
 	public static MovingObjectDataStructureProvider getInstance() {
@@ -41,12 +41,12 @@ public class MovingObjectDataStructureProvider {
 	 *            attribute is.
 	 * @return A spatial data structure
 	 */
-	public MovingObjectIndex getOrCreateDataStructure(String name, String type, int geometryPosition, double distanePerMovingObject) {
+	public MovingObjectIndexOld getOrCreateDataStructure(String name, String type, int geometryPosition, double distanePerMovingObject) {
 		if (!dataStructureExists(name)) {
 			Class<?> dataStructureClass = MovingObjectDataStructureRegistry.getDataStructureClass(type);
-			MovingObjectIndex dataStrucure = null;
+			MovingObjectIndexOld dataStrucure = null;
 			try {
-				dataStrucure = (MovingObjectIndex) dataStructureClass
+				dataStrucure = (MovingObjectIndexOld) dataStructureClass
 						.getDeclaredConstructor(String.class, int.class, double.class)
 						.newInstance(name, geometryPosition, distanePerMovingObject);
 				addDataStructure(dataStrucure);
@@ -68,7 +68,7 @@ public class MovingObjectDataStructureProvider {
 	 * @param dataStructure
 	 *            The data structure to add
 	 */
-	public void addDataStructure(MovingObjectIndex dataStructure) {
+	public void addDataStructure(MovingObjectIndexOld dataStructure) {
 		dataStructureMap.put(dataStructure.getName(), dataStructure);
 	}
 
@@ -80,7 +80,7 @@ public class MovingObjectDataStructureProvider {
 	 *            The name of the data structure
 	 * @return The data structure or null, if it does not exist
 	 */
-	public MovingObjectIndex getDataStructure(String name) {
+	public MovingObjectIndexOld getDataStructure(String name) {
 		return this.dataStructureMap.get(name);
 	}
 

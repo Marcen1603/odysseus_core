@@ -30,7 +30,7 @@ public class MovingObjectDataStructureRegistry {
 	public static void register(Class<?> datastructure, String type) {
 
 		// Is it a spatial data structure?
-		if (!MovingObjectIndex.class.isAssignableFrom(datastructure)) {
+		if (!MovingObjectIndexOld.class.isAssignableFrom(datastructure)) {
 			logger.warn("Given class with type " + type + " does not implement IMovingObjectDataStructure.");
 			return;
 		}
@@ -48,7 +48,7 @@ public class MovingObjectDataStructureRegistry {
 	 * @param datastructure
 	 *            The data structure that needs to be removed.
 	 */
-	static public void remove(MovingObjectIndex datastructure) {
+	static public void remove(MovingObjectIndexOld datastructure) {
 		logger.trace("Remove datastructure " + datastructure.getName());
 		datastructures.remove(datastructure.getName().toLowerCase());
 		if (datastructure instanceof IHasAlias) {

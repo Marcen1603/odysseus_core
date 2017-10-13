@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndex;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndexOld;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectDataStructureProvider;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
@@ -17,7 +17,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MODataStruc
 
 public class MODataStructurePO<T extends IStreamObject<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
-	private MovingObjectIndex dataStructure;
+	private MovingObjectIndexOld dataStructure;
 
 	private int geometryPosition;
 	private int idPosition;

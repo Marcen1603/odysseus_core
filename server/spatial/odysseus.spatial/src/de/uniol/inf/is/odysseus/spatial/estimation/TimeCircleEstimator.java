@@ -7,19 +7,19 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndex;
+import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndexOld;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
 public class TimeCircleEstimator implements Estimator {
 
 	private static final int SECONDS_TO_MS = 1000;
 
-	private MovingObjectIndex index;
+	private MovingObjectIndexOld index;
 	private double radiusExtensionFactor;
 	private int numberOfExtensions;
 	private double maxSpeedMeterPerSecond;
 
-	public TimeCircleEstimator(MovingObjectIndex index, double radiusExtensionFactor, int numberOfExtensions,
+	public TimeCircleEstimator(MovingObjectIndexOld index, double radiusExtensionFactor, int numberOfExtensions,
 			double maxSpeedMeterPerSecond) {
 		this.index = index;
 		this.radiusExtensionFactor = radiusExtensionFactor;
