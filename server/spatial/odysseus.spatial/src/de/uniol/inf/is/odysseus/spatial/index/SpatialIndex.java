@@ -69,4 +69,13 @@ public interface SpatialIndex {
 	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double longitude,
 			double radius, TimeInterval interval);
 
+	/**
+	 * Searches for the latest known location of the given moving object.
+	 * 
+	 * @param movingObjectID
+	 *            The ID of the moving object to search for
+	 * @return The latest known location of that object
+	 */
+	public TrajectoryElement getLatestLocationOfObject(String movingObjectID);
+
 }
