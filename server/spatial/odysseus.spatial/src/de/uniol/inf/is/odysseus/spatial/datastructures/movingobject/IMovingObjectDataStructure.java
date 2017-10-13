@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Point;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
@@ -145,5 +146,36 @@ public interface IMovingObjectDataStructure {
 	 * @return The Ids from all moving objects currently in the data structure.
 	 */
 	public Set<String> getAllMovingObjectIds();
+
+	/**
+	 * Queries a circle without using the prediction. Only the latest state of each
+	 * moving object is used.
+	 * 
+	 * @param movingObjectID
+	 *            The id of the center object
+	 * @param radius
+	 *            The radius around the center
+	 * @return A map of all moving objects in this circle. ID of the moving object
+	 *         -> element of the trajectory, also containing the distance to the
+	 *         center
+	 */
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius);
+
+	/**
+	 * Queries a circle without using the prediction. Only the latest state of each
+	 * moving object is used.
+	 * 
+	 * @param movingObjectID
+	 *            The id of the center object
+	 * @param radius
+	 *            The radius around the center
+	 * @param t
+	 *            Filters the elements to this time interval
+	 * @return A map of all moving objects in this circle. ID of the moving object
+	 *         -> element of the trajectory, also containing the distance to the
+	 *         center
+	 */
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius,
+			TimeInterval t);
 
 }
