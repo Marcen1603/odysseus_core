@@ -74,6 +74,12 @@ public class GeoHashIndex implements SpatialIndex {
 
 		// Add the new element to the list
 		geoHashList.add(trajectoryElement);
+
+		/*
+		 * To have the double linked list correctly add the new element as the next
+		 * element in the previous one
+		 */
+		latestElement.setNextElement(trajectoryElement);
 		this.locationMap.put(geoHash, geoHashList);
 	}
 
