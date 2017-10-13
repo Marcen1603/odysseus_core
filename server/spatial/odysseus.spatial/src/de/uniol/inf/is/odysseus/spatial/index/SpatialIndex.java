@@ -1,9 +1,12 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures;
+package de.uniol.inf.is.odysseus.spatial.index;
 
 import java.util.List;
 import java.util.Map;
 
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
@@ -14,6 +17,16 @@ import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
  *
  */
 public interface SpatialIndex {
+
+	/**
+	 * Adds a location measurement to the index.
+	 * 
+	 * @param locationMeasurement
+	 *            The location that has to be added to the index
+	 * @param streamElement
+	 *            The according streaming element
+	 */
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement);
 
 	/**
 	 * Calculates all neighbors within the given radius around the center. Returns

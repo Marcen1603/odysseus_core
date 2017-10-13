@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.spatial.datastructures.movingobject;
+package de.uniol.inf.is.odysseus.spatial.index;
 
 import java.util.List;
 import java.util.Map;
