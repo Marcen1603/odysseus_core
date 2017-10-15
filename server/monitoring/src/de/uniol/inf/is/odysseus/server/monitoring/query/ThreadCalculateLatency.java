@@ -13,6 +13,7 @@ public class ThreadCalculateLatency extends Thread {
 	Comparator<LatencyEvent> comparator = new EventComparator();
 
 	public ThreadCalculateLatency() {
+		this.setDaemon(true);
 		this.setName("Calculating_Latencys");
 		this.queue = new PriorityQueue<LatencyEvent>(comparator);
 	}
