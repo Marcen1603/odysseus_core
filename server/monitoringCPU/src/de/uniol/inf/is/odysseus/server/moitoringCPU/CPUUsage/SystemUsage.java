@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.server.monitoring.system;
+package de.uniol.inf.is.odysseus.server.moitoringCPU.CPUUsage;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
