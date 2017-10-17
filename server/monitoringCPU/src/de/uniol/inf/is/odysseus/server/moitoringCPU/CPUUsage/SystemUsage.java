@@ -133,7 +133,7 @@ public class SystemUsage implements Runnable {
 	 * @param threadID ID of a current active Thread
 	 * @return CPU-Usage for a Thread. -1 if Thread has finished.
 	 */
-	public double getCPUUsageforThread(long threadID) {
+	public double getCPUUsageForThread(long threadID) {
 		if (threadCPUUsage.containsKey(threadID)) {
 			return threadCPUUsage.get(threadID);
 		}
