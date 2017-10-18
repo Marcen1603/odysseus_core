@@ -15,7 +15,22 @@ import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.SDFKeyValueDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
-// TODO javaDoc
+/**
+ * MEP function to create a graph out of a very specific string notation of a
+ * low voltage topology in the research project NetzDatenStrom. <br />
+ * <br />
+ * It is assumed that the input is either a string list or a
+ * {@link KeyValueObject} list, formated exactly as follows: <br/>
+ * <br />
+ * [{"source": "a", "target": "b"}, {"source": "c", "target": "d"}, ...] where
+ * "source" and "target" are fix.<br />
+ * <br />
+ * The output is a {@link Graph} object (SDFDatatype =
+ * {@link SDFGraphDatatype}).
+ *
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public class NDSGraphFromJSONString extends AbstractFunction<Graph> {
 
 	/**
@@ -50,7 +65,9 @@ public class NDSGraphFromJSONString extends AbstractFunction<Graph> {
 	 */
 	private static final SDFDatatype outputType = SDFGraphDatatype.GRAPH;
 
-	// TODO javaDoc
+	/**
+	 * The fix keys of the nodes that define an edge.
+	 */
 	private static final String[] edgeKeys = new String[] { "source", "target" };
 
 	/**
