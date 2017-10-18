@@ -16,10 +16,14 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
+import de.uniol.inf.is.odysseus.spatial.estimation.AllEstimator;
+import de.uniol.inf.is.odysseus.spatial.estimation.ApproximateTimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.Estimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.ExtendedRadiusEstimatior;
 import de.uniol.inf.is.odysseus.spatial.estimation.TimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.index.GeoHashIndex;
+import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
 
 public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
@@ -29,8 +33,10 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 	private int pointInTimePosition;
 	private GeoHashMODataStructure index;
+	private SpatialIndex spatialIndex;
 
-	private Set<String> allIds;
+	private Set<String> allIDs;
+	boolean collectAllIDs;
 
 	private int idAttributeIndex;
 	private int centerMovingObjectAttributeIndex;
@@ -51,7 +57,8 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// TODO Name and "length" is not correct here. Remove length and use a time
 		// window.
 		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
-		this.allIds = new HashSet<>();
+		this.spatialIndex = new GeoHashIndex();
+		this.allIDs = new HashSet<>();
 
 		this.radius = ao.getRadius();
 
@@ -65,10 +72,19 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 			}
 		}
 
+		// Define the estimator. If no one is defined, do not estimate but use all IDs.
+		this.collectAllIDs = false;
 		if (estimatorOption.getValue().equals("timeCircle")) {
-			this.predictionEstimator = new TimeCircleEstimator(index, radiusExtensionFactor, (int) numberOfIterations, 15);
+			this.predictionEstimator = new TimeCircleEstimator(this.index, radiusExtensionFactor,
+					(int) numberOfIterations, 15);
+		} else if (estimatorOption.getValue().equals("approximateTimeCircle")) {
+			this.predictionEstimator = new ApproximateTimeCircleEstimator(this.spatialIndex, radiusExtensionFactor,
+					(int) numberOfIterations, 15);
+		} else if (estimatorOption.getValue().equals("extendedRadius")) {
+			this.predictionEstimator = new ExtendedRadiusEstimatior(this.index, radiusExtensionFactor);
 		} else {
-			this.predictionEstimator = new ExtendedRadiusEstimatior(index, radiusExtensionFactor);
+			this.predictionEstimator = new AllEstimator(this.allIDs);
+			this.collectAllIDs = true;
 		}
 	}
 
@@ -92,11 +108,13 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 			id = (String) object.getAttribute(this.idAttributeIndex);
 		}
 
-		this.allIds.add(id);
-
-		LocationMeasurement locationMeasurement = new LocationMeasurement(geometry.getCoordinate().x,
-				geometry.getCoordinate().y, 0, 0, object.getMetadata().getStart(), id);
-		this.index.add(locationMeasurement, object);
+		if (this.collectAllIDs) {
+			this.allIDs.add(id);
+		} else {
+			LocationMeasurement locationMeasurement = new LocationMeasurement(geometry.getCoordinate().x,
+					geometry.getCoordinate().y, 0, 0, object.getMetadata().getStart(), id);
+			this.spatialIndex.add(locationMeasurement, object);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
