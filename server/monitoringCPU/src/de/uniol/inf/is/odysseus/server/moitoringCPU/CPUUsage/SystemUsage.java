@@ -1,14 +1,18 @@
-package de.uniol.inf.is.odysseus.server.monitoring.system;
+package de.uniol.inf.is.odysseus.server.moitoringCPU.CPUUsage;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.management.*;
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
 
 public class SystemUsage implements Runnable {
 	
@@ -16,7 +20,7 @@ public class SystemUsage implements Runnable {
 	private static SystemUsage systemUsage;
 	private volatile boolean running = true;
 
-	private static final int sampleTime = 10000;
+	private static final int sampleTime = 1000;
 	private ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
 	private Map<Long, Double> threadCPUUsage = new HashMap<Long, Double>();
 	
@@ -129,7 +133,7 @@ public class SystemUsage implements Runnable {
 	 * @param threadID ID of a current active Thread
 	 * @return CPU-Usage for a Thread. -1 if Thread has finished.
 	 */
-	public double getCPUUsageforThread(long threadID) {
+	public double getCPUUsageForThread(long threadID) {
 		if (threadCPUUsage.containsKey(threadID)) {
 			return threadCPUUsage.get(threadID);
 		}

@@ -9,30 +9,48 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IUpdateEventListener;
-import de.uniol.inf.is.odysseus.core.procedure.StoredProcedure;
+import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.IIterableSource;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
+import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
-import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
-import de.uniol.inf.is.odysseus.server.monitoring.system.SystemUsage;
 
 public class QueryManager implements IUpdateEventListener {
-	private static Map<IPhysicalQuery, List<SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<SubQuery>>();
+	private static Map<IPhysicalQuery, List<_SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<_SubQuery>>();
 	private static final QueryManager manager = new QueryManager();
+	private static IServerExecutor executor=null;
+	private ISession currentUser = null;
 
-	private static Map<IPhysicalQuery, AverageLatency> latencys = new HashMap<IPhysicalQuery, AverageLatency>();
+	private static Map<IPhysicalQuery, _AverageLatency> averageLatencys = new HashMap<IPhysicalQuery, _AverageLatency>();
 	private ThreadCalculateLatency thread = new ThreadCalculateLatency();
 
-	// TODO: IUpdateEventListener.QUERY see AbstractExecutor
-	private QueryManager() {
-		OdysseusRCPPlugIn.getExecutor().addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+	public QueryManager() {
 		thread.start();
 	}
 
 	public static QueryManager getInstance() {
 		return manager;
+	}
+
+	public void bindExecutor(IExecutor ex) throws PlanManagementException {
+		executor = (IServerExecutor) ex;
+		String name = executor.getName();
+		if (name == null) {
+			name = "";
+		}
+		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+	}
+
+	public void unbindExecutor(IExecutor ex) {
+		if (executor == (IServerExecutor) ex) {
+			executor.removeUpdateEventListener(this, IUpdateEventListener.QUERY, null);
+			executor = null;
+		}
 	}
 
 	/**
@@ -60,7 +78,7 @@ public class QueryManager implements IUpdateEventListener {
 										 * || operator.getName().contains(
 										 * "Aggregate")
 										 */)) {
-						for (SubQuery subquery : subquerys.get(q)) {
+						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
 								added = true;
@@ -68,7 +86,7 @@ public class QueryManager implements IUpdateEventListener {
 							}
 						}
 						if (!added) {
-							SubQuery s = new SubQuery(thread);
+							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
 							subquerys.get(q).add(s);
 							added = true;
@@ -76,14 +94,14 @@ public class QueryManager implements IUpdateEventListener {
 						}
 					}
 					if (subscriptions.isEmpty() && !added) {
-						for (SubQuery subquery : subquerys.get(q)) {
+						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
 								added = true;
 							}
 						}
 						if (!added) {
-							SubQuery s = new SubQuery(thread);
+							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
 							subquerys.get(q).add(s);
 							added = true;
@@ -102,7 +120,7 @@ public class QueryManager implements IUpdateEventListener {
 							/*
 							 * || subscription.getName().contains("Aggregate")
 							 */) {
-								SubQuery s = new SubQuery(thread);
+								_SubQuery s = new _SubQuery(thread);
 								s.setRoot(operator);
 								subquerys.get(q).add(s);
 								added = true;
@@ -110,14 +128,14 @@ public class QueryManager implements IUpdateEventListener {
 							}
 						}
 
-						for (SubQuery subquery : subquerys.get(q)) {
+						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!added) {
 								added = addOperatorToSubQuery(operator, subscriptions, subquery);
 							}
 						}
 
 						if (!added) {
-							SubQuery s = new SubQuery(thread);
+							_SubQuery s = new _SubQuery(thread);
 							s.addOperator(operator);
 							subquerys.get(q).add(s);
 						}
@@ -125,14 +143,14 @@ public class QueryManager implements IUpdateEventListener {
 				}
 			}
 			if (adding) {
-				for (SubQuery subquery : subquerys.get(q)) {
+				for (_SubQuery subquery : subquerys.get(q)) {
 					for (int i = 0; i < subquery.getOperator().size(); i++) {
 						subquery.removeOperator(subquery.getOperator().get(i));
 					}
 				}
 			}
 		}
-		for (SubQuery subquery : subquerys.get(q)) {
+		for (_SubQuery subquery : subquerys.get(q)) {
 			subquery.addEventListener();
 		}
 	}
@@ -147,7 +165,7 @@ public class QueryManager implements IUpdateEventListener {
 	 * @return True if operator is in any SubQuery, false if not.
 	 */
 	private boolean subqueriesContainsOperator(IPhysicalQuery query, IPhysicalOperator operator) {
-		for (SubQuery subquery : subquerys.get(query)) {
+		for (_SubQuery subquery : subquerys.get(query)) {
 			if (subquery.containsOperator(operator)) {
 				return true;
 			}
@@ -168,7 +186,7 @@ public class QueryManager implements IUpdateEventListener {
 	 *         not.
 	 */
 	private boolean addOperatorToSubQuery(IPhysicalOperator o, List<IPhysicalOperator> subscriptions,
-			SubQuery subquery) {
+			_SubQuery subquery) {
 		for (IPhysicalOperator subscription : subscriptions) {
 			if (subquery.containsOperator(subscription)) {
 				subquery.addOperator(o);
@@ -207,22 +225,22 @@ public class QueryManager implements IUpdateEventListener {
 	 *            Query for which the latency is calculated
 	 */
 	public static void calcAverageLatency(IPhysicalQuery q) {
-		for (SubQuery subquery : subquerys.get(q)) {
-			AverageLatency l = latencys.get(q);
+		for (_SubQuery subquery : subquerys.get(q)) {
+			_AverageLatency l = averageLatencys.get(q);
 			if (l == null) {
-				l = new AverageLatency();
+				l = new _AverageLatency();
 				l.addLatency(getTotalQueryLatency(q));
 			} else {
 				l.addLatency(getTotalQueryLatency(q));
 			}
-			latencys.put(q, l);
+			averageLatencys.put(q, l);
 		}
-		System.out.println(latencys.get(q).getAverageLatency());
+		System.out.println(averageLatencys.get(q).getAverageLatency());
 	}
 
 	private static long getTotalQueryLatency(IPhysicalQuery q) {
 		long sum = 0;
-		for (SubQuery subquery : subquerys.get(q)) {
+		for (_SubQuery subquery : subquerys.get(q)) {
 			sum += subquery.getMeasurement().getCurrentLatency();
 		}
 		return sum;
@@ -230,17 +248,19 @@ public class QueryManager implements IUpdateEventListener {
 
 	@Override
 	public void eventOccured(String type) {
-		if (type == IUpdateEventListener.QUERY) {
-			System.out.println("IUpdateEventListener.QUERY");
-			refreshQuerys();
+		IExecutionPlan executionPlan = executor.getExecutionPlan(currentUser);
+		Collection<IPhysicalQuery> queries = executionPlan.getQueries(currentUser);
+		for (IPhysicalQuery query : queries){
+			addQuery(query);
 		}
-	}
-
-	// TODO: Where do i get the queries from
-	private void refreshQuerys() {
-		ISession session = OdysseusRCPPlugIn.getActiveSession();
-		List<StoredProcedure> storedProcedures = OdysseusRCPPlugIn.getExecutor().getStoredProcedures(session);
-		System.out.println(storedProcedures.toString());
+		for (IPhysicalQuery query : subquerys.keySet()){
+			if (!queries.contains(query)){
+				subquerys.remove(query);
+			}
+		}
+		if (queries.isEmpty()){
+			thread.shutdown();
+		}
 	}
 
 	/**
@@ -251,15 +271,19 @@ public class QueryManager implements IUpdateEventListener {
 	 */
 	public void addQuery(IPhysicalQuery q) {
 		if (!subquerys.keySet().contains(q)) {
-			List<SubQuery> list = new ArrayList<SubQuery>();
-			list.add(new SubQuery(thread));
+			List<_SubQuery> list = new ArrayList<_SubQuery>();
+			list.add(new _SubQuery(thread));
 			subquerys.put(q, list);
 			divideQuery(q);
 		}
 	}
+
+	public Long getAverageLatency(IPhysicalQuery query) {
+		return averageLatencys.get(query).getAverageLatency();
+	}
 }
 
-class SubQuery {
+class _SubQuery {
 	private ThreadCalculateLatency thread;
 	private Measurement measurement;
 	private ArrayList<IPhysicalOperator> operator;
@@ -267,7 +291,7 @@ class SubQuery {
 	private QueryEventListener eventListener;
 	private long lastLatency;
 
-	public SubQuery() {
+	public _SubQuery() {
 		if (getThread() == null) {
 			setThread(new ThreadCalculateLatency());
 			getThread().start();
@@ -283,7 +307,7 @@ class SubQuery {
 		}
 	}
 
-	public SubQuery(ThreadCalculateLatency t) {
+	public _SubQuery(ThreadCalculateLatency t) {
 		if (getThread() == null) {
 			setThread(t);
 		}
@@ -407,12 +431,12 @@ class SubQuery {
 	}
 }
 
-class AverageLatency {
+class _AverageLatency {
 	private long averageLatency;
 	private int pointer = 0;
 	private long[] lastLatencys = new long[20];
 
-	public AverageLatency() {
+	public _AverageLatency() {
 
 	}
 
