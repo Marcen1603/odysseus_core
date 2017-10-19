@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
+import de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology.NDSAddSMsToGraph;
 import de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology.NDSGraphFromJSONString;
 
 /**
@@ -22,7 +23,7 @@ public class NetzDatenStromMEPFunctions implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new NDSGraphFromJSONString() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new NDSGraphFromJSONString(), new NDSAddSMsToGraph() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
