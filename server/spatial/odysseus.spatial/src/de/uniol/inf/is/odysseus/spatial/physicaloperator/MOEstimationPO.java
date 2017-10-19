@@ -26,63 +26,92 @@ import de.uniol.inf.is.odysseus.spatial.index.GeoHashIndex;
 import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
 
+/**
+ * Operator that estimates the moving objects that need to be predicted.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends AbstractPipe<T, T> {
 
 	private static final int DATA_PORT = 0;
 	private static final int ENRICH_PORT = 1;
 
-	private int pointInTimePosition;
+	// Use the time circle algorithm with exact circle calculations
+	private static final String TIME_CIRCLE_ESTIMATION = "timecircle";
+	/*
+	 * Use the time circle algorithm but only approximate circles with underlying
+	 * spatial index to avoid distance calculations
+	 */
+	private static final String APPROXIMATE_TIME_CIRCLE_ESTIMATION = "approximatetimecircle";
+	// Simply extends the radius by a given factor
+	private static final String EXTENDED_RADIUS_ESTIMATION = "extendedradius";
+
 	private GeoHashMODataStructure index;
 	private SpatialIndex spatialIndex;
 
-	private Set<String> allIDs;
+	// True, if no estimation is used but all IDs are simply collected
 	boolean collectAllIDs;
+	// Will be filled if all IDs are collected
+	private Set<String> allIDs;
 
+	// Define the attribute indexes to find the attributes in the incoming tuples
+	private int pointInTimeAttributeIndex;
 	private int idAttributeIndex;
 	private int centerMovingObjectAttributeIndex;
 	private int geometryAttributeIndex;
 
 	private double radius;
-	private static final double radiusExtensionFactor = 3;
 
 	private Estimator predictionEstimator;
 
 	public MOEstimationPO(MOEstimationAO ao) {
 		this.geometryAttributeIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
 		this.idAttributeIndex = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getIdAttribute());
-		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
+		this.pointInTimeAttributeIndex = ao.getInputSchema(ENRICH_PORT)
+				.findAttributeIndex(ao.getPointInTimeAttribute());
 		this.centerMovingObjectAttributeIndex = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getCenterMovingObjectAttribute());
 
 		// TODO Name and "length" is not correct here. Remove length and use a time
-		// window.
+		// window. Remove old index structure by new spatial index
 		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
 		this.spatialIndex = new GeoHashIndex();
 		this.allIDs = new HashSet<>();
-
 		this.radius = ao.getRadius();
 
-		Option estimatorOption = null;
+		// Read the options to use the settings of the user
 		long numberOfIterations = 0;
+		String estimatorName = "";
+		double radiusExtensionFactor = 1;
+		double maxSpeed = 1;
+
 		for (Option option : ao.getOptions()) {
 			if (option.getName().equals("estimator")) {
-				estimatorOption = option;
+				estimatorName = option.getValue();
 			} else if (option.getName().equals("iterations")) {
-				numberOfIterations = (long) ao.getOptions().get(1).getValue();
+				numberOfIterations = (long) option.getValue();
+			} else if (option.getName().equals("extensionFactor")) {
+				radiusExtensionFactor = option.getValue();
+			} else if (option.getName().equals("maxSpeed")) {
+				maxSpeed = option.getValue();
 			}
 		}
 
 		// Define the estimator. If no one is defined, do not estimate but use all IDs.
 		this.collectAllIDs = false;
-		if (estimatorOption.getValue().equals("timeCircle")) {
+
+		switch (estimatorName.toLowerCase()) {
+		case TIME_CIRCLE_ESTIMATION:
 			this.predictionEstimator = new TimeCircleEstimator(this.index, radiusExtensionFactor,
-					(int) numberOfIterations, 15);
-		} else if (estimatorOption.getValue().equals("approximateTimeCircle")) {
+					(int) numberOfIterations, maxSpeed);
+		case APPROXIMATE_TIME_CIRCLE_ESTIMATION:
 			this.predictionEstimator = new ApproximateTimeCircleEstimator(this.spatialIndex, radiusExtensionFactor,
-					(int) numberOfIterations, 15);
-		} else if (estimatorOption.getValue().equals("extendedRadius")) {
+					(int) numberOfIterations, maxSpeed);
+		case EXTENDED_RADIUS_ESTIMATION:
 			this.predictionEstimator = new ExtendedRadiusEstimatior(this.index, radiusExtensionFactor);
-		} else {
+		default:
 			this.predictionEstimator = new AllEstimator(this.allIDs);
 			this.collectAllIDs = true;
 		}
@@ -123,8 +152,8 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// Get the point in time to which the moving objects need to be
 		// predicted
 		long pointInTime = 0;
-		if (object.getAttribute(this.pointInTimePosition) instanceof Long) {
-			pointInTime = object.getAttribute(this.pointInTimePosition);
+		if (object.getAttribute(this.pointInTimeAttributeIndex) instanceof Long) {
+			pointInTime = object.getAttribute(this.pointInTimeAttributeIndex);
 		}
 
 		long centerMovingObjectId = object.getAttribute(this.centerMovingObjectAttributeIndex);
