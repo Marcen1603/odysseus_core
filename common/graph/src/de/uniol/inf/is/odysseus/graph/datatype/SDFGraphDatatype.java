@@ -17,9 +17,9 @@ public class SDFGraphDatatype implements IDatatypeProvider {
 
 	public static final SDFDatatype GRAPH = new SDFDatatype("Graph");
 	public static final SDFDatatype NODE = new SDFDatatype("GraphNode");
-	public static final SDFDatatype NODE_LIST = new SDFDatatype("GraphNode_List");
+	public static final SDFDatatype NODE_LIST = new SDFDatatype("List_GraphNode", SDFDatatype.KindOfDatatype.LIST, NODE);
 	public static final SDFDatatype EDGE = new SDFDatatype("GraphEdge");
-	public static final SDFDatatype EDGE_LIST = new SDFDatatype("GraphEdge_List");
+	public static final SDFDatatype EDGE_LIST = new SDFDatatype("List_GraphEdge", SDFDatatype.KindOfDatatype.LIST, EDGE);
 
 	@Override
 	public List<SDFDatatype> getDatatypes() {
