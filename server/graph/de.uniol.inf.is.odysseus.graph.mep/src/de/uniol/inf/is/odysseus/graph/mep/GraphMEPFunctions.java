@@ -23,7 +23,7 @@ public class GraphMEPFunctions implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new FindNodesByPatternMEP() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new FindNodesByPatternMEP(), new GetGraphElementIdMEP() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
