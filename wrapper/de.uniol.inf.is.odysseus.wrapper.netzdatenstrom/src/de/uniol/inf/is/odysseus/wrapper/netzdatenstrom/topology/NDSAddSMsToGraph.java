@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology;
 
 import java.util.List;
+import java.util.Map;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -109,16 +110,32 @@ public class NDSAddSMsToGraph extends AbstractFunction<Graph> {
 				KeyValueObject<?> smgwObj = (KeyValueObject<?>) smgws.get(i);
 				String smgwId = smgwObj.getAttribute(smgwIdField);
 				String nodeId = smgwObj.getAttribute(nodeIdField);
+
 				// if node/edge exists, the existing node/edge is returned.
 				// nothing is changed in the graph
 				Node node = topology.getNode(nodeId);
 				Node smgw = topology.addNode(smgwId);
+
+				// add assets to smgw
+				Map<String, Object> smgwAssets = smgwObj.getAsKeyValueMap();
+				smgwAssets.keySet().stream().filter(key -> !(key.equals(smgwIdField) || key.equals(nodeIdField) || key.startsWith(smsField))).forEach(key -> {
+					smgw.addAttribute(key, smgwAssets.get(key));
+				});
+
 				topology.addEdge(nodeId + "-" + smgwId, node, smgw);
 
 				List<Object> sms = smgwObj.path(smsField);
 				sms.stream().forEach(smObj -> {
-					String smid = ((KeyValueObject<?>) smObj).getAttribute(smIdField);
+					KeyValueObject<?> smKVObj = (KeyValueObject<?>) smObj;
+					String smid = smKVObj.getAttribute(smIdField);
 					Node sm = topology.addNode(smid);
+
+					// add assets to smgw
+					Map<String, Object> smAssets = smKVObj.getAsKeyValueMap();
+					smAssets.keySet().stream().filter(key -> !key.equals(smIdField)).forEach(key -> {
+						sm.addAttribute(key, smAssets.get(key));
+					});
+
 					topology.addEdge(smgwId + "-" + smid, smgw, sm);
 				});
 			}
