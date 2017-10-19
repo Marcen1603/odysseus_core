@@ -104,7 +104,7 @@ public class NDSGraphFromJSONString extends AbstractFunction<Graph> {
 			}
 			return graph;
 		} catch (Throwable e) {
-			log.error("Could not parse create graph!", e);
+			log.error("Could not create graph!", e);
 			return null;
 		}
 	}
