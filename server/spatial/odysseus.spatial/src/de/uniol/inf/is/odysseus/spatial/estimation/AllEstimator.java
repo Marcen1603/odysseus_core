@@ -4,10 +4,16 @@ import java.util.Set;
 
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
+/**
+ * Estimates always all elements within a given set.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class AllEstimator implements Estimator {
-	
+
 	private Set<String> allIDs;
-	
+
 	public AllEstimator(Set<String> allIDs) {
 		this.allIDs = allIDs;
 	}

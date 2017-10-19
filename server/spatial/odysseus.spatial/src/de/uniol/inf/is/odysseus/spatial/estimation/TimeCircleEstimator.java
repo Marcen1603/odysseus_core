@@ -10,6 +10,13 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObjectIndexOld;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
+/**
+ * Use the time circle algorithm. Uses exact radius queries for the estimation,
+ * hence, needs distance calculations on the index.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TimeCircleEstimator implements Estimator {
 
 	private static final int SECONDS_TO_MS = 1000;
@@ -19,6 +26,20 @@ public class TimeCircleEstimator implements Estimator {
 	private int numberOfExtensions;
 	private double maxSpeedMeterPerSecond;
 
+	/**
+	 * 
+	 * @param index
+	 *            The index to query on
+	 * @param radiusExtensionFactor
+	 *            The radius is extended by a certain factor in each iteration.
+	 * @param numberOfExtensions
+	 *            The number of iterations. One extension is always done, this only
+	 *            defines how many addition extensions after the first one are done.
+	 *            Only these additional extensions consider the time.
+	 * @param maxSpeedMeterPerSecond
+	 *            The maximum speed of the moving objects. Needed to filter out
+	 *            objects that can't reach the queried region.
+	 */
 	public TimeCircleEstimator(MovingObjectIndexOld index, double radiusExtensionFactor, int numberOfExtensions,
 			double maxSpeedMeterPerSecond) {
 		this.index = index;
