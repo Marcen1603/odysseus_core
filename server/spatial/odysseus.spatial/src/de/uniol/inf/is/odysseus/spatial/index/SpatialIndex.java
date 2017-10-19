@@ -66,7 +66,7 @@ public interface SpatialIndex {
 	 * @return An approximation of elements within the circle. Map: ID of the object
 	 *         -> result for that object
 	 */
-	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double longitude,
+	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double centerLongitude,
 			double radius, TimeInterval interval);
 
 	/**

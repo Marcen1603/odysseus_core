@@ -107,15 +107,33 @@ public class GeoHashIndex implements SpatialIndex {
 	@Override
 	public Map<String, ResultElement> queryCircleOnLatestElements(double centerLatitude, double centerLongitude,
 			double radius, TimeInterval interval) {
-		// TODO Auto-generated method stub
-		return null;
+
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+
+		// Get possible elements within the circle
+		Map<String, TrajectoryElement> candidates = approximateCircleOnLatestElements(centerLatitude, centerLongitude,
+				radius, interval);
+
+		// Refine: calculate actual distance
+		Map<String, ResultElement> results = new HashMap<>(candidates.size());
+		for (String key : candidates.keySet()) {
+			double meters = spatialUtils.calculateDistance(null, new Coordinate(centerLatitude, centerLongitude),
+					new Coordinate(candidates.get(key).getLatitude(), candidates.get(key).getLongitude()));
+			if (meters <= radius) {
+				// The element is within the radius
+				ResultElement result = new ResultElement(candidates.get(key), meters);
+				results.put(key, result);
+			}
+		}
+
+		return results;
 	}
 
 	@Override
-	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double longitude,
-			double radius, TimeInterval interval) {
+	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude,
+			double centerLongitude, double radius, TimeInterval interval) {
 		// Get the rectangular envelope for the circle
-		Coordinate centerCoord = new Coordinate(centerLatitude, longitude);
+		Coordinate centerCoord = new Coordinate(centerLatitude, centerLongitude);
 		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerCoord, radius);
 		GeometryFactory factory = new GeometryFactory();
 		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
