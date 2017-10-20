@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
-public class GeoHashIndex implements SpatialIndex {
+public class GeoHashIndex<T extends IMetaAttribute> implements SpatialIndex<T> {
 
 	// The precision of the GeoHashes
 	public static final int BIT_PRECISION = 64;
@@ -47,7 +47,7 @@ public class GeoHashIndex implements SpatialIndex {
 	}
 
 	@Override
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement) {
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<T> streamElement) {
 
 		// TODO How to clean up with window?
 
@@ -170,9 +170,7 @@ public class GeoHashIndex implements SpatialIndex {
 		Geometry envelope = polygon.getEnvelope();
 
 		// Get hashes that we have to search for
-		// TODO This is guessed. See which coordinate is which. ->
-		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
-		// with all polygonPoints
+		// x is latitude, y is longitude, cause JTS works with lat / lng
 		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
 		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
 		BoundingBox bBox = new BoundingBox(point1, point2);
