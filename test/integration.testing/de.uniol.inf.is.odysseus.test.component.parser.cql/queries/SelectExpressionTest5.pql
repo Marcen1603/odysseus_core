@@ -1,5 +1,0 @@
-operator_1 = RENAME({aliases=['auction','A'],pairs='true'},TIMEWINDOW({size=[1,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_2 = AGGREGATE({AGGREGATIONS=[['AVG','bid.price','avgPrice','Double']],GROUP_BY=['A']},operator_1)
-operator_3 = RENAME({aliases=['auction','A'],pairs='true'},TIMEWINDOW({size=[1,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_4 = SELECT({predicate='avgPrice>150'},JOIN(RENAME({aliases=['A','A_groupAttribute#0'],pairs='true'},operator_2),operator_3))
-operator_5 = MAP({expressions=[['DolToEur(bid.price)','expression_0'],'avgPrice','A']},operator_4)

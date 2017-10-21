@@ -1,1 +1,0 @@
-operator_1 = MAP({expressions=[['DolToEur(DolToEur(bid.price))','expression_0']]},TIMEWINDOW({size=[5,'SECONDS'],advance=[1,'SECONDS']},bid))

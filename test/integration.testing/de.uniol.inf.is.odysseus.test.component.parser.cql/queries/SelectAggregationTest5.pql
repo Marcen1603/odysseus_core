@@ -1,3 +1,0 @@
-operator_1 = AGGREGATE({AGGREGATIONS=[['AVG','bid.auction','auctionAVG','Integer']],GROUP_BY=['bid.auction']},bid)
-operator_2 = SELECT({predicate='auctionAVG>150'},JOIN(RENAME({aliases=['auction','auction_groupAttribute#0'],pairs='true'},operator_1),bid))
-operator_3 = MAP({expressions=['bid.auction','auctionAVG']},operator_2)

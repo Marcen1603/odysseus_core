@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT * FROM bid, person, auction;

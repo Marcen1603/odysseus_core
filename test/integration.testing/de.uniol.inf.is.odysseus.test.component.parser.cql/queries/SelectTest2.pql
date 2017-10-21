@@ -1,2 +1,0 @@
-operator_1 = SELECT({predicate='bid.auction>1000'},bid)
-operator_2 = MAP({expressions=['bid.auction']},operator_1)
