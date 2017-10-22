@@ -1287,8 +1287,8 @@ public class CQLGenerator implements IGenerator2 {
     argss.put("transport", pars.getTransport());
     argss.put("datahandler", pars.getDatahandler());
     String _xifexpression = null;
-    boolean _equals_2 = t.equals("source");
-    if (_equals_2) {
+    boolean _containsKey = argss.containsKey("source");
+    if (_containsKey) {
       _xifexpression = this.extractSchema(schema).toString();
     } else {
       _xifexpression = null;
@@ -1296,8 +1296,8 @@ public class CQLGenerator implements IGenerator2 {
     argss.put("schema", _xifexpression);
     argss.put("options", this.generateKeyValueString(pars.getKeys(), pars.getValues(), ","));
     String _xifexpression_1 = null;
-    boolean _equals_3 = t.equals("sink");
-    if (_equals_3) {
+    boolean _containsKey_1 = argss.containsKey("sink");
+    if (_containsKey_1) {
       _xifexpression_1 = input;
     } else {
       _xifexpression_1 = null;

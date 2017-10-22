@@ -791,9 +791,9 @@ class CQLGenerator implements IGenerator2 {
 		argss.put('protocol', pars.protocol)
 		argss.put('transport', pars.transport)
 		argss.put('datahandler', pars.datahandler)
-		argss.put('schema', if(t.equals("source")) extractSchema(schema).toString else null)
+		argss.put('schema', if(argss.containsKey('source')) extractSchema(schema).toString else null)
 		argss.put('options', generateKeyValueString(pars.keys, pars.values, ','))
-		argss.put('input', if(t.equals("sink")) input else null)
+		argss.put('input', if(argss.containsKey('sink')) input else null)
 		return builder.build(t, argss)
 	}
 

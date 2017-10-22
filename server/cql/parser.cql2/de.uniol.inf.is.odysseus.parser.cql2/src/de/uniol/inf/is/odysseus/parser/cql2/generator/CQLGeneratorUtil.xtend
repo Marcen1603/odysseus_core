@@ -154,8 +154,9 @@ class CQLGeneratorUtil {
 		if (attributes.empty && EcoreUtil2.getAllContentsOfType(select, SelectExpression).empty) {
 			var List<String> attributeOrderList = newArrayList
 			var List<String> sourceOrderList = newArrayList
-			for (Source source : select.sources)
-				if (source instanceof SimpleSource)
+			for (Source source : select.sources) {
+				if (source instanceof SimpleSource) {
+					log.debug("sources=" + CQLGeneratorUtil.sourceNames);
 					for (String attribute : getAttributeNamesFrom(source.name)) {
 						if (source.alias !== null) {
 							var attributealias = source.alias.name + '.' + attribute
@@ -170,6 +171,8 @@ class CQLGeneratorUtil {
 						map = addToMap(map, attribute, source.name)
 						sourceOrderList.add(source.name)
 					}
+				}
+			}
 			attributeOrder = attributeOrderList
 			sourceOrder = sourceOrderList
 			projectionAttributes.put(select, attributeOrder)
@@ -374,9 +377,11 @@ class CQLGeneratorUtil {
 
 			/** Returns all {@link Attribute} elements from the corresponding source. */
 			public static def List<String> getAttributeNamesFrom(String srcname) {
-				for (SourceStruct source : registry_Sources)
-					if (source.sourcename.equals(srcname) || source.aliases.contains(srcname))
+				for (SourceStruct source : registry_Sources) {
+					if (source.sourcename.equals(srcname) || source.aliases.contains(srcname)) {
 						return source.attributes.stream.map(e|e.attributename).collect(Collectors.toList);
+					}
+				}
 			}
 
 			private static def Object[] parseAttribute(Attribute attribute) {

@@ -232,6 +232,9 @@ public class CQLGeneratorUtil {
       EList<Source> _sources = select.getSources();
       for (final Source source : _sources) {
         if ((source instanceof SimpleSource)) {
+          List<String> _sourceNames = CQLGeneratorUtil.getSourceNames();
+          String _plus = ("sources=" + _sourceNames);
+          CQLGeneratorUtil.log.debug(_plus);
           List<String> _attributeNamesFrom = CQLGeneratorUtil.getAttributeNamesFrom(((SimpleSource)source).getName());
           for (final String attribute : _attributeNamesFrom) {
             {
@@ -239,17 +242,17 @@ public class CQLGeneratorUtil {
               boolean _tripleNotEquals_1 = (_alias != null);
               if (_tripleNotEquals_1) {
                 String _name = ((SimpleSource)source).getAlias().getName();
-                String _plus = (_name + ".");
-                String attributealias = (_plus + attribute);
+                String _plus_1 = (_name + ".");
+                String attributealias = (_plus_1 + attribute);
                 CQLGeneratorUtil.getSource(((SimpleSource)source).getName()).findbyName(attribute).aliases.add(attributealias);
                 CQLGeneratorUtil.registry_AttributeAliases.put(attributealias, ((SimpleSource)source).getAlias().getName());
                 attributeOrderList.add(attributealias);
                 map = CQLGeneratorUtil.addToMap(map, attributealias, ((SimpleSource)source).getName());
               } else {
                 String _name_1 = ((SimpleSource)source).getName();
-                String _plus_1 = (_name_1 + ".");
-                String _plus_2 = (_plus_1 + attribute);
-                attributeOrderList.add(_plus_2);
+                String _plus_2 = (_name_1 + ".");
+                String _plus_3 = (_plus_2 + attribute);
+                attributeOrderList.add(_plus_3);
               }
               map = CQLGeneratorUtil.addToMap(map, attribute, ((SimpleSource)source).getName());
               sourceOrderList.add(((SimpleSource)source).getName());
@@ -309,8 +312,8 @@ public class CQLGeneratorUtil {
         if (_greaterThan) {
           if (((sourceCandidates.size() > 1) && (sourcename_1 == null))) {
             String _string = sourceCandidates.toString();
-            String _plus = ((("attribute " + attributename_1) + " is ambiguous: possible sources are ") + _string);
-            throw new IllegalArgumentException(_plus);
+            String _plus_1 = ((("attribute " + attributename_1) + " is ambiguous: possible sources are ") + _string);
+            throw new IllegalArgumentException(_plus_1);
           }
           int _size_1 = sourceCandidates.size();
           boolean _equals = (_size_1 == 1);
