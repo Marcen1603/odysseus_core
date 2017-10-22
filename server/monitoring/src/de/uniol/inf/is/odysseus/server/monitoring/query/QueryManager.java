@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 public class QueryManager implements IUpdateEventListener {
 	private static Map<IPhysicalQuery, List<_SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<_SubQuery>>();
 	private static final QueryManager manager = new QueryManager();
-	private static IServerExecutor executor=null;
+	private static IServerExecutor executor = null;
 	private ISession currentUser = null;
 
 	private static Map<IPhysicalQuery, _AverageLatency> averageLatencys = new HashMap<IPhysicalQuery, _AverageLatency>();
@@ -72,15 +72,12 @@ public class QueryManager implements IUpdateEventListener {
 					if (subqueriesContainsOperator(q, operator)) {
 						added = true;
 					}
-					// TODO: Remove identification about their name
-					if (!added && (operator.getName().contains(
-							"Buffer") /*
-										 * || operator.getName().contains(
-										 * "Aggregate")
-										 */)) {
+					// TODO: Remove identification by the operator name
+					if (!added && (operator.getName().contains("Buffer"))) {
 						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
+								subquery.setEnd(true);
 								added = true;
 								adding = true;
 							}
@@ -88,21 +85,25 @@ public class QueryManager implements IUpdateEventListener {
 						if (!added) {
 							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
+							s.setEnd(true);
 							subquerys.get(q).add(s);
 							added = true;
 							adding = true;
 						}
 					}
+					// No Subscriptions -> End of Query
 					if (subscriptions.isEmpty() && !added) {
 						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
+								subquery.setEnd(true);
 								added = true;
 							}
 						}
 						if (!added) {
 							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
+							s.setEnd(true);
 							subquerys.get(q).add(s);
 							added = true;
 							adding = true;
@@ -110,16 +111,9 @@ public class QueryManager implements IUpdateEventListener {
 					}
 
 					if (!added) {
-						// TODO: if (subscriptions.contains(JOIN) ||
-						// subscriptions.contains(Aggregate)) {
-						// setRoot(JOIN/Aggregate);
-						// adding = true;
-						// }
+						// TODO: Remove identification by the operator name
 						for (IPhysicalOperator subscription : subscriptions) {
-							if (subscription.getName().contains("Buffer")
-							/*
-							 * || subscription.getName().contains("Aggregate")
-							 */) {
+							if (subscription.getName().contains("Buffer")) {
 								_SubQuery s = new _SubQuery(thread);
 								s.setRoot(operator);
 								subquerys.get(q).add(s);
@@ -225,20 +219,18 @@ public class QueryManager implements IUpdateEventListener {
 	 *            Query for which the latency is calculated
 	 */
 	public static void calcAverageLatency(IPhysicalQuery q) {
-		for (_SubQuery subquery : subquerys.get(q)) {
-			_AverageLatency l = averageLatencys.get(q);
-			if (l == null) {
-				l = new _AverageLatency();
-				l.addLatency(getTotalQueryLatency(q));
-			} else {
-				l.addLatency(getTotalQueryLatency(q));
-			}
-			averageLatencys.put(q, l);
+		_AverageLatency l = averageLatencys.get(q);
+		if (l == null) {
+			l = new _AverageLatency();
+			l.addLatency(getLastQueryLatency(q));
+		} else {
+			l.addLatency(getLastQueryLatency(q));
 		}
-		System.out.println(averageLatencys.get(q).getAverageLatency());
+		averageLatencys.put(q, l);
+		System.out.println("AverageLatency: " + averageLatencys.get(q).getAverageLatency());
 	}
 
-	private static long getTotalQueryLatency(IPhysicalQuery q) {
+	private static long getLastQueryLatency(IPhysicalQuery q) {
 		long sum = 0;
 		for (_SubQuery subquery : subquerys.get(q)) {
 			sum += subquery.getMeasurement().getCurrentLatency();
@@ -250,21 +242,21 @@ public class QueryManager implements IUpdateEventListener {
 	public void eventOccured(String type) {
 		IExecutionPlan executionPlan = executor.getExecutionPlan(currentUser);
 		Collection<IPhysicalQuery> queries = executionPlan.getQueries(currentUser);
-		for (IPhysicalQuery query : queries){
+		for (IPhysicalQuery query : queries) {
 			addQuery(query);
 		}
-		for (IPhysicalQuery query : subquerys.keySet()){
-			if (!queries.contains(query)){
+		for (IPhysicalQuery query : subquerys.keySet()) {
+			if (!queries.contains(query)) {
 				subquerys.remove(query);
 			}
 		}
-		if (queries.isEmpty()){
+		if (queries.isEmpty()) {
 			thread.shutdown();
 		}
 	}
 
 	/**
-	 * Adds a new query to the querymanager if it not exists
+	 * Adds a new query to the QueryManager if it not exists
 	 * 
 	 * @param q
 	 *            Query which will be added
@@ -278,8 +270,34 @@ public class QueryManager implements IUpdateEventListener {
 		}
 	}
 
+	/**
+	 * Get the average latency for an query about the last 20 Tupel
+	 * @param query IPhysicalQuery
+	 * @return long Latency for an query
+	 */
 	public Long getAverageLatency(IPhysicalQuery query) {
 		return averageLatencys.get(query).getAverageLatency();
+	}
+
+	/**
+	 * Sets latency for an SubQuery
+	 * 
+	 * @param measurement
+	 * @param currentLatency
+	 */
+	public synchronized void setLatencyForSubQuery(Measurement measurement, long currentLatency) {
+		for (IPhysicalQuery q : subquerys.keySet()) {
+			for (_SubQuery subQuery : subquerys.get(q)) {
+				if (subQuery.getMeasurement() == measurement) {
+					subQuery.setCurrentLatency(currentLatency);
+					// Tupel reached end of query
+					if (subQuery.isEnd()) {
+						calcAverageLatency(q);
+					}
+					return;
+				}
+			}
+		}
 	}
 }
 
@@ -289,7 +307,8 @@ class _SubQuery {
 	private ArrayList<IPhysicalOperator> operator;
 	private IPhysicalOperator root;
 	private QueryEventListener eventListener;
-	private long lastLatency;
+	private boolean isEnd;
+	private long currentLatency;
 
 	public _SubQuery() {
 		if (getThread() == null) {
@@ -339,6 +358,10 @@ class _SubQuery {
 		return false;
 	}
 
+	/**
+	 * Has the SubQuery an last operator
+	 * @return true if an operator is set as end of SubQuery, false if not
+	 */
 	public boolean hasRoot() {
 		if (getRoot() == null) {
 			return false;
@@ -346,6 +369,10 @@ class _SubQuery {
 		return true;
 	}
 
+	/**
+	 * Adds an Operator to the SubQuery
+	 * @param o IPhysicalOperator
+	 */
 	public void addOperator(IPhysicalOperator o) {
 		if (getOperator().contains(o)) {
 			return;
@@ -353,6 +380,9 @@ class _SubQuery {
 		getOperator().add(o);
 	}
 
+	/**
+	 * Creates the EventListener for all operators in this SubQuery
+	 */
 	public void addEventListener() {
 		for (IPhysicalOperator o : this.getOperator()) {
 			getEventListener().addOperator(o);
@@ -364,20 +394,17 @@ class _SubQuery {
 		}
 	}
 
+	/**
+	 * Removes an Operator from this SubQuery
+	 * @param o IPhysicalOperator
+	 */
 	public void removeOperator(IPhysicalOperator o) {
 		if (getOperator() != null && getOperator().contains(o)) {
-			// getEventListener().removeOperator(o);
 			getOperator().remove(o);
-			if (operator.isEmpty()) {
-				// stopThread();
-			}
 		}
 
 	}
 
-	public void stopThread() {
-		thread.shutdown();
-	}
 
 	public ThreadCalculateLatency getThread() {
 		return thread;
@@ -422,12 +449,20 @@ class _SubQuery {
 		this.eventListener = eventListener;
 	}
 
-	public long getLastLatency() {
-		return lastLatency;
+	public long getCurrentLatency() {
+		return currentLatency;
 	}
 
-	public void setLastLatency(long latency) {
-		this.lastLatency = latency;
+	public boolean isEnd() {
+		return isEnd;
+	}
+
+	public void setEnd(boolean isEnd) {
+		this.isEnd = isEnd;
+	}
+
+	public void setCurrentLatency(long currentLatency) {
+		this.currentLatency = currentLatency;
 	}
 }
 
@@ -440,14 +475,23 @@ class _AverageLatency {
 
 	}
 
+	/**
+	 * Adds an new latency to calculate the average latency about the last 20 values
+	 * @param latency
+	 */
 	public void addLatency(long latency) {
 		averageLatency = 0;
 		lastLatencys[pointer] = latency;
+		int averageLatencyCount = 0;
 		for (long l : lastLatencys) {
 			averageLatency += l;
+			if (l != 0)
+				averageLatencyCount++;
 		}
-		averageLatency = averageLatency / lastLatencys.length;
-		pointer = (pointer++) % lastLatencys.length;
+		averageLatency = averageLatency / averageLatencyCount;
+		pointer++;
+		if (pointer == 20)
+			pointer = 0;
 	}
 
 	public long getAverageLatency() {
