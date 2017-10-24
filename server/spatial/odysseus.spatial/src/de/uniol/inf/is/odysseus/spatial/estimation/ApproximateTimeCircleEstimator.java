@@ -1,6 +1,8 @@
 package de.uniol.inf.is.odysseus.spatial.estimation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,15 +83,18 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			/*
 			 * How much older must they be at minimum? This is the time they need at minimum
 			 * to get from the outer donut to the inner circle of the query (not the
-			 * extended circle). In fact, we calculate the time from the border from the
-			 * first extension to the real radius because this in the minimum distance the
-			 * objects need to travel.
+			 * extended circle). In fact, we calculate the time from the outer border of the
+			 * previous extension / the inner border of this donut to the real query radius
+			 * because this in the minimum distance the objects need to travel.
 			 */
 			long travelTimeMs = (long) ((distanceToQueryCircle / this.maxSpeedMeterPerSecond) * SECONDS_TO_MS);
 
 			// Make this to a timestamp by subtracting this from the current timestamp
 			PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
 			PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
+
+			TimeInterval intervalBefore = new TimeInterval(PointInTime.ZERO, timeStampInPast);
+			TimeInterval intervalAfter = new TimeInterval(timeStampInFuture, PointInTime.INFINITY);
 
 			/*
 			 * TODO: We have to remove the elements from the rounds before. If we don't, we
@@ -110,16 +115,30 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			 * way around: excluding all elements which are within this timespan, not
 			 * including them.
 			 */
-			Map<String, TrajectoryElement> bigCircleTimeFiltered = this.index.approximateCircleOnLatestElements(
-					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle,
-					new TimeInterval(timeStampInPast, timeStampInFuture));
+			Map<String, TrajectoryElement> bigCircle = this.index.approximateCircleOnLatestElements(
+					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle, null);
+
+			// Filter for the time intervals
+			List<String> IDsToRemove = new ArrayList<>();
+			for (String movingObjectID : bigCircle.keySet()) {
+				PointInTime measurementTime = bigCircle.get(movingObjectID).getMeasurementTime();
+				if (!intervalBefore.includes(measurementTime) && !intervalAfter.includes(measurementTime)) {
+					// The element is not within the specified time intervals: remove it
+					IDsToRemove.add(movingObjectID);
+				}
+			}
+
+			// Remove from map
+			for (String movingObjectIDToRemove : IDsToRemove) {
+				bigCircle.remove(movingObjectIDToRemove);
+			}
 
 			/*
 			 * Add the new keys to the exiting set. We do not need to actually do the
 			 * subtraction to have a donut query as we only add the elements which are not
 			 * already in the result set.
 			 */
-			objectsToPredict.addAll(bigCircleTimeFiltered.keySet());
+			objectsToPredict.addAll(bigCircle.keySet());
 
 			// Extend the radius for the next iteration
 			radiusLastExtendedCircle = outerCircle;
