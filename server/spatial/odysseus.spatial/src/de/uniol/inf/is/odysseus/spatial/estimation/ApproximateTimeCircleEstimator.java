@@ -94,12 +94,19 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			/*
 			 * TODO: We have to remove the elements from the rounds before. If we don't, we
 			 * include more elements than we want to, because the elements in the inner
-			 * circles get a new chance with more time. If we would keep it this way, we
+			 * circles get a new chance with more time.* If we would keep it this way, we
 			 * could just skip the inner circles and only do the calculation with the last
 			 * circle.
 			 * 
 			 * So, the solution is to remember which elements were considered in the rounds
 			 * before and remove them to get an approximated donut.
+			 * 
+			 * 
+			 * * No, they don't. They get a new chance with even heavier time constrains,
+			 * hence, they won't be chosen the next round if they weren't chosen the round
+			 * before. It's AT LEAST x minutes time difference.
+			 * 
+			 * Nevertheless, the filter predicate is wrong I guess.
 			 */
 			Map<String, TrajectoryElement> bigCircleTimeFiltered = this.index.approximateCircleOnLatestElements(
 					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle,
