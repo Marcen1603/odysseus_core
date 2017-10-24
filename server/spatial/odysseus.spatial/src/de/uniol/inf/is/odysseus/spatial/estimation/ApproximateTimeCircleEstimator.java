@@ -90,6 +90,17 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			// Make this to a timestamp by subtracting this from the current timestamp
 			PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
 			PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
+
+			/*
+			 * TODO: We have to remove the elements from the rounds before. If we don't, we
+			 * include more elements than we want to, because the elements in the inner
+			 * circles get a new chance with more time. If we would keep it this way, we
+			 * could just skip the inner circles and only do the calculation with the last
+			 * circle.
+			 * 
+			 * So, the solution is to remember which elements were considered in the rounds
+			 * before and remove them to get an approximated donut.
+			 */
 			Map<String, TrajectoryElement> bigCircleTimeFiltered = this.index.approximateCircleOnLatestElements(
 					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle,
 					new TimeInterval(timeStampInPast, timeStampInFuture));
