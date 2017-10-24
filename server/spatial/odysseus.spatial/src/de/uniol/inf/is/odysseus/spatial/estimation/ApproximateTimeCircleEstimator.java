@@ -106,7 +106,9 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			 * hence, they won't be chosen the next round if they weren't chosen the round
 			 * before. It's AT LEAST x minutes time difference.
 			 * 
-			 * Nevertheless, the filter predicate is wrong I guess.
+			 * Nevertheless, the filter predicate is wrong I guess. It needs to be the other
+			 * way around: excluding all elements which are within this timespan, not
+			 * including them.
 			 */
 			Map<String, TrajectoryElement> bigCircleTimeFiltered = this.index.approximateCircleOnLatestElements(
 					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle,
