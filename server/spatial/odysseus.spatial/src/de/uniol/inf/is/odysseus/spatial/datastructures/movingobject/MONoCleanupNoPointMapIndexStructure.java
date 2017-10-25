@@ -454,14 +454,23 @@ public class MONoCleanupNoPointMapIndexStructure implements MovingObjectIndexOld
 		return this.latestTrajectoryElementMap.keySet();
 	}
 
-	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+	@Override
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(double centerLatitude, double centerLongitude,
+			double radius, TimeInterval t) {
 		// TODO Implement this method
 		return null;
 	}
 
-	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius,
+	@Override
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectCenterID, double radius,
 			TimeInterval t) {
-		// TODO Implement this method
+		// TODO Auto-generated method stub
 		return null;
 	}
 

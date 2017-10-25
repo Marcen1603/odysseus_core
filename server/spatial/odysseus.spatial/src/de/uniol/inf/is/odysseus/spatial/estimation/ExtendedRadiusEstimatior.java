@@ -9,19 +9,20 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObject
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
 public class ExtendedRadiusEstimatior implements Estimator {
-	
+
 	private MovingObjectIndexOld index;
 	private double radiusExtensionFactor;
-	
+
 	public ExtendedRadiusEstimatior(MovingObjectIndexOld index, double radiusExtensionFactor) {
 		this.index = index;
 		this.radiusExtensionFactor = radiusExtensionFactor;
 	}
 
 	@Override
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
-		Map<String, List<ResultElement>> queryCircleWOPrediction = this.index
-				.queryCircleWOPrediction(centerObjectId, radius * this.radiusExtensionFactor);
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
+			PointInTime targetTime) {
+		Map<String, List<ResultElement>> queryCircleWOPrediction = this.index.queryCircleWOPrediction(centerLatitude,
+				centerLongitude, radius * this.radiusExtensionFactor, null);
 		return queryCircleWOPrediction.keySet();
 	}
 

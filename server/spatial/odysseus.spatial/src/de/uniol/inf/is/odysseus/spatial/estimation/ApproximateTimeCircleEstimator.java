@@ -50,16 +50,15 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 	}
 
 	@Override
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
+			PointInTime targetTime) {
 
-		TrajectoryElement latestLocationOfObject = this.index.getLatestLocationOfObject(centerObjectId);
 		Set<String> objectsToPredict = new HashSet<>();
 
 		// First circle is simply an extension without the consideration of time
 		double radiusLastExtendedCircle = radius * this.radiusExtensionFactor;
-		Map<String, TrajectoryElement> extendedInnerCircleResults = this.index.approximateCircleOnLatestElements(
-				latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), radiusLastExtendedCircle,
-				null);
+		Map<String, TrajectoryElement> extendedInnerCircleResults = this.index
+				.approximateCircleOnLatestElements(centerLatitude, centerLongitude, radiusLastExtendedCircle, null);
 		Set<String> extendedInnerCircle = extendedInnerCircleResults.keySet();
 		objectsToPredict.addAll(extendedInnerCircle);
 
@@ -115,8 +114,8 @@ public class ApproximateTimeCircleEstimator implements Estimator {
 			 * way around: excluding all elements which are within this timespan, not
 			 * including them.
 			 */
-			Map<String, TrajectoryElement> bigCircle = this.index.approximateCircleOnLatestElements(
-					latestLocationOfObject.getLatitude(), latestLocationOfObject.getLongitude(), outerCircle, null);
+			Map<String, TrajectoryElement> bigCircle = this.index.approximateCircleOnLatestElements(centerLatitude,
+					centerLongitude, outerCircle, null);
 
 			// Filter for the time intervals
 			List<String> IDsToRemove = new ArrayList<>();

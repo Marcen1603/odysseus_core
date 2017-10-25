@@ -18,16 +18,17 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "MovingObjectPrediction", doc = "Enriches the point in time (input 2) with a prediction, where the moving objects will be.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class MOPredictionAO extends BinaryLogicalOp {
-	
+
 	private static final int LOCATION_INPUT_PORT = 0;
 	private static final int ESTIMATION_INPUT_PORT = 1;
 
 	private static final long serialVersionUID = -5203604651964484664L;
 
-	private String pointInTimeAttribute;
+	private String pointInTimeFutureAttribute;
+	private String pointInTimeNowAttribute;
 	private String movingObjectListAttribute;
 	private String centermovingObjectIdAttribute;
-	
+
 	private String geometryAttribute;
 	private String idAttribute;
 	private String courseOverGroundAttribute;
@@ -41,7 +42,8 @@ public class MOPredictionAO extends BinaryLogicalOp {
 		super(ao);
 		this.geometryAttribute = ao.getGeometryAttribute();
 		this.idAttribute = ao.getIdAttribute();
-		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
+		this.pointInTimeFutureAttribute = ao.getPointInTimeAttribute();
+		this.pointInTimeNowAttribute = ao.getPointInTimeNowAttribute();
 		this.movingObjectListAttribute = ao.getMovingObjectListAttribute();
 		this.courseOverGroundAttribute = ao.getCourseOverGroundAttribute();
 		this.speedOverGroundAttribute = ao.getSpeedOverGroundAttribute();
@@ -67,12 +69,21 @@ public class MOPredictionAO extends BinaryLogicalOp {
 	}
 
 	public String getPointInTimeAttribute() {
-		return pointInTimeAttribute;
+		return pointInTimeFutureAttribute;
 	}
 
-	@Parameter(name = "pointInTimeAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the point in time to which the moving objects need to be predicted.")
+	@Parameter(name = "pointInTimeFutureAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the point in time to which the moving objects need to be predicted.")
 	public void setPointInTimeAttribute(String pointInTimeAttribute) {
-		this.pointInTimeAttribute = pointInTimeAttribute;
+		this.pointInTimeFutureAttribute = pointInTimeAttribute;
+	}
+
+	public String getPointInTimeNowAttribute() {
+		return pointInTimeNowAttribute;
+	}
+
+	@Parameter(name = "pointInTimeNowAttribute", optional = true, type = StringParameter.class, isList = false, doc = "Name of the attribute with the point in time to which the moving objects need to be predicted.")
+	public void setPointInTimeNowAttribute(String pointInTimeAttribute) {
+		this.pointInTimeNowAttribute = pointInTimeAttribute;
 	}
 
 	public String getMovingObjectListAttribute() {
@@ -106,26 +117,37 @@ public class MOPredictionAO extends BinaryLogicalOp {
 	public AbstractLogicalOperator clone() {
 		return new MOPredictionAO(this);
 	}
-	
+
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int pos) {
-		
+
 		// Use old schema from the input
 		SDFSchema inputSchema = getInputSchema(LOCATION_INPUT_PORT);
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.STRING);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location", SDFSpatialDatatype.SPATIAL_POINT);
-		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "speedMetersPerSecond", SDFDatatype.DOUBLE);
-		SDFAttribute attribute4 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "direction", SDFDatatype.DOUBLE);
-		SDFAttribute attribute5 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "centerMovingObjectId", SDFDatatype.STRING);
-		
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId",
+				SDFDatatype.STRING);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "location",
+				SDFSpatialDatatype.SPATIAL_POINT);
+		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "speedMetersPerSecond",
+				SDFDatatype.DOUBLE);
+		SDFAttribute attribute4 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "direction",
+				SDFDatatype.DOUBLE);
+		SDFAttribute attribute5 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "centerMovingObjectId",
+				SDFDatatype.STRING);
+		SDFAttribute attribute6 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "centerLocation",
+				SDFSpatialDatatype.SPATIAL_POINT);
+		SDFAttribute attribute7 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "predictionTime",
+				SDFDatatype.POINT_IN_TIME);
+
 		attributes.add(attribute1);
 		attributes.add(attribute2);
 		attributes.add(attribute3);
 		attributes.add(attribute4);
 		attributes.add(attribute5);
+		attributes.add(attribute6);
+		attributes.add(attribute7);
 
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);

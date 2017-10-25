@@ -49,13 +49,14 @@ public class TimeCircleEstimator implements Estimator {
 	}
 
 	@Override
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
+			PointInTime targetTime) {
 		Set<String> objectsToPredict = new HashSet<>();
 
 		// First circle is simply an extension without the consideration of time
 		double radiusLastExtendedCircle = radius * this.radiusExtensionFactor;
-		Map<String, List<ResultElement>> extendedInnerCircleResults = this.index.queryCircleWOPrediction(centerObjectId,
-				radiusLastExtendedCircle);
+		Map<String, List<ResultElement>> extendedInnerCircleResults = this.index.queryCircleWOPrediction(centerLatitude,
+				centerLongitude, radiusLastExtendedCircle, null);
 		Set<String> extendedInnerCircle = extendedInnerCircleResults.keySet();
 		objectsToPredict.addAll(extendedInnerCircle);
 
@@ -88,8 +89,8 @@ public class TimeCircleEstimator implements Estimator {
 			// Make this to a timestamp by subtracting this from the current timestamp
 			PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
 			PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
-			Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerObjectId,
-					outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
+			Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerLatitude,
+					centerLongitude, outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
 
 			/*
 			 * Add the new keys to the exiting set. We do not need to actually do the

@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.spatial.physicaloperator;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -32,7 +32,8 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private static final int ENRICH_PORT = 1;
 
 	// On the enrich-port
-	private int pointInTimePosition;
+	private int pointInTimeFuturePosition;
+	private int pointInTimeNowPosition;
 	private int movingObjectListPosition;
 	private int centerMovingObjectIdAttribute;
 
@@ -42,14 +43,23 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int courseOverGroundPosition;
 	private int speedOverGroundPosition;
 
+	// TODO Make customizable
+	private long trajectoryStepSizeMs = 60000;
+
 	private IMovingObjectLocationPredictor movingObjectInterpolator;
 	private GeometryFactory geoFactory;
 
 	public MOPredictionPO(MOPredictionAO ao) {
-		this.pointInTimePosition = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getPointInTimeAttribute());
+		this.pointInTimeFuturePosition = ao.getInputSchema(ENRICH_PORT)
+				.findAttributeIndex(ao.getPointInTimeAttribute());
+		if (ao.getPointInTimeNowAttribute() != null && !ao.getPointInTimeNowAttribute().isEmpty()) {
+			this.pointInTimeNowPosition = ao.getInputSchema(ENRICH_PORT)
+					.findAttributeIndex(ao.getPointInTimeNowAttribute());
+		}
 		this.movingObjectListPosition = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getMovingObjectListAttribute());
-		this.centerMovingObjectIdAttribute = ao.getInputSchema(ENRICH_PORT).findAttributeIndex(ao.getCentermovingObjectIdAttribute());
+		this.centerMovingObjectIdAttribute = ao.getInputSchema(ENRICH_PORT)
+				.findAttributeIndex(ao.getCentermovingObjectIdAttribute());
 
 		this.geometryPosition = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getGeometryAttribute());
 		this.idPosition = ao.getInputSchema(DATA_PORT).findAttributeIndex(ao.getIdAttribute());
@@ -102,33 +112,97 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	 */
 	@SuppressWarnings("unchecked")
 	private void processTimeTuple(T object) {
-		List<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
-		long timeStamp = object.getAttribute(this.pointInTimePosition);
-		PointInTime pointInTime = new PointInTime(timeStamp);
+		Collection<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
+		String centerMovingObjectID = "" + object.getAttribute(this.centerMovingObjectIdAttribute);
 
-		for (String movingObjectId : movingObjectIds) {
-			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId, pointInTime);
-			Tuple<IMetaAttribute> tuple = createTuple(prediction, object);
+		/*
+		 * Get the point in time to which the moving objects need to be predicted
+		 */
+		PointInTime futurePointInTime = PointInTime.ZERO;
+		if (object.getAttribute(this.pointInTimeFuturePosition) instanceof Long) {
+			long futurePointInTimeValue = object.getAttribute(this.pointInTimeFuturePosition);
+			futurePointInTime = new PointInTime(futurePointInTimeValue);
+		} else if (object.getAttribute(this.pointInTimeFuturePosition) instanceof PointInTime) {
+			futurePointInTime = object.getAttribute(this.pointInTimeFuturePosition);
+		}
+
+		/*
+		 * In case that we want to predict a trajectory, we also need to have the start
+		 * point in time.
+		 */
+		PointInTime startPointInTime = null;
+		long startTime = -1;
+		if (object.getAttribute(this.pointInTimeNowPosition) instanceof Long) {
+			startTime = object.getAttribute(this.pointInTimeNowPosition);
+			startPointInTime = new PointInTime(startTime);
+		} else if (object.getAttribute(this.pointInTimeNowPosition) instanceof PointInTime) {
+			startPointInTime = object.getAttribute(this.pointInTimeNowPosition);
+		}
+
+		if (startTime < 0) {
+			// Only predict one point in time
+			predictPoint(centerMovingObjectID, futurePointInTime, movingObjectIds, object);
+		} else {
+			// Predict a trajectory
+
+			/* Predict all points on the trajectory. */
+			PointInTime timeSteps = new PointInTime(startPointInTime);
+			while (timeSteps.plus(this.trajectoryStepSizeMs).beforeOrEquals(futurePointInTime)) {
+				predictPoint(centerMovingObjectID, timeSteps, movingObjectIds, object);
+				timeSteps = timeSteps.plus(this.trajectoryStepSizeMs);
+			}
+
+			/*
+			 * The time distance may not exactly end on the endpoint given. We simply set it
+			 * to the last point.
+			 */
+			if (timeSteps.before(futurePointInTime)) {
+				predictPoint(centerMovingObjectID, futurePointInTime, movingObjectIds, object);
+			}
+
+		}
+
+	}
+
+	private void predictPoint(String movingObjectID, PointInTime predictedTime, Collection<String> idsToPredict,
+			T originalStreamElement) {
+		// Predict the location of the center
+		LocationMeasurement centerPrediction = this.movingObjectInterpolator.predictLocation(movingObjectID,
+				predictedTime);
+
+		for (String movingObjectId : idsToPredict) {
+			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId,
+					predictedTime);
+			Tuple<IMetaAttribute> tuple = createTuple(prediction, centerPrediction, originalStreamElement);
 			this.transfer((T) tuple);
 		}
 	}
 
-	private Tuple<IMetaAttribute> createTuple(LocationMeasurement interpolatedLocationMeasurement, T triggerTuple) {
+	private Tuple<IMetaAttribute> createTuple(LocationMeasurement interpolatedLocationMeasurement,
+			LocationMeasurement predictedCenterLocation, T triggerTuple) {
 		Geometry geometry = this.geoFactory.createPoint(new Coordinate(interpolatedLocationMeasurement.getLatitude(),
 				interpolatedLocationMeasurement.getLongitude()));
 		GeometryWrapper geoWrapper = new GeometryWrapper(geometry);
 
-		Tuple<IMetaAttribute> tupleWithInterpolatedLocation = new Tuple<IMetaAttribute>(5, false);
+		Geometry centerGeometry = this.geoFactory.createPoint(
+				new Coordinate(predictedCenterLocation.getLatitude(), predictedCenterLocation.getLongitude()));
+		GeometryWrapper centerGeoWrapper = new GeometryWrapper(centerGeometry);
+
+		Tuple<IMetaAttribute> tupleWithInterpolatedLocation = new Tuple<IMetaAttribute>(7, false);
 		// The prediction is valid only one point in time
 		tupleWithInterpolatedLocation.setMetadata(triggerTuple.getMetadata().clone());
-//		((T) tupleWithInterpolatedLocation).getMetadata().setStart(interpolatedLocationMeasurement.getMeasurementTime());
-//		((T) tupleWithInterpolatedLocation).getMetadata().setEnd(interpolatedLocationMeasurement.getMeasurementTime().plus(1));
+		// ((T)
+		// tupleWithInterpolatedLocation).getMetadata().setStart(interpolatedLocationMeasurement.getMeasurementTime());
+		// ((T)
+		// tupleWithInterpolatedLocation).getMetadata().setEnd(interpolatedLocationMeasurement.getMeasurementTime().plus(1));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, geoWrapper);
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getSpeedInMetersPerSecond());
 		tupleWithInterpolatedLocation.setAttribute(3, interpolatedLocationMeasurement.getHorizontalDirection());
 		// Keep the center
 		tupleWithInterpolatedLocation.setAttribute(4, triggerTuple.getAttribute(this.centerMovingObjectIdAttribute));
+		tupleWithInterpolatedLocation.setAttribute(5, centerGeoWrapper);
+		tupleWithInterpolatedLocation.setAttribute(6, interpolatedLocationMeasurement.getMeasurementTime());
 		return tupleWithInterpolatedLocation;
 	}
 

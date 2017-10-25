@@ -514,4 +514,11 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 		return this.latestTrajectoryElementMap.keySet();
 	}
 
+	@Override
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(double centerLatitude, double longitude,
+			double radius, TimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

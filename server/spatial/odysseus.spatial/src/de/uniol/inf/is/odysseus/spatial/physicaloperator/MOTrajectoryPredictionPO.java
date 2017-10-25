@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOTrajector
 
 /**
  * Predicts a trajectory of a moving object. Trajectory element are predicted
- * with a certain granularity. A list of waypoints is calcualted for every
+ * with a certain granularity. A list of waypoints is calculated for every
  * moving object.
  * 
  * @author Tobias Brandt

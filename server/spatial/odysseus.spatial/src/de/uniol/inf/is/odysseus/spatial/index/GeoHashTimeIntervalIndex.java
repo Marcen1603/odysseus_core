@@ -54,7 +54,7 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 		for (IStreamObject<T> streamObject : removed) {
 			if (this.isTuple) {
 				Tuple<T> tuple = (Tuple<T>) streamObject;
-				String id = tuple.getAttribute(idAttributeIndex);
+				String id = "" + tuple.getAttribute(idAttributeIndex);
 
 				// Remove this from the indexes
 

@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.MovingObject
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 
 public class ApproximateTimeCircleEstimatorOld implements Estimator {
-	
+
 	private static final int SECONDS_TO_MS = 1000;
 
 	private MovingObjectIndexOld index;
@@ -19,8 +19,8 @@ public class ApproximateTimeCircleEstimatorOld implements Estimator {
 	private int numberOfExtensions;
 	private double maxSpeedMeterPerSecond;
 
-	public ApproximateTimeCircleEstimatorOld(MovingObjectIndexOld index, double radiusExtensionFactor, int numberOfExtensions,
-			double maxSpeedMeterPerSecond) {
+	public ApproximateTimeCircleEstimatorOld(MovingObjectIndexOld index, double radiusExtensionFactor,
+			int numberOfExtensions, double maxSpeedMeterPerSecond) {
 		this.index = index;
 		this.radiusExtensionFactor = radiusExtensionFactor;
 		this.numberOfExtensions = numberOfExtensions;
@@ -28,7 +28,8 @@ public class ApproximateTimeCircleEstimatorOld implements Estimator {
 	}
 
 	@Override
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
+			PointInTime targetTime) {
 
 		// TODO Use methods in the index which only approximated circle calculations to
 		// avoid distance calculations
@@ -37,8 +38,8 @@ public class ApproximateTimeCircleEstimatorOld implements Estimator {
 
 		// First circle is simply an extension without the consideration of time
 		double radiusLastExtendedCircle = radius * this.radiusExtensionFactor;
-		Map<String, List<ResultElement>> extendedInnerCircleResults = this.index.queryCircleWOPrediction(centerObjectId,
-				radiusLastExtendedCircle);
+		Map<String, List<ResultElement>> extendedInnerCircleResults = this.index.queryCircleWOPrediction(centerLatitude,
+				centerLongitude, radiusLastExtendedCircle, null);
 		Set<String> extendedInnerCircle = extendedInnerCircleResults.keySet();
 		objectsToPredict.addAll(extendedInnerCircle);
 
@@ -71,8 +72,8 @@ public class ApproximateTimeCircleEstimatorOld implements Estimator {
 			// Make this to a timestamp by subtracting this from the current timestamp
 			PointInTime timeStampInPast = targetTime.minus(travelTimeMs);
 			PointInTime timeStampInFuture = targetTime.plus(travelTimeMs);
-			Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerObjectId,
-					outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
+			Map<String, List<ResultElement>> bigCircleTimeFiltered = this.index.queryCircleWOPrediction(centerLatitude,
+					centerLongitude, outerCircle, new TimeInterval(timeStampInPast, timeStampInFuture));
 
 			/*
 			 * Add the new keys to the exiting set. We do not need to actually do the
