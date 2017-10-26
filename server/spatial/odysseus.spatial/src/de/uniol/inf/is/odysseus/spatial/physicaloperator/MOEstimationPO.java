@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
@@ -49,7 +48,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private static final String EXTENDED_RADIUS_ESTIMATION = "extendedradius";
 
 	private GeoHashMODataStructure index;
-	private SpatialIndex spatialIndex;
+	private SpatialIndex<ITimeInterval> spatialIndex;
 
 	// True, if no estimation is used but all IDs are simply collected
 	boolean collectAllIDs;
@@ -85,7 +84,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// TODO Name and "length" is not correct here. Remove length and use a time
 		// window. Remove old index structure by new spatial index
 		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
-		this.spatialIndex = new GeoHashTimeIntervalIndex<TimeInterval>(true);
+		this.spatialIndex = new GeoHashTimeIntervalIndex<ITimeInterval>(true);
 		this.allIDs = new HashSet<>();
 		this.radius = ao.getRadius();
 

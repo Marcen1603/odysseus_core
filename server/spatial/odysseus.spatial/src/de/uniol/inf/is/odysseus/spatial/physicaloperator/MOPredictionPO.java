@@ -110,7 +110,6 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	 * @param object
 	 *            Tuple with time information
 	 */
-	@SuppressWarnings("unchecked")
 	private void processTimeTuple(T object) {
 		Collection<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
 		String centerMovingObjectID = "" + object.getAttribute(this.centerMovingObjectIdAttribute);
@@ -164,6 +163,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void predictPoint(String movingObjectID, PointInTime predictedTime, Collection<String> idsToPredict,
 			T originalStreamElement) {
 		// Predict the location of the center
@@ -191,10 +191,6 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		Tuple<IMetaAttribute> tupleWithInterpolatedLocation = new Tuple<IMetaAttribute>(7, false);
 		// The prediction is valid only one point in time
 		tupleWithInterpolatedLocation.setMetadata(triggerTuple.getMetadata().clone());
-		// ((T)
-		// tupleWithInterpolatedLocation).getMetadata().setStart(interpolatedLocationMeasurement.getMeasurementTime());
-		// ((T)
-		// tupleWithInterpolatedLocation).getMetadata().setEnd(interpolatedLocationMeasurement.getMeasurementTime().plus(1));
 		tupleWithInterpolatedLocation.setAttribute(0, interpolatedLocationMeasurement.getMovingObjectId());
 		tupleWithInterpolatedLocation.setAttribute(1, geoWrapper);
 		tupleWithInterpolatedLocation.setAttribute(2, interpolatedLocationMeasurement.getSpeedInMetersPerSecond());

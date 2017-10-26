@@ -20,7 +20,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class MOPredictionAO extends BinaryLogicalOp {
 
 	private static final int LOCATION_INPUT_PORT = 0;
-	private static final int ESTIMATION_INPUT_PORT = 1;
+	//private static final int ESTIMATION_INPUT_PORT = 1;
 
 	private static final long serialVersionUID = -5203604651964484664L;
 

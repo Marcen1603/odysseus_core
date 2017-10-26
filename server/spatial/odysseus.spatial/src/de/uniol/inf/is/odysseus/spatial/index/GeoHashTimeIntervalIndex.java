@@ -28,7 +28,7 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 	protected boolean isTuple;
 
 	// Index by time
-	protected DefaultTISweepArea<IStreamObject<T>> sweepArea;
+	protected DefaultTISweepArea<IStreamObject<? extends T>> sweepArea;
 
 	public GeoHashTimeIntervalIndex(boolean isTuple) {
 		super();
@@ -37,7 +37,7 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 	}
 
 	@Override
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<T> streamElement) {
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends T> streamElement) {
 		super.add(locationMeasurement, streamElement);
 
 		// Insert in SweepArea
@@ -49,11 +49,11 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 
 	private void cleanUp(PointInTime endTime) {
 		// Remove old elements from sweepArea
-		List<IStreamObject<T>> removed = this.sweepArea.extractElementsBeforeAsList(endTime);
+		List<IStreamObject<? extends T>> removed = this.sweepArea.extractElementsBeforeAsList(endTime);
 
-		for (IStreamObject<T> streamObject : removed) {
+		for (IStreamObject<? extends T> streamObject : removed) {
 			if (this.isTuple) {
-				Tuple<T> tuple = (Tuple<T>) streamObject;
+				Tuple<? extends T> tuple = (Tuple<? extends T>) streamObject;
 				String id = "" + tuple.getAttribute(idAttributeIndex);
 
 				// Remove this from the indexes

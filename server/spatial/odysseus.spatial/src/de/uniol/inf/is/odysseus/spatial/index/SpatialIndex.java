@@ -25,7 +25,7 @@ public interface SpatialIndex<T extends IMetaAttribute> {
 	 * @param streamElement
 	 *            The according streaming element
 	 */
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<T> streamElement);
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends T> streamElement);
 
 	/**
 	 * Calculates all neighbors within the given radius around the center. Only uses

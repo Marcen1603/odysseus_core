@@ -45,7 +45,7 @@ public class GeoHashIndex<T extends IMetaAttribute> implements SpatialIndex<T> {
 	}
 
 	@Override
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<T> streamElement) {
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends T> streamElement) {
 
 		// Get info for new TrajectoryElement
 		GeoHash geoHash = GeoHashHelper.fromLatLong(locationMeasurement.getLatitude(),
