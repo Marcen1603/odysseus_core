@@ -43,8 +43,9 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int courseOverGroundPosition;
 	private int speedOverGroundPosition;
 
-	// TODO Make customizable
-	private long trajectoryStepSizeMs = 60000;
+	// One minute
+	private static final long DEFAULT_TIME_STEP = 60000; 
+	private long trajectoryStepSizeMs;
 
 	private IMovingObjectLocationPredictor movingObjectInterpolator;
 	private GeometryFactory geoFactory;
@@ -72,6 +73,11 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.movingObjectInterpolator = new MovingObjectLinearLocationPredictor(ao.getBaseTimeUnit());
 
 		this.geoFactory = new GeometryFactory();
+		
+		this.trajectoryStepSizeMs = ao.getTimeStepSizeMs();
+		if (this.trajectoryStepSizeMs < 1) {
+			this.trajectoryStepSizeMs = DEFAULT_TIME_STEP;
+		}
 	}
 
 	@Override

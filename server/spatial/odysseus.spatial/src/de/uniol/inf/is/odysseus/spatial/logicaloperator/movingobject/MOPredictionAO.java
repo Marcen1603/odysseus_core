@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
@@ -20,7 +21,7 @@ import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialD
 public class MOPredictionAO extends BinaryLogicalOp {
 
 	private static final int LOCATION_INPUT_PORT = 0;
-	//private static final int ESTIMATION_INPUT_PORT = 1;
+	// private static final int ESTIMATION_INPUT_PORT = 1;
 
 	private static final long serialVersionUID = -5203604651964484664L;
 
@@ -33,6 +34,8 @@ public class MOPredictionAO extends BinaryLogicalOp {
 	private String idAttribute;
 	private String courseOverGroundAttribute;
 	private String speedOverGroundAttribute;
+
+	private long timeStepSizeMs;
 
 	public MOPredictionAO() {
 		super();
@@ -48,6 +51,7 @@ public class MOPredictionAO extends BinaryLogicalOp {
 		this.courseOverGroundAttribute = ao.getCourseOverGroundAttribute();
 		this.speedOverGroundAttribute = ao.getSpeedOverGroundAttribute();
 		this.centermovingObjectIdAttribute = ao.getCentermovingObjectIdAttribute();
+		this.timeStepSizeMs = ao.getTimeStepSizeMs();
 	}
 
 	public String getGeometryAttribute() {
@@ -113,6 +117,24 @@ public class MOPredictionAO extends BinaryLogicalOp {
 		this.speedOverGroundAttribute = speedOverGroundAttribute;
 	}
 
+	public String getCentermovingObjectIdAttribute() {
+		return centermovingObjectIdAttribute;
+	}
+
+	@Parameter(name = "centerMovingObjectIdAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the id in the time input port..")
+	public void setCenterMovingObjectIdAttribute(String centermovingObjectIdAttribute) {
+		this.centermovingObjectIdAttribute = centermovingObjectIdAttribute;
+	}
+
+	public long getTimeStepSizeMs() {
+		return timeStepSizeMs;
+	}
+
+	@Parameter(name = "timeStepSizeMs", optional = true, type = LongParameter.class, isList = false, doc = "If you predict a trajectory, this is the step size used between the predicted points.")
+	public void setTimeStepSizeMs(long timeStepSizeMs) {
+		this.timeStepSizeMs = timeStepSizeMs;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new MOPredictionAO(this);
@@ -152,15 +174,6 @@ public class MOPredictionAO extends BinaryLogicalOp {
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
-	}
-
-	public String getCentermovingObjectIdAttribute() {
-		return centermovingObjectIdAttribute;
-	}
-
-	@Parameter(name = "centerMovingObjectIdAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the id in the time input port..")
-	public void setCenterMovingObjectIdAttribute(String centermovingObjectIdAttribute) {
-		this.centermovingObjectIdAttribute = centermovingObjectIdAttribute;
 	}
 
 }
