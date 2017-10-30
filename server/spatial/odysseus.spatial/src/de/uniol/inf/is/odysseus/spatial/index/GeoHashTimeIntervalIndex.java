@@ -30,10 +30,11 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 	// Index by time
 	protected DefaultTISweepArea<IStreamObject<? extends T>> sweepArea;
 
-	public GeoHashTimeIntervalIndex(boolean isTuple) {
+	public GeoHashTimeIntervalIndex(boolean isTuple, int idAttributeIndex) {
 		super();
 		this.sweepArea = new DefaultTISweepArea<>();
 		this.isTuple = isTuple;
+		this.idAttributeIndex = idAttributeIndex;
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 				TrajectoryElement trajectoryElement = latestTrajectoryElementMap.get(id);
 
 				while (trajectoryElement != null) {
-					if (trajectoryElement.getMeasurementTime().beforeOrEquals(endTime)) {
+					if (trajectoryElement.getMeasurementTime().afterOrEquals(endTime)) {
 
 						/*
 						 * If this element is the latest element of the trajectory, we have to remove it
@@ -82,6 +83,12 @@ public class GeoHashTimeIntervalIndex<T extends ITimeInterval> extends GeoHashIn
 								// We have to remove this element from the list
 								locations.remove(trajectoryElement);
 							}
+
+							/*
+							 * In this case, we also need to remove it from the map with the latest
+							 * locations
+							 */
+							this.latestTrajectoryElementMap.remove(id);
 						}
 
 						/*

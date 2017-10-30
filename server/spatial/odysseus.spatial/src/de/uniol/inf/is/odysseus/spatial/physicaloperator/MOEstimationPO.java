@@ -21,6 +21,7 @@ import de.uniol.inf.is.odysseus.spatial.estimation.Estimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.ExtendedRadiusEstimatior;
 import de.uniol.inf.is.odysseus.spatial.estimation.TimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.index.GeoHashIndex;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashTimeIntervalIndex;
 import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
@@ -84,7 +85,8 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// TODO Name and "length" is not correct here. Remove length and use a time
 		// window. Remove old index structure by new spatial index
 		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
-		this.spatialIndex = new GeoHashTimeIntervalIndex<ITimeInterval>(true);
+		this.spatialIndex = new GeoHashTimeIntervalIndex<ITimeInterval>(true, idAttributeIndex);
+		// this.spatialIndex = new GeoHashIndex<>();
 		this.allIDs = new HashSet<>();
 		this.radius = ao.getRadius();
 
@@ -221,10 +223,15 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		// Collect all objects that need to be predicted
 		Set<String> idsToPredict = new HashSet<>();
 
-		// Calculate objects that need to be predicted
-		TrajectoryElement latestLocationOfObject = this.spatialIndex.getLatestLocationOfObject(centerMovingObjectID);
-		idsToPredict.addAll(this.predictionEstimator.estimateObjectsToPredict(latestLocationOfObject.getLatitude(),
-				latestLocationOfObject.getLongitude(), this.radius, timestamp));
+		if (this.collectAllIDs) {
+			idsToPredict.addAll(this.allIDs);
+		} else {
+			// Calculate objects that need to be predicted
+			TrajectoryElement latestLocationOfObject = this.spatialIndex
+					.getLatestLocationOfObject(centerMovingObjectID);
+			idsToPredict.addAll(this.predictionEstimator.estimateObjectsToPredict(latestLocationOfObject.getLatitude(),
+					latestLocationOfObject.getLongitude(), this.radius, timestamp));
+		}
 
 		// Create a tuple with all the IDs that need to be predicted
 		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(3, false);

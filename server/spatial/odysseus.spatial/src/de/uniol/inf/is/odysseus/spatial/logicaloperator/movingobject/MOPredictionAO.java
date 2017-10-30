@@ -94,7 +94,7 @@ public class MOPredictionAO extends BinaryLogicalOp {
 		return this.movingObjectListAttribute;
 	}
 
-	@Parameter(name = "movingObjectListAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the list of the moving objects that need to be predicted.")
+	@Parameter(name = "movingObjectListAttribute", optional = true, type = StringParameter.class, isList = false, doc = "Name of the attribute with the list of the moving objects that need to be predicted.")
 	public void setMovingObjectListAttribute(String movingObjectListAttribute) {
 		this.movingObjectListAttribute = movingObjectListAttribute;
 	}

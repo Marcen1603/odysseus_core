@@ -34,7 +34,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	// On the enrich-port
 	private int pointInTimeFuturePosition;
 	private int pointInTimeNowPosition;
-	private int movingObjectListPosition;
+	private int movingObjectListPosition = -1;
 	private int centerMovingObjectIdAttribute;
 
 	// On the data-port
@@ -44,7 +44,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private int speedOverGroundPosition;
 
 	// One minute
-	private static final long DEFAULT_TIME_STEP = 60000; 
+	private static final long DEFAULT_TIME_STEP = 60000;
 	private long trajectoryStepSizeMs;
 
 	private IMovingObjectLocationPredictor movingObjectInterpolator;
@@ -57,8 +57,10 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 			this.pointInTimeNowPosition = ao.getInputSchema(ENRICH_PORT)
 					.findAttributeIndex(ao.getPointInTimeNowAttribute());
 		}
-		this.movingObjectListPosition = ao.getInputSchema(ENRICH_PORT)
-				.findAttributeIndex(ao.getMovingObjectListAttribute());
+		if (ao.getMovingObjectListAttribute() != null && !ao.getMovingObjectListAttribute().isEmpty()) {
+			this.movingObjectListPosition = ao.getInputSchema(ENRICH_PORT)
+					.findAttributeIndex(ao.getMovingObjectListAttribute());
+		}
 		this.centerMovingObjectIdAttribute = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getCentermovingObjectIdAttribute());
 
@@ -73,7 +75,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.movingObjectInterpolator = new MovingObjectLinearLocationPredictor(ao.getBaseTimeUnit());
 
 		this.geoFactory = new GeometryFactory();
-		
+
 		this.trajectoryStepSizeMs = ao.getTimeStepSizeMs();
 		if (this.trajectoryStepSizeMs < 1) {
 			this.trajectoryStepSizeMs = DEFAULT_TIME_STEP;
@@ -117,7 +119,14 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	 *            Tuple with time information
 	 */
 	private void processTimeTuple(T object) {
-		Collection<String> movingObjectIds = object.getAttribute(this.movingObjectListPosition);
+		Collection<String> movingObjectIds = null;
+		if (this.movingObjectListPosition != -1) {
+			/*
+			 * Only use if we have this given. If we only predict one object, this may not
+			 * be given
+			 */
+			movingObjectIds = object.getAttribute(this.movingObjectListPosition);
+		}
 		String centerMovingObjectID = "" + object.getAttribute(this.centerMovingObjectIdAttribute);
 
 		/*
@@ -176,6 +185,14 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		LocationMeasurement centerPrediction = this.movingObjectInterpolator.predictLocation(movingObjectID,
 				predictedTime);
 
+		// We only predict the center
+		if (idsToPredict == null) {
+			Tuple<IMetaAttribute> tuple = createTuple(centerPrediction, centerPrediction, originalStreamElement);
+			this.transfer((T) tuple);
+			return;
+		}
+
+		// We predict some more objects
 		for (String movingObjectId : idsToPredict) {
 			LocationMeasurement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId,
 					predictedTime);
