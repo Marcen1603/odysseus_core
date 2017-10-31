@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.physicaloperator.ControllablePhysicalSubscription;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ISource;
@@ -20,16 +23,19 @@ import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvide
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class QueryManager implements IUpdateEventListener {
+	private static final Logger LOG = LoggerFactory.getLogger(QueryManager.class);
+
 	private static Map<IPhysicalQuery, List<_SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<_SubQuery>>();
-	private static final QueryManager manager = new QueryManager();
+	private static QueryManager manager;
 	private static IServerExecutor executor = null;
 	private ISession currentUser = null;
 
 	private static Map<IPhysicalQuery, _AverageLatency> averageLatencys = new HashMap<IPhysicalQuery, _AverageLatency>();
-	private ThreadCalculateLatency thread = new ThreadCalculateLatency();
+	private static ThreadCalculateLatency thread = new ThreadCalculateLatency();
 
 	public QueryManager() {
 		thread.start();
+		manager = this;
 	}
 
 	public static QueryManager getInstance() {
@@ -61,10 +67,12 @@ public class QueryManager implements IUpdateEventListener {
 	 *            IPhysicalQuery
 	 */
 	private void divideQuery(IPhysicalQuery q) {
+		// adding is used to end the divide process
 		boolean adding = true;
 		while (adding) {
 			adding = false;
 			for (IPhysicalOperator operator : q.getPhysicalChilds()) {
+				// Exclude sources from monitoring
 				if (!q.getLeafSources().contains(operator) && !q.getIterableSources().contains(operator)
 						&& !q.getIteratableLeafSources().contains(operator)) {
 					List<IPhysicalOperator> subscriptions = getSubscriptions(operator);
@@ -73,11 +81,10 @@ public class QueryManager implements IUpdateEventListener {
 						added = true;
 					}
 					// TODO: Remove identification by the operator name
-					if (!added && (operator.getName().contains("Buffer"))) {
+					if (!added && (operator.getName().contains("Buffer") || subscriptions.size() > 1)) {
 						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
-								subquery.setEnd(true);
 								added = true;
 								adding = true;
 							}
@@ -85,7 +92,6 @@ public class QueryManager implements IUpdateEventListener {
 						if (!added) {
 							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
-							s.setEnd(true);
 							subquerys.get(q).add(s);
 							added = true;
 							adding = true;
@@ -96,14 +102,14 @@ public class QueryManager implements IUpdateEventListener {
 						for (_SubQuery subquery : subquerys.get(q)) {
 							if (!subquery.hasRoot()) {
 								subquery.setRoot(operator);
-								subquery.setEnd(true);
+								subquery.setIsEnd(true);
 								added = true;
 							}
 						}
 						if (!added) {
 							_SubQuery s = new _SubQuery(thread);
 							s.setRoot(operator);
-							s.setEnd(true);
+							s.setIsEnd(true);
 							subquerys.get(q).add(s);
 							added = true;
 							adding = true;
@@ -113,7 +119,7 @@ public class QueryManager implements IUpdateEventListener {
 					if (!added) {
 						// TODO: Remove identification by the operator name
 						for (IPhysicalOperator subscription : subscriptions) {
-							if (subscription.getName().contains("Buffer")) {
+							if (!added && (subscription.getName().contains("Buffer") || subscriptions.size() > 1)) {
 								_SubQuery s = new _SubQuery(thread);
 								s.setRoot(operator);
 								subquerys.get(q).add(s);
@@ -204,7 +210,6 @@ public class QueryManager implements IUpdateEventListener {
 		ISource source = (ISource) o;
 		if (source instanceof AbstractSource) {
 			Collection<ControllablePhysicalSubscription> sourceSubscriptions = (source).getSubscriptions();
-			System.out.println(sourceSubscriptions.toString());
 			for (ControllablePhysicalSubscription subscription : sourceSubscriptions) {
 				subscriptions.add((IPhysicalOperator) subscription.getTarget());
 			}
@@ -227,7 +232,7 @@ public class QueryManager implements IUpdateEventListener {
 			l.addLatency(getLastQueryLatency(q));
 		}
 		averageLatencys.put(q, l);
-		System.out.println("AverageLatency: " + averageLatencys.get(q).getAverageLatency());
+		QueryManager.LOG.info("AverageLatency: " + averageLatencys.get(q).getAverageLatency());
 	}
 
 	private static long getLastQueryLatency(IPhysicalQuery q) {
@@ -243,6 +248,9 @@ public class QueryManager implements IUpdateEventListener {
 		IExecutionPlan executionPlan = executor.getExecutionPlan(currentUser);
 		Collection<IPhysicalQuery> queries = executionPlan.getQueries(currentUser);
 		for (IPhysicalQuery query : queries) {
+			if (!thread.isAlive()){
+				thread.start();
+			}
 			addQuery(query);
 		}
 		for (IPhysicalQuery query : subquerys.keySet()) {
@@ -272,7 +280,9 @@ public class QueryManager implements IUpdateEventListener {
 
 	/**
 	 * Get the average latency for an query about the last 20 Tupel
-	 * @param query IPhysicalQuery
+	 * 
+	 * @param query
+	 *            IPhysicalQuery
 	 * @return long Latency for an query
 	 */
 	public Long getAverageLatency(IPhysicalQuery query) {
@@ -360,6 +370,7 @@ class _SubQuery {
 
 	/**
 	 * Has the SubQuery an last operator
+	 * 
 	 * @return true if an operator is set as end of SubQuery, false if not
 	 */
 	public boolean hasRoot() {
@@ -371,7 +382,9 @@ class _SubQuery {
 
 	/**
 	 * Adds an Operator to the SubQuery
-	 * @param o IPhysicalOperator
+	 * 
+	 * @param o
+	 *            IPhysicalOperator
 	 */
 	public void addOperator(IPhysicalOperator o) {
 		if (getOperator().contains(o)) {
@@ -387,16 +400,14 @@ class _SubQuery {
 		for (IPhysicalOperator o : this.getOperator()) {
 			getEventListener().addOperator(o);
 		}
-		if (getRoot().getName().contains("Buffer")) {
-			getEventListener().addBuffer(getRoot());
-		} else {
-			getEventListener().addOperator(getRoot());
-		}
+		getEventListener().addOperator(getRoot());
 	}
 
 	/**
 	 * Removes an Operator from this SubQuery
-	 * @param o IPhysicalOperator
+	 * 
+	 * @param o
+	 *            IPhysicalOperator
 	 */
 	public void removeOperator(IPhysicalOperator o) {
 		if (getOperator() != null && getOperator().contains(o)) {
@@ -404,7 +415,6 @@ class _SubQuery {
 		}
 
 	}
-
 
 	public ThreadCalculateLatency getThread() {
 		return thread;
@@ -457,7 +467,7 @@ class _SubQuery {
 		return isEnd;
 	}
 
-	public void setEnd(boolean isEnd) {
+	public void setIsEnd(boolean isEnd) {
 		this.isEnd = isEnd;
 	}
 
@@ -476,7 +486,9 @@ class _AverageLatency {
 	}
 
 	/**
-	 * Adds an new latency to calculate the average latency about the last 20 values
+	 * Adds an new latency to calculate the average latency about the last 20
+	 * values
+	 * 
 	 * @param latency
 	 */
 	public void addLatency(long latency) {
@@ -490,7 +502,7 @@ class _AverageLatency {
 		}
 		averageLatency = averageLatency / averageLatencyCount;
 		pointer++;
-		if (pointer == 20)
+		if (pointer == lastLatencys.length)
 			pointer = 0;
 	}
 

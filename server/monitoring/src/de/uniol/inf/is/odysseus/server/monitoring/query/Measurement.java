@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.event.POEventType;
 import de.uniol.inf.is.odysseus.server.monitoring.physicaloperator.OperatorLatency;
 
 public class Measurement {
+	private static final Logger LOG = LoggerFactory.getLogger(Measurement.class);
 
 	private Map<IPhysicalOperator, OperatorLatency> latencys;
 	private long currentLatency, averageLatency;
@@ -42,9 +46,6 @@ public class Measurement {
 	 */
 	public synchronized void processEvent(IEvent<?, ?> event, long nanoTimestamp) {
 		IPhysicalOperator operator = (IPhysicalOperator) event.getSender();
-		if (operator.getName().contains("Union")){
-			System.out.println("Union");
-		}
 		if (!this.temporaryLatencys.isEmpty()) {
 			boolean added=false;
 			loop: for (HashMap<IPhysicalOperator, OperatorLatency> map : this.temporaryLatencys) {
@@ -109,7 +110,10 @@ public class Measurement {
 		} else {
 			addInitialInnerHashMap(operator, nanoTimestamp, event);
 		}
-		if (event.getEventType().equals(POEventType.ProcessDone)) {
+		if (event.getEventType().equals(POEventType.ProcessDone) && !operator.getName().contains("Buffer")) {
+			checkForRemovableEntrys();
+		}
+		if (event.getEventType().equals(POEventType.PushInit) && operator.getName().contains("Buffer")){
 			checkForRemovableEntrys();
 		}
 	}
@@ -174,7 +178,7 @@ public class Measurement {
 		long latency = 0;
 		for (IPhysicalOperator o : this.latencys.keySet()) {
 			latency += this.latencys.get(o).getLatency();
-			System.out.println(o + " Latenz: " + this.latencys.get(o).getLatency());
+			Measurement.LOG.debug(o + " Latency: " + this.latencys.get(o).getLatency());
 		}
 		if (getCurrentLatency() != 0) {
 			setAverageLatency((latency + getCurrentLatency()) / 2);

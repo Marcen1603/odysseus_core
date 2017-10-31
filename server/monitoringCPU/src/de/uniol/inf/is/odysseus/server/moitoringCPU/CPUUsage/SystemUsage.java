@@ -20,7 +20,7 @@ public class SystemUsage implements Runnable {
 	private static SystemUsage systemUsage;
 	private volatile boolean running = true;
 
-	private static final int sampleTime = 1000;
+	private static final int sampleTime = 100;
 	private ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
 	private Map<Long, Double> threadCPUUsage = new HashMap<Long, Double>();
 	
@@ -58,7 +58,6 @@ public class SystemUsage implements Runnable {
 			initialUptime += initialThreadCPUTimes.get(info.getThreadId());
 		}
 
-		// TODO: remove sum. It is only for testing
 		long sum = 0;
 		long elapsedTime = (upTime - initialUptime);
 
@@ -74,7 +73,6 @@ public class SystemUsage implements Runnable {
 				}
 			}
 		}
-		System.out.println("Summe: " + sum);
 	}
 
 	public SystemUsage() {
