@@ -8,7 +8,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
 
 public class QueryEventListener implements IPOEventListener {
 	private Measurement measurement;
-	ThreadCalculateLatency thread;
+	private ThreadCalculateLatency thread;
 
 	/**
 	 * Adds required Events (PushInit, ProcessInit and ProcessDone) for an Operator
@@ -16,11 +16,6 @@ public class QueryEventListener implements IPOEventListener {
 	 */
 	public void addOperator(IPhysicalOperator o) {
 		o.subscribe(this, POEventType.PushInit);
-		o.subscribe(this, POEventType.ProcessInit);
-		o.subscribe(this, POEventType.ProcessDone);
-	}
-	
-	public void addBuffer(IPhysicalOperator o){
 		o.subscribe(this, POEventType.ProcessInit);
 		o.subscribe(this, POEventType.ProcessDone);
 	}
