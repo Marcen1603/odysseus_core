@@ -76,10 +76,7 @@ public class Measurement {
 					} else {
 						//Handle PushInit Events for operator with integrated buffer
 						//TODO: Remove identification by name
-						if (   operator.getName().contains("Aggregate")
-							|| operator.getName().contains("Join")							
-							|| operator.getName().contains("Buffer")
-							|| operator.getName().contains("Union")){
+						if (isBufferedOperator(operator)){
 							return;
 						}
 						map.get(operator).stopMeasurement(nanoTimestamp);
@@ -118,6 +115,23 @@ public class Measurement {
 		}
 	}
 
+	/**
+	 * Returns true if the operator contains buffer
+	 * TODO: Remove identification based on their names
+	 * @param operator
+	 * @return
+	 */
+	private boolean isBufferedOperator(IPhysicalOperator operator){
+		if (   operator.getName().contains("Aggregate")
+			|| operator.getName().contains("Join")							
+			|| operator.getName().contains("Buffer")
+			|| operator.getName().contains("Union")){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	/**
 	 * Initializes and adds a new entry to temporaryLatencys
 	 * 
@@ -178,7 +192,7 @@ public class Measurement {
 		long latency = 0;
 		for (IPhysicalOperator o : this.latencys.keySet()) {
 			latency += this.latencys.get(o).getLatency();
-			Measurement.LOG.debug(o + " Latency: " + this.latencys.get(o).getLatency());
+			Measurement.LOG.info(o + " Latency: " + this.latencys.get(o).getLatency());
 		}
 		if (getCurrentLatency() != 0) {
 			setAverageLatency((latency + getCurrentLatency()) / 2);
