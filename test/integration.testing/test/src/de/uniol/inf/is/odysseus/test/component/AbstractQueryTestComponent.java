@@ -6,6 +6,8 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.planmanagement.SinkInformation;
+import de.uniol.inf.is.odysseus.core.planmanagement.ViewInformation;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.exception.PlanManagementException;
 import de.uniol.inf.is.odysseus.core.util.SimplePlanPrinter;
 import de.uniol.inf.is.odysseus.test.StatusCode;
@@ -61,7 +63,8 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 					for (int id : ids) {
 						SimplePlanPrinter<IPhysicalOperator> planPrinter = new SimplePlanPrinter<IPhysicalOperator>(
 								true);
-						for (IPhysicalOperator op : executor.getExecutionPlan(session).getQueryById(id, session).getRoots()) {
+						for (IPhysicalOperator op : executor.getExecutionPlan(session).getQueryById(id, session)
+								.getRoots()) {
 							String output = planPrinter.createString(op);
 							LOG.debug(output);
 						}
@@ -85,6 +88,26 @@ public abstract class AbstractQueryTestComponent<T extends ITestContext, S exten
 				@Override
 				public void run() {
 					executor.removeAllQueries(session);
+
+					List<ViewInformation> views = executor.getStreamsAndViewsInformation(session);
+					for (ViewInformation vi : views) {
+						try {
+							executor.removeViewOrStream(vi.getName(), session);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+					List<SinkInformation> sinks = executor.getSinks(session);
+					for (SinkInformation si:sinks) {
+						try {
+							executor.removeSink(si.getName(), session);
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+						
+					}
+					
 				};
 			};
 			t.start();

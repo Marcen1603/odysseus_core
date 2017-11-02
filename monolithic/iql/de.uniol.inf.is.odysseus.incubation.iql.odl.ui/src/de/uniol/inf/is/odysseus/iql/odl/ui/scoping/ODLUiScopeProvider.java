@@ -25,7 +25,6 @@ public class ODLUiScopeProvider extends ODLScopeProvider {
 		super(typeDictionary, lookUp, exprEvaluator, typeUtils);
 	}
 	
-	@Override
 	protected IScope getJdtScope(ResourceSet set,IIQLJdtTypeProvider typeProvider) {
 		if (typeProvider != null) {
 			return new IQLJdtBasedTypeScope(typeProvider, converter, null);
@@ -34,7 +33,6 @@ public class ODLUiScopeProvider extends ODLScopeProvider {
 		}
 	}
 	
-	@Override
 	protected Collection<String> getImplicitImports(EObject obj) {
 		Collection<String> result = super.getImplicitImports(obj);
 		String packageName = BasicIQLUiTypeUtils.getPackage(obj.eResource());

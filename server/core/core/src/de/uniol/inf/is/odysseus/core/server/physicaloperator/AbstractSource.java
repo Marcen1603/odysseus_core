@@ -524,8 +524,10 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 
 	@Override
 	public void sendPunctuation(IPunctuation punctuation) {
-		for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-			sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
+		if (!suppressPunctuation) {
+			for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub : this.activeSinkSubscriptions) {
+				sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
+			}
 		}
 	}
 
@@ -533,12 +535,19 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	public void sendPunctuation(IPunctuation punctuation, int outPort) {
 		if (!suppressPunctuation) {
 			for (AbstractPhysicalSubscription<?, ? extends ISink<?>> sub : this.activeSinkSubscriptions) {
-				if (sub.getSourceOutPort() == outPort) {
-					sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
-				}
+				sendPunctuation(punctuation, outPort, sub);
 			}
 		}
 	}
+
+	protected void sendPunctuation(IPunctuation punctuation, int outPort,
+			AbstractPhysicalSubscription<?, ? extends ISink<?>> sub) {
+		if (sub.getSourceOutPort() == outPort) {
+			sub.getSink().processPunctuation(punctuation, sub.getSinkInPort());
+		}
+	}
+	
+	
 
 	// ------------------------------------------------------------------------
 	// TRANSFER
@@ -808,7 +817,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		subscribeSink(sub, asActive);
 	}
 
-	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub, boolean asActive) {
+	private void subscribeSink(AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>> sub,
+			boolean asActive) {
 		if (!this.sinkSubscriptions.contains(sub)) {
 			// getLogger().trace(
 			// this + " Subscribe Sink " + sink + " to " + sinkInPort
@@ -825,11 +835,12 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	final public void subscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort, SDFSchema schema) {
 		subscribeSink(sink, sinkInPort, sourceOutPort, schema, false, 0);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	final public void subscribeSink(AbstractPhysicalSubscription<?, ISink<IStreamObject<?>>> subscription) {
-		subscribeSink((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) subscription, false);
+		subscribeSink((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>) subscription,
+				false);
 	}
 
 	@Override
@@ -851,8 +862,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	@Override
 	final public void unsubscribeSink(ISink<IStreamObject<?>> sink, int sinkInPort, int sourceOutPort,
 			SDFSchema schema) {
-		unsubscribeSink(
-				new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>((ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema));
+		unsubscribeSink(new ControllablePhysicalSubscription<ISource<IStreamObject<?>>, ISink<IStreamObject<?>>>(
+				(ISource<IStreamObject<?>>) this, sink, sinkInPort, sourceOutPort, schema));
 	}
 
 	@Override
@@ -887,7 +898,8 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 		boolean subContained = this.sinkSubscriptions.remove(subscription);
 		removeActiveSubscription(subscription);
 		if (subContained) {
-			subscription.getSink().unsubscribeFromSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) subscription);
+			subscription.getSink()
+					.unsubscribeFromSource((AbstractPhysicalSubscription<ISource<IStreamObject<?>>, ?>) subscription);
 		}
 	}
 

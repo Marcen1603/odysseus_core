@@ -32,7 +32,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       location="de.uniol.inf.is.odysseus.rcp.base" />
    <launcher name="studio">
       <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
-      <solaris/>
       <win useIco="true">
          <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
          <bmp/>
@@ -77,6 +76,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.iql.qdl.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.iql.qdl.ui.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.datarate.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.keyvalue.feature" version="1.0.0.qualifier"/>
    </features>
 
    <configurations>

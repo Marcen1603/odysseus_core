@@ -132,7 +132,10 @@ public class StandardQuerySharingOptimizer implements IQuerySharingOptimizer {
 					// Schritt 1: Entfernen von identischen Operatoren
 
 					// Operatoren sind semantisch gleiche Pipes, die identische Quellen haben
-					if (op1 instanceof IPipe && ((AbstractPipe)op1).hasSameSources(op2) &&  haveSameNames(op1,op2) &&op1.isSemanticallyEqual(op2)) {
+					if (op1 instanceof IPipe && 
+							((AbstractPipe)op1).hasSameSources(op2) &&  
+							haveSameNames(op1,op2) 
+							&& op1.isSemanticallyEqual(op2)) {
 						// Der erste Operator ist nicht neu, der zweite
 						// allerdings schon und eine Umstrukturierung des alten
 						// Plans ist untersagt

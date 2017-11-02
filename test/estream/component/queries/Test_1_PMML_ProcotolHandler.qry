@@ -1,0 +1,55 @@
+#PARSER PQL
+#ADDQUERY
+ 
+models := ACCESS({
+    source='pmml-data',
+    wrapper='GenericPull',
+    transport='HTTP',
+    protocol='PMML',
+    dataHandler='Tuple',
+    options=[
+        ['uri', 'http://dmg.org/pmml/pmml_examples/rattle_pmml_examples/AuditKMeans.xml'],
+        ['method', 'get'],
+        ['scheduler.delay', '100000'],
+        ['fireOnce', 'true']
+    ],
+    schema=[
+        ['meta', 'Object'],
+        ['models', 'Object'],
+        ['dictionary', 'Object']
+    ]
+})
+ 
+ 
+/// data to be tested against
+#ADDQUERY
+data := ACCESS({
+    source='audit-data',
+    wrapper='GenericPull',
+    transport='HTTP',
+    protocol='CSV',
+    dataHandler='Tuple',
+    options=[
+        ['uri', 'http://dmg.org/pmml/pmml_examples/Audit.csv'],
+        ['method', 'get'],
+        ['readfirstline', 'false'],
+        ['delimiter',','],
+        ['textDelimiter','"'], 
+        ['', '']
+    ],
+    schema=[
+        ['ID', 'Integer'],
+        ['Age', 'Integer'],
+        ['Employment', 'String'],
+        ['Education', 'String'],
+        ['Marital', 'String'],
+        ['Occupation', 'String'],
+        ['Income', 'Double'],
+        ['Gender', 'String'],
+        ['Deductions', 'Double'],
+        ['Hours', 'Double'],
+        ['IGNORE_Accounts', 'String'],
+        ['RISK_Adjustment', 'Double'],
+        ['TARGET_Adjusted', 'Double']
+    ]
+})

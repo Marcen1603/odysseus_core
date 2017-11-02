@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="de.uniol.inf.is.odysseus.incubation.graph.graphbuilder">
-   <implementation class="de.uniol.inf.is.odysseus.incubation.graph.logicaloperator.GraphBuilderAO"/>
-   <service>
-      <provide interface="de.uniol.inf.is.odysseus.incubation.graph.IGraphBuilder"/>
-   </service>
-   <reference bind="bindGraphDataStructure" cardinality="0..n" interface="de.uniol.inf.is.odysseus.incubation.graph.datamodel.IGraphDataStructure" name="IGraphDataStructure" policy="dynamic" unbind="unbindGraphDataStructure"/>
-</scr:component>

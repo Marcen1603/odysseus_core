@@ -544,17 +544,13 @@ public abstract class AbstractPipe<R extends IStreamObject<?>, W extends IStream
 		for (AbstractPhysicalSubscription<?,?> s1 : thisSubs) {
 			boolean foundmatch = false;
 			for (AbstractPhysicalSubscription<?,?> s2 : otherSubs) {
-				if (s1.equals(s2)) {
+				// This will not work anymore, as subscriptions now contain sink and source!
+				// if (s1.equals(s2)) {
 
-					// // Subscription enth�lt gleiche Quelle und gleiche
-					// Ports
-					// if (((ISource<?>) s1.getTarget()) == ((ISource<?>) s2
-					// .getTarget())
-					// && s1.getSinkInPort() == s2.getSinkInPort()
-					// && s1.getSourceOutPort() == s2.getSourceOutPort()
-					// && ((s1.getSchema() == null && s2.getSchema() == null) ||
-					// (s1
-					// .getSchema().compareTo(s2.getSchema())) == 0)) {
+				if (( s1.getSource() == s2.getSource())
+						&& s1.getSinkInPort() == s2.getSinkInPort() && s1.getSourceOutPort() == s2.getSourceOutPort()
+						&& ((s1.getSchema() == null && s2.getSchema() == null)
+								|| (s1.getSchema().compareTo(s2.getSchema())) == 0)) {
 					foundmatch = true;
 				}
 			}

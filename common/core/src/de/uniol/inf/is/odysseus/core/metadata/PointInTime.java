@@ -258,6 +258,12 @@ public class PointInTime implements Comparable<PointInTime>, Cloneable,
 			return this;
 		return new PointInTime(this.point - time.point);
 	}
+	
+	public PointInTime minus(long time) {
+		if (isInfinite())
+			return this;
+		return new PointInTime(this.point - time);
+	}
 
 	public PointInTime plus(PointInTime time) {
 		if (isInfinite())

@@ -3,6 +3,8 @@ package de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.Option;
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -12,20 +14,26 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.BinaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.DoubleParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.OptionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
 @LogicalOperator(maxInputPorts = 2, minInputPorts = 2, name = "MovingObjectEstimation", doc = "Enriches the point in time (input 2) with an estimation, which moving objects need to be predicted.", category = {
 		LogicalOperatorCategory.SPATIAL })
 public class MOEstimationAO extends BinaryLogicalOp {
-	
-	private static final int LOCATION_INPUT_PORT = 0;
-	private static final int TIMER_INPUT_PORT = 1;
 
 	private static final long serialVersionUID = -7299499368889774372L;
+
+	private static final int LOCATION_INPUT_PORT = 0;
+	// private static final int TIMER_INPUT_PORT = 1;
+
 	private String geometryAttribute;
 	private String idAttribute;
 	private String pointInTimeAttribute;
 	private String centerMovingObjectAttribute;
+	private double radius;
+	private final OptionMap optionsMap = new OptionMap();
+	private List<Option> optionsList;
 
 	public MOEstimationAO() {
 		super();
@@ -37,6 +45,12 @@ public class MOEstimationAO extends BinaryLogicalOp {
 		this.idAttribute = ao.getIdAttribute();
 		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
 		this.centerMovingObjectAttribute = ao.getCenterMovingObjectAttribute();
+		this.radius = ao.getRadius();
+		
+		optionsMap.addAll(ao.optionsMap);
+		if (ao.optionsList != null) {
+			this.optionsList = new ArrayList<>(ao.optionsList);
+		}
 	}
 
 	public String getGeometryAttribute() {
@@ -66,6 +80,27 @@ public class MOEstimationAO extends BinaryLogicalOp {
 		this.pointInTimeAttribute = pointInTimeAttribute;
 	}
 
+	public double getRadius() {
+		return radius;
+	}
+
+	@Parameter(name = "radius", optional = false, type = DoubleParameter.class, isList = false, doc = "The radius for estimation around the center moving object. E.g. the same radius as the following radius select operator.")
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
+	
+	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
+	public void setOptions(List<Option> value) {
+		for (Option option : value) {
+			optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
+		}
+		optionsList = value;
+	}
+
+	public List<Option> getOptions() {
+		return optionsList;
+	}
+
 	@Override
 	public AbstractLogicalOperator clone() {
 		return new MOEstimationAO(this);
@@ -79,14 +114,17 @@ public class MOEstimationAO extends BinaryLogicalOp {
 
 		// Add the attributes
 		List<SDFAttribute> attributes = new ArrayList<>();
-		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "PointInTime", SDFDatatype.TIMESTAMP);
-		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId", SDFDatatype.LONG);
-		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectIds", SDFDatatype.LIST);
+		SDFAttribute attribute1 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "PointInTime",
+				SDFDatatype.TIMESTAMP);
+		SDFAttribute attribute2 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectId",
+				SDFDatatype.LONG);
+		SDFAttribute attribute3 = new SDFAttribute(inputSchema.getBaseSourceNames().get(0), "movingObjectIds",
+				SDFDatatype.LIST);
 
 		attributes.add(attribute1);
 		attributes.add(attribute2);
 		attributes.add(attribute3);
-		
+
 		// Create the new schema
 		SDFSchema outputSchema = SDFSchemaFactory.createNewWithAttributes(attributes, inputSchema);
 		return outputSchema;
@@ -100,5 +138,4 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	public void setCenterMovingObjectAttribute(String centerMovingObjectAttribute) {
 		this.centerMovingObjectAttribute = centerMovingObjectAttribute;
 	}
-
 }

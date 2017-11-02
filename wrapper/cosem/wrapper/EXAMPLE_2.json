@@ -1,0 +1,15 @@
+{
+  "SMGWSimulator-0.smartmetergateway_109": {
+    "objects": [
+      {
+        "scaler": -3,
+        "value": 3.424839,
+        "capture_time": 11700,
+        "unit": 30,
+        "logical_name": "sm_21",
+        "status": "000"
+      }
+    ],
+    "logical_name": "smartmetergateway_109"
+  }
+}

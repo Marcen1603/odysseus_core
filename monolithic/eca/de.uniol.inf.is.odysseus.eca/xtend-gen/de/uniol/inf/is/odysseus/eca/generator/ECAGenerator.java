@@ -23,7 +23,9 @@ import de.uniol.inf.is.odysseus.eca.plugin.EcaRuleObj;
 import java.util.ArrayList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.generator.IFileSystemAccess;
-import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IFileSystemAccess2;
+import org.eclipse.xtext.generator.IGenerator2;
+import org.eclipse.xtext.generator.IGeneratorContext;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 
@@ -33,7 +35,7 @@ import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 @SuppressWarnings("all")
-public class ECAGenerator implements IGenerator {
+public class ECAGenerator implements IGenerator2 {
   private EcaPluginConnector connect = new EcaPluginConnector();
   
   private ArrayList<EcaRuleObj> querySet = new ArrayList<EcaRuleObj>();
@@ -64,7 +66,6 @@ public class ECAGenerator implements IGenerator {
   
   private int timerIntervall = 1000;
   
-  @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess fsa) {
     final Procedure1<Window> _function = (Window it) -> {
       if ((it != null)) {
@@ -390,5 +391,20 @@ public class ECAGenerator implements IGenerator {
     tmp.append(cond.getQueryFunct().getStateName());
     this.queryCondList.add(tmp.toString());
     tmp.setLength(0);
+  }
+  
+  @Override
+  public void afterGenerate(final Resource input, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
+    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+  }
+  
+  @Override
+  public void beforeGenerate(final Resource input, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
+    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+  }
+  
+  @Override
+  public void doGenerate(final Resource input, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
+    throw new UnsupportedOperationException("TODO: auto-generated method stub");
   }
 }

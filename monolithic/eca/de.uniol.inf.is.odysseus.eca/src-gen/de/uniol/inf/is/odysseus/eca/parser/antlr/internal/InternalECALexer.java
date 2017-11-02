@@ -51,6 +51,7 @@ public class InternalECALexer extends Lexer {
     public static final int RULE_ANY_OTHER=11;
     public static final int T__44=44;
     public static final int T__45=45;
+    public static final int T__46=46;
     public static final int T__40=40;
     public static final int T__41=41;
     public static final int T__42=42;
@@ -67,17 +68,17 @@ public class InternalECALexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g"; }
+    public String getGrammarFileName() { return "InternalECA.g"; }
 
     // $ANTLR start "T__12"
     public final void mT__12() throws RecognitionException {
         try {
             int _type = T__12;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:11:7: ( 'DEFINE CONSTANT' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:11:9: 'DEFINE CONSTANT'
+            // InternalECA.g:11:7: ( 'DEFINE' )
+            // InternalECA.g:11:9: 'DEFINE'
             {
-            match("DEFINE CONSTANT"); 
+            match("DEFINE"); 
 
 
             }
@@ -95,10 +96,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__13;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:12:7: ( ':' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:12:9: ':'
+            // InternalECA.g:12:7: ( 'CONSTANT' )
+            // InternalECA.g:12:9: 'CONSTANT'
             {
-            match(':'); 
+            match("CONSTANT"); 
+
 
             }
 
@@ -115,10 +117,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__14;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:13:7: ( ';' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:13:9: ';'
+            // InternalECA.g:13:7: ( ':' )
+            // InternalECA.g:13:9: ':'
             {
-            match(';'); 
+            match(':'); 
 
             }
 
@@ -135,11 +137,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:14:7: ( 'DEFINE WINDOWSIZE' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:14:9: 'DEFINE WINDOWSIZE'
+            // InternalECA.g:14:7: ( ';' )
+            // InternalECA.g:14:9: ';'
             {
-            match("DEFINE WINDOWSIZE"); 
-
+            match(';'); 
 
             }
 
@@ -156,10 +157,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__16;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:15:7: ( 'DEFINE TIMEINTERVALL' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:15:9: 'DEFINE TIMEINTERVALL'
+            // InternalECA.g:15:7: ( 'WINDOWSIZE' )
+            // InternalECA.g:15:9: 'WINDOWSIZE'
             {
-            match("DEFINE TIMEINTERVALL"); 
+            match("WINDOWSIZE"); 
 
 
             }
@@ -177,10 +178,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__17;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:16:7: ( 'DEFINE EVENT' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:16:9: 'DEFINE EVENT'
+            // InternalECA.g:16:7: ( 'TIMEINTERVALL' )
+            // InternalECA.g:16:9: 'TIMEINTERVALL'
             {
-            match("DEFINE EVENT"); 
+            match("TIMEINTERVALL"); 
 
 
             }
@@ -198,10 +199,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__18;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:17:7: ( 'WITH' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:17:9: 'WITH'
+            // InternalECA.g:17:7: ( 'EVENT' )
+            // InternalECA.g:17:9: 'EVENT'
             {
-            match("WITH"); 
+            match("EVENT"); 
 
 
             }
@@ -219,10 +220,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__19;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:18:7: ( 'ON' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:18:9: 'ON'
+            // InternalECA.g:18:7: ( 'WITH' )
+            // InternalECA.g:18:9: 'WITH'
             {
-            match("ON"); 
+            match("WITH"); 
 
 
             }
@@ -240,10 +241,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__20;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:19:7: ( 'IF' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:19:9: 'IF'
+            // InternalECA.g:19:7: ( 'ON' )
+            // InternalECA.g:19:9: 'ON'
             {
-            match("IF"); 
+            match("ON"); 
 
 
             }
@@ -261,10 +262,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__21;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:20:7: ( 'THEN' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:20:9: 'THEN'
+            // InternalECA.g:20:7: ( 'IF' )
+            // InternalECA.g:20:9: 'IF'
             {
-            match("THEN"); 
+            match("IF"); 
 
 
             }
@@ -282,10 +283,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__22;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:21:7: ( 'AND' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:21:9: 'AND'
+            // InternalECA.g:21:7: ( 'THEN' )
+            // InternalECA.g:21:9: 'THEN'
             {
-            match("AND"); 
+            match("THEN"); 
 
 
             }
@@ -303,10 +304,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__23;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:22:7: ( '${' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:22:9: '${'
+            // InternalECA.g:22:7: ( 'AND' )
+            // InternalECA.g:22:9: 'AND'
             {
-            match("${"); 
+            match("AND"); 
 
 
             }
@@ -324,10 +325,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__24;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:23:7: ( '}' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:23:9: '}'
+            // InternalECA.g:23:7: ( '${' )
+            // InternalECA.g:23:9: '${'
             {
-            match('}'); 
+            match("${"); 
+
 
             }
 
@@ -344,10 +346,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__25;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:24:7: ( '!' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:24:9: '!'
+            // InternalECA.g:24:7: ( '}' )
+            // InternalECA.g:24:9: '}'
             {
-            match('!'); 
+            match('}'); 
 
             }
 
@@ -364,11 +366,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__26;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:25:7: ( 'queryExists' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:25:9: 'queryExists'
+            // InternalECA.g:25:7: ( '!' )
+            // InternalECA.g:25:9: '!'
             {
-            match("queryExists"); 
-
+            match('!'); 
 
             }
 
@@ -385,10 +386,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__27;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:26:7: ( '(' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:26:9: '('
+            // InternalECA.g:26:7: ( 'queryExists' )
+            // InternalECA.g:26:9: 'queryExists'
             {
-            match('('); 
+            match("queryExists"); 
+
 
             }
 
@@ -405,10 +407,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__28;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:27:7: ( ')' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:27:9: ')'
+            // InternalECA.g:27:7: ( '(' )
+            // InternalECA.g:27:9: '('
             {
-            match(')'); 
+            match('('); 
 
             }
 
@@ -425,11 +427,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__29;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:28:7: ( 'SYSTEM.' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:28:9: 'SYSTEM.'
+            // InternalECA.g:28:7: ( ')' )
+            // InternalECA.g:28:9: ')'
             {
-            match("SYSTEM."); 
-
+            match(')'); 
 
             }
 
@@ -446,10 +447,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__30;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:29:7: ( 'GET' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:29:9: 'GET'
+            // InternalECA.g:29:7: ( 'SYSTEM.' )
+            // InternalECA.g:29:9: 'SYSTEM.'
             {
-            match("GET"); 
+            match("SYSTEM."); 
 
 
             }
@@ -467,10 +468,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__31;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:30:7: ( 'prio' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:30:9: 'prio'
+            // InternalECA.g:30:7: ( 'GET' )
+            // InternalECA.g:30:9: 'GET'
             {
-            match("prio"); 
+            match("GET"); 
 
 
             }
@@ -488,10 +489,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__32;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:31:7: ( 'MIN' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:31:9: 'MIN'
+            // InternalECA.g:31:7: ( 'prio' )
+            // InternalECA.g:31:9: 'prio'
             {
-            match("MIN"); 
+            match("prio"); 
 
 
             }
@@ -509,10 +510,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__33;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:32:7: ( 'MAX' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:32:9: 'MAX'
+            // InternalECA.g:32:7: ( 'MIN' )
+            // InternalECA.g:32:9: 'MIN'
             {
-            match("MAX"); 
+            match("MIN"); 
 
 
             }
@@ -530,10 +531,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__34;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:33:7: ( ',' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:33:9: ','
+            // InternalECA.g:33:7: ( 'MAX' )
+            // InternalECA.g:33:9: 'MAX'
             {
-            match(','); 
+            match("MAX"); 
+
 
             }
 
@@ -550,11 +552,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__35;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:34:7: ( 'state' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:34:9: 'state'
+            // InternalECA.g:34:7: ( ',' )
+            // InternalECA.g:34:9: ','
             {
-            match("state"); 
-
+            match(','); 
 
             }
 
@@ -571,10 +572,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__36;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:35:7: ( '=' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:35:9: '='
+            // InternalECA.g:35:7: ( 'state' )
+            // InternalECA.g:35:9: 'state'
             {
-            match('='); 
+            match("state"); 
+
 
             }
 
@@ -591,11 +593,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__37;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:36:7: ( 'TimerEvent' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:36:9: 'TimerEvent'
+            // InternalECA.g:36:7: ( '=' )
+            // InternalECA.g:36:9: '='
             {
-            match("TimerEvent"); 
-
+            match('='); 
 
             }
 
@@ -612,10 +613,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__38;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:37:7: ( 'QueryEvent' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:37:9: 'QueryEvent'
+            // InternalECA.g:37:7: ( 'TimerEvent' )
+            // InternalECA.g:37:9: 'TimerEvent'
             {
-            match("QueryEvent"); 
+            match("TimerEvent"); 
 
 
             }
@@ -633,10 +634,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__39;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:38:7: ( 'curCPULoad' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:38:9: 'curCPULoad'
+            // InternalECA.g:38:7: ( 'QueryEvent' )
+            // InternalECA.g:38:9: 'QueryEvent'
             {
-            match("curCPULoad"); 
+            match("QueryEvent"); 
 
 
             }
@@ -654,10 +655,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__40;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:39:7: ( 'curMEMLoad' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:39:9: 'curMEMLoad'
+            // InternalECA.g:39:7: ( 'curCPULoad' )
+            // InternalECA.g:39:9: 'curCPULoad'
             {
-            match("curMEMLoad"); 
+            match("curCPULoad"); 
 
 
             }
@@ -675,10 +676,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__41;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:40:7: ( 'curNETLoad' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:40:9: 'curNETLoad'
+            // InternalECA.g:40:7: ( 'curMEMLoad' )
+            // InternalECA.g:40:9: 'curMEMLoad'
             {
-            match("curNETLoad"); 
+            match("curMEMLoad"); 
 
 
             }
@@ -696,10 +697,11 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__42;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:41:7: ( '<' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:41:9: '<'
+            // InternalECA.g:41:7: ( 'curNETLoad' )
+            // InternalECA.g:41:9: 'curNETLoad'
             {
-            match('<'); 
+            match("curNETLoad"); 
+
 
             }
 
@@ -716,10 +718,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__43;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:42:7: ( '>' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:42:9: '>'
+            // InternalECA.g:42:7: ( '<' )
+            // InternalECA.g:42:9: '<'
             {
-            match('>'); 
+            match('<'); 
 
             }
 
@@ -736,11 +738,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__44;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:43:7: ( '<=' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:43:9: '<='
+            // InternalECA.g:43:7: ( '>' )
+            // InternalECA.g:43:9: '>'
             {
-            match("<="); 
-
+            match('>'); 
 
             }
 
@@ -757,10 +758,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = T__45;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:44:7: ( '>=' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:44:9: '>='
+            // InternalECA.g:44:7: ( '<=' )
+            // InternalECA.g:44:9: '<='
             {
-            match(">="); 
+            match("<="); 
 
 
             }
@@ -773,15 +774,36 @@ public class InternalECALexer extends Lexer {
     }
     // $ANTLR end "T__45"
 
+    // $ANTLR start "T__46"
+    public final void mT__46() throws RecognitionException {
+        try {
+            int _type = T__46;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalECA.g:45:7: ( '>=' )
+            // InternalECA.g:45:9: '>='
+            {
+            match(">="); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__46"
+
     // $ANTLR start "RULE_DOUBLE"
     public final void mRULE_DOUBLE() throws RecognitionException {
         try {
             int _type = RULE_DOUBLE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:13: ( ( '-' )? ( '0' .. '9' )+ '.' '0' .. '9' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:15: ( '-' )? ( '0' .. '9' )+ '.' '0' .. '9'
+            // InternalECA.g:1855:13: ( ( '-' )? ( '0' .. '9' )+ '.' '0' .. '9' )
+            // InternalECA.g:1855:15: ( '-' )? ( '0' .. '9' )+ '.' '0' .. '9'
             {
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:15: ( '-' )?
+            // InternalECA.g:1855:15: ( '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -790,7 +812,7 @@ public class InternalECALexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:15: '-'
+                    // InternalECA.g:1855:15: '-'
                     {
                     match('-'); 
 
@@ -799,7 +821,7 @@ public class InternalECALexer extends Lexer {
 
             }
 
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:20: ( '0' .. '9' )+
+            // InternalECA.g:1855:20: ( '0' .. '9' )+
             int cnt2=0;
             loop2:
             do {
@@ -813,7 +835,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1878:21: '0' .. '9'
+            	    // InternalECA.g:1855:21: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -847,10 +869,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1880:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1880:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalECA.g:1857:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalECA.g:1857:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1880:11: ( '^' )?
+            // InternalECA.g:1857:11: ( '^' )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -859,7 +881,7 @@ public class InternalECALexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1880:11: '^'
+                    // InternalECA.g:1857:11: '^'
                     {
                     match('^'); 
 
@@ -877,7 +899,7 @@ public class InternalECALexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1880:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalECA.g:1857:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop4:
             do {
                 int alt4=2;
@@ -890,7 +912,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:
+            	    // InternalECA.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -926,10 +948,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1882:10: ( ( '0' .. '9' )+ )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1882:12: ( '0' .. '9' )+
+            // InternalECA.g:1859:10: ( ( '0' .. '9' )+ )
+            // InternalECA.g:1859:12: ( '0' .. '9' )+
             {
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1882:12: ( '0' .. '9' )+
+            // InternalECA.g:1859:12: ( '0' .. '9' )+
             int cnt5=0;
             loop5:
             do {
@@ -943,7 +965,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1882:13: '0' .. '9'
+            	    // InternalECA.g:1859:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -975,10 +997,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalECA.g:1861:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalECA.g:1861:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalECA.g:1861:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt8=2;
             int LA8_0 = input.LA(1);
 
@@ -996,10 +1018,10 @@ public class InternalECALexer extends Lexer {
             }
             switch (alt8) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalECA.g:1861:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalECA.g:1861:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop6:
                     do {
                         int alt6=3;
@@ -1015,7 +1037,7 @@ public class InternalECALexer extends Lexer {
 
                         switch (alt6) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:21: '\\\\' .
+                    	    // InternalECA.g:1861:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1023,7 +1045,7 @@ public class InternalECALexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalECA.g:1861:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1048,10 +1070,10 @@ public class InternalECALexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalECA.g:1861:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalECA.g:1861:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop7:
                     do {
                         int alt7=3;
@@ -1067,7 +1089,7 @@ public class InternalECALexer extends Lexer {
 
                         switch (alt7) {
                     	case 1 :
-                    	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:54: '\\\\' .
+                    	    // InternalECA.g:1861:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1075,7 +1097,7 @@ public class InternalECALexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1884:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalECA.g:1861:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1118,12 +1140,12 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1886:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1886:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalECA.g:1863:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalECA.g:1863:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1886:24: ( options {greedy=false; } : . )*
+            // InternalECA.g:1863:24: ( options {greedy=false; } : . )*
             loop9:
             do {
                 int alt9=2;
@@ -1148,7 +1170,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1886:52: .
+            	    // InternalECA.g:1863:52: .
             	    {
             	    matchAny(); 
 
@@ -1178,12 +1200,12 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalECA.g:1865:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalECA.g:1865:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalECA.g:1865:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop10:
             do {
                 int alt10=2;
@@ -1196,7 +1218,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalECA.g:1865:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1216,7 +1238,7 @@ public class InternalECALexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:40: ( ( '\\r' )? '\\n' )?
+            // InternalECA.g:1865:40: ( ( '\\r' )? '\\n' )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1225,9 +1247,9 @@ public class InternalECALexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:41: ( '\\r' )? '\\n'
+                    // InternalECA.g:1865:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:41: ( '\\r' )?
+                    // InternalECA.g:1865:41: ( '\\r' )?
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -1236,7 +1258,7 @@ public class InternalECALexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1888:41: '\\r'
+                            // InternalECA.g:1865:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1268,10 +1290,10 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1890:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1890:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalECA.g:1867:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalECA.g:1867:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1890:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalECA.g:1867:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt13=0;
             loop13:
             do {
@@ -1285,7 +1307,7 @@ public class InternalECALexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:
+            	    // InternalECA.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -1325,8 +1347,8 @@ public class InternalECALexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1892:16: ( . )
-            // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1892:18: .
+            // InternalECA.g:1869:16: ( . )
+            // InternalECA.g:1869:18: .
             {
             matchAny(); 
 
@@ -1341,299 +1363,306 @@ public class InternalECALexer extends Lexer {
     // $ANTLR end "RULE_ANY_OTHER"
 
     public void mTokens() throws RecognitionException {
-        // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | RULE_DOUBLE | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
-        int alt14=42;
+        // InternalECA.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | RULE_DOUBLE | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt14=43;
         alt14 = dfa14.predict(input);
         switch (alt14) {
             case 1 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:10: T__12
+                // InternalECA.g:1:10: T__12
                 {
                 mT__12(); 
 
                 }
                 break;
             case 2 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:16: T__13
+                // InternalECA.g:1:16: T__13
                 {
                 mT__13(); 
 
                 }
                 break;
             case 3 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:22: T__14
+                // InternalECA.g:1:22: T__14
                 {
                 mT__14(); 
 
                 }
                 break;
             case 4 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:28: T__15
+                // InternalECA.g:1:28: T__15
                 {
                 mT__15(); 
 
                 }
                 break;
             case 5 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:34: T__16
+                // InternalECA.g:1:34: T__16
                 {
                 mT__16(); 
 
                 }
                 break;
             case 6 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:40: T__17
+                // InternalECA.g:1:40: T__17
                 {
                 mT__17(); 
 
                 }
                 break;
             case 7 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:46: T__18
+                // InternalECA.g:1:46: T__18
                 {
                 mT__18(); 
 
                 }
                 break;
             case 8 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:52: T__19
+                // InternalECA.g:1:52: T__19
                 {
                 mT__19(); 
 
                 }
                 break;
             case 9 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:58: T__20
+                // InternalECA.g:1:58: T__20
                 {
                 mT__20(); 
 
                 }
                 break;
             case 10 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:64: T__21
+                // InternalECA.g:1:64: T__21
                 {
                 mT__21(); 
 
                 }
                 break;
             case 11 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:70: T__22
+                // InternalECA.g:1:70: T__22
                 {
                 mT__22(); 
 
                 }
                 break;
             case 12 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:76: T__23
+                // InternalECA.g:1:76: T__23
                 {
                 mT__23(); 
 
                 }
                 break;
             case 13 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:82: T__24
+                // InternalECA.g:1:82: T__24
                 {
                 mT__24(); 
 
                 }
                 break;
             case 14 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:88: T__25
+                // InternalECA.g:1:88: T__25
                 {
                 mT__25(); 
 
                 }
                 break;
             case 15 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:94: T__26
+                // InternalECA.g:1:94: T__26
                 {
                 mT__26(); 
 
                 }
                 break;
             case 16 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:100: T__27
+                // InternalECA.g:1:100: T__27
                 {
                 mT__27(); 
 
                 }
                 break;
             case 17 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:106: T__28
+                // InternalECA.g:1:106: T__28
                 {
                 mT__28(); 
 
                 }
                 break;
             case 18 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:112: T__29
+                // InternalECA.g:1:112: T__29
                 {
                 mT__29(); 
 
                 }
                 break;
             case 19 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:118: T__30
+                // InternalECA.g:1:118: T__30
                 {
                 mT__30(); 
 
                 }
                 break;
             case 20 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:124: T__31
+                // InternalECA.g:1:124: T__31
                 {
                 mT__31(); 
 
                 }
                 break;
             case 21 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:130: T__32
+                // InternalECA.g:1:130: T__32
                 {
                 mT__32(); 
 
                 }
                 break;
             case 22 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:136: T__33
+                // InternalECA.g:1:136: T__33
                 {
                 mT__33(); 
 
                 }
                 break;
             case 23 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:142: T__34
+                // InternalECA.g:1:142: T__34
                 {
                 mT__34(); 
 
                 }
                 break;
             case 24 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:148: T__35
+                // InternalECA.g:1:148: T__35
                 {
                 mT__35(); 
 
                 }
                 break;
             case 25 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:154: T__36
+                // InternalECA.g:1:154: T__36
                 {
                 mT__36(); 
 
                 }
                 break;
             case 26 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:160: T__37
+                // InternalECA.g:1:160: T__37
                 {
                 mT__37(); 
 
                 }
                 break;
             case 27 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:166: T__38
+                // InternalECA.g:1:166: T__38
                 {
                 mT__38(); 
 
                 }
                 break;
             case 28 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:172: T__39
+                // InternalECA.g:1:172: T__39
                 {
                 mT__39(); 
 
                 }
                 break;
             case 29 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:178: T__40
+                // InternalECA.g:1:178: T__40
                 {
                 mT__40(); 
 
                 }
                 break;
             case 30 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:184: T__41
+                // InternalECA.g:1:184: T__41
                 {
                 mT__41(); 
 
                 }
                 break;
             case 31 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:190: T__42
+                // InternalECA.g:1:190: T__42
                 {
                 mT__42(); 
 
                 }
                 break;
             case 32 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:196: T__43
+                // InternalECA.g:1:196: T__43
                 {
                 mT__43(); 
 
                 }
                 break;
             case 33 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:202: T__44
+                // InternalECA.g:1:202: T__44
                 {
                 mT__44(); 
 
                 }
                 break;
             case 34 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:208: T__45
+                // InternalECA.g:1:208: T__45
                 {
                 mT__45(); 
 
                 }
                 break;
             case 35 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:214: RULE_DOUBLE
+                // InternalECA.g:1:214: T__46
+                {
+                mT__46(); 
+
+                }
+                break;
+            case 36 :
+                // InternalECA.g:1:220: RULE_DOUBLE
                 {
                 mRULE_DOUBLE(); 
 
                 }
                 break;
-            case 36 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:226: RULE_ID
+            case 37 :
+                // InternalECA.g:1:232: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 37 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:234: RULE_INT
+            case 38 :
+                // InternalECA.g:1:240: RULE_INT
                 {
                 mRULE_INT(); 
 
                 }
                 break;
-            case 38 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:243: RULE_STRING
+            case 39 :
+                // InternalECA.g:1:249: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
-            case 39 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:255: RULE_ML_COMMENT
+            case 40 :
+                // InternalECA.g:1:261: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 40 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:271: RULE_SL_COMMENT
+            case 41 :
+                // InternalECA.g:1:277: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 41 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:287: RULE_WS
+            case 42 :
+                // InternalECA.g:1:293: RULE_WS
                 {
                 mRULE_WS(); 
 
                 }
                 break;
-            case 42 :
-                // ../de.uniol.inf.is.odysseus.eca/src-gen/de/uniol/inf/is/odysseus/eca/parser/antlr/internal/InternalECA.g:1:295: RULE_ANY_OTHER
+            case 43 :
+                // InternalECA.g:1:301: RULE_ANY_OTHER
                 {
                 mRULE_ANY_OTHER(); 
 
@@ -1647,218 +1676,212 @@ public class InternalECALexer extends Lexer {
 
     protected DFA14 dfa14 = new DFA14(this);
     static final String DFA14_eotS =
-        "\1\uffff\1\44\2\uffff\5\44\1\42\2\uffff\1\44\2\uffff\4\44\1\uffff"+
-        "\1\44\1\uffff\2\44\1\76\1\100\1\42\1\102\1\42\1\uffff\3\42\2\uffff"+
-        "\1\44\3\uffff\1\44\1\112\1\113\3\44\3\uffff\1\44\2\uffff\5\44\1"+
-        "\uffff\1\44\1\uffff\2\44\6\uffff\1\102\4\uffff\2\44\2\uffff\2\44"+
-        "\1\134\2\44\1\137\1\44\1\141\1\142\4\44\1\151\1\152\1\44\1\uffff"+
-        "\2\44\1\uffff\1\156\2\uffff\6\44\2\uffff\3\44\1\uffff\1\170\10\44"+
-        "\1\uffff\4\44\1\uffff\2\44\1\uffff\4\44\4\uffff\14\44\1\u009b\1"+
-        "\44\1\u009d\1\u009e\1\u009f\1\u00a0\1\uffff\1\u00a1\5\uffff";
+        "\1\uffff\2\46\2\uffff\6\46\1\44\2\uffff\1\46\2\uffff\4\46\1\uffff\1\46\1\uffff\2\46\1\103\1\105\1\44\1\107\1\44\1\uffff\3\44\2\uffff\1\46\1\uffff\1\46\2\uffff\5\46\1\125\1\126\1\46\3\uffff\1\46\2\uffff\5\46\1\uffff\1\46\1\uffff\2\46\6\uffff\1\107\4\uffff\10\46\2\uffff\1\151\2\46\1\154\1\46\1\156\1\157\6\46\1\170\1\46\1\172\2\46\1\uffff\2\46\1\uffff\1\177\2\uffff\10\46\1\uffff\1\46\1\uffff\1\46\1\u008a\2\46\1\uffff\1\u008d\4\46\1\u0092\4\46\1\uffff\2\46\1\uffff\4\46\1\uffff\5\46\1\uffff\4\46\1\u00a6\10\46\1\uffff\10\46\1\u00b7\1\46\1\u00b9\1\46\1\u00bb\1\u00bc\1\u00bd\1\u00be\1\uffff\1\46\1\uffff\1\u00c0\4\uffff\1\46\1\uffff\1\u00c2\1\uffff";
     static final String DFA14_eofS =
-        "\u00a2\uffff";
+        "\u00c3\uffff";
     static final String DFA14_minS =
-        "\1\0\1\105\2\uffff\1\111\1\116\1\106\1\110\1\116\1\173\2\uffff"+
-        "\1\165\2\uffff\1\131\1\105\1\162\1\101\1\uffff\1\164\1\uffff\2\165"+
-        "\2\75\1\60\1\56\1\101\1\uffff\2\0\1\52\2\uffff\1\106\3\uffff\1\124"+
-        "\2\60\1\105\1\155\1\104\3\uffff\1\145\2\uffff\1\123\1\124\1\151"+
-        "\1\116\1\130\1\uffff\1\141\1\uffff\1\145\1\162\6\uffff\1\56\4\uffff"+
-        "\1\111\1\110\2\uffff\1\116\1\145\1\60\1\162\1\124\1\60\1\157\2\60"+
-        "\1\164\1\162\1\103\1\116\2\60\1\162\1\uffff\1\171\1\105\1\uffff"+
-        "\1\60\2\uffff\1\145\1\171\1\120\3\105\2\uffff\2\105\1\115\1\uffff"+
-        "\1\60\1\105\1\125\1\115\1\124\1\40\1\166\1\170\1\56\1\uffff\1\166"+
-        "\3\114\1\103\1\145\1\151\1\uffff\1\145\3\157\4\uffff\1\156\1\163"+
-        "\1\156\3\141\3\164\3\144\1\60\1\163\4\60\1\uffff\1\60\5\uffff";
+        "\1\0\1\105\1\117\2\uffff\1\111\1\110\1\126\1\116\1\106\1\116\1\173\2\uffff\1\165\2\uffff\1\131\1\105\1\162\1\101\1\uffff\1\164\1\uffff\2\165\2\75\1\60\1\56\1\101\1\uffff\2\0\1\52\2\uffff\1\106\1\uffff\1\116\2\uffff\1\116\1\115\1\105\1\155\1\105\2\60\1\104\3\uffff\1\145\2\uffff\1\123\1\124\1\151\1\116\1\130\1\uffff\1\141\1\uffff\1\145\1\162\6\uffff\1\56\4\uffff\1\111\1\123\1\104\1\110\1\105\1\116\1\145\1\116\2\uffff\1\60\1\162\1\124\1\60\1\157\2\60\1\164\1\162\1\103\1\116\1\124\1\117\1\60\1\111\1\60\1\162\1\124\1\uffff\1\171\1\105\1\uffff\1\60\2\uffff\1\145\1\171\1\120\3\105\1\101\1\127\1\uffff\1\116\1\uffff\1\105\1\60\1\105\1\115\1\uffff\1\60\1\105\1\125\1\115\1\124\1\60\1\116\1\123\1\124\1\166\1\uffff\1\170\1\56\1\uffff\1\166\3\114\1\uffff\1\124\1\111\1\105\1\145\1\151\1\uffff\1\145\3\157\1\60\1\132\1\122\1\156\1\163\1\156\3\141\1\uffff\1\105\1\126\3\164\3\144\1\60\1\101\1\60\1\163\4\60\1\uffff\1\114\1\uffff\1\60\4\uffff\1\114\1\uffff\1\60\1\uffff";
     static final String DFA14_maxS =
-        "\1\uffff\1\105\2\uffff\1\111\1\116\1\106\1\151\1\116\1\173\2\uffff"+
-        "\1\165\2\uffff\1\131\1\105\1\162\1\111\1\uffff\1\164\1\uffff\2\165"+
-        "\2\75\2\71\1\172\1\uffff\2\uffff\1\57\2\uffff\1\106\3\uffff\1\124"+
-        "\2\172\1\105\1\155\1\104\3\uffff\1\145\2\uffff\1\123\1\124\1\151"+
-        "\1\116\1\130\1\uffff\1\141\1\uffff\1\145\1\162\6\uffff\1\71\4\uffff"+
-        "\1\111\1\110\2\uffff\1\116\1\145\1\172\1\162\1\124\1\172\1\157\2"+
-        "\172\1\164\1\162\2\116\2\172\1\162\1\uffff\1\171\1\105\1\uffff\1"+
-        "\172\2\uffff\1\145\1\171\1\120\3\105\2\uffff\2\105\1\115\1\uffff"+
-        "\1\172\1\105\1\125\1\115\1\124\1\40\1\166\1\170\1\56\1\uffff\1\166"+
-        "\3\114\1\127\1\145\1\151\1\uffff\1\145\3\157\4\uffff\1\156\1\163"+
-        "\1\156\3\141\3\164\3\144\1\172\1\163\4\172\1\uffff\1\172\5\uffff";
+        "\1\uffff\1\105\1\117\2\uffff\1\111\1\151\1\126\1\116\1\106\1\116\1\173\2\uffff\1\165\2\uffff\1\131\1\105\1\162\1\111\1\uffff\1\164\1\uffff\2\165\2\75\2\71\1\172\1\uffff\2\uffff\1\57\2\uffff\1\106\1\uffff\1\116\2\uffff\1\124\1\115\1\105\1\155\1\105\2\172\1\104\3\uffff\1\145\2\uffff\1\123\1\124\1\151\1\116\1\130\1\uffff\1\141\1\uffff\1\145\1\162\6\uffff\1\71\4\uffff\1\111\1\123\1\104\1\110\1\105\1\116\1\145\1\116\2\uffff\1\172\1\162\1\124\1\172\1\157\2\172\1\164\1\162\2\116\1\124\1\117\1\172\1\111\1\172\1\162\1\124\1\uffff\1\171\1\105\1\uffff\1\172\2\uffff\1\145\1\171\1\120\3\105\1\101\1\127\1\uffff\1\116\1\uffff\1\105\1\172\1\105\1\115\1\uffff\1\172\1\105\1\125\1\115\1\124\1\172\1\116\1\123\1\124\1\166\1\uffff\1\170\1\56\1\uffff\1\166\3\114\1\uffff\1\124\1\111\1\105\1\145\1\151\1\uffff\1\145\3\157\1\172\1\132\1\122\1\156\1\163\1\156\3\141\1\uffff\1\105\1\126\3\164\3\144\1\172\1\101\1\172\1\163\4\172\1\uffff\1\114\1\uffff\1\172\4\uffff\1\114\1\uffff\1\172\1\uffff";
     static final String DFA14_acceptS =
-        "\2\uffff\1\2\1\3\6\uffff\1\15\1\16\1\uffff\1\20\1\21\4\uffff\1"+
-        "\27\1\uffff\1\31\7\uffff\1\44\3\uffff\1\51\1\52\1\uffff\1\44\1\2"+
-        "\1\3\6\uffff\1\14\1\15\1\16\1\uffff\1\20\1\21\5\uffff\1\27\1\uffff"+
-        "\1\31\2\uffff\1\41\1\37\1\42\1\40\1\43\1\45\1\uffff\1\46\1\47\1"+
-        "\50\1\51\2\uffff\1\10\1\11\20\uffff\1\13\2\uffff\1\23\1\uffff\1"+
-        "\25\1\26\6\uffff\1\7\1\12\3\uffff\1\24\11\uffff\1\30\7\uffff\1\22"+
-        "\4\uffff\1\1\1\4\1\5\1\6\22\uffff\1\32\1\uffff\1\33\1\34\1\35\1"+
-        "\36\1\17";
+        "\3\uffff\1\3\1\4\7\uffff\1\16\1\17\1\uffff\1\21\1\22\4\uffff\1\30\1\uffff\1\32\7\uffff\1\45\3\uffff\1\52\1\53\1\uffff\1\45\1\uffff\1\3\1\4\10\uffff\1\15\1\16\1\17\1\uffff\1\21\1\22\5\uffff\1\30\1\uffff\1\32\2\uffff\1\42\1\40\1\43\1\41\1\44\1\46\1\uffff\1\47\1\50\1\51\1\52\10\uffff\1\11\1\12\22\uffff\1\14\2\uffff\1\24\1\uffff\1\26\1\27\10\uffff\1\10\1\uffff\1\13\4\uffff\1\25\12\uffff\1\7\2\uffff\1\31\4\uffff\1\1\5\uffff\1\23\15\uffff\1\2\20\uffff\1\5\1\uffff\1\33\1\uffff\1\34\1\35\1\36\1\37\1\uffff\1\20\1\uffff\1\6";
     static final String DFA14_specialS =
-        "\1\2\35\uffff\1\1\1\0\u0082\uffff}>";
+        "\1\1\37\uffff\1\2\1\0\u00a1\uffff}>";
     static final String[] DFA14_transitionS = {
-            "\11\42\2\41\2\42\1\41\22\42\1\41\1\13\1\36\1\42\1\11\2\42\1"+
-            "\37\1\15\1\16\2\42\1\23\1\32\1\42\1\40\12\33\1\2\1\3\1\30\1"+
-            "\25\1\31\2\42\1\10\2\35\1\1\2\35\1\20\1\35\1\6\3\35\1\22\1\35"+
-            "\1\5\1\35\1\26\1\35\1\17\1\7\2\35\1\4\3\35\3\42\1\34\1\35\1"+
-            "\42\2\35\1\27\14\35\1\21\1\14\1\35\1\24\7\35\2\42\1\12\uff82"+
-            "\42",
-            "\1\43",
-            "",
-            "",
+            "\11\44\2\43\2\44\1\43\22\44\1\43\1\15\1\40\1\44\1\13\2\44\1\41\1\17\1\20\2\44\1\25\1\34\1\44\1\42\12\35\1\3\1\4\1\32\1\27\1\33\2\44\1\12\1\37\1\2\1\1\1\7\1\37\1\22\1\37\1\11\3\37\1\24\1\37\1\10\1\37\1\30\1\37\1\21\1\6\2\37\1\5\3\37\3\44\1\36\1\37\1\44\2\37\1\31\14\37\1\23\1\16\1\37\1\26\7\37\2\44\1\14\uff82\44",
+            "\1\45",
             "\1\47",
-            "\1\50",
-            "\1\51",
-            "\1\52\40\uffff\1\53",
-            "\1\54",
-            "\1\55",
             "",
             "",
+            "\1\52",
+            "\1\54\1\53\37\uffff\1\55",
+            "\1\56",
+            "\1\57",
             "\1\60",
+            "\1\61",
+            "\1\62",
             "",
             "",
-            "\1\63",
-            "\1\64",
             "\1\65",
-            "\1\67\7\uffff\1\66",
             "",
+            "",
+            "\1\70",
             "\1\71",
+            "\1\72",
+            "\1\74\7\uffff\1\73",
             "",
-            "\1\73",
-            "\1\74",
-            "\1\75",
-            "\1\77",
-            "\12\101",
-            "\1\101\1\uffff\12\103",
-            "\32\44\4\uffff\1\44\1\uffff\32\44",
+            "\1\76",
             "",
-            "\0\104",
-            "\0\104",
-            "\1\105\4\uffff\1\106",
+            "\1\100",
+            "\1\101",
+            "\1\102",
+            "\1\104",
+            "\12\106",
+            "\1\106\1\uffff\12\110",
+            "\32\46\4\uffff\1\46\1\uffff\32\46",
             "",
-            "",
-            "\1\110",
-            "",
+            "\0\111",
+            "\0\111",
+            "\1\112\4\uffff\1\113",
             "",
             "",
-            "\1\111",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\1\114",
             "\1\115",
+            "",
             "\1\116",
             "",
             "",
-            "",
-            "\1\117",
-            "",
-            "",
-            "\1\120",
+            "\1\117\5\uffff\1\120",
             "\1\121",
             "\1\122",
             "\1\123",
             "\1\124",
-            "",
-            "\1\125",
-            "",
-            "\1\126",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\127",
             "",
             "",
             "",
-            "",
-            "",
-            "",
-            "\1\101\1\uffff\12\103",
-            "",
-            "",
-            "",
-            "",
             "\1\130",
+            "",
+            "",
             "\1\131",
-            "",
-            "",
             "\1\132",
             "\1\133",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "\1\134",
             "\1\135",
+            "",
             "\1\136",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "",
+            "\1\137",
             "\1\140",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\106\1\uffff\12\110",
+            "",
+            "",
+            "",
+            "",
+            "\1\141",
+            "\1\142",
             "\1\143",
             "\1\144",
-            "\1\145\11\uffff\1\146\1\147",
+            "\1\145",
+            "\1\146",
+            "\1\147",
             "\1\150",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "",
+            "",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\152",
             "\1\153",
-            "",
-            "\1\154",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\155",
-            "",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "",
-            "",
-            "\1\157",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\160",
             "\1\161",
-            "\1\162",
-            "\1\163",
-            "\1\164",
-            "",
-            "",
+            "\1\162\11\uffff\1\163\1\164",
             "\1\165",
             "\1\166",
             "\1\167",
-            "",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\171",
-            "\1\172",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\173",
             "\1\174",
+            "",
             "\1\175",
             "\1\176",
-            "\1\177",
-            "\1\u0080",
             "",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "",
+            "",
+            "\1\u0080",
             "\1\u0081",
             "\1\u0082",
             "\1\u0083",
             "\1\u0084",
-            "\1\u0085\1\uffff\1\u0088\16\uffff\1\u0087\2\uffff\1\u0086",
-            "\1\u0089",
-            "\1\u008a",
+            "\1\u0085",
+            "\1\u0086",
+            "\1\u0087",
             "",
+            "\1\u0088",
+            "",
+            "\1\u0089",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\u008b",
             "\1\u008c",
-            "\1\u008d",
+            "",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\u008e",
-            "",
-            "",
-            "",
-            "",
             "\1\u008f",
             "\1\u0090",
             "\1\u0091",
-            "\1\u0092",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "\1\u0093",
             "\1\u0094",
             "\1\u0095",
             "\1\u0096",
+            "",
             "\1\u0097",
             "\1\u0098",
+            "",
             "\1\u0099",
             "\1\u009a",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "\1\u009b",
             "\1\u009c",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
             "",
-            "\12\44\7\uffff\32\44\4\uffff\1\44\1\uffff\32\44",
+            "\1\u009d",
+            "\1\u009e",
+            "\1\u009f",
+            "\1\u00a0",
+            "\1\u00a1",
+            "",
+            "\1\u00a2",
+            "\1\u00a3",
+            "\1\u00a4",
+            "\1\u00a5",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\u00a7",
+            "\1\u00a8",
+            "\1\u00a9",
+            "\1\u00aa",
+            "\1\u00ab",
+            "\1\u00ac",
+            "\1\u00ad",
+            "\1\u00ae",
+            "",
+            "\1\u00af",
+            "\1\u00b0",
+            "\1\u00b1",
+            "\1\u00b2",
+            "\1\u00b3",
+            "\1\u00b4",
+            "\1\u00b5",
+            "\1\u00b6",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\u00b8",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\1\u00ba",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
+            "",
+            "\1\u00bf",
+            "",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             "",
             "",
             "",
             "",
+            "\1\u00c1",
+            "",
+            "\12\46\7\uffff\32\46\4\uffff\1\46\1\uffff\32\46",
             ""
     };
 
@@ -1892,103 +1915,107 @@ public class InternalECALexer extends Lexer {
             this.transition = DFA14_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | RULE_DOUBLE | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
+            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | T__40 | T__41 | T__42 | T__43 | T__44 | T__45 | T__46 | RULE_DOUBLE | RULE_ID | RULE_INT | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             IntStream input = _input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA14_31 = input.LA(1);
+                        int LA14_33 = input.LA(1);
 
                         s = -1;
-                        if ( ((LA14_31>='\u0000' && LA14_31<='\uFFFF')) ) {s = 68;}
+                        if ( ((LA14_33>='\u0000' && LA14_33<='\uFFFF')) ) {s = 73;}
 
-                        else s = 34;
+                        else s = 36;
 
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA14_30 = input.LA(1);
-
-                        s = -1;
-                        if ( ((LA14_30>='\u0000' && LA14_30<='\uFFFF')) ) {s = 68;}
-
-                        else s = 34;
-
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
                         int LA14_0 = input.LA(1);
 
                         s = -1;
                         if ( (LA14_0=='D') ) {s = 1;}
 
-                        else if ( (LA14_0==':') ) {s = 2;}
+                        else if ( (LA14_0=='C') ) {s = 2;}
 
-                        else if ( (LA14_0==';') ) {s = 3;}
+                        else if ( (LA14_0==':') ) {s = 3;}
 
-                        else if ( (LA14_0=='W') ) {s = 4;}
+                        else if ( (LA14_0==';') ) {s = 4;}
 
-                        else if ( (LA14_0=='O') ) {s = 5;}
+                        else if ( (LA14_0=='W') ) {s = 5;}
 
-                        else if ( (LA14_0=='I') ) {s = 6;}
+                        else if ( (LA14_0=='T') ) {s = 6;}
 
-                        else if ( (LA14_0=='T') ) {s = 7;}
+                        else if ( (LA14_0=='E') ) {s = 7;}
 
-                        else if ( (LA14_0=='A') ) {s = 8;}
+                        else if ( (LA14_0=='O') ) {s = 8;}
 
-                        else if ( (LA14_0=='$') ) {s = 9;}
+                        else if ( (LA14_0=='I') ) {s = 9;}
 
-                        else if ( (LA14_0=='}') ) {s = 10;}
+                        else if ( (LA14_0=='A') ) {s = 10;}
 
-                        else if ( (LA14_0=='!') ) {s = 11;}
+                        else if ( (LA14_0=='$') ) {s = 11;}
 
-                        else if ( (LA14_0=='q') ) {s = 12;}
+                        else if ( (LA14_0=='}') ) {s = 12;}
 
-                        else if ( (LA14_0=='(') ) {s = 13;}
+                        else if ( (LA14_0=='!') ) {s = 13;}
 
-                        else if ( (LA14_0==')') ) {s = 14;}
+                        else if ( (LA14_0=='q') ) {s = 14;}
 
-                        else if ( (LA14_0=='S') ) {s = 15;}
+                        else if ( (LA14_0=='(') ) {s = 15;}
 
-                        else if ( (LA14_0=='G') ) {s = 16;}
+                        else if ( (LA14_0==')') ) {s = 16;}
 
-                        else if ( (LA14_0=='p') ) {s = 17;}
+                        else if ( (LA14_0=='S') ) {s = 17;}
 
-                        else if ( (LA14_0=='M') ) {s = 18;}
+                        else if ( (LA14_0=='G') ) {s = 18;}
 
-                        else if ( (LA14_0==',') ) {s = 19;}
+                        else if ( (LA14_0=='p') ) {s = 19;}
 
-                        else if ( (LA14_0=='s') ) {s = 20;}
+                        else if ( (LA14_0=='M') ) {s = 20;}
 
-                        else if ( (LA14_0=='=') ) {s = 21;}
+                        else if ( (LA14_0==',') ) {s = 21;}
 
-                        else if ( (LA14_0=='Q') ) {s = 22;}
+                        else if ( (LA14_0=='s') ) {s = 22;}
 
-                        else if ( (LA14_0=='c') ) {s = 23;}
+                        else if ( (LA14_0=='=') ) {s = 23;}
 
-                        else if ( (LA14_0=='<') ) {s = 24;}
+                        else if ( (LA14_0=='Q') ) {s = 24;}
 
-                        else if ( (LA14_0=='>') ) {s = 25;}
+                        else if ( (LA14_0=='c') ) {s = 25;}
 
-                        else if ( (LA14_0=='-') ) {s = 26;}
+                        else if ( (LA14_0=='<') ) {s = 26;}
 
-                        else if ( ((LA14_0>='0' && LA14_0<='9')) ) {s = 27;}
+                        else if ( (LA14_0=='>') ) {s = 27;}
 
-                        else if ( (LA14_0=='^') ) {s = 28;}
+                        else if ( (LA14_0=='-') ) {s = 28;}
 
-                        else if ( ((LA14_0>='B' && LA14_0<='C')||(LA14_0>='E' && LA14_0<='F')||LA14_0=='H'||(LA14_0>='J' && LA14_0<='L')||LA14_0=='N'||LA14_0=='P'||LA14_0=='R'||(LA14_0>='U' && LA14_0<='V')||(LA14_0>='X' && LA14_0<='Z')||LA14_0=='_'||(LA14_0>='a' && LA14_0<='b')||(LA14_0>='d' && LA14_0<='o')||LA14_0=='r'||(LA14_0>='t' && LA14_0<='z')) ) {s = 29;}
+                        else if ( ((LA14_0>='0' && LA14_0<='9')) ) {s = 29;}
 
-                        else if ( (LA14_0=='\"') ) {s = 30;}
+                        else if ( (LA14_0=='^') ) {s = 30;}
 
-                        else if ( (LA14_0=='\'') ) {s = 31;}
+                        else if ( (LA14_0=='B'||LA14_0=='F'||LA14_0=='H'||(LA14_0>='J' && LA14_0<='L')||LA14_0=='N'||LA14_0=='P'||LA14_0=='R'||(LA14_0>='U' && LA14_0<='V')||(LA14_0>='X' && LA14_0<='Z')||LA14_0=='_'||(LA14_0>='a' && LA14_0<='b')||(LA14_0>='d' && LA14_0<='o')||LA14_0=='r'||(LA14_0>='t' && LA14_0<='z')) ) {s = 31;}
 
-                        else if ( (LA14_0=='/') ) {s = 32;}
+                        else if ( (LA14_0=='\"') ) {s = 32;}
 
-                        else if ( ((LA14_0>='\t' && LA14_0<='\n')||LA14_0=='\r'||LA14_0==' ') ) {s = 33;}
+                        else if ( (LA14_0=='\'') ) {s = 33;}
 
-                        else if ( ((LA14_0>='\u0000' && LA14_0<='\b')||(LA14_0>='\u000B' && LA14_0<='\f')||(LA14_0>='\u000E' && LA14_0<='\u001F')||LA14_0=='#'||(LA14_0>='%' && LA14_0<='&')||(LA14_0>='*' && LA14_0<='+')||LA14_0=='.'||(LA14_0>='?' && LA14_0<='@')||(LA14_0>='[' && LA14_0<=']')||LA14_0=='`'||(LA14_0>='{' && LA14_0<='|')||(LA14_0>='~' && LA14_0<='\uFFFF')) ) {s = 34;}
+                        else if ( (LA14_0=='/') ) {s = 34;}
+
+                        else if ( ((LA14_0>='\t' && LA14_0<='\n')||LA14_0=='\r'||LA14_0==' ') ) {s = 35;}
+
+                        else if ( ((LA14_0>='\u0000' && LA14_0<='\b')||(LA14_0>='\u000B' && LA14_0<='\f')||(LA14_0>='\u000E' && LA14_0<='\u001F')||LA14_0=='#'||(LA14_0>='%' && LA14_0<='&')||(LA14_0>='*' && LA14_0<='+')||LA14_0=='.'||(LA14_0>='?' && LA14_0<='@')||(LA14_0>='[' && LA14_0<=']')||LA14_0=='`'||(LA14_0>='{' && LA14_0<='|')||(LA14_0>='~' && LA14_0<='\uFFFF')) ) {s = 36;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA14_32 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA14_32>='\u0000' && LA14_32<='\uFFFF')) ) {s = 73;}
+
+                        else s = 36;
 
                         if ( s>=0 ) return s;
                         break;

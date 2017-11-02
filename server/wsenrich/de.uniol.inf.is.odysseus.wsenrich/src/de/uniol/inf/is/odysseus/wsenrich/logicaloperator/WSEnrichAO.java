@@ -208,6 +208,9 @@ public class WSEnrichAO extends AbstractEnrichAO {
 
 	@Override
 	protected SDFSchema getOutputSchemaIntern(int port) {
+		if (recalcOutputSchemata || getOutputSchema() == null) {
+			initialize();
+		}
 		return getOutputSchema();
 	}
 

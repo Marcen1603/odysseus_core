@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.generator.IFileSystemAccess;
-import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IGenerator2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,7 @@ import de.uniol.inf.is.odysseus.iql.basic.generator.context.IIQLGeneratorContext
 
 
 
-public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C extends IIQLCompiler<G>>  implements IIQLGenerator, IGenerator{
+public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C extends IIQLCompiler<G>>  implements IIQLGenerator, IGenerator2 {
 	
 	protected G context;
 	
@@ -34,11 +34,6 @@ public abstract class AbstractIQLGenerator<G extends IIQLGeneratorContext,  C ex
 	public AbstractIQLGenerator (G context, C compiler) {
 		this.context = context;
 		this.compiler = compiler;
-	}
-
-	@Override
-	public void doGenerate(Resource input, IFileSystemAccess fsa) {
-		doGenerate(input, fsa, null);
 	}
 	
 	@Override

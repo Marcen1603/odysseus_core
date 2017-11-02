@@ -8,9 +8,9 @@ import java.util.Map;
 import ch.hsr.geohash.GeoHash;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
+import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 
 public class GeoHashMODataStructure extends GeoHashMONoCleanupIndexStructure {
 

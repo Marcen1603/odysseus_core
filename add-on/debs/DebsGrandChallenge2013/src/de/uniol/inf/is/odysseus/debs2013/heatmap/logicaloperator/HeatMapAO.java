@@ -130,6 +130,14 @@ public class HeatMapAO extends UnaryLogicalOp {
 		return valueAttribute;
 	}
 	
+	@Override
+	protected SDFSchema getOutputSchemaIntern(int port) {
+		if (recalcOutputSchemata || getOutputSchema() == null) {
+			initOutputSchema();
+		}
+		return getOutputSchema();
+	}
+	
 	public void initOutputSchema() {
 		String schemaURI = "heatmap";
 		SDFSchema grandChallengeSchema = SDFSchemaFactory.createNewTupleSchema(schemaURI,

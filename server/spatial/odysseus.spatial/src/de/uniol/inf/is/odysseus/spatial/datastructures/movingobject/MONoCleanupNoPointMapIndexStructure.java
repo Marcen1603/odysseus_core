@@ -24,11 +24,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.spatial.datastructures.GeoHashHelper;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
+import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 /**
@@ -39,7 +40,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @author Tobias Brandt
  *
  */
-public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStructure {
+public class MONoCleanupNoPointMapIndexStructure implements MovingObjectIndexOld {
 
 	public static final int BIT_PRECISION = 64;
 	public static final String TYPE = "mo_no_cleanup_geohash";
@@ -50,14 +51,14 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 	// The name of the data structure to access it
 	private String name;
 
-//	protected NavigableMap<GeoHash, List<TrajectoryElement>> pointMap;
+	// protected NavigableMap<GeoHash, List<TrajectoryElement>> pointMap;
 	protected Map<String, TrajectoryElement> latestTrajectoryElementMap;
 
 	public MONoCleanupNoPointMapIndexStructure(String name, int geometryPosition) {
 		this.name = name;
 		this.geometryAttributePosition = geometryPosition;
 
-//		this.pointMap = new TreeMap<>();
+		// this.pointMap = new TreeMap<>();
 		this.latestTrajectoryElementMap = new HashMap<>();
 	}
 
@@ -76,18 +77,18 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 				locationMeasurement.getMeasurementTime(), streamElement);
 		latestTrajectoryElementMap.put(id, trajectoryElement);
 
-//		List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
-//		if (geoHashList == null) {
-//			/*
-//			 * Probably we will only have one element in here as two objects on the same
-//			 * location are unlikely (but depends on the scenario)
-//			 */
-//			geoHashList = new ArrayList<>(1);
-//		}
+		// List<TrajectoryElement> geoHashList = this.pointMap.get(geoHash);
+		// if (geoHashList == null) {
+		// /*
+		// * Probably we will only have one element in here as two objects on the same
+		// * location are unlikely (but depends on the scenario)
+		// */
+		// geoHashList = new ArrayList<>(1);
+		// }
 
 		// Add the new element to the list
-//		geoHashList.add(trajectoryElement);
-//		this.pointMap.put(geoHash, geoHashList);
+		// geoHashList.add(trajectoryElement);
+		// this.pointMap.put(geoHash, geoHashList);
 	}
 
 	@Override
@@ -116,57 +117,62 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 	private Map<String, List<ResultElement>> queryCircle(Geometry geometry, double radius, ITimeInterval t,
 			Map<GeoHash, List<Tuple<ITimeInterval>>> candidateCollection, String movingObjectIdToIgnore) {
 
-//		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
-//
-//		// TODO Maybe faster with Haversine. Give choice?
-//		// TODO Think about: maybe it is faster to first check if the point is
-//		// within a polygon (cheap) and reduce the number of distance
-//		// calculations (expensive)
-//
-//		Map<String, List<ResultElement>> resultMap = new HashMap<>();
-//
-//		// Check all candidates
-//		for (GeoHash key : candidateCollection.keySet()) {
-//
-//			double meters = spatialUtils.calculateDistance(null, geometry.getCentroid().getCoordinate(),
-//					new Coordinate(key.getPoint().getLatitude(), key.getPoint().getLongitude()));
-//
-//			// Check if they are in the given radius
-//			if (meters <= radius) {
-//				// All elements that are at this point (key) need to be added to
-//				// the result
-//				for (TrajectoryElement element : pointMap.get(key)) {
-//
-//					if (movingObjectIdToIgnore != null && !movingObjectIdToIgnore.isEmpty()
-//							&& element.getMovingObjectID().equals(movingObjectIdToIgnore)) {
-//						// This is probably the moving object we are searching for, hence, do not put it
-//						// into the results
-//						continue;
-//					}
-//
-//					// Check if the result is within the given time interval
-//					if (element.getStreamElement().getMetadata() instanceof ITimeInterval) {
-//						ITimeInterval time = (ITimeInterval) element.getStreamElement().getMetadata();
-//						if (!(time.getStart().before(t.getEnd()) && time.getEnd().after(t.getStart()))) {
-//							// It's not in the right time interval
-//							continue;
-//						}
-//					}
-//
-//					// Check if we already have results for this key
-//					List<ResultElement> listOfMOInRadius = resultMap.get(element.getMovingObjectID());
-//					if (listOfMOInRadius == null) {
-//						// No: Add a result list
-//						listOfMOInRadius = new ArrayList<ResultElement>();
-//						resultMap.put(element.getMovingObjectID(), listOfMOInRadius);
-//					}
-//					ResultElement resultElement = new ResultElement(element, meters);
-//					listOfMOInRadius.add(resultElement);
-//				}
-//			}
-//		}
-//
-//		return resultMap;
+		// MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+		//
+		// // TODO Maybe faster with Haversine. Give choice?
+		// // TODO Think about: maybe it is faster to first check if the point is
+		// // within a polygon (cheap) and reduce the number of distance
+		// // calculations (expensive)
+		//
+		// Map<String, List<ResultElement>> resultMap = new HashMap<>();
+		//
+		// // Check all candidates
+		// for (GeoHash key : candidateCollection.keySet()) {
+		//
+		// double meters = spatialUtils.calculateDistance(null,
+		// geometry.getCentroid().getCoordinate(),
+		// new Coordinate(key.getPoint().getLatitude(), key.getPoint().getLongitude()));
+		//
+		// // Check if they are in the given radius
+		// if (meters <= radius) {
+		// // All elements that are at this point (key) need to be added to
+		// // the result
+		// for (TrajectoryElement element : pointMap.get(key)) {
+		//
+		// if (movingObjectIdToIgnore != null && !movingObjectIdToIgnore.isEmpty()
+		// && element.getMovingObjectID().equals(movingObjectIdToIgnore)) {
+		// // This is probably the moving object we are searching for, hence, do not put
+		// it
+		// // into the results
+		// continue;
+		// }
+		//
+		// // Check if the result is within the given time interval
+		// if (element.getStreamElement().getMetadata() instanceof ITimeInterval) {
+		// ITimeInterval time = (ITimeInterval)
+		// element.getStreamElement().getMetadata();
+		// if (!(time.getStart().before(t.getEnd()) &&
+		// time.getEnd().after(t.getStart()))) {
+		// // It's not in the right time interval
+		// continue;
+		// }
+		// }
+		//
+		// // Check if we already have results for this key
+		// List<ResultElement> listOfMOInRadius =
+		// resultMap.get(element.getMovingObjectID());
+		// if (listOfMOInRadius == null) {
+		// // No: Add a result list
+		// listOfMOInRadius = new ArrayList<ResultElement>();
+		// resultMap.put(element.getMovingObjectID(), listOfMOInRadius);
+		// }
+		// ResultElement resultElement = new ResultElement(element, meters);
+		// listOfMOInRadius.add(resultElement);
+		// }
+		// }
+		// }
+		//
+		// return resultMap;
 		return null;
 	}
 
@@ -246,7 +252,7 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 					results.get(otherMovingObjectID).add(queryResultElement);
 				}
 			}
-			
+
 			// Go on with the previous / older element we know
 			centerElement = centerElement.getPreviousElement();
 		} while (centerElement != null);
@@ -282,45 +288,49 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 	}
 
 	protected Map<GeoHash, List<Tuple<ITimeInterval>>> approximateBoundinBox(Polygon polygon) {
-//		Geometry envelope = polygon.getEnvelope();
-//
-//		// Get hashes that we have to search for
-//		// TODO This is guessed. See which coordinate is which. ->
-//		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
-//		// with all polygonPoints
-//		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
-//		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
-//		BoundingBox bBox = new BoundingBox(point1, point2);
-//		GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
-//		List<GeoHash> searchHashes = bbQuery.getSearchHashes();
-//
-//		// Get all hashes that we have to calculate the distance for
-//		Map<GeoHash, List<Tuple<ITimeInterval>>> allHashes = new HashMap<>();
-//		for (GeoHash hash : searchHashes) {
-//			// Query all our hashes and use those which have the same prefix
-//			// The whole list of hashes is used in "getByPrefix"
-//			allHashes.putAll((Map<? extends GeoHash, ? extends List<Tuple<ITimeInterval>>>) GeoHashHelper
-//					.getByPreffix(hash, pointMap));
-//		}
-//		return allHashes;
+		// Geometry envelope = polygon.getEnvelope();
+		//
+		// // Get hashes that we have to search for
+		// // TODO This is guessed. See which coordinate is which. ->
+		// // First test seems to be OK. Other possibility: expand BoundingBoxQuery
+		// // with all polygonPoints
+		// WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x,
+		// envelope.getCoordinates()[0].y);
+		// WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x,
+		// envelope.getCoordinates()[2].y);
+		// BoundingBox bBox = new BoundingBox(point1, point2);
+		// GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
+		// List<GeoHash> searchHashes = bbQuery.getSearchHashes();
+		//
+		// // Get all hashes that we have to calculate the distance for
+		// Map<GeoHash, List<Tuple<ITimeInterval>>> allHashes = new HashMap<>();
+		// for (GeoHash hash : searchHashes) {
+		// // Query all our hashes and use those which have the same prefix
+		// // The whole list of hashes is used in "getByPrefix"
+		// allHashes.putAll((Map<? extends GeoHash, ? extends
+		// List<Tuple<ITimeInterval>>>) GeoHashHelper
+		// .getByPreffix(hash, pointMap));
+		// }
+		// return allHashes;
 		return null;
 	}
 
 	private Map<String, List<TrajectoryElement>> convertToTrajectoryMap(List<GeoHash> unsortedList) {
-//		Map<String, List<TrajectoryElement>> resultMap = new HashMap<>();
-//
-//		for (GeoHash hash : unsortedList) {
-//			for (TrajectoryElement element : pointMap.get(hash)) {
-//				List<TrajectoryElement> listOfMOInBoundingBox = resultMap.get(element.getMovingObjectID());
-//				if (listOfMOInBoundingBox == null) {
-//					listOfMOInBoundingBox = new ArrayList<TrajectoryElement>();
-//					resultMap.put(element.getMovingObjectID(), listOfMOInBoundingBox);
-//				}
-//				listOfMOInBoundingBox.add(element);
-//			}
-//		}
-//
-//		return resultMap;
+		// Map<String, List<TrajectoryElement>> resultMap = new HashMap<>();
+		//
+		// for (GeoHash hash : unsortedList) {
+		// for (TrajectoryElement element : pointMap.get(hash)) {
+		// List<TrajectoryElement> listOfMOInBoundingBox =
+		// resultMap.get(element.getMovingObjectID());
+		// if (listOfMOInBoundingBox == null) {
+		// listOfMOInBoundingBox = new ArrayList<TrajectoryElement>();
+		// resultMap.put(element.getMovingObjectID(), listOfMOInBoundingBox);
+		// }
+		// listOfMOInBoundingBox.add(element);
+		// }
+		// }
+		//
+		// return resultMap;
 		return null;
 	}
 
@@ -442,6 +452,17 @@ public class MONoCleanupNoPointMapIndexStructure implements IMovingObjectDataStr
 	@Override
 	public Set<String> getAllMovingObjectIds() {
 		return this.latestTrajectoryElementMap.keySet();
+	}
+
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius) {
+		// TODO Implement this method
+		return null;
+	}
+
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius,
+			TimeInterval t) {
+		// TODO Implement this method
+		return null;
 	}
 
 }

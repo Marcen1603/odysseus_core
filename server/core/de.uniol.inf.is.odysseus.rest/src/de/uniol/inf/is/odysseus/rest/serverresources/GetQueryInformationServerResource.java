@@ -47,6 +47,7 @@ public class GetQueryInformationServerResource extends AbstractSessionServerReso
 		String name = "";
 		String parser = "";
 		String state = "";
+		String queryText = "";
 		
 		// Check, if query exists
 		IPhysicalQuery query = ExecutorServiceBinding.getExecutor().getExecutionPlan(session).getQueryById(queryId, session);
@@ -66,9 +67,10 @@ public class GetQueryInformationServerResource extends AbstractSessionServerReso
 			}
 			parser = ExecutorServiceBinding.getExecutor().getLogicalQueryById(queryId, session).getParserId();
 			state = query.getState().toString();
+			queryText = query.getQueryText();
 		}
 		
-		QueryInformation queryInformation = new QueryInformation(name, parser, state);
+		QueryInformation queryInformation = new QueryInformation(name, parser, state, queryText);
 		return new GenericResponseDTO<QueryInformation>(queryInformation);
 	}
 }
