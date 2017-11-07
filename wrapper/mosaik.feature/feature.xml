@@ -21,6 +21,10 @@ mosaik to odysseus.
          id="de.uniol.inf.is.odysseus.keyvalue.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.graph.server.feature"
+         version="0.0.0"/>
+
    <plugin
          id="de.uniol.inf.is.odysseus.wrapper.mosaik"
          download-size="0"
