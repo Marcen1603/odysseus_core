@@ -46,13 +46,7 @@ public class Activator implements BundleActivator {
 	public static BundleContext getBundleContext(){
 		return bundleContext;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext
-	 * )
-	 */
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void start(BundleContext context) throws Exception {	
@@ -98,12 +92,6 @@ public class Activator implements BundleActivator {
 	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		bundleContext = null;
