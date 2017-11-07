@@ -77,10 +77,8 @@ public class Activator implements BundleActivator {
 		ProtocolHandlerRegistry.register(new SimpleCSVProtocolHandler());
 		ProtocolHandlerRegistry.register(new NoProtocolHandler());
 		ProtocolHandlerRegistry.register(new TextProtocolHandler());
-		//ProtocolHandlerRegistry.register(new SizeByteBufferHandler());
 		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
 		ProtocolHandlerRegistry.register(new SVMProtocolHandler());
-		//ProtocolHandlerRegistry.register(new SimpleByteBufferHandler<>());
 		
 		TransportHandlerRegistry.register(new TcpSocketHandler());
 		TransportHandlerRegistry.register(new FileHandler());
@@ -88,11 +86,6 @@ public class Activator implements BundleActivator {
         TransportHandlerRegistry.register(new DirectoryWatcherTransportHandler());
 		TransportHandlerRegistry.register(new NonBlockingTcpHandler());		
 		
-//		TransportHandlerRegistry.register(new NonBlockingTcpServerHandler());
-//		TransportHandlerRegistry.register(new NonBlockingTcpClientHandler());
-//		TransportHandlerRegistry.register(new NonBlockingUdpServerHandler());
-//		TransportHandlerRegistry.register(new NonBlockingUdpClientHandler());
-
 		DataHandlerRegistry.registerDataHandler(new ListDataHandler());	
 	}
 	
