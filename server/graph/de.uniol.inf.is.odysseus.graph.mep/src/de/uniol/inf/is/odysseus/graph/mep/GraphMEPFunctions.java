@@ -12,7 +12,11 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 /**
  * Provides the MEP functions for graphs (see {@link Graph} and {@link SDFGraphDatatype}) : <br />
  * <ul>
+ * <li>{@link AddAttributeToEdge}</li>
+ * <li>{@link AddAttributeToGraph}</li>
+ * <li>{@link AddAttributeToNode}</li>
  * <li>{@link FindNodesByPatternMEP}</li>
+ * <li>{@link GetGraphElementIdMEP}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -23,7 +27,7 @@ public class GraphMEPFunctions implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new FindNodesByPatternMEP(), new GetGraphElementIdMEP() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new AddAttributeToEdge(), new AddAttributeToGraph(), new AddAttributeToNode(), new FindNodesByPatternMEP(), new GetGraphElementIdMEP() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
