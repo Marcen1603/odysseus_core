@@ -8,10 +8,10 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 /**
- * TODO update javaDoc
- * MEP function to get the id of a graph {@link Element}.
- * The input is a graph element (graph, node or edge). The output is the id
- * (String) of the graph element.
+ * Abstract MEP function to add an attribute (string or
+ * object) to a graph {@link Element}. The inputs are a graph element (graph,
+ * node or edge), the key of the attribute, and its value. The output is the
+ * updated graph element.
  *
  * @author Michael Brand (michael.brand@uol.de)
  *

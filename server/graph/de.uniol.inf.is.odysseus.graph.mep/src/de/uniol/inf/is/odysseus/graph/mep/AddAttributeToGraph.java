@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.graph.mep;
 
-import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.graph.datatype.SDFGraphDatatype;
 
 /**
- * TODO update javadoc MEP function to get the id of a graph {@link Element}.
- * The input is a graph element (graph, node or edge). The output is the id
- * (String) of the graph element.
+ * MEP function to add an attribute (string or object) to a {@link Graph}. The
+ * inputs are a {@link GetAllNodes}, the key of the attribute, and its value.
+ * The output is the updated {@link Graph}.
  *
  * @author Michael Brand (michael.brand@uol.de)
  *
@@ -26,7 +25,7 @@ public class AddAttributeToGraph extends AddAttributeToGraphElement<Graph> {
 	 * data types in a row mark different possible data types for the input.
 	 */
 	private static final SDFDatatype[][] inputTypes = new SDFDatatype[][] { { SDFGraphDatatype.GRAPH },
-			{ SDFDatatype.STRING } , { SDFDatatype.STRING, SDFDatatype.OBJECT } };
+			{ SDFDatatype.STRING }, { SDFDatatype.STRING, SDFDatatype.OBJECT } };
 
 	/**
 	 * The data type of the output.
