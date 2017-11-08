@@ -26,7 +26,7 @@ public class QueryManager implements IUpdateEventListener {
 	private static final Logger LOG = LoggerFactory.getLogger(QueryManager.class);
 
 	private static Map<IPhysicalQuery, List<_SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<_SubQuery>>();
-	private static QueryManager manager;
+	private static QueryManager instance;
 	private static IServerExecutor executor = null;
 	private ISession currentUser = null;
 
@@ -35,11 +35,11 @@ public class QueryManager implements IUpdateEventListener {
 
 	public QueryManager() {
 		thread.start();
-		manager = this;
+		instance = this;
 	}
 
 	public static QueryManager getInstance() {
-		return manager;
+		return instance;
 	}
 
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
@@ -154,6 +154,7 @@ public class QueryManager implements IUpdateEventListener {
 			subquery.addEventListener();
 		}
 	}
+	
 
 	/**
 	 * Checks if the operator is in any SubQuery for the given query.
