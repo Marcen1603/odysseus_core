@@ -75,7 +75,6 @@ public class Measurement {
 						}
 					} else {
 						//Handle PushInit Events for operator with integrated buffer
-						//TODO: Remove identification by name
 						if (isBufferedOperator(operator)){
 							return;
 						}
