@@ -567,8 +567,16 @@ public class SocketService extends Observable {
 
 			// Get the right data handler. For example, we need different for
 			// Tuples and KeyValueObjects
-			IStreamObjectDataHandler handler = DataHandlerRegistry.getStreamObjectDataHandler(
-					root.getOutputSchema(rootOutputPort).getType().getSimpleName(),
+			String dataType = root.getOutputSchema(rootOutputPort).getType().getSimpleName();
+			/*
+			 * Workaround: We need a NullAwareTupleDataHandler, because it sets the "1" or
+			 * "0" byte before every attribute so that the client can correctly read the
+			 * data.
+			 */
+			if (dataType.equals("Tuple")) {
+				dataType = "ntuple";
+			}
+			IStreamObjectDataHandler handler = DataHandlerRegistry.getStreamObjectDataHandler(dataType,
 					root.getOutputSchema(rootOutputPort));
 
 			ByteBufferHandler<Tuple<ITimeInterval>> objectHandler = new ByteBufferHandler<Tuple<ITimeInterval>>(
