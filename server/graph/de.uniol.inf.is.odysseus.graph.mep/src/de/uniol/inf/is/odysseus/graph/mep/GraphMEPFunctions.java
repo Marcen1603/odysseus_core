@@ -10,9 +10,18 @@ import de.uniol.inf.is.odysseus.graph.datatype.SDFGraphDatatype;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 
 /**
- * Provides the MEP functions for graphs (see {@link Graph} and {@link SDFGraphDatatype}) : <br />
+ * Provides the MEP functions for graphs (see {@link Graph} and
+ * {@link SDFGraphDatatype}) : <br />
  * <ul>
+ * <li>{@link AddAttributeToEdge}</li>
+ * <li>{@link AddAttributeToGraph}</li>
+ * <li>{@link AddAttributeToNode}</li>
+ * <li>{@link AddEdgeToGraph}</li>
+ * <li>{@link AddNodeToGraph}</li>
  * <li>{@link FindNodesByPatternMEP}</li>
+ * <li>{@link GetAllEdges}</li>
+ * <li>{@link GetAllNodes}</li>
+ * <li>{@link GetGraphElementIdMEP}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -23,7 +32,9 @@ public class GraphMEPFunctions implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new FindNodesByPatternMEP(), new GetGraphElementIdMEP() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new AddAttributeToEdge(),
+			new AddAttributeToGraph(), new AddAttributeToNode(), new AddEdgeToGraph(), new AddNodeToGraph(),
+			new FindNodesByPatternMEP(), new GetAllEdges(), new GetAllNodes(), new GetGraphElementIdMEP() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
