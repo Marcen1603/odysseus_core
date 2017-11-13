@@ -53,7 +53,7 @@ public abstract class AddAttributeToGraphElement<E extends Element> extends Abst
 			element.addAttribute((String) getInputValue(1), (Object) getInputValue(2));
 			return element;
 		} catch (Throwable e) {
-			log.error("Could not extract id of graph element!", e);
+			log.error("Could not add attribute to graph element!", e);
 			return null;
 		}
 	}

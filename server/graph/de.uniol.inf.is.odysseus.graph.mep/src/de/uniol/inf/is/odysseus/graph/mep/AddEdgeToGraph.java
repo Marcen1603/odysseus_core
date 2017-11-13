@@ -80,7 +80,7 @@ public class AddEdgeToGraph extends AbstractFunction<Graph> {
 			addedEdge.addAttributes(attributes);
 			return graph;
 		} catch (Throwable e) {
-			log.error("Could not calculate shortest path length in graph!", e);
+			log.error("Could not add edge to graph!", e);
 			return null;
 		}
 	}
