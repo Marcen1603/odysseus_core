@@ -117,9 +117,9 @@ public class MosaikTopologyFromJSON extends AbstractFunction<Graph> {
 				Node toBus = graph.getNode((String) branch.get(2));
 				Edge edge = graph.addEdge((String) branch.get(0), fromBus, toBus);
 				edge.addAttribute("length_km", (Double) branch.get(3));
-				edge.addAttribute("R'_ohm/km", (Double) branch.get(4));
-				edge.addAttribute("X'_owm/km", (Double) branch.get(5));
-				edge.addAttribute("C'_nF/km", (Double) branch.get(6));
+				edge.addAttribute("R_ohm/km", (Double) branch.get(4));
+				edge.addAttribute("X_owm/km", (Double) branch.get(5));
+				edge.addAttribute("C_nF/km", (Double) branch.get(6));
 				edge.addAttribute("Imax_A", (Double) branch.get(7));
 			});
 			return graph;
