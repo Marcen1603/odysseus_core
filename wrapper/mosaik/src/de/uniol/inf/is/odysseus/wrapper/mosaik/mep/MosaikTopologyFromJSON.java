@@ -93,34 +93,37 @@ public class MosaikTopologyFromJSON extends AbstractFunction<Graph> {
 
 			Graph graph = new SingleGraph(graphId);
 			graph.addAttribute("base_mva", input.getNumberAttribute("base_mva"));
+			graph.addAttribute("frequency", input.getNumberAttribute("frequency"));
 
 			input.path("bus").stream().forEach(busObj -> {
 				List<Object> bus = ((KeyValueObject<?>) busObj).path("$");
-				Node node = graph.addNode((String) bus.get(0));
-				node.addAttribute("NodeType", (String) bus.get(1));
-				node.addAttribute("BaseVoltage_kV", (Double) bus.get(2));
+				Node node = graph.addNode(((String) bus.get(0)).replaceAll("\"", ""));
+				node.addAttribute("NodeType", ((String) bus.get(1)).replaceAll("\"", ""));
+				node.addAttribute("BaseVoltage_V", (Double) bus.get(2) * 1000);
 			});
 
-			List<Object> trafo = ((KeyValueObject<?>)((List<Object>) input.path("trafo")).get(0)).path("$");
-			Node fromTrafo = graph.getNode((String) trafo.get(1));
-			Node toTrafo = graph.getNode((String) trafo.get(2));
-			Edge trafoEdge = graph.addEdge((String) trafo.get(0), fromTrafo, toTrafo);
-			trafoEdge.addAttribute("Sr_MVA", (Double) trafo.get(3));
-			trafoEdge.addAttribute("v1_%", (Double) trafo.get(4));
-			trafoEdge.addAttribute("P1_MW", (Double) trafo.get(5));
-			trafoEdge.addAttribute("Imax_p_A", (Double) trafo.get(6));
-			trafoEdge.addAttribute("Imax_s_A", (Double) trafo.get(7));
+			// TODO
+//			List<Object> trafo = ((KeyValueObject<?>)((List<Object>) input.path("trafo")).get(0)).path("$");
+//			Node fromTrafo = graph.getNode((String) trafo.get(1));
+//			Node toTrafo = graph.getNode((String) trafo.get(2));
+//			Edge trafoEdge = graph.addEdge((String) trafo.get(0), fromTrafo, toTrafo);
+//			trafoEdge.addAttribute("Sr_MVA", (Double) trafo.get(3));
+//			trafoEdge.addAttribute("v1_%", (Double) trafo.get(4));
+//			trafoEdge.addAttribute("P1_MW", (Double) trafo.get(5));
+//			trafoEdge.addAttribute("Imax_p_A", (Double) trafo.get(6));
+//			trafoEdge.addAttribute("Imax_s_A", (Double) trafo.get(7));
 
 			input.path("branch").stream().forEach(branchObj -> {
 				List<Object> branch = ((KeyValueObject<?>) branchObj).path("$");
-				Node fromBus = graph.getNode((String) branch.get(1));
-				Node toBus = graph.getNode((String) branch.get(2));
-				Edge edge = graph.addEdge((String) branch.get(0), fromBus, toBus);
+				Node fromBus = graph.getNode(((String) branch.get(1)).replaceAll("\"", ""));
+				Node toBus = graph.getNode(((String) branch.get(2)).replaceAll("\"", ""));
+				Edge edge = graph.addEdge(((String) branch.get(0)).replaceAll("\"", ""), fromBus, toBus);
 				edge.addAttribute("length_km", (Double) branch.get(3));
 				edge.addAttribute("R_ohm/km", (Double) branch.get(4));
-				edge.addAttribute("X_owm/km", (Double) branch.get(5));
+				edge.addAttribute("X_ohm/km", (Double) branch.get(5));
 				edge.addAttribute("C_nF/km", (Double) branch.get(6));
 				edge.addAttribute("Imax_A", (Double) branch.get(7));
+				edge.addAttribute("type", ((String) branch.get(8)).replaceAll("\"", ""));
 			});
 			return graph;
 		} catch (Throwable e) {
