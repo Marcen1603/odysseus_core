@@ -78,7 +78,9 @@ TOKEN :
       < DIGIT >
     | < LETTER >
     | < SPECIAL_CHARS >
-    )* >
+    )* |
+    "{" (~["}"])* "}"
+   >
 | < #LETTER : [ "a"-"z", "A"-"Z" ] >
 | < #SPECIAL_CHARS :
     "_"
