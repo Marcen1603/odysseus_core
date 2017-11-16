@@ -771,11 +771,6 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     finally { jj_save(2, xla); }
   }
 
-  private boolean jj_3R_26() {
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
   private boolean jj_3R_14() {
     if (jj_3R_15()) return true;
     return false;
@@ -979,6 +974,11 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
 
   private boolean jj_3R_27() {
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_3R_27()) return true;
     return false;
   }
 

@@ -50,12 +50,11 @@ TOKEN :
 {
 < K_AND : "AND">
 | < K_OR : "OR">
-| < DIGITS : (< DIGIT >)+ >
-| < INTEGER : ("-")? <DIGITS> >
+| < INTEGER : ("-")? (< DIGIT >)+ >
 | < FLOAT :
     (
-      < INTEGER > "." < DIGITS >
-    | "." < DIGITS >
+      < INTEGER > "." (< DIGIT >)+
+    | "." (< DIGIT >)+
     ) >
 | < BOOLEAN :
     "false"
@@ -79,7 +78,9 @@ TOKEN :
       < DIGIT >
     | < LETTER >
     | < SPECIAL_CHARS >
-    )* >
+    )* |
+    "{" (~["}"])* "}"
+   >
 | < #LETTER : [ "a"-"z", "A"-"Z" ] >
 | < #SPECIAL_CHARS :
     "_"
