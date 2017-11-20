@@ -113,16 +113,14 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 		}
 
 		PointInTime marker = object.getMetadata().getStart();
-		//if (marker.afterOrEquals(getWatermark())) {
-		// TODO: why afterOrEquals?
-		if (marker.after(getWatermark())) {
+		if (marker.afterOrEquals(getWatermark())) {
 			transfer(object);
 			restartTimer();
 		} else {
 			LOG.warn("Removed out of order object: " + object +" for watermark "+marker);
-			// TODO: Restart Time in this case?
-			if (isRestartTimerForEveryInput())
-			restartTimer();
+			if (isRestartTimerForEveryInput()) {
+				restartTimer();
+			}
 			transfer(object, 99);
 		}
 	}
@@ -168,7 +166,6 @@ public class HeartbeatPO<R extends IStreamObject<? extends ITimeInterval>> exten
 	}
 
 	public synchronized void setWatermark(PointInTime watermark) {
-		// LOG.debug("Set new Watermark "+watermark);
 		this._watermark = watermark;
 	}
 
