@@ -38,6 +38,18 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants/*@egen*/
       System.out.println(e.getMessage());
     }
   }
+
+  public static String removeCurlyBrackets(String input) {
+	String output = input;
+	int start = input.indexOf("{");
+	int end = input.lastIndexOf( "}");
+	if ( start >= 0 && end > 0) { 
+		output = input.substring(start+1,end);
+	}else if (start > 0 || end > 0) {
+		System.err.println("Warning: Expression "+input+" contains unbalanced curly brackets");
+	}
+	return output;
+  }
 }
 
 PARSER_END(MEPImpl)
@@ -597,7 +609,7 @@ void Function() :
 /*@egen*/
   t = < IDENTIFIER >
   {
-    jjtn000.setSymbol(t.image);
+    jjtn000.setSymbol(removeCurlyBrackets(t.image));
   }
   (< LRND > ArgumentList() < RRND >) | (< LRND > < RRND >)/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
@@ -640,7 +652,7 @@ void Variable() :
   }
 /*@egen*/
   {
-    jjtn000.setIdentifier(t.image);
+    jjtn000.setIdentifier(removeCurlyBrackets(t.image));
   }/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {

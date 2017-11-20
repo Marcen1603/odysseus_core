@@ -21,6 +21,18 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     }
   }
 
+  public static String removeCurlyBrackets(String input) {
+        String output = input;
+        int start = input.indexOf("{");
+        int end = input.lastIndexOf( "}");
+        if ( start >= 0 && end > 0) {
+                output = input.substring(start+1,end);
+        }else if (start > 0 || end > 0) {
+                System.err.println("Warning: Expression "+input+" contains unbalanced curly brackets");
+        }
+        return output;
+  }
+
   final public SimpleNode Expression() throws ParseException {
  /*@bgen(jjtree) Expression */
   ASTExpression jjtn000 = new ASTExpression(JJTEXPRESSION);
@@ -580,7 +592,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
         t = jj_consume_token(IDENTIFIER);
-    jjtn000.setSymbol(t.image);
+    jjtn000.setSymbol(removeCurlyBrackets(t.image));
         jj_consume_token(LRND);
         ArgumentList();
         jj_consume_token(RRND);
@@ -624,7 +636,7 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
       t = jj_consume_token(IDENTIFIER);
     jjtree.closeNodeScope(jjtn000, true);
     jjtc000 = false;
-    jjtn000.setIdentifier(t.image);
+    jjtn000.setIdentifier(removeCurlyBrackets(t.image));
     } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -769,46 +781,6 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
-  }
-
-  private boolean jj_3R_14() {
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30() {
-    if (jj_scan_token(21)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_32()) {
-    jj_scanpos = xsp;
-    if (jj_3R_33()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (jj_scan_token(LRND)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    if (jj_scan_token(OPEN_ARRAY)) return true;
-    return false;
   }
 
   private boolean jj_3R_38() {
@@ -979,6 +951,46 @@ public class MEPImpl/*@bgen(jjtree)*/implements MEPImplTreeConstants, MEPImplCon
 
   private boolean jj_3R_26() {
     if (jj_3R_27()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_30() {
+    if (jj_scan_token(21)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_32()) {
+    jj_scanpos = xsp;
+    if (jj_3R_33()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_33() {
+    if (jj_scan_token(LRND)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_12() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(OPEN_ARRAY)) return true;
     return false;
   }
 
