@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -47,31 +46,44 @@ public class JSONCOSEMParser<T extends IStreamObject<IMetaAttribute>> extends Ab
 	private JsonNode objectsNode;
 	private int currentNodeIndex;
 	private int maxNodeIndex;
-	
+
 	@Override
 	protected T next() {
-		if(currentNodeIndex < maxNodeIndex) {
-			JsonNode attributes = objectsNode.path(currentNodeIndex);
-			Iterator<String> fieldNames = attributes.fieldNames();
-			for (JsonNode attribute : attributes) {
-				setValue(fieldNames.next(), attribute.asText());
+		if (currentNodeIndex < maxNodeIndex) {
+
+			for (JsonNode obj : objectsNode) {
+				// TODO: maybe this should be done in a more general way
+				setValue("logical_name", obj.path("logical_name").toString());
+				obj = obj.path(super.rootNode);
+
+				JsonNode attributes = obj.path(currentNodeIndex);
+				Iterator<String> fieldNames = attributes.fieldNames();
+				for (JsonNode attribute : attributes) {
+					setValue(fieldNames.next(), attribute.asText());
+				}
+
+				currentNodeIndex++;
+
+				return getTuple();
 			}
-			
-			currentNodeIndex++;
-			return getTuple();
+
 		} else {
 			close();
 		}
 		return null;
 	}
-	
+
 	@Override
 	protected void init(InputStream inputStream) {
 		super.inputStream = inputStream;
 		try {
 			root = new ObjectMapper().readTree(new JsonFactory().createParser(new InputStreamReader(inputStream)));
-			rootElement = root.fields().next().getKey();
-			objectsNode = root.get(rootElement).path(super.rootNode);
+			
+			// returns ldevs or logical_name, but must be ldevs
+			// rootElement = root.fields().next().getKey(); 
+			rootElement = "ldevs";
+
+			objectsNode = root.get(rootElement);
 			maxNodeIndex = objectsNode.size();
 			currentNodeIndex = 0;
 		} catch (JsonParseException e) {
