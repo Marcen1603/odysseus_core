@@ -313,13 +313,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// When we do not want to produce an output when elements get outdated
 		// but we have incremental functions, than we need to update the state
 		// of the incremental functions, though.
-		if (hasOutdatingElements && (evaluateAtOutdatingElements || hasIncrementalFunctions)) {
+		if (hasOutdatingElements && (evaluateAtOutdatingElements || evaluateBeforeRemovingOutdatingElements || hasIncrementalFunctions)) {
 			processOutdatedElements(object, groupKey);
 		}
 
-		if (evaluateAtNewElement || hasIncrementalFunctions) {
-			processNewElement(object, groupKey);
-		}
+		processNewElement(object, groupKey);
 	}
 
 	/**
@@ -387,13 +385,6 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// functions even when we not want to calculate the result.
 
 		// Get and remove outdated elements.
-		/*
-		 * ODY-1107:
-		 * Moved retrieval of outdated elements outside the if-clause (evaluate || hasIncrementalFunctions),
-		 * because it does more than getting the outdated tuples, it removes them from SA.
-		 * That is also necessary for non-incremental functions.
-		 */
-		final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 		if (evaluate || hasIncrementalFunctions) {
 			// TODO: Do we need deep copy here? Depends on the values of the
@@ -416,6 +407,18 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				}
 				processNonIncrementalFunctions(result, objects, trigger, pointInTime);
 			}
+
+			/*
+			 * ODY-1107:
+			 * Moved retrieval of outdated elements outside the if-clause (evaluate || hasIncrementalFunctions),
+			 * because it does more than getting the outdated tuples, it removes them from SA.
+			 * That is also necessary for non-incremental functions.
+			 *
+			 * ODY-1422:
+			 * Moved retrieval of outdated elements below the if-clause (evaluate && hasNonIncrementalFunctions && evaluateBeforeRemovingOutdatingElements),
+			 * because sweepArea.getValidTuples() would return an empty list. That is because the outdated elements would have been removed from sa with the following line.
+			 */
+			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 			if (hasIncrementalFunctions) {
 				final List<IIncrementalAggregationFunction<M, T>> statefulFunctionsForKey = getStatefulFunctions(
