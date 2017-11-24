@@ -19,7 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractSource;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.IServerExecutor;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.plan.IExecutionPlan;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.query.IPhysicalQuery;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.UserManagementProvider;
+import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
 public class QueryManager implements IUpdateEventListener {
@@ -28,7 +28,7 @@ public class QueryManager implements IUpdateEventListener {
 	private static Map<IPhysicalQuery, List<_SubQuery>> subquerys = new HashMap<IPhysicalQuery, List<_SubQuery>>();
 	private static QueryManager instance;
 	private static IServerExecutor executor = null;
-	private ISession currentUser = null;
+	private ISession superUser = null;
 
 	private static Map<IPhysicalQuery, _AverageLatency> averageLatencys = new HashMap<IPhysicalQuery, _AverageLatency>();
 	private static ThreadCalculateLatency thread = new ThreadCalculateLatency();
@@ -42,13 +42,14 @@ public class QueryManager implements IUpdateEventListener {
 		return instance;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void bindExecutor(IExecutor ex) throws PlanManagementException {
 		executor = (IServerExecutor) ex;
 		String name = executor.getName();
 		if (name == null) {
 			name = "";
 		}
-		currentUser = UserManagementProvider.getUsermanagement(true).getSessionManagement().loginSuperUser(null);
+		superUser = SessionManagement.instance.loginSuperUser(null);
 		executor.addUpdateEventListener(this, IUpdateEventListener.QUERY, null);
 	}
 
@@ -212,7 +213,7 @@ public class QueryManager implements IUpdateEventListener {
 		if (source instanceof AbstractSource) {
 			Collection<ControllablePhysicalSubscription> sourceSubscriptions = (source).getSubscriptions();
 			for (ControllablePhysicalSubscription subscription : sourceSubscriptions) {
-				subscriptions.add((IPhysicalOperator) subscription.getTarget());
+				subscriptions.add((IPhysicalOperator) subscription.getSink());
 			}
 		}
 		return subscriptions;
@@ -246,8 +247,8 @@ public class QueryManager implements IUpdateEventListener {
 
 	@Override
 	public void eventOccured(String type) {
-		IExecutionPlan executionPlan = executor.getExecutionPlan(currentUser);
-		Collection<IPhysicalQuery> queries = executionPlan.getQueries(currentUser);
+		IExecutionPlan executionPlan = executor.getExecutionPlan(superUser);
+		Collection<IPhysicalQuery> queries = executionPlan.getQueries(superUser);
 		for (IPhysicalQuery query : queries) {
 			if (!thread.isAlive()){
 				thread.start();
