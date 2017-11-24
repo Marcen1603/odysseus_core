@@ -3,14 +3,19 @@ package de.uniol.inf.is.odysseus.server.monitoring.query;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.core.event.IEvent;
 
 public class ThreadCalculateLatency extends Thread {
+	private static final Logger LOG = LoggerFactory.getLogger(ThreadCalculateLatency.class);
 
 	private static final int minQueueLength = 5;
 	private PriorityQueue<LatencyEvent> queue;
 	private volatile boolean running = true;
 	Comparator<LatencyEvent> comparator = new EventComparator();
+	private boolean waiting = false;
 
 	public ThreadCalculateLatency() {
 		this.setDaemon(true);
@@ -28,8 +33,21 @@ public class ThreadCalculateLatency extends Thread {
 	@Override
 	public void run() {
 		while (running) {
-			if (!queue.isEmpty() && queue.size()>=minQueueLength) {
+			if (!queue.isEmpty() && queue.size() >= minQueueLength) {
 				processEvent();
+			} else {
+				waitForEvent();
+			}
+		}
+	}
+
+	private void waitForEvent() {
+		synchronized (this) {
+			waiting = true;
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -44,19 +62,22 @@ public class ThreadCalculateLatency extends Thread {
 	}
 
 	private void printEvent(IEvent<?, ?> e, long time) {
-		System.out.println(time + " " + e.toString());
+		ThreadCalculateLatency.LOG.debug(time + " " + e.toString());
 	}
 
-	public void addEvent(Measurement m, IEvent<?, ?> e, long nanoTimestamp) {
-		synchronized (queue) {
-			queue.add(new LatencyEvent(m, e, nanoTimestamp));
+	public synchronized void addEvent(Measurement m, IEvent<?, ?> e, long nanoTimestamp) {
+		queue.add(new LatencyEvent(m, e, nanoTimestamp));	
+		if (waiting) {
+			this.notifyAll();
 		}
 	}
 
-	public LatencyEvent removeEvent() {
-		synchronized (queue) {
-			return queue.poll();
-		}
+	public synchronized LatencyEvent removeEvent() {
+		return queue.poll();
+	}
+
+	public synchronized boolean isWaiting() {
+		return waiting;
 	}
 }
 

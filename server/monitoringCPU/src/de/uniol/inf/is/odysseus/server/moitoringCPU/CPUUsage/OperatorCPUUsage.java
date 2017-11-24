@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.server.monitoring.physicaloperator;
+package de.uniol.inf.is.odysseus.server.moitoringCPU.CPUUsage;
 
 public class OperatorCPUUsage implements IMeasurableValue {
 
