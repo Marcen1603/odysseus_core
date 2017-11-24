@@ -62,7 +62,7 @@ TOKEN :
 {
 < K_AND : "AND">
 | < K_OR : "OR">
-| < INTEGER : ("-")? (< DIGIT >)+ >
+| < INTEGER : (< DIGIT >)+ >
 | < FLOAT :
     (
       < INTEGER > "." (< DIGIT >)+
