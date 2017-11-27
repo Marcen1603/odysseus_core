@@ -46,6 +46,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.C
 import de.uniol.inf.is.odysseus.core.server.planmanagement.executor.command.dd.CreateViewCommand;
 import de.uniol.inf.is.odysseus.core.collection.Context;
 
+@SuppressWarnings("all")
 /** Token Manager. */
 public class PQLParserImplTokenManager implements PQLParserImplConstants
 {
