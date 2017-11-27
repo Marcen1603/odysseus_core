@@ -300,6 +300,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	@Override
 	protected synchronized void process_next(final T object, final int port) {
 
+		if(metaData == null) {
+			metaData = object.getMetadata().clone();
+		}
+
 		if (!hasOutdatingElements) {
 			if (!object.getMetadata().getEnd().isInfinite()) {
 				hasOutdatingElements = true;
