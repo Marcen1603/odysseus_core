@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.uniol.inf.is.odysseus.rest.feature"
-      label="Odysseus Rest Feature"
+      id="de.uniol.inf.is.odysseus.server.monitoring.feature"
+      label="Monitoring"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -16,32 +16,15 @@
       [Enter License Description here.]
    </license>
 
-   <includes
-         id="de.uniol.inf.is.odysseus.keyvalue.feature"
-         version="0.0.0"/>
-
    <plugin
-         id="de.uniol.inf.is.odysseus.rest"
+         id="de.uniol.inf.is.odysseus.server.monitoring"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="restlet-osgi-2.3.1"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.guava"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="de.uniol.inf.is.odysseus.server.keyvalue"
+         id="de.uniol.inf.is.odysseus.server.moitoringCPU"
          download-size="0"
          install-size="0"
          version="0.0.0"

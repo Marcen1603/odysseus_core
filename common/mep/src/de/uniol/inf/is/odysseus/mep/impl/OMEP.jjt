@@ -34,6 +34,18 @@ public class MEPImpl
       System.out.println(e.getMessage());
     }
   }
+
+  public static String removeCurlyBrackets(String input) {
+	String output = input;
+	int start = input.indexOf("{");
+	int end = input.lastIndexOf( "}");
+	if ( start >= 0 && end > 0) { 
+		output = input.substring(start+1,end);
+	}else if (start > 0 || end > 0) {
+		System.err.println("Warning: Expression "+input+" contains unbalanced curly brackets");
+	}
+	return output;
+  }
 }
 
 PARSER_END(MEPImpl)
@@ -50,12 +62,11 @@ TOKEN :
 {
 < K_AND : "AND">
 | < K_OR : "OR">
-| < DIGITS : (< DIGIT >)+ >
-| < INTEGER : ("-")? <DIGITS> >
+| < INTEGER : (< DIGIT >)+ >
 | < FLOAT :
     (
-      < INTEGER > "." < DIGITS >
-    | "." < DIGITS >
+      < INTEGER > "." (< DIGIT >)+
+    | "." (< DIGIT >)+
     ) >
 | < BOOLEAN :
     "false"
@@ -79,7 +90,9 @@ TOKEN :
       < DIGIT >
     | < LETTER >
     | < SPECIAL_CHARS >
-    )* >
+    )* |
+    "{" (~["}"])* "}"
+   >
 | < #LETTER : [ "a"-"z", "A"-"Z" ] >
 | < #SPECIAL_CHARS :
     "_"
@@ -320,7 +333,7 @@ void Function() :
 {
   t = < IDENTIFIER >
   {
-    jjtThis.setSymbol(t.image);
+    jjtThis.setSymbol(removeCurlyBrackets(t.image));
   }
   (< LRND > ArgumentList() < RRND >) | (< LRND > < RRND >)
 }
@@ -332,7 +345,7 @@ void Variable() :
 {
   t = < IDENTIFIER >
   {
-    jjtThis.setIdentifier(t.image);
+    jjtThis.setIdentifier(removeCurlyBrackets(t.image));
   }
 }
 
