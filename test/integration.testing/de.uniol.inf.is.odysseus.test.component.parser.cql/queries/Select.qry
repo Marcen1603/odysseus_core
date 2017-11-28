@@ -33,8 +33,6 @@ SELECT auction FROM bid;
 SELECT auction FROM bid WHERE auction > 1000;
 
 #QUERY
-SELECT price, AVG(price) AS avgPrice, auction, bidder FROM bid;
-
 SELECT auction, price FROM bid WHERE auction=7 OR auction=20 OR auction=21 OR auction=59 OR auction=87;
 
 #QUERY

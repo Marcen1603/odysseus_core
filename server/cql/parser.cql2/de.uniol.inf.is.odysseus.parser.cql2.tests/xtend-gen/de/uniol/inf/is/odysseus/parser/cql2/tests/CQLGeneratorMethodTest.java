@@ -9,7 +9,6 @@ import java.util.Set;
 import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -110,41 +109,31 @@ public class CQLGeneratorMethodTest {
   
   @Test
   public void getAttributenameFromAliasTest() {
-    for (int i = 0; (i < this.attributes.size()); i++) {
-      Assert.assertEquals(this.attributes.get(i), this._cQLGenerator.getAttributenameFromAlias(this.aliases.get(i)));
-    }
-    for (int i = 0; (i < this.attributes2.size()); i++) {
-      Assert.assertEquals(this.attributes2.get(i), this._cQLGenerator.getAttributenameFromAlias(this.aliases2.get(i)));
-    }
-    for (int i = 0; (i < this.aggregates.size()); i++) {
-      Assert.assertEquals(this.aggregationAliases.get(i), this._cQLGenerator.getAttributenameFromAlias(this.aggregationAliases.get(i)));
-    }
-    this.thrown.expect(IllegalArgumentException.class);
-    this._cQLGenerator.getAttributenameFromAlias("");
-    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
-    this._cQLGenerator.getAttributenameFromAlias(null);
-    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
-    this._cQLGenerator.getAttributenameFromAlias("attr12");
-    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method getAttributenameFromAlias(String) is undefined"
+      + "\nThe method getAttributenameFromAlias(String) is undefined"
+      + "\nThe method getAttributenameFromAlias(String) is undefined"
+      + "\nThe method getAttributenameFromAlias(String) is undefined"
+      + "\nThe method getAttributenameFromAlias(Object) is undefined"
+      + "\nThe method getAttributenameFromAlias(String) is undefined");
   }
   
   @Test
   public void getAttributenameTest() {
-    Assert.assertEquals("stream1.attr1", this._cQLGenerator.getAttributename("attr1", null));
-    Assert.assertEquals("stream1.attr1", this._cQLGenerator.getAttributename("a1", null));
-    Assert.assertEquals("stream1.attr1", this._cQLGenerator.getAttributename("stream1.a1", null));
-    Assert.assertEquals("stream1.attr1", this._cQLGenerator.getAttributename("aa1", null));
-    Assert.assertEquals("stream1.attr1", this._cQLGenerator.getAttributename("stream1.aa1", null));
-    Assert.assertEquals("stream2.attr5", this._cQLGenerator.getAttributename("attr5", null));
-    Assert.assertEquals("stream2.attr5", this._cQLGenerator.getAttributename("b2", null));
-    Assert.assertEquals("stream2.attr5", this._cQLGenerator.getAttributename("stream2.b2", null));
-    Assert.assertEquals("stream2.attr5", this._cQLGenerator.getAttributename("bb2", null));
-    Assert.assertEquals("stream2.attr5", this._cQLGenerator.getAttributename("stream2.bb2", null));
-    Assert.assertEquals("avgAttr1", this._cQLGenerator.getAttributename("avgAttr1", null));
-    Assert.assertEquals("sumAttr5", this._cQLGenerator.getAttributename("sumAttr5", null));
-    this.thrown.expect(IllegalArgumentException.class);
-    Assert.assertEquals("attr12", this._cQLGenerator.getAttributename("stream1.attr12", null));
-    this.thrown.reportMissingExceptionWithMessage("No exception of %s thrown");
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined"
+      + "\nThe method getAttributename(String, Object) is undefined");
   }
   
   @Test
@@ -153,8 +142,9 @@ public class CQLGeneratorMethodTest {
   
   @Test
   public void getSourcenameFromAliasTest() {
-    Assert.assertEquals(this.source, this._cQLGenerator.getSourcenameFromAlias(this.source1Alias));
-    Assert.assertEquals(this.source2, this._cQLGenerator.getSourcenameFromAlias(this.source2Alias));
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method getSourcenameFromAlias(String) is undefined"
+      + "\nThe method getSourcenameFromAlias(String) is undefined");
   }
   
   @Test

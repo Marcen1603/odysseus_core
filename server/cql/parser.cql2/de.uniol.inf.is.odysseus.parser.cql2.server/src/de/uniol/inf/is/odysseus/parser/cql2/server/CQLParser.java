@@ -107,9 +107,9 @@ public class CQLParser implements IQueryParser {
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
 		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 		generator = injector.getInstance(CQLGenerator.class);
-		generator.setFunctionStore(getFunctionStore());
-		generator.setMEP(getMEP());
-		generator.setAggregatePattern(getAggregateFunctionPattern());
+//		generator.setFunctionStore(getFunctionStore());
+//		generator.setMEP(getMEP());
+//		generator.setAggregatePattern(getAggregateFunctionPattern());
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(
@@ -194,7 +194,7 @@ public class CQLParser implements IQueryParser {
 			if (issues.isEmpty()) {
 				Set<SDFSchema> schema = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
 						.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
-				generator.setSchema(convertSchema(schema, false));
+				generator.setSchema(convertSchema(schema));
 				executorCommands.clear();
 				// Translate query to executor commands
 				for (EObject component : components) {
@@ -367,27 +367,23 @@ public class CQLParser implements IQueryParser {
 		return MEP.getInstance();
 	}
 
-	public List<SourceStruct> convertSchema(Collection<SDFSchema> schema, boolean internal) {
+	public List<SourceStruct> convertSchema(Collection<SDFSchema> schema) {
 		ArrayList<SourceStruct> list = new ArrayList<>();
-		for (SDFSchema s : schema) {
-			for (String sourcename : s.getBaseSourceNames()) {
-				SourceStruct source = new SourceStruct();
-				source.internal = internal;
-				source.sourcename = sourcename;
-				source.attributes = new ArrayList<>();
-				source.aliases = new ArrayList<>();
-				for (SDFAttribute attributename : s.getAttributes()) {
-					if (sourcename.equals(attributename.getSourceName())) {
-						AttributeStruct attribute = new AttributeStruct();
-						attribute.attributename = attributename.getAttributeName();
-						attribute.sourcename = sourcename;
-						attribute.datatype = attributename.getDatatype().toString();
-						attribute.aliases = new ArrayList<>();
-						attribute.prefixes = new ArrayList<>();
-						source.attributes.add(attribute);
+		for (SDFSchema ss : schema) {
+			for (String sourcename : ss.getBaseSourceNames()) {
+				SourceStruct sourceStruct = new SourceStruct();
+				sourceStruct.setName(sourcename);
+				for (SDFAttribute struct : ss.getAttributes()) {
+					if (sourcename.equals(struct.getSourceName())) {
+						sourceStruct.add(new AttributeStruct(
+								sourceStruct, 
+								struct.getAttributeName(),
+								struct.getDatatype().toString()
+								)
+						);
 					}
 				}
-				list.add(source);
+				list.add(sourceStruct);
 			}
 		}
 		return list;

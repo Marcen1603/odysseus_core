@@ -1,23 +1,15 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator
 
-import de.uniol.inf.is.odysseus.core.mep.IMepFunction
-import de.uniol.inf.is.odysseus.mep.FunctionStore
-import de.uniol.inf.is.odysseus.mep.MEP
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
-import java.util.ArrayList
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache
 import java.util.List
 import java.util.Map
-import java.util.Map.Entry
 import java.util.Set
-import java.util.regex.Pattern
-import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -43,7 +35,7 @@ class CQLGeneratorUtil {
 	/** Contains all selected attributes for each registered query */
 	private static var Map<SimpleSelect, List<String>> projectionAttributes = newHashMap
 	/** Contains the corresponding sources to the attributes in projectionAttributes */
-	private static var Map<SimpleSelect, List<String>> projectionSources = newHashMap
+//	private static var Map<SimpleSelect, List<String>> projectionSources = newHashMap
 	private static var Map<SimpleSelect, List<SelectExpression>> queryExpressions = newHashMap
 
 	/** Contains string representations of all attributes mapped by their corresponding sources.*/
@@ -53,9 +45,15 @@ class CQLGeneratorUtil {
 
 	private static var aggregationCounter = 0
 	private static var expressionCounter = 0
+	
+	
+	////
+	private static QueryCache<SimpleSelect> generatorCache;
+	////
 
 	private new(CQLGenerator generator) {
 		this.generator = generator
+		generatorCache = new QueryCache();
 	}
 
 	public static def Map<String, List<String>> addToMap(Map<String, List<String>> map, String attribute,
@@ -105,6 +103,7 @@ class CQLGeneratorUtil {
 		}
 	}
 
+	//
 	private static def String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
 		String sourcenamealias, boolean isSubQuery) {
 //		println(
@@ -136,9 +135,9 @@ class CQLGeneratorUtil {
 		return null
 	}
 
+	//
 	/** Returns all attributes with its corresponding sources from a select statement. */
-	public static def Map<String, List<String>> getSelectedAttributes(SimpleSelect select,
-		Map<String, List<String>> var2) {
+	public static def Map<String, List<String>> getSelectedAttributes(SimpleSelect select, Map<String, List<String>> var2) {
 		var map = var2
 		var attributes = newArrayList
 		var String[] attributeOrder = newArrayOfSize(select.arguments.size)
@@ -156,7 +155,6 @@ class CQLGeneratorUtil {
 			var List<String> sourceOrderList = newArrayList
 			for (Source source : select.sources) {
 				if (source instanceof SimpleSource) {
-					log.debug("sources=" + CQLGeneratorUtil.sourceNames);
 					for (String attribute : getAttributeNamesFrom(source.name)) {
 						if (source.alias !== null) {
 							var attributealias = source.alias.name + '.' + attribute
@@ -176,7 +174,8 @@ class CQLGeneratorUtil {
 			attributeOrder = attributeOrderList
 			sourceOrder = sourceOrderList
 			projectionAttributes.put(select, attributeOrder)
-			projectionSources.put(select, sourceOrder)
+			generatorCache.put(select, sourceOrder, QueryCache.Type.PROJECTION_SOURCE)
+//			projectionSources.put(select, sourceOrder)
 			return map
 		}
 		// Get all attributes from predicates
@@ -230,7 +229,7 @@ class CQLGeneratorUtil {
 						}
 						map = addToMap(map, attributename, sourcename)
 						if (isFromSubQuery)
-							registerSourceAlias(sourcename, sourcealias)
+							registerSourceAlias(sourcename, sourcealias), 
 						attributealias = registerAttributeAliases(attribute, attributename, sourcename, sourcealias,
 							isFromSubQuery)
 					} else {
@@ -248,13 +247,15 @@ class CQLGeneratorUtil {
 					i++
 				}
 				attributeOrder = computeProjectionAttributes(attributeOrder, select, null, null, null, null)
-				projectionAttributes.put(select, attributeOrder)
-				projectionSources.put(select, sourceOrder)
+				projectionAttributes.put(select, attributeOrder)//
+				generatorCache.put(select, sourceOrder, QueryCache.Type.PROJECTION_SOURCE)
+//				projectionSources.put(select, sourceOrder)
 
 //				println("getSelectedAttributes() -> map= " + map.toString + ', order= ' + attributeOrder.toString)
 				return map
 			}
-
+				
+			//
 			public static def String[] computeProjectionAttributes(String[] list, SimpleSelect select,
 				Attribute attribute, String attributename, String attributealias, String sourcename) {
 				expressionCounter = 0
@@ -291,7 +292,7 @@ class CQLGeneratorUtil {
 									} else
 										attributeOrder.set(i, sourcename + '.' + attributename)
 								}
-
+						
 						if ((candidate = argument.expression) !== null) {
 							if ((candidate as SelectExpression).alias !== null)
 								attributeOrder.set(i, (candidate as SelectExpression).alias.name)
@@ -334,6 +335,7 @@ class CQLGeneratorUtil {
 				return attributeOrder
 			}
 
+			//
 			private static def List<SourceStruct> getSourceCandidates(Attribute attribute, List<Source> sources) {
 				var containedBySources = newArrayList
 				for (Source source1 : sources) {
@@ -350,7 +352,7 @@ class CQLGeneratorUtil {
 							}
 						}
 					} else {
-						var subQueryAlias = (source1 as NestedSource).alias.name
+						var subQueryAlias = (source1 as NestedSource).alias.name//
 						for (String source : registry_SubQuerySources.get(subQueryAlias)) {
 							for (SourceStruct source2 : registry_Sources) {
 								var realName = attribute.name
@@ -375,6 +377,7 @@ class CQLGeneratorUtil {
 				return containedBySources
 			}
 
+			//
 			/** Returns all {@link Attribute} elements from the corresponding source. */
 			public static def List<String> getAttributeNamesFrom(String srcname) {
 				for (SourceStruct source : registry_Sources) {
@@ -383,7 +386,8 @@ class CQLGeneratorUtil {
 					}
 				}
 			}
-
+			
+			//
 			private static def Object[] parseAttribute(Attribute attribute) {
 				var String sourcename
 				var String sourcealias
@@ -412,6 +416,7 @@ class CQLGeneratorUtil {
 				return #[attribute.name, sourcename, sourcealias, list, subQuery]
 			}
 
+			//
 			public static def String getProjectAttribute(String attribute) {
 				if (attribute.contains(CQLGeneratorUtil.getExpressionPrefix()))
 					return CQLGeneratorUtil.getRegisteredExpressions().get(attribute)
@@ -447,6 +452,7 @@ class CQLGeneratorUtil {
 				return null
 			}
 
+			//
 			def public AttributeStruct getAttributeFromAlias(String alias) {
 				for (Entry<AttributeStruct, List<String>> entry : getAttributeAliasesAsMap().entrySet)
 					if (entry.value.contains(alias))
@@ -463,6 +469,7 @@ class CQLGeneratorUtil {
 					return alias
 			}
 
+			//
 			public static def List<String> getSourceAliasesAsList() {
 				var list = newArrayList
 				for (List<String> l : getSourceAliases().values)
@@ -470,6 +477,7 @@ class CQLGeneratorUtil {
 				return list
 			}
 
+			//
 			public static def Map<SourceStruct, List<String>> getSourceAliases() {
 				var map = newHashMap
 				for (SourceStruct source : registry_Sources)
@@ -477,7 +485,7 @@ class CQLGeneratorUtil {
 				return map
 			}
 
-/////rename method1
+			//
 			public static def Map<AttributeStruct, List<String>> getAttributeAliasesAsMap() {
 				var map = newHashMap
 				for (SourceStruct source : registry_Sources)
@@ -562,7 +570,7 @@ class CQLGeneratorUtil {
 			}
 
 			public static def getGetProjectSources() {
-				return projectionSources
+				return generatorCache.getAll(QueryCache.Type.PROJECTION_SOURCE) as Collection<String>
 			}
 
 			public static def getSubQuerySources() {
@@ -587,6 +595,7 @@ class CQLGeneratorUtil {
 
 			public static def addQueryAttributes(SimpleSelect select, Map<String, List<String>> map) {
 				if(select !== null && map !== null) {
+					generatorCache.put(select, map, QueryCache.Type.QUERY_ATTRIBUTE)
 					queryAttributes.put(select, map)
 				} else {
 //					throw new IllegalArgumentException("given objects were: select= " + select + ", list= " + map)
@@ -651,7 +660,10 @@ class CQLGeneratorUtil {
 				registry_Expressions.clear()
 				registry_Sources.clear()
 				registry_SubQuerySources.clear()
-				projectionSources.clear()
+//				projectionSources.clear()
+
+				generatorCache.flush();
+
 				projectionAttributes.clear()
 				queryExpressions.clear()
 				aggregationCounter = 0

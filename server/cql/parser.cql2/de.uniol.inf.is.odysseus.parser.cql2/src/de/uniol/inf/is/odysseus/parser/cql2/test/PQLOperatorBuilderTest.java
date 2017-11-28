@@ -92,7 +92,7 @@ public class PQLOperatorBuilderTest {
 		
 		args.put("input", "INPUT");
 
-		String expected = "SELECT({predicate='100>attr1'},INPUT)";
+		String expected = "TIMEWINDOW({advance=[1],size=[5]},INPUT)";
 		String actual = builder.build(TimeWindowAO.class, args);
 		Assert.assertEquals(expected, actual);
 	}

@@ -1,0 +1,21 @@
+package de.uniol.inf.is.odysseus.parser.cql2.generator.cache;
+
+import java.util.Collection;
+import java.util.Map;
+
+import de.uniol.inf.is.odysseus.core.collection.Pair;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+
+public interface ICacheService {
+	
+	Collection<SourceStruct> getSourceCache();
+	Collection<Pair<SelectExpression, String>> getAggregationAttributeCache();
+	OperatorCache getOperatorCache();
+	Map<String, String> getExpressionCache();
+	Map<String, String> getAttributeAliases();
+	QueryCache getQueryCache();
+	void flushAll();
+	SelectCache getSelectCache();
+	
+}
