@@ -100,7 +100,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				if (logger.isTraceEnabled()) {
+					e.printStackTrace();
+				}
 				logger.warn(e.getMessage(), e);
 			}
 
