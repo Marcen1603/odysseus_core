@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  */
 public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
 	
-	static final String REMOVE_NEWLINES = "remove_newlines";
+	static final String REMOVE_NEWLINES = "removeNewlines";
 	
 	Logger LOG = LoggerFactory.getLogger(DocumentProtocolHandler.class);
 	protected BufferedReader reader;
@@ -215,7 +215,7 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		}
 		if (result != null) {
 			if (removeNewlines) {
-				result = result.replace("\n", "").replaceAll("\r", "");
+				result = result.replace("\n", "").replace("\r", "");
 			}
 			return getDataHandler().readData(result);
 		} else {
