@@ -44,7 +44,7 @@ public class ReportGenerator implements IReportGenerator {
 					reportText = NO_REPORT_TEXT;
 				}
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 			reportMap.put(reportTitle, reportText);
 		}
