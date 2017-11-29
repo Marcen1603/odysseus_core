@@ -27,6 +27,9 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @param <T>
  */
 public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
+	
+	static final String REMOVE_NEWLINES = "remove_newlines";
+	
 	Logger LOG = LoggerFactory.getLogger(DocumentProtocolHandler.class);
 	protected BufferedReader reader;
 	protected BufferedWriter writer;
@@ -46,6 +49,7 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 	private long basetime;
 
 	private boolean oneDocPerCall = true;
+	private boolean removeNewlines = false;
 
 	public DocumentProtocolHandler() {
 		super();
@@ -92,6 +96,8 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 		if (options.containsKey("onedocpercall")){
 			oneDocPerCall = Boolean.parseBoolean(options.get("onedocpercall"));
 		}
+		removeNewlines = options.getBoolean(REMOVE_NEWLINES, false);
+		
 		lastDumpTime = System.currentTimeMillis();
 	}
 
@@ -208,6 +214,9 @@ public class DocumentProtocolHandler<T extends IStreamObject<? extends IMetaAttr
 			intern_close();
 		}
 		if (result != null) {
+			if (removeNewlines) {
+				result = result.replace("\n", "").replaceAll("\r", "");
+			}
 			return getDataHandler().readData(result);
 		} else {
 			return null;
