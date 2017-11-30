@@ -1,7 +1,10 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -55,7 +58,17 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 
 	@Override
 	public Document<?> readData(InputStream inputStream, boolean handleMetaData) throws IOException {
-		return null;
+		BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+		StringBuffer out = new StringBuffer();
+		
+		while ((line = in.readLine()) != null) {
+			out.append(line+System.lineSeparator());
+		}
+		
+		// remove last lineSeperator
+				
+		return new Document<>(out.substring(0,out.length()-1));
 	}
 
 	@SuppressWarnings("unchecked")
