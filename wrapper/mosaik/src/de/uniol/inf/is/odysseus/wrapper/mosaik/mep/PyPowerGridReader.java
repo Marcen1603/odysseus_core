@@ -111,7 +111,7 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 
 			// attributes for buses are (0) the id, (1) the type and (2) the
 			// base voltage [kV]
-			input.path("bus").parallelStream().forEach(busObj -> {
+			input.path("bus").stream().forEach(busObj -> {
 				List<Object> bus = ((KeyValueObject<?>) busObj).path("$");
 				Node node = graph.addNode(getStringWithoutQuotes(bus.get(0)));
 				node.addAttribute("nodeType", getStringWithoutQuotes(bus.get(1)));
@@ -124,14 +124,18 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 			// the target bus, (3) the power rating [MVA], (4) the short-circuit
 			// voltage [%], (5) the short-circuit losses [MV], (6) max current
 			// on primary side [A], (7) max current on secondary side [A]
-			input.path("trafo").parallelStream().forEach(trafoObj -> {
+			input.path("trafo").stream().forEach(trafoObj -> {
 				List<Object> trafo = ((KeyValueObject<?>) trafoObj).path("$");
 				Node fromBus = graph.getNode(getStringWithoutQuotes(trafo.get(1)));
 				Node toBus = graph.getNode(getStringWithoutQuotes(trafo.get(2)));
 				Edge edge = graph.addEdge(getStringWithoutQuotes(trafo.get(0)), fromBus, toBus);
-				edge.addAttribute("Sr", (Double) trafo.get(3) * Math.pow(10, 6)); // MVA to VA
+				edge.addAttribute("Sr", (Double) trafo.get(3) * Math.pow(10, 6)); // MVA
+																					// to
+																					// VA
 				edge.addAttribute("Uk", (Double) trafo.get(4));
-				edge.addAttribute("Pk", (Double) trafo.get(5) * Math.pow(10, 6)); // MV to V
+				edge.addAttribute("Pk", (Double) trafo.get(5) * Math.pow(10, 6)); // MV
+																					// to
+																					// V
 				edge.addAttribute("ImaxP", (Double) trafo.get(6));
 				edge.addAttribute("ImaxS", (Double) trafo.get(7));
 			});
@@ -140,29 +144,29 @@ public class PyPowerGridReader extends AbstractFunction<Graph> {
 			// the target bus, (3) the length [km], (4) the resistance per unit
 			// length [Ohm/km], (5) the reactance per unit length [Ohm/km], (6)
 			// the capacity per unit length [nF/km], (7) max current [A]
-			input.path("branch").parallelStream().forEach(branchObj -> {
+			input.path("branch").stream().forEach(branchObj -> {
 				List<Object> branch = ((KeyValueObject<?>) branchObj).path("$");
 				Node fromBus = graph.getNode(getStringWithoutQuotes(branch.get(1)));
 				Node toBus = graph.getNode(getStringWithoutQuotes(branch.get(2)));
 				Edge edge = graph.addEdge(getStringWithoutQuotes(branch.get(0)), fromBus, toBus);
 				edge.addAttribute("length", (Double) branch.get(3) * Math.pow(10, 3)); // km
-																						// to
-																						// m
+				// to
+				// m
 				edge.addAttribute("RpL", (Double) branch.get(4) * Math.pow(10, -3)); // Ohm/km
-																						// to
-																						// Ohm/m
+				// to
+				// Ohm/m
 				edge.addAttribute("XpL", (Double) branch.get(5) * Math.pow(10, -3)); // Ohm/km
-																						// to
-																						// Ohm/m
+				// to
+				// Ohm/m
 				edge.addAttribute("CpL", (Double) branch.get(6) * Math.pow(10, 9) * Math.pow(10, -3)); // nF/km
-																										// to
-																										// F/m
+				// to
+				// F/m
 				edge.addAttribute("Imax", (Double) branch.get(7));
 			});
 
 			// additional there are line types for each branch (originally not
 			// from mosaik).
-			input.path("branchtype").parallelStream().forEach(branchTypeObj -> {
+			input.path("branchtype").stream().forEach(branchTypeObj -> {
 				KeyValueObject<?> branchType = (KeyValueObject<?>) branchTypeObj;
 				Edge edge = graph.getEdge(branchType.getAttribute("branch"));
 				String type = branchType.getAttribute("type");
