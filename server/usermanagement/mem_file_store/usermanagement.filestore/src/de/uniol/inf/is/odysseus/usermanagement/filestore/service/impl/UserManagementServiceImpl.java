@@ -33,7 +33,7 @@ import de.uniol.inf.is.odysseus.usermanagement.filestore.service.domain.User;
 
 public class UserManagementServiceImpl extends AbstractUserManagement<User, Role, Privilege> {
 
-	private OdysseusConfiguration config;
+	private OdysseusConfiguration config = OdysseusConfiguration.instance;
 
 	@Override
 	protected Role createEmptyRole() {

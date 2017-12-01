@@ -86,7 +86,7 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					if (outputDatatype.isNumeric()) {
 						notToParse[i] = input.getNumberAttribute(attributeName);
 					} else {
-						dataValues.set(i, input.getAttribute(attributeName));
+						dataValues.set(i, input.getAttribute(attributeName)+"");
 					}
 				}else{
 					// try with path expression
@@ -100,6 +100,9 @@ public class KeyValueToTuplePO<M extends IMetaAttribute> extends AbstractPipe<Ke
 					}
 				}
 			} catch (Exception e) {
+				if (logger.isTraceEnabled()) {
+					e.printStackTrace();
+				}
 				logger.warn(e.getMessage(), e);
 			}
 
