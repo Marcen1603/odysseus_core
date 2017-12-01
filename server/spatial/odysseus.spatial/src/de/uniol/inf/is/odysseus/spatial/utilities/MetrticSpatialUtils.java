@@ -108,7 +108,7 @@ public class MetrticSpatialUtils {
 	 *            The coordinate reference system. If null, WGS84 is used as
 	 *            default.
 	 * @param coord1
-	 *            One point for distance calculation.
+	 *            One point for distance calculation. x = lat, y = lng
 	 * @param coord2
 	 *            Other point for distance calculation.
 	 * @return The distance between the two points in meters.

@@ -19,7 +19,7 @@ public class AllEstimator implements Estimator {
 	}
 
 	@Override
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime) {
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius, PointInTime targetTime) {
 		return this.allIDs;
 	}
 

@@ -45,6 +45,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @author Tobias Brandt
  *
  */
+@Deprecated
 public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 
 	public static final int BIT_PRECISION = 64;
@@ -512,6 +513,13 @@ public class GeoHashMONoCleanupIndexStructure implements MovingObjectIndexOld {
 	@Override
 	public Set<String> getAllMovingObjectIds() {
 		return this.latestTrajectoryElementMap.keySet();
+	}
+
+	@Override
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(double centerLatitude, double longitude,
+			double radius, TimeInterval t) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

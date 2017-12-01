@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
  * @author Tobias Brandt
  *
  */
-public interface SpatialIndex {
+public interface SpatialIndex<T extends IMetaAttribute> {
 
 	/**
 	 * Adds a location measurement to the index.
@@ -25,7 +25,7 @@ public interface SpatialIndex {
 	 * @param streamElement
 	 *            The according streaming element
 	 */
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement);
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends T> streamElement);
 
 	/**
 	 * Calculates all neighbors within the given radius around the center. Only uses
@@ -66,7 +66,7 @@ public interface SpatialIndex {
 	 * @return An approximation of elements within the circle. Map: ID of the object
 	 *         -> result for that object
 	 */
-	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double longitude,
+	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double centerLongitude,
 			double radius, TimeInterval interval);
 
 	/**
