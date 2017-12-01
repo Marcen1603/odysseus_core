@@ -47,6 +47,7 @@ import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
  * @since 2017
  *
  */
+@Deprecated
 public class GeoHashSTDataStructure implements ISpatioTemporalDataStructure {
 
 	private static Logger _logger = LoggerFactory.getLogger(GeoHashSTDataStructure.class);

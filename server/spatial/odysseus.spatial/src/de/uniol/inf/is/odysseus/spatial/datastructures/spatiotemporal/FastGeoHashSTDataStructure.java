@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 
+@Deprecated
 public class FastGeoHashSTDataStructure extends GeoHashSTDataStructure {
 
 	public static final String TYPE = "fastgeohash";

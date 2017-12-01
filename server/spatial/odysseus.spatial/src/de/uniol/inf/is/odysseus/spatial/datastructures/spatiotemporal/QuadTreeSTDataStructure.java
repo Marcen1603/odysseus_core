@@ -24,6 +24,7 @@ import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
+@Deprecated
 public class QuadTreeSTDataStructure implements ISpatioTemporalDataStructure {
 
 	public static final String TYPE = "quadtree";
