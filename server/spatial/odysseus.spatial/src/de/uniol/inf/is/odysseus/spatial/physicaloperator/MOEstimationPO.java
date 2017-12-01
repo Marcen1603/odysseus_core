@@ -19,9 +19,7 @@ import de.uniol.inf.is.odysseus.spatial.estimation.AllEstimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.ApproximateTimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.Estimator;
 import de.uniol.inf.is.odysseus.spatial.estimation.ExtendedRadiusEstimatior;
-import de.uniol.inf.is.odysseus.spatial.estimation.TimeCircleEstimator;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
-import de.uniol.inf.is.odysseus.spatial.index.GeoHashIndex;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashTimeIntervalIndex;
 import de.uniol.inf.is.odysseus.spatial.index.SpatialIndex;
 import de.uniol.inf.is.odysseus.spatial.logicaloperator.movingobject.MOEstimationAO;
@@ -38,8 +36,6 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	private static final int DATA_PORT = 0;
 	private static final int ENRICH_PORT = 1;
 
-	// Use the time circle algorithm with exact circle calculations
-	private static final String TIME_CIRCLE_ESTIMATION = "timecircle";
 	/*
 	 * Use the time circle algorithm but only approximate circles with underlying
 	 * spatial index to avoid distance calculations
@@ -82,9 +78,6 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.centerMovingObjectAttributeIndex = ao.getInputSchema(ENRICH_PORT)
 				.findAttributeIndex(ao.getCenterMovingObjectAttribute());
 
-		// TODO Name and "length" is not correct here. Remove length and use a time
-		// window. Remove old index structure by new spatial index
-		this.index = new GeoHashMODataStructure("EstimationPO" + this.hashCode(), this.geometryAttributeIndex, 1000);
 		this.spatialIndex = new GeoHashTimeIntervalIndex<ITimeInterval>(true, idAttributeIndex);
 		// this.spatialIndex = new GeoHashIndex<>();
 		this.allIDs = new HashSet<>();
@@ -112,10 +105,6 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 		this.collectAllIDs = false;
 
 		switch (estimatorName.toLowerCase()) {
-		case TIME_CIRCLE_ESTIMATION:
-			this.predictionEstimator = new TimeCircleEstimator(this.index, radiusExtensionFactor,
-					(int) numberOfIterations, maxSpeed);
-			break;
 		case APPROXIMATE_TIME_CIRCLE_ESTIMATION:
 			this.predictionEstimator = new ApproximateTimeCircleEstimator(this.spatialIndex, radiusExtensionFactor,
 					(int) numberOfIterations, maxSpeed);
