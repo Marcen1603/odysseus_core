@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
-import de.uniol.inf.is.odysseus.spatial.datastructures.movingobject.GeoHashMODataStructure;
 import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.estimation.AllEstimator;
@@ -44,7 +43,6 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	// Simply extends the radius by a given factor
 	private static final String EXTENDED_RADIUS_ESTIMATION = "extendedradius";
 
-	private GeoHashMODataStructure index;
 	private SpatialIndex<ITimeInterval> spatialIndex;
 
 	// True, if no estimation is used but all IDs are simply collected
@@ -79,7 +77,6 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 				.findAttributeIndex(ao.getCenterMovingObjectAttribute());
 
 		this.spatialIndex = new GeoHashTimeIntervalIndex<ITimeInterval>(true, idAttributeIndex);
-		// this.spatialIndex = new GeoHashIndex<>();
 		this.allIDs = new HashSet<>();
 		this.radius = ao.getRadius();
 
@@ -110,7 +107,7 @@ public class MOEstimationPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 					(int) numberOfIterations, maxSpeed);
 			break;
 		case EXTENDED_RADIUS_ESTIMATION:
-			this.predictionEstimator = new ExtendedRadiusEstimatior(this.index, radiusExtensionFactor);
+			this.predictionEstimator = new ExtendedRadiusEstimatior(this.spatialIndex, radiusExtensionFactor);
 			break;
 		default:
 			this.predictionEstimator = new AllEstimator(this.allIDs);
