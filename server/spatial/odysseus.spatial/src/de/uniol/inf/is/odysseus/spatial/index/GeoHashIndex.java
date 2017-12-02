@@ -9,16 +9,14 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import ch.hsr.geohash.BoundingBox;
 import ch.hsr.geohash.GeoHash;
 import ch.hsr.geohash.WGS84Point;
 import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
+import ch.hsr.geohash.queries.GeoHashCircleQuery;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
@@ -27,7 +25,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
-public class GeoHashIndex implements SpatialIndex {
+public class GeoHashIndex<T extends IMetaAttribute> implements SpatialIndex<T> {
 
 	// The precision of the GeoHashes
 	public static final int BIT_PRECISION = 64;
@@ -47,9 +45,7 @@ public class GeoHashIndex implements SpatialIndex {
 	}
 
 	@Override
-	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends IMetaAttribute> streamElement) {
-
-		// TODO How to clean up with window?
+	public void add(LocationMeasurement locationMeasurement, IStreamObject<? extends T> streamElement) {
 
 		// Get info for new TrajectoryElement
 		GeoHash geoHash = GeoHashHelper.fromLatLong(locationMeasurement.getLatitude(),
@@ -107,24 +103,34 @@ public class GeoHashIndex implements SpatialIndex {
 	@Override
 	public Map<String, ResultElement> queryCircleOnLatestElements(double centerLatitude, double centerLongitude,
 			double radius, TimeInterval interval) {
-		// TODO Auto-generated method stub
-		return null;
+
+		MetrticSpatialUtils spatialUtils = MetrticSpatialUtils.getInstance();
+
+		// Get possible elements within the circle
+		Map<String, TrajectoryElement> candidates = approximateCircleOnLatestElements(centerLatitude, centerLongitude,
+				radius, interval);
+
+		// Refine: calculate actual distance
+		Map<String, ResultElement> results = new HashMap<>(candidates.size());
+		for (String key : candidates.keySet()) {
+			double meters = spatialUtils.calculateDistance(null, new Coordinate(centerLatitude, centerLongitude),
+					new Coordinate(candidates.get(key).getLatitude(), candidates.get(key).getLongitude()));
+			if (meters <= radius) {
+				// The element is within the radius
+				ResultElement result = new ResultElement(candidates.get(key), meters);
+				results.put(key, result);
+			}
+		}
+
+		return results;
 	}
 
 	@Override
-	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude, double longitude,
-			double radius, TimeInterval interval) {
-		// Get the rectangular envelope for the circle
-		Coordinate centerCoord = new Coordinate(centerLatitude, longitude);
-		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerCoord, radius);
-		GeometryFactory factory = new GeometryFactory();
-		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
-		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+	public Map<String, TrajectoryElement> approximateCircleOnLatestElements(double centerLatitude,
+			double centerLongitude, double radius, TimeInterval interval) {
 
-		// Get all elements within that bounding box (filter step, just an
-		// approximation)
-		Map<GeoHash, List<TrajectoryElement>> candidateCollection = approximateBoundinBox(
-				GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
+		Map<GeoHash, List<TrajectoryElement>> candidateCollection = approximateCircle(centerLatitude, centerLongitude,
+				radius);
 
 		// Transform format of result
 		Map<String, TrajectoryElement> result = new HashMap<>();
@@ -148,13 +154,29 @@ public class GeoHashIndex implements SpatialIndex {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected Map<GeoHash, List<TrajectoryElement>> approximateBoundinBox(Polygon polygon) {
+	protected Map<GeoHash, List<TrajectoryElement>> approximateCircle(double centerLatitude, double centerLongitude,
+			double radius) {
+		GeoHashCircleQuery circleQuery = new GeoHashCircleQuery(new WGS84Point(centerLatitude, centerLongitude),
+				radius);
+		List<GeoHash> searchHashes = circleQuery.getSearchHashes();
+
+		// Get all hashes that we have to calculate the distance for
+		Map<GeoHash, List<TrajectoryElement>> allHashes = new HashMap<>();
+		for (GeoHash hash : searchHashes) {
+			// Query all our hashes and use those which have the same prefix
+			// The whole list of hashes is used in "getByPrefix"
+			allHashes.putAll((Map<? extends GeoHash, ? extends List<TrajectoryElement>>) GeoHashHelper
+					.getByPreffix(hash, this.locationMap));
+		}
+		return allHashes;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Map<GeoHash, List<TrajectoryElement>> approximateBoundingBox(Polygon polygon) {
 		Geometry envelope = polygon.getEnvelope();
 
 		// Get hashes that we have to search for
-		// TODO This is guessed. See which coordinate is which. ->
-		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
-		// with all polygonPoints
+		// x is latitude, y is longitude, cause JTS works with lat / lng
 		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
 		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
 		BoundingBox bBox = new BoundingBox(point1, point2);

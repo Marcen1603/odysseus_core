@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  * @author Tobias Brandt
  *
  */
+@Deprecated
 public interface ISpatioTemporalDataStructure {
 
 	/**

@@ -67,6 +67,12 @@ public class TrajectoryElement {
 		}
 	}
 
+	public void decoupleFromNextElement() {
+		if (this.nextElement != null)
+			this.nextElement.setPreviousElement(null);
+		this.nextElement = null;
+	}
+
 	public TrajectoryElement getPreviousElement() {
 		return previousElement;
 	}
