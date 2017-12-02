@@ -66,5 +66,11 @@
 <unit id="org.junit" version="4.12.0.v201504281640"/>
 <repository location="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/tools/orbit/downloads/drops/R20150821153341/repository/"/>
 </location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.emf.ecore.feature.group" version="2.11.0.v20150512-0501"/>
+<unit id="org.eclipse.emf.feature.group" version="2.11.0.v20150601-0402"/>
+<unit id="org.eclipse.emf.sdk.feature.group" version="2.11.0.v20150601-0402"/>
+<repository location="http://ftp-stud.fht-esslingen.de/pub/Mirrors/eclipse/modeling/emf/emf/updates/"/>
+</location>
 </locations>
 </target>

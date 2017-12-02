@@ -38,6 +38,7 @@ import de.uniol.inf.is.odysseus.aggregation.sweeparea.IAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.IndexedByEndTsAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.StartTsTimeOrderedAggregationSweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
@@ -88,9 +89,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * key.
 	 */
 	protected final int[] groupingAttributesIndices;
-	
+
 	/**
-	 * The attribute indices of the outgoing elements that form the grouping key.
+	 * The attribute indices of the outgoing elements that form the grouping
+	 * key.
 	 */
 	protected final int[] groupingAttributesIndicesOutputSchema;
 
@@ -173,6 +175,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	long watermarkOut = 0l;
 
 	/**
+	 * A copy of the meta data of the first element.
+	 */
+	private IMetaAttribute metaData;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param nonIncrementalFunctions
@@ -194,14 +201,16 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The output schema of this operator.
 	 * @param groupingAttributesIdx
 	 *            The indices that form the grouping attributes.
-	 * @param groupingAttributesIdxOutputSchema   
-	 * 			  The indices that form the grouping attributes on the output schema
+	 * @param groupingAttributesIdxOutputSchema
+	 *            The indices that form the grouping attributes on the output
+	 *            schema
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
 			final boolean evaluateAtOutdatingElements, final boolean evaluateBeforeRemovingOutdatingElements,
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
-			final SDFSchema outputSchema, final int[] groupingAttributesIdx, final int[] groupingAttributesIdxOutputSchema) {
+			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
+			final int[] groupingAttributesIdxOutputSchema) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -265,6 +274,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		if (lastOutput != null) {
 			lastOutput.clear();
 		}
+		metaData = null;
 	}
 
 	/*
@@ -276,8 +286,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	@Override
 	public void processPunctuation(final IPunctuation punctuation, final int port) {
-		// TODO: Process outdated elements that are before the punctuation.
-		// sendPunctuation(punctuation);
+		// Process outdated elements that are before the punctuation.
+		processOutdatedElements(punctuation.getTime(), null);
+		sendPunctuation(punctuation);
 	}
 
 	/*
@@ -288,6 +299,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	@Override
 	protected synchronized void process_next(final T object, final int port) {
+
+		if(metaData == null) {
+			metaData = object.getMetadata().clone();
+		}
 
 		if (!hasOutdatingElements) {
 			if (!object.getMetadata().getEnd().isInfinite()) {
@@ -313,13 +328,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// When we do not want to produce an output when elements get outdated
 		// but we have incremental functions, than we need to update the state
 		// of the incremental functions, though.
-		if (hasOutdatingElements && (evaluateAtOutdatingElements || hasIncrementalFunctions)) {
+		if (hasOutdatingElements && (evaluateAtOutdatingElements || evaluateBeforeRemovingOutdatingElements
+				|| hasIncrementalFunctions)) {
 			processOutdatedElements(object, groupKey);
 		}
 
-		if (evaluateAtNewElement || hasIncrementalFunctions) {
-			processNewElement(object, groupKey);
-		}
+		processNewElement(object, groupKey);
 	}
 
 	/**
@@ -331,9 +345,37 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The group key of the trigger element,
 	 */
 	private void processOutdatedElements(final T trigger, final Object triggerGroupKey) {
+		processOutdatedElements(trigger.getMetadata().getStart(), trigger, triggerGroupKey);
+	}
+
+	/**
+	 * Processes all outdated points before a given point in time (e.g. a
+	 * heartbeat).
+	 *
+	 * @param triggerPiT
+	 *            The point in time that trigger this processing.
+	 * @param triggerGroupKey
+	 *            The group key of the trigger element,
+	 */
+	private void processOutdatedElements(final PointInTime triggerPiT, final Object triggerGroupKey) {
+		processOutdatedElements(triggerPiT, null, triggerGroupKey);
+	}
+
+	/**
+	 * Processes all outdated points a given point in time.
+	 *
+	 * @param triggerPiT
+	 *            The point in time that trigger this processing.
+	 * @param triggerObj
+	 *            The new element that trigger this processing.
+	 * @param triggerGroupKey
+	 *            The group key of the trigger element,
+	 */
+	private void processOutdatedElements(final PointInTime triggerPiT, final T triggerObj,
+			final Object triggerGroupKey) {
 		// Iterate over all points in time that are before trigger start TS.
-		for (final Iterator<Entry<PointInTime, Set<Object>>> iter = outdatingGroups
-				.headMap(trigger.getMetadata().getStart(), true).entrySet().iterator(); iter.hasNext();) {
+		for (final Iterator<Entry<PointInTime, Set<Object>>> iter = outdatingGroups.headMap(triggerPiT, true).entrySet()
+				.iterator(); iter.hasNext();) {
 
 			final Entry<PointInTime, Set<Object>> entry = iter.next();
 			final PointInTime pointInTime = entry.getKey();
@@ -349,7 +391,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 					triggerGroup = triggerGroupKey.equals(gkey);
 				}
 
-				processOutdatedForGroup(getSweepArea(gkey), trigger, gkey, triggerGroup, pointInTime);
+				processOutdatedForGroup(getSweepArea(gkey), triggerPiT, triggerObj, gkey, triggerGroup, pointInTime);
 			}
 			// remove point in time
 			iter.remove();
@@ -362,8 +404,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *
 	 * @param sweepArea
 	 *            The sweep area of the group.
-	 * @param trigger
-	 *            The element that triggers the calculation.
+	 * @param triggerPiT
+	 *            The point in time that trigger this processing.
+	 * @param triggerObj
+	 *            The new element that trigger this processing.
 	 * @param groupKey
 	 *            The group key of the group.
 	 * @param isTriggerGroup
@@ -372,8 +416,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The point in time where the element set changed due to invalid
 	 *            elements in the sweep area.
 	 */
-	private void processOutdatedForGroup(final IAggregationSweepArea<M, T> sweepArea, final T trigger,
-			final Object groupKey, final boolean isTriggerGroup, final PointInTime pointInTime) {
+	private void processOutdatedForGroup(final IAggregationSweepArea<M, T> sweepArea, final PointInTime triggerPiT,
+			final T triggerObj, final Object groupKey, final boolean isTriggerGroup, final PointInTime pointInTime) {
 
 		// We output a result only if the flag evaluateAtOutdatingElements is
 		// set true AND the outdating elements are not elements of the trigger
@@ -381,19 +425,12 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// case, the result will be output by the processing of the trigger
 		// element.
 		final boolean evaluate = (evaluateAtOutdatingElements || evaluateBeforeRemovingOutdatingElements)
-				&& (!evaluateAtNewElement || !(isTriggerGroup && pointInTime.equals(trigger.getMetadata().getStart())));
+				&& (!evaluateAtNewElement || !(isTriggerGroup && pointInTime.equals(triggerPiT)));
 
 		// If we have incremental functions we need to update the state of these
 		// functions even when we not want to calculate the result.
 
 		// Get and remove outdated elements.
-		/*
-		 * ODY-1107:
-		 * Moved retrieval of outdated elements outside the if-clause (evaluate || hasIncrementalFunctions),
-		 * because it does more than getting the outdated tuples, it removes them from SA.
-		 * That is also necessary for non-incremental functions.
-		 */
-		final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 		if (evaluate || hasIncrementalFunctions) {
 			// TODO: Do we need deep copy here? Depends on the values of the
@@ -414,13 +451,28 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				if (sampleOfGroup == null && objects != null && !objects.isEmpty()) {
 					sampleOfGroup = objects.iterator().next();
 				}
-				processNonIncrementalFunctions(result, objects, trigger, pointInTime);
+				processNonIncrementalFunctions(result, objects, triggerObj, pointInTime);
 			}
+
+			/*
+			 * ODY-1107: Moved retrieval of outdated elements outside the
+			 * if-clause (evaluate || hasIncrementalFunctions), because it does
+			 * more than getting the outdated tuples, it removes them from SA.
+			 * That is also necessary for non-incremental functions.
+			 *
+			 * ODY-1422: Moved retrieval of outdated elements below the
+			 * if-clause (evaluate && hasNonIncrementalFunctions &&
+			 * evaluateBeforeRemovingOutdatingElements), because
+			 * sweepArea.getValidTuples() would return an empty list. That is
+			 * because the outdated elements would have been removed from sa
+			 * with the following line.
+			 */
+			final Collection<T> outdatedTuples = sweepArea.getOutdatedTuples(pointInTime, true);
 
 			if (hasIncrementalFunctions) {
 				final List<IIncrementalAggregationFunction<M, T>> statefulFunctionsForKey = getStatefulFunctions(
 						groupKey);
-				processStatefulFunctionsRemove(result, statefulFunctionsForKey, outdatedTuples, trigger, pointInTime);
+				processStatefulFunctionsRemove(result, statefulFunctionsForKey, outdatedTuples, triggerObj, pointInTime);
 			}
 
 			if (evaluate) {
@@ -428,7 +480,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				if (isTriggerGroup) {
 					// If this group is the same as the trigger element group,
 					// the sample of the group is the trigger. Thats easy.
-					sampleOfGroup = trigger;
+					sampleOfGroup = triggerObj;
 				} else if (outdatedTuples != null && !outdatedTuples.isEmpty()) {
 					// Otherwise use the first outdating element as sample of
 					// the group (if we have one).
@@ -444,11 +496,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 						// valid element.
 						sampleOfGroup = objects.iterator().next();
 					}
-					processNonIncrementalFunctions(result, objects, trigger, pointInTime);
+					processNonIncrementalFunctions(result, objects, triggerObj, pointInTime);
 				}
 
 				if (result != null) {
-					transferResult(result, trigger, pointInTime, sampleOfGroup);
+					transferResult(result, pointInTime, sampleOfGroup);
 				}
 
 			}
@@ -662,14 +714,14 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	@SuppressWarnings("unchecked")
-	private void transferResult(final T result, final T trigger, final PointInTime startTs, final T sampleOfGroup) {
+	private void transferResult(final T result, final PointInTime startTs, final T sampleOfGroup) {
 
 		if (onlyNullAttributes(result)) {
 			return;
 		}
 
 		if (watermarkOut > startTs.getMainPoint()) {
-			LOG.warn("Out element " + result + " triggerd by " + trigger + " for start ts " + startTs
+			LOG.warn("Out element " + result + " for start ts " + startTs
 					+ " is out of order!");
 		} else {
 			watermarkOut = startTs.getMainPoint();
@@ -688,7 +740,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (output) {
-			final M meta = (M) trigger.getMetadata().clone();
+			final M meta = (M) metaData.clone();
 			meta.setEnd(PointInTime.INFINITY);
 			meta.setStart(startTs);
 			result.setMetadata(meta);
@@ -713,7 +765,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 * @param result
 	 */
 	private void transferResult(final T result, final T trigger, final PointInTime startTs) {
-		transferResult(result, trigger, startTs, trigger);
+		transferResult(result, startTs, trigger);
 	}
 
 	/**
