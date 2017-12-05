@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
 /**
  * Provides the MEP functions that closely related to mosaik. Provides MEP functions are: <br />
  * <ul>
- * <li>{@link MosaikTopologyFromJSON}</li>
+ * <li>{@link PyPowerGridReader}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -20,7 +20,7 @@ public class MosaikMEPFunctions implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new MosaikTopologyFromJSON() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new PyPowerGridReader() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
