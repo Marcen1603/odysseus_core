@@ -29,11 +29,7 @@ public class TKeyValueToKeyValueRule extends AbstractTransformationRule<ToKeyVal
 
 	@Override
 	public boolean isExecutable(ToKeyValueAO operator, TransformationConfiguration config) {
-		if (operator.getInputSchema().getType() == KeyValueObject.class) {
-			return true;
-
-		}
-		return false;
+		return operator.getInputSchema().getType() == KeyValueObject.class;
 	}
 
 	@Override
