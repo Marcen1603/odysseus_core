@@ -24,12 +24,12 @@ public class MDAExchangeDimFunction extends AbstractFunction<Void> {
 	public Void getValue() {
 		String name = getInputValue(0);
 		Objects.requireNonNull(name);
-		Integer index = Integer.valueOf(getInputValue(1));
+		Long index = getInputValue(1);
 		Objects.requireNonNull(index);
 		List<Double> dim = getInputValue(2);
 		Objects.requireNonNull(dim);
-		MDARemoveDimFunction.removeDim(name, index);
-		MDAAddDimWithIndexFunction.addDim(name, index, dim);
+		MDARemoveDimFunction.removeDim(name, index.intValue());
+		MDAAddDimWithIndexFunction.addDim(name, index.intValue(), dim);
 		return null;
 	}
 

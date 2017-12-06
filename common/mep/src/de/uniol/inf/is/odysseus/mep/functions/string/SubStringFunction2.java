@@ -37,11 +37,12 @@ public class SubStringFunction2 extends AbstractFunction<String> {
 	@Override
 	public String getValue() {
 		String a = getInputValue(0);
-		Integer b = Integer.valueOf(getInputValue(1));
+		Long b = getInputValue(1);
+
 		if ((a == null) || (b == null)) {
 			return null;
 		}
-		return a.substring(b);
+		return a.substring(b.intValue());
 	}
 
 }
