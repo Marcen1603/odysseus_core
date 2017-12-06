@@ -35,7 +35,7 @@ public class MDAAddDimWithIndexFunction extends AbstractFunction<Void> {
 	public Void getValue() {
 		String name = getInputValue(0);
 		Objects.requireNonNull(name);
-		Integer index = getInputValue(1);
+		Integer index = Integer.valueOf(getInputValue(1));
 		Objects.requireNonNull(index);
 		List<Double> dim = getInputValue(2);
 		Objects.requireNonNull(dim);
