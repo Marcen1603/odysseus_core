@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,7 +39,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
  */
 public class JSONCOSEMParser<T extends IStreamObject<IMetaAttribute>> extends AbstractCOSEMParser<T> {
 
-	// private static final Logger logger = LoggerFactory.getLogger(JSONCOSEMParser.class.getSimpleName());
+	 private static final Logger log = LoggerFactory.getLogger(JSONCOSEMParser.class);
 
 	public JSONCOSEMParser(InputStream inputStream, SDFSchema schema, String rootNode) {
 		super(inputStream, schema, rootNode);
@@ -80,12 +84,18 @@ public class JSONCOSEMParser<T extends IStreamObject<IMetaAttribute>> extends Ab
 			root = new ObjectMapper().readTree(new JsonFactory().createParser(new InputStreamReader(inputStream)));
 			
 			// returns ldevs or logical_name, but must be ldevs
-			// rootElement = root.fields().next().getKey(); 
-			rootElement = "ldevs";
+			 rootElement = root.fields().next().getKey(); 
+//			rootElement = "ldevs";
 
 			objectsNode = root.get(rootElement);
-			maxNodeIndex = objectsNode.size();
-			currentNodeIndex = 0;
+			
+			if (objectsNode != null) {
+				maxNodeIndex = objectsNode.size();
+				currentNodeIndex = 0;
+			} else {
+				log.error("encountered null object during initialisation");
+			}
+			
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
