@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.uniol.inf.is.odysseus.iql.odl.ui.feature"
-      label="Feature"
+      label="IQL ODL UI Feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -9,7 +9,7 @@
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+      Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
 
    <license url="http://www.example.com/license">
