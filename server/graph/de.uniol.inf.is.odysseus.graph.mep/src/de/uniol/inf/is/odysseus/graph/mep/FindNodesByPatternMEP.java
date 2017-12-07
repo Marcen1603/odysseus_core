@@ -81,7 +81,7 @@ public class FindNodesByPatternMEP extends AbstractFunction<List<Node>> {
 			return graph.getNodeSet().stream().filter(node -> node.getId().matches(pattern))
 					.collect(Collectors.toList());
 		} catch (Throwable e) {
-			log.error("Could not calculate shortest path length in graph!", e);
+			log.error("Could not search for node patterns in graph!", e);
 			return null;
 		}
 	}

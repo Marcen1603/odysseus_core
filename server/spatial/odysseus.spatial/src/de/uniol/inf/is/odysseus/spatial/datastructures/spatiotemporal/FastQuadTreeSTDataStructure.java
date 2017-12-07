@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
+@Deprecated
 public class FastQuadTreeSTDataStructure extends QuadTreeSTDataStructure {
 
 	public static final String TYPE = "fastquadtree";

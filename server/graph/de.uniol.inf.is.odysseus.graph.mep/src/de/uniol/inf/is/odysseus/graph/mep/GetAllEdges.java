@@ -64,7 +64,7 @@ public class GetAllEdges extends AbstractFunction<List<Edge>> {
 		try {
 			return new ArrayList<Edge>(((Graph) getInputValue(0)).getEdgeSet());
 		} catch (Throwable e) {
-			log.error("Could not calculate shortest path length in graph!", e);
+			log.error("Could not extract edge list from graph!", e);
 			return null;
 		}
 	}

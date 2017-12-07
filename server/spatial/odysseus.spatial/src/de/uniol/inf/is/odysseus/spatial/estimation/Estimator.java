@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
  */
 public interface Estimator {
 
-	public Set<String> estimateObjectsToPredict(String centerObjectId, double radius, PointInTime targetTime);
+	public Set<String> estimateObjectsToPredict(double centerLatitude, double centerLongitude, double radius,
+			PointInTime targetTime);
 
 }

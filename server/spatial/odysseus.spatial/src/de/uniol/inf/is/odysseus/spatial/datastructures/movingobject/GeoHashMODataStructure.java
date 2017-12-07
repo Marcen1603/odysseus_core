@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 
+@Deprecated
 public class GeoHashMODataStructure extends GeoHashMONoCleanupIndexStructure {
 
 	public static final String TYPE = "mo_geohash";

@@ -33,10 +33,10 @@ http://odysseus.informatik.uni-oldenburg.de/
    <splash
       location="de.uniol.inf.is.odysseus.rcp.starter" />
    <launcher name="studio">
-      <macosx icon="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-mac.icns"/>
+      <macosx icon="/de.uniol.inf.is.odysseus.client.starter/icons/Odysseus-icons-mac.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="/de.uniol.inf.is.odysseus.core/icons/Odysseus-icons-win.ico"/>
+         <ico path="/de.uniol.inf.is.odysseus.client.starter/icons/Odysseus-icons-win.ico"/>
          <bmp/>
       </win>
    </launcher>

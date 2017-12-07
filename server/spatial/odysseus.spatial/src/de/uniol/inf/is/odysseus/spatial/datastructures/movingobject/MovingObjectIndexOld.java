@@ -16,6 +16,7 @@ import de.uniol.inf.is.odysseus.spatial.datatype.ResultElement;
 import de.uniol.inf.is.odysseus.spatial.datatype.SpatioTemporalQueryResult;
 import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
+@Deprecated
 public interface MovingObjectIndexOld {
 
 	/**
@@ -175,7 +176,10 @@ public interface MovingObjectIndexOld {
 	 *         -> element of the trajectory, also containing the distance to the
 	 *         center
 	 */
-	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectID, double radius,
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(double centerLatitude, double longitude,
+			double radius, TimeInterval t);
+
+	public Map<String, List<ResultElement>> queryCircleWOPrediction(String movingObjectCenterID, double radius,
 			TimeInterval t);
 
 }
