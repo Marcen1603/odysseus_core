@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
 
 public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JSONCOSEMProtocolHandler.class.getSimpleName());
+	private static final Logger log = LoggerFactory.getLogger(JSONCOSEMProtocolHandler.class.getSimpleName());
 
 	private AbstractCOSEMParser<IStreamObject<? extends IMetaAttribute>> parser;
 	private String rootNode;
@@ -64,7 +64,7 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 			
 		}
 		
-		LOGGER.info("Initialized " + JSONCOSEMProtocolHandler.class.getSimpleName());
+		log.info("Initialized " + JSONCOSEMProtocolHandler.class.getSimpleName());
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 				initialStream.read(targetArray);
 				initParser(targetArray);
 			} catch (IllegalArgumentException e) {
-				LOGGER.info("Given transport handler has no input stream");
+				log.info("Given transport handler has no input stream");
 			}
 			isDone = false;
 		}
@@ -112,7 +112,7 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 	public void close() throws IOException {
 		terminateParser();
 		super.close();
-		LOGGER.info("connection closed");
+		log.info("connection closed");
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 	@Override
 	public void onConnect(ITransportHandler caller) {
 		super.onConnect(caller);
-		LOGGER.info("connected");
+		log.info("connected");
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 				e.printStackTrace();
 			}
 		}
-		LOGGER.info("disconnected");
+		log.info("disconnected");
 	}
 
 	@Override
@@ -175,11 +175,17 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 	public void process(String[] message) {
 		try {
 			initParser(String.join("", message).getBytes());
-			getTransfer().transfer(getDataHandler().readData(parser.parse()));
+			Tuple<?> tuple = (Tuple<?>) parser.parse();
+			
+			if(tuple != null) {
+				log.info("tuple=" + tuple.toString());
+				getTransfer().transfer(getDataHandler().readData(tuple));
+			}
+			
 			terminateParser();
 		} catch (IllegalArgumentException | NullPointerException e) {
-			LOGGER.info("last message: " + Arrays.toString(message));
-			LOGGER.error("exception occurred");
+			log.warn("last message before error: " + Arrays.toString(message));
+			log.error("exception occurred: " + e);
 			if (!isDone) {
 				try {
 					close();
