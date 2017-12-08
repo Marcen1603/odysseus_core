@@ -81,6 +81,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
     private List<T> result = new LinkedList<>();
     private boolean reverse;
     private boolean prettyprint = true;
+    private boolean done = false;
 
     /**
      * Create a new XML Data Handler
@@ -142,6 +143,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     @Override
     public void open() throws UnknownHostException, IOException {
+    	done = false;
         this.getTransportHandler().open();
         if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
@@ -172,8 +174,17 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             return result.size() > 0 || this.input.available() > 0;
         }
         catch (Throwable t) {
+        	if (t instanceof IOException) {
+        		done = true;
+        	}
+        	
             return false;
         }
+    }
+    
+    @Override
+    public boolean isDone() {
+    	return super.isDone() || done;
     }
 
     @Override
