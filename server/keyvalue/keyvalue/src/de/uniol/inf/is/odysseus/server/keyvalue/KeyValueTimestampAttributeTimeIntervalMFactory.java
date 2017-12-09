@@ -177,7 +177,11 @@ AbstractMetadataUpdater<ITimeInterval, KeyValueObject<? extends ITimeInterval>> 
 						+ timeString + " with " + df.toPattern());
 			}
 		} else {
-			timeN = inElem.getNumberAttribute(attrKey);
+			try {
+				timeN = inElem.getNumberAttribute(attrKey);
+			}catch(Exception e) {
+				timeN = Long.parseLong(inElem.getAttribute(attrKey));
+			}
 		}
 		if (factor != 0){
 			timeN = timeN.longValue() * factor;
