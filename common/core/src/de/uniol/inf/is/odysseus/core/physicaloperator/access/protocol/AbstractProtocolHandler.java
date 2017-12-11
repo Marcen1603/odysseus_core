@@ -60,6 +60,8 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	private CharsetEncoder encoder;
 
 	protected final OptionMap optionsMap;
+	
+    private boolean done = false;
 
 	public AbstractProtocolHandler() {
 		direction = null;
@@ -257,7 +259,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public boolean isDone() {
-		return transportHandler.isDone();
+		return done || transportHandler.isDone();
+	}
+	
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 
 	@Override
