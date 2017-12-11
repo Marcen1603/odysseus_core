@@ -32,6 +32,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
+import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
@@ -56,6 +57,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final static private ObjectMapper mapper = new ObjectMapper();
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
 	final static private ObjectMapper xmlMapper = new ObjectMapper(new XmlFactory());
+	final static private ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
 
 	///final static private
 
@@ -529,6 +531,15 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public byte[] getAsBSON() {
+		try {
+			return bsonMapper.writeValueAsBytes(node);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	// ------------------------------------
 
 	@Override
@@ -1868,8 +1879,5 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	}
 
-	public byte[] getAsBSON() {
-		throw new RuntimeException("Currently not supported");
-	}
 
 }
