@@ -329,14 +329,22 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 									((KeyValueObject<IMetaAttribute>) value).node.deepCopy());
 						} else if (value instanceof Object[]) {
 							ArrayNode node = new ArrayNode(nodeFactory);
-							for (Object o : (Object[]) value) {
-								processSublist(value, node, o);
+							if (((Object[])value)[0] instanceof KeyValueObject) {
+								for (Object o : (Object[]) value) {
+									processKeyValueObjectSublist(value, node, o);
+								}
+							}else {
+								node = convertToJsonArray(value);
 							}
 							((ObjectNode) father).set(subkeys[i], node);
 						} else if (value instanceof List) {
 							ArrayNode node = new ArrayNode(nodeFactory);
-							for (Object o : (List<Object>) value) {
-								processSublist(value, node, o);
+							if (((List<Object>)value).get(0) instanceof KeyValueObject) {
+								for (Object o : (List<Object>) value) {
+									processKeyValueObjectSublist(value, node, o);
+								}
+							}else {
+								node = convertToJsonArray(value);
 							}
 							((ObjectNode) father).set(subkeys[i], node);
 
@@ -377,17 +385,22 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processSublist(Object value, ArrayNode node, Object o) {
+	private void processKeyValueObjectSublist(Object value, ArrayNode node, Object o) {
 		if (o instanceof KeyValueObject) {
 			node.add(((KeyValueObject<IMetaAttribute>) o).node.deepCopy());
 		} else {
-			try {
-				String arrayToJson = jsonMapper.writeValueAsString(value);
-				node.add(jsonMapper.readTree(arrayToJson));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			throw new IllegalArgumentException("This method can only be used with KeyValueObjets!");
 		}
+	}
+
+	private ArrayNode convertToJsonArray(Object value) {
+		try {
+			String arrayToJson = jsonMapper.writeValueAsString(value);
+			return (ArrayNode) jsonMapper.readTree(arrayToJson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Object removeAttribute(String key) {
@@ -1802,7 +1815,20 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 		System.out.println(kv.toStringWithNewlines());
 
-		System.out.println(kv.path("sensordatavalues[0].value_type"));
+		List<String> liste = new ArrayList<>();
+		liste.add("Eins");
+		liste.add("Zwei");
+		liste.add("Drei");
+
+		kv.setAttribute("neu", liste);
+
+		System.out.println(kv.toStringWithNewlines());
+
+		Integer[] liste2 = new Integer[] {1, 2,3};
+		
+		kv.setAttribute("neu2", liste2);
+		
+		System.out.println(kv.toStringWithNewlines());
 
 		// Map<String, Object> map;
 		// map = kv.getAsKeyValueMap();
