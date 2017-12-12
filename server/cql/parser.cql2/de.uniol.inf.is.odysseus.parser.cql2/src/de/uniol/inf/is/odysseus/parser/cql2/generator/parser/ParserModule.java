@@ -15,6 +15,7 @@ public class ParserModule extends AbstractModule {
 		bind(ISelectParser.class).to(SelectParser.class);
 		bind(IProjectionParser.class).to(ProjectionParser.class);
 		bind(IExistenceParser.class).to(ExistenceParser.class);
+		bind(IAggregationParser.class).to(AggregationParser.class);
 		
 	}
 

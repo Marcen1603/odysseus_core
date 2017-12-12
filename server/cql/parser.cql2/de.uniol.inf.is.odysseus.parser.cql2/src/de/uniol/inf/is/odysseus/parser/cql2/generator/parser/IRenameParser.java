@@ -10,6 +10,7 @@ public interface IRenameParser {
 	CharSequence buildRename(CharSequence input, SimpleSource simpleSource, int selfJoin);
 	Collection<String> getAliases();
 	Collection<Source> getSources();
+	String parse(Collection<String> groupAttributes, String input);
 	void setSources(Collection<Source> sources);
 	void clear();
 	

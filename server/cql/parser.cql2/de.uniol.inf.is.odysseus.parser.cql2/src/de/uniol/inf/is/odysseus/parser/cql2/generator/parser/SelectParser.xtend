@@ -1,37 +1,36 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
-import java.util.Collection
-import java.util.Map
 import com.google.inject.Inject
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
-import java.util.List
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.BoolConstant
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Matrix
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Matrix
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression
-import org.eclipse.xtext.EcoreUtil2
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
-import java.util.stream.Collectors
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import java.util.Collection
+import java.util.List
+import java.util.Map
+import java.util.stream.Collectors
+import org.eclipse.xtext.EcoreUtil2
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class SelectParser implements ISelectParser {
 
@@ -43,7 +42,9 @@ class SelectParser implements ISelectParser {
 	var IAttributeNameParser attributeParser;
 	var IPredicateParser predicateParser;
 	var IJoinParser joinParser;
+	var IRenameParser renameParser;
 	var IProjectionParser projectionParser;
+	var IAggregationParser aggregateParser;
 	var IExistenceParser existenceParser;
 	
 	var boolean prepare;
@@ -51,7 +52,8 @@ class SelectParser implements ISelectParser {
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ICacheService cacheService, IUtilityService utilityService,
 		IAttributeNameParser attributeParser, IPredicateParser predicateParser, IJoinParser joinParser,
-		IProjectionParser projectionParser, IExistenceParser existenceParser) {
+		IProjectionParser projectionParser, IRenameParser renameParser, IAggregationParser aggregateParser, 
+		IExistenceParser existenceParser) {
 
 		this.builder = builder;
 		this.cacheService = cacheService;
@@ -60,7 +62,9 @@ class SelectParser implements ISelectParser {
 		this.predicateParser = predicateParser;
 		this.joinParser = joinParser;
 		this.projectionParser = projectionParser;
+		this.aggregateParser = aggregateParser;
 		this.existenceParser = existenceParser;
+		this.renameParser = renameParser;
 		this.prepare = true;
 
 	}
@@ -331,11 +335,7 @@ class SelectParser implements ISelectParser {
 				groupAttributes.add(groupAttribute + '_groupAttribute#' + i)
 			}
 			// Return a join operator that aggregate operator and a rename operator that renames the group attributes
-			return joinParser.buildJoin(
-				#[
-					builder.build(typeof(RenameAO),
-						newHashMap('pairs' -> 'true', 'aliases' -> utilityService.generateListString(groupAttributes),
-							'input' -> aggregateOperator)), join])
+			return joinParser.buildJoin(#[renameParser.parse(groupAttributes, aggregateOperator), join])
 
 		}
 		return output
@@ -371,7 +371,7 @@ class SelectParser implements ISelectParser {
 				var aggregations = cacheService.getQueryCache().getQueryAggregations(select)
 				if (aggregations !== null && !aggregations.empty) {
 					//TODO add aggregate parser
-//					result = buildAggregateOP(aggregations, select.order, select.sources)
+					result = aggregateParser.parse(aggregations, select.order, select.sources);
 					operatorName = cacheService.getOperatorCache().registerOperator(result.get(1).toString)
 				}
 			}

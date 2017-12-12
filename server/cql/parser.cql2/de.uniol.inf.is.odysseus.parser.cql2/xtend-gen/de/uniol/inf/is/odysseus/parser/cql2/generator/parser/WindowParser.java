@@ -37,7 +37,8 @@ public class WindowParser implements IWindowParser {
       int _advance_size = ((TimebasedWindow)window).getAdvance_size();
       boolean _tripleNotEquals = (_advance_size != 0);
       if (_tripleNotEquals) {
-        _xifexpression = Integer.valueOf(((TimebasedWindow)window).getAdvance_size()).toString();
+        int _advance_size_1 = ((TimebasedWindow)window).getAdvance_size();
+        _xifexpression = Integer.valueOf(_advance_size_1).toString();
       } else {
         _xifexpression = "1";
       }
@@ -46,7 +47,8 @@ public class WindowParser implements IWindowParser {
       Time _unit = ((TimebasedWindow)window).getUnit();
       boolean _tripleNotEquals_1 = (_unit != Time.NULL);
       if (_tripleNotEquals_1) {
-        _xifexpression_1 = ((TimebasedWindow)window).getUnit().getName();
+        Time _unit_1 = ((TimebasedWindow)window).getUnit();
+        _xifexpression_1 = _unit_1.getName();
       } else {
         _xifexpression_1 = Time.NANOSECONDS.getName();
       }
@@ -55,7 +57,8 @@ public class WindowParser implements IWindowParser {
       Time _advance_unit = ((TimebasedWindow)window).getAdvance_unit();
       boolean _tripleNotEquals_2 = (_advance_unit != Time.NULL);
       if (_tripleNotEquals_2) {
-        _xifexpression_2 = ((TimebasedWindow)window).getAdvance_unit().getName();
+        Time _advance_unit_1 = ((TimebasedWindow)window).getAdvance_unit();
+        _xifexpression_2 = _advance_unit_1.getName();
       } else {
         _xifexpression_2 = var3;
       }
@@ -64,7 +67,9 @@ public class WindowParser implements IWindowParser {
       String _xifexpression_3 = null;
       int _length = var2.length();
       int _minus = (_length - 1);
-      boolean _equalsIgnoreCase = Character.valueOf(var2.charAt(_minus)).toString().equalsIgnoreCase("S");
+      char _charAt = var2.charAt(_minus);
+      String _string = Character.valueOf(_charAt).toString();
+      boolean _equalsIgnoreCase = _string.equalsIgnoreCase("S");
       boolean _not = (!_equalsIgnoreCase);
       if (_not) {
         _xifexpression_3 = "S";
@@ -72,36 +77,43 @@ public class WindowParser implements IWindowParser {
         _xifexpression_3 = "";
       }
       var2 = (_var2 + _xifexpression_3);
-      String _string = Integer.valueOf(((TimebasedWindow)window).getSize()).toString();
-      String _plus = (_string + ",\'");
+      int _size = ((TimebasedWindow)window).getSize();
+      String _string_1 = Integer.valueOf(_size).toString();
+      String _plus = (_string_1 + ",\'");
       String _plus_1 = (_plus + var3);
       String _plus_2 = (_plus_1 + "\'");
       args.put("size", _plus_2);
       args.put("advance", (((var1 + ",\'") + var2) + "\'"));
-      args.put("input", source.getName());
+      String _name = source.getName();
+      args.put("input", _name);
       return this.builder.build(TimeWindowAO.class, args);
     } else {
       if ((window instanceof TuplebasedWindow)) {
-        args.put("size", Integer.valueOf(((TuplebasedWindow)window).getSize()).toString());
+        int _size_1 = ((TuplebasedWindow)window).getSize();
+        String _string_2 = Integer.valueOf(_size_1).toString();
+        args.put("size", _string_2);
         int _xifexpression_4 = (int) 0;
-        int _advance_size_1 = ((TuplebasedWindow)window).getAdvance_size();
-        boolean _notEquals = (_advance_size_1 != 0);
+        int _advance_size_2 = ((TuplebasedWindow)window).getAdvance_size();
+        boolean _notEquals = (_advance_size_2 != 0);
         if (_notEquals) {
           _xifexpression_4 = ((TuplebasedWindow)window).getAdvance_size();
         } else {
           _xifexpression_4 = 1;
         }
-        args.put("advance", Integer.valueOf(_xifexpression_4).toString());
+        String _string_3 = Integer.valueOf(_xifexpression_4).toString();
+        args.put("advance", _string_3);
         String _xifexpression_5 = null;
         Attribute _partition_attribute = ((TuplebasedWindow)window).getPartition_attribute();
         boolean _tripleNotEquals_3 = (_partition_attribute != null);
         if (_tripleNotEquals_3) {
-          _xifexpression_5 = ((TuplebasedWindow)window).getPartition_attribute().getName();
+          Attribute _partition_attribute_1 = ((TuplebasedWindow)window).getPartition_attribute();
+          _xifexpression_5 = _partition_attribute_1.getName();
         } else {
           _xifexpression_5 = null;
         }
         args.put("partition", _xifexpression_5);
-        args.put("input", source.getName());
+        String _name_1 = source.getName();
+        args.put("input", _name_1);
         return this.builder.build(ElementWindowAO.class, args);
       } else {
         return source.getName();

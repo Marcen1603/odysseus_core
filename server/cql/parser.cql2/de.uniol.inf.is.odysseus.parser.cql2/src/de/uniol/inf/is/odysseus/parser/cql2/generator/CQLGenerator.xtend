@@ -50,6 +50,7 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -66,6 +67,7 @@ class CQLGenerator implements IGenerator2 {
 	var IJoinParser joinParser;
 	var ISelectParser selectParser;
 	var IExistenceParser existenceParser;
+	var IAggregationParser aggregationParser;
 	var AbstractPQLOperatorBuilder builder;
 	
 	new () {
@@ -88,6 +90,7 @@ class CQLGenerator implements IGenerator2 {
 		joinParser = injector.getInstance(IJoinParser);
 		selectParser = injector.getInstance(ISelectParser);
 		existenceParser = injector.getInstance(IExistenceParser);
+		aggregationParser = injector.getInstance(IAggregationParser)
 		builder = injector.getInstance(AbstractPQLOperatorBuilder);
 		
 	}
@@ -104,8 +107,8 @@ class CQLGenerator implements IGenerator2 {
 		cacheService.getSelectCache().flush()
 //		cacheService.getQueryCache().flush()
 		cacheService.getExpressionCache().clear()
-//		SourceStruct.clearQuerySources()
-//		SourceStruct.clearAttributeAliases()
+		SourceStruct.clearQuerySources()
+		SourceStruct.clearAttributeAliases()
 		
 		//TODO clear caches! really?
 		
@@ -328,70 +331,6 @@ class CQLGenerator implements IGenerator2 {
 		}
 	}
 
-	def private Object[] buildAggregateOP(Collection<SelectExpression> aggAttr, List<Attribute> orderAttr,
-		CharSequence input) {
-		var argsstr = ''
-		var List<String> args = newArrayList
-		var List<String> aliases = newArrayList
-		var mapName = ''
-		for (var i = 0; i < aggAttr.length; i++) {
-			var aggregation = aggAttr.get(i).expressions.get(0).value as Function
-			var attributename = ''
-			var datatype = ''
-			var components = (aggregation.value as SelectExpression).expressions
-			if (components.size == 1) {
-				var comp = components.get(0).value
-				switch (comp) {
-					Attribute: {
-						attributename = attributeParser.parse(comp.name)
-						datatype = getDataTypeFrom(attributename)
-
-					}
-					Starthing: {
-						attributename = '*'
-					}
-				}
-			} else {
-				//TODO HERE!
-//				var mapOperator = buildMapOperator(#[aggregation.value as SelectExpression], input.toString)
-//				mapName = cacheService.getOperatorCache().registerOperator(mapOperator.get(1) as CharSequence)
-//				attributename = (mapOperator.get(0) as List<String>).get(0)
-//				datatype = 'DOUBLE'
-			}
-
-			args.add(aggregation.name)
-			args.add(attributename)
-			var alias = ''
-			if (aggAttr.get(i).alias !== null)
-				alias = aggAttr.get(i).alias.name
-			else
-				alias = utilityService.getAggregationName(aggregation.name)
-			args.add(alias)
-			aliases.add(alias)
-
-			if(datatype != '') args.add(datatype)
-			// utilityServicetil.getRegisteredAggregationAttributes().add(alias)
-			utilityService.addAggregationAttribute(aggAttr.get(i), alias)
-			args.add(',')
-			argsstr += utilityService.generateKeyValueString(args)
-			if(i != aggAttr.length - 1) argsstr += ','
-			args.clear
-		}
-		// Generates the group by argument that is formed like ['attr1', attr2', ...]
-		var groupby = ''
-		if (!orderAttr.empty)
-			groupby +=
-				utilityService.generateListString(orderAttr.stream.map(e|attributeParser.parse(e.name, null)).collect(Collectors.toList))
-		return #[aliases,
-			builder.build(typeof(AggregateAO),
-				newHashMap('aggregations' -> argsstr, 'group_by' -> if(groupby != '') groupby else null,
-					'input' -> if(mapName != '') mapName else input.toString))] // '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «IF mapName != ''»«mapName»«ELSE»«»«input»«ENDIF»)''']
-	}
-
-	def private Object[] buildAggregateOP(Collection<SelectExpression> list, List<Attribute> list2, List<Source> srcs) {
-		return buildAggregateOP(list, list2, joinParser.buildJoin(srcs))
-	}
-
 	def private CharSequence buildCreate1(String type, AccessFramework pars, SchemaDefinition schema, String name) {
 		var Class<?> t = null
 		var input = "--INPUT--"
@@ -513,57 +452,6 @@ class CQLGenerator implements IGenerator2 {
 	}
 
 	def void setSchema(List<SourceStruct> schemata) { utilityService.sourcesStructs = schemata }
-
-	def public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.name) }
-
-	def public String getDataTypeFrom(String attribute) {
-		var attributename = attribute // getAttributename(attribute)
-		var sourcename = ''
-		if (attribute.contains('.')) {
-			var splitted = attribute.split("\\.")
-			if (utilityService.isAttributeAlias(attributename)) {
-				var sourceFromAlias = utilityService.getSourceNameFromAlias(attributename)
-				if (utilityService.isSourceAlias(sourceFromAlias))
-					sourceFromAlias = utilityService.getSourceNameFromAlias(sourceFromAlias)
-				attributename = utilityService.getAttributenameFromAlias(attributename)
-				sourcename = sourceFromAlias
-				for (AttributeStruct attr : utilityService.getSource(sourcename).getAttributeList)
-					if (attr.attributename.equals(attributename))
-						return attr.datatype
-			}
-			sourcename = splitted.get(0)
-			attributename = splitted.get(1)
-			if (utilityService.isAttributeAlias(attributename))
-				attributename = utilityService.getAttributenameFromAlias(attributename)
-			if (utilityService.isSourceAlias(sourcename))
-				sourcename = utilityService.getSourceNameFromAlias(sourcename)
-			try {
-				for (AttributeStruct attr : utilityService.getSource(sourcename).getAttributeList)
-					if (attr.attributename.equals(attributename))
-						return attr.datatype
-			} catch (IllegalArgumentException e) {
-				for (String attr : utilityService.getSubQuerySources().get(sourcename)) {
-					if (attributeParser.parse(attr).equals(attributename)) {
-						return utilityService.getAttribute(attr).getDatatype
-
-					}
-				}
-			}
-		} else {
-			if (utilityService.isAttributeAlias(attributename)) {
-				var sourceFromAlias = utilityService.getSourceNameFromAlias(attributename)
-				if (utilityService.isSourceAlias(sourceFromAlias))
-					sourceFromAlias = utilityService.getSourceNameFromAlias(sourceFromAlias)
-				attributename = utilityService.getAttributenameFromAlias(attributename)
-				if (attributename === null)
-					attributename = attribute
-				for (AttributeStruct attr : utilityService.getSource(sourceFromAlias).getAttributeList)
-					if (attr.attributename.equals(attributename))
-						return attr.datatype
-			}
-		}
-		return "Double" // TODO change to null if you are done with debugging
-	}
 
 	def setDatabaseConnections(Map<String, String> connections) {
 		databaseConnections = connections;

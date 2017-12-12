@@ -51,10 +51,11 @@ public interface IUtilityService {
 	AttributeStruct getAttribute(String string);
 //	Collection<String> getProjectionAttributes(SimpleSelect select);
 	
-	String generateListString(List<String> strings);
+	String generateListString(Collection<String> strings);
 	String generateListString(String s1);
 	String generateKeyValueString(List<String> l1, List<String> l2, String s);
 	String generateKeyValueString(String[] s);
+	String getDataTypeFrom(String attribute);
 	
 	
 }

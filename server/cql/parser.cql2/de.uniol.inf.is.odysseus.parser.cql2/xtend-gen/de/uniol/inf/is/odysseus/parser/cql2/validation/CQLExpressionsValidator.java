@@ -20,6 +20,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsType;
 import de.uniol.inf.is.odysseus.parser.cql2.typing.ExpressionsTypeProvider;
 import de.uniol.inf.is.odysseus.parser.cql2.validation.AbstractCQLValidator;
 import java.util.List;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -76,50 +77,65 @@ public class CQLExpressionsValidator extends AbstractCQLValidator {
   
   @Check
   public void checkType(final Plus type) {
-    this.checkExpectedNumber(type.getLeft(), CQLPackage.Literals.PLUS__LEFT);
-    this.checkExpectedNumber(type.getRight(), CQLPackage.Literals.PLUS__RIGHT);
+    Expression _left = type.getLeft();
+    this.checkExpectedNumber(_left, CQLPackage.Literals.PLUS__LEFT);
+    Expression _right = type.getRight();
+    this.checkExpectedNumber(_right, CQLPackage.Literals.PLUS__RIGHT);
   }
   
   @Check
   public void checkType(final MulOrDiv type) {
-    this.checkExpectedNumber(type.getLeft(), CQLPackage.Literals.PLUS__LEFT);
-    this.checkExpectedNumber(type.getRight(), CQLPackage.Literals.PLUS__RIGHT);
+    Expression _left = type.getLeft();
+    this.checkExpectedNumber(_left, CQLPackage.Literals.PLUS__LEFT);
+    Expression _right = type.getRight();
+    this.checkExpectedNumber(_right, CQLPackage.Literals.PLUS__RIGHT);
   }
   
   @Check
   public void checkType(final Minus type) {
-    this.checkExpectedNumber(type.getLeft(), CQLPackage.Literals.PLUS__LEFT);
-    this.checkExpectedNumber(type.getRight(), CQLPackage.Literals.PLUS__RIGHT);
+    Expression _left = type.getLeft();
+    this.checkExpectedNumber(_left, CQLPackage.Literals.PLUS__LEFT);
+    Expression _right = type.getRight();
+    this.checkExpectedNumber(_right, CQLPackage.Literals.PLUS__RIGHT);
   }
   
   @Check
   public void checkType(final NOT type) {
-    this.checkExpectedBoolean(type.getExpression(), CQLPackage.Literals.NOT__EXPRESSION);
+    Expression _expression = type.getExpression();
+    this.checkExpectedBoolean(_expression, CQLPackage.Literals.NOT__EXPRESSION);
   }
   
   @Check
   public void checkType(final AndPredicate type) {
-    this.checkExpectedBoolean(type.getLeft(), CQLPackage.Literals.AND_PREDICATE__LEFT);
-    this.checkExpectedBoolean(type.getRight(), CQLPackage.Literals.AND_PREDICATE__RIGHT);
+    Expression _left = type.getLeft();
+    this.checkExpectedBoolean(_left, CQLPackage.Literals.AND_PREDICATE__LEFT);
+    Expression _right = type.getRight();
+    this.checkExpectedBoolean(_right, CQLPackage.Literals.AND_PREDICATE__RIGHT);
   }
   
   @Check
   public void checkType(final OrPredicate type) {
-    this.checkExpectedBoolean(type.getLeft(), CQLPackage.Literals.OR_PREDICATE__LEFT);
-    this.checkExpectedBoolean(type.getRight(), CQLPackage.Literals.OR_PREDICATE__RIGHT);
+    Expression _left = type.getLeft();
+    this.checkExpectedBoolean(_left, CQLPackage.Literals.OR_PREDICATE__LEFT);
+    Expression _right = type.getRight();
+    this.checkExpectedBoolean(_right, CQLPackage.Literals.OR_PREDICATE__RIGHT);
   }
   
   @Check
   public void checkType(final Equality type) {
-    final ExpressionsType left = this.getTypeAndNotNull(type.getLeft(), CQLPackage.Literals.EQUALITY__LEFT);
-    final ExpressionsType right = this.getTypeAndNotNull(type.getRight(), CQLPackage.Literals.EQUALITY__RIGHT);
+    Expression _left = type.getLeft();
+    final ExpressionsType left = this.getTypeAndNotNull(_left, CQLPackage.Literals.EQUALITY__LEFT);
+    Expression _right = type.getRight();
+    final ExpressionsType right = this.getTypeAndNotNull(_right, CQLPackage.Literals.EQUALITY__RIGHT);
     this.checkExpectedSame(left, right);
   }
   
   @Check
   public void checkType(final Comparision type) {
-    final ExpressionsType left = this.getTypeAndNotNull(type.getLeft(), CQLPackage.Literals.COMPARISION__LEFT);
-    final ExpressionsType right = this.getTypeAndNotNull(type.getRight(), CQLPackage.Literals.COMPARISION__RIGHT);
+    Expression _left = type.getLeft();
+    final ExpressionsType left = this.getTypeAndNotNull(_left, CQLPackage.Literals.COMPARISION__LEFT);
+    Expression _right = type.getRight();
+    final ExpressionsType right = this.getTypeAndNotNull(_right, CQLPackage.Literals.COMPARISION__RIGHT);
     this.checkExpectedSame(left, right);
     this.checkNotBoolean(left, CQLPackage.Literals.COMPARISION__LEFT);
     this.checkNotBoolean(left, CQLPackage.Literals.COMPARISION__RIGHT);
@@ -136,9 +152,9 @@ public class CQLExpressionsValidator extends AbstractCQLValidator {
   
   public void checkExpectedSame(final ExpressionsType left, final ExpressionsType right) {
     if ((((left != null) && (right != null)) && (right != left))) {
+      EAttribute _eIDAttribute = CQLPackage.Literals.EQUALITY.getEIDAttribute();
       this.error(
-        ((("expected the same type, but was " + left) + ", ") + right), 
-        CQLPackage.Literals.EQUALITY.getEIDAttribute(), 
+        ((("expected the same type, but was " + left) + ", ") + right), _eIDAttribute, 
         CQLExpressionsValidator.WRONG_TYPE);
     }
   }

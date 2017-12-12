@@ -47,7 +47,8 @@ public class CQLGeneratorMethodTest {
   public void generateModel(final String query) {
     final InMemoryFileSystemAccess fsa = new InMemoryFileSystemAccess();
     String result = "";
-    Set<Map.Entry<String, CharSequence>> _entrySet = fsa.getTextFiles().entrySet();
+    Map<String, CharSequence> _textFiles = fsa.getTextFiles();
+    Set<Map.Entry<String, CharSequence>> _entrySet = _textFiles.entrySet();
     for (final Map.Entry<String, CharSequence> e : _entrySet) {
       String _result = result;
       CharSequence _value = e.getValue();

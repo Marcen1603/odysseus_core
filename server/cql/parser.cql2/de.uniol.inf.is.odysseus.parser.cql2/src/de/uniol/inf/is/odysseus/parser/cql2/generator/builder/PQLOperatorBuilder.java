@@ -107,7 +107,7 @@ public class PQLOperatorBuilder extends AbstractPQLOperatorBuilder {
 					builder.append(parameter.toString()).append("\n");
 				}
 			}
-			throw new IllegalArgumentException(operator.getSimpleName() + " misses parameters: " + builder.toString());
+//			throw new IllegalArgumentException(operator.getSimpleName() + " misses parameters: " + builder.toString());
 		}
 
 		builder.deleteCharAt(builder.toString().length() - 1);

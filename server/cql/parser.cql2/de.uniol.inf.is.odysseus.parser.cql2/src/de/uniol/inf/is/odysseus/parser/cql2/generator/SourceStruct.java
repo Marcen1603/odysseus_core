@@ -41,7 +41,6 @@ public class SourceStruct {
 	}
 
 	public void associateAttributeAliasWithSourceAlias(String attributealias, String source) {
-		
 		attributeAliases.put(attributealias, source);
 	}
 

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 
 public interface ICacheService {
@@ -17,5 +18,6 @@ public interface ICacheService {
 	QueryCache getQueryCache();
 	void flushAll();
 	SelectCache getSelectCache();
+	Map<String, AttributeStruct> getRenamedAttributes();
 	
 }

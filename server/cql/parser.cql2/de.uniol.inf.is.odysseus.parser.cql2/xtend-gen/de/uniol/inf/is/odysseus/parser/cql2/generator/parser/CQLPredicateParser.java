@@ -15,6 +15,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InPredicate;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Minus;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.MulOrDiv;
@@ -25,6 +26,8 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
@@ -35,6 +38,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,86 +72,108 @@ public class CQLPredicateParser implements IPredicateParser {
     this.selectParser = selectParser;
     this.existenceParser = existenceParser;
     this.predicateString = "";
-    this.predicateStringList = CollectionLiterals.<String>newArrayList();
+    ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+    this.predicateStringList = _newArrayList;
     this.lastPredicateElement = "";
   }
   
   public CharSequence parse(final Expression e) {
-    boolean _isEmpty = e.eContents().isEmpty();
+    EList<EObject> _eContents = e.eContents();
+    boolean _isEmpty = _eContents.isEmpty();
     boolean _not = (!_isEmpty);
     if (_not) {
       boolean _matched = false;
       if (e instanceof OrPredicate) {
         _matched=true;
-        this.parse(((OrPredicate)e).getLeft());
+        Expression _left = ((OrPredicate)e).getLeft();
+        this.parse(_left);
         this.buildPredicateString("||");
-        this.parse(((OrPredicate)e).getRight());
+        Expression _right = ((OrPredicate)e).getRight();
+        this.parse(_right);
       }
       if (!_matched) {
         if (e instanceof AndPredicate) {
           _matched=true;
-          this.parse(((AndPredicate)e).getLeft());
+          Expression _left = ((AndPredicate)e).getLeft();
+          this.parse(_left);
           this.buildPredicateString("&&");
-          this.parse(((AndPredicate)e).getRight());
+          Expression _right = ((AndPredicate)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof Equality) {
           _matched=true;
-          this.parse(((Equality)e).getLeft());
-          boolean _equals = ((Equality)e).getOp().equals("=");
+          Expression _left = ((Equality)e).getLeft();
+          this.parse(_left);
+          String _op = ((Equality)e).getOp();
+          boolean _equals = _op.equals("=");
           if (_equals) {
             this.buildPredicateString("==");
           } else {
-            this.buildPredicateString(((Equality)e).getOp());
+            String _op_1 = ((Equality)e).getOp();
+            this.buildPredicateString(_op_1);
           }
-          this.parse(((Equality)e).getRight());
+          Expression _right = ((Equality)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof Comparision) {
           _matched=true;
-          this.parse(((Comparision)e).getLeft());
-          this.buildPredicateString(((Comparision)e).getOp());
-          this.parse(((Comparision)e).getRight());
+          Expression _left = ((Comparision)e).getLeft();
+          this.parse(_left);
+          String _op = ((Comparision)e).getOp();
+          this.buildPredicateString(_op);
+          Expression _right = ((Comparision)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof Plus) {
           _matched=true;
-          this.parse(((Plus)e).getLeft());
+          Expression _left = ((Plus)e).getLeft();
+          this.parse(_left);
           this.buildPredicateString("+");
-          this.parse(((Plus)e).getRight());
+          Expression _right = ((Plus)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof Minus) {
           _matched=true;
-          this.parse(((Minus)e).getLeft());
+          Expression _left = ((Minus)e).getLeft();
+          this.parse(_left);
           this.buildPredicateString("-");
-          this.parse(((Minus)e).getRight());
+          Expression _right = ((Minus)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof MulOrDiv) {
           _matched=true;
-          this.parse(((MulOrDiv)e).getLeft());
-          this.buildPredicateString(((MulOrDiv)e).getOp());
-          this.parse(((MulOrDiv)e).getRight());
+          Expression _left = ((MulOrDiv)e).getLeft();
+          this.parse(_left);
+          String _op = ((MulOrDiv)e).getOp();
+          this.buildPredicateString(_op);
+          Expression _right = ((MulOrDiv)e).getRight();
+          this.parse(_right);
         }
       }
       if (!_matched) {
         if (e instanceof NOT) {
           _matched=true;
           this.buildPredicateString("!");
-          this.parse(((NOT)e).getExpression());
+          Expression _expression = ((NOT)e).getExpression();
+          this.parse(_expression);
         }
       }
       if (!_matched) {
         if (e instanceof Bracket) {
           _matched=true;
           this.buildPredicateString("(");
-          this.parse(((Bracket)e).getInner());
+          Expression _inner = ((Bracket)e).getInner();
+          this.parse(_inner);
           this.buildPredicateString(")");
         }
       }
@@ -154,7 +181,8 @@ public class CQLPredicateParser implements IPredicateParser {
         if (e instanceof AttributeRef) {
           _matched=true;
           Attribute _value = ((AttributeRef)e).getValue();
-          this.buildPredicateString(this.attributeParser.parse(((Attribute) _value)));
+          String _parse = this.attributeParser.parse(((Attribute) _value));
+          this.buildPredicateString(_parse);
         }
       }
       if (!_matched) {
@@ -165,10 +193,14 @@ public class CQLPredicateParser implements IPredicateParser {
           QuantificationPredicate quantification = null;
           ExistPredicate exists = null;
           InPredicate in = null;
-          if (((quantification = complexPredicate.getQuantification()) != null)) {
+          QuantificationPredicate _quantification = complexPredicate.getQuantification();
+          QuantificationPredicate _quantification_1 = (quantification = _quantification);
+          boolean _tripleNotEquals = (_quantification_1 != null);
+          if (_tripleNotEquals) {
             String type = "EXISTS";
             String operator = quantification.getOperator();
-            boolean _equalsIgnoreCase = quantification.getPredicate().equalsIgnoreCase("ALL");
+            String _predicate = quantification.getPredicate();
+            boolean _equalsIgnoreCase = _predicate.equalsIgnoreCase("ALL");
             if (_equalsIgnoreCase) {
               type = "NOT_EXISTS";
               boolean _equals = operator.equals(">=");
@@ -192,47 +224,59 @@ public class CQLPredicateParser implements IPredicateParser {
               }
             }
             ArrayList<String> predicateStringListBackup = new ArrayList<String>(this.predicateStringList);
-            this.predicateStringList = CollectionLiterals.<String>newArrayList();
+            ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+            this.predicateStringList = _newArrayList;
             String predicateBackup = this.predicateString;
             this.predicateString = "";
-            SimpleSelect select = complexPredicate.getSelect().getSelect();
+            InnerSelect _select = complexPredicate.getSelect();
+            SimpleSelect select = _select.getSelect();
             this.selectParser.prepare(select);
             String predicate = "";
             ExpressionsModel _predicates = select.getPredicates();
             boolean _tripleEquals = (_predicates == null);
             if (_tripleEquals) {
               this.selectParser.parse(select);
-              Collection<String> _projectionAttributes = this.cacheService.getQueryCache().getProjectionAttributes(select);
+              QueryCache _queryCache = this.cacheService.getQueryCache();
+              Collection<String> _projectionAttributes = _queryCache.getProjectionAttributes(select);
               for (final String attribute : _projectionAttributes) {
-                String _predicate = predicate;
-                String _name = quantification.getAttribute().getName();
+                String _predicate_1 = predicate;
+                Attribute _attribute = quantification.getAttribute();
+                String _name = _attribute.getName();
                 String _plus = (_name + operator);
                 String _plus_1 = (_plus + attribute);
                 String _plus_2 = (_plus_1 + "&&");
-                predicate = (_predicate + _plus_2);
+                predicate = (_predicate_1 + _plus_2);
               }
               int _lastIndexOf = predicate.lastIndexOf("&");
               int _minus = (_lastIndexOf - 1);
-              predicate = predicate.substring(0, _minus);
+              String _substring = predicate.substring(0, _minus);
+              predicate = _substring;
             } else {
               this.selectParser.parseWithPredicate(select);
-              Collection<String> _projectionAttributes_1 = this.cacheService.getQueryCache().getProjectionAttributes(select);
+              QueryCache _queryCache_1 = this.cacheService.getQueryCache();
+              Collection<String> _projectionAttributes_1 = _queryCache_1.getProjectionAttributes(select);
               for (final String attribute_1 : _projectionAttributes_1) {
-                String _predicate_1 = predicate;
-                String _name_1 = quantification.getAttribute().getName();
+                String _predicate_2 = predicate;
+                Attribute _attribute_1 = quantification.getAttribute();
+                String _name_1 = _attribute_1.getName();
                 String _plus_3 = (_name_1 + operator);
                 String _plus_4 = (_plus_3 + attribute_1);
                 String _plus_5 = (_plus_4 + "&&");
-                predicate = (_predicate_1 + _plus_5);
+                predicate = (_predicate_2 + _plus_5);
               }
               int _lastIndexOf_1 = predicate.lastIndexOf("&");
               int _minus_1 = (_lastIndexOf_1 - 1);
-              predicate = predicate.substring(0, _minus_1);
+              String _substring_1 = predicate.substring(0, _minus_1);
+              predicate = _substring_1;
             }
             Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
             args.put("type", type);
-            args.put("input", this.cacheService.getOperatorCache().lastOperatorId());
-            Set<Map.Entry<String, Collection<String>>> _entrySet = this.cacheService.getQueryCache().getQueryAttributes(select).entrySet();
+            OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+            String _lastOperatorId = _operatorCache.lastOperatorId();
+            args.put("input", _lastOperatorId);
+            QueryCache _queryCache_2 = this.cacheService.getQueryCache();
+            Map<String, Collection<String>> _queryAttributes = _queryCache_2.getQueryAttributes(select);
+            Set<Map.Entry<String, Collection<String>>> _entrySet = _queryAttributes.entrySet();
             for (final Map.Entry<String, Collection<String>> l : _entrySet) {
               Collection<String> _value_1 = l.getValue();
               for (final String s : _value_1) {
@@ -246,17 +290,23 @@ public class CQLPredicateParser implements IPredicateParser {
                     String _plus_7 = (_plus_6 + attributename);
                     attributename = _plus_7;
                   }
-                  predicate = predicate.replace(attributename, attributename.replace(".", "_"));
+                  String _replace = attributename.replace(".", "_");
+                  String _replace_1 = predicate.replace(attributename, _replace);
+                  predicate = _replace_1;
                 }
               }
             }
             args.put("predicate", predicate);
-            this.existenceParser.getOperators().add(args);
+            Collection<Map<String, String>> _operators = this.existenceParser.getOperators();
+            _operators.add(args);
             this.predicateString = predicateBackup;
             ArrayList<String> _arrayList = new ArrayList<String>(predicateStringListBackup);
             this.predicateStringList = _arrayList;
           } else {
-            if (((exists = complexPredicate.getExists()) != null)) {
+            ExistPredicate _exists = complexPredicate.getExists();
+            ExistPredicate _exists_1 = (exists = _exists);
+            boolean _tripleNotEquals_1 = (_exists_1 != null);
+            if (_tripleNotEquals_1) {
               String type_1 = "EXISTS";
               boolean _equals_4 = this.lastPredicateElement.equals("!");
               if (_equals_4) {
@@ -288,48 +338,61 @@ public class CQLPredicateParser implements IPredicateParser {
               }
               this.parseComplexPredicate(complexPredicate, type_1);
             } else {
-              if (((in = complexPredicate.getIn()) != null)) {
+              InPredicate _in = complexPredicate.getIn();
+              InPredicate _in_1 = (in = _in);
+              boolean _tripleNotEquals_2 = (_in_1 != null);
+              if (_tripleNotEquals_2) {
                 String type_2 = "EXISTS";
                 String operator_1 = "==";
                 ArrayList<String> predicateStringListBackup_1 = new ArrayList<String>(this.predicateStringList);
-                this.predicateStringList = CollectionLiterals.<String>newArrayList();
+                ArrayList<String> _newArrayList_1 = CollectionLiterals.<String>newArrayList();
+                this.predicateStringList = _newArrayList_1;
                 String predicateBackup_1 = this.predicateString;
                 this.predicateString = "";
-                SimpleSelect select_1 = complexPredicate.getSelect().getSelect();
+                InnerSelect _select_1 = complexPredicate.getSelect();
+                SimpleSelect select_1 = _select_1.getSelect();
                 this.selectParser.prepare(select_1);
                 String predicate_1 = "";
                 ExpressionsModel _predicates_1 = select_1.getPredicates();
                 boolean _tripleEquals_1 = (_predicates_1 == null);
                 if (_tripleEquals_1) {
                   this.selectParser.parse(select_1);
-                  Collection<String> _projectionAttributes_2 = this.cacheService.getQueryCache().getProjectionAttributes(select_1);
+                  QueryCache _queryCache_3 = this.cacheService.getQueryCache();
+                  Collection<String> _projectionAttributes_2 = _queryCache_3.getProjectionAttributes(select_1);
                   for (final String attribute_2 : _projectionAttributes_2) {
-                    String _predicate_2 = predicate_1;
-                    String _name_2 = in.getAttribute().getName();
+                    String _predicate_3 = predicate_1;
+                    Attribute _attribute_2 = in.getAttribute();
+                    String _name_2 = _attribute_2.getName();
                     String _plus_6 = (_name_2 + operator_1);
                     String _plus_7 = (_plus_6 + attribute_2);
                     String _plus_8 = (_plus_7 + "&&");
-                    predicate_1 = (_predicate_2 + _plus_8);
+                    predicate_1 = (_predicate_3 + _plus_8);
                   }
                   int _lastIndexOf_2 = predicate_1.lastIndexOf("&");
                   int _minus_5 = (_lastIndexOf_2 - 1);
-                  predicate_1 = predicate_1.substring(0, _minus_5);
+                  String _substring_2 = predicate_1.substring(0, _minus_5);
+                  predicate_1 = _substring_2;
                 } else {
                   this.selectParser.parseWithPredicate(select_1);
-                  Collection<String> _projectionAttributes_3 = this.cacheService.getQueryCache().getProjectionAttributes(select_1);
+                  QueryCache _queryCache_4 = this.cacheService.getQueryCache();
+                  Collection<String> _projectionAttributes_3 = _queryCache_4.getProjectionAttributes(select_1);
                   for (final String attribute_3 : _projectionAttributes_3) {
-                    String _predicate_3 = predicate_1;
-                    String _name_3 = in.getAttribute().getName();
+                    String _predicate_4 = predicate_1;
+                    Attribute _attribute_3 = in.getAttribute();
+                    String _name_3 = _attribute_3.getName();
                     String _plus_9 = (_name_3 + operator_1);
                     String _plus_10 = (_plus_9 + attribute_3);
                     String _plus_11 = (_plus_10 + "&&");
-                    predicate_1 = (_predicate_3 + _plus_11);
+                    predicate_1 = (_predicate_4 + _plus_11);
                   }
                   int _lastIndexOf_3 = predicate_1.lastIndexOf("&");
                   int _minus_6 = (_lastIndexOf_3 - 1);
-                  predicate_1 = predicate_1.substring(0, _minus_6);
+                  String _substring_3 = predicate_1.substring(0, _minus_6);
+                  predicate_1 = _substring_3;
                 }
-                Set<Map.Entry<String, Collection<String>>> _entrySet_1 = this.cacheService.getQueryCache().getQueryAttributes(select_1).entrySet();
+                QueryCache _queryCache_5 = this.cacheService.getQueryCache();
+                Map<String, Collection<String>> _queryAttributes_1 = _queryCache_5.getQueryAttributes(select_1);
+                Set<Map.Entry<String, Collection<String>>> _entrySet_1 = _queryAttributes_1.entrySet();
                 for (final Map.Entry<String, Collection<String>> l_1 : _entrySet_1) {
                   Collection<String> _value_2 = l_1.getValue();
                   for (final String s_1 : _value_2) {
@@ -343,15 +406,20 @@ public class CQLPredicateParser implements IPredicateParser {
                         String _plus_13 = (_plus_12 + attributename);
                         attributename = _plus_13;
                       }
-                      predicate_1 = predicate_1.replace(attributename, attributename.replace(".", "_"));
+                      String _replace = attributename.replace(".", "_");
+                      String _replace_1 = predicate_1.replace(attributename, _replace);
+                      predicate_1 = _replace_1;
                     }
                   }
                 }
                 Map<String, String> args_1 = CollectionLiterals.<String, String>newHashMap();
                 args_1.put("type", type_2);
-                args_1.put("input", this.cacheService.getOperatorCache().lastOperatorId());
+                OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
+                String _lastOperatorId_1 = _operatorCache_1.lastOperatorId();
+                args_1.put("input", _lastOperatorId_1);
                 args_1.put("predicate", predicate_1);
-                this.existenceParser.getOperators().add(args_1);
+                Collection<Map<String, String>> _operators_1 = this.existenceParser.getOperators();
+                _operators_1.add(args_1);
                 this.predicateString = predicateBackup_1;
                 ArrayList<String> _arrayList_1 = new ArrayList<String>(predicateStringListBackup_1);
                 this.predicateStringList = _arrayList_1;
@@ -396,6 +464,7 @@ public class CQLPredicateParser implements IPredicateParser {
       }
       this.buildPredicateString(str);
     }
+    this.log.info(("PREDICATESTRING::" + this.predicateString));
     return this.predicateString;
   }
   
@@ -406,13 +475,19 @@ public class CQLPredicateParser implements IPredicateParser {
       Expression _get = expressions.get(i);
       if ((_get instanceof AttributeRef)) {
       } else {
-        this.predicateString = this.parse(expressions.get(i)).toString();
+        Expression _get_1 = expressions.get(i);
+        CharSequence _parse = this.parse(_get_1);
+        String _string = _parse.toString();
+        this.predicateString = _string;
         this.buildPredicateString("&&");
       }
     }
     int _size = expressions.size();
     int _minus = (_size - 1);
-    this.predicateString = this.parse(expressions.get(_minus)).toString();
+    Expression _get = expressions.get(_minus);
+    CharSequence _parse = this.parse(_get);
+    String _string = _parse.toString();
+    this.predicateString = _string;
     return this.predicateString;
   }
   
@@ -443,17 +518,26 @@ public class CQLPredicateParser implements IPredicateParser {
     List<String> _xblockexpression = null;
     {
       ArrayList<String> predicateStringListBackup = new ArrayList<String>(this.predicateStringList);
-      this.predicateStringList = CollectionLiterals.<String>newArrayList();
+      ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+      this.predicateStringList = _newArrayList;
       String predicateBackup = this.predicateString;
       this.predicateString = "";
       Map<String, String> args = CollectionLiterals.<String, String>newHashMap();
       args.put("type", type);
-      SimpleSelect _select = complexPredicate.getSelect().getSelect();
-      SimpleSelect subQuery = ((SimpleSelect) _select);
+      InnerSelect _select = complexPredicate.getSelect();
+      SimpleSelect _select_1 = _select.getSelect();
+      SimpleSelect subQuery = ((SimpleSelect) _select_1);
       this.selectParser.prepare(subQuery);
       this.selectParser.parse(subQuery);
-      this.parse(complexPredicate.getSelect().getSelect().getPredicates().getElements().get(0));
-      Set<Map.Entry<String, Collection<String>>> _entrySet = this.cacheService.getQueryCache().getQueryAttributes(subQuery).entrySet();
+      InnerSelect _select_2 = complexPredicate.getSelect();
+      SimpleSelect _select_3 = _select_2.getSelect();
+      ExpressionsModel _predicates = _select_3.getPredicates();
+      EList<Expression> _elements = _predicates.getElements();
+      Expression _get = _elements.get(0);
+      this.parse(_get);
+      QueryCache _queryCache = this.cacheService.getQueryCache();
+      Map<String, Collection<String>> _queryAttributes = _queryCache.getQueryAttributes(subQuery);
+      Set<Map.Entry<String, Collection<String>>> _entrySet = _queryAttributes.entrySet();
       for (final Map.Entry<String, Collection<String>> l : _entrySet) {
         Collection<String> _value = l.getValue();
         for (final String s : _value) {
@@ -467,13 +551,18 @@ public class CQLPredicateParser implements IPredicateParser {
               String _plus_1 = (_plus + attributename);
               attributename = _plus_1;
             }
-            this.predicateString = this.predicateString.replace(attributename, attributename.replace(".", "_"));
+            String _replace = attributename.replace(".", "_");
+            String _replace_1 = this.predicateString.replace(attributename, _replace);
+            this.predicateString = _replace_1;
           }
         }
       }
       args.put("predicate", this.predicateString);
-      args.put("input", this.cacheService.getOperatorCache().lastOperatorId());
-      this.existenceParser.getOperators().add(args);
+      OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+      String _lastOperatorId = _operatorCache.lastOperatorId();
+      args.put("input", _lastOperatorId);
+      Collection<Map<String, String>> _operators = this.existenceParser.getOperators();
+      _operators.add(args);
       this.predicateString = predicateBackup;
       ArrayList<String> _arrayList = new ArrayList<String>(predicateStringListBackup);
       _xblockexpression = this.predicateStringList = _arrayList;
@@ -483,7 +572,8 @@ public class CQLPredicateParser implements IPredicateParser {
   
   public CharSequence buildPredicateString(final CharSequence sequence) {
     this.lastPredicateElement = sequence;
-    this.predicateStringList.add(sequence.toString());
+    String _string = sequence.toString();
+    this.predicateStringList.add(_string);
     String _predicateString = this.predicateString;
     return this.predicateString = (_predicateString + sequence);
   }
@@ -492,7 +582,8 @@ public class CQLPredicateParser implements IPredicateParser {
   public void clear() {
     this.predicateString = "";
     this.lastPredicateElement = "";
-    this.predicateStringList = CollectionLiterals.<String>newArrayList();
+    ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+    this.predicateStringList = _newArrayList;
   }
   
   @Override

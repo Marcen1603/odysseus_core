@@ -142,7 +142,7 @@ public class OperatorCache implements Cache {
 
 	public String registerOperator(String key, String value) {
 		addOperator(key, value);
-		return value;
+		return key;
 	}
 
 	public void changeToBACKUP() {

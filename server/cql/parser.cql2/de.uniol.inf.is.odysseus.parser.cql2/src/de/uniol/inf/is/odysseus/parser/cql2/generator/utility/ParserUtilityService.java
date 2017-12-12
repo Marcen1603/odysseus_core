@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.impl.FunctionImpl;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -149,7 +150,6 @@ public class ParserUtilityService implements IUtilityService {
 			attributeOrder = attributeOrderList.toArray(new String[attributeOrderList.size()]);
 			sourceOrder = sourceOrderList.toArray(new String[sourceOrderList.size()]);
 		
-			
 			cacheService.getQueryCache().putProjectionAttributes(select, attributeOrder);
 			cacheService.getQueryCache().putProjectionSources(select, sourceOrder);
 
@@ -165,9 +165,12 @@ public class ParserUtilityService implements IUtilityService {
 					String[] split = attributename.split("\\.");
 					String sourcename = split[0];
 					String attributename2 = split[1];
-
 					if (isSourceAlias(sourcename) && isAttributeAlias(attributename2)) {
 						registerAttributeAliases(attribute, attribute.getName(), getSourcenameFromAlias(sourcename), sourcename, false);
+					} else if (isSourceAlias(sourcename) && !isAttributeAlias(attributename2)) {
+						SourceStruct s = getSource(sourcename);
+						s.findByName(attributename2).addAlias(sourcename + "." + attributename2);
+						s.associateAttributeAliasWithSourceAlias(sourcename + "." + attributename2, sourcename);
 					}
 				}
 			}
@@ -196,7 +199,7 @@ public class ParserUtilityService implements IUtilityService {
 				
 				if (sourceCandidates.size() == 1) {
 					sourcename = sourceCandidates.get(0).getName();
-					sourcealias = getSource(sourcename).getAliasList().get(0);
+//					sourcealias = getSource(sourcename).getAliasList().get(0);
 					if( list != null) {
 						for (String name : list) {
 							map = addToMap(map, name, sourcename);
@@ -302,8 +305,11 @@ public class ParserUtilityService implements IUtilityService {
 		Object candidate = null;
 
 		if (attribute != null) {
+			
 			for (SelectArgument argument : select.getArguments()) {
+				
 				if ((candidate = argument.getAttribute()) != null) {
+					
 					Attribute candidateAttribute = (Attribute) candidate;
 					if (candidateAttribute.getName().equals(attribute.getName())) {
 						if (candidateAttribute.getAlias() != null) {
@@ -356,6 +362,7 @@ public class ParserUtilityService implements IUtilityService {
 
 	// TODO rename
 	private String[] foo(Object candidate, String[] attributeOrder, SelectArgument argument, int i) {
+		
 		if ((candidate = argument.getExpression()) != null) {
 			SelectExpression candiateExpression = (SelectExpression) candidate;
 			if (candiateExpression.getAlias() != null) {
@@ -363,9 +370,9 @@ public class ParserUtilityService implements IUtilityService {
 			} else {
 				if (candiateExpression.getExpressions().size() == 1) {
 					ExpressionComponent function = candiateExpression.getExpressions().get(0);
-					if (function instanceof Function) {
-						if (isAggregateFunctionName(((Function) function).getName())) {
-							attributeOrder[i] = getAggregationName(((Function) function).getName());
+					if (function.getValue() instanceof FunctionImpl ) {
+						if (isAggregateFunctionName(((Function) function.getValue()).getName())) {
+							attributeOrder[i] = getAggregationName(((Function) function.getValue()).getName());
 						} else {
 							attributeOrder[i] = getExpressionName();
 						}
@@ -504,6 +511,8 @@ public class ParserUtilityService implements IUtilityService {
 
 	@Override
 	public String getProjectAttribute(String name) {
+	
+		
 		if (name.contains(getExpressionPrefix())) {
 			return (String) cacheService.getExpressionCache().get(name);
 		}
@@ -554,10 +563,10 @@ public class ParserUtilityService implements IUtilityService {
 		
 		// if no source could be found by given, interpret name 
 		// as source alias and try again
-//		String source =  getSourceNameFromAlias(name);
-//		if (source != null) {
-//			return getSource(source);
-//		}
+		String source =  getSourceNameFromAlias(name);
+		if (source != null) {
+			return getSource(source);
+		}
 		
 		throw new IllegalArgumentException("given source " + name + " is not registered");
 	}
@@ -813,7 +822,7 @@ public class ParserUtilityService implements IUtilityService {
 	}
 	
 	@Override
-	public String generateKeyValueString(String... s) {
+	public String generateKeyValueString(String ... s) {
 		String str = "[";
 		if (s.length == 1) {
 			return str += "'" + s[0] + "']";
@@ -841,15 +850,70 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public String generateListString(List<String> l1) {
+	public String generateListString(Collection<String> l1) {
+		
+		ArrayList<String> p = new ArrayList<>(l1);
+		
 		if (l1 != null && !l1.isEmpty()) {
 			String str = "";
 			for (int i = 0; i < l1.size() - 1; i++)
-				str += generateListString(l1.get(i)) + ",";
-			return (str += generateListString(l1.get(l1.size() - 1)));
+				str += generateListString(p.get(i)) + ",";
+			return (str += generateListString(p.get(l1.size() - 1)));
 		}
 
 		return "";
+	}
+	
+	public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.getName()); }
+
+	public String getDataTypeFrom(String attribute) {
+		String attributename = attribute; // getAttributename(attribute)
+		String sourcename = "";
+		if (attribute.contains(".")) {
+			String[] splitted = attribute.split("\\.");
+			if (isAttributeAlias(attributename)) {
+				String sourceFromAlias = getSourceNameFromAlias(attributename);
+				if (isSourceAlias(sourceFromAlias))
+					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
+				attributename = getAttributenameFromAlias(attributename);
+				sourcename = sourceFromAlias;
+				for (AttributeStruct attr : getSource(sourcename).getAttributeList())
+					if (attr.attributename.equals(attributename))
+						return attr.datatype;
+			}
+			sourcename = splitted[0];
+			attributename = splitted[1];
+			if (isAttributeAlias(attributename))
+				attributename = getAttributenameFromAlias(attributename);
+			if (isSourceAlias(sourcename))
+				sourcename = getSourceNameFromAlias(sourcename);
+			try {
+				for (AttributeStruct attr : getSource(sourcename).getAttributeList())
+					if (attr.attributename.equals(attributename))
+						return attr.getDatatype();
+			} catch (IllegalArgumentException e) {
+				//TODO is still used?
+//				for (String attr : getSubQuerySources().get(sourcename)) {
+//					if (attributeParser.parse(attr).equals(attributename)) {
+//						return getAttribute(attr).getDatatype();
+//
+//					}
+//				}
+			}
+		} else {
+			if (isAttributeAlias(attributename)) {
+				String sourceFromAlias = getSourceNameFromAlias(attributename);
+				if (isSourceAlias(sourceFromAlias))
+					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
+				attributename = getAttributenameFromAlias(attributename);
+				if (attributename == null)
+					attributename = attribute;
+				for (AttributeStruct attr : getSource(sourceFromAlias).getAttributeList())
+					if (attr.attributename.equals(attributename))
+						return attr.getDatatype();
+			}
+		}
+		return "Double"; // TODO change to null if you are done with debugging
 	}
 	
 }

@@ -66,8 +66,7 @@ class ProjectionParser implements IProjectionParser {
 			attributeNames.add(expressionName)
 		}
 //		Collections.sort(attributeNames)
-		return #[attributeNames,
-			builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
+		return #[attributeNames, builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
 	}
 
 	def private String buildProjection(SimpleSelect select, CharSequence operator) {

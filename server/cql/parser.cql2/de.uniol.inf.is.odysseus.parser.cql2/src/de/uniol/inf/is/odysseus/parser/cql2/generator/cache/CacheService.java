@@ -7,7 +7,7 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 
 public class CacheService implements ICacheService {
@@ -17,6 +17,7 @@ public class CacheService implements ICacheService {
 	private Collection<Pair<SelectExpression, String>> aggAttributeCache;
 	private Map<String, String> expressionCache;
 	private Map<String, String> attributeAliasCache;
+	private Map<String, AttributeStruct> renamedAttributes;
 	private OperatorCache operatorCache;
 	private SelectCache selectCache;
 
@@ -28,6 +29,7 @@ public class CacheService implements ICacheService {
 		attributeAliasCache = new HashMap<>();
 		operatorCache = new OperatorCache();
 		selectCache = new SelectCache();
+		renamedAttributes = new HashMap<>();
 	}
 	
 	@Override
@@ -75,5 +77,8 @@ public class CacheService implements ICacheService {
 		return operatorCache;
 	}
 
-
+	@Override
+	public Map<String, AttributeStruct> getRenamedAttributes() {
+		return renamedAttributes;
+	}
 }

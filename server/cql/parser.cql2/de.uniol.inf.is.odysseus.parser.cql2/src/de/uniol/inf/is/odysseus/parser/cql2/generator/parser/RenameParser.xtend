@@ -11,8 +11,12 @@ import java.util.List
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class RenameParser implements IRenameParser {
+
+	var Logger log = LoggerFactory.getLogger(RenameParser)
 
 	var IUtilityService utilityService
 	var AbstractPQLOperatorBuilder builder
@@ -39,71 +43,94 @@ class RenameParser implements IRenameParser {
 
 	override CharSequence buildRename(CharSequence input, SimpleSource simpleSource, int selfJoin) {
 		
-		var listOfLists = newArrayList()
+		val listOfLists= newArrayList()
 		
 		// get SourceStruct to the given source
-		var SourceStruct source = utilityService.getSource(simpleSource)	
+		val SourceStruct source = utilityService.getSource(simpleSource)	
 		// get alias from source if available
-		var String sourcealias = if (simpleSource.alias !== null) simpleSource.alias.name else null;
-		// get list of attributes of SourceStruct
-		var attributeList = source.getAttributeList();
+		val String sourcealias = if (simpleSource.alias !== null) simpleSource.alias.name else null;
 		
-		for (var j = 0; j < attributeList.size; j++) {
-			var k = 0
-			for (String attributealias : attributeList.get(j).aliases) {
-				var sourceFromAlias = source.getAssociatedSource(attributealias)//utilityService.getAttributeAliases.get(attributealias)
-				if (sourceFromAlias !== null && (sourceFromAlias.equals(sourcealias) || sourceFromAlias.equals(simpleSource.name))) {
-					var b = listOfLists.size <= k
-					var List<String> list
-					if (b)
-						list = newArrayList
-					else
-						list = listOfLists.get(k)
-					list.add(attributeList.get(j).attributename)
-					list.add(attributealias)
-					if(b) listOfLists.add(list)
-					k++
+		// TODO add description
+//		if (sourcealias !== null) {
+			
+			for (var j = 0; j < source.getAttributeList().size; j++) {
+				
+				var attr = source.getAttributeList().get(j);
+				var k = 0;
+				var l = 0;
+				
+				while(l < attr.aliases.size) {
+					
+					var attrAlias = attr.aliases.get(l);
+					var sourceAlias = source.getAssociatedSource(attrAlias);
+					
+//					if (sourceAlias.equals(sourcealias) || sourceAlias.equals(simpleSource.name)) {
+				if (sourceAlias !== null && (sourceAlias.equals(sourcealias) || sourceAlias.equals(simpleSource.name))) {
+						
+						var List<String> col
+						
+						if (listOfLists.size <= k) {
+							col = newArrayList
+						} else {
+							col = listOfLists.get(k)
+						}
+						
+						col.add(attr.attributename)
+						col.add(attrAlias)
+						
+						if(listOfLists.size <= k) {
+							listOfLists.add(col)
+						}
+						k++
+					}
+					l++
 				}
 			}
-		}
-		
-		// self join			
+			
+		// add rename operators for self-joins			
 		if (listOfLists.size > 1 || selfJoin > 0 || sourcealias !== null) {
 			for (var j = 0; j < listOfLists.size; j++) {
 				var list = listOfLists.get(j)
-				for (var k = 0; k < attributeList.size; k++)
-					if (!list.contains(attributeList.get(k).attributename)) {
+				for (var k = 0; k < source.getAttributeList().size; k++) {
+					if (!list.contains(source.getAttributeList().get(k).attributename)) {
+						
 						var String alias = null
-						var name = attributeList.get(k).attributename
+						var name = source.getAttributeList().get(k).attributename
 						if (sourcealias !== null)
 							if (j > 0 && listOfLists.size > 1)
 								alias = generateAlias(name, source.getName, j)
 							else
-								alias = sourcealias + '.' + name
-
+								alias = sourcealias + '.' + name						
 						renameAliases.add(name)
 						renameAliases.add(source.getName)
 						renameAliases.add(alias)
 						list.add(name)
 						list.add(alias)
+						
 					}
+				}
 			}
 		}
 
 		var renames = newArrayList
 		processedSources.add(source.getName)
-//		renames.add(source.sourcename)
-		for (var j = 0; j < listOfLists.size; j++)
-			renames.add(
-				cacheService.getOperatorCache().registerOperator(
-					builder.build(typeof(RenameAO),
-						newLinkedHashMap('aliases' -> utilityService.generateListString(listOfLists.get(j)), 'pairs' -> 'true',
-							'input' -> input.toString))))
-		if (renames.size > 1)
+		for (var j = 0; j < listOfLists.size; j++) {
+			renames.add(parse(listOfLists.get(j), input.toString))
+		}
+		
+		if (renames.size > 1) {
 			return joinParser.buildJoin(renames)
-		if (renames.size == 1)
+		}
+		
+		if (renames.size == 1) {
 			return renames.get(0)
+		}
+		
 		return input
+	}
+	
+	override parse(Collection<String> groupAttributes, String input) {
+		return cacheService.getOperatorCache().registerOperator(builder.build(typeof(RenameAO), newHashMap('pairs' -> 'true', 'aliases' -> utilityService.generateListString(groupAttributes), 'input' -> input)))
 	}
 
 	def private String generateAlias(String attributename, String sourcename, int number) {

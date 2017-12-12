@@ -1,21 +1,20 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO
+import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
-import java.util.Map.Entry
-import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
 import java.util.List
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import java.util.Map.Entry
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class JoinParser implements IJoinParser {
 
@@ -85,11 +84,12 @@ class JoinParser implements IJoinParser {
 									aliasses.add(name2)
 								}
 							}
-						inputs.add(
-							cacheService.getOperatorCache().registerOperator(
-								builder.build(typeof(RenameAO),
+						inputs.add(renameParser.parse(aliasses, lastOperator))
+						/*TODO remove
+						 * builder.build(typeof(RenameAO),
 									newHashMap('aliases' -> utilityService.generateListString(aliasses),
-										'pairs' -> 'true', 'input' -> lastOperator))))
+										'pairs' -> 'true', 'input' -> lastOperator))
+						 */
 					}
 				}
 				// build rename operator for sub query alias
@@ -109,10 +109,13 @@ class JoinParser implements IJoinParser {
 						aliasses.add(subQueryAlias + "." + realName)
 					}
 				}
-				var op = builder.build(typeof(RenameAO),
+				var op = renameParser.parse(aliasses, lastOperator)
+						/*
+						 * builder.build(typeof(RenameAO),
 					newHashMap('aliases' -> utilityService.generateListString(aliasses), 'pairs' -> 'true',
 						'input' -> lastOperator))
-				inputs.add(cacheService.getOperatorCache().registerOperator(op))
+						 */
+				inputs.add(op)
 
 //				if (inputs.size == 0) {
 //					inputs.add(lastOperator)

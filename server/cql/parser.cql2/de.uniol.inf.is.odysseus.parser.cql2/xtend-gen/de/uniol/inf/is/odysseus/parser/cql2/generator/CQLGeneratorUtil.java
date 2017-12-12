@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +82,8 @@ public class CQLGeneratorUtil {
   public static Map<String, List<String>> addToMap(final Map<String, List<String>> map, final String attribute, final String realSourcename) {
     List<String> attributeList = map.get(realSourcename);
     if ((attributeList == null)) {
-      attributeList = CollectionLiterals.<String>newArrayList();
+      ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+      attributeList = _newArrayList;
     }
     boolean _contains = attributeList.contains(attribute);
     boolean _not = (!_contains);
@@ -99,7 +101,8 @@ public class CQLGeneratorUtil {
   }
   
   public static boolean isAttributeAlias(final String attributename) {
-    return CQLGeneratorUtil.getAttributeAliasesAsList().contains(attributename);
+    List<String> _attributeAliasesAsList = CQLGeneratorUtil.getAttributeAliasesAsList();
+    return _attributeAliasesAsList.contains(attributename);
   }
   
   public static Object isSourceAlias(final String sourcename) {

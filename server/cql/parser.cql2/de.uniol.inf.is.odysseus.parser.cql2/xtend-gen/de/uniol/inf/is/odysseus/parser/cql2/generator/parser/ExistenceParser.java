@@ -46,21 +46,27 @@ public class ExistenceParser implements IExistenceParser {
             String _plus = (_get + ",");
             String _plus_1 = (_plus + selectInput);
             newArgs.put("input", _plus_1);
-            this.cacheService.getOperatorCache().registerOperator(this.builder.build(ExistenceAO.class, newArgs));
+            OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+            String _build = this.builder.build(ExistenceAO.class, newArgs);
+            _operatorCache.registerOperator(_build);
           }
         }
-        String t = this.cacheService.getOperatorCache().getOperator(select);
         OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-        String _substring = t.substring(0, t.lastIndexOf("}"));
+        String t = _operatorCache.getOperator(select);
+        OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
+        int _lastIndexOf = t.lastIndexOf("}");
+        String _substring = t.substring(0, _lastIndexOf);
         String _plus = (_substring + "},");
         String _plus_1 = (_plus + "JOIN(");
-        String _lastOperatorId = this.cacheService.getOperatorCache().lastOperatorId();
+        OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
+        String _lastOperatorId = _operatorCache_2.lastOperatorId();
         String _plus_2 = (_plus_1 + _lastOperatorId);
         String _plus_3 = (_plus_2 + ",");
         String _plus_4 = (_plus_3 + selectInput);
         String _plus_5 = (_plus_4 + "))");
-        _operatorCache.addOperator(select, _plus_5);
-        this.cacheService.getOperatorCache().swapLastOperators();
+        _operatorCache_1.addOperator(select, _plus_5);
+        OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
+        _operatorCache_3.swapLastOperators();
       } else {
         for (final Map<String, String> args_1 : this.registry_existenceOperators) {
           {
@@ -69,7 +75,9 @@ public class ExistenceParser implements IExistenceParser {
             String _plus_6 = (_get + ",");
             String _plus_7 = (_plus_6 + selectInput);
             newArgs.put("input", _plus_7);
-            this.cacheService.getOperatorCache().registerOperator(this.builder.build(ExistenceAO.class, newArgs));
+            OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
+            String _build = this.builder.build(ExistenceAO.class, newArgs);
+            _operatorCache_4.registerOperator(_build);
           }
         }
       }

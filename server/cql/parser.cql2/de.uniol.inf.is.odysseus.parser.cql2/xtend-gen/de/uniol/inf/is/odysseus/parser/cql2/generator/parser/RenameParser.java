@@ -9,18 +9,24 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class RenameParser implements IRenameParser {
+  private Logger log = LoggerFactory.getLogger(RenameParser.class);
+  
   private IUtilityService utilityService;
   
   private AbstractPQLOperatorBuilder builder;
@@ -41,49 +47,59 @@ public class RenameParser implements IRenameParser {
     this.builder = builder;
     this.joinParser = joinParser;
     this.cacheService = cacheService;
-    this.renameAliases = CollectionLiterals.<String>newArrayList();
-    this.processedSources = CollectionLiterals.<String>newArrayList();
-    this.sourcesDuringRename = CollectionLiterals.<Source>newArrayList();
+    ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+    this.renameAliases = _newArrayList;
+    ArrayList<String> _newArrayList_1 = CollectionLiterals.<String>newArrayList();
+    this.processedSources = _newArrayList_1;
+    ArrayList<Source> _newArrayList_2 = CollectionLiterals.<Source>newArrayList();
+    this.sourcesDuringRename = _newArrayList_2;
   }
   
   @Override
   public CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final int selfJoin) {
-    ArrayList<List<String>> listOfLists = CollectionLiterals.<List<String>>newArrayList();
-    SourceStruct source = this.utilityService.getSource(simpleSource);
+    final ArrayList<List<String>> listOfLists = CollectionLiterals.<List<String>>newArrayList();
+    final SourceStruct source = this.utilityService.getSource(simpleSource);
     String _xifexpression = null;
     Alias _alias = simpleSource.getAlias();
     boolean _tripleNotEquals = (_alias != null);
     if (_tripleNotEquals) {
-      _xifexpression = simpleSource.getAlias().getName();
+      Alias _alias_1 = simpleSource.getAlias();
+      _xifexpression = _alias_1.getName();
     } else {
       _xifexpression = null;
     }
-    String sourcealias = _xifexpression;
-    Collection<AttributeStruct> attributeList = source.getAttributeList();
-    for (int j = 0; (j < attributeList.size()); j++) {
+    final String sourcealias = _xifexpression;
+    for (int j = 0; (j < source.getAttributeList().size()); j++) {
       {
+        Collection<AttributeStruct> _attributeList = source.getAttributeList();
+        AttributeStruct attr = ((AttributeStruct[])Conversions.unwrapArray(_attributeList, AttributeStruct.class))[j];
         int k = 0;
-        final Collection<AttributeStruct> _converted_attributeList = (Collection<AttributeStruct>)attributeList;
-        for (final String attributealias : ((AttributeStruct[])Conversions.unwrapArray(_converted_attributeList, AttributeStruct.class))[j].aliases) {
+        int l = 0;
+        while ((l < attr.aliases.size())) {
           {
-            String sourceFromAlias = source.getAssociatedSource(attributealias);
-            if (((sourceFromAlias != null) && (sourceFromAlias.equals(sourcealias) || sourceFromAlias.equals(simpleSource.getName())))) {
+            String attrAlias = attr.aliases.get(l);
+            String sourceAlias = source.getAssociatedSource(attrAlias);
+            if (((sourceAlias != null) && (sourceAlias.equals(sourcealias) || sourceAlias.equals(simpleSource.getName())))) {
+              List<String> col = null;
               int _size = listOfLists.size();
-              boolean b = (_size <= k);
-              List<String> list = null;
-              if (b) {
-                list = CollectionLiterals.<String>newArrayList();
+              boolean _lessEqualsThan = (_size <= k);
+              if (_lessEqualsThan) {
+                ArrayList<String> _newArrayList = CollectionLiterals.<String>newArrayList();
+                col = _newArrayList;
               } else {
-                list = listOfLists.get(k);
+                List<String> _get = listOfLists.get(k);
+                col = _get;
               }
-              final Collection<AttributeStruct> _converted_attributeList_1 = (Collection<AttributeStruct>)attributeList;
-              list.add(((AttributeStruct[])Conversions.unwrapArray(_converted_attributeList_1, AttributeStruct.class))[j].attributename);
-              list.add(attributealias);
-              if (b) {
-                listOfLists.add(list);
+              col.add(attr.attributename);
+              col.add(attrAlias);
+              int _size_1 = listOfLists.size();
+              boolean _lessEqualsThan_1 = (_size_1 <= k);
+              if (_lessEqualsThan_1) {
+                listOfLists.add(col);
               }
               k++;
             }
+            l++;
           }
         }
       }
@@ -92,23 +108,28 @@ public class RenameParser implements IRenameParser {
       for (int j = 0; (j < listOfLists.size()); j++) {
         {
           List<String> list = listOfLists.get(j);
-          for (int k = 0; (k < attributeList.size()); k++) {
-            final Collection<AttributeStruct> _converted_attributeList = (Collection<AttributeStruct>)attributeList;
-            boolean _contains = list.contains(((AttributeStruct[])Conversions.unwrapArray(_converted_attributeList, AttributeStruct.class))[k].attributename);
+          for (int k = 0; (k < source.getAttributeList().size()); k++) {
+            Collection<AttributeStruct> _attributeList = source.getAttributeList();
+            AttributeStruct _get = ((AttributeStruct[])Conversions.unwrapArray(_attributeList, AttributeStruct.class))[k];
+            boolean _contains = list.contains(_get.attributename);
             boolean _not = (!_contains);
             if (_not) {
               String alias = null;
-              final Collection<AttributeStruct> _converted_attributeList_1 = (Collection<AttributeStruct>)attributeList;
-              String name = ((AttributeStruct[])Conversions.unwrapArray(_converted_attributeList_1, AttributeStruct.class))[k].attributename;
+              Collection<AttributeStruct> _attributeList_1 = source.getAttributeList();
+              AttributeStruct _get_1 = ((AttributeStruct[])Conversions.unwrapArray(_attributeList_1, AttributeStruct.class))[k];
+              String name = _get_1.attributename;
               if ((sourcealias != null)) {
                 if (((j > 0) && (listOfLists.size() > 1))) {
-                  alias = this.generateAlias(name, source.getName(), j);
+                  String _name = source.getName();
+                  String _generateAlias = this.generateAlias(name, _name, j);
+                  alias = _generateAlias;
                 } else {
                   alias = ((sourcealias + ".") + name);
                 }
               }
               this.renameAliases.add(name);
-              this.renameAliases.add(source.getName());
+              String _name_1 = source.getName();
+              this.renameAliases.add(_name_1);
               this.renameAliases.add(alias);
               list.add(name);
               list.add(alias);
@@ -118,17 +139,13 @@ public class RenameParser implements IRenameParser {
       }
     }
     ArrayList<String> renames = CollectionLiterals.<String>newArrayList();
-    this.processedSources.add(source.getName());
+    String _name = source.getName();
+    this.processedSources.add(_name);
     for (int j = 0; (j < listOfLists.size()); j++) {
-      String _generateListString = this.utilityService.generateListString(listOfLists.get(j));
-      Pair<String, String> _mappedTo = Pair.<String, String>of("aliases", _generateListString);
-      Pair<String, String> _mappedTo_1 = Pair.<String, String>of("pairs", "true");
+      List<String> _get = listOfLists.get(j);
       String _string = input.toString();
-      Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", _string);
-      renames.add(
-        this.cacheService.getOperatorCache().registerOperator(
-          this.builder.build(RenameAO.class, 
-            CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1, _mappedTo_2))));
+      String _parse = this.parse(_get, _string);
+      renames.add(_parse);
     }
     int _size = renames.size();
     boolean _greaterThan = (_size > 1);
@@ -144,11 +161,24 @@ public class RenameParser implements IRenameParser {
     return input;
   }
   
+  @Override
+  public String parse(final Collection<String> groupAttributes, final String input) {
+    OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+    Pair<String, String> _mappedTo = Pair.<String, String>of("pairs", "true");
+    String _generateListString = this.utilityService.generateListString(groupAttributes);
+    Pair<String, String> _mappedTo_1 = Pair.<String, String>of("aliases", _generateListString);
+    Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", input);
+    HashMap<String, String> _newHashMap = CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2);
+    String _build = this.builder.build(RenameAO.class, _newHashMap);
+    return _operatorCache.registerOperator(_build);
+  }
+  
   private String generateAlias(final String attributename, final String sourcename, final int number) {
     String alias = ((((sourcename + ".") + attributename) + "#") + Integer.valueOf(number));
     boolean _contains = this.renameAliases.contains(alias);
     if (_contains) {
-      return alias = this.generateAlias(attributename, sourcename, (number + 1));
+      String _generateAlias = this.generateAlias(attributename, sourcename, (number + 1));
+      return alias = _generateAlias;
     }
     return alias;
   }

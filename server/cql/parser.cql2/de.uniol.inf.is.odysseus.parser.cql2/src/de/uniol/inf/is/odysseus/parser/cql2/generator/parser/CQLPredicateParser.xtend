@@ -255,6 +255,7 @@ class CQLPredicateParser implements IPredicateParser {
 //		} catch (NullPointerException exc) {
 //			log.error("while parsing predicate an object was null: following predicate string was constructed \"" + predicateString + "\"")
 //		}
+		log.info("PREDICATESTRING::" + predicateString)
 		return predicateString
 	}
 
