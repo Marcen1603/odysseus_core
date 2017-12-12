@@ -28,10 +28,10 @@ import java.util.Collection
 import java.util.List
 import java.util.Map
 import java.util.Map.Entry
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class CQLPredicateParser implements IPredicateParser {
 

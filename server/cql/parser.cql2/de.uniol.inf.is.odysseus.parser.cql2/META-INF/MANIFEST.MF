@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.xtext,
  org.junit,
  de.uniol.inf.is.odysseus.core.server,
  org.eclipse.debug.core,
- javax.validation;bundle-version="1.1.0"
+ javax.validation
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.uniol.inf.is.odysseus.parser.cql2,
  de.uniol.inf.is.odysseus.parser.cql2.generator,
@@ -48,6 +48,4 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql2,
 Import-Package: com.google.inject,
  de.uniol.inf.is.odysseus.parser.cql2.cQL,
  javax.validation.constraints,
- org.apache.log4j,
  org.slf4j
- Bundle-ActivationPolicy: lazy
