@@ -80,7 +80,7 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 	 */
 	@Override
 	public InputStream getInputStream() {
-		return new MailInputStream(this.mailConfig);
+		return new MailInputStream(this.mailConfig); // TODO maintain single instance for each object instead of creating new objects?
 	}
 
 	/**
