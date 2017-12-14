@@ -10,6 +10,7 @@ import javax.mail.Flags.Flag;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.Part;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,7 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 			kvo.setAttribute(SENT_DATE, message.getSentDate());
 
 			AddFlags(kvo, message);
-			
+			Object content = message.getContent();
 			
 
 		} catch (MessagingException e) {
