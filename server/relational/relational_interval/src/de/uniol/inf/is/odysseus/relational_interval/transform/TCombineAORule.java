@@ -19,16 +19,12 @@ import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
  */
 public class TCombineAORule extends AbstractTransformationRule<CombineAO> {
 
-	@Override
-	public String getName() {
-		return "CombineAO -> CombinePO";
-	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void execute(CombineAO combineAO, TransformationConfiguration config)
 			throws RuleException {
-		defaultExecute(combineAO, new CombinePO(combineAO.getWaitForAllChanged(),combineAO.getOutputPorts() ,combineAO.getOutputTupleSize(), combineAO.getBufferNewInputElements()),config,true,true);
+		defaultExecute(combineAO, new CombinePO(combineAO.getWaitForAllChanged(),combineAO.getOutputPorts() ,combineAO.getOutputTupleSize(), combineAO.getBufferNewInputElements(), combineAO.isOutputOnHeartsbeat()),config,true,true);
 		
 	}
 

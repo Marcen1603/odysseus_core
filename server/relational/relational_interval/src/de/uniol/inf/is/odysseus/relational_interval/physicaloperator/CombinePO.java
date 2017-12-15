@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  * Physical implementation of the combine operator
  * 
  * @author Dennis Nowak
+ * @author Marco Grawunder
  *
  * @param <M>
  */
@@ -20,12 +21,14 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 
 	private final int ports;
 	private final int tupleSize;
-	private boolean waitForEachChanged;
-	private boolean bufferIncoming;
-
+	private final boolean waitForEachChanged;
+	private final boolean bufferIncoming;
+	private final boolean outputOnHeartsbeat;
+	
 	private Tuple<M>[] tuples;
 	private boolean[] changed;
 	private Deque<Tuple<M>>[] queues;
+	private M lastMeta;
 
 	/**
 	 * Creates a new instance of CombinePO
@@ -40,24 +43,12 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 	 * @param bufferIncoming
 	 *            if true, input will be buffered
 	 */
-	public CombinePO(boolean waitForEachChanged, int ports, int tupleSize, boolean bufferIncoming) {
+	public CombinePO(boolean waitForEachChanged, int ports, int tupleSize, boolean bufferIncoming, boolean outputOnHeartsbeat) {
 		this.waitForEachChanged = waitForEachChanged;
 		this.ports = ports;
 		this.tupleSize = tupleSize;
 		this.bufferIncoming = bufferIncoming;
-	}
-
-	/**
-	 * Copy constructor of Class CombinePO
-	 * 
-	 * @param cpo
-	 *            the CombinePO to copy
-	 */
-	public CombinePO(CombinePO<M> cpo) {
-		this.waitForEachChanged = cpo.waitForEachChanged;
-		this.ports = cpo.ports;
-		this.tupleSize = cpo.tupleSize;
-		this.bufferIncoming = cpo.bufferIncoming;
+		this.outputOnHeartsbeat = outputOnHeartsbeat;
 	}
 
 	@Override
@@ -65,9 +56,9 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 		return OutputMode.NEW_ELEMENT;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected synchronized void process_next(Tuple<M> tuple, int port) {
+		this.lastMeta = tuple.getMetadata();
 		if (this.bufferIncoming && this.changed[port]) {
 			this.queues[port].add(tuple);
 		} else {
@@ -76,17 +67,9 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 			}
 			this.changed[port] = true;
 			if (!this.waitForEachChanged) {
-				for (int i = 0; i < this.tuples.length; i++) {
-					Tuple<M> out = new Tuple<M>(this.tuples[i]);
-					out.setMetadata((M) tuple.getMetadata().clone());
-					transfer(out, i);
-				}
+				transferCurrentTuple();
 			} else if (allTrue(this.changed)) {
-				for (int i = 0; i < this.tuples.length; i++) {
-					Tuple<M> out = new Tuple<M>(this.tuples[i]);
-					out.setMetadata((M) tuple.getMetadata().clone());
-					transfer(out, i);
-				}
+				transferCurrentTuple();
 				for (int i = 0; i < this.tupleSize; i++) {
 					if (this.bufferIncoming && this.queues[i].peek() != null) {
 						for (int j = 0; j < this.ports; j++) {
@@ -100,6 +83,15 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 			}
 		}
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void transferCurrentTuple() {
+		for (int i = 0; i < this.tuples.length; i++) {
+			Tuple<M> out = new Tuple<M>(this.tuples[i]);
+			out.setMetadata((M) lastMeta.clone());
+			transfer(out, i);
+		}
 	}
 
 	/**
@@ -149,8 +141,12 @@ public class CombinePO<M extends ITimeInterval> extends AbstractPipe<Tuple<M>, T
 	 */
 	@Override
 	public synchronized void processPunctuation(IPunctuation punctuation, int port) {
-		// TODO clean up queues
-		sendPunctuation(punctuation, port);
+		if (outputOnHeartsbeat) {
+			transferCurrentTuple();
+			// TODO: clean up queues, find a concept for this ... what should be done in this case?
+		}
+	
+		sendPunctuation(punctuation);
 	}
 
 }
