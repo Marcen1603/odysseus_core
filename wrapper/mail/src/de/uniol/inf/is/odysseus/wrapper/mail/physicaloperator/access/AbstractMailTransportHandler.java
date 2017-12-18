@@ -31,7 +31,7 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 
 	public AbstractMailTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
 		super(protocolHandler, options);
-		mailConfig = getMailConfiguration();
+		mailConfig = CreateMailConfiguration();
 		mailConfig.init(options);
 	}
 
@@ -47,7 +47,7 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 	 * 
 	 * @return a newly created mail configuration object
 	 */
-	public abstract MailConfiguration getMailConfiguration();
+	public abstract MailConfiguration CreateMailConfiguration();
 
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
@@ -66,7 +66,6 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 
 	@Override
 	public void processInClose() throws IOException {
-		this.mailConfig = null;
 		this.fireOnDisconnect();
 	}
 
@@ -97,7 +96,7 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 			return false;
 		}
 		final AbstractMailTransportHandler other = (AbstractMailTransportHandler) o;
-		return this.mailConfig.isSemanticallyEqualImpl(other.getMailConfiguration());
+		return this.mailConfig.isSemanticallyEqualImpl(other.CreateMailConfiguration());
 	}
 
 }

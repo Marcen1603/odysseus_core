@@ -85,7 +85,7 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 	public void open() throws UnknownHostException, IOException {
 		getTransportHandler().open();
 		InputStream in = this.getTransportHandler().getInputStream();
-		if (inputStream == null || !(inputStream instanceof MailInputStream)) {
+		if (in == null || !(in instanceof MailInputStream)) {
 			throw new IOException("Transport handler does not provide mail input stream");
 		}
 		this.inputStream = (MailInputStream) in;
@@ -130,6 +130,8 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 		} catch (MessagingException | MimeTypeException e) {
 			this.LOG.error(e.getMessage(), e);
 		}
+		
+		System.out.println(kvo.toString());
 
 		return kvo;
 	}

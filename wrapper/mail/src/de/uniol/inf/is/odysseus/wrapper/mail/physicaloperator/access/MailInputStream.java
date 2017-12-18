@@ -39,9 +39,7 @@ public class MailInputStream extends InputStream {
 
 	public MailInputStream(MailConfiguration mailConfiguration) {
 		this.mailConfiguration = mailConfiguration;
-		messageQueue = new LinkedList<Message>(); // TODO thread safe
-													// alternative?
-		throw new NotImplementedException();
+		messageQueue = new LinkedList<Message>();
 	}
 
 	@Override
