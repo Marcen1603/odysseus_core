@@ -23,6 +23,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeHandlerRegistry;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartAlternativeHandler;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartMixedHandler;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextHtmlHandler;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextPlainHandler;
 
 public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<IMetaAttribute>> {
 
@@ -41,6 +47,11 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 	private static String NAME = "Mail";
 
 	private MailInputStream inputStream;
+
+	private MimeTypeHandlerRegistry<String> mimeTypeHandlers;
+
+	public MailProtocolHandler() {
+	}
 
 	public MailProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<KeyValueObject<IMetaAttribute>> dataHandler) {
@@ -79,6 +90,18 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 			throw new IOException("Transport handler does not provide mail input stream");
 		}
 		this.inputStream = (MailInputStream) in;
+
+		InitMimeTypeHandlers();
+	}
+
+	private void InitMimeTypeHandlers() {
+		// TODO handler initialization should be more generic and extensible
+		// (e.g. provided by a service)
+		mimeTypeHandlers = new MimeTypeHandlerRegistry<>();
+		mimeTypeHandlers.RegisterHandler(new TextPlainHandler());
+		mimeTypeHandlers.RegisterHandler(new TextHtmlHandler());
+		mimeTypeHandlers.RegisterHandler(new MultipartAlternativeHandler());
+		mimeTypeHandlers.RegisterHandler(new MultipartMixedHandler("\n"));
 	}
 
 	@Override
@@ -96,24 +119,28 @@ public class MailProtocolHandler extends AbstractProtocolHandler<KeyValueObject<
 		}
 
 		try {
-			addAddresses(kvo, FROM, message.getFrom());
-			addAddresses(kvo, TO, message.getRecipients(RecipientType.TO));
-			addAddresses(kvo, CC, message.getRecipients(RecipientType.CC));
-			addAddresses(kvo, BCC, message.getRecipients(RecipientType.BCC));
-			addAddresses(kvo, REPLY_TO, message.getReplyTo());
+			AddAddresses(kvo, message);
 
 			kvo.setAttribute(SUBJECT, message.getSubject());
 			kvo.setAttribute(SENT_DATE, message.getSentDate());
 
 			AddFlags(kvo, message);
-			Object content = message.getContent();
-			
 
-		} catch (MessagingException e) {
+			kvo.setAttribute("content", this.mimeTypeHandlers.HandlePart(message));
+
+		} catch (MessagingException | MimeTypeException e) {
 			this.LOG.error(e.getMessage(), e);
 		}
 
 		return kvo;
+	}
+
+	private void AddAddresses(KeyValueObject<IMetaAttribute> kvo, Message message) throws MessagingException {
+		addAddresses(kvo, FROM, message.getFrom());
+		addAddresses(kvo, TO, message.getRecipients(RecipientType.TO));
+		addAddresses(kvo, CC, message.getRecipients(RecipientType.CC));
+		addAddresses(kvo, BCC, message.getRecipients(RecipientType.BCC));
+		addAddresses(kvo, REPLY_TO, message.getReplyTo());
 	}
 
 	private void AddFlags(KeyValueObject<IMetaAttribute> kvo, Message message) throws MessagingException {
