@@ -10,7 +10,6 @@ import javax.mail.Flags.Flag;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Part;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

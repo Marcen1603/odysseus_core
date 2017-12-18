@@ -117,6 +117,8 @@ public class MailInputStream extends InputStream {
 			Folder inbox = getInbox();
 			Message[] messages = getMessages(inbox);
 			QueueMessages(messages);
+			
+			inbox.close(true);
 
 		} catch (final MessagingException e) {
 			MailInputStream.this.LOG.error(e.getMessage(), e);
