@@ -59,7 +59,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 				buffer[i] = (byte) inputStream.read();
 			}
 			try {
-				CharBuffer decoded = getDecoder().decode(ByteBuffer.wrap(buffer));
+				CharBuffer decoded = conversionOptions.getDecoder().decode(ByteBuffer.wrap(buffer));
 				return decoded.toString();
 			} catch (CharacterCodingException e) {
 				LOG.error("Could not decode data with string handler", e);
@@ -76,7 +76,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 			int limit = b.limit();
 			b.limit(b.position() + size);
 			try {
-				CharBuffer decoded = getDecoder().decode(b);
+				CharBuffer decoded = conversionOptions.getDecoder().decode(b);
 				return decoded.toString();
 			} catch (CharacterCodingException e) {
 				LOG.error("Could not decode data with string handler", e);
@@ -112,7 +112,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 		String s = (String) data;
 		try {
 			if (data != null) {
-				ByteBuffer charBuffer = getEncoder().encode(CharBuffer.wrap(s));
+				ByteBuffer charBuffer = conversionOptions.getEncoder().encode(CharBuffer.wrap(s));
 				buffer.putInt(charBuffer.limit());
 				buffer.put(charBuffer);
 			} else {
@@ -135,7 +135,7 @@ public class StringHandler extends AbstractDataHandler<String> {
 			if (attr == null) {
 				attr = "";
 			}
-			int val = getEncoder().encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
+			int val = conversionOptions.getEncoder().encode(CharBuffer.wrap(attr)).limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {
 			LOG.error("Could not encode '{}' for calculation mem-size", attribute, e);
