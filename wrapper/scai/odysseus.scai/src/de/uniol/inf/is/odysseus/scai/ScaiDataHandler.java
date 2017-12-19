@@ -89,7 +89,7 @@ public class ScaiDataHandler extends AbstractDataHandler<Tuple<?>> {
 	@Override
 	public Tuple<?> readData(ByteBuffer buffer) {
 		try {
-			final CharBuffer charBuffer = getDecoder().decode(buffer);
+			final CharBuffer charBuffer = conversionOptions.getDecoder().decode(buffer);
 			return readData(charBuffer.toString());
 		} catch (CharacterCodingException e) {
 			LOG.warn(e.getMessage(), e);

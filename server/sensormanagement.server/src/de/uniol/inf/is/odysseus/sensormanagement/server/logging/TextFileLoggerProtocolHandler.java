@@ -24,7 +24,7 @@ public class TextFileLoggerProtocolHandler extends LoggerProtocolHandler
 {
 	public static final String NAME = "TextFileLogger";
 	static final Runtime RUNTIME = Runtime.getRuntime();
-	static final WriteOptions writeOptions = new WriteOptions(',', '\'', null, null);
+	static final WriteOptions writeOptions = WriteOptions.defaultOptions2;
 
 	Logger LOG = LoggerFactory.getLogger(TextFileLoggerProtocolHandler.class);
 

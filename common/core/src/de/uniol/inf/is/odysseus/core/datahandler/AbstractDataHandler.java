@@ -17,12 +17,10 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -32,19 +30,14 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 
 	final private SDFSchema schema;
 	
-	private Charset charset;
-	private CharsetDecoder decoder;
-	private CharsetEncoder encoder;
+	protected ConversionOptions conversionOptions = ConversionOptions.defaultOptions;
 
-	
 	protected AbstractDataHandler(SDFSchema schema){
 		this.schema = schema;
-		setCharset("UTF-8");
 	}
 	
 	protected AbstractDataHandler(){
 		this.schema = null;
-		setCharset("UTF-8");
 	}
 	
 	@Override
@@ -58,35 +51,23 @@ public abstract class AbstractDataHandler<T> implements IDataHandler<T> {
 		return i;
 	}
 	
+    @Override
+    public ConversionOptions getConversionOptions() {
+    	return conversionOptions;
+    }
+    
+    @Override
+    public void setConversionOptions(ConversionOptions conversionOptions) {
+    	this.conversionOptions = conversionOptions;
+    }
+	
 	abstract protected IDataHandler<T> getInstance(SDFSchema schema); 
 
 	protected IDataHandler<T> getInstance(List<SDFDatatype> schema){
 		// Hint: Currently only needed for TupleDataHandler
 		return null;
 	}
-
-	public void setCharset(String charsetString) {
-		setCharset(Charset.forName(charsetString));
-	}
-	
-	public void setCharset(Charset charset) {
-		this.charset = charset;
-		decoder = charset.newDecoder();
-		encoder = charset.newEncoder();	
-	}
-	
-	public Charset getCharset() {
-		return charset;
-	}
-	
-	public CharsetDecoder getDecoder() {
-		return decoder;
-	}
-	
-	public CharsetEncoder getEncoder() {
-		return encoder;
-	}
-	
+			
 	@Override
 	public T readData(InputStream inputStream) throws IOException {
 		throw new UnsupportedOperationException("Sorry. Reading from input stream is currently not supported by this data handler");

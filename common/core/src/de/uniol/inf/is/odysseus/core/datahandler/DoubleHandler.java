@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,8 +42,20 @@ public class DoubleHandler extends AbstractDataHandler<Double> {
 
 	@Override
     public Double readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
+        }
+        if (getConversionOptions().hasFloatingFormatter()) {
+        	try {
+				return getConversionOptions().getFloatingFormatter().parse(string).doubleValue();
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
         }
         return Double.parseDouble(string);
     }

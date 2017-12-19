@@ -57,7 +57,7 @@ public class DStringHandler extends AbstractDataHandler<DString> {
                 buffer[i] = (byte) inputStream.read();
             }
             try {
-                CharBuffer decoded = getDecoder().decode(ByteBuffer.wrap(buffer));
+                CharBuffer decoded = conversionOptions.getDecoder().decode(ByteBuffer.wrap(buffer));
                 return new DString(decoded.toString());
             }
             catch (CharacterCodingException e) {
@@ -76,7 +76,7 @@ public class DStringHandler extends AbstractDataHandler<DString> {
 			int limit = b.limit();
 			b.limit(b.position() + size);
 			try {
-				CharBuffer decoded = getDecoder().decode(b);
+				CharBuffer decoded = conversionOptions.getDecoder().decode(b);
 				return new DString(decoded.toString());
 			} catch (CharacterCodingException e) {
 				LOG.error("Could not decode data with string handler", e);
@@ -115,7 +115,7 @@ public class DStringHandler extends AbstractDataHandler<DString> {
 		// buffer.putInt(s.length());
 		try {
 			if (data != null) {
-				ByteBuffer charBuffer = getEncoder().encode(CharBuffer.wrap(s));
+				ByteBuffer charBuffer = conversionOptions.getEncoder().encode(CharBuffer.wrap(s));
 				buffer.putInt(charBuffer.limit());
 				buffer.put(charBuffer);
 			} else {
@@ -134,7 +134,7 @@ public class DStringHandler extends AbstractDataHandler<DString> {
 	@Override
 	public int memSize(Object attribute) {
 		try {
-			int val = getEncoder().encode(CharBuffer.wrap(((DString) attribute).toString()))
+			int val = conversionOptions.getEncoder().encode(CharBuffer.wrap(((DString) attribute).toString()))
 					.limit() + Integer.SIZE / 8;
 			return val;
 		} catch (CharacterCodingException e) {

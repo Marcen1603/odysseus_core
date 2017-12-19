@@ -44,7 +44,7 @@ public class SimpleCSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> e
 
 	@Override
 	protected T readLine(String line, boolean readMeta) {
-		List<String> ret = CSVParser.parseCSV(line, delimiter, trim);
+		List<String> ret = CSVParser.parseCSV(line, getConversionOptions().getDelimiter(), trim);
         if (ret.size() < this.getDataHandler().getSchema().size()) {
         	ret = ret.subList(0, ret.size());
         }
