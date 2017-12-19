@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +29,7 @@ public class GroupSplitFileWriter<R extends IStreamObject<?>> extends
 		this.path = path;
 		this.groupProcessor = groupProcessor;
 		this.dataHandler = dataHandler;
-		writeOptions = new WriteOptions(';', '\'', (DecimalFormat) null,
-				(DecimalFormat) null);
+		writeOptions = WriteOptions.defaultOptions2;
 	}
 
 	@Override

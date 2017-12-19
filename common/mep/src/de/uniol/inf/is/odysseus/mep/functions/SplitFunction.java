@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.mep.functions;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
@@ -26,7 +27,7 @@ public class SplitFunction extends AbstractFunction<List<String>> {
 
 	@Override
 	public List<String> getValue() {
-		List<String> ret = CSVParser.parseCSV((String)getInputValue(0), CSVParser.determineDelimiter((String)getInputValue(1)), true);
+		List<String> ret = CSVParser.parseCSV((String)getInputValue(0), ConversionOptions.determineDelimiter((String)getInputValue(1)), true);
 		return ret;
 	}
 
