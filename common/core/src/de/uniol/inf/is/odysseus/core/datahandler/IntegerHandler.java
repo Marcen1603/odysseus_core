@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,20 @@ public class IntegerHandler extends AbstractDataHandler<Integer> {
 
 	@Override
     public Integer readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string)) || "".equals(string)) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
+        }
+        if (getConversionOptions().hasFloatingFormatter()) {
+        	try {
+				return getConversionOptions().getFloatingFormatter().parse(string).intValue();
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
         }
         return Integer.parseInt(string);
     }
