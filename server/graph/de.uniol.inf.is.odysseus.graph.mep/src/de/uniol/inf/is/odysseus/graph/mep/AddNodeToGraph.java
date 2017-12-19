@@ -77,7 +77,7 @@ public class AddNodeToGraph extends AbstractFunction<Graph> {
 			addedNode.addAttributes(attributes);
 			return graph;
 		} catch (Throwable e) {
-			log.error("Could not calculate shortest path length in graph!", e);
+			log.error("Could not add node to graph!", e);
 			return null;
 		}
 	}

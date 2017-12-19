@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>-clean -debug -nl ${target.nl} -data @user.home -noExit  -gcf  &quot;/config/NEXMarkGeneratorConfiguration.properties&quot; -useNIO -pr 65440
+      <programArgs>-clean -debug -nl ${target.nl} -data @noDefault -noExit  -gcf  &quot;/config/NEXMarkGeneratorConfiguration.properties&quot; -useNIO -pr 65440
       </programArgs>
       <vmArgs>-Dosgi.requiredJavaVersion=1.5 -Xms40m -Xmx512m  -XX:+HeapDumpOnOutOfMemoryError -XX:+UseConcMarkSweepGC  -Dosgi.console.enable.builtin=true
       </vmArgs>

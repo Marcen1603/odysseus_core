@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Document;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -19,7 +21,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
 public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Document<?>> {
 
-	StringHandler stringHandler = new StringHandler();
+	StringHandler handler = new StringHandler();
 
 	@SuppressWarnings("unused")
 	private static final Logger LOG = LoggerFactory.getLogger(DocumentDataHandler.class);
@@ -30,16 +32,17 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 	}
 
 	@Override
-	public void setCharset(Charset charset) {
-		super.setCharset(charset);
-		if (stringHandler != null) {
-			stringHandler.setCharset(charset);
+	public void setConversionOptions(ConversionOptions conversionOptions) {
+		super.setConversionOptions(conversionOptions);
+		if (this.handler != null) {
+			this.handler.setConversionOptions(conversionOptions);
 		}
 	}
 
+
 	@Override
 	public Document<?> readData(ByteBuffer buffer, boolean handleMetaData) {
-		return new Document<>(stringHandler.readData(buffer));
+		return new Document<>(handler.readData(buffer));
 	}
 
 	@Override
@@ -50,31 +53,41 @@ public class DocumentDataHandler extends AbstractStreamObjectDataHandler<Documen
 
 	@Override
 	public Document<?> readData(String string, boolean handleMetaData) {
-		return new Document<>(stringHandler.readData(string));
+		return new Document<>(handler.readData(string));
 	}
 
 	@Override
 	public Document<?> readData(InputStream inputStream, boolean handleMetaData) throws IOException {
-		return null;
+		BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+		StringBuffer out = new StringBuffer();
+		
+		while ((line = in.readLine()) != null) {
+			out.append(line+System.lineSeparator());
+		}
+		
+		// remove last lineSeperator
+				
+		return new Document<>(out.substring(0,out.length()-1));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
-		stringHandler.writeData(buffer, ((Document<IMetaAttribute>) data).getContent());
+		handler.writeData(buffer, ((Document<IMetaAttribute>) data).getContent());
 	}
 
 	@SuppressWarnings("unchecked")
 
 	@Override
 	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
-		stringHandler.writeData(output, ((Document<IMetaAttribute>) data).getContent(), options);
+		handler.writeData(output, ((Document<IMetaAttribute>) data).getContent(), options);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public int memSize(Object attribute, boolean handleMetaData) {
-		return stringHandler.memSize(((Document<IMetaAttribute>) attribute).getContent());
+		return handler.memSize(((Document<IMetaAttribute>) attribute).getContent());
 	}
 
 	@Override

@@ -3,7 +3,7 @@
       id="de.uniol.inf.is.odysseus.text.feature"
       label="Text and Phonetic Functions"
       version="1.0.0.qualifier"
-      provider-name="OFFIS">
+      provider-name="University of Oldenburg">
 
    <description>
       Holds text processing functions for Odysseus. This includes different

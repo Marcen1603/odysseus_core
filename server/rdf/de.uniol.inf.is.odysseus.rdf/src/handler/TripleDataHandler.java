@@ -3,11 +3,11 @@ package handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
@@ -25,20 +25,20 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 		types.add(SDFDatatype.TRIPLE.getURI());
 	}
 
-	static final List<StringHandler> dataHandler = new ArrayList<>();
-
-	static {
-		dataHandler.add(new StringHandler());
-		dataHandler.add(new StringHandler());
-		dataHandler.add(new StringHandler());
+	final List<StringHandler> dataHandlers = new ArrayList<>();
+	
+	public TripleDataHandler() {
+		for (int i=0;i<3;i++) {
+			dataHandlers.add(new StringHandler());
+		}
 	}
 	
 	@Override
-	public void setCharset(Charset charset) {
-		super.setCharset(charset);
-		if (dataHandler != null) {
-			for (IDataHandler<?> handler : dataHandler) {
-				handler.setCharset(charset);
+	public void setConversionOptions(ConversionOptions conversionOptions) {
+		super.setConversionOptions(conversionOptions);
+		if (dataHandlers != null) {
+			for (IDataHandler<?> handler : dataHandlers) {
+				handler.setConversionOptions(conversionOptions);
 			}
 		}
 	}
@@ -47,7 +47,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 	public Triple<? extends IMetaAttribute> readData(ByteBuffer buffer, boolean handleMetaData) {
 		String[] res = new String[3];
 		for (int i = 0; i < 3; i++) {
-			res[i] = dataHandler.get(i).readData(buffer);
+			res[i] = dataHandlers.get(i).readData(buffer);
 		}
 
 		Triple<IMetaAttribute> t = new Triple<IMetaAttribute>(res[0], res[1], res[2]);
@@ -65,7 +65,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 			throws IOException {
 		String[] res = new String[3];
 		for (int i = 0; i < 3; i++) {
-			res[i] = dataHandler.get(i).readData(inputStream);
+			res[i] = dataHandlers.get(i).readData(inputStream);
 		}
 
 		Triple<IMetaAttribute> t = new Triple<IMetaAttribute>(res[0], res[1], res[2]);
@@ -87,7 +87,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 	public Triple<? extends IMetaAttribute> readData(Iterator<String> input, boolean handleMetaData) {
 		String[] res = new String[3];
 		for (int i = 0; i < 3; i++) {
-			res[i] = dataHandler.get(i).readData(input.next());
+			res[i] = dataHandlers.get(i).readData(input.next());
 		}
 
 		Triple<IMetaAttribute> t = new Triple<IMetaAttribute>(res[0], res[1], res[2]);
@@ -111,7 +111,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 	public void writeData(ByteBuffer buffer, Triple<? extends IMetaAttribute> object, boolean handleMetaData) {
 		Triple<? extends IMetaAttribute> triple = object;
 		for (int i = 0; i < 3; i++) {
-			dataHandler.get(i).writeData(buffer, triple.get(i));
+			dataHandlers.get(i).writeData(buffer, triple.get(i));
 		}
 		if (handleMetaData) {
 			writeMetaData(buffer, triple.getMetadata());
@@ -123,7 +123,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 		@SuppressWarnings("unchecked")
 		Triple<? extends IMetaAttribute> triple = (Triple<? extends IMetaAttribute>) data;
 		for (int i = 0; i < 3; i++) {
-			dataHandler.get(i).writeData(string, triple.get(i));
+			dataHandlers.get(i).writeData(string, triple.get(i));
 		}
 		if (handleMetaData) {
 			writeMetaData(string, triple.getMetadata());
@@ -135,7 +135,7 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 		@SuppressWarnings("unchecked")
 		Triple<? extends IMetaAttribute> triple = (Triple<? extends IMetaAttribute>) data;
 		for (int i = 0; i < 3; i++) {
-			dataHandler.get(i).writeData(output, triple.get(i), options);
+			dataHandlers.get(i).writeData(output, triple.get(i), options);
 		}
 		if (handleMetaData) {
 			writeMetaData(output, triple.getMetadata(), options);
@@ -147,8 +147,8 @@ public class TripleDataHandler extends AbstractStreamObjectDataHandler<Triple<? 
 		@SuppressWarnings("unchecked")
 		Triple<? extends IMetaAttribute> triple = (Triple<? extends IMetaAttribute>) attribute;
 		int size = 0;
-		for (int i = 0; i < dataHandler.size(); i++) {
-			size += dataHandler.get(i).memSize(triple.get(i));
+		for (int i = 0; i < dataHandlers.size(); i++) {
+			size += dataHandlers.get(i).memSize(triple.get(i));
 		}
 		if (handleMetaData) {
 			size += getMetaDataMemSize(triple.getMetadata());

@@ -29,7 +29,8 @@ public class MOEstimationAO extends BinaryLogicalOp {
 
 	private String geometryAttribute;
 	private String idAttribute;
-	private String pointInTimeAttribute;
+	private String pointInTimeFutureAttribute;
+	private String pointInTimeNowAttribute;
 	private String centerMovingObjectAttribute;
 	private double radius;
 	private final OptionMap optionsMap = new OptionMap();
@@ -43,10 +44,11 @@ public class MOEstimationAO extends BinaryLogicalOp {
 		super(ao);
 		this.geometryAttribute = ao.getGeometryAttribute();
 		this.idAttribute = ao.getIdAttribute();
-		this.pointInTimeAttribute = ao.getPointInTimeAttribute();
+		this.pointInTimeFutureAttribute = ao.getPointInTimeAttribute();
+		this.pointInTimeNowAttribute = ao.getPointInTimeNowAttribute();
 		this.centerMovingObjectAttribute = ao.getCenterMovingObjectAttribute();
 		this.radius = ao.getRadius();
-		
+
 		optionsMap.addAll(ao.optionsMap);
 		if (ao.optionsList != null) {
 			this.optionsList = new ArrayList<>(ao.optionsList);
@@ -72,12 +74,21 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	}
 
 	public String getPointInTimeAttribute() {
-		return pointInTimeAttribute;
+		return pointInTimeFutureAttribute;
 	}
 
 	@Parameter(name = "pointInTimeAttribute", optional = false, type = StringParameter.class, isList = false, doc = "Name of the attribute with the point in time to which the moving objects need to be predicted.")
 	public void setPointInTimeAttribute(String pointInTimeAttribute) {
-		this.pointInTimeAttribute = pointInTimeAttribute;
+		this.pointInTimeFutureAttribute = pointInTimeAttribute;
+	}
+
+	public String getPointInTimeNowAttribute() {
+		return pointInTimeNowAttribute;
+	}
+
+	@Parameter(name = "pointInTimeNowAttribute", optional = true, type = StringParameter.class, isList = false, doc = "Name of the attribute with the point in time from which the trajectory needs to be predicted.")
+	public void setPointInTimeNowAttribute(String pointInTimeAttribute) {
+		this.pointInTimeNowAttribute = pointInTimeAttribute;
 	}
 
 	public double getRadius() {
@@ -88,7 +99,7 @@ public class MOEstimationAO extends BinaryLogicalOp {
 	public void setRadius(double radius) {
 		this.radius = radius;
 	}
-	
+
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
 	public void setOptions(List<Option> value) {
 		for (Option option : value) {

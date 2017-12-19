@@ -42,7 +42,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		writeJSONData(builder, attribute, handleMetaData);
 		ByteBuffer charBuffer;
 		try {
-			charBuffer = getEncoder().encode(CharBuffer.wrap(builder.toString()));
+			charBuffer = conversionOptions.getEncoder().encode(CharBuffer.wrap(builder.toString()));
 			return charBuffer.limit();
 		} catch (CharacterCodingException e) {
 			// TODO Auto-generated catch block
@@ -75,7 +75,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		// TODO: Find a way to handle metadata in key value
 		try {
 			if (buffer.remaining() > 0) {
-				CharBuffer decoded = getDecoder().decode(buffer);
+				CharBuffer decoded = conversionOptions.getDecoder().decode(buffer);
 				return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
 			}
 		} catch (IOException e) {
@@ -93,7 +93,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 				buffer[i] = (byte) inputStream.read();
 			}
 
-			CharBuffer decoded = getDecoder().decode(ByteBuffer.wrap(buffer));
+			CharBuffer decoded = conversionOptions.getDecoder().decode(ByteBuffer.wrap(buffer));
 			return (KeyValueObject<?>) KeyValueObject.createInstance(decoded.toString());
 		} catch (IOException e) {
 			LOG.error("Could not decode data with KeyValueObject handler", e);
@@ -113,7 +113,7 @@ public class KeyValueObjectDataHandler extends AbstractStreamObjectDataHandler<K
 		writeJSONData(builder, data, handleMetaData);
 		ByteBuffer charBuffer;
 		try {
-			charBuffer = getEncoder().encode(CharBuffer.wrap(builder.toString()));
+			charBuffer = conversionOptions.getEncoder().encode(CharBuffer.wrap(builder.toString()));
 			buffer.put(charBuffer);
 			return;
 		} catch (CharacterCodingException e) {

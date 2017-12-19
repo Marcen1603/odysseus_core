@@ -16,7 +16,6 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
@@ -121,10 +121,10 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 	}
 	
 	@Override
-	public void setCharset(Charset charset) {
-		super.setCharset(charset);
+	public void setConversionOptions(ConversionOptions conversionOptions) {
+		super.setConversionOptions(conversionOptions);
 		if (this.handler != null) {
-			this.handler.setCharset(charset);
+			this.handler.setConversionOptions(conversionOptions);
 		}
 	}
 

@@ -30,7 +30,7 @@ public class StringMultiplicationOperator extends AbstractBinaryOperator<String>
     @Override
     public String getValue() {
 		String a = getInputValue(0);
-		Integer b = getInputValue(1);
+		Long b = getInputValue(1);
 		if ((a == null) || (b == null)) {
 			return null;
 		}

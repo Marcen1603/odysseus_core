@@ -64,7 +64,7 @@ public class GetAllNodes extends AbstractFunction<List<Node>> {
 		try {
 			return new ArrayList<Node>(((Graph) getInputValue(0)).getNodeSet());
 		} catch (Throwable e) {
-			log.error("Could not calculate shortest path length in graph!", e);
+			log.error("Could not extract node list from graph!", e);
 			return null;
 		}
 	}

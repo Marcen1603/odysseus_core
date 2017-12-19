@@ -43,8 +43,13 @@ public class ShortDataHandler extends AbstractDataHandler<Short> {
 
 	@Override
 	public Short readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
         }
 		return Short.parseShort(string);
 	}
