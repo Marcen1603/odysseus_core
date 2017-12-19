@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
@@ -16,6 +17,11 @@ public class ConversionOptions {
 	public static final String TEXT_DELIMITER = "textdelimiter";
 	public static final String CSV_TEXT_DELIMITER = "csv.textdelimiter";
 	public static final String CSV_FLOATING_FORMATTER = "csv.floatingformatter";
+	
+	public static final String DECIMAL_SEPARATOR = "decimalseparator";
+	public static final String EXPONENT_SEPARATOR = "exponentseparator";
+	public static final String GROUPING_SEPARATOR = "groupingseparator";
+	
 	public static final String CSV_NUMBER_FORMATTER = "csv.numberformatter";
 	public static final String NULL_VALUE_TEXT = "nullvaluetext";
 	public static final String CHARSET = "charset";
@@ -63,21 +69,43 @@ public class ConversionOptions {
 		} else {
 			delimiter = ',';
 		}
+		
+		DecimalFormatSymbols dfs = createDFS(optionsMap);
+
 		if (optionsMap.containsKey(ConversionOptions.CSV_FLOATING_FORMATTER)) {
-			floatingFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_FLOATING_FORMATTER));
+			floatingFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_FLOATING_FORMATTER),dfs);		
 		}else {
 			floatingFormatter = null;
 		}
+		
+		
 		if (optionsMap.containsKey(ConversionOptions.CSV_NUMBER_FORMATTER)) {
-			numberFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_NUMBER_FORMATTER));
+			numberFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_NUMBER_FORMATTER), dfs);
 		}else {
 			numberFormatter = null;
 		}
 
+	
+		
 		this.textSeperator = optionsMap.getCharacter(TEXT_DELIMITER, null);
 		
 		this.nullValueString = optionsMap.get(NULL_VALUE_TEXT, "");
 
+	}
+
+	private DecimalFormatSymbols createDFS(OptionMap optionsMap) {
+		DecimalFormatSymbols dfs = DecimalFormatSymbols.getInstance();
+		
+		if (optionsMap.containsKey(ConversionOptions.DECIMAL_SEPARATOR)) {
+			dfs.setDecimalSeparator(optionsMap.getChar(ConversionOptions.DECIMAL_SEPARATOR,'.'));
+		}
+		if (optionsMap.containsKey(ConversionOptions.EXPONENT_SEPARATOR)) {
+			dfs.setDecimalSeparator(optionsMap.getChar(ConversionOptions.EXPONENT_SEPARATOR,'e'));
+		}
+		if (optionsMap.containsKey(ConversionOptions.GROUPING_SEPARATOR)) {
+			dfs.setDecimalSeparator(optionsMap.getChar(ConversionOptions.GROUPING_SEPARATOR,','));
+		}
+		return dfs;
 	}
 
 	public ConversionOptions(ConversionOptions convOpts, OptionMap optionsMap) {
@@ -97,13 +125,15 @@ public class ConversionOptions {
 			delimiter = convOpts.delimiter;
 		}
 		
+		DecimalFormatSymbols dfs = createDFS(optionsMap);
+		
 		if (optionsMap.containsKey(ConversionOptions.CSV_FLOATING_FORMATTER)) {
-			floatingFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_FLOATING_FORMATTER));
+			floatingFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_FLOATING_FORMATTER), dfs);
 		}else {
 			floatingFormatter = convOpts.floatingFormatter;
 		}
 		if (optionsMap.containsKey(ConversionOptions.CSV_NUMBER_FORMATTER)) {
-			numberFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_NUMBER_FORMATTER));
+			numberFormatter = new DecimalFormat(optionsMap.get(ConversionOptions.CSV_NUMBER_FORMATTER), dfs);
 		}else {
 			numberFormatter = convOpts.numberFormatter;
 		}
