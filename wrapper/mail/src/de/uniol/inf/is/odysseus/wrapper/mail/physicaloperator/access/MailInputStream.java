@@ -47,7 +47,10 @@ public class MailInputStream extends InputStream {
 		throw new NotImplementedException();
 	}
 
-	public boolean HasNextMessage() {
+	public boolean HasNextMessage() throws IOException {
+		if (messageQueue.isEmpty()) {
+			fetch();
+		}
 		return !messageQueue.isEmpty();
 	}
 
@@ -58,49 +61,58 @@ public class MailInputStream extends InputStream {
 	@Override
 	public int available() throws IOException {
 		// TODO Auto-generated method stub
-		return super.available();
+		System.out.println("AVAILABLE CALLED");
+		throw new NotImplementedException();
+		// return super.available();
 	}
 
 	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
 		super.close();
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public synchronized void mark(int readlimit) {
 		// TODO Auto-generated method stub
 		super.mark(readlimit);
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public boolean markSupported() {
 		// TODO Auto-generated method stub
-		return super.markSupported();
+		// return super.markSupported();
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		// TODO Auto-generated method stub
-		return super.read(b, off, len);
+		// return super.read(b, off, len);
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public int read(byte[] b) throws IOException {
 		// TODO Auto-generated method stub
-		return super.read(b);
+		// return super.read(b);
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public synchronized void reset() throws IOException {
 		// TODO Auto-generated method stub
-		super.reset();
+		// super.reset();
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public long skip(long n) throws IOException {
 		// TODO Auto-generated method stub
-		return super.skip(n);
+		// return super.skip(n);
+		throw new NotImplementedException();
 	}
 
 	/**
@@ -110,12 +122,14 @@ public class MailInputStream extends InputStream {
 	 */
 	void fetch() throws IOException {
 		try {
-			this.mailConfiguration.getStore().connect();
+			this.mailConfiguration.getStore().connect(this.mailConfiguration.getHost(),
+					this.mailConfiguration.getPort(), this.mailConfiguration.getUsername(),
+					this.mailConfiguration.getPassword());
 
 			Folder inbox = getInbox();
 			Message[] messages = getMessages(inbox);
 			QueueMessages(messages);
-			
+
 			inbox.close(true);
 
 		} catch (final MessagingException e) {
@@ -156,12 +170,12 @@ public class MailInputStream extends InputStream {
 	}
 
 	private void QueueMessages(Message[] messages) throws MessagingException {
-		if (messages.length > 0){
+		if (messages.length > 0) {
 			for (Message message : messages) {
 				messageQueue.add(message);
 				if (!mailConfiguration.isKeep()) {
-		            message.setFlag(Flags.Flag.DELETED, true);
-		        }
+					message.setFlag(Flags.Flag.DELETED, true);
+				}
 			}
 		}
 	}

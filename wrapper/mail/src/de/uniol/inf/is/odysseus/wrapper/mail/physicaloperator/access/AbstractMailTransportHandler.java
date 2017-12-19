@@ -20,8 +20,10 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 	/** Logger */
 	private final Logger LOG = LoggerFactory.getLogger(AbstractMailTransportHandler.class);
 
-	MailConfiguration mailConfig = null;
-
+	private MailConfiguration mailConfig = null;
+	
+	private MailInputStream inputStream = null;
+	
 	/**
 	 * 
 	 */
@@ -33,8 +35,9 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 		super(protocolHandler, options);
 		mailConfig = CreateMailConfiguration();
 		mailConfig.init(options);
+		inputStream = new MailInputStream(mailConfig);
 	}
-
+	
 	@Override
 	public void send(final byte[] message) throws IOException {
 
@@ -79,7 +82,7 @@ public abstract class AbstractMailTransportHandler extends AbstractPullTransport
 	 */
 	@Override
 	public InputStream getInputStream() {
-		return new MailInputStream(this.mailConfig); // TODO maintain single instance for each object instead of creating new objects?
+		return this.inputStream;
 	}
 
 	/**
