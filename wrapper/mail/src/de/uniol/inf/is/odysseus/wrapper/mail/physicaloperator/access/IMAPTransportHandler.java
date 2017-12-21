@@ -1,10 +1,12 @@
 package de.uniol.inf.is.odysseus.wrapper.mail.physicaloperator.access;
 
+import com.sun.mail.imap.IMAPMessage;
+
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-public class IMAPTransportHandler extends AbstractMailTransportHandler {
+public class IMAPTransportHandler extends AbstractMailTransportHandler<IMAPMessage> {
 
 	private static final String NAME = "IMAP";
 

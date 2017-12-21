@@ -26,6 +26,7 @@ public class MimeTypeHandlerRegistry<T> {
 					"handler for mime type '" + handler.getMimeType() + "' already registered");
 		}
 		handlers.put(handler.getMimeType(), handler);
+		handler.setRegistry(this);
 	}
 
 	public boolean UnregisterHandler(String mimeType) {

@@ -7,13 +7,15 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.activation.CommandMap;
+import javax.activation.MailcapCommandMap;
 import javax.mail.Address;
 import javax.mail.Flags;
+import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Flags.Flag;
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.search.SubjectTerm;
 
 import org.slf4j.Logger;
@@ -22,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractPullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
@@ -33,7 +34,7 @@ import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartMi
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextHtmlHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextPlainHandler;
 
-public abstract class AbstractMailTransportHandler
+public abstract class AbstractMailTransportHandler<M extends Message>
 		extends AbstractSimplePullTransportHandler<KeyValueObject<IMetaAttribute>> {
 
 	/** Logger */
@@ -67,7 +68,18 @@ public abstract class AbstractMailTransportHandler
 		mailConfig = CreateMailConfiguration();
 		mailConfig.init(options);
 		InitMimeTypeHandlers();
+		InitCommandMap();
 		messageQueue = new LinkedList<KeyValueObject<IMetaAttribute>>();
+	}
+
+	private void InitCommandMap() {
+		MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
+        mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+        mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+        CommandMap.setDefaultCommandMap(mc);
 	}
 
 	@Override
@@ -83,7 +95,7 @@ public abstract class AbstractMailTransportHandler
 	 * @return a newly created mail configuration object
 	 */
 	public abstract MailConfiguration CreateMailConfiguration();
-
+	
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
 		try {
@@ -157,13 +169,19 @@ public abstract class AbstractMailTransportHandler
 
 			addFlags(kvo, message);
 
-			kvo.setAttribute("content", this.mimeTypeHandlers.HandlePart(message));
+			//Object content = this.GetMessageReader().ReadMessage(message);
+			Object content = null;
+			try {
+				content = this.mimeTypeHandlers.HandlePart(message);
+			} catch (MimeTypeException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			kvo.setAttribute("content", content);
 
-		} catch (MessagingException | MimeTypeException | IOException e) {
+		} catch (MessagingException e) {
 			this.LOG.error(e.getMessage(), e);
 		}
-
-		System.out.println(kvo.toString());
 
 		return kvo;
 	}
