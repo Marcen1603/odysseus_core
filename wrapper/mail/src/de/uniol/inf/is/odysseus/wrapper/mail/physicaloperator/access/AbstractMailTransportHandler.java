@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartMi
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextHtmlHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextPlainHandler;
 
-public abstract class AbstractMailTransportHandler<M extends Message>
+public abstract class AbstractMailTransportHandler
 		extends AbstractSimplePullTransportHandler<KeyValueObject<IMetaAttribute>> {
 
 	/** Logger */

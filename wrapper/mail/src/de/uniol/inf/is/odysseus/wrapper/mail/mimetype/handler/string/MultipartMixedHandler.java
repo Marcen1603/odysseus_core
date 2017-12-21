@@ -2,11 +2,8 @@ package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string;
 
 import java.io.IOException;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Part;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 

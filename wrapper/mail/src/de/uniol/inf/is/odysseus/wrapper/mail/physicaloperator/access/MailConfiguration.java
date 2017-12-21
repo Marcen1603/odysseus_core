@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
-import javax.mail.Provider;
 import javax.mail.Session;
 import javax.mail.Store;
 
@@ -234,7 +233,7 @@ public abstract class MailConfiguration {
 		if (options.containsKey(MailConfiguration.PORT)) {
 			this.setPort(Integer.parseInt(options.get(MailConfiguration.PORT)));
 		} else {
-			this.setPort(993);
+			this.setPort(this.getDefaultPort());
 		}
 		if (options.containsKey(MailConfiguration.KEEP)) {
 			this.setKeep(Boolean.parseBoolean(options.get(MailConfiguration.KEEP)));
