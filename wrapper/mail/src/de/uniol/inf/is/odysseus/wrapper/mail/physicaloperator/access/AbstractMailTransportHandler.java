@@ -29,6 +29,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeHandlerRegistry;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.ApplicationOctetStreamHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartAlternativeHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartMixedHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextHtmlHandler;
@@ -241,6 +242,7 @@ public abstract class AbstractMailTransportHandler
 		mimeTypeHandlers.RegisterHandler(new TextHtmlHandler());
 		mimeTypeHandlers.RegisterHandler(new MultipartAlternativeHandler());
 		mimeTypeHandlers.RegisterHandler(new MultipartMixedHandler("\n"));
+		mimeTypeHandlers.RegisterHandler(new ApplicationOctetStreamHandler());
 	}
 
 	/**
