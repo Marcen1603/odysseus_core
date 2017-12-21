@@ -26,6 +26,7 @@ public abstract class MailConfiguration {
 	private static final String FOLDER = "folder";
 	private static final String KEEP = "keep";
 	private static final String PATTERN = "pattern";
+	private static final String READ_CONTENT = "readcontent";
 
 	private static final String DEFAULT_PATTERN = "";
 	private static final String DEFAULT_FOLDER = "INBOX";
@@ -40,6 +41,7 @@ public abstract class MailConfiguration {
 	private String folder;
 	private Store store;
 	private Session session;
+	private boolean readContent;
 
 	public Store getStore() {
 		return store;
@@ -58,7 +60,7 @@ public abstract class MailConfiguration {
 
 	private void initSession() {
 		Properties properties = new Properties();
-		
+
 		InitProperties(properties);
 
 		this.session = Session.getDefaultInstance(properties, new javax.mail.Authenticator() {
@@ -177,6 +179,23 @@ public abstract class MailConfiguration {
 
 	/**
 	 * 
+	 * @return true if the email content should be read, false otherwise
+	 */
+	public boolean isReadContent() {
+		return readContent;
+	}
+
+	/**
+	 * 
+	 * @param readContent
+	 *            true if the email content should be read, false otherwise
+	 */
+	public void setReadContent(boolean readContent) {
+		this.readContent = readContent;
+	}
+
+	/**
+	 * 
 	 * @return the name of the mail protocol
 	 */
 	public abstract String getProviderName();
@@ -190,7 +209,9 @@ public abstract class MailConfiguration {
 	/**
 	 * Initializes the provider-specific properties required for creating the
 	 * connection
-	 * @param properties the property object to init
+	 * 
+	 * @param properties
+	 *            the property object to init
 	 */
 	protected abstract void InitProperties(Properties properties);
 
@@ -235,6 +256,9 @@ public abstract class MailConfiguration {
 			this.setPattern(options.get(MailConfiguration.PATTERN));
 		} else {
 			this.setPattern(MailConfiguration.DEFAULT_PATTERN);
+		}
+		if (options.containsKey(MailConfiguration.READ_CONTENT)) {
+			this.setReadContent(Boolean.parseBoolean(options.get(MailConfiguration.READ_CONTENT)));
 		}
 	}
 

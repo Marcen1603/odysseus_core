@@ -74,12 +74,12 @@ public abstract class AbstractMailTransportHandler<M extends Message>
 
 	private void InitCommandMap() {
 		MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
-        mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
-        mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
-        mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
-        mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
-        mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
-        CommandMap.setDefaultCommandMap(mc);
+		mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
+		mc.addMailcap("text/xml;; x-java-content-handler=com.sun.mail.handlers.text_xml");
+		mc.addMailcap("text/plain;; x-java-content-handler=com.sun.mail.handlers.text_plain");
+		mc.addMailcap("multipart/*;; x-java-content-handler=com.sun.mail.handlers.multipart_mixed");
+		mc.addMailcap("message/rfc822;; x-java-content-handler=com.sun.mail.handlers.message_rfc822");
+		CommandMap.setDefaultCommandMap(mc);
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public abstract class AbstractMailTransportHandler<M extends Message>
 	 * @return a newly created mail configuration object
 	 */
 	public abstract MailConfiguration CreateMailConfiguration();
-	
+
 	@Override
 	public void processInOpen() throws UnknownHostException, IOException {
 		try {
@@ -169,21 +169,21 @@ public abstract class AbstractMailTransportHandler<M extends Message>
 
 			addFlags(kvo, message);
 
-			//Object content = this.GetMessageReader().ReadMessage(message);
-			Object content = null;
-			try {
-				content = this.mimeTypeHandlers.HandlePart(message);
-			} catch (MimeTypeException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			kvo.setAttribute("content", content);
+			addContent(kvo, message);
 
-		} catch (MessagingException e) {
+		} catch (MessagingException | MimeTypeException | IOException e) {
 			this.LOG.error(e.getMessage(), e);
 		}
 
 		return kvo;
+	}
+
+	private void addContent(KeyValueObject<IMetaAttribute> kvo, Message message)
+			throws MessagingException, MimeTypeException, IOException {
+		if (mailConfig.isReadContent()) {
+			Object content = this.mimeTypeHandlers.HandlePart(message);
+			kvo.setAttribute("content", content);
+		}
 	}
 
 	@Override
