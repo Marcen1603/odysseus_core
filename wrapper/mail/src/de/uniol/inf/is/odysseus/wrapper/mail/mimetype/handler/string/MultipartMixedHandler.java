@@ -7,10 +7,10 @@ import javax.mail.Part;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.AbstractMimeTypeHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic.AbstractMultipartMixedhandler;
 
-public class MultipartMixedHandler extends AbstractMimeTypeHandler<String> {
+public class MultipartMixedHandler extends AbstractMultipartMixedhandler<String> {
 
 	private String seperator;
 
@@ -46,11 +46,6 @@ public class MultipartMixedHandler extends AbstractMimeTypeHandler<String> {
 		}
 		
 		return text;
-	}
-
-	@Override
-	public String getMimeType() {
-		return "multipart/mixed";
 	}
 
 }

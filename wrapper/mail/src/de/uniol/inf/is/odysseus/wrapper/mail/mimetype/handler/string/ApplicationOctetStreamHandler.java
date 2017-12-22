@@ -6,10 +6,10 @@ import java.io.InputStream;
 import javax.mail.MessagingException;
 import javax.mail.Part;
 
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.AbstractMimeTypeHandler;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic.AbstractApplicationOctetStreamHandler;
 
-public class ApplicationOctetStreamHandler extends AbstractMimeTypeHandler<String> {
+public class ApplicationOctetStreamHandler extends AbstractApplicationOctetStreamHandler<String> {
 
 	private static final int BUFFER_SIZE = 1024;
 
@@ -24,11 +24,6 @@ public class ApplicationOctetStreamHandler extends AbstractMimeTypeHandler<Strin
 		}
 
 		return sb.toString();
-	}
-
-	@Override
-	public String getMimeType() {
-		return "APPLICATION/octet-stream";
 	}
 
 }
