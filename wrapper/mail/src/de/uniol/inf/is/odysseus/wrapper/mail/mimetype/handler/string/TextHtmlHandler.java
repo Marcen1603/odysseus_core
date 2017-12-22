@@ -11,7 +11,8 @@ public class TextHtmlHandler extends AbstractTextHtmlHandler<String> {
 
 	@Override
 	public String getContent(Part part) throws IOException, MessagingException {
-		return (String)part.getContent(); // TODO optionally filter HTML tags to extract plain text from HTML
+		String html = (String) part.getContent();
+		return processHtml(html);
 	}
 
 }

@@ -8,5 +8,10 @@ public abstract class AbstractTextHtmlHandler<T> extends AbstractMimeTypeHandler
 	public String getMimeType() {
 		return "text/html";
 	}
+	
+	protected String processHtml(String html) {
+		 // TODO optionally filter HTML tags to extract plain text from HTML
+		return html;
+	}
 
 }
