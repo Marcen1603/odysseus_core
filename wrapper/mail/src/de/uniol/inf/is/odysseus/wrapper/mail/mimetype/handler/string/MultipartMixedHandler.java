@@ -1,13 +1,7 @@
 package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string;
 
-import java.io.IOException;
+import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.Part;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic.AbstractMultipartMixedhandler;
 
 public class MultipartMixedHandler extends AbstractMultipartMixedhandler<String> {
@@ -19,33 +13,17 @@ public class MultipartMixedHandler extends AbstractMultipartMixedhandler<String>
 	}
 
 	@Override
-	public String getContent(Part part) throws IOException, MessagingException, MimeTypeException {
-		String text = "";
-		if (part instanceof MimeMultipart) {
-			MimeMultipart mp = (MimeMultipart) part;
-			text = getContent(mp);
-			
-		} else if (part instanceof MimeMessage) {
-			MimeMessage message = (MimeMessage) part;
+	protected String CombineSubContents(List<String> subcontents) {
+		StringBuilder sb = new StringBuilder();
 
-			text = this.getContent((MimeMultipart) message.getContent());
-		}
-		return text;
-	}
-
-	public String getContent(MimeMultipart mp) throws MessagingException, MimeTypeException, IOException {
-		String text = "";
-		
-		for (int i = 0; i < mp.getCount(); i++) {
-			Part p = mp.getBodyPart(i);
-
-			if (text.length() > 0) {
-				text += seperator;
+		for (int i = 0; i < subcontents.size(); i++) {
+			if (i>0){
+				sb.append(seperator);
 			}
-			text += this.getRegistry().HandlePart(p);
+			sb.append(subcontents.get(i));
 		}
-		
-		return text;
+
+		return sb.toString();
 	}
 
 }
