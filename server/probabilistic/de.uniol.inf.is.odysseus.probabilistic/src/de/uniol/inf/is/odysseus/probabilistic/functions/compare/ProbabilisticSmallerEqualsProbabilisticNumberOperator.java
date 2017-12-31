@@ -14,7 +14,7 @@ public class ProbabilisticSmallerEqualsProbabilisticNumberOperator extends Proba
     private static final long serialVersionUID = -3418450821273833863L;
 
     public ProbabilisticSmallerEqualsProbabilisticNumberOperator() {
-        super("<=", true, true);
+        super("<=", true);
     }
 
 }

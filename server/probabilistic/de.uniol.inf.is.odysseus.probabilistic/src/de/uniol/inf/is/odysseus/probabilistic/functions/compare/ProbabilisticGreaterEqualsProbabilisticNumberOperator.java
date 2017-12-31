@@ -15,7 +15,7 @@ public class ProbabilisticGreaterEqualsProbabilisticNumberOperator extends Proba
     private static final long serialVersionUID = -3834057191681240434L;
 
     public ProbabilisticGreaterEqualsProbabilisticNumberOperator() {
-        super(">=", true, true);
+        super(">=", true);
     }
 
 }

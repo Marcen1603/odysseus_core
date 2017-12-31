@@ -55,7 +55,7 @@ public class ProbabilisticEqualsOperatorInverse extends AbstractProbabilisticCom
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
         upperBound[a.getDimension(pos)] = b;
 
-        return this.getValueInternal(a, lowerBound, upperBound,true,true);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

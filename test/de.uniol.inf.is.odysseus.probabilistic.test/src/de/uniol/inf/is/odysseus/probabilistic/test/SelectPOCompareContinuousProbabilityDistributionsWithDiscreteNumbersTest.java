@@ -48,27 +48,26 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                 // Test selection operation on a continuous distribution
 
                 // Given the expression x < y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
-                        0, 0.5 }, //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
+                        0, //
+                        0.5 }, //
                 // Given the expression x <= y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -77,27 +76,25 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         0, //
                         0.5 }, //
                 // Given the expression y > x, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y > x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y > x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         0, 0.5 }, //
                 // Given the expression y >= x, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y >= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y >= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -106,28 +103,26 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         0, //
                         0.5 }, //
                 // Given the expression x > y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x >= y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -136,13 +131,26 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                         0, //
                         0.5 }, //
                 // Given the expression y < x, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y < x",
+                { "y < x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
+                        0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
+                        0, //
+                        0.5 }, //
+                // Given the expression y <= x, with x being a continuous
+                // distribution with x = N(0.0, 1.0) and y = 0,
+                // the selection should return the tuple with existence 0.5.
+                { "y <= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -150,41 +158,24 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                                 }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
-                // Given the expression y <= x, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
-                // the selection should return the tuple with existence 0.5.
-                { "y <= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
-                        0, //
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }, new Interval[] { new Interval(0.0,Double.POSITIVE_INFINITY) }, 2.0), //
-                        0, //
-                        0.5 }, //
                 // Given the expression x == y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should discard the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
                 // Given the expression x == y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y = 0,
+                // distribution with x = N(0.0, 1.0) and y = 0,
                 // the selection should discard the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         null, //
                         null, //
@@ -194,201 +185,189 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
                 // distribution containing two continuous distribution
 
                 // Given the expression x < y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x <= y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y > x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y > x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y > x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y >= x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y >= x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y >= x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x > y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x >= y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y < x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y < x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y < x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression y <= x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y <= x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y <= x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
                                         new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                },new Interval[] { new Interval( 0.0,Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
                 // Given the expression x == y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should discard the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
                 // Given the expression y == x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 0,
                 // the selection should discard the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
                 // Given the expression x == y, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 1,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 1,
                 // the selection should discard the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         1, //
                         null, //
                         null, //
                         0.0 }, //
                 // Given the expression y == x, with x being two continuous
-                // distribution with means at -1.0 with p(x)=1.0 and 1.0
-                // with p(1.0)=1.0 both weighted by 0.5, and y = 1,
+                // distribution with x = 0.5N(-1.0, 1.0) + 0.5N(1.0, 1.0) and y
+                // = 1,
                 // the selection should discard the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
-                                        new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { -1.0 }, new double[] { 1.0 }), //
+                                new MultivariateNormalDistribution(new double[] { 1.0 }, new double[] { 1.0 })//
+                        }), //
                         1, //
                         null, //
                         null, //
@@ -396,6 +375,8 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithDiscreteNumber
         });
 
     }
+
+
 
     @Parameter(0)
     public String predicateString;

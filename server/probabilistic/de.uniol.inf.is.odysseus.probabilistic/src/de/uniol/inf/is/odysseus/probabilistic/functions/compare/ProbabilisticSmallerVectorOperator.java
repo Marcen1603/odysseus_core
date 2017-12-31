@@ -34,17 +34,15 @@ public class ProbabilisticSmallerVectorOperator extends AbstractProbabilisticCom
      *
      */
     private static final long serialVersionUID = 6744058190515174151L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticSmallerVectorOperator() {
-        this("<", true, false);
+        this("<",  false);
     }
 
-    public ProbabilisticSmallerVectorOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    public ProbabilisticSmallerVectorOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticSmallerVectorOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -69,9 +67,14 @@ public class ProbabilisticSmallerVectorOperator extends AbstractProbabilisticCom
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
-
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        if (!inclusive) {
+            for (int i = 0; i < b[0].length; i++) {
+                upperBound[i] = b[0][i] - Double.MIN_VALUE;
+            }
+        } else {
+            System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
+        }
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /*

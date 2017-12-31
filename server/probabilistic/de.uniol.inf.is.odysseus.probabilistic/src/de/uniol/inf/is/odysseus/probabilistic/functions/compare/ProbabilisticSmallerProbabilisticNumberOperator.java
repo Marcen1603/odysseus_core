@@ -20,17 +20,15 @@ public class ProbabilisticSmallerProbabilisticNumberOperator extends AbstractPro
      *
      */
     private static final long serialVersionUID = 9197974946216206256L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticSmallerProbabilisticNumberOperator() {
-        this("<", true, false);
+        this("<", false);
     }
 
-    public ProbabilisticSmallerProbabilisticNumberOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    public ProbabilisticSmallerProbabilisticNumberOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticSmallerProbabilisticNumberOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -54,9 +52,12 @@ public class ProbabilisticSmallerProbabilisticNumberOperator extends AbstractPro
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
         final double[] upperBound = new double[a.getDimension()];
-        Arrays.fill(upperBound, 0.0);
-
-        return this.getValueInternal(a, b, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        if (!inclusive) {
+            Arrays.fill(upperBound, -Double.MIN_VALUE);
+        } else {
+            Arrays.fill(upperBound, 0.0);
+        }
+        return this.getValueInternal(a, b, lowerBound, upperBound);
 
     }
 

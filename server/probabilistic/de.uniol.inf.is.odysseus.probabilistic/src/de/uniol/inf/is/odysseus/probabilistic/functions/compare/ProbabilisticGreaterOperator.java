@@ -34,17 +34,15 @@ public class ProbabilisticGreaterOperator extends AbstractProbabilisticCompareOp
      *
      */
     private static final long serialVersionUID = 796948165806227074L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticGreaterOperator() {
-        this(">", false, true);
+        this(">",  false);
     }
 
-    protected ProbabilisticGreaterOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    protected ProbabilisticGreaterOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticGreaterOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -58,11 +56,15 @@ public class ProbabilisticGreaterOperator extends AbstractProbabilisticCompareOp
         final Double b = getNumericalInputValue(1);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        lowerBound[a.getDimension(pos)] = b;
+        if (!inclusive) {
+            lowerBound[a.getDimension(pos)] = b + Double.MIN_VALUE;
+        } else {
+            lowerBound[a.getDimension(pos)] = b;
+        }
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

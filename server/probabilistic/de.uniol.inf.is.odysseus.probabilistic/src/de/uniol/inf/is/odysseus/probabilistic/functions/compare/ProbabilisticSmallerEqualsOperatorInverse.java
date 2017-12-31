@@ -29,7 +29,7 @@ public class ProbabilisticSmallerEqualsOperatorInverse extends ProbabilisticSmal
     private static final long serialVersionUID = 8417832098112718610L;
 
     public ProbabilisticSmallerEqualsOperatorInverse() {
-        super("<=", true, true);
+        super("<=", true);
     }
 
 }

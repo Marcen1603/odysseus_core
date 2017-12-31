@@ -21,17 +21,15 @@ public class ProbabilisticGreaterProbabilisticNumberOperator extends AbstractPro
      */
 
     private static final long serialVersionUID = 3981025281707408907L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticGreaterProbabilisticNumberOperator() {
-        this(">", false, true);
+        this(">", false);
     }
 
-    protected ProbabilisticGreaterProbabilisticNumberOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    protected ProbabilisticGreaterProbabilisticNumberOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticGreaterProbabilisticNumberOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -53,10 +51,14 @@ public class ProbabilisticGreaterProbabilisticNumberOperator extends AbstractPro
         final MultivariateMixtureDistribution b = ((MultivariateMixtureDistribution) this.getInputValue(1)).clone();
 
         final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, 0.0);
+        if (!inclusive) {
+            Arrays.fill(lowerBound, Double.MIN_VALUE);
+        } else {
+            Arrays.fill(lowerBound, 0.0);
+        }
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        return this.getValueInternal(a, b, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, b, lowerBound, upperBound);
     }
 
     /**

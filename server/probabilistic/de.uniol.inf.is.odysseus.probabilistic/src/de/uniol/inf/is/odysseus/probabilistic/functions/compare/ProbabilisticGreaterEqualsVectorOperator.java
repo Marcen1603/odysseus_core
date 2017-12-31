@@ -29,7 +29,7 @@ public class ProbabilisticGreaterEqualsVectorOperator extends ProbabilisticGreat
     private static final long serialVersionUID = -9122605635777338549L;
 
     public ProbabilisticGreaterEqualsVectorOperator() {
-        super(">=", true, true);
+        super(">=", true);
     }
 
 }

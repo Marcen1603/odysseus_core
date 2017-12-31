@@ -34,17 +34,15 @@ public class ProbabilisticSmallerVectorOperatorInverse extends AbstractProbabili
      *
      */
     private static final long serialVersionUID = 8102613259720024601L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticSmallerVectorOperatorInverse() {
-        this("<", false, true);
+        this("<", false);
     }
 
-    public ProbabilisticSmallerVectorOperatorInverse(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    public ProbabilisticSmallerVectorOperatorInverse(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticSmallerVectorOperatorInverse.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -67,11 +65,17 @@ public class ProbabilisticSmallerVectorOperatorInverse extends AbstractProbabili
         final double[][] b = (double[][]) this.getInputValue(0);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
+        if (!inclusive) {
+            for (int i = 0; i < b[0].length; i++) {
+                lowerBound[i] = b[0][i] + Double.MIN_VALUE;
+            }
+        } else {
+            System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
+        }
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /*

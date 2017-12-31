@@ -46,14 +46,13 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithContinuousProb
                 // Test selection operation on two continuous distribution
 
                 // Given the expression x < y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y
-                // being a continuous distribution with a mean at 0.0 with
-                // p(x)=1.0, the selection should return the tuple.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                // distribution with x = N(0.0, 1.0) and y
+                // being a continuous distribution with y = N(0.0, 1.0), the
+                // selection should return the tuple.
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
@@ -68,14 +67,13 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithContinuousProb
                                 }, 1.0), //
                         0.5 }, //
                 // Given the expression x <= y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y
-                // being a continuous distribution with a mean at 0.0 with
-                // p(x)=1.0, the selection should return the tuple.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                // distribution with x = N(0.0, 1.0) and y
+                // being a continuous distribution with y = N(0.0, 1.0), the
+                // selection should return the tuple.
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
@@ -90,14 +88,13 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithContinuousProb
                                 }, 1.0), //
                         0.5 }, //
                 // Given the expression x > y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y
-                // being a continuous distribution with a mean at 0.0 with
-                // p(x)=1.0, the selection should return the tuple.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                // distribution with x = N(0.0, 1.0) and y
+                // being a continuous distribution with y = N(0.0, 1.0), the
+                // selection should return the tuple.
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
@@ -112,14 +109,13 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithContinuousProb
                                 }, 1.0), //
                         0.5 }, //
                 // Given the expression x >= y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y
-                // being a continuous distribution with a mean at 0.0 with
-                // p(x)=1.0, the selection should return the tuple.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                // distribution with x = N(0.0, 1.0) and y
+                // being a continuous distribution with y = N(0.0, 1.0), the
+                // selection should return the tuple.
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
@@ -134,14 +130,13 @@ public class SelectPOCompareContinuousProbabilityDistributionsWithContinuousProb
                                 }, 1.0), // , //
                         0.5 }, //
                 // Given the expression x == y, with x being a continuous
-                // distribution with a mean at 0.0 with p(x)=1.0 and y
-                // being a continuous distribution with a mean at 0.0 with
-                // p(x)=1.0, the selection should return the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
-                                }), //
+                // distribution with x = N(0.0, 1.0) and y
+                // being a continuous distribution with y = N(0.0, 1.0), the
+                // selection should return the tuple.
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//
+                        }), //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateNormalDistribution(new double[] { 0.0 }, new double[] { 1.0 })//

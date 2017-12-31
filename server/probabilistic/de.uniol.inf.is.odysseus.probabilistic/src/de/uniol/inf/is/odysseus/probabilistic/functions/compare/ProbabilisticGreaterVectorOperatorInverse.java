@@ -31,17 +31,15 @@ import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilistic
 public class ProbabilisticGreaterVectorOperatorInverse extends AbstractProbabilisticCompareOperator {
 
     private static final long serialVersionUID = -2524539771244683448L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticGreaterVectorOperatorInverse() {
-        this(">", true, false);
+        this(">", false);
     }
 
-    protected ProbabilisticGreaterVectorOperatorInverse(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    protected ProbabilisticGreaterVectorOperatorInverse(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticGreaterVectorOperatorInverse.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -67,9 +65,14 @@ public class ProbabilisticGreaterVectorOperatorInverse extends AbstractProbabili
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
-
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        if (!inclusive) {
+            for (int i = 0; i < b[0].length; i++) {
+                upperBound[i] = b[0][i] - Double.MIN_VALUE;
+            }
+        } else {
+            System.arraycopy(b[0], 0, upperBound, 0, b[0].length);
+        }
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

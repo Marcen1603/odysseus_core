@@ -34,17 +34,15 @@ public class ProbabilisticGreaterVectorOperator extends AbstractProbabilisticCom
      *
      */
     private static final long serialVersionUID = 2398264666150249533L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticGreaterVectorOperator() {
-        this(">", false, true);
+        this(">", false);
     }
 
-    protected ProbabilisticGreaterVectorOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    protected ProbabilisticGreaterVectorOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticGreaterVectorOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -68,11 +66,17 @@ public class ProbabilisticGreaterVectorOperator extends AbstractProbabilisticCom
         final double[][] b = (double[][]) this.getInputValue(1);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
+        if (!inclusive) {
+            for (int i = 0; i < b[0].length; i++) {
+                lowerBound[i] = b[0][i] + Double.MIN_VALUE;
+            }
+        } else {
+            System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
+        }
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

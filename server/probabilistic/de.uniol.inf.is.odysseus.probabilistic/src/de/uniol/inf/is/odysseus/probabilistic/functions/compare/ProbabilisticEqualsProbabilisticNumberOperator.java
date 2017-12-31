@@ -42,7 +42,7 @@ public class ProbabilisticEqualsProbabilisticNumberOperator extends AbstractProb
         Arrays.fill(lowerBound, 0.0);
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, 0.0);
-        return this.getValueInternal(a, b, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, b, lowerBound, upperBound);
 
     }
 

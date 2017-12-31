@@ -15,13 +15,9 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Date;
 import java.util.Optional;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.DirectAttributeResolver;
@@ -48,7 +44,6 @@ public class MapPOTest extends AbstractMapPOTest {
      * Test method for
      * {@link de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO#process_open()}.
      */
-    @Ignore("Not implemented yet")
     @Test
     public void testProcessOpen() {
         givenSchema(//
@@ -56,7 +51,7 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
 
-        givenExpression("x+y");
+        givenExpression("x + y");
         givenProbabilisticMapPO();
 
         whenProcessOpen();
@@ -64,25 +59,8 @@ public class MapPOTest extends AbstractMapPOTest {
 
     /**
      * Test method for
-     * {@link de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticSelectPO#toString()}.
-     */
-    @Test
-    public void testToString() {
-        givenSchema(//
-                attribute("x").as(SDFDatatype.DOUBLE), //
-                attribute("y").as(SDFDatatype.DOUBLE) //
-        );
-        givenExpression("x+y");
-        givenProbabilisticMapPO();
-
-        thenToStringContainsPredicate();
-    }
-
-    /**
-     * Test method for
      * {@link de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO#process_isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)}.
      */
-    @Ignore("Not implemented yet")
     @Test
     public void testProcessIsSemanticallyEqual() {
         givenSchema(//
@@ -93,10 +71,10 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
-        givenOtherExpression("x+y");
+        givenExpression("x + y");
+        givenOtherExpression("x + y");
         givenProbabilisticMapPO();
-        givenSemanticallyEqualProbabilisticMapPO();
+        givenOtherProbabilisticMapPO();
 
         whenProcess_isSemanticallyEqual();
 
@@ -107,7 +85,6 @@ public class MapPOTest extends AbstractMapPOTest {
      * Test method for
      * {@link de.uniol.inf.is.odysseus.probabilistic.physicaloperator.ProbabilisticMapPO#process_isSemanticallyEqual(de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator)}.
      */
-    @Ignore("Not implemented yet")
     @Test
     public void testProcessIsSemanticallyEqualWithInvertedExpression() {
         givenSchema(//
@@ -118,17 +95,16 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
-        givenOtherExpression("x-y");
+        givenExpression("x + y");
+        givenOtherExpression("x - y");
         givenProbabilisticMapPO();
-        givenSemanticallyEqualProbabilisticMapPO();
+        givenOtherProbabilisticMapPO();
 
         whenProcess_isSemanticallyEqual();
 
         thenProcess_isSemanticallyEqualReturns(false);
     }
 
-    @Ignore("Not implemented yet")
     @Test
     public void testIsSemanticallyEqual() {
         givenSchema(//
@@ -139,14 +115,14 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
-        givenOtherExpression("x+y");
+        givenExpression("x + y");
+        givenOtherExpression("x + y");
         givenProbabilisticMapPO();
-        givenSemanticallyEqualProbabilisticMapPO();
+        givenOtherProbabilisticMapPO();
 
         thenOperatorsAreSemanticallyEqual();
     }
-    @Ignore("Not implemented yet")
+
     @Test
     public void testIsNotSemanticallyEqual() {
         givenSchema(//
@@ -157,10 +133,10 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
-        givenOtherExpression("x-y");
+        givenExpression("x + y");
+        givenOtherExpression("x - y");
         givenProbabilisticMapPO();
-        givenSemanticallyEqualProbabilisticMapPO();
+        givenOtherProbabilisticMapPO();
 
         thenOperatorsAreNotSemanticallyEqual();
     }
@@ -175,7 +151,7 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
+        givenExpression("x + y");
         givenProbabilisticMapPO();
 
         thenOutputModeIs(OutputMode.NEW_ELEMENT);
@@ -191,7 +167,7 @@ public class MapPOTest extends AbstractMapPOTest {
                 attribute("x").as(SDFDatatype.DOUBLE), //
                 attribute("y").as(SDFDatatype.DOUBLE) //
         );
-        givenExpression("x+y");
+        givenExpression("x + y");
         givenProbabilisticMapPO();
 
         whenProcessPunctuationAt(new Date(0));
@@ -204,30 +180,8 @@ public class MapPOTest extends AbstractMapPOTest {
         this.otherExpressions = Optional.of(new SDFProbabilisticExpression[] { new SDFProbabilisticExpression(new SDFExpression(expression, resolver, MEP.getInstance())) });
     }
 
-    private void givenOtherExpressions(final String... expressions) {
-        final IAttributeResolver resolver = new DirectAttributeResolver(this.schema.get());
-        this.otherExpressions = Optional.of(new SDFProbabilisticExpression[expressions.length]);
-        for (int i = 0; i < expressions.length; i++) {
-            this.otherExpressions.get()[i] = new SDFProbabilisticExpression(new SDFExpression(expressions[i], resolver, MEP.getInstance()));
-        }
-    }
-
     private void givenOtherProbabilisticMapPO() {
-        this.otherOperator = Optional.of(new ProbabilisticMapPO<IProbabilistic>(this.otherSchema.orElse(null), this.otherExpressions.orElse(null),true));
-    }
-
-    private void givenSemanticallyEqualProbabilisticMapPO() {
-        this.otherOperator = Optional.of(new ProbabilisticMapPO<IProbabilistic>(this.schema.orElse(null), this.expressions.orElse(null),true));
-    }
-
-    private void givenNotSemanticallyEqualProbabilisticMapPO() {
-        assertThat("Cannot create inverted predicate for null value", this.expressions.isPresent(), is(true));
-        this.otherOperator = Optional
-                .of(new ProbabilisticMapPO<IProbabilistic>(this.schema.orElse(null), this.expressions.map(expression -> (SDFProbabilisticExpression[]) expression).orElse(null),true));
-    }
-
-    private void thenToStringContainsPredicate() {
-       // assertThat("ToString() does not contain the predicate", this.operator.get().toString(), endsWith(this.expressions.get().getExpression().getExpressionString()));
+        this.otherOperator = Optional.of(new ProbabilisticMapPO<IProbabilistic>(this.otherSchema.orElse(null), this.otherExpressions.orElse(null), true));
     }
 
 }

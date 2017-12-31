@@ -26,6 +26,12 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ //
+        IntervalTest.class, //
+        IntervalArithmeticAdditionTest.class, //
+        IntervalArithmeticSubtractionTest.class, //
+        IntervalArithmeticMultiplicationTest.class, //
+        IntervalArithmeticDivisionTest.class, //
+
         MapPOTest.class, //
 
         MapPOExpressionsWithContinuousProbabilityDistributionTest.class, //

@@ -496,7 +496,13 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         }
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
         for (int i = 0; i < this.getDimension(); i++) {
-            mixture.support[i] = this.support[i].divide(o.support[i]);
+            Interval[] s = this.support[i].divide(o.support[i]);
+            if (s.length==1) {
+            mixture.support[i] = s[0];
+            }else {
+                // FIXME we are loosing interval information here. cku 20171231
+                mixture.support[i] = s[0].union(s[1]);
+            }
             mixture.attributes[i] = this.attributes[i];
         }
         mixture.scale = this.scale * o.scale;

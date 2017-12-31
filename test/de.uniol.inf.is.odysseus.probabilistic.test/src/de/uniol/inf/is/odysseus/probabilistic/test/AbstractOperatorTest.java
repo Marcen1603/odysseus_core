@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -326,7 +327,30 @@ abstract public class AbstractOperatorTest {
             assertThat("Last emitted output tuple has an invalid existence metadata value", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getMetadata().getExistence(),
                     is(closeTo(existence, 0.1)));
             assertThat("Invalid emitted output tuple", this.lastObject.get(), is(output));
-            assertThat("Invalid emitted output distributions", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions(), arrayContainingInAnyOrder(output.getDistributions()));
+
+            int successCounter = output.getDistributions().length;
+            for (MultivariateMixtureDistribution distribution : ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions()) {
+                for (MultivariateMixtureDistribution expectedDistribution : output.getDistributions()) {
+                    boolean equal = true;
+
+                    if (Math.abs(distribution.getScale() - expectedDistribution.getScale()) > 0.01) {
+                        equal = false;
+                    }
+                    if (!Arrays.equals(distribution.getSupport(), expectedDistribution.getSupport())) {
+                        equal = false;
+                    }
+                    if (!(new HashSet<>(distribution.getComponents()).equals(new HashSet<>(expectedDistribution.getComponents())))) {
+                        equal = false;
+                    }
+                    if (equal) {
+                        successCounter--;
+                        break;
+                    }
+                }
+            }
+            if (successCounter > 0) {
+                assertThat("Invalid emitted output distributions", ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions(), arrayContainingInAnyOrder(output.getDistributions()));
+            }
 
             for (MultivariateMixtureDistribution distribution : ((ProbabilisticTuple<IProbabilistic>) this.lastObject.get()).getDistributions()) {
                 final double[] lowerBound = new double[distribution.getDimension()];

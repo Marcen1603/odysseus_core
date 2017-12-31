@@ -47,26 +47,26 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
         return Arrays.asList(new Object[][] { //
                 // Test selection operation on a discrete distribution
 
+                // 0
                 // Given the expression x < y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should discard the tuple.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 1
                 // Given the expression x <= y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -74,26 +74,26 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }), //
                         0, //
                         1.0 }, //
+                // 2
                 // Given the expression y > x, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should discard the tuple.
-                { "y > x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "y > x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 3
                 // Given the expression y >= x, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "y >= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "y >= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -101,26 +101,26 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }), //
                         0, //
                         1.0 }, //
+                // 4
                 // Given the expression x > y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should discard the tuple.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 5
                 // Given the expression x >= y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -128,26 +128,26 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }), //
                         0, //
                         1.0 }, //
+                // 6
                 // Given the expression y < x, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should discard the tuple.
-                { "y < x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "y < x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 7
                 // Given the expression y <= x, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "y <= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "y <= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -155,14 +155,14 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }), //
                         0, //
                         1.0 }, //
+                // 8
                 // Given the expression x == y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -170,14 +170,14 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, 0.0) }), //
                         0, //
                         1.0 }, //
+                // 9
                 // Given the expression x == y, with x being a discrete
                 // distribution with a singleton at 0.0 with p(x)=1.0 and y = 0,
                 // the selection should return the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
@@ -185,190 +185,192 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, 0.0) }), //
                         0, //
                         1.0 }, //
-
+                // 10
                 // Given the expression x < y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should discard the tuple.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 11
                 // Given the expression x <= y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) },2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 12
                 // Given the expression y > x, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should discard the tuple.
-                { "y > x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "y > x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 13
                 // Given the expression y >= x, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "y >= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "y >= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) },2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 14
                 // Given the expression x > y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
-                // the selection should discard the tuple.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                // the selection should return the tuple with a smaller support.
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(0.0,Double.POSITIVE_INFINITY) },2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 15
                 // Given the expression x >= y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) },1.0), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 1.0), //
                         0, //
                         1.0 }, //
+                // 16
                 // Given the expression y < x, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
-                // the selection should discard the tuple.
-                { "y < x",
+                // the selection should return the tuple.
+                { "y < x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
+                        0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
-                        null, //
-                        null, //
-                        0.0 }, //
+                        0.5 }, //
+                // 17
                 // Given the expression y <= x, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "y <= x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "y <= x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) },1.0), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 1.0), //
                         0, //
                         1.0 }, //
+                // 18
                 // Given the expression x == y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(0.0, 0.0) },2.0), //
+                                }, new Interval[] { new Interval(0.0, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 19
                 // Given the expression x == y, with x being a discrete
                 // distribution with two singletons at 0.0 with p(x)=0.5 and 1.0
                 // with p(x)=0.5 and y = 0,
                 // the selection should return the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[][] { { 0.0 }, { 1.0 } }, new double[] { 0.5, 0.5 })//
-                                }, new Interval[] { new Interval(0.0, 0.0) },2.0), //
+                                }, new Interval[] { new Interval(0.0, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
 
                 // Test selection operation on a multivariate mixture
                 // distribution containing two discrete distribution
 
+                // 20
                 // Given the expression x < y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x < y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x < y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 21
                 // Given the expression x <= y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x <= y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x <= y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
@@ -377,34 +379,34 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 22
                 // Given the expression y > x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y > x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y > x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 23
                 // Given the expression y >= x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y >= x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y >= x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
@@ -413,34 +415,34 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 24
                 // Given the expression x > y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x > y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x > y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 25
                 // Given the expression x >= y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "x >= y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x >= y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
@@ -449,34 +451,34 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 26
                 // Given the expression y < x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y < x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y < x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 27
                 // Given the expression y <= x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should return the tuple with existence 0.5.
-                { "y <= x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y <= x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
@@ -485,44 +487,44 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         0, //
                         0.5 }, //
+                // 28
                 // Given the expression x == y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should discard the tuple.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 29
                 // Given the expression y == x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 0,
                 // the selection should discard the tuple.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         0, //
                         null, //
                         null, //
                         0.0 }, //
+                // 30
                 // Given the expression x == y, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 1,
                 // the selection should return the tuple with existence 0.5.
-                { "x == y",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "x == y", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         1, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
@@ -531,16 +533,16 @@ public class SelectPOCompareDiscreteProbabilityDistributionsWithDiscreteNumbersT
                                 }, new Interval[] { new Interval(1.0, 1.0) }, 2.0), //
                         1, //
                         0.5 }, //
+                // 31
                 // Given the expression y == x, with x being two discrete
                 // distribution with singletons at -1.0 with p(x)=1.0 and 1.0
                 // with p(1.0)=1.0 both weighted by 0.5, and y = 1,
                 // the selection should return the tuple with existence 0.5.
-                { "y == x",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
-                                }), //
+                { "y == x", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0 }, 1.0)//
+                        }), //
                         1, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //

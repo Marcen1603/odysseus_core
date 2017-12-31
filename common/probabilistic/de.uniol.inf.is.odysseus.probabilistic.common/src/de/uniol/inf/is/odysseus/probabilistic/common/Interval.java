@@ -25,9 +25,9 @@ import java.io.Serializable;
  */
 public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     /** Infinity interval. */
-    public static final Interval MAX = new Interval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false, false);
+    public static final Interval MAX = Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     /** Empty interval. */
-    public static final Interval EMPTY = new Interval(Double.NaN, Double.NaN, false, false);
+    public static final Interval EMPTY = Interval.of(Double.NaN, Double.NaN);
 
     /**
      * 
@@ -35,12 +35,8 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     private static final long serialVersionUID = -6115929417128254867L;
     /** The infimum of the interval. */
     private final double inf;
-    /** Infimum inclusive. */
-    private final boolean infInclusive;
     /** The supremum of the interval. */
     private final double sup;
-    /** Supremum inclusive. */
-    private final boolean supInclusive;
 
     /**
      * Creates a new interval with the given infimum and supremum.
@@ -52,24 +48,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The interval
      */
     public static Interval of(final double inf, final double sup) {
-        return new Interval(inf, sup, true, true);
-    }
-
-    /**
-     * Creates a new interval with the given infimum and supremum.
-     * 
-     * @param inf
-     *            The infimum
-     * @param sup
-     *            The supremum
-     * @param infInclusive
-     *            Infimum inclusive/exclusive
-     * @param supInclusive
-     *            Supremum inclusive/exclusive
-     * @return The interval
-     */
-    public static Interval of(final double inf, final double sup, final boolean infInclusive, final boolean supInclusive) {
-        return new Interval(inf, sup, infInclusive, supInclusive);
+        return new Interval(inf, sup);
     }
 
     /**
@@ -81,29 +60,8 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The supremum
      */
     public Interval(final double inf, final double sup) {
-        this.inf = inf;
-        this.sup = sup;
-        this.infInclusive = true;
-        this.supInclusive = true;
-    }
-
-    /**
-     * Creates a new interval with the given infimum and supremum.
-     * 
-     * @param inf
-     *            The infimum
-     * @param sup
-     *            The supremum
-     * @param infInclusive
-     *            Infimum inclusive/exclusive
-     * @param supInclusive
-     *            Supremum inclusive/exclusive
-     */
-    public Interval(final double inf, final double sup, final boolean infInclusive, final boolean supInclusive) {
-        this.inf = inf;
-        this.sup = sup;
-        this.infInclusive = infInclusive;
-        this.supInclusive = supInclusive;
+        this.inf = inf < sup ? inf : sup;
+        this.sup = inf < sup ? sup : inf;
     }
 
     /**
@@ -135,40 +93,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         return ((!this.isEmpty()) && (!other.isEmpty()) && //
                 (//
                  // [a,b] [c,d]
-                (this.infInclusive && this.supInclusive && other.infInclusive && other.supInclusive && (other.inf <= this.sup) && (this.inf <= other.sup)) || //
-                // (a,b] [c,d]
-                        (!this.infInclusive && this.supInclusive && other.infInclusive && other.supInclusive && (other.inf <= this.sup) && (this.inf < other.sup)) || //
-                        // [a,b) [c,d]
-                        (this.infInclusive && !this.supInclusive && other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf <= other.sup)) || //
-                        // (a,b) [c,d]
-                        (!this.infInclusive && !this.supInclusive && other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-
-                        // [a,b] (c,d]
-                        (this.infInclusive && this.supInclusive && !other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf <= other.sup)) || //
-                        // (a,b] (c,d]
-                        (!this.infInclusive && this.supInclusive && !other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // [a,b) (c,d]
-                        (this.infInclusive && !this.supInclusive && !other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // (a,b) (c,d]
-                        (!this.infInclusive && !this.supInclusive && !other.infInclusive && other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-
-                        // [a,b] [c,d)
-                        (this.infInclusive && this.supInclusive && other.infInclusive && !other.supInclusive && (other.inf <= this.sup) && (this.inf < other.sup)) || //
-                        // (a,b] [c,d)
-                        (!this.infInclusive && this.supInclusive && other.infInclusive && !other.supInclusive && (other.inf <= this.sup) && (this.inf < other.sup)) || //
-                        // [a,b) [c,d)
-                        (this.infInclusive && !this.supInclusive && other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // (a,b) [c,d)
-                        (!this.infInclusive && !this.supInclusive && other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-
-                        // [a,b] (c,d)
-                        (this.infInclusive && this.supInclusive && !other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // (a,b] (c,d)
-                        (!this.infInclusive && this.supInclusive && !other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // [a,b) (c,d)
-                        (this.infInclusive && !this.supInclusive && !other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) || //
-                        // (a,b) (c,d)
-                        (!this.infInclusive && !this.supInclusive && !other.infInclusive && !other.supInclusive && (other.inf < this.sup) && (this.inf < other.sup)) //
+                (other.inf <= this.sup) && (this.inf <= other.sup)//
                 ));
     }
 
@@ -178,12 +103,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return <code>true</code> if this interval is empty
      */
     public final boolean isEmpty() {
-        // [a,b]
-        if (infInclusive && supInclusive) {
-            return this.inf > this.sup;
-        }
-        // (a,b] || [a,b) || (a,b)
-        return this.inf >= this.sup;
+        return this.inf > this.sup;
     }
 
     /**
@@ -222,9 +142,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double b = this.sup;
         double c = other.inf;
         double d = other.sup;
-        boolean l = this.infInclusive && other.infInclusive;
-        boolean r = this.supInclusive && other.supInclusive;
-        return Interval.of(a + c, b + d, l, r);
+        return Interval.of(a + c, b + d);
     }
 
     /**
@@ -237,9 +155,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     public final Interval add(final double v) {
         double a = this.inf;
         double b = this.sup;
-        boolean l = this.infInclusive;
-        boolean r = this.supInclusive;
-        return Interval.of(a + v, b + v, l, r);
+        return Interval.of(a + v, b + v);
     }
 
     /**
@@ -256,9 +172,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double b = this.sup;
         double c = other.inf;
         double d = other.sup;
-        boolean l = this.infInclusive && other.infInclusive;
-        boolean r = this.supInclusive && other.supInclusive;
-        return Interval.of(a - d, b - c, l, r);
+        return Interval.of(a - d, b - c);
     }
 
     /**
@@ -272,9 +186,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     public final Interval subtract(final double v) {
         double a = this.inf;
         double b = this.sup;
-        boolean l = this.infInclusive;
-        boolean r = this.supInclusive;
-        return Interval.of(a - v, b - v, l, r);
+        return Interval.of(a - v, b - v);
     }
 
     /**
@@ -293,11 +205,8 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double c = other.inf;
         double d = other.sup;
 
-        boolean l = this.infInclusive && other.infInclusive;
-        boolean r = this.supInclusive && other.supInclusive;
-
         if ((a >= 0) && (b >= 0)) {
-            return Interval.of(a * c, b * d, l, r);
+            return Interval.of(a * c, b * d);
 
         }
         double ac = a * c;
@@ -305,7 +214,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double bc = b * c;
         double bd = b * d;
 
-        return Interval.of(Math.min(Math.min(ac, ad), Math.min(bc, bd)), Math.max(Math.max(ac, ad), Math.max(bc, bd)), l, r);
+        return Interval.of(Math.min(Math.min(ac, ad), Math.min(bc, bd)), Math.max(Math.max(ac, ad), Math.max(bc, bd)));
     }
 
     /**
@@ -320,9 +229,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double a = this.inf;
         double b = this.sup;
 
-        boolean l = this.infInclusive;
-        boolean r = this.supInclusive;
-        return Interval.of(a * v, b * v, l, r);
+        return Interval.of(a * v, b * v);
     }
 
     /**
@@ -337,43 +244,40 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      *            The other interval
      * @return The result of the operation
      */
-    public final Interval divide(final Interval other) {
+    public final Interval[] divide(final Interval other) {
         double a = this.inf;
         double b = this.sup;
         double c = other.inf;
         double d = other.sup;
 
-        boolean l = this.infInclusive && other.infInclusive;
-        boolean r = this.supInclusive && other.supInclusive;
-
         if (!other.contains(0.0)) {
-            return this.multiply(Interval.of(1.0 / d, 1.0 / c, other.infInclusive, other.supInclusive));
+            return new Interval[] { this.multiply(Interval.of(1.0 / d, 1.0 / c)) };
         }
-        if ((this.contains(0.0)) && (other.contains(0.0))) {
-            return Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, false, false);
-        }
-        if (b < 0.0 && c < d && d < 0.0) {
-            return Interval.of(b / c, Double.POSITIVE_INFINITY, l, false);
+        if (b < 0.0 && c < d && d == 0.0) {
+            return new Interval[] { Interval.of(b / c, Double.POSITIVE_INFINITY) };
         }
         if (b < 0.0 && c < 0.0 && 0.0 < d) {
-            return Interval.of(Double.NEGATIVE_INFINITY, b / d, false, r).union(Interval.of(b / c, Double.POSITIVE_INFINITY, l, false));
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, b / d), Interval.of(b / c, Double.POSITIVE_INFINITY) };
         }
         if (b < 0.0 && c == 0.0 && c < d) {
-            return Interval.of(Double.NEGATIVE_INFINITY, b / d, false, r);
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, b / d) };
         }
         if (0.0 < a && c < d && d == 0.0) {
-            return Interval.of(Double.NEGATIVE_INFINITY, a / c, false, r);
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, a / c) };
         }
         if (0.0 < a && c < 0.0 && 0.0 < d) {
-            return Interval.of(Double.NEGATIVE_INFINITY, a / c, false, r).union(Interval.of(a / d, Double.POSITIVE_INFINITY, l, false));
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, a / c), Interval.of(a / d, Double.POSITIVE_INFINITY) };
         }
         if (0.0 < a && c == 0.0 && c < d) {
-            return Interval.of(a / d, Double.POSITIVE_INFINITY, l, false);
+            return new Interval[] { Interval.of(a / d, Double.POSITIVE_INFINITY) };
         }
         if ((!this.contains(0.0)) && (c == 0.0) && (d == 0.0)) {
-            return Interval.EMPTY;
+            return new Interval[] { Interval.EMPTY };
         }
-        return Interval.EMPTY;
+        if ((this.contains(0.0)) && (other.contains(0.0))) {
+            return new Interval[] { Interval.of(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY) };
+        }
+        return new Interval[] {};
     }
 
     /**
@@ -387,11 +291,8 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         double a = this.inf;
         double b = this.sup;
 
-        boolean l = this.infInclusive;
-        boolean r = this.supInclusive;
-
         if (v != 0.0) {
-            return Interval.of(a / v, b / v, l, r);
+            return Interval.of(a / v, b / v);
         }
 
         return Interval.EMPTY;
@@ -405,23 +306,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The result of the operation
      */
     public final Interval union(final Interval other) {
-        final boolean infInclusive;
-        if (this.inf < other.inf) {
-            infInclusive = this.infInclusive;
-        } else if (other.inf < this.inf) {
-            infInclusive = other.infInclusive;
-        } else {
-            infInclusive = this.infInclusive || other.infInclusive;
-        }
-        final boolean supInclusive;
-        if (this.sup > other.sup) {
-            supInclusive = this.supInclusive;
-        } else if (other.sup > this.sup) {
-            supInclusive = other.supInclusive;
-        } else {
-            supInclusive = this.supInclusive || other.supInclusive;
-        }
-        return new Interval(Math.min(this.inf, other.inf), Math.max(this.sup, other.sup), infInclusive, supInclusive);
+        return Interval.of(Math.min(this.inf, other.inf), Math.max(this.sup, other.sup));
     }
 
     /**
@@ -433,11 +318,9 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     public final Interval intersection(final Interval other) {
         if (!intersects(other)) {
-            return new Interval(Double.NaN, Double.NaN);
+            return EMPTY;
         }
-        boolean infInclusive = this.inf > other.inf ? this.infInclusive : other.infInclusive;
-        boolean supInclusive = this.sup < other.sup ? this.supInclusive : other.supInclusive;
-        return new Interval(Math.max(this.inf, other.inf), Math.min(this.sup, other.sup), infInclusive, supInclusive);
+        return Interval.of(Math.max(this.inf, other.inf), Math.min(this.sup, other.sup));
     }
 
     /**
@@ -449,18 +332,18 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     public final Interval[] difference(final Interval other) {
         if (!this.intersects(other)) {
-            return new Interval[] { new Interval(Double.NaN, Double.NaN) };
+            return new Interval[] { Interval.of(this.inf, this.sup) };
         }
         if ((other.inf >= this.inf) && (other.sup <= this.sup)) {
-            return new Interval[] { new Interval(this.inf, other.inf, this.infInclusive, other.infInclusive), new Interval(other.sup, this.sup, other.supInclusive, this.supInclusive) };
+            return new Interval[] { Interval.of(this.inf, other.inf), Interval.of(other.sup, this.sup) };
         }
         if ((other.inf <= this.inf) && (other.sup <= this.sup)) {
-            return new Interval[] { new Interval(other.sup, this.sup, other.supInclusive, this.supInclusive) };
+            return new Interval[] { Interval.of(other.sup, this.sup) };
         }
         if (other.inf >= this.inf) {
-            return new Interval[] { new Interval(this.inf, other.inf, this.infInclusive, other.infInclusive) };
+            return new Interval[] { Interval.of(this.inf, other.inf) };
         }
-        return new Interval[] { new Interval(Double.MAX_VALUE, Double.MIN_VALUE) };
+        return new Interval[] { EMPTY };
     }
 
     /**
@@ -471,19 +354,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return <code>true</code> if the value is in this interval
      */
     public final boolean contains(final double value) {
-        if (this.infInclusive && this.supInclusive) {
-            return ((value >= this.inf) && (value <= this.sup));
-        }
-        if (!this.infInclusive && this.supInclusive) {
-            return ((value > this.inf) && (value <= this.sup));
-        }
-        if (this.infInclusive && !this.supInclusive) {
-            return ((value >= this.inf) && (value < this.sup));
-        }
-        if (!this.infInclusive && !this.supInclusive) {
-            return ((value > this.inf) && (value < this.sup));
-        }
-        return false;
+        return ((value >= this.inf) && (value <= this.sup));
     }
 
     /**
@@ -511,21 +382,11 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The resulting intervals
      */
     public final Interval[] split(final double value) {
-        final Interval[] intervals = new Interval[2];
-        if (this.isEmpty()) {
-            intervals[0] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-            intervals[1] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-        } else if (value < this.inf) {
-            intervals[0] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
-            intervals[1] = new Interval(value, value);
-        } else if (value > this.sup) {
-            intervals[0] = new Interval(value, value);
-            intervals[1] = new Interval(Double.MAX_VALUE, Double.MIN_VALUE);
+        if ((this.isEmpty()) || (value < this.inf) || (value > this.sup)) {
+            return new Interval[] { this };
         } else {
-            intervals[0] = new Interval(this.inf, value, this.infInclusive, true);
-            intervals[1] = new Interval(value, this.sup, true, this.supInclusive);
+            return new Interval[] { Interval.of(this.inf, value), Interval.of(value, this.sup) };
         }
-        return intervals;
     }
 
     /**
@@ -536,37 +397,35 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      * @return The resulting intervals
      */
     public final Interval[] split(final Interval other) {
-        if (!this.intersects(other)) {
-            return new Interval[] { new Interval(Double.MAX_VALUE, Double.MIN_VALUE) };
-        }
         if (this.contains(other)) {
-            return new Interval[] { new Interval(this.inf, other.inf, this.infInclusive, this.supInclusive), new Interval(other.inf, other.sup, other.infInclusive, other.supInclusive),
-                    new Interval(other.sup, this.sup, other.supInclusive, this.supInclusive) };
+            return new Interval[] { Interval.of(this.inf, other.inf), Interval.of(other.inf, other.sup), Interval.of(other.sup, this.sup) };
         } else {
             if ((this.contains(other.inf)) && (this.sup != other.inf)) {
                 return this.split(other.inf);
             } else if ((this.contains(other.sup)) && (this.inf != other.sup)) {
                 return this.split(other.sup);
             } else {
-                return new Interval[] { new Interval(this.inf, this.sup, this.infInclusive, this.supInclusive) };
+                return new Interval[] { this };
             }
         }
     }
 
     /**
      * Estimate the midpoint of the interval
+     * 
      * @return The midpoint
      */
-    public final double midpoint(){
-        return (this.sup-this.inf)/2.0;
+    public final double midpoint() {
+        return (this.sup - this.inf) / 2.0;
     }
+
     /*
      * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
     public final int compareTo(final Interval other) {
-        return Double.valueOf(this.inf).compareTo(Double.valueOf(other.inf)) + Double.valueOf(this.sup).compareTo(Double.valueOf(other.sup));
+        return Double.valueOf(this.inf + this.midpoint()).compareTo(Double.valueOf(other.inf + other.midpoint()));
     }
 
     /*
@@ -581,10 +440,8 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         long temp;
         temp = Double.doubleToLongBits(this.inf);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (this.infInclusive ? 1231 : 1237);
         temp = Double.doubleToLongBits(this.sup);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (this.supInclusive ? 1231 : 1237);
         return result;
     }
 
@@ -608,13 +465,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         if (Double.doubleToLongBits(this.inf) != Double.doubleToLongBits(other.inf)) {
             return false;
         }
-        if (this.infInclusive != other.infInclusive) {
-            return false;
-        }
         if (Double.doubleToLongBits(this.sup) != Double.doubleToLongBits(other.sup)) {
-            return false;
-        }
-        if (this.supInclusive != other.supInclusive) {
             return false;
         }
         return true;
@@ -626,7 +477,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
      */
     @Override
     public final Interval clone() {
-        return new Interval(this.inf, this.sup, this.infInclusive, this.supInclusive);
+        return Interval.of(this.inf, this.sup);
     }
 
     /*
@@ -636,12 +487,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
     @Override
     public final String toString() {
         final StringBuilder sb = new StringBuilder();
-        if (this.infInclusive) {
-            sb.append("[");
-        } else {
-            sb.append("(");
-
-        }
+        sb.append("[");
         if (this.inf == Double.NEGATIVE_INFINITY) {
             sb.append("-oo");
         } else {
@@ -653,11 +499,7 @@ public class Interval implements Serializable, Cloneable, Comparable<Interval> {
         } else {
             sb.append(this.sup);
         }
-        if (this.supInclusive) {
-            sb.append("]");
-        } else {
-            sb.append(")");
-        }
+        sb.append("]");
         return sb.toString();
     }
 

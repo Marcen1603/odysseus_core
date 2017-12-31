@@ -34,17 +34,15 @@ public class ProbabilisticSmallerOperator extends AbstractProbabilisticCompareOp
      *
      */
     private static final long serialVersionUID = -1978828532807864673L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticSmallerOperator() {
-        this("<", true, false);
+        this("<", false);
     }
 
-    public ProbabilisticSmallerOperator(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    public ProbabilisticSmallerOperator(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticSmallerOperator.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -69,9 +67,13 @@ public class ProbabilisticSmallerOperator extends AbstractProbabilisticCompareOp
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        upperBound[a.getDimension(pos)] = b;
+        if (!inclusive) {
+            upperBound[a.getDimension(pos)] = b - Double.MIN_VALUE;
 
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        } else {
+            upperBound[a.getDimension(pos)] = b;
+        }
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

@@ -34,17 +34,15 @@ public class ProbabilisticSmallerOperatorInverse extends AbstractProbabilisticCo
      *
      */
     private static final long serialVersionUID = 69720551268314998L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticSmallerOperatorInverse() {
-        this("<", false, true);
+        this("<", false);
     }
 
-    public ProbabilisticSmallerOperatorInverse(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    public ProbabilisticSmallerOperatorInverse(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticSmallerOperatorInverse.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -67,11 +65,16 @@ public class ProbabilisticSmallerOperatorInverse extends AbstractProbabilisticCo
         final Double b = getNumericalInputValue(0);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        lowerBound[a.getDimension(pos)] = b;
+        if (!inclusive) {
+            lowerBound[a.getDimension(pos)] = b + Double.MIN_VALUE;
+
+        } else {
+            lowerBound[a.getDimension(pos)] = b;
+        }
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
 
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

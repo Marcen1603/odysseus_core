@@ -34,17 +34,15 @@ public class ProbabilisticGreaterOperatorInverse extends AbstractProbabilisticCo
      *
      */
     private static final long serialVersionUID = -1919756382879505534L;
-    private final boolean leftInclusive;
-    private final boolean rightInclusive;
+    private final boolean inclusive;
 
     public ProbabilisticGreaterOperatorInverse() {
-        this(">", true, false);
+        this(">", false);
     }
 
-    protected ProbabilisticGreaterOperatorInverse(final String symbol, final boolean leftInclusive, final boolean rightInclusive) {
+    protected ProbabilisticGreaterOperatorInverse(final String symbol, final boolean inclusive) {
         super(symbol, ProbabilisticGreaterOperatorInverse.ACC_TYPES);
-        this.leftInclusive = leftInclusive;
-        this.rightInclusive = rightInclusive;
+        this.inclusive = inclusive;
     }
 
     /**
@@ -58,11 +56,15 @@ public class ProbabilisticGreaterOperatorInverse extends AbstractProbabilisticCo
         final Double b = getNumericalInputValue(0);
         final double[] lowerBound = new double[a.getDimension()];
         Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
+
         final double[] upperBound = new double[a.getDimension()];
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-        upperBound[a.getDimension(pos)] = b;
-
-        return this.getValueInternal(a, lowerBound, upperBound, this.leftInclusive, this.rightInclusive);
+        if (!inclusive) {
+            upperBound[a.getDimension(pos)] = b - Double.MIN_VALUE;
+        } else {
+            upperBound[a.getDimension(pos)] = b;
+        }
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

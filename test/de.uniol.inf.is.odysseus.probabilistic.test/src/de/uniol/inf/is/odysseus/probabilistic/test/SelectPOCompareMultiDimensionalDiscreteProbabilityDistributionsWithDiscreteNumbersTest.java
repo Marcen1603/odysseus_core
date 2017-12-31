@@ -25,6 +25,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.probabilistic.common.Interval;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.IMultivariateDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateEnumeratedDistribution;
 import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
@@ -46,267 +47,299 @@ public class SelectPOCompareMultiDimensionalDiscreteProbabilityDistributionsWith
         return Arrays.asList(new Object[][] { //
                 // Test selection operation on a enumerated distribution
 
-                // Given the expression as2DVector(x1,x2) < [y1,y2], with x being a
+                // 0
+                // Given the expression as2DVector(x1,x2) < [y1,y2], with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should discard the tuple.
-                { "as2DVector(x1,x2) < [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) < [y1,y2]", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         null, //
                         null, //
                         0.0 }, //
-                // Given the expression as2DVector(x1,x2) <=[y1,y2], with x being a
+                // 1
+                // Given the expression as2DVector(x1,x2) <=[y1,y2], with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should return the tuple.
-                { "as2DVector(x1,x2) <= [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) <= [y1,y2]", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0), new Interval(Double.NEGATIVE_INFINITY, 0.0) }), //
                         new Object[] { 0.0, 0.0 }, //
                         1.0 }, //
-                // Given the expression [y1,y2] > as2DVector(x1,x2), with x being a
+                // 2
+                // Given the expression [y1,y2] > as2DVector(x1,x2), with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should discard the tuple.
-                { "[y1,y2] > as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] > as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         null, //
                         null, //
                         0.0 }, //
-                // Given the expression [y1,y2] >= as2DVector(x1,x2), with x being a
+                // 3
+                // Given the expression [y1,y2] >= as2DVector(x1,x2), with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should return the tuple.
-                { "[y1,y2] >= as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] >= as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0), new Interval(Double.NEGATIVE_INFINITY, 0.0) }), //
                         new Object[] { 0.0, 0.0 }, //
                         1.0 }, //
-                // Given the expression as2DVector(x1,x2) > [y1,y2], with x being a
+                // 4
+                // Given the expression as2DVector(x1,x2) > [y1,y2], with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should discard the tuple.
-                { "as2DVector(x1,x2) > [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) > [y1,y2]", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         null, //
                         null, //
                         0.0 }, //
-                // Given the expression as2DVector(x1,x2) >= [y1,y2], with x being a
+                // 5
+                // Given the expression as2DVector(x1,x2) >= [y1,y2], with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should return the tuple.
-                { "as2DVector(x1,x2) >= [y1,y2]",
+                { "as2DVector(x1,x2) >= [y1,y2]", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
+                        new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
-                        new Object[] { 0.0, 0.0 }, //
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY), new Interval(0.0, Double.POSITIVE_INFINITY) }), //
                         new Object[] { 0.0, 0.0 }, //
                         1.0 }, //
-                // Given the expression [y1,y2] < as2DVector(x1,x2), with x being a
+                // 6
+                // Given the expression [y1,y2] < as2DVector(x1,x2), with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should discard the tuple.
-                { "[y1,y2] < as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] < as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         null, //
                         null, //
                         0.0 }, //
-                // Given the expression [y1,y2] <= as2DVector(x1,x2), with x being a
+                // 7
+                // Given the expression [y1,y2] <= as2DVector(x1,x2), with x
+                // being a
                 // discrete
                 // distribution with a singleton at {0.0,0.0} with p(x)=1.0 and
                 // y = {0,0},
                 // the selection should return the tuple.
-                { "[y1,y2] <= as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 1.0 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] <= as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 1.0 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 1.0 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { 0.0, 0.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY), new Interval(0.0, Double.POSITIVE_INFINITY) }), //
                         new Object[] { 0.0, 0.0 }, //
                         1.0 }, //
                 // Test selection operation on a multivariate mixture
                 // distribution containing two enumerated distribution
 
-                // Given the expression as2DVector(x1,x2) < [y1,y2], with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 8
+                // Given the expression as2DVector(x1,x2) < [y1,y2], with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "as2DVector(x1,x2) < [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) < [y1,y2]", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE), new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression as2DVector(x1,x2) <= [y1,y2], with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 9
+                // Given the expression as2DVector(x1,x2) <= [y1,y2], with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "as2DVector(x1,x2) <= [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) <= [y1,y2]", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0), new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression [y1,y2] > as2DVector(x1,x2), with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 10
+                // Given the expression [y1,y2] > as2DVector(x1,x2), with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "[y1,y2] > as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] > as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE), new Interval(Double.NEGATIVE_INFINITY, -Double.MIN_VALUE) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression [y1,y2] >= as2DVector(x1,x2), with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 11
+                // Given the expression [y1,y2] >= as2DVector(x1,x2), with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "[y1,y2] >= as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] >= as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.NEGATIVE_INFINITY, 0.0), new Interval(Double.NEGATIVE_INFINITY, 0.0) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression as2DVector(x1,x2) > [y1,y2], with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 12
+                // Given the expression as2DVector(x1,x2) > [y1,y2], with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "as2DVector(x1,x2) > [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) > [y1,y2]", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY), new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression as2DVector(x1,x2) >= [y1,y2], with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 13
+                // Given the expression as2DVector(x1,x2) >= [y1,y2], with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "as2DVector(x1,x2) >= [y1,y2]",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "as2DVector(x1,x2) >= [y1,y2]", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY), new Interval(0.0, Double.POSITIVE_INFINITY) },2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression [y1,y2] < as2DVector(x1,x2), with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 14
+                // Given the expression [y1,y2] < as2DVector(x1,x2), with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "[y1,y2] < as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] < as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY), new Interval(Double.MIN_VALUE, Double.POSITIVE_INFINITY) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
-                // Given the expression [y1,y2] <= as2DVector(x1,x2), with x being two discrete
-                // distribution with singletons at  {-1.0,-1.0} with p(x)=1.0 and {1.0,1.0}  with p(1.0)=1.0 both weighted by 0.5, and y = {0.0,0.0},
+                // 15
+                // Given the expression [y1,y2] <= as2DVector(x1,x2), with x
+                // being two discrete
+                // distribution with singletons at {-1.0,-1.0} with p(x)=1.0 and
+                // {1.0,1.0} with p(1.0)=1.0 both weighted by 0.5, and y =
+                // {0.0,0.0},
                 // the selection should return the tuple with existence 0.5.
-                { "[y1,y2] <= as2DVector(x1,x2)",
-                        new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
-                                new IMultivariateDistribution[] { //
-                                        new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
-                                        new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                { "[y1,y2] <= as2DVector(x1,x2)", new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
+                        new IMultivariateDistribution[] { //
+                                new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
+                                new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
+                        }), //
                         new Object[] { 0.0, 0.0 }, //
                         new MultivariateMixtureDistribution(new double[] { 0.5, 0.5 }, //
                                 new IMultivariateDistribution[] { //
                                         new MultivariateEnumeratedDistribution(new double[] { -1.0, -1.0 }, 1.0), //
                                         new MultivariateEnumeratedDistribution(new double[] { 1.0, 1.0 }, 1.0)//
-                                }), //
+                                }, new Interval[] { new Interval(0.0, Double.POSITIVE_INFINITY), new Interval(0.0, Double.POSITIVE_INFINITY) }, 2.0), //
                         new Object[] { 0.0, 0.0 }, //
                         0.5 }, //
         });

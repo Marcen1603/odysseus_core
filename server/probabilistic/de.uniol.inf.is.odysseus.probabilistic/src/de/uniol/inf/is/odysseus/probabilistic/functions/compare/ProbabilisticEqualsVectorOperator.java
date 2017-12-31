@@ -56,7 +56,7 @@ public class ProbabilisticEqualsVectorOperator extends AbstractProbabilisticComp
         Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
         System.arraycopy(b[0], 0, lowerBound, 0, b[0].length);
 
-        return this.getValueInternal(a, lowerBound, upperBound,true,true);
+        return this.getValueInternal(a, lowerBound, upperBound);
     }
 
     /**

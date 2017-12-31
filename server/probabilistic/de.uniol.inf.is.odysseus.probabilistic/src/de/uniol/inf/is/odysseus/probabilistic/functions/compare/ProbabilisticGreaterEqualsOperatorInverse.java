@@ -29,7 +29,7 @@ public class ProbabilisticGreaterEqualsOperatorInverse extends ProbabilisticGrea
     private static final long serialVersionUID = 536907731158476799L;
 
     public ProbabilisticGreaterEqualsOperatorInverse() {
-        super(">=", true, true);
+        super(">=", true);
     }
 
 }

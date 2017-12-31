@@ -29,7 +29,7 @@ public class ProbabilisticSmallerEqualsVectorOperator extends ProbabilisticSmall
     private static final long serialVersionUID = -9122605635777338549L;
 
     public ProbabilisticSmallerEqualsVectorOperator() {
-        super("<=", true, true);
+        super("<=", true);
     }
 
 }
