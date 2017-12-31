@@ -37,6 +37,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry;
 
 public class ParserUtilityService implements IUtilityService {
 
@@ -109,8 +110,11 @@ public class ParserUtilityService implements IUtilityService {
 	int aggregationCounter = 0;
 
 	@Override
-	public Map<String, Collection<String>> getSelectedAttributes(SimpleSelect select, Map<String, Collection<String>> var2) {
-		Map<String, Collection<String>> map = new HashMap<>(var2);
+	public Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select) {
+
+		Collection<QueryCacheAttributeEntry> entryCol = new ArrayList<>();
+		
+		Map<String, Collection<String>> map = new HashMap<>();
 		Collection<Attribute> attributes = new ArrayList<>();
 		String[] attributeOrder = new String[select.getArguments().size()];
 		String[] sourceOrder = new String[select.getArguments().size()];
@@ -153,7 +157,11 @@ public class ParserUtilityService implements IUtilityService {
 			cacheService.getQueryCache().putProjectionAttributes(select, attributeOrder);
 			cacheService.getQueryCache().putProjectionSources(select, sourceOrder);
 
-			return map;
+			map.entrySet().stream().forEach(e -> {
+				entryCol.add(new QueryCacheAttributeEntry(e.getKey(), e.getValue()));
+			});
+			
+			return entryCol;
 		}
 
 		// Get all attributes from predicates
@@ -242,7 +250,11 @@ public class ParserUtilityService implements IUtilityService {
 		cacheService.getQueryCache().putProjectionAttributes(select, attributeOrder);
 		cacheService.getQueryCache().putProjectionSources(select, sourceOrder);
 		
-		return map;
+		map.entrySet().stream().forEach(e -> {
+			entryCol.add(new QueryCacheAttributeEntry(e.getKey(), e.getValue()));
+		});
+		
+		return entryCol;
 	}
 
 	private String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
@@ -737,7 +749,7 @@ public class ParserUtilityService implements IUtilityService {
 		List<String> l = new ArrayList<>();
 		
 		cacheService.getQueryCache().getQueryAggregations(select).forEach(e -> l.add(e.getAlias().getName()));
-		cacheService.getQueryCache().getQueryAttributes(select).values().forEach(e -> e.forEach(k -> l.add(k)));
+		cacheService.getQueryCache().getQueryAttributes(select).stream().forEach(e -> l.add(e.name));
 		
 		return l;
 	}

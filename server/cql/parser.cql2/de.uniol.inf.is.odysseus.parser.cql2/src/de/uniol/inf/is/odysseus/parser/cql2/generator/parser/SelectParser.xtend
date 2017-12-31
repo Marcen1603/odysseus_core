@@ -31,6 +31,7 @@ import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
 
 class SelectParser implements ISelectParser {
 
@@ -171,8 +172,7 @@ class SelectParser implements ISelectParser {
 					cacheService.getQueryCache().putSubQuerySources(subQuery);
 				}
 
-				var Map<String, Collection<String>> attributes2 = newHashMap
-				attributes2 = utilityService.getSelectedAttributes(select, attributes2)
+				var Collection<QueryCacheAttributeEntry> attributes2 = utilityService.getSelectedAttributes(select)
 				var aggregations = extractAggregationsFromArgument(select.arguments)
 				var expressions = extractSelectExpressionsFromArgument(select.arguments)
 				if (aggregations !== null) {

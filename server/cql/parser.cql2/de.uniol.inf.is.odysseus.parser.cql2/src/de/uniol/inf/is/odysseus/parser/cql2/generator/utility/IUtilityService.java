@@ -13,13 +13,15 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry;
+
 import java.util.ArrayList;
 
 public interface IUtilityService {
 
 	List<String> getAttributeAliasesAsList();
 	Map<SourceStruct, Collection<String>> getSourceAliases();
-	Map<String, Collection<String>> getSelectedAttributes(SimpleSelect select, Map<String, Collection<String>> var2);
+	Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select);
 	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
 //	void addSubQuerySources(@NotNull NestedSource subQuery);
 	Map<AttributeStruct, Collection<String>> getAttributeAliasesAsMap();

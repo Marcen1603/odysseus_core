@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -67,27 +66,23 @@ public class JoinParser implements IJoinParser {
           SelectCache _selectCache = this.cacheService.getSelectCache();
           SimpleSelect query = _selectCache.last();
           QueryCache _queryCache = this.cacheService.getQueryCache();
-          Map<String, Collection<String>> queryAttributess = _queryCache.getQueryAttributes(query);
+          Collection<QueryCache.QueryCacheAttributeEntry> queryAttributess = _queryCache.getQueryAttributes(query);
           InnerSelect _statement = ((NestedSource)source).getStatement();
           SimpleSelect _select = _statement.getSelect();
           SimpleSelect subQuery = ((SimpleSelect) _select);
           QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-          Map<String, Collection<String>> subQueryAttributes = _queryCache_1.getQueryAttributes(subQuery);
+          Collection<QueryCache.QueryCacheAttributeEntry> subQueryAttributes = _queryCache_1.getQueryAttributes(subQuery);
           OperatorCache _operatorCache = this.cacheService.getOperatorCache();
           Map<SimpleSelect, String> _subQueries = _operatorCache.getSubQueries();
           String lastOperator = _subQueries.get(subQuery);
           ArrayList<String> inputs = CollectionLiterals.<String>newArrayList();
           List<String> attributeAliases = this.utilityService.getAttributeAliasesAsList();
-          Set<Map.Entry<String, Collection<String>>> _entrySet = queryAttributess.entrySet();
-          for (final Map.Entry<String, Collection<String>> entry : _entrySet) {
-            {
-              String _key = entry.getKey();
-              Collection<String> attributes = subQueryAttributes.get(_key);
-              if ((attributes != null)) {
+          for (final QueryCache.QueryCacheAttributeEntry entry : queryAttributess) {
+            for (final QueryCache.QueryCacheAttributeEntry entry2 : subQueryAttributes) {
+              if ((entry2 != null)) {
                 ArrayList<String> aliasses = CollectionLiterals.<String>newArrayList();
-                for (final String name : attributes) {
-                  Collection<String> _value = entry.getValue();
-                  for (final String name2 : _value) {
+                for (final String name : entry2.sources) {
+                  for (final String name2 : entry.sources) {
                     {
                       String realName = name;
                       String realName2 = name2;
@@ -127,13 +122,13 @@ public class JoinParser implements IJoinParser {
               }
             }
           }
-          ArrayList<String> aliasses = CollectionLiterals.<String>newArrayList();
+          ArrayList<String> aliasses_1 = CollectionLiterals.<String>newArrayList();
           Alias _alias = ((NestedSource)source).getAlias();
           String subQueryAlias = _alias.getName();
           Collection<String> _allQueryAttributes = this.utilityService.getAllQueryAttributes(subQuery);
-          for (final String name : _allQueryAttributes) {
+          for (final String name_1 : _allQueryAttributes) {
             {
-              String realName = name;
+              String realName = name_1;
               boolean _contains = realName.contains(".");
               if (_contains) {
                 int _indexOf = realName.indexOf(".");
@@ -141,20 +136,20 @@ public class JoinParser implements IJoinParser {
                 int _length = realName.length();
                 String _substring = realName.substring(_plus, _length);
                 realName = _substring;
-                String _replace = name.replace(".", "_");
-                aliasses.add(_replace);
+                String _replace = name_1.replace(".", "_");
+                aliasses_1.add(_replace);
               } else {
-                aliasses.add(name);
+                aliasses_1.add(name_1);
               }
-              boolean _isAggregationAttribute = this.utilityService.isAggregationAttribute(name);
+              boolean _isAggregationAttribute = this.utilityService.isAggregationAttribute(name_1);
               if (_isAggregationAttribute) {
-                aliasses.add(((subQueryAlias + ".") + realName));
+                aliasses_1.add(((subQueryAlias + ".") + realName));
               } else {
-                aliasses.add(((subQueryAlias + ".") + realName));
+                aliasses_1.add(((subQueryAlias + ".") + realName));
               }
             }
           }
-          String op = this.renameParser.parse(aliasses, lastOperator);
+          String op = this.renameParser.parse(aliasses_1, lastOperator);
           inputs.add(op);
           final ArrayList<String> _converted_inputs = (ArrayList<String>)inputs;
           String _buildJoin = this.buildJoin(((String[])Conversions.unwrapArray(_converted_inputs, String.class)));
@@ -171,8 +166,8 @@ public class JoinParser implements IJoinParser {
             final long count = _filter.count();
             sourcenames.add(sourcename);
             this.renameParser.setSources(sources);
-            String _parse = this.windowParser.parse(((SimpleSource)source));
-            CharSequence _buildRename = this.renameParser.buildRename(_parse, ((SimpleSource)source), 
+            String _parse_1 = this.windowParser.parse(((SimpleSource)source));
+            CharSequence _buildRename = this.renameParser.buildRename(_parse_1, ((SimpleSource)source), 
               ((int) count));
             String _string_1 = _buildRename.toString();
             sourceStrings[i] = _string_1;

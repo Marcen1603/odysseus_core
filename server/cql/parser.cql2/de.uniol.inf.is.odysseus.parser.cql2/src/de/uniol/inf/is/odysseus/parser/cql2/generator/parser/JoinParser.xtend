@@ -15,6 +15,7 @@ import java.util.List
 import java.util.Map.Entry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
 
 class JoinParser implements IJoinParser {
 
@@ -43,53 +44,53 @@ class JoinParser implements IJoinParser {
 		var String[] sourceStrings = newArrayOfSize(sources.size)
 		var Collection<String> sourcenames = newArrayList
 
-//		var simpleSources = sources.stream.filter(e|e instanceof SimpleSource).map(e|e as SimpleSource).collect(
-//			Collectors.toList)
-//		var subQueries = sources.stream.filter(e|e instanceof NestedSource).map(e|e as NestedSource).collect(
-//			Collectors.toList)
 		for (var i = 0; i < sources.size; i++) {
 			var source = sources.get(i)
 			if (source instanceof NestedSource) {
 				var query = cacheService.getSelectCache().last()
-				var queryAttributess = cacheService.getQueryCache().getQueryAttributes(query)
-//				var queryAggregations = utilityServicetil.getQueryAggregations(query)
+				
+				var Collection<QueryCacheAttributeEntry> queryAttributess = cacheService.getQueryCache().getQueryAttributes(query)
+				
+
 				var subQuery = source.statement.select as SimpleSelect
-				var subQueryAttributes = cacheService.getQueryCache().getQueryAttributes(subQuery)
-//				var subQueryAggregations = utilityServicetil.getQueryAggregations(subQuery)
+				var Collection<QueryCacheAttributeEntry> subQueryAttributes = cacheService.getQueryCache().getQueryAttributes(subQuery)
+
 				var lastOperator = cacheService.getOperatorCache().getSubQueries().get(subQuery)
 				var inputs = newArrayList
+				
 				var attributeAliases = utilityService.getAttributeAliasesAsList()
-//				var allQuerAttributes = utilityServicetil.getAllQueryAttributes(query)
-//				var allSubQuerAttributes = utilityServicetil.getAllQueryAttributes(subQuery)
-				for (Entry<String, Collection<String>> entry : queryAttributess.entrySet) {
-					var attributes = subQueryAttributes.get(entry.key)
-					if (attributes !== null) {
-						var aliasses = newArrayList
-						for (String name : attributes)
-							for (String name2 : entry.value) {
-								var realName = name
-								var realName2 = name2
-								if (attributeAliases.contains(realName))
-									realName = utilityService.getAttributenameFromAlias(realName)
-								if (attributeAliases.contains(realName2))
-									realName2 = utilityService.getAttributenameFromAlias(realName2)
-
-								if (realName.contains('.'))
-									realName = name.split('\\.').get(1)
-								if (realName2.contains('.'))
-									realName2 = realName2.split('\\.').get(1)
-
-								if (realName.equals(realName2)) {
-									aliasses.add(name.replace('.', '_'))
-									aliasses.add(name2)
-								}
+				
+				for (QueryCacheAttributeEntry entry : queryAttributess) {
+					for (QueryCacheAttributeEntry entry2 : subQueryAttributes) {
+						if (entry2 !== null) {
+							var aliasses = newArrayList
+							for (String name : entry2.sources) {
+								for (String name2 : entry.sources) {
+									var realName = name
+									var realName2 = name2
+									if (attributeAliases.contains(realName))
+										realName = utilityService.getAttributenameFromAlias(realName)
+									if (attributeAliases.contains(realName2))
+										realName2 = utilityService.getAttributenameFromAlias(realName2)
+	
+									if (realName.contains('.'))
+										realName = name.split('\\.').get(1)
+									if (realName2.contains('.'))
+										realName2 = realName2.split('\\.').get(1)
+	
+									if (realName.equals(realName2)) {
+										aliasses.add(name.replace('.', '_'))
+										aliasses.add(name2)
+									}
+								}	
 							}
-						inputs.add(renameParser.parse(aliasses, lastOperator))
-						/*TODO remove
-						 * builder.build(typeof(RenameAO),
-									newHashMap('aliases' -> utilityService.generateListString(aliasses),
-										'pairs' -> 'true', 'input' -> lastOperator))
-						 */
+							inputs.add(renameParser.parse(aliasses, lastOperator))
+							/*TODO remove
+							 * builder.build(typeof(RenameAO),
+										newHashMap('aliases' -> utilityService.generateListString(aliasses),
+											'pairs' -> 'true', 'input' -> lastOperator))
+							 */
+						}
 					}
 				}
 				// build rename operator for sub query alias

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -60,23 +61,76 @@ public class QueryCache implements Cache {
 	public Collection<String> getProjectionSourcess(SimpleSelect query) {
 		return (Collection<String>) getCollection(query, Type.PROJECTION_SOURCE);
 	}
-
-	public void putSubQuerySources(String name, Map<String, Collection<String>> values) {
-		putMap(name, values, QueryCache.Type.QUERY_SUBQUERY);
+/////
+	
+	private Map<String, QueryCacheSubQueryEntry> subQueryEntries = new HashMap<>();
+	
+	public static class QueryCacheSubQueryEntry {
+		
+		public String parent;
+		public NestedSource subQuery;
+		public Collection<QueryCacheAttributeEntry> attributes;
+		
+		public QueryCacheSubQueryEntry(String parent, NestedSource subQuery, Collection<QueryCacheAttributeEntry> attributes) {
+			super();
+			this.parent = parent;
+			this.subQuery = subQuery;
+			this.attributes = attributes;
+		}
+		
+		
+		
 	}
+
+//	public void putSubQuerySources(String name, Collection<QueryCacheAttributeEntry> attributes) {
+//		subQueryEntries.put(name, attributes);
+////		putMap(name, values.stream().map(e -> e.sources).collect(Collectors.toList()), QueryCache.Type.QUERY_SUBQUERY);
+//	}
 
 	public void putSubQuerySources(NestedSource subQuery) {
-		putSubQuerySources(subQuery.getAlias().getName(), getQueryAttributes(subQuery.getStatement().getSelect()));
-	}
+	
+		String name = subQuery.getAlias().getName();
+		subQueryEntries.put(name, new QueryCacheSubQueryEntry(name, subQuery, attributeEntries.get(subQuery.getStatement().getSelect())));
+		
 
-	public void putQueryAttributes(SimpleSelect query, Map<String, Collection<String>> attributes) {
-		putMap(query, attributes, Type.QUERY_ATTRIBUTE);
 	}
-
-	public Map<String, Collection<String>> getQueryAttributes(SimpleSelect query) {
-		return (Map<String, Collection<String>>) getCollection(query, Type.QUERY_ATTRIBUTE);
+////
+	
+	public static class QueryCacheAttributeEntry {
+		
+		public String name;
+		public Collection<String> sources;
+		
+		public QueryCacheAttributeEntry(String name, Collection<String> sources) {
+			super();
+			this.name = name;
+			this.sources = sources;
+		}
+		
 	}
+	
+	
+	private Map<SimpleSelect, Collection<QueryCacheAttributeEntry>> attributeEntries = new HashMap<>();
+	
+	public void putQueryAttributes(SimpleSelect query, Collection<QueryCacheAttributeEntry> entry) {
+		attributeEntries.put(query, entry);
+	}
+	
+	public Collection<QueryCacheAttributeEntry> getQueryAttributes(SimpleSelect query) {
+		return attributeEntries.containsKey(query) ? attributeEntries.get(query) : null;
+	}
+	
+	
+//	public void putQueryAttributes(SimpleSelect query, Map<String, Collection<String>> attributes) {
+//		putMap(query, attributes, Type.QUERY_ATTRIBUTE);
+//	}
 
+//	public Map<String, Collection<String>> getQueryAttributes(SimpleSelect query) {
+//		return (Map<String, Collection<String>>) getCollection(query, Type.QUERY_ATTRIBUTE);
+//	}
+
+	
+	/////
 	public Collection<SelectExpression> getQueryAggregations(SimpleSelect query) {
 		return (Collection<SelectExpression>) getCollection(query, Type.QUERY_AGGREGATION);
 	}

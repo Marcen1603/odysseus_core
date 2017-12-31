@@ -250,9 +250,7 @@ public class SelectParser implements ISelectParser {
               _queryCache.putSubQuerySources(subQuery);
             }
           }
-          Map<String, Collection<String>> attributes2 = CollectionLiterals.<String, Collection<String>>newHashMap();
-          Map<String, Collection<String>> _selectedAttributes = this.utilityService.getSelectedAttributes(select, attributes2);
-          attributes2 = _selectedAttributes;
+          Collection<QueryCache.QueryCacheAttributeEntry> attributes2 = this.utilityService.getSelectedAttributes(select);
           EList<SelectArgument> _arguments = select.getArguments();
           List<SelectExpression> aggregations = this.extractAggregationsFromArgument(_arguments);
           EList<SelectArgument> _arguments_1 = select.getArguments();

@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -274,28 +273,6 @@ public class CQLPredicateParser implements IPredicateParser {
             OperatorCache _operatorCache = this.cacheService.getOperatorCache();
             String _lastOperatorId = _operatorCache.lastOperatorId();
             args.put("input", _lastOperatorId);
-            QueryCache _queryCache_2 = this.cacheService.getQueryCache();
-            Map<String, Collection<String>> _queryAttributes = _queryCache_2.getQueryAttributes(select);
-            Set<Map.Entry<String, Collection<String>>> _entrySet = _queryAttributes.entrySet();
-            for (final Map.Entry<String, Collection<String>> l : _entrySet) {
-              Collection<String> _value_1 = l.getValue();
-              for (final String s : _value_1) {
-                {
-                  String attributename = s;
-                  boolean _contains = attributename.contains(".");
-                  boolean _not_1 = (!_contains);
-                  if (_not_1) {
-                    String _key = l.getKey();
-                    String _plus_6 = (_key + ".");
-                    String _plus_7 = (_plus_6 + attributename);
-                    attributename = _plus_7;
-                  }
-                  String _replace = attributename.replace(".", "_");
-                  String _replace_1 = predicate.replace(attributename, _replace);
-                  predicate = _replace_1;
-                }
-              }
-            }
             args.put("predicate", predicate);
             Collection<Map<String, String>> _operators = this.existenceParser.getOperators();
             _operators.add(args);
@@ -357,8 +334,8 @@ public class CQLPredicateParser implements IPredicateParser {
                 boolean _tripleEquals_1 = (_predicates_1 == null);
                 if (_tripleEquals_1) {
                   this.selectParser.parse(select_1);
-                  QueryCache _queryCache_3 = this.cacheService.getQueryCache();
-                  Collection<String> _projectionAttributes_2 = _queryCache_3.getProjectionAttributes(select_1);
+                  QueryCache _queryCache_2 = this.cacheService.getQueryCache();
+                  Collection<String> _projectionAttributes_2 = _queryCache_2.getProjectionAttributes(select_1);
                   for (final String attribute_2 : _projectionAttributes_2) {
                     String _predicate_3 = predicate_1;
                     Attribute _attribute_2 = in.getAttribute();
@@ -374,8 +351,8 @@ public class CQLPredicateParser implements IPredicateParser {
                   predicate_1 = _substring_2;
                 } else {
                   this.selectParser.parseWithPredicate(select_1);
-                  QueryCache _queryCache_4 = this.cacheService.getQueryCache();
-                  Collection<String> _projectionAttributes_3 = _queryCache_4.getProjectionAttributes(select_1);
+                  QueryCache _queryCache_3 = this.cacheService.getQueryCache();
+                  Collection<String> _projectionAttributes_3 = _queryCache_3.getProjectionAttributes(select_1);
                   for (final String attribute_3 : _projectionAttributes_3) {
                     String _predicate_4 = predicate_1;
                     Attribute _attribute_3 = in.getAttribute();
@@ -389,28 +366,6 @@ public class CQLPredicateParser implements IPredicateParser {
                   int _minus_6 = (_lastIndexOf_3 - 1);
                   String _substring_3 = predicate_1.substring(0, _minus_6);
                   predicate_1 = _substring_3;
-                }
-                QueryCache _queryCache_5 = this.cacheService.getQueryCache();
-                Map<String, Collection<String>> _queryAttributes_1 = _queryCache_5.getQueryAttributes(select_1);
-                Set<Map.Entry<String, Collection<String>>> _entrySet_1 = _queryAttributes_1.entrySet();
-                for (final Map.Entry<String, Collection<String>> l_1 : _entrySet_1) {
-                  Collection<String> _value_2 = l_1.getValue();
-                  for (final String s_1 : _value_2) {
-                    {
-                      String attributename = s_1;
-                      boolean _contains = attributename.contains(".");
-                      boolean _not_1 = (!_contains);
-                      if (_not_1) {
-                        String _key = l_1.getKey();
-                        String _plus_12 = (_key + ".");
-                        String _plus_13 = (_plus_12 + attributename);
-                        attributename = _plus_13;
-                      }
-                      String _replace = attributename.replace(".", "_");
-                      String _replace_1 = predicate_1.replace(attributename, _replace);
-                      predicate_1 = _replace_1;
-                    }
-                  }
                 }
                 Map<String, String> args_1 = CollectionLiterals.<String, String>newHashMap();
                 args_1.put("type", type_2);
@@ -535,28 +490,6 @@ public class CQLPredicateParser implements IPredicateParser {
       EList<Expression> _elements = _predicates.getElements();
       Expression _get = _elements.get(0);
       this.parse(_get);
-      QueryCache _queryCache = this.cacheService.getQueryCache();
-      Map<String, Collection<String>> _queryAttributes = _queryCache.getQueryAttributes(subQuery);
-      Set<Map.Entry<String, Collection<String>>> _entrySet = _queryAttributes.entrySet();
-      for (final Map.Entry<String, Collection<String>> l : _entrySet) {
-        Collection<String> _value = l.getValue();
-        for (final String s : _value) {
-          {
-            String attributename = s;
-            boolean _contains = attributename.contains(".");
-            boolean _not = (!_contains);
-            if (_not) {
-              String _key = l.getKey();
-              String _plus = (_key + ".");
-              String _plus_1 = (_plus + attributename);
-              attributename = _plus_1;
-            }
-            String _replace = attributename.replace(".", "_");
-            String _replace_1 = this.predicateString.replace(attributename, _replace);
-            this.predicateString = _replace_1;
-          }
-        }
-      }
       args.put("predicate", this.predicateString);
       OperatorCache _operatorCache = this.cacheService.getOperatorCache();
       String _lastOperatorId = _operatorCache.lastOperatorId();

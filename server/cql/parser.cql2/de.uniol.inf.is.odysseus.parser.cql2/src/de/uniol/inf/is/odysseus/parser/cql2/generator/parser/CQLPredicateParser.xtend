@@ -32,6 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
 
 class CQLPredicateParser implements IPredicateParser {
 
@@ -161,16 +162,16 @@ class CQLPredicateParser implements IPredicateParser {
 							var Map<String, String> args = newHashMap
 							args.put('type', type)
 							args.put('input', cacheService.getOperatorCache().lastOperatorId())
-
-							for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(select).entrySet)
-								for (String s : l.value) {
-									var attributename = s
-									if (!attributename.contains('.')) {
-										attributename = l.key + '.' + attributename
-									}
-//								println(attributename)
-									predicate = predicate.replace(attributename, attributename.replace('.', '_'))
-								}
+//FIXME 31.12.17
+//							for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(select).entrySet)
+//								for (String s : l.value) {
+//									var attributename = s
+//									if (!attributename.contains('.')) {
+//										attributename = l.key + '.' + attributename
+//									}
+////								println(attributename)
+//									predicate = predicate.replace(attributename, attributename.replace('.', '_'))
+//								}
 
 							args.put('predicate', predicate)
 							existenceParser.getOperators().add(args)
@@ -218,16 +219,16 @@ class CQLPredicateParser implements IPredicateParser {
 									predicate += in.attribute.name + operator + attribute + '&&'
 								predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 							}
-
-							for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(select).entrySet)
-								for (String s : l.value) {
-									var attributename = s
-									if (!attributename.contains('.')) {
-										attributename = l.key + '.' + attributename
-									}
-//								println(attributename)
-									predicate = predicate.replace(attributename, attributename.replace('.', '_'))
-								}
+//FIXME 31.12.17
+//							for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(select).entrySet)
+//								for (String s : l.value) {
+//									var attributename = s
+//									if (!attributename.contains('.')) {
+//										attributename = l.key + '.' + attributename
+//									}
+////								println(attributename)
+//									predicate = predicate.replace(attributename, attributename.replace('.', '_'))
+//								}
 
 //						predicate = predicate.replace('\\.', '_')
 							var Map<String, String> args = newHashMap
@@ -302,15 +303,16 @@ class CQLPredicateParser implements IPredicateParser {
 		parse(complexPredicate.select.select.predicates.elements.get(0))
 
 //		println("exists() -> " + predicateString)
-		for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(subQuery).entrySet)
-			for (String s : l.value) {
-				var attributename = s
-				if (!attributename.contains('.')) {
-					attributename = l.key + '.' + attributename
-				}
-//				println(attributename)
-				predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
-			}
+//FIXME not working anymore 31.12.17
+//		for (QueryCacheAttributeEntry l : cacheService.getQueryCache().getQueryAttributes(subQuery))
+//			for (String s : l.value) {
+//				var attributename = s
+//				if (!attributename.contains('.')) {
+//					attributename = l.key + '.' + attributename
+//				}
+////				println(attributename)
+//				predicateString = predicateString.replace(attributename, attributename.replace('.', '_'))
+//			}
 
 //		println("exists() -> " + predicateString)
 		args.put('predicate', predicateString)
