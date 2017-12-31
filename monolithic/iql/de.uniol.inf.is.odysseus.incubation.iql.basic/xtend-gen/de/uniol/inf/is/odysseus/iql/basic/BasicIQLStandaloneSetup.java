@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.iql.basic.BasicIQLStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class BasicIQLStandaloneSetup extends BasicIQLStandaloneSetupGenerated {
   public static void doSetup() {
-    new BasicIQLStandaloneSetup().createInjectorAndDoEMFRegistration();
+    BasicIQLStandaloneSetup _basicIQLStandaloneSetup = new BasicIQLStandaloneSetup();
+    _basicIQLStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }
