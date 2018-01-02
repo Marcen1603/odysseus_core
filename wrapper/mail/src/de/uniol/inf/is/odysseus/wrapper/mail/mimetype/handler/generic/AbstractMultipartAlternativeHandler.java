@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic;
 
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.AbstractMimeTypeHandler;
-
-public abstract class AbstractMultipartAlternativeHandler<T> extends AbstractMimeTypeHandler<T> {
+public abstract class AbstractMultipartAlternativeHandler<T> extends AbstractMultipartHandler<T> {
 
 	@Override
 	public String getMimeType() {

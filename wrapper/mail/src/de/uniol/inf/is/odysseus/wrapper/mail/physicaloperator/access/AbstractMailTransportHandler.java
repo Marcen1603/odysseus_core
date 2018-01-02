@@ -240,7 +240,7 @@ public abstract class AbstractMailTransportHandler
 		mimeTypeHandlers = new MimeTypeHandlerRegistry<>();
 		mimeTypeHandlers.RegisterHandler(new TextPlainHandler());
 		mimeTypeHandlers.RegisterHandler(new TextHtmlHandler());
-		mimeTypeHandlers.RegisterHandler(new MultipartAlternativeHandler());
+		mimeTypeHandlers.RegisterHandler(new MultipartAlternativeHandler("text/plain"));
 		mimeTypeHandlers.RegisterHandler(new MultipartMixedHandler("\n"));
 		mimeTypeHandlers.RegisterHandler(new ApplicationOctetStreamHandler());
 	}

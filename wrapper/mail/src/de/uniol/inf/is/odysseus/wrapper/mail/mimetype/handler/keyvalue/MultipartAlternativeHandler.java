@@ -4,9 +4,9 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic.AbstractMultipartMixedhandler;
 
-public class MultipartMixedHandler extends AbstractMultipartMixedhandler<KeyValueObject<IMetaAttribute>> {
+public class MultipartAlternativeHandler extends AbstractMultipartMixedhandler<KeyValueObject<IMetaAttribute>> {
 
-	public MultipartMixedHandler() {
+	public MultipartAlternativeHandler(){
 		super();
 		this.setCombiner(new KeyValueContentCombiner(this.getMimeType()));
 	}
