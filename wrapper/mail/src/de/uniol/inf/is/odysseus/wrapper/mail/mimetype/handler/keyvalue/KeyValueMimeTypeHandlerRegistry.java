@@ -12,6 +12,7 @@ public class KeyValueMimeTypeHandlerRegistry extends MimeTypeHandlerRegistry<Key
 		this.RegisterHandler(new TextHtmlHandler());
 		this.RegisterHandler(new MultipartAlternativeHandler());
 		this.RegisterHandler(new MultipartMixedHandler());
+		this.RegisterHandler(new ApplicationOctetStreamHandler());
 	}
 
 }
