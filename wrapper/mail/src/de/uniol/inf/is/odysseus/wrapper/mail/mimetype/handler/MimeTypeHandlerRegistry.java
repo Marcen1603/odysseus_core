@@ -9,13 +9,19 @@ import javax.mail.Part;
 
 import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
-public class MimeTypeHandlerRegistry<T> {
+public abstract class MimeTypeHandlerRegistry<T> implements IMimeTypeHandlerRegistry<T> {
 
 	private HashMap<String, IMimeTypeHandler<T>> handlers;
 
 	public MimeTypeHandlerRegistry() {
 		handlers = new HashMap<String, IMimeTypeHandler<T>>();
+		Init();
 	}
+
+	/**
+	 * creates mime type handlers and registers them in the registry
+	 */
+	protected abstract void Init();
 
 	public void RegisterHandler(IMimeTypeHandler<T> handler) {
 		if (handler == null) {

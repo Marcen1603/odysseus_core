@@ -27,13 +27,10 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolH
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.IMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeHandlerRegistry;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.ApplicationOctetStreamHandler;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartAlternativeHandler;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.MultipartMixedHandler;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextHtmlHandler;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.TextPlainHandler;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.keyvalue.KeyValueMimeTypeHandlerRegistry;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeTypeHandlerRegistry;
 
 public abstract class AbstractMailTransportHandler
 		extends AbstractSimplePullTransportHandler<KeyValueObject<IMetaAttribute>> {
@@ -45,7 +42,7 @@ public abstract class AbstractMailTransportHandler
 
 	private Queue<KeyValueObject<IMetaAttribute>> messageQueue;
 
-	private MimeTypeHandlerRegistry<String> mimeTypeHandlers;
+	private IMimeTypeHandlerRegistry<?> mimeTypeHandlers;
 
 	/* Keys for Key-Value objects */
 	private static final String FLAG_EXTENSION = "Flags";
@@ -235,14 +232,14 @@ public abstract class AbstractMailTransportHandler
 	}
 
 	private void InitMimeTypeHandlers() {
-		// TODO handler initialization should be more generic and extensible
-		// (e.g. provided by a service)
-		mimeTypeHandlers = new MimeTypeHandlerRegistry<>();
-		mimeTypeHandlers.RegisterHandler(new TextPlainHandler());
-		mimeTypeHandlers.RegisterHandler(new TextHtmlHandler());
-		mimeTypeHandlers.RegisterHandler(new MultipartAlternativeHandler("text/plain"));
-		mimeTypeHandlers.RegisterHandler(new MultipartMixedHandler("\n"));
-		mimeTypeHandlers.RegisterHandler(new ApplicationOctetStreamHandler());
+		if (mailConfig.getMimeTypeHandler().equals("string")) {
+			mimeTypeHandlers = new StringMimeTypeHandlerRegistry();
+		} else if (mailConfig.getMimeTypeHandler().equals("keyvalue")) {
+			mimeTypeHandlers = new KeyValueMimeTypeHandlerRegistry();
+		} else {
+			throw new IllegalArgumentException("unknown mime type handler: " + mailConfig.getMimeTypeHandler());
+		}
+
 	}
 
 	/**

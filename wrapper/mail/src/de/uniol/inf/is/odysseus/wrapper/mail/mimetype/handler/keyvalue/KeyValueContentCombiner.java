@@ -1,6 +1,5 @@
 package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.keyvalue;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
@@ -16,16 +15,17 @@ public class KeyValueContentCombiner implements IContentCombiner<KeyValueObject<
 		this.mimeType = mimeType;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public KeyValueObject<IMetaAttribute> CombineSubContents(
 			List<Pair<String, KeyValueObject<IMetaAttribute>>> subcontents) {
-		KeyValueObject<IMetaAttribute>[] content = null;
+		@SuppressWarnings("rawtypes")
+		KeyValueObject[] content = null;
 
 		if (!subcontents.isEmpty()) {
-			content = (KeyValueObject<IMetaAttribute>[]) Array.newInstance(subcontents.get(0).getE2().getClass(),
-					subcontents.size());
-			content = subcontents.toArray(content);
+			content = new KeyValueObject[subcontents.size()];
+			for (int i = 0; i < subcontents.size(); i++) {
+				content[i] = subcontents.get(i).getE2();
+			}
 		}
 
 		return Util.BuildKeyValueObject(this.mimeType, content);

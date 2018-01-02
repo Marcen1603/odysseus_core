@@ -26,10 +26,12 @@ public abstract class MailConfiguration {
 	private static final String KEEP = "keep";
 	private static final String PATTERN = "pattern";
 	private static final String READ_CONTENT = "readcontent";
+	private static final String MIME_TYPE_HANDLER = "mimetypehandler";
 
 	private static final String DEFAULT_PATTERN = "";
 	private static final String DEFAULT_FOLDER = "INBOX";
 	private static final String DEFAULT_HOST = "localhost";
+	private static final String DEFAULT_MIME_TYPE_HANDLER = "keyValue";
 
 	private String host;
 	private String username;
@@ -41,6 +43,7 @@ public abstract class MailConfiguration {
 	private Store store;
 	private Session session;
 	private boolean readContent;
+	private String mimeTypeHandler;
 
 	public Store getStore() {
 		return store;
@@ -259,6 +262,11 @@ public abstract class MailConfiguration {
 		if (options.containsKey(MailConfiguration.READ_CONTENT)) {
 			this.setReadContent(Boolean.parseBoolean(options.get(MailConfiguration.READ_CONTENT)));
 		}
+		if (options.containsKey(MailConfiguration.MIME_TYPE_HANDLER)){
+			this.setMimeTypeHandler(options.get(MailConfiguration.MIME_TYPE_HANDLER));
+		} else {
+			this.setMimeTypeHandler(MailConfiguration.DEFAULT_MIME_TYPE_HANDLER);
+		}
 	}
 
 	public boolean isSemanticallyEqualImpl(final MailConfiguration other) {
@@ -275,6 +283,14 @@ public abstract class MailConfiguration {
 			return false;
 		}
 		return true;
+	}
+
+	public String getMimeTypeHandler() {
+		return mimeTypeHandler;
+	}
+
+	public void setMimeTypeHandler(String mimeTypeHandler) {
+		this.mimeTypeHandler = mimeTypeHandler;
 	}
 
 }
