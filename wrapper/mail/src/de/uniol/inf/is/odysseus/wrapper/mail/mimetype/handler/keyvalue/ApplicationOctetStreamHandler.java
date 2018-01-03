@@ -16,7 +16,7 @@ public class ApplicationOctetStreamHandler
 	@Override
 	public KeyValueObject<IMetaAttribute> getContent(Part part)
 			throws IOException, MessagingException, MimeTypeException {
-		String content = ReadInputAsString(part);
+		Object content = ReadInputAsByteArray(part);
 		return Util.BuildKeyValueObject(this.getMimeType(), content);
 	}
 
