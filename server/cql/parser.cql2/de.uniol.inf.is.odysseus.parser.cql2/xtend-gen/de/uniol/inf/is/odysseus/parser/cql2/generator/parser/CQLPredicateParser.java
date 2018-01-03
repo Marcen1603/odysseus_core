@@ -236,13 +236,13 @@ public class CQLPredicateParser implements IPredicateParser {
             if (_tripleEquals) {
               this.selectParser.parse(select);
               QueryCache _queryCache = this.cacheService.getQueryCache();
-              Collection<String> _projectionAttributes = _queryCache.getProjectionAttributes(select);
-              for (final String attribute : _projectionAttributes) {
+              Collection<QueryCache.QueryAttribute> _projectionAttributes = _queryCache.getProjectionAttributes(select);
+              for (final QueryCache.QueryAttribute attribute : _projectionAttributes) {
                 String _predicate_1 = predicate;
                 Attribute _attribute = quantification.getAttribute();
                 String _name = _attribute.getName();
                 String _plus = (_name + operator);
-                String _plus_1 = (_plus + attribute);
+                String _plus_1 = (_plus + attribute.name);
                 String _plus_2 = (_plus_1 + "&&");
                 predicate = (_predicate_1 + _plus_2);
               }
@@ -253,13 +253,13 @@ public class CQLPredicateParser implements IPredicateParser {
             } else {
               this.selectParser.parseWithPredicate(select);
               QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-              Collection<String> _projectionAttributes_1 = _queryCache_1.getProjectionAttributes(select);
-              for (final String attribute_1 : _projectionAttributes_1) {
+              Collection<QueryCache.QueryAttribute> _projectionAttributes_1 = _queryCache_1.getProjectionAttributes(select);
+              for (final QueryCache.QueryAttribute attribute_1 : _projectionAttributes_1) {
                 String _predicate_2 = predicate;
                 Attribute _attribute_1 = quantification.getAttribute();
                 String _name_1 = _attribute_1.getName();
                 String _plus_3 = (_name_1 + operator);
-                String _plus_4 = (_plus_3 + attribute_1);
+                String _plus_4 = (_plus_3 + attribute_1.name);
                 String _plus_5 = (_plus_4 + "&&");
                 predicate = (_predicate_2 + _plus_5);
               }
@@ -335,13 +335,13 @@ public class CQLPredicateParser implements IPredicateParser {
                 if (_tripleEquals_1) {
                   this.selectParser.parse(select_1);
                   QueryCache _queryCache_2 = this.cacheService.getQueryCache();
-                  Collection<String> _projectionAttributes_2 = _queryCache_2.getProjectionAttributes(select_1);
-                  for (final String attribute_2 : _projectionAttributes_2) {
+                  Collection<QueryCache.QueryAttribute> _projectionAttributes_2 = _queryCache_2.getProjectionAttributes(select_1);
+                  for (final QueryCache.QueryAttribute attribute_2 : _projectionAttributes_2) {
                     String _predicate_3 = predicate_1;
                     Attribute _attribute_2 = in.getAttribute();
                     String _name_2 = _attribute_2.getName();
                     String _plus_6 = (_name_2 + operator_1);
-                    String _plus_7 = (_plus_6 + attribute_2);
+                    String _plus_7 = (_plus_6 + attribute_2.name);
                     String _plus_8 = (_plus_7 + "&&");
                     predicate_1 = (_predicate_3 + _plus_8);
                   }
@@ -352,13 +352,13 @@ public class CQLPredicateParser implements IPredicateParser {
                 } else {
                   this.selectParser.parseWithPredicate(select_1);
                   QueryCache _queryCache_3 = this.cacheService.getQueryCache();
-                  Collection<String> _projectionAttributes_3 = _queryCache_3.getProjectionAttributes(select_1);
-                  for (final String attribute_3 : _projectionAttributes_3) {
+                  Collection<QueryCache.QueryAttribute> _projectionAttributes_3 = _queryCache_3.getProjectionAttributes(select_1);
+                  for (final QueryCache.QueryAttribute attribute_3 : _projectionAttributes_3) {
                     String _predicate_4 = predicate_1;
                     Attribute _attribute_3 = in.getAttribute();
                     String _name_3 = _attribute_3.getName();
                     String _plus_9 = (_name_3 + operator_1);
-                    String _plus_10 = (_plus_9 + attribute_3);
+                    String _plus_10 = (_plus_9 + attribute_3.name);
                     String _plus_11 = (_plus_10 + "&&");
                     predicate_1 = (_predicate_4 + _plus_11);
                   }

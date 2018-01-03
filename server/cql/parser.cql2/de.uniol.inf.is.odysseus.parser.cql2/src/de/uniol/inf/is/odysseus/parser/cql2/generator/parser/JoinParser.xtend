@@ -15,7 +15,7 @@ import java.util.List
 import java.util.Map.Entry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class JoinParser implements IJoinParser {
 
@@ -49,19 +49,19 @@ class JoinParser implements IJoinParser {
 			if (source instanceof NestedSource) {
 				var query = cacheService.getSelectCache().last()
 				
-				var Collection<QueryCacheAttributeEntry> queryAttributess = cacheService.getQueryCache().getQueryAttributes(query)
+				var Collection<QueryAttribute> queryAttributess = cacheService.getQueryCache().getQueryAttributes(query)
 				
 
 				var subQuery = source.statement.select as SimpleSelect
-				var Collection<QueryCacheAttributeEntry> subQueryAttributes = cacheService.getQueryCache().getQueryAttributes(subQuery)
+				var Collection<QueryAttribute> subQueryAttributes = cacheService.getQueryCache().getQueryAttributes(subQuery)
 
 				var lastOperator = cacheService.getOperatorCache().getSubQueries().get(subQuery)
 				var inputs = newArrayList
 				
 				var attributeAliases = utilityService.getAttributeAliasesAsList()
 				
-				for (QueryCacheAttributeEntry entry : queryAttributess) {
-					for (QueryCacheAttributeEntry entry2 : subQueryAttributes) {
+				for (QueryAttribute entry : queryAttributess) {
+					for (QueryAttribute entry2 : subQueryAttributes) {
 						if (entry2 !== null) {
 							var aliasses = newArrayList
 							for (String name : entry2.sources) {

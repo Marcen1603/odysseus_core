@@ -31,7 +31,7 @@ import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class SelectParser implements ISelectParser {
 
@@ -40,25 +40,27 @@ class SelectParser implements ISelectParser {
 	var AbstractPQLOperatorBuilder builder;
 	var ICacheService cacheService;
 	var IUtilityService utilityService;
-	var IAttributeNameParser attributeParser;
+	var IAttributeNameParser nameParser;
 	var IPredicateParser predicateParser;
 	var IJoinParser joinParser;
 	var IRenameParser renameParser;
 	var IProjectionParser projectionParser;
 	var IAggregationParser aggregateParser;
 	var IExistenceParser existenceParser;
+	var IAttributeParser attributeParser;
 	
 	var boolean prepare;
 
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ICacheService cacheService, IUtilityService utilityService,
-		IAttributeNameParser attributeParser, IPredicateParser predicateParser, IJoinParser joinParser,
+		IAttributeNameParser nameParser, IPredicateParser predicateParser, IJoinParser joinParser,
 		IProjectionParser projectionParser, IRenameParser renameParser, IAggregationParser aggregateParser, 
-		IExistenceParser existenceParser) {
+		IExistenceParser existenceParser, IAttributeParser attributeParser) {
 
 		this.builder = builder;
 		this.cacheService = cacheService;
 		this.utilityService = utilityService;
+		this.nameParser = nameParser;
 		this.attributeParser = attributeParser;
 		this.predicateParser = predicateParser;
 		this.joinParser = joinParser;
@@ -172,7 +174,8 @@ class SelectParser implements ISelectParser {
 					cacheService.getQueryCache().putSubQuerySources(subQuery);
 				}
 
-				var Collection<QueryCacheAttributeEntry> attributes2 = utilityService.getSelectedAttributes(select)
+				var Collection<QueryAttribute> attributes2 = attributeParser.getSelectedAttributes(select)
+				
 				var aggregations = extractAggregationsFromArgument(select.arguments)
 				var expressions = extractSelectExpressionsFromArgument(select.arguments)
 				if (aggregations !== null) {
@@ -204,7 +207,7 @@ class SelectParser implements ISelectParser {
 				Function:
 					str += component.name + '(' + parseExpression((component.value as SelectExpression)) + ')'
 				Attribute:
-					str += attributeParser.parse(component.name)
+					str += nameParser.parse(component.name)
 				IntConstant:
 					str += component.value + ''
 				FloatConstant:

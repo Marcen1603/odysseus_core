@@ -19,14 +19,16 @@ class AggregationParser implements IAggregationParser {
 	var AbstractPQLOperatorBuilder builder
 	var IUtilityService utilityService;
 	var IJoinParser joinParser;
-	var IAttributeNameParser attributeParser;
+	var IAttributeNameParser nameParser;
+	var IAttributeParser attributeParser;
 
 	@Inject
-	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser attributeParser) {
+	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser nameParser, IAttributeParser attributeParser) {
 
 		this.builder = builder;
 		this.utilityService = utilityService;
 		this.joinParser = joinParser;
+		this.nameParser = nameParser;
 		this.attributeParser = attributeParser;
 		
 	}
@@ -50,7 +52,7 @@ class AggregationParser implements IAggregationParser {
 				var comp = components.get(0).value
 				switch (comp) {
 					Attribute: {
-						attributename = attributeParser.parse(comp.name)
+						attributename = nameParser.parse(comp.name)
 						datatype = utilityService.getDataTypeFrom(attributename)
 
 					}
@@ -72,7 +74,7 @@ class AggregationParser implements IAggregationParser {
 			if (aggAttr.get(i).alias !== null)
 				alias = aggAttr.get(i).alias.name
 			else
-				alias = utilityService.getAggregationName(aggregation.name)
+				alias = attributeParser.getAggregationName(aggregation.name)
 			args.add(alias)
 			aliases.add(alias)
 
@@ -88,7 +90,7 @@ class AggregationParser implements IAggregationParser {
 		var groupby = ''
 		if (!orderAttr.empty)
 			groupby +=
-				utilityService.generateListString(orderAttr.stream.map(e|attributeParser.parse(e.name, null)).collect(Collectors.toList))
+				utilityService.generateListString(orderAttr.stream.map(e|nameParser.parse(e.name, null)).collect(Collectors.toList))
 		return #[aliases,
 			builder.build(typeof(AggregateAO),
 				newHashMap('aggregations' -> argsstr, 'group_by' -> if(groupby != '') groupby else null,

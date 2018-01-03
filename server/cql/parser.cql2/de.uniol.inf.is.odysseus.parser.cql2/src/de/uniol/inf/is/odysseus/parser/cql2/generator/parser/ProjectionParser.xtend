@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperato
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class ProjectionParser implements IProjectionParser {
 
@@ -17,16 +18,18 @@ class ProjectionParser implements IProjectionParser {
 	private IRenameParser renameParser;
 	private IUtilityService utilityService;
 	private ICacheService cacheService;
+	private IAttributeParser attributeParser;
 
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ISelectParser selectParser, IRenameParser renameParser,
-		IUtilityService utilityService, ICacheService cacheService) {
+		IUtilityService utilityService, ICacheService cacheService, IAttributeParser attributeParser) {
 
 		this.builder = builder;
 		this.selectParser = selectParser;
 		this.utilityService = utilityService;
 		this.cacheService = cacheService;
 		this.renameParser = renameParser;
+		this.attributeParser = attributeParser;
 
 	}
 
@@ -52,7 +55,7 @@ class ProjectionParser implements IProjectionParser {
 //			var expressionType = MEP.instance.parse(expressionString).returnType.toString //parseSelectExpressionType(expressionComponents)
 //			println("expressiontype:: " + expressionType)
 			if (expressions.get(i).alias === null)
-				expressionName = utilityService.getExpressionName()
+				expressionName = attributeParser.getExpressionName()
 			else
 				expressionName = expressions.get(i).alias.name
 			expressionStrings.add(expressionString)
@@ -70,7 +73,7 @@ class ProjectionParser implements IProjectionParser {
 	}
 
 	def private String buildProjection(SimpleSelect select, CharSequence operator) {
-		var attributes = cacheService.getQueryCache().getProjectionAttributes(select)
+		var Collection<QueryAttribute> attributes = cacheService.getQueryCache().getProjectionAttributes(select)
 		// Add new aliases from the rename operation		
 		for (var i = 0; i < renameParser.getAliases().size - 2; i = i + 3) {
 			var attributename = renameParser.getAliases().get(i)
@@ -79,12 +82,12 @@ class ProjectionParser implements IProjectionParser {
 			utilityService.getSource(sourcename).addAliasTo(attributename, alias);
 		}
 
-		var list = newArrayList
-		for (var i = 0; i < attributes.size; i++) {
-			var attribute1 = utilityService.getProjectAttribute(attributes.get(i))
-			list.add(attribute1)
-		}
-
+		val list = newArrayList
+		
+		attributes.stream().forEach(e | {
+			list.add(utilityService.getProjectAttribute(e.name));
+		})
+		
 		// Add new aliases from the rename operation		
 		for (var i = 0; i < renameParser.getAliases().size - 2; i = i + 3) {
 			var attributename = renameParser.getAliases().get(i)

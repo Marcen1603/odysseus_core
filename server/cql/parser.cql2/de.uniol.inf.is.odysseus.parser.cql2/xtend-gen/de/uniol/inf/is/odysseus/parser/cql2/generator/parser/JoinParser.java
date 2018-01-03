@@ -66,19 +66,19 @@ public class JoinParser implements IJoinParser {
           SelectCache _selectCache = this.cacheService.getSelectCache();
           SimpleSelect query = _selectCache.last();
           QueryCache _queryCache = this.cacheService.getQueryCache();
-          Collection<QueryCache.QueryCacheAttributeEntry> queryAttributess = _queryCache.getQueryAttributes(query);
+          Collection<QueryCache.QueryAttribute> queryAttributess = _queryCache.getQueryAttributes(query);
           InnerSelect _statement = ((NestedSource)source).getStatement();
           SimpleSelect _select = _statement.getSelect();
           SimpleSelect subQuery = ((SimpleSelect) _select);
           QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-          Collection<QueryCache.QueryCacheAttributeEntry> subQueryAttributes = _queryCache_1.getQueryAttributes(subQuery);
+          Collection<QueryCache.QueryAttribute> subQueryAttributes = _queryCache_1.getQueryAttributes(subQuery);
           OperatorCache _operatorCache = this.cacheService.getOperatorCache();
           Map<SimpleSelect, String> _subQueries = _operatorCache.getSubQueries();
           String lastOperator = _subQueries.get(subQuery);
           ArrayList<String> inputs = CollectionLiterals.<String>newArrayList();
           List<String> attributeAliases = this.utilityService.getAttributeAliasesAsList();
-          for (final QueryCache.QueryCacheAttributeEntry entry : queryAttributess) {
-            for (final QueryCache.QueryCacheAttributeEntry entry2 : subQueryAttributes) {
+          for (final QueryCache.QueryAttribute entry : queryAttributess) {
+            for (final QueryCache.QueryAttribute entry2 : subQueryAttributes) {
               if ((entry2 != null)) {
                 ArrayList<String> aliasses = CollectionLiterals.<String>newArrayList();
                 for (final String name : entry2.sources) {

@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.Collection;
@@ -35,13 +36,16 @@ public class AggregationParser implements IAggregationParser {
   
   private IJoinParser joinParser;
   
-  private IAttributeNameParser attributeParser;
+  private IAttributeNameParser nameParser;
+  
+  private IAttributeParser attributeParser;
   
   @Inject
-  public AggregationParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final IAttributeNameParser attributeParser) {
+  public AggregationParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final IAttributeNameParser nameParser, final IAttributeParser attributeParser) {
     this.builder = builder;
     this.utilityService = utilityService;
     this.joinParser = joinParser;
+    this.nameParser = nameParser;
     this.attributeParser = attributeParser;
   }
   
@@ -75,7 +79,7 @@ public class AggregationParser implements IAggregationParser {
           if (comp instanceof Attribute) {
             _matched=true;
             String _name = ((Attribute)comp).getName();
-            String _parse = this.attributeParser.parse(_name);
+            String _parse = this.nameParser.parse(_name);
             attributename = _parse;
             String _dataTypeFrom = this.utilityService.getDataTypeFrom(attributename);
             datatype = _dataTypeFrom;
@@ -102,7 +106,7 @@ public class AggregationParser implements IAggregationParser {
           alias = _name_1;
         } else {
           String _name_2 = aggregation.getName();
-          String _aggregationName = this.utilityService.getAggregationName(_name_2);
+          String _aggregationName = this.attributeParser.getAggregationName(_name_2);
           alias = _aggregationName;
         }
         args.add(alias);
@@ -136,7 +140,7 @@ public class AggregationParser implements IAggregationParser {
       Stream<Attribute> _stream = orderAttr.stream();
       final java.util.function.Function<Attribute, String> _function = (Attribute e) -> {
         String _name = e.getName();
-        return this.attributeParser.parse(_name, null);
+        return this.nameParser.parse(_name, null);
       };
       Stream<String> _map = _stream.<String>map(_function);
       Collector<String, ?, List<String>> _list = Collectors.<String>toList();

@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 
 public class ParserUtilityService implements IUtilityService {
 
@@ -106,158 +107,8 @@ public class ParserUtilityService implements IUtilityService {
 		return map;
 	}
 
-	int expressionCounter = 0;
-	int aggregationCounter = 0;
-
 	@Override
-	public Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select) {
-
-		Collection<QueryCacheAttributeEntry> entryCol = new ArrayList<>();
-		
-		Map<String, Collection<String>> map = new HashMap<>();
-		Collection<Attribute> attributes = new ArrayList<>();
-		String[] attributeOrder = new String[select.getArguments().size()];
-		String[] sourceOrder = new String[select.getArguments().size()];
-
-		// Get all attributes from select arguments
-		for (SelectArgument argument : select.getArguments()) {
-			if (argument.getAttribute() != null) {
-				attributes.add(argument.getAttribute());
-			}
-		}
-		
-		// Check if it is a select * query and add for each source its attributes
-		if (attributes.isEmpty() && EcoreUtil2.getAllContentsOfType(select, SelectExpression.class).isEmpty()) {
-			List<String> attributeOrderList = new ArrayList<>();
-			List<String> sourceOrderList = new ArrayList<>();
-
-			for (Source source : select.getSources()) {
-				if (source instanceof SimpleSource) {
-					String sourcename = ((SimpleSource) source).getName();
-					for (String attribute : getAttributeNamesFromSource(sourcename)) {
-						if (source.getAlias() != null) {
-							String alias = source.getAlias().getName() + "." + attribute;
-							SourceStruct struct = getSource(sourcename);
-							struct.addAliasTo(attribute, alias);
-							struct.associateAttributeAliasWithSourceAlias(alias, source);
-							attributeOrderList.add(alias);
-							map = addToMap(map, alias, sourcename);
-						} else {
-							attributeOrderList.add(sourcename + "." + attribute);
-						}
-						map = addToMap(map, attribute, sourcename);
-						sourceOrderList.add(sourcename);
-					}
-				}
-			}
-
-			attributeOrder = attributeOrderList.toArray(new String[attributeOrderList.size()]);
-			sourceOrder = sourceOrderList.toArray(new String[sourceOrderList.size()]);
-		
-			cacheService.getQueryCache().putProjectionAttributes(select, attributeOrder);
-			cacheService.getQueryCache().putProjectionSources(select, sourceOrder);
-
-			map.entrySet().stream().forEach(e -> {
-				entryCol.add(new QueryCacheAttributeEntry(e.getKey(), e.getValue()));
-			});
-			
-			return entryCol;
-		}
-
-		// Get all attributes from predicates
-		if (select.getPredicates() != null) {
-			List<Attribute> attributeList = EcoreUtil2.getAllContentsOfType(select.getPredicates(), Attribute.class);
-			for (Attribute attribute : attributeList) {
-				String attributename = attribute.getName();
-				if (attributename.contains(".")) {
-					String[] split = attributename.split("\\.");
-					String sourcename = split[0];
-					String attributename2 = split[1];
-					if (isSourceAlias(sourcename) && isAttributeAlias(attributename2)) {
-						registerAttributeAliases(attribute, attribute.getName(), getSourcenameFromAlias(sourcename), sourcename, false);
-					} else if (isSourceAlias(sourcename) && !isAttributeAlias(attributename2)) {
-						SourceStruct s = getSource(sourcename);
-						s.findByName(attributename2).addAlias(sourcename + "." + attributename2);
-						s.associateAttributeAliasWithSourceAlias(sourcename + "." + attributename2, sourcename);
-					}
-				}
-			}
-		}
-
-		int i = 0;
-		// Iterate over all found attributes
-		for (Attribute attribute : attributes) {
-			// Compute source candidates for the current attribute
-			List<SourceStruct> sourceCandidates = getSourceCandidates(attribute, select.getSources());
-			
-			// Parse the current attribute and get its informations			
-			Object[] parsedAttribute = parseAttribute(attribute);
-			String attributename = (String) parsedAttribute[0];
-			String attributealias = attribute.getAlias() != null ? attribute.getAlias().getName() : null;
-			String sourcename = (String) parsedAttribute[1];
-			String sourcealias = (String) parsedAttribute[2];
-			List<String> list = (List<String>) parsedAttribute[3];
-			boolean isFromSubQuery = (boolean) parsedAttribute[4];
-			
-			if (sourceCandidates.size() > 0) {
-				
-				if (sourceCandidates.size() > 1 && sourcename == null) {
-					throw new IllegalArgumentException("attribute " + attributename + " is ambiguous: possible sources are " + sourceCandidates.toString());
-				}
-				
-				if (sourceCandidates.size() == 1) {
-					sourcename = sourceCandidates.get(0).getName();
-//					sourcealias = getSource(sourcename).getAliasList().get(0);
-					if( list != null) {
-						for (String name : list) {
-							map = addToMap(map, name, sourcename);
-						}
-					}
-				}
-				
-				map = addToMap(map, attributename, sourcename);
-				
-				if(isFromSubQuery) {
-					getSource(sourcename).addAlias(sourcealias);
-				}
-				
-				attributealias = registerAttributeAliases(attribute, attributename, sourcename, sourcealias, isFromSubQuery);
-				
-			} else {
-				if(list != null) {
-					for (String name : list) {
-						map = addToMap(map, name, sourcename);
-						registerAttributeAliases(attribute, sourcealias + "." + name, sourcename, sourcealias, isFromSubQuery);
-					}
-				}
-			}
-			
-			attributeOrder = computeProjectionAttributes(
-					attributeOrder, 
-					select, 
-					attribute, 
-					attributename,
-					attributealias, 
-					sourcename
-			);
-			
-			sourceOrder[i] = sourcename;
-			i++;
-			
-		}
-		
-		attributeOrder = computeProjectionAttributes(attributeOrder, select, null, null, null, null);
-		cacheService.getQueryCache().putProjectionAttributes(select, attributeOrder);
-		cacheService.getQueryCache().putProjectionSources(select, sourceOrder);
-		
-		map.entrySet().stream().forEach(e -> {
-			entryCol.add(new QueryCacheAttributeEntry(e.getKey(), e.getValue()));
-		});
-		
-		return entryCol;
-	}
-
-	private String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
+	public String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
 			String sourcenamealias, boolean isSubQuery) {
 
 		String sourceAlias = sourcenamealias;
@@ -307,168 +158,8 @@ public class ParserUtilityService implements IUtilityService {
 		}
 	}
 	
-	private String[] computeProjectionAttributes(String[] list, SimpleSelect select, Attribute attribute,
-			String attributename, String attributealias, String sourcename) {
-
-		expressionCounter = 0;
-		aggregationCounter = 0;
-		int i = 0;
-		String[] attributeOrder = list;
-		Object candidate = null;
-
-		if (attribute != null) {
-			
-			for (SelectArgument argument : select.getArguments()) {
-				
-				if ((candidate = argument.getAttribute()) != null) {
-					
-					Attribute candidateAttribute = (Attribute) candidate;
-					if (candidateAttribute.getName().equals(attribute.getName())) {
-						if (candidateAttribute.getAlias() != null) {
-							attributeOrder[i] = candidateAttribute.getAlias().getName();
-						} else if (attributealias != null) {
-							attributeOrder[i] = attributealias;
-						} else {
-
-							if (attributename.contains(".")) {
-								String[] split = attributename.split("\\.");
-								String name = split[1];
-								String source = split[0];
-								String salias = source;
-
-								if (isSourceAlias(source)) {
-									source = getSourcenameFromAlias(salias);
-								}
-								if (name.equals("*")) {
-									// TODO Query with stream1.*, stream.* would be overriden!
-									Collection<String> attributeOrderList = new ArrayList<>(attributeOrder.length);
-									for (String str : getAttributeNamesFromSource(source)) {
-										attributeOrderList.add(salias + "." + str);
-										i++;
-									}
-									attributeOrder = attributeOrderList.toArray(new String[attributeOrderList.size()]);
-								} else {
-									attributeOrder[i] = attributename;
-								}
-
-							} else {
-								attributeOrder[i] = sourcename + "." + attributename;
-							}
-						}
-					}
-				}
-				attributeOrder = foo(candidate, attributeOrder, argument, i);
-				i++;
-			}
-		} else {
-			for (SelectArgument argument : select.getArguments()) {
-				attributeOrder = foo(candidate, attributeOrder, argument, i);
-				i++;
-			}
-		}
-
-		expressionCounter = 0;
-		aggregationCounter = 0;
-		return attributeOrder;
-	}
-
-	// TODO rename
-	private String[] foo(Object candidate, String[] attributeOrder, SelectArgument argument, int i) {
-		
-		if ((candidate = argument.getExpression()) != null) {
-			SelectExpression candiateExpression = (SelectExpression) candidate;
-			if (candiateExpression.getAlias() != null) {
-				attributeOrder[i] = candiateExpression.getAlias().getName();
-			} else {
-				if (candiateExpression.getExpressions().size() == 1) {
-					ExpressionComponent function = candiateExpression.getExpressions().get(0);
-					if (function.getValue() instanceof FunctionImpl ) {
-						if (isAggregateFunctionName(((Function) function.getValue()).getName())) {
-							attributeOrder[i] = getAggregationName(((Function) function.getValue()).getName());
-						} else {
-							attributeOrder[i] = getExpressionName();
-						}
-					}
-
-				} else {
-					attributeOrder[i] = getExpressionName();
-				}
-			}
-		}
-
-		return attributeOrder;
-	}
-
-	private static String EXPRESSSION_NAME_PREFIX = "expression_";
-
 	@Override
-	public String getExpressionName() {
-		return EXPRESSSION_NAME_PREFIX + (expressionCounter++);
-	}
-
-	@Override
-	public String getAggregationName(String name) {
-		return name + '_' + (aggregationCounter++);
-	}
-
-	protected List<SourceStruct> getSourceCandidates( Attribute attribute,  List<Source> sources) {
-		List<SourceStruct> containedBySources = new ArrayList<>();
-		for (Source source : sources) {
-			if (source instanceof SimpleSource) {
-				for (SourceStruct struct : cacheService.getSourceCache()) {
-					if (struct.isSame((SimpleSource) source) && struct.hasAttribute(attribute)
-							&& struct.isContainedBy(sources)) {
-						if (!containedBySources.contains(struct)) {
-							containedBySources.add(struct);
-						} else if (!attribute.getName().contains(".")) {
-							if (!isAttributeAlias(attribute.getName())) {
-								throw new IllegalArgumentException("error occurred: name=" + attribute.getName());
-							}
-						}
-					}
-				}
-
-			} else {
-				String subQueryAlias = ((NestedSource) source).getAlias().getName();
-
-				@SuppressWarnings("unchecked")
-				Collection<NestedSource> subQueries = (Collection<NestedSource>) cacheService.getQueryCache().getAll(QueryCache.Type.QUERY_SUBQUERY);
-				for (NestedSource subQuery : subQueries) {
-					if (subQuery.getAlias().getName().equals(subQueryAlias)) {
-						Collection<SimpleSource> simpleSources = getAllSubQuerySource(
-								subQuery.getStatement().getSelect());
-
-						for (SimpleSource simpleSource : simpleSources) {
-
-							for (SourceStruct struct : cacheService.getSourceCache()) {
-								String realName = attribute.getName();
-								if (realName.contains(".")) {
-									realName = realName.split("\\.")[1];
-								}
-								if (struct.isSame(simpleSource) && struct.hasAttribute(realName)) {
-									if (!containedBySources.contains(struct)) {
-										containedBySources.add(struct);
-									} else if (!attribute.getName().contains(".")) {
-										if (!isAttributeAlias(attribute.getName())) {
-											throw new IllegalArgumentException(
-													"error occurred: name=" + attribute.getName());
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}
-
-			}
-
-		}
-
-		return containedBySources;
-	}
-
-	private Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery) {
+	public Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery) {
 		Collection<SimpleSource> col = new ArrayList<>();
 		for (Source source : subQuery.getSources()) {
 			if (source instanceof SimpleSource) {
@@ -481,43 +172,8 @@ public class ParserUtilityService implements IUtilityService {
 		return col;
 	}
 
-	// TODO should this be private?
-	protected Object[] parseAttribute(Attribute attribute) {
-		String sourcename = null;
-		String sourcealias = null;
-		List<String> list = new ArrayList<>();
-		boolean subQuery = false;
-
-		if (attribute.getName().contains(".")) {
-			String[] split = attribute.getName().split("\\.");
-			sourcename = split[0];
-
-			if (!getSourceNames().contains(sourcename)) {
-				sourcealias = sourcename;
-				if ((sourcename = getSourcenameFromAlias(sourcename)) == null
-						&& (cacheService.getExpressionCache().get(split[0]) != null)) {
-					subQuery = true;
-				}
-
-			}
-
-			if (split[1].contains("*")) {
-				sourcename = split[0];
-				if (isSourceAlias(sourcename)) {
-					sourcealias = sourcename;
-					sourcename = getSourcenameFromAlias(sourcename);
-				}
-			}
-			for (String name : getAttributeNamesFromSource(sourcename)) {
-				list.add(name);
-			}
-
-		}
-
-		return new Object[] { attribute.getName(), sourcename, sourcealias, list, subQuery };
-	}
-
-	protected List<String> getAttributeNamesFromSource(String name) {
+	@Override
+	public Collection<String> getAttributeNamesFromSource(String name) {
 		return getSource(name).attributeList.stream().map(e -> e.getAttributename()).collect(Collectors.toList());
 	}
 
@@ -592,11 +248,13 @@ public class ParserUtilityService implements IUtilityService {
 		return "expression_";
 	}
 
-	protected List<String> getSourceNames() {
+	@Override
+	public Collection<String> getSourceNames() {
 		return cacheService.getSourceCache().stream().map(e -> e.getName()).collect(Collectors.toList());
 	}
 
-	protected String getSourcenameFromAlias(String name) {
+	@Override
+	public String getSourcenameFromAlias(String name) {
 		for (Map.Entry<SourceStruct, Collection<String>> source : getSourceAliases().entrySet()) {
 			if (source.getValue().contains(name)) {
 				return source.getKey().getName();
@@ -777,9 +435,7 @@ public class ParserUtilityService implements IUtilityService {
 //		cacheService.getExpressionCache().flush();
 //		cacheService.getSourceCache().flush();
 //		cacheService.getAggregationAttributeCache().flush();
-		
-		aggregationCounter = 0;
-		expressionCounter = 0;
+	
 		
 	}
 	

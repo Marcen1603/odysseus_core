@@ -41,7 +41,6 @@ public class AttributeNameParser implements IAttributeNameParser {
   
   @Override
   public String parse(final String attributename, final String sourcename) {
-    this.log.info((((("[parse:: attributename=" + attributename) + ", sourcename=") + sourcename) + "]"));
     String attribute = null;
     String source = null;
     if (((sourcename != null) && (!sourcename.equals("")))) {

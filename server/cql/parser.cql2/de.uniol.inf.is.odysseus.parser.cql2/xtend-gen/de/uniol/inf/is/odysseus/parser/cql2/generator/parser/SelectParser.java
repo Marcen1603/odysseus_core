@@ -30,6 +30,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.SelectCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
@@ -71,7 +72,7 @@ public class SelectParser implements ISelectParser {
   
   private IUtilityService utilityService;
   
-  private IAttributeNameParser attributeParser;
+  private IAttributeNameParser nameParser;
   
   private IPredicateParser predicateParser;
   
@@ -85,13 +86,16 @@ public class SelectParser implements ISelectParser {
   
   private IExistenceParser existenceParser;
   
+  private IAttributeParser attributeParser;
+  
   private boolean prepare;
   
   @Inject
-  public SelectParser(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService, final IUtilityService utilityService, final IAttributeNameParser attributeParser, final IPredicateParser predicateParser, final IJoinParser joinParser, final IProjectionParser projectionParser, final IRenameParser renameParser, final IAggregationParser aggregateParser, final IExistenceParser existenceParser) {
+  public SelectParser(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService, final IUtilityService utilityService, final IAttributeNameParser nameParser, final IPredicateParser predicateParser, final IJoinParser joinParser, final IProjectionParser projectionParser, final IRenameParser renameParser, final IAggregationParser aggregateParser, final IExistenceParser existenceParser, final IAttributeParser attributeParser) {
     this.builder = builder;
     this.cacheService = cacheService;
     this.utilityService = utilityService;
+    this.nameParser = nameParser;
     this.attributeParser = attributeParser;
     this.predicateParser = predicateParser;
     this.joinParser = joinParser;
@@ -250,7 +254,7 @@ public class SelectParser implements ISelectParser {
               _queryCache.putSubQuerySources(subQuery);
             }
           }
-          Collection<QueryCache.QueryCacheAttributeEntry> attributes2 = this.utilityService.getSelectedAttributes(select);
+          Collection<QueryCache.QueryAttribute> attributes2 = this.attributeParser.getSelectedAttributes(select);
           EList<SelectArgument> _arguments = select.getArguments();
           List<SelectExpression> aggregations = this.extractAggregationsFromArgument(_arguments);
           EList<SelectArgument> _arguments_1 = select.getArguments();
@@ -311,7 +315,7 @@ public class SelectParser implements ISelectParser {
             _matched=true;
             String _str = str;
             String _name = ((Attribute)component).getName();
-            String _parse = this.attributeParser.parse(_name);
+            String _parse = this.nameParser.parse(_name);
             str = (_str + _parse);
           }
         }
@@ -534,7 +538,7 @@ public class SelectParser implements ISelectParser {
             List<String> predicateAttributes = _xifexpression_2;
             Collection<de.uniol.inf.is.odysseus.core.collection.Pair<SelectExpression, String>> _aggregationAttributeCache = this.cacheService.getAggregationAttributeCache();
             QueryCache _queryCache = this.cacheService.getQueryCache();
-            Collection<String> _projectionAttributes = _queryCache.getProjectionAttributes(select);
+            Collection<QueryCache.QueryAttribute> _projectionAttributes = _queryCache.getProjectionAttributes(select);
             boolean _containsAll = _aggregationAttributeCache.containsAll(_projectionAttributes);
             if (_containsAll) {
               if ((((predicateAttributes != null) && (!predicateAttributes.isEmpty())) && 

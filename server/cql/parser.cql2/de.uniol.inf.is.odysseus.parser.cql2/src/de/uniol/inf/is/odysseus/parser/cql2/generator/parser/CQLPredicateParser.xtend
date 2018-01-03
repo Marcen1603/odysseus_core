@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class CQLPredicateParser implements IPredicateParser {
 
@@ -149,13 +149,15 @@ class CQLPredicateParser implements IPredicateParser {
 							var predicate = ''
 							if (select.predicates === null) {
 								selectParser.parse(select)
-								for (String attribute : cacheService.getQueryCache().getProjectionAttributes(select))
-									predicate += quantification.attribute.name + operator + attribute + '&&'
+								for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+									predicate += quantification.attribute.name + operator + attribute.name + '&&'
+								}
 								predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 							} else {
 								selectParser.parseWithPredicate(select)
-								for (String attribute : cacheService.getQueryCache().getProjectionAttributes(select))
-									predicate += quantification.attribute.name + operator + attribute + '&&'
+								for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+									predicate += quantification.attribute.name + operator + attribute.name + '&&'
+								}
 								predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 							}
 
@@ -210,13 +212,15 @@ class CQLPredicateParser implements IPredicateParser {
 							var predicate = ''
 							if (select.predicates === null) {
 								selectParser.parse(select)
-								for (String attribute : cacheService.getQueryCache().getProjectionAttributes(select))
-									predicate += in.attribute.name + operator + attribute + '&&'
+								for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+									predicate += in.attribute.name + operator + attribute.name + '&&'	
+								}
 								predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 							} else {
 								selectParser.parseWithPredicate(select)
-								for (String attribute : cacheService.getQueryCache().getProjectionAttributes(select))
-									predicate += in.attribute.name + operator + attribute + '&&'
+								for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+									predicate += in.attribute.name + operator + attribute.name + '&&'
+								}
 								predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
 							}
 //FIXME 31.12.17
@@ -304,7 +308,7 @@ class CQLPredicateParser implements IPredicateParser {
 
 //		println("exists() -> " + predicateString)
 //FIXME not working anymore 31.12.17
-//		for (QueryCacheAttributeEntry l : cacheService.getQueryCache().getQueryAttributes(subQuery))
+//		for (QueryAttribute l : cacheService.getQueryCache().getQueryAttributes(subQuery))
 //			for (String s : l.value) {
 //				var attributename = s
 //				if (!attributename.contains('.')) {

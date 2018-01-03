@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
@@ -38,17 +39,26 @@ public class QueryCache implements Cache {
 		}
 	}
 
-	public void putProjectionAttributes(SimpleSelect query, String[] attributes) {
+//////	 
+	
+	private Map<SimpleSelect, Collection<QueryAttribute>> projectionAttributes = new HashMap<>();
+	
+	public void putProjectionAttributes(SimpleSelect query, QueryAttribute[] attributes) {
 		putProjectionAttributes(query, Arrays.asList(attributes));
 	}
 
-	public void putProjectionAttributes(SimpleSelect query, Collection<String> attributes) {
-		putCollection(query, attributes, Type.PROJECTION_ATTRIBUTE);
+	public void putProjectionAttributes(SimpleSelect query, Collection<QueryAttribute> attributes) {
+		
+		projectionAttributes.put(query, attributes);
+		
+//		putCollection(query, attributes, Type.PROJECTION_ATTRIBUTE);
 	}
 
-	public Collection<String> getProjectionAttributes(SimpleSelect query) {
-		return (Collection<String>) getCollection(query, Type.PROJECTION_ATTRIBUTE);
+	public Collection<QueryAttribute> getProjectionAttributes(SimpleSelect query) {
+		return projectionAttributes.containsKey(query) ? projectionAttributes.get(query) : null;
 	}
+	
+////	
 
 	public void putProjectionSources(SimpleSelect query, String[] sources) {
 		putProjectionSources(query, Arrays.asList(sources));
@@ -69,9 +79,9 @@ public class QueryCache implements Cache {
 		
 		public String parent;
 		public NestedSource subQuery;
-		public Collection<QueryCacheAttributeEntry> attributes;
+		public Collection<QueryAttribute> attributes;
 		
-		public QueryCacheSubQueryEntry(String parent, NestedSource subQuery, Collection<QueryCacheAttributeEntry> attributes) {
+		public QueryCacheSubQueryEntry(String parent, NestedSource subQuery, Collection<QueryAttribute> attributes) {
 			super();
 			this.parent = parent;
 			this.subQuery = subQuery;
@@ -96,12 +106,22 @@ public class QueryCache implements Cache {
 	}
 ////
 	
-	public static class QueryCacheAttributeEntry {
+	public static class QueryAttribute {
 		
 		public String name;
+		public String alias;
 		public Collection<String> sources;
+		public Attribute attribute;
 		
-		public QueryCacheAttributeEntry(String name, Collection<String> sources) {
+		public QueryAttribute(Attribute obj) {
+			
+			this.attribute = obj;
+			this.name = obj.getName();
+			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
+			
+		}
+		
+		public QueryAttribute(String name, Collection<String> sources) {
 			super();
 			this.name = name;
 			this.sources = sources;
@@ -110,13 +130,13 @@ public class QueryCache implements Cache {
 	}
 	
 	
-	private Map<SimpleSelect, Collection<QueryCacheAttributeEntry>> attributeEntries = new HashMap<>();
+	private Map<SimpleSelect, Collection<QueryAttribute>> attributeEntries = new HashMap<>();
 	
-	public void putQueryAttributes(SimpleSelect query, Collection<QueryCacheAttributeEntry> entry) {
+	public void putQueryAttributes(SimpleSelect query, Collection<QueryAttribute> entry) {
 		attributeEntries.put(query, entry);
 	}
 	
-	public Collection<QueryCacheAttributeEntry> getQueryAttributes(SimpleSelect query) {
+	public Collection<QueryAttribute> getQueryAttributes(SimpleSelect query) {
 		return attributeEntries.containsKey(query) ? attributeEntries.get(query) : null;
 	}
 	

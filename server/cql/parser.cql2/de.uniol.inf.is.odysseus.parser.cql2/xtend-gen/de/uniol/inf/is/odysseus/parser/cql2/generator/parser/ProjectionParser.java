@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IProjectionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ISelectParser;
@@ -18,6 +19,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -34,13 +37,16 @@ public class ProjectionParser implements IProjectionParser {
   
   private ICacheService cacheService;
   
+  private IAttributeParser attributeParser;
+  
   @Inject
-  public ProjectionParser(final AbstractPQLOperatorBuilder builder, final ISelectParser selectParser, final IRenameParser renameParser, final IUtilityService utilityService, final ICacheService cacheService) {
+  public ProjectionParser(final AbstractPQLOperatorBuilder builder, final ISelectParser selectParser, final IRenameParser renameParser, final IUtilityService utilityService, final ICacheService cacheService, final IAttributeParser attributeParser) {
     this.builder = builder;
     this.selectParser = selectParser;
     this.utilityService = utilityService;
     this.cacheService = cacheService;
     this.renameParser = renameParser;
+    this.attributeParser = attributeParser;
   }
   
   @Override
@@ -71,7 +77,7 @@ public class ProjectionParser implements IProjectionParser {
         Alias _alias = _get_1.getAlias();
         boolean _tripleEquals = (_alias == null);
         if (_tripleEquals) {
-          String _expressionName = this.utilityService.getExpressionName();
+          String _expressionName = this.attributeParser.getExpressionName();
           expressionName = _expressionName;
         } else {
           SelectExpression _get_2 = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
@@ -108,7 +114,7 @@ public class ProjectionParser implements IProjectionParser {
   
   private String buildProjection(final SimpleSelect select, final CharSequence operator) {
     QueryCache _queryCache = this.cacheService.getQueryCache();
-    Collection<String> attributes = _queryCache.getProjectionAttributes(select);
+    Collection<QueryCache.QueryAttribute> attributes = _queryCache.getProjectionAttributes(select);
     for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
       {
         Collection<String> _aliases = this.renameParser.getAliases();
@@ -121,15 +127,13 @@ public class ProjectionParser implements IProjectionParser {
         _source.addAliasTo(attributename, alias);
       }
     }
-    ArrayList<String> list = CollectionLiterals.<String>newArrayList();
-    for (int i = 0; (i < attributes.size()); i++) {
-      {
-        final Collection<String> _converted_attributes = (Collection<String>)attributes;
-        String _get = ((String[])Conversions.unwrapArray(_converted_attributes, String.class))[i];
-        String attribute1 = this.utilityService.getProjectAttribute(_get);
-        list.add(attribute1);
-      }
-    }
+    final ArrayList<String> list = CollectionLiterals.<String>newArrayList();
+    Stream<QueryCache.QueryAttribute> _stream = attributes.stream();
+    final Consumer<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute e) -> {
+      String _projectAttribute = this.utilityService.getProjectAttribute(e.name);
+      list.add(_projectAttribute);
+    };
+    _stream.forEach(_function);
     for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
       {
         Collection<String> _aliases = this.renameParser.getAliases();

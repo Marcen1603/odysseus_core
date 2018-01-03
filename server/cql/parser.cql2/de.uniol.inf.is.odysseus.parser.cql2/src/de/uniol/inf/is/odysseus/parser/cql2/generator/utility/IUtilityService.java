@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
@@ -13,7 +14,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryCacheAttributeEntry;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public interface IUtilityService {
 
 	List<String> getAttributeAliasesAsList();
 	Map<SourceStruct, Collection<String>> getSourceAliases();
-	Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select);
+//	Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select);
 	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
 //	void addSubQuerySources(@NotNull NestedSource subQuery);
 	Map<AttributeStruct, Collection<String>> getAttributeAliasesAsMap();
@@ -42,8 +43,8 @@ public interface IUtilityService {
 	AttributeStruct getAttributeFromAlias(String attributealias);
 	String getAttributenameFromAlias(String attributealias);
 	List<String> getSourceAliasesAsList();
-	String getExpressionName();
-	String getAggregationName(String name);
+//	String getExpressionName();
+//	String getAggregationName(String name);
 	String getProjectAttribute(String name);
 	boolean isSourceAlias(String name);
 	void clear();
@@ -58,6 +59,10 @@ public interface IUtilityService {
 	String generateKeyValueString(List<String> l1, List<String> l2, String s);
 	String generateKeyValueString(String[] s);
 	String getDataTypeFrom(String attribute);
-	
+	Collection<String> getAttributeNamesFromSource(String name);
+	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
+	String getSourcenameFromAlias(String name);
+	Collection<String> getSourceNames();
+	String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename, String sourcenamealias, boolean isSubQuery); 
 	
 }
