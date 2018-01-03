@@ -22,7 +22,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
@@ -154,7 +154,7 @@ public class SelectParser implements ISelectParser {
         if ((source instanceof SimpleSource)) {
           String _name = ((SimpleSource) source).getName();
           String _name_1 = name = _name;
-          SourceStruct.addQuerySource(_name_1);
+          SystemSource.addQuerySource(_name_1);
           if (((((SimpleSource)source).getAlias() != null) && (!this.utilityService.getSource(((SimpleSource)source)).hasAlias(((SimpleSource)source).getAlias())))) {
             this.utilityService.registerSourceAlias(((SimpleSource) source));
           }
@@ -254,6 +254,7 @@ public class SelectParser implements ISelectParser {
               _queryCache.putSubQuerySources(subQuery);
             }
           }
+          this.attributeParser.parsePredicateAttributes(select);
           Collection<QueryCache.QueryAttribute> attributes2 = this.attributeParser.getSelectedAttributes(select);
           EList<SelectArgument> _arguments = select.getArguments();
           List<SelectExpression> aggregations = this.extractAggregationsFromArgument(_arguments);

@@ -78,7 +78,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.UserManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class CQLParser implements IQueryParser {
 
@@ -367,11 +367,11 @@ public class CQLParser implements IQueryParser {
 		return MEP.getInstance();
 	}
 
-	public List<SourceStruct> convertSchema(Collection<SDFSchema> schema) {
-		ArrayList<SourceStruct> list = new ArrayList<>();
+	public List<SystemSource> convertSchema(Collection<SDFSchema> schema) {
+		ArrayList<SystemSource> list = new ArrayList<>();
 		for (SDFSchema ss : schema) {
 			for (String sourcename : ss.getBaseSourceNames()) {
-				SourceStruct sourceStruct = new SourceStruct();
+				SystemSource sourceStruct = new SystemSource();
 				sourceStruct.setName(sourcename);
 				for (SDFAttribute struct : ss.getAttributes()) {
 					if (sourcename.equals(struct.getSourceName())) {

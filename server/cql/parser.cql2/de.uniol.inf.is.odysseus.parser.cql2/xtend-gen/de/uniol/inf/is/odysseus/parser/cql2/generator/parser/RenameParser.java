@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
@@ -58,7 +58,7 @@ public class RenameParser implements IRenameParser {
   @Override
   public CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final int selfJoin) {
     final ArrayList<List<String>> listOfLists = CollectionLiterals.<List<String>>newArrayList();
-    final SourceStruct source = this.utilityService.getSource(simpleSource);
+    final SystemSource source = this.utilityService.getSource(simpleSource);
     String _xifexpression = null;
     Alias _alias = simpleSource.getAlias();
     boolean _tripleNotEquals = (_alias != null);

@@ -13,5 +13,6 @@ public interface IAttributeParser {
 			Attribute attribute, String attributename, String attributealias, String sourcename);
 	String getExpressionName();
 	String getAggregationName(String name);
+	void parsePredicateAttributes(SimpleSelect select);
 
 }

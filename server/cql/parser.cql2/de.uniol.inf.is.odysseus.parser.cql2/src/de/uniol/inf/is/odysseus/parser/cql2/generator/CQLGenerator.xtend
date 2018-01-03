@@ -107,8 +107,8 @@ class CQLGenerator implements IGenerator2 {
 		cacheService.getSelectCache().flush()
 //		cacheService.getQueryCache().flush()
 		cacheService.getExpressionCache().clear()
-		SourceStruct.clearQuerySources()
-		SourceStruct.clearAttributeAliases()
+		SystemSource.clearQuerySources()
+		SystemSource.clearAttributeAliases()
 		
 		//TODO clear caches! really?
 		
@@ -451,7 +451,7 @@ class CQLGenerator implements IGenerator2 {
 		return list
 	}
 
-	def void setSchema(List<SourceStruct> schemata) { utilityService.sourcesStructs = schemata }
+	def void setSchema(List<SystemSource> schemata) { utilityService.sourcesStructs = schemata }
 
 	def setDatabaseConnections(Map<String, String> connections) {
 		databaseConnections = connections;

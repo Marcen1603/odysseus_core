@@ -20,9 +20,10 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.List
@@ -31,7 +32,6 @@ import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class SelectParser implements ISelectParser {
 
@@ -117,7 +117,7 @@ class SelectParser implements ISelectParser {
 			if (source instanceof SimpleSource) {
 
 //				if(!SourceStruct.existQuerySource(name = (source as SimpleSource).getName())) {
-				SourceStruct.addQuerySource(name = (source as SimpleSource).getName());
+				SystemSource.addQuerySource(name = (source as SimpleSource).getName());
 //				}
 				if (source.alias !== null && !utilityService.getSource(source).hasAlias(source.alias)) {
 					utilityService.registerSourceAlias(source as SimpleSource);
@@ -174,6 +174,7 @@ class SelectParser implements ISelectParser {
 					cacheService.getQueryCache().putSubQuerySources(subQuery);
 				}
 
+				attributeParser.parsePredicateAttributes(select);
 				var Collection<QueryAttribute> attributes2 = attributeParser.getSelectedAttributes(select)
 				
 				var aggregations = extractAggregationsFromArgument(select.arguments)

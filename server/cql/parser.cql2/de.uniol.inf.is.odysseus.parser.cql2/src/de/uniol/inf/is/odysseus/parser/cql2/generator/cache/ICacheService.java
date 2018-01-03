@@ -6,11 +6,11 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public interface ICacheService {
 	
-	Collection<SourceStruct> getSourceCache();
+	Collection<SystemSource> getSourceCache();
 	Collection<Pair<SelectExpression, String>> getAggregationAttributeCache();
 	OperatorCache getOperatorCache();
 	Map<String, String> getExpressionCache();

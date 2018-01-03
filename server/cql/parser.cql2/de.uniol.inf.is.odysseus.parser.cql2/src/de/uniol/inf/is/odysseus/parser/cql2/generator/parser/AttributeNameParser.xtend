@@ -1,12 +1,12 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 
 class AttributeNameParser implements IAttributeNameParser {
 
@@ -30,7 +30,7 @@ class AttributeNameParser implements IAttributeNameParser {
 		var String attribute
 		var String source
 		if (sourcename !== null && !sourcename.equals("")) {
-			var SourceStruct tmp
+			var SystemSource tmp
 			attribute = attributename
 			source = if((tmp = utilityService.getSource(sourcename)) !== null) tmp.getName else null
 		} else if (attributename.contains(".")) {
@@ -91,7 +91,7 @@ class AttributeNameParser implements IAttributeNameParser {
 			var containedBySources = newArrayList
 //			var usedNames = newArrayList
 			// TODO clear all data structures!!!!
-			for (String name : SourceStruct.getQuerySources()) {
+			for (String name : SystemSource.getQuerySources()) {
 //				if (!usedNames.contains(name)) {
 //					usedNames.add(name)
 				log.info("querySource::" + name)

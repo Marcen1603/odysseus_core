@@ -32,7 +32,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLBuilderModule;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.CacheModule;
@@ -134,14 +134,14 @@ public class CQLGenerator implements IGenerator2 {
     this.selectParser.clear();
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
     _operatorCache.flush();
-    Collection<SourceStruct> _sourceCache = this.cacheService.getSourceCache();
+    Collection<SystemSource> _sourceCache = this.cacheService.getSourceCache();
     _sourceCache.clear();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     _selectCache.flush();
     Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
     _expressionCache.clear();
-    SourceStruct.clearQuerySources();
-    SourceStruct.clearAttributeAliases();
+    SystemSource.clearQuerySources();
+    SystemSource.clearAttributeAliases();
   }
   
   @Override
@@ -764,7 +764,7 @@ public class CQLGenerator implements IGenerator2 {
     return list;
   }
   
-  public void setSchema(final List<SourceStruct> schemata) {
+  public void setSchema(final List<SystemSource> schemata) {
     this.utilityService.setSourcesStructs(schemata);
   }
   

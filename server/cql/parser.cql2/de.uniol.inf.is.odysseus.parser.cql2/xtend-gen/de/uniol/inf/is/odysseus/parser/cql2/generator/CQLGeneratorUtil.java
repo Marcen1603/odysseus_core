@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class CQLGeneratorUtil {
   
   private CQLGenerator generator;
   
-  private static List<SourceStruct> registry_Sources = CollectionLiterals.<SourceStruct>newArrayList();
+  private static List<SystemSource> registry_Sources = CollectionLiterals.<SystemSource>newArrayList();
   
   private static Map<String, String> registry_Expressions = CollectionLiterals.<String, String>newHashMap();
   
@@ -117,7 +117,7 @@ public class CQLGeneratorUtil {
   
   public static List<AttributeStruct> getAttributes() {
     throw new Error("Unresolved compilation problems:"
-      + "\nThe method or field attributes is undefined for the type SourceStruct");
+      + "\nThe method or field attributes is undefined for the type SystemSource");
   }
   
   public static AttributeStruct getAttribute(final String name) {

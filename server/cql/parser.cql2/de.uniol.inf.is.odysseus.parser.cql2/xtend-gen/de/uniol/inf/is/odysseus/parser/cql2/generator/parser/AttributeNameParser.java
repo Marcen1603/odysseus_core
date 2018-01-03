@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
@@ -44,11 +44,11 @@ public class AttributeNameParser implements IAttributeNameParser {
     String attribute = null;
     String source = null;
     if (((sourcename != null) && (!sourcename.equals("")))) {
-      SourceStruct tmp = null;
+      SystemSource tmp = null;
       attribute = attributename;
       String _xifexpression = null;
-      SourceStruct _source = this.utilityService.getSource(sourcename);
-      SourceStruct _tmp = (tmp = _source);
+      SystemSource _source = this.utilityService.getSource(sourcename);
+      SystemSource _tmp = (tmp = _source);
       boolean _tripleNotEquals = (_tmp != null);
       if (_tripleNotEquals) {
         _xifexpression = tmp.getName();
@@ -86,7 +86,7 @@ public class AttributeNameParser implements IAttributeNameParser {
             this.log.info("YO-1");
             return r;
           } else {
-            SourceStruct _source_1 = this.utilityService.getSource(source);
+            SystemSource _source_1 = this.utilityService.getSource(source);
             AttributeStruct _findByName = _source_1.findByName(attributename);
             List<String> attributeAliases = _findByName.getAliases();
             boolean _isEmpty = attributeAliases.isEmpty();
@@ -142,12 +142,12 @@ public class AttributeNameParser implements IAttributeNameParser {
       if (_isAttributeAlias) {
         return attribute;
       }
-      ArrayList<SourceStruct> containedBySources = CollectionLiterals.<SourceStruct>newArrayList();
-      Collection<String> _querySources = SourceStruct.getQuerySources();
+      ArrayList<SystemSource> containedBySources = CollectionLiterals.<SystemSource>newArrayList();
+      Collection<String> _querySources = SystemSource.getQuerySources();
       for (final String name : _querySources) {
         {
           this.log.info(("querySource::" + name));
-          SourceStruct source2 = this.utilityService.getSource(name);
+          SystemSource source2 = this.utilityService.getSource(name);
           boolean _hasAttribute = source2.hasAttribute(attribute);
           if (_hasAttribute) {
             containedBySources.add(source2);
@@ -160,9 +160,9 @@ public class AttributeNameParser implements IAttributeNameParser {
       int _size = containedBySources.size();
       boolean _equals = (_size == 1);
       if (_equals) {
-        SourceStruct _get_3 = containedBySources.get(0);
+        SystemSource _get_3 = containedBySources.get(0);
         String _name = _get_3.getName();
-        SourceStruct _source_2 = this.utilityService.getSource(_name);
+        SystemSource _source_2 = this.utilityService.getSource(_name);
         AttributeStruct _findByName_1 = _source_2.findByName(attribute);
         List<String> aliases = _findByName_1.getAliases();
         boolean _isEmpty_1 = aliases.isEmpty();
@@ -176,9 +176,9 @@ public class AttributeNameParser implements IAttributeNameParser {
           return aliases.get(0);
         }
         this.log.info("HERE2");
-        SourceStruct _get_4 = containedBySources.get(0);
+        SystemSource _get_4 = containedBySources.get(0);
         String _name_1 = _get_4.getName();
-        SourceStruct sourceStruct = this.utilityService.getSource(_name_1);
+        SystemSource sourceStruct = this.utilityService.getSource(_name_1);
         boolean _isEmpty_2 = sourceStruct.aliasList.isEmpty();
         boolean _not_2 = (!_isEmpty_2);
         if (_not_2) {
@@ -187,7 +187,7 @@ public class AttributeNameParser implements IAttributeNameParser {
           return (_plus_2 + attributename);
         }
         this.log.info("HERE3");
-        SourceStruct _get_6 = containedBySources.get(0);
+        SystemSource _get_6 = containedBySources.get(0);
         String _name_2 = _get_6.getName();
         String _plus_3 = (_name_2 + ".");
         return (_plus_3 + attribute);

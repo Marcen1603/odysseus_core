@@ -26,7 +26,7 @@ class CQLGeneratorUtil {
 
 	private var CQLGenerator generator
 
-	private static var List<SourceStruct> registry_Sources = newArrayList
+	private static var List<SystemSource> registry_Sources = newArrayList
 	private static var Map<String, String> registry_Expressions = newHashMap
 	private static var List<String> registry_AggregationAttributes = newArrayList
 	private static var Map<SelectExpression, String> registry_AggregationAttributes2 = newHashMap
@@ -89,7 +89,7 @@ class CQLGeneratorUtil {
 
 	public static def List<AttributeStruct> getAttributes() {
 		var list = newArrayList
-		for (SourceStruct source : registry_Sources)
+		for (SystemSource source : registry_Sources)
 			list.addAll(source.attributes)
 		return list
 	}

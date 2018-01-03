@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -18,7 +17,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
-import java.util.List;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class QueryCache implements Cache {
 	
@@ -120,9 +119,20 @@ public class QueryCache implements Cache {
 			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
 			
 		}
+
+		public QueryAttribute(Attribute e, SystemSource systemSource) {
+			this.attribute = e;
+			this.sources = new ArrayList<>();
+			this.sources.add(systemSource.name);
+		}
+		
+		public QueryAttribute(String name, SystemSource systemSource) {
+			this.name = name;
+			this.sources = new ArrayList<>();
+			this.sources.add(systemSource.name);
+		}
 		
 		public QueryAttribute(String name, Collection<String> sources) {
-			super();
 			this.name = name;
 			this.sources = sources;
 		}

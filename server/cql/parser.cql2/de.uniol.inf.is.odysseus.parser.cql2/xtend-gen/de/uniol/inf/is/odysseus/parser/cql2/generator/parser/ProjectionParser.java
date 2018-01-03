@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
@@ -123,7 +123,7 @@ public class ProjectionParser implements IProjectionParser {
         String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
         Collection<String> _aliases_2 = this.renameParser.getAliases();
         String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SourceStruct _source = this.utilityService.getSource(sourcename);
+        SystemSource _source = this.utilityService.getSource(sourcename);
         _source.addAliasTo(attributename, alias);
       }
     }
@@ -142,7 +142,7 @@ public class ProjectionParser implements IProjectionParser {
         String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
         Collection<String> _aliases_2 = this.renameParser.getAliases();
         String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SourceStruct _source = this.utilityService.getSource(sourcename);
+        SystemSource _source = this.utilityService.getSource(sourcename);
         _source.removeAliasFrom(attributename, alias);
       }
     }

@@ -10,12 +10,12 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 public class AttributeStruct {
 
 	public String attributename;
-	public SourceStruct source;
+	public SystemSource source;
 	public String datatype;
 	public List<String> prefixes;
 	public List<String> aliases;
 
-	public AttributeStruct(SourceStruct source, String name, String type) {
+	public AttributeStruct(SystemSource source, String name, String type) {
 		this.prefixes = new ArrayList<>();
 		this.aliases = new ArrayList<>();
 		this.source = source;
@@ -46,11 +46,11 @@ public class AttributeStruct {
 		this.attributename = attributename;
 	}
 
-	public SourceStruct getSource() {
+	public SystemSource getSource() {
 		return source;
 	}
 
-	public void setSource(SourceStruct source) {
+	public void setSource(SystemSource source) {
 		this.source = source;
 	}
 

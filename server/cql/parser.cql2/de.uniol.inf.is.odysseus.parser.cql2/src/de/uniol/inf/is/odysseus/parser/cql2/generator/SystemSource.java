@@ -15,18 +15,18 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 
-public class SourceStruct {
+public class SystemSource {
 
 	public static Map<String, String> attributeAliases = new HashMap<>();
 	public static Collection<String> querySources = new HashSet<>();
 
-	private final Logger log = LoggerFactory.getLogger(SourceStruct.class);
+	private final Logger log = LoggerFactory.getLogger(SystemSource.class);
 
 	public String name;
 	public Collection<AttributeStruct> attributeList;
 	public List<String> aliasList;
 
-	public SourceStruct() {
+	public SystemSource() {
 		attributeList = new ArrayList<>();
 		aliasList = new ArrayList<>();
 
@@ -239,7 +239,7 @@ public class SourceStruct {
 	}
 
 	public static void setQuerySources(Collection<String> querySources) {
-		SourceStruct.querySources = querySources;
+		SystemSource.querySources = querySources;
 	}
 
 	public static boolean existQuerySource(String querySource) {

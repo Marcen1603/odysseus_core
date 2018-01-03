@@ -10,9 +10,9 @@ import java.util.Collection
 import java.util.List
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 
 class RenameParser implements IRenameParser {
 
@@ -46,7 +46,7 @@ class RenameParser implements IRenameParser {
 		val listOfLists= newArrayList()
 		
 		// get SourceStruct to the given source
-		val SourceStruct source = utilityService.getSource(simpleSource)	
+		val SystemSource source = utilityService.getSource(simpleSource)	
 		// get alias from source if available
 		val String sourcealias = if (simpleSource.alias !== null) simpleSource.alias.name else null;
 		

@@ -13,7 +13,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public interface IUtilityService {
 
 	List<String> getAttributeAliasesAsList();
-	Map<SourceStruct, Collection<String>> getSourceAliases();
+	Map<SystemSource, Collection<String>> getSourceAliases();
 //	Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select);
 	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
 //	void addSubQuerySources(@NotNull NestedSource subQuery);
@@ -29,8 +29,8 @@ public interface IUtilityService {
 	boolean isAggregateFunctionName(String name);
 	boolean isMEPFunctionMame(String name, String parsedMEP);
 	Map<String, Collection<String>> getSubQuerySources();
-	SourceStruct getSource(@NotNull String name);
-	SourceStruct getSource(@NotNull SimpleSource source); 
+	SystemSource getSource(@NotNull String name);
+	SystemSource getSource(@NotNull SimpleSource source); 
 	void addAggregationAttribute(SelectExpression aggregation, String alias);
 //	void addQueryAttributes(@NotNull SimpleSelect select, @NotNull Map<String, List<String>> attributes);
 	void registerSourceAlias(@NotNull SimpleSource source);
@@ -48,7 +48,7 @@ public interface IUtilityService {
 	String getProjectAttribute(String name);
 	boolean isSourceAlias(String name);
 	void clear();
-	void setSourcesStructs(Collection<SourceStruct> sources);
+	void setSourcesStructs(Collection<SystemSource> sources);
 	boolean isAggregationAttribute(String name);
 	boolean isAttributeAlias(String string);
 	AttributeStruct getAttribute(String string);

@@ -8,12 +8,12 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class CacheService implements ICacheService {
 
 	private QueryCache queryCache;
-	private Collection<SourceStruct> sourceCache;
+	private Collection<SystemSource> sourceCache;
 	private Collection<Pair<SelectExpression, String>> aggAttributeCache;
 	private Map<String, String> expressionCache;
 	private Map<String, String> attributeAliasCache;
@@ -38,7 +38,7 @@ public class CacheService implements ICacheService {
 	}
 
 	@Override
-	public Collection<SourceStruct> getSourceCache() {
+	public Collection<SystemSource> getSourceCache() {
 		return sourceCache;
 	}
 	
