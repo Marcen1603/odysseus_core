@@ -4,34 +4,28 @@ import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.BoolConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionsModel;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InnerSelect;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Matrix;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.SelectCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExpressionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IProjectionParser;
@@ -43,11 +37,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
@@ -88,10 +82,12 @@ public class SelectParser implements ISelectParser {
   
   private IAttributeParser attributeParser;
   
+  private IExpressionParser expressionParser;
+  
   private boolean prepare;
   
   @Inject
-  public SelectParser(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService, final IUtilityService utilityService, final IAttributeNameParser nameParser, final IPredicateParser predicateParser, final IJoinParser joinParser, final IProjectionParser projectionParser, final IRenameParser renameParser, final IAggregationParser aggregateParser, final IExistenceParser existenceParser, final IAttributeParser attributeParser) {
+  public SelectParser(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService, final IUtilityService utilityService, final IAttributeNameParser nameParser, final IPredicateParser predicateParser, final IJoinParser joinParser, final IProjectionParser projectionParser, final IRenameParser renameParser, final IAggregationParser aggregateParser, final IExistenceParser existenceParser, final IAttributeParser attributeParser, final IExpressionParser expressionParser) {
     this.builder = builder;
     this.cacheService = cacheService;
     this.utilityService = utilityService;
@@ -103,6 +99,7 @@ public class SelectParser implements ISelectParser {
     this.aggregateParser = aggregateParser;
     this.existenceParser = existenceParser;
     this.renameParser = renameParser;
+    this.expressionParser = expressionParser;
     this.prepare = true;
   }
   
@@ -168,73 +165,6 @@ public class SelectParser implements ISelectParser {
     return list;
   }
   
-  public List<SelectExpression> extractAggregationsFromArgument(final List<SelectArgument> args) {
-    List<SelectExpression> list = CollectionLiterals.<SelectExpression>newArrayList();
-    for (final SelectArgument a : args) {
-      SelectExpression _expression = a.getExpression();
-      boolean _tripleNotEquals = (_expression != null);
-      if (_tripleNotEquals) {
-        SelectExpression _expression_1 = a.getExpression();
-        EList<ExpressionComponent> _expressions = _expression_1.getExpressions();
-        int _size = _expressions.size();
-        boolean _equals = (_size == 1);
-        if (_equals) {
-          SelectExpression _expression_2 = a.getExpression();
-          EList<ExpressionComponent> _expressions_1 = _expression_2.getExpressions();
-          ExpressionComponent aggregation = _expressions_1.get(0);
-          EObject function = aggregation.getValue();
-          if ((function instanceof Function)) {
-            String _name = ((Function)function).getName();
-            boolean _isAggregateFunctionName = this.utilityService.isAggregateFunctionName(_name);
-            if (_isAggregateFunctionName) {
-              SelectExpression _expression_3 = a.getExpression();
-              list.add(_expression_3);
-            }
-          }
-        }
-      }
-    }
-    return list;
-  }
-  
-  public Collection<SelectExpression> extractSelectExpressionsFromArgument(final List<SelectArgument> args) {
-    Collection<SelectExpression> list = CollectionLiterals.<SelectExpression>newArrayList();
-    for (final SelectArgument a : args) {
-      SelectExpression _expression = a.getExpression();
-      boolean _tripleNotEquals = (_expression != null);
-      if (_tripleNotEquals) {
-        SelectExpression _expression_1 = a.getExpression();
-        EList<ExpressionComponent> _expressions = _expression_1.getExpressions();
-        int _size = _expressions.size();
-        boolean _equals = (_size == 1);
-        if (_equals) {
-          SelectExpression _expression_2 = a.getExpression();
-          EList<ExpressionComponent> _expressions_1 = _expression_2.getExpressions();
-          ExpressionComponent aggregation = _expressions_1.get(0);
-          EObject function = aggregation.getValue();
-          if ((function instanceof Function)) {
-            String _name = ((Function)function).getName();
-            SelectExpression _expression_3 = a.getExpression();
-            String _parseExpression = this.parseExpression(((SelectExpression) _expression_3));
-            String _string = _parseExpression.toString();
-            boolean _isMEPFunctionMame = this.utilityService.isMEPFunctionMame(_name, _string);
-            if (_isMEPFunctionMame) {
-              SelectExpression _expression_4 = a.getExpression();
-              list.add(_expression_4);
-            }
-          } else {
-            SelectExpression _expression_5 = a.getExpression();
-            list.add(_expression_5);
-          }
-        } else {
-          SelectExpression _expression_6 = a.getExpression();
-          list.add(_expression_6);
-        }
-      }
-    }
-    return list;
-  }
-  
   @Override
   public void prepare(final SimpleSelect select) {
     try {
@@ -254,24 +184,24 @@ public class SelectParser implements ISelectParser {
               _queryCache.putSubQuerySources(subQuery);
             }
           }
-          this.attributeParser.parsePredicateAttributes(select);
-          Collection<QueryCache.QueryAttribute> attributes2 = this.attributeParser.getSelectedAttributes(select);
+          this.attributeParser.registerAttributesFromPredicate(select);
+          QueryCache _queryCache = this.cacheService.getQueryCache();
+          Collection<QueryCache.QueryAttribute> _selectedAttributes = this.attributeParser.getSelectedAttributes(select);
+          _queryCache.putQueryAttributes(select, _selectedAttributes);
+          QueryCache _queryCache_1 = this.cacheService.getQueryCache();
+          AttributeParser.QuerySourceOrder _sourceOrder = this.attributeParser.getSourceOrder();
+          _queryCache_1.putProjectionSources(select, _sourceOrder);
+          QueryCache _queryCache_2 = this.cacheService.getQueryCache();
+          AttributeParser.QueryAttributeOrder _attributeOrder = this.attributeParser.getAttributeOrder();
+          _queryCache_2.putProjectionAttributes(select, _attributeOrder);
+          QueryCache _queryCache_3 = this.cacheService.getQueryCache();
           EList<SelectArgument> _arguments = select.getArguments();
-          List<SelectExpression> aggregations = this.extractAggregationsFromArgument(_arguments);
+          Collection<SelectExpression> _extractAggregationsFromArgument = this.aggregateParser.extractAggregationsFromArgument(_arguments);
+          _queryCache_3.putQueryAggregations(select, _extractAggregationsFromArgument);
+          QueryCache _queryCache_4 = this.cacheService.getQueryCache();
           EList<SelectArgument> _arguments_1 = select.getArguments();
-          Collection<SelectExpression> expressions = this.extractSelectExpressionsFromArgument(_arguments_1);
-          if ((aggregations != null)) {
-            QueryCache _queryCache = this.cacheService.getQueryCache();
-            _queryCache.putQueryAggregations(select, aggregations);
-          }
-          if ((expressions != null)) {
-            QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-            _queryCache_1.putQueryExpressions(select, expressions);
-          }
-          if ((attributes2 != null)) {
-            QueryCache _queryCache_2 = this.cacheService.getQueryCache();
-            _queryCache_2.putQueryAttributes(select, attributes2);
-          }
+          Collection<SelectExpression> _extractSelectExpressionsFromArgument = this.expressionParser.extractSelectExpressionsFromArgument(_arguments_1);
+          _queryCache_4.putQueryExpressions(select, _extractSelectExpressionsFromArgument);
           SelectCache _selectCache_1 = this.cacheService.getSelectCache();
           _selectCache_1.add(select);
         }
@@ -289,103 +219,6 @@ public class SelectParser implements ISelectParser {
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
-  }
-  
-  @Override
-  public String parseExpression(final SelectExpression e) {
-    String str = "";
-    for (int i = 0; (i < e.getExpressions().size()); i++) {
-      {
-        EList<ExpressionComponent> _expressions = e.getExpressions();
-        ExpressionComponent _get = _expressions.get(i);
-        EObject component = ((ExpressionComponent) _get).getValue();
-        boolean _matched = false;
-        if (component instanceof Function) {
-          _matched=true;
-          String _str = str;
-          String _name = ((Function)component).getName();
-          String _plus = (_name + "(");
-          EObject _value = ((Function)component).getValue();
-          String _parseExpression = this.parseExpression(((SelectExpression) _value));
-          String _plus_1 = (_plus + _parseExpression);
-          String _plus_2 = (_plus_1 + ")");
-          str = (_str + _plus_2);
-        }
-        if (!_matched) {
-          if (component instanceof Attribute) {
-            _matched=true;
-            String _str = str;
-            String _name = ((Attribute)component).getName();
-            String _parse = this.nameParser.parse(_name);
-            str = (_str + _parse);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof IntConstant) {
-            _matched=true;
-            String _str = str;
-            int _value = ((IntConstant)component).getValue();
-            String _plus = (Integer.valueOf(_value) + "");
-            str = (_str + _plus);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof FloatConstant) {
-            _matched=true;
-            String _str = str;
-            String _value = ((FloatConstant)component).getValue();
-            String _plus = (_value + "");
-            str = (_str + _plus);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof BoolConstant) {
-            _matched=true;
-            String _str = str;
-            String _value = ((BoolConstant)component).getValue();
-            String _plus = (_value + "");
-            str = (_str + _plus);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof StringConstant) {
-            _matched=true;
-            String _str = str;
-            String _value = ((StringConstant)component).getValue();
-            String _plus = ("\"" + _value);
-            String _plus_1 = (_plus + "\"");
-            str = (_str + _plus_1);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof Vector) {
-            _matched=true;
-            String _str = str;
-            String _value = ((Vector)component).getValue();
-            str = (_str + _value);
-          }
-        }
-        if (!_matched) {
-          if (component instanceof Matrix) {
-            _matched=true;
-            String _str = str;
-            String _value = ((Matrix)component).getValue();
-            str = (_str + _value);
-          }
-        }
-        EList<ExpressionComponent> _expressions_1 = e.getExpressions();
-        int _size = _expressions_1.size();
-        int _minus = (_size - 1);
-        boolean _notEquals = (i != _minus);
-        if (_notEquals) {
-          String _str = str;
-          EList<String> _operators = e.getOperators();
-          String _get_1 = _operators.get(i);
-          str = (_str + _get_1);
-        }
-      }
-    }
-    return str;
   }
   
   @Override
@@ -527,7 +360,7 @@ public class SelectParser implements ISelectParser {
               ExpressionsModel _predicates_1 = select.getPredicates();
               List<Attribute> _allContentsOfType = EcoreUtil2.<Attribute>getAllContentsOfType(_predicates_1, Attribute.class);
               Stream<Attribute> _stream = _allContentsOfType.stream();
-              final java.util.function.Function<Attribute, String> _function = (Attribute e) -> {
+              final Function<Attribute, String> _function = (Attribute e) -> {
                 return e.getName();
               };
               Stream<String> _map = _stream.<String>map(_function);

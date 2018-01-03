@@ -20,18 +20,15 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateChannelFrameworkViaPort;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateDatabaseSink;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateDatabaseStream;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateView;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InnerSelect2;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SchemaDefinition;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StreamTo;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLBuilderModule;
@@ -134,8 +131,8 @@ public class CQLGenerator implements IGenerator2 {
     this.selectParser.clear();
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
     _operatorCache.flush();
-    Collection<SystemSource> _sourceCache = this.cacheService.getSourceCache();
-    _sourceCache.clear();
+    Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
+    _systemSources.clear();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     _selectCache.flush();
     Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
@@ -638,13 +635,13 @@ public class CQLGenerator implements IGenerator2 {
     List<String> _attributeAliasesAsList = this.utilityService.getAttributeAliasesAsList();
     boolean _contains_2 = _attributeAliasesAsList.contains(name1);
     if (_contains_2) {
-      AttributeStruct _attributeFromAlias = this.utilityService.getAttributeFromAlias(name1);
+      SystemAttribute _attributeFromAlias = this.utilityService.getAttributeFromAlias(name1);
       name1 = _attributeFromAlias.attributename;
     }
     List<String> _attributeAliasesAsList_1 = this.utilityService.getAttributeAliasesAsList();
     boolean _contains_3 = _attributeAliasesAsList_1.contains(name2);
     if (_contains_3) {
-      AttributeStruct _attributeFromAlias_1 = this.utilityService.getAttributeFromAlias(name2);
+      SystemAttribute _attributeFromAlias_1 = this.utilityService.getAttributeFromAlias(name2);
       name2 = _attributeFromAlias_1.attributename;
     }
     List<String> _sourceAliasesAsList = this.utilityService.getSourceAliasesAsList();
@@ -695,73 +692,6 @@ public class CQLGenerator implements IGenerator2 {
       }
     }
     return true;
-  }
-  
-  public List<SelectExpression> extractAggregationsFromArgument(final List<SelectArgument> args) {
-    List<SelectExpression> list = CollectionLiterals.<SelectExpression>newArrayList();
-    for (final SelectArgument a : args) {
-      SelectExpression _expression = a.getExpression();
-      boolean _tripleNotEquals = (_expression != null);
-      if (_tripleNotEquals) {
-        SelectExpression _expression_1 = a.getExpression();
-        EList<ExpressionComponent> _expressions = _expression_1.getExpressions();
-        int _size = _expressions.size();
-        boolean _equals = (_size == 1);
-        if (_equals) {
-          SelectExpression _expression_2 = a.getExpression();
-          EList<ExpressionComponent> _expressions_1 = _expression_2.getExpressions();
-          ExpressionComponent aggregation = _expressions_1.get(0);
-          EObject function = aggregation.getValue();
-          if ((function instanceof Function)) {
-            String _name = ((Function)function).getName();
-            boolean _isAggregateFunctionName = this.utilityService.isAggregateFunctionName(_name);
-            if (_isAggregateFunctionName) {
-              SelectExpression _expression_3 = a.getExpression();
-              list.add(_expression_3);
-            }
-          }
-        }
-      }
-    }
-    return list;
-  }
-  
-  public Collection<SelectExpression> extractSelectExpressionsFromArgument(final List<SelectArgument> args) {
-    Collection<SelectExpression> list = CollectionLiterals.<SelectExpression>newArrayList();
-    for (final SelectArgument a : args) {
-      SelectExpression _expression = a.getExpression();
-      boolean _tripleNotEquals = (_expression != null);
-      if (_tripleNotEquals) {
-        SelectExpression _expression_1 = a.getExpression();
-        EList<ExpressionComponent> _expressions = _expression_1.getExpressions();
-        int _size = _expressions.size();
-        boolean _equals = (_size == 1);
-        if (_equals) {
-          SelectExpression _expression_2 = a.getExpression();
-          EList<ExpressionComponent> _expressions_1 = _expression_2.getExpressions();
-          ExpressionComponent aggregation = _expressions_1.get(0);
-          EObject function = aggregation.getValue();
-          if ((function instanceof Function)) {
-            String _name = ((Function)function).getName();
-            SelectExpression _expression_3 = a.getExpression();
-            String _parseExpression = this.selectParser.parseExpression(((SelectExpression) _expression_3));
-            String _string = _parseExpression.toString();
-            boolean _isMEPFunctionMame = this.utilityService.isMEPFunctionMame(_name, _string);
-            if (_isMEPFunctionMame) {
-              SelectExpression _expression_4 = a.getExpression();
-              list.add(_expression_4);
-            }
-          } else {
-            SelectExpression _expression_5 = a.getExpression();
-            list.add(_expression_5);
-          }
-        } else {
-          SelectExpression _expression_6 = a.getExpression();
-          list.add(_expression_6);
-        }
-      }
-    }
-    return list;
   }
   
   public void setSchema(final List<SystemSource> schemata) {

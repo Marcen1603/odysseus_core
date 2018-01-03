@@ -7,6 +7,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
@@ -173,5 +174,35 @@ public class AggregationParser implements IAggregationParser {
   private Object[] buildAggregateOP(final Collection<SelectExpression> list, final List<Attribute> list2, final List<Source> srcs) {
     String _buildJoin = this.joinParser.buildJoin(srcs);
     return this.buildAggregateOP(list, list2, _buildJoin);
+  }
+  
+  @Override
+  public Collection<SelectExpression> extractAggregationsFromArgument(final List<SelectArgument> args) {
+    List<SelectExpression> list = CollectionLiterals.<SelectExpression>newArrayList();
+    for (final SelectArgument a : args) {
+      SelectExpression _expression = a.getExpression();
+      boolean _tripleNotEquals = (_expression != null);
+      if (_tripleNotEquals) {
+        SelectExpression _expression_1 = a.getExpression();
+        EList<ExpressionComponent> _expressions = _expression_1.getExpressions();
+        int _size = _expressions.size();
+        boolean _equals = (_size == 1);
+        if (_equals) {
+          SelectExpression _expression_2 = a.getExpression();
+          EList<ExpressionComponent> _expressions_1 = _expression_2.getExpressions();
+          ExpressionComponent aggregation = _expressions_1.get(0);
+          EObject function = aggregation.getValue();
+          if ((function instanceof Function)) {
+            String _name = ((Function)function).getName();
+            boolean _isAggregateFunctionName = this.utilityService.isAggregateFunctionName(_name);
+            if (_isAggregateFunctionName) {
+              SelectExpression _expression_3 = a.getExpression();
+              list.add(_expression_3);
+            }
+          }
+        }
+      }
+    }
+    return list;
   }
 }

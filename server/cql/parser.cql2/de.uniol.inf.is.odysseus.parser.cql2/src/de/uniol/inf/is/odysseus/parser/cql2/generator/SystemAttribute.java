@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 
-public class AttributeStruct {
+public class SystemAttribute {
 
 	public String attributename;
 	public SystemSource source;
@@ -15,7 +15,7 @@ public class AttributeStruct {
 	public List<String> prefixes;
 	public List<String> aliases;
 
-	public AttributeStruct(SystemSource source, String name, String type) {
+	public SystemAttribute(SystemSource source, String name, String type) {
 		this.prefixes = new ArrayList<>();
 		this.aliases = new ArrayList<>();
 		this.source = source;
@@ -26,9 +26,9 @@ public class AttributeStruct {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof AttributeStruct))
+		if (!(obj instanceof SystemAttribute))
 			return false;
-		AttributeStruct attribute = (AttributeStruct) obj;
+		SystemAttribute attribute = (SystemAttribute) obj;
 		return attribute.attributename.equals(this.attributename) && attribute.datatype.equals(this.datatype)
 				&& attribute.source.equals(this.source);
 	}
@@ -78,7 +78,7 @@ public class AttributeStruct {
 		this.aliases = aliases;
 	}
 
-	public void update(AttributeStruct attribute) {
+	public void update(SystemAttribute attribute) {
 		this.aliases = new ArrayList<>(attribute.getAliases());
 		this.prefixes = new ArrayList<>(attribute.getPrefixes());
 		this.attributename = attribute.attributename;

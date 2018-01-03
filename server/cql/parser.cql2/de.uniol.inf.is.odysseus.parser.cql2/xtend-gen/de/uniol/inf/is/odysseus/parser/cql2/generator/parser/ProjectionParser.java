@@ -10,6 +10,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperato
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExpressionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IProjectionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ISelectParser;
@@ -39,14 +40,17 @@ public class ProjectionParser implements IProjectionParser {
   
   private IAttributeParser attributeParser;
   
+  private IExpressionParser expressionParser;
+  
   @Inject
-  public ProjectionParser(final AbstractPQLOperatorBuilder builder, final ISelectParser selectParser, final IRenameParser renameParser, final IUtilityService utilityService, final ICacheService cacheService, final IAttributeParser attributeParser) {
+  public ProjectionParser(final AbstractPQLOperatorBuilder builder, final ISelectParser selectParser, final IRenameParser renameParser, final IUtilityService utilityService, final ICacheService cacheService, final IAttributeParser attributeParser, final IExpressionParser expressionParser) {
     this.builder = builder;
     this.selectParser = selectParser;
     this.utilityService = utilityService;
     this.cacheService = cacheService;
     this.renameParser = renameParser;
     this.attributeParser = attributeParser;
+    this.expressionParser = expressionParser;
   }
   
   @Override
@@ -71,8 +75,8 @@ public class ProjectionParser implements IProjectionParser {
       {
         String expressionName = "";
         SelectExpression _get = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
-        String _parseExpression = this.selectParser.parseExpression(_get);
-        String expressionString = _parseExpression.toString();
+        String _parse = this.expressionParser.parse(_get);
+        String expressionString = _parse.toString();
         SelectExpression _get_1 = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
         Alias _alias = _get_1.getAlias();
         boolean _tripleEquals = (_alias == null);

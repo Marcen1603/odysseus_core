@@ -38,7 +38,6 @@ http://odysseus.informatik.uni-oldenburg.de/
       </win>
    </launcher>
 
-
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</macos>
@@ -73,6 +72,7 @@ limitations under the License.
       <feature id="de.uniol.inf.is.odysseus.monolithic.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.latency.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.priority.feature" version="1.0.0.qualifier"/>
+      <feature id="de.uniol.inf.is.odysseus.parser.cql2.feature" version="1.0.0.qualifier"/>
       <feature id="de.uniol.inf.is.odysseus.keyvalue.datahandler.feature" version="1.0.0.qualifier"/>
    </features>
 

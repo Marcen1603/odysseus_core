@@ -19,10 +19,12 @@ class ProjectionParser implements IProjectionParser {
 	private IUtilityService utilityService;
 	private ICacheService cacheService;
 	private IAttributeParser attributeParser;
+	private IExpressionParser expressionParser;
 
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ISelectParser selectParser, IRenameParser renameParser,
-		IUtilityService utilityService, ICacheService cacheService, IAttributeParser attributeParser) {
+		IUtilityService utilityService, ICacheService cacheService, IAttributeParser attributeParser,
+		IExpressionParser expressionParser) {
 
 		this.builder = builder;
 		this.selectParser = selectParser;
@@ -30,6 +32,7 @@ class ProjectionParser implements IProjectionParser {
 		this.cacheService = cacheService;
 		this.renameParser = renameParser;
 		this.attributeParser = attributeParser;
+		this.expressionParser = expressionParser;
 
 	}
 
@@ -51,7 +54,7 @@ class ProjectionParser implements IProjectionParser {
 		var List<String> attributeNames = newArrayList()
 		for (var i = 0; i < expressions.size; i++) {
 			var expressionName = ''
-			var expressionString = selectParser.parseExpression(expressions.get(i)).toString
+			var expressionString = expressionParser.parse(expressions.get(i)).toString
 //			var expressionType = MEP.instance.parse(expressionString).returnType.toString //parseSelectExpressionType(expressionComponents)
 //			println("expressiontype:: " + expressionType)
 			if (expressions.get(i).alias === null)

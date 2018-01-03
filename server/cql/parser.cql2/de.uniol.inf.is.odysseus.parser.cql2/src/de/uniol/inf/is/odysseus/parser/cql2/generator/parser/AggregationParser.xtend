@@ -1,18 +1,18 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import java.util.Collection
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
-import java.util.List
+import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing
-import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO
-import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
-import java.util.stream.Collectors
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import java.util.Collection
+import java.util.List
+import java.util.stream.Collectors
 
 class AggregationParser implements IAggregationParser {
 
@@ -99,6 +99,23 @@ class AggregationParser implements IAggregationParser {
 
 	def private Object[] buildAggregateOP(Collection<SelectExpression> list, List<Attribute> list2, List<Source> srcs) {
 		return buildAggregateOP(list, list2, joinParser.buildJoin(srcs))
+	}
+
+	
+	override Collection<SelectExpression> extractAggregationsFromArgument(List<SelectArgument> args) {
+		var List<SelectExpression> list = newArrayList
+		for (SelectArgument a : args)
+			if (a.expression !== null)
+				if (a.expression.expressions.size == 1) {
+					var aggregation = a.expression.expressions.get(0)
+					var function = aggregation.value
+					if (function instanceof Function) {
+						if (utilityService.isAggregateFunctionName(function.name))
+							list.add(a.expression)
+					}
+				}
+				
+		return list
 	}
 
 }

@@ -76,7 +76,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.UserManagement;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
@@ -375,7 +375,7 @@ public class CQLParser implements IQueryParser {
 				sourceStruct.setName(sourcename);
 				for (SDFAttribute struct : ss.getAttributes()) {
 					if (sourcename.equals(struct.getSourceName())) {
-						sourceStruct.add(new AttributeStruct(
+						sourceStruct.add(new SystemAttribute(
 								sourceStruct, 
 								struct.getAttributeName(),
 								struct.getDatatype().toString()

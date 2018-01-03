@@ -36,16 +36,9 @@ Export-Package: de.uniol.inf.is.odysseus.parser.cql2,
  de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.internal,
  de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.lexer,
  de.uniol.inf.is.odysseus.parser.cql2.serializer,
- de.uniol.inf.is.odysseus.parser.cql2.services,
- de.uniol.inf.is.odysseus.parser.cql2.cQL.util,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.internal,
- de.uniol.inf.is.odysseus.parser.cql2.services,
- de.uniol.inf.is.odysseus.parser.cql2.cQL,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr,
- de.uniol.inf.is.odysseus.parser.cql2.serializer,
- de.uniol.inf.is.odysseus.parser.cql2.cQL.impl,
- de.uniol.inf.is.odysseus.parser.cql2.parser.antlr.lexer
+ de.uniol.inf.is.odysseus.parser.cql2.services
 Import-Package: com.google.inject,
  de.uniol.inf.is.odysseus.parser.cql2.cQL,
  javax.validation.constraints,
- org.slf4j
+ org.slf4j,
+ org.apache.log4j

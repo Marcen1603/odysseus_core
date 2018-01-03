@@ -34,7 +34,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.impl.FunctionImpl;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
@@ -91,8 +91,8 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	public List<String> getAttributeAliasesAsList() {
 		List<String> list = new ArrayList<>();
-		Map<AttributeStruct, Collection<String>> map = getAttributeAliasesAsMap();
-		for (Map.Entry<AttributeStruct, Collection<String>> e : map.entrySet()) {
+		Map<SystemAttribute, Collection<String>> map = getAttributeAliasesAsMap();
+		for (Map.Entry<SystemAttribute, Collection<String>> e : map.entrySet()) {
 			list.addAll(e.getValue());
 		}
 		return list;
@@ -101,7 +101,7 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	public Map<SystemSource, Collection<String>> getSourceAliases() {
 		Map<SystemSource, Collection<String>> map = new HashMap<>();
-		for (SystemSource source : cacheService.getSourceCache()) {
+		for (SystemSource source : cacheService.getSystemSources()) {
 			map.put(source, source.getAliasList());
 		}
 		return map;
@@ -116,7 +116,7 @@ public class ParserUtilityService implements IUtilityService {
 		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
 		SystemSource sourceStruct = getSource(realSourcename);
 
-		for (AttributeStruct struct : sourceStruct.getAttributeList()) {
+		for (SystemAttribute struct : sourceStruct.getAttributeList()) {
 			if (struct.getAttributename().equals(simpleName)) {
 				if (sourceAlias == null) {
 					sourceAlias = realSourcename;
@@ -228,7 +228,7 @@ public class ParserUtilityService implements IUtilityService {
 			throw new IllegalArgumentException("given source was null");
 		}
 		
-		for (SystemSource source : cacheService.getSourceCache()) {
+		for (SystemSource source : cacheService.getSystemSources()) {
 			if (source.getName().equals(name) || source.hasAlias(name)) {
 				return source;
 			}
@@ -255,7 +255,7 @@ public class ParserUtilityService implements IUtilityService {
 
 	@Override
 	public Collection<String> getSourceNames() {
-		return cacheService.getSourceCache().stream().map(e -> e.getName()).collect(Collectors.toList());
+		return cacheService.getSystemSources().stream().map(e -> e.getName()).collect(Collectors.toList());
 	}
 
 	@Override
@@ -279,9 +279,9 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public AttributeStruct getAttributeFromAlias(String name) {
-		for(SystemSource source : cacheService.getSourceCache()) {
-			AttributeStruct attribute = source.findByName(name);
+	public SystemAttribute getAttributeFromAlias(String name) {
+		for(SystemSource source : cacheService.getSystemSources()) {
+			SystemAttribute attribute = source.findByName(name);
 			if(attribute != null) {
 				return attribute;
 			}
@@ -292,7 +292,7 @@ public class ParserUtilityService implements IUtilityService {
 	
 	@Override
 	public String getAttributenameFromAlias(String name) {
-		AttributeStruct attribute = getAttributeFromAlias(name);
+		SystemAttribute attribute = getAttributeFromAlias(name);
 		if (attribute != null) {
 			return attribute.getAttributename();
 		}
@@ -307,11 +307,11 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public Map<AttributeStruct, Collection<String>> getAttributeAliasesAsMap() {
+	public Map<SystemAttribute, Collection<String>> getAttributeAliasesAsMap() {
 
-		Map<AttributeStruct, Collection<String>> map = new HashMap<>();
-		for (SystemSource source : cacheService.getSourceCache()) {
-			for (AttributeStruct attribute : source.getAttributeList()) {
+		Map<SystemAttribute, Collection<String>> map = new HashMap<>();
+		for (SystemSource source : cacheService.getSystemSources()) {
+			for (SystemAttribute attribute : source.getAttributeList()) {
 				if (!attribute.aliases.isEmpty()) {
 					map.put(attribute, attribute.aliases);
 				}
@@ -460,16 +460,16 @@ public class ParserUtilityService implements IUtilityService {
 		return null;
 	}
 	
-	public Collection<AttributeStruct> getAllAttributes() {
-		Collection<AttributeStruct> col = new ArrayList<>();
-		cacheService.getSourceCache().forEach(e -> col.addAll(e.getAttributeList()));
+	public Collection<SystemAttribute> getAllAttributes() {
+		Collection<SystemAttribute> col = new ArrayList<>();
+		cacheService.getSystemSources().forEach(e -> col.addAll(e.getAttributeList()));
 		return col;
 	}
 	
 	//TODO method is missleading; if there are more attributes with the same name, only one is returned
 	@Override
-	public AttributeStruct getAttribute(String name) {
-		for (AttributeStruct attr : getAllAttributes()) {
+	public SystemAttribute getAttribute(String name) {
+		for (SystemAttribute attr : getAllAttributes()) {
 			if (attr.attributename.equals(name))
 				return attr;
 			else if (attr.aliases.contains(name))
@@ -491,7 +491,7 @@ public class ParserUtilityService implements IUtilityService {
 	
 	@Override
 	public void setSourcesStructs(Collection<SystemSource> sources) {
-		sources.forEach(e -> cacheService.getSourceCache().add(e));
+		sources.forEach(e -> cacheService.getSystemSources().add(e));
 	}
 	
 	@Override
@@ -550,7 +550,7 @@ public class ParserUtilityService implements IUtilityService {
 					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
 				attributename = getAttributenameFromAlias(attributename);
 				sourcename = sourceFromAlias;
-				for (AttributeStruct attr : getSource(sourcename).getAttributeList())
+				for (SystemAttribute attr : getSource(sourcename).getAttributeList())
 					if (attr.attributename.equals(attributename))
 						return attr.datatype;
 			}
@@ -561,7 +561,7 @@ public class ParserUtilityService implements IUtilityService {
 			if (isSourceAlias(sourcename))
 				sourcename = getSourceNameFromAlias(sourcename);
 			try {
-				for (AttributeStruct attr : getSource(sourcename).getAttributeList())
+				for (SystemAttribute attr : getSource(sourcename).getAttributeList())
 					if (attr.attributename.equals(attributename))
 						return attr.getDatatype();
 			} catch (IllegalArgumentException e) {
@@ -581,7 +581,7 @@ public class ParserUtilityService implements IUtilityService {
 				attributename = getAttributenameFromAlias(attributename);
 				if (attributename == null)
 					attributename = attribute;
-				for (AttributeStruct attr : getSource(sourceFromAlias).getAttributeList())
+				for (SystemAttribute attr : getSource(sourceFromAlias).getAttributeList())
 					if (attr.attributename.equals(attributename))
 						return attr.getDatatype();
 			}

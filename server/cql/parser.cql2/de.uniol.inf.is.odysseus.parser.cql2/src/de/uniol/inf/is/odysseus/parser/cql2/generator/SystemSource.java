@@ -17,13 +17,13 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 
 public class SystemSource {
 
-	public static Map<String, String> attributeAliases = new HashMap<>();
-	public static Collection<String> querySources = new HashSet<>();
+	protected static Map<String, String> attributeAliases = new HashMap<>();
+	protected static Collection<String> querySources = new HashSet<>();
 
 	private final Logger log = LoggerFactory.getLogger(SystemSource.class);
 
 	public String name;
-	public Collection<AttributeStruct> attributeList;
+	public Collection<SystemAttribute> attributeList;
 	public List<String> aliasList;
 
 	public SystemSource() {
@@ -61,15 +61,15 @@ public class SystemSource {
 		return isAssociatedToASource(attributealias) ? attributeAliases.get(attributealias) : null;
 	}
 
-	public void update(AttributeStruct attribute) {
-		for (AttributeStruct e : attributeList) {
+	public void update(SystemAttribute attribute) {
+		for (SystemAttribute e : attributeList) {
 			if (e.equals(attribute)) {
 				attribute.update(attribute);
 			}
 		}
 	}
 
-	public void add(AttributeStruct attribute) {
+	public void add(SystemAttribute attribute) {
 		if (!attributeList.contains(attribute)) {
 			attributeList.add(attribute);
 		}
@@ -77,11 +77,11 @@ public class SystemSource {
 	}
 
 	public void addRenamedAttribute(List<String> names) {
-		List<AttributeStruct> list = new ArrayList<>();
-		for (AttributeStruct attribute : attributeList) {
+		List<SystemAttribute> list = new ArrayList<>();
+		for (SystemAttribute attribute : attributeList) {
 			for (int i = 1; i < list.size(); i++) {
 				String name = names.get(i).split("\\.")[1];
-				AttributeStruct newAttribute = new AttributeStruct(null, name, attribute.datatype);
+				SystemAttribute newAttribute = new SystemAttribute(null, name, attribute.datatype);
 				attributeList.add(newAttribute);
 			}
 		}
@@ -92,31 +92,31 @@ public class SystemSource {
 	}
 
 	/**
-	 * Returns an {@link AttributeStruct} object for a given string that is either
+	 * Returns an {@link SystemAttribute} object for a given string that is either
 	 * its name or an alias.
 	 * 
 	 * @param name
 	 * @return
 	 */
-	public AttributeStruct findByName(String name) {
-		AttributeStruct attribute = null;
+	public SystemAttribute findByName(String name) {
+		SystemAttribute attribute = null;
 		if (name.contains(".")) {
 			String[] split = name.split("\\.");
 			if (split[0].equals(this.name)) {
-				for (AttributeStruct e : attributeList) {
+				for (SystemAttribute e : attributeList) {
 					if (e.attributename.equals(split[1]) || e.aliases.contains(split[1])) {
 						attribute = e;
 					}
 				}
 			} else if (aliasList.contains(split[0])) {
-				for (AttributeStruct e : attributeList) {
+				for (SystemAttribute e : attributeList) {
 					if (e.attributename.equals(split[1]) || e.aliases.contains(split[1])) {
 						attribute = e;
 					}
 				}
 			}
 		} else {
-			for (AttributeStruct e : attributeList) {
+			for (SystemAttribute e : attributeList) {
 				if (e.attributename.equals(name) || e.aliases.contains(name)) {
 					attribute = e;
 				}
@@ -126,9 +126,9 @@ public class SystemSource {
 		return attribute;
 	}
 
-	public List<AttributeStruct> findByType(String type) {
-		List<AttributeStruct> list = new ArrayList<>();
-		for (AttributeStruct e : attributeList) {
+	public List<SystemAttribute> findByType(String type) {
+		List<SystemAttribute> list = new ArrayList<>();
+		for (SystemAttribute e : attributeList) {
 			if (e.datatype.equalsIgnoreCase(type)) {
 				list.add(e);
 			}
@@ -149,7 +149,7 @@ public class SystemSource {
 		return this.getName().equals(source.getName());
 	}
 
-	public boolean isContainedBy(List<Source> sourceList) {
+	public boolean isContainedBy(Collection<Source> sourceList) {
 		for (Source source : sourceList) {
 			if (source instanceof SimpleSource) {
 				if (((SimpleSource) source).getName().equals(this.getName())) {
@@ -161,11 +161,11 @@ public class SystemSource {
 		return false;
 	}
 
-	public AttributeStruct getStartTimestampAttribute() {
+	public SystemAttribute getStartTimestampAttribute() {
 		return findByName("StartTimestamp");
 	}
 
-	public AttributeStruct getEndTimestampAttribute() {
+	public SystemAttribute getEndTimestampAttribute() {
 		return findByName("EndTimestamp");
 	}
 
@@ -174,11 +174,11 @@ public class SystemSource {
 		return "[SourceStruct::name=" + name + ", aliases=" + aliasList.toString() + "]";
 	}
 
-	public Collection<AttributeStruct> getAttributeList() {
+	public Collection<SystemAttribute> getAttributeList() {
 		return attributeList;
 	}
 
-	public void setAttributeList(List<AttributeStruct> attributeList) {
+	public void setAttributeList(List<SystemAttribute> attributeList) {
 		this.attributeList = attributeList;
 	}
 
@@ -195,7 +195,7 @@ public class SystemSource {
 	}
 
 	public void addAliasTo(String attribute, String alias) {
-		AttributeStruct struct = findByName(attribute);
+		SystemAttribute struct = findByName(attribute);
 		if (struct != null) {
 			struct.addAlias(alias);
 		}
@@ -222,7 +222,7 @@ public class SystemSource {
 	}
 
 	public void removeAliasFrom(String attributename, String alias) {
-		AttributeStruct attribute = findByName(attributename);
+		SystemAttribute attribute = findByName(attributename);
 		if (attribute != null) {
 			attribute.removeAlias(alias);
 		}

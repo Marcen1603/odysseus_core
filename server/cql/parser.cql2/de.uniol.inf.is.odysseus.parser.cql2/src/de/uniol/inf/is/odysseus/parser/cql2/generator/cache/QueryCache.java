@@ -18,6 +18,8 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
 
 public class QueryCache implements Cache {
 	
@@ -41,46 +43,54 @@ public class QueryCache implements Cache {
 //////	 
 	
 	private Map<SimpleSelect, Collection<QueryAttribute>> projectionAttributes = new HashMap<>();
-	
-	public void putProjectionAttributes(SimpleSelect query, QueryAttribute[] attributes) {
-		putProjectionAttributes(query, Arrays.asList(attributes));
-	}
 
-	public void putProjectionAttributes(SimpleSelect query, Collection<QueryAttribute> attributes) {
-		
-		projectionAttributes.put(query, attributes);
-		
-//		putCollection(query, attributes, Type.PROJECTION_ATTRIBUTE);
+	public void putProjectionAttributes(SimpleSelect query, QueryAttributeOrder attributes) {
+		projectionAttributes.put(query, Arrays.asList(attributes.array));
 	}
 
 	public Collection<QueryAttribute> getProjectionAttributes(SimpleSelect query) {
-		return projectionAttributes.containsKey(query) ? projectionAttributes.get(query) : null;
+		return projectionAttributes.containsKey(query) ? projectionAttributes.get(query) : new ArrayList<>();
 	}
 	
 ////	
+	
+	private Map<SimpleSelect, Collection<QuerySource>> sourceEntries = new HashMap<>();
 
-	public void putProjectionSources(SimpleSelect query, String[] sources) {
-		putProjectionSources(query, Arrays.asList(sources));
+	public static class QuerySource {
+
+		public String name;
+		public String alias;
+		
+		public QuerySource(String sourcename) {
+			this.name = sourcename;
+		}
+
+		public QuerySource(String sourcename, String sourcealias) {
+			this(sourcename);
+			this.alias = sourcealias;
+		}
+		
+	}
+	
+	public void putProjectionSources(SimpleSelect query, QuerySourceOrder sources) {
+		sourceEntries.put(query, Arrays.asList(sources.array));
 	}
 
-	public void putProjectionSources(SimpleSelect query, Collection<String> sources) {
-		putCollection(query, sources, Type.PROJECTION_SOURCE);
-	}
 
-	public Collection<String> getProjectionSourcess(SimpleSelect query) {
-		return (Collection<String>) getCollection(query, Type.PROJECTION_SOURCE);
+	public Collection<QuerySource> getProjectionSourcess(SimpleSelect query) {
+		return sourceEntries.containsKey(query) ? sourceEntries.get(query) : new ArrayList<>();
 	}
 /////
 	
-	private Map<String, QueryCacheSubQueryEntry> subQueryEntries = new HashMap<>();
+	private Map<String, SubQuery> subQueryEntries = new HashMap<>();
 	
-	public static class QueryCacheSubQueryEntry {
+	public static class SubQuery {
 		
 		public String parent;
 		public NestedSource subQuery;
 		public Collection<QueryAttribute> attributes;
 		
-		public QueryCacheSubQueryEntry(String parent, NestedSource subQuery, Collection<QueryAttribute> attributes) {
+		public SubQuery(String parent, NestedSource subQuery, Collection<QueryAttribute> attributes) {
 			super();
 			this.parent = parent;
 			this.subQuery = subQuery;
@@ -91,17 +101,15 @@ public class QueryCache implements Cache {
 		
 	}
 
-//	public void putSubQuerySources(String name, Collection<QueryCacheAttributeEntry> attributes) {
-//		subQueryEntries.put(name, attributes);
-////		putMap(name, values.stream().map(e -> e.sources).collect(Collectors.toList()), QueryCache.Type.QUERY_SUBQUERY);
-//	}
-
-	public void putSubQuerySources(NestedSource subQuery) {
+///
 	
+	public Collection<SubQuery> getAllSubQueries() {
+		return subQueryEntries.values();
+	}
+	
+	public void putSubQuerySources(NestedSource subQuery) {
 		String name = subQuery.getAlias().getName();
-		subQueryEntries.put(name, new QueryCacheSubQueryEntry(name, subQuery, attributeEntries.get(subQuery.getStatement().getSelect())));
-		
-
+		subQueryEntries.put(name, new SubQuery(name, subQuery, attributeEntries.get(subQuery.getStatement().getSelect())));
 	}
 ////
 	
@@ -111,29 +119,40 @@ public class QueryCache implements Cache {
 		public String alias;
 		public Collection<String> sources;
 		public Attribute attribute;
+		public Type type;
 		
-		public QueryAttribute(Attribute obj) {
-			
+		public enum Type {
+			SELECTALL,
+			EXPRESSION,
+			AGGREGATE,
+			STANDARD,
+		}
+		
+		public QueryAttribute(Attribute obj, Type type) {
 			this.attribute = obj;
+			this.type = type;
 			this.name = obj.getName();
 			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
-			
 		}
 
-		public QueryAttribute(Attribute e, SystemSource systemSource) {
+		public QueryAttribute(Attribute e, Type type, SystemSource systemSource) {
 			this.attribute = e;
+			this.type = type;
+			this.alias = e.getAlias() != null ? e.getAlias().getName() : "";
 			this.sources = new ArrayList<>();
 			this.sources.add(systemSource.name);
 		}
-		
-		public QueryAttribute(String name, SystemSource systemSource) {
+
+		public QueryAttribute(String name, Type type, SystemSource systemSource) {
 			this.name = name;
+			this.type = type;
 			this.sources = new ArrayList<>();
 			this.sources.add(systemSource.name);
 		}
-		
-		public QueryAttribute(String name, Collection<String> sources) {
+
+		public QueryAttribute(String name, Type type, Collection<String> sources) {
 			this.name = name;
+			this.type = type;
 			this.sources = sources;
 		}
 		

@@ -5,12 +5,12 @@ import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public interface ICacheService {
 	
-	Collection<SystemSource> getSourceCache();
+	Collection<SystemSource> getSystemSources();
 	Collection<Pair<SelectExpression, String>> getAggregationAttributeCache();
 	OperatorCache getOperatorCache();
 	Map<String, String> getExpressionCache();
@@ -18,6 +18,6 @@ public interface ICacheService {
 	QueryCache getQueryCache();
 	void flushAll();
 	SelectCache getSelectCache();
-	Map<String, AttributeStruct> getRenamedAttributes();
+	Map<String, SystemAttribute> getRenamedAttributes();
 	
 }

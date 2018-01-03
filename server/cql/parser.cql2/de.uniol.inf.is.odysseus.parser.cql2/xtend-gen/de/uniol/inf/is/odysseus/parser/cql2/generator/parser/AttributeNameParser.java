@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
@@ -87,7 +87,7 @@ public class AttributeNameParser implements IAttributeNameParser {
             return r;
           } else {
             SystemSource _source_1 = this.utilityService.getSource(source);
-            AttributeStruct _findByName = _source_1.findByName(attributename);
+            SystemAttribute _findByName = _source_1.findByName(attributename);
             List<String> attributeAliases = _findByName.getAliases();
             boolean _isEmpty = attributeAliases.isEmpty();
             boolean _not = (!_isEmpty);
@@ -163,7 +163,7 @@ public class AttributeNameParser implements IAttributeNameParser {
         SystemSource _get_3 = containedBySources.get(0);
         String _name = _get_3.getName();
         SystemSource _source_2 = this.utilityService.getSource(_name);
-        AttributeStruct _findByName_1 = _source_2.findByName(attribute);
+        SystemAttribute _findByName_1 = _source_2.findByName(attribute);
         List<String> aliases = _findByName_1.getAliases();
         boolean _isEmpty_1 = aliases.isEmpty();
         boolean _not_1 = (!_isEmpty_1);

@@ -4,26 +4,16 @@ import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.BoolConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Matrix
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.List
@@ -48,6 +38,7 @@ class SelectParser implements ISelectParser {
 	var IAggregationParser aggregateParser;
 	var IExistenceParser existenceParser;
 	var IAttributeParser attributeParser;
+	var IExpressionParser expressionParser;
 	
 	var boolean prepare;
 
@@ -55,7 +46,7 @@ class SelectParser implements ISelectParser {
 	new(AbstractPQLOperatorBuilder builder, ICacheService cacheService, IUtilityService utilityService,
 		IAttributeNameParser nameParser, IPredicateParser predicateParser, IJoinParser joinParser,
 		IProjectionParser projectionParser, IRenameParser renameParser, IAggregationParser aggregateParser, 
-		IExistenceParser existenceParser, IAttributeParser attributeParser) {
+		IExistenceParser existenceParser, IAttributeParser attributeParser, IExpressionParser expressionParser) {
 
 		this.builder = builder;
 		this.cacheService = cacheService;
@@ -68,6 +59,7 @@ class SelectParser implements ISelectParser {
 		this.aggregateParser = aggregateParser;
 		this.existenceParser = existenceParser;
 		this.renameParser = renameParser;
+		this.expressionParser = expressionParser;
 		this.prepare = true;
 
 	}
@@ -128,43 +120,9 @@ class SelectParser implements ISelectParser {
 		return list
 	}
 
-	def List<SelectExpression> extractAggregationsFromArgument(List<SelectArgument> args) {
-		var List<SelectExpression> list = newArrayList
-		for (SelectArgument a : args)
-			if (a.expression !== null)
-				if (a.expression.expressions.size == 1) {
-					var aggregation = a.expression.expressions.get(0)
-					var function = aggregation.value
-					if (function instanceof Function) {
-						if (utilityService.isAggregateFunctionName(function.name))
-							list.add(a.expression)
-					}
-				}
-		return list
-	}
-
-//
-	def Collection<SelectExpression> extractSelectExpressionsFromArgument(List<SelectArgument> args) {
-		var Collection<SelectExpression> list = newArrayList
-		for (SelectArgument a : args)
-			if (a.expression !== null) {
-				if (a.expression.expressions.size == 1) {
-					var aggregation = a.expression.expressions.get(0)
-					var function = aggregation.value
-					if (function instanceof Function) {
-						if (utilityService.isMEPFunctionMame(function.name,
-							parseExpression(a.expression as SelectExpression).toString))
-							list.add(a.expression)
-					} else
-						list.add(a.expression)
-				} else
-					list.add(a.expression)
-			}
-		return list
-	}
-
 	override prepare(SimpleSelect select) {
 		try {
+			
 			if (!cacheService.getSelectCache().getSelects().contains(select)) {
 				var subQueries = registerAllSource(select)
 				for (NestedSource subQuery : subQueries) {
@@ -174,24 +132,16 @@ class SelectParser implements ISelectParser {
 					cacheService.getQueryCache().putSubQuerySources(subQuery);
 				}
 
-				attributeParser.parsePredicateAttributes(select);
-				var Collection<QueryAttribute> attributes2 = attributeParser.getSelectedAttributes(select)
+				attributeParser.registerAttributesFromPredicate(select);
 				
-				var aggregations = extractAggregationsFromArgument(select.arguments)
-				var expressions = extractSelectExpressionsFromArgument(select.arguments)
-				if (aggregations !== null) {
-					cacheService.getQueryCache().putQueryAggregations(select, aggregations);
-				}
-//					utilityServicetil.addQueryAggregations(select, aggregations)
-				if (expressions !== null) {
-					cacheService.getQueryCache().putQueryExpressions(select, expressions);
-				}
-//					utilityServicetil.getQueryExpressions().put(select, expressions)
-				if (attributes2 !== null) {
-					cacheService.getQueryCache().putQueryAttributes(select, attributes2);
-				}
+				cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
+				cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
+				cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
+				cacheService.getQueryCache().putQueryAggregations(select, aggregateParser.extractAggregationsFromArgument(select.arguments));
+				cacheService.getQueryCache().putQueryExpressions(select, expressionParser.extractSelectExpressionsFromArgument(select.arguments));
 
 				cacheService.getSelectCache().add(select);
+				
 			}
 		} catch (Exception e) {
 			// TODO remove this after debugging
@@ -199,35 +149,6 @@ class SelectParser implements ISelectParser {
 			throw e
 		}
 	}
-
-	override parseExpression(SelectExpression e) {
-		var str = ''
-		for (var i = 0; i < e.expressions.size; i++) {
-			var component = (e.expressions.get(i) as ExpressionComponent).value
-			switch (component) {
-				Function:
-					str += component.name + '(' + parseExpression((component.value as SelectExpression)) + ')'
-				Attribute:
-					str += nameParser.parse(component.name)
-				IntConstant:
-					str += component.value + ''
-				FloatConstant:
-					str += component.value + ''
-				BoolConstant:
-					str += component.value + '' // TODO Is a bool value feasible?
-				StringConstant:
-					str += '\"' + component.value + '\"'
-				Vector:
-					str += component.value
-				Matrix:
-					str += component.value
-			}
-			if (i != e.expressions.size - 1)
-				str += e.operators.get(i)
-		}
-		return str
-	}
-
 	override parseComplex(SimpleSelect left, SimpleSelect right, String operator) {
 		parse(left)
 		var rightSelectOperatorName = cacheService.getOperatorCache().lastOperatorId();

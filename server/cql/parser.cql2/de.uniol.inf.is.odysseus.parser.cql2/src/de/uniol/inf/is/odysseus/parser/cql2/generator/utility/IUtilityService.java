@@ -12,7 +12,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 
@@ -25,7 +25,7 @@ public interface IUtilityService {
 //	Collection<QueryCacheAttributeEntry> getSelectedAttributes(SimpleSelect select);
 	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
 //	void addSubQuerySources(@NotNull NestedSource subQuery);
-	Map<AttributeStruct, Collection<String>> getAttributeAliasesAsMap();
+	Map<SystemAttribute, Collection<String>> getAttributeAliasesAsMap();
 	boolean isAggregateFunctionName(String name);
 	boolean isMEPFunctionMame(String name, String parsedMEP);
 	Map<String, Collection<String>> getSubQuerySources();
@@ -40,7 +40,7 @@ public interface IUtilityService {
 //	Map<String, Collection<String>> getQueryAttributes(SimpleSelect select);
 	Collection<String> getAllQueryAttributes(SimpleSelect select);
 	String getSourceNameFromAlias(String sourcealias);
-	AttributeStruct getAttributeFromAlias(String attributealias);
+	SystemAttribute getAttributeFromAlias(String attributealias);
 	String getAttributenameFromAlias(String attributealias);
 	List<String> getSourceAliasesAsList();
 //	String getExpressionName();
@@ -51,7 +51,7 @@ public interface IUtilityService {
 	void setSourcesStructs(Collection<SystemSource> sources);
 	boolean isAggregationAttribute(String name);
 	boolean isAttributeAlias(String string);
-	AttributeStruct getAttribute(String string);
+	SystemAttribute getAttribute(String string);
 //	Collection<String> getProjectionAttributes(SimpleSelect select);
 	
 	String generateListString(Collection<String> strings);

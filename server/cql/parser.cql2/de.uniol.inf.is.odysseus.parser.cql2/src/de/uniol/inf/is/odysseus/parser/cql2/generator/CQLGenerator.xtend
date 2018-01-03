@@ -5,7 +5,6 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator
 
 import com.google.inject.Guice
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AccessAO
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SenderAO
 import de.uniol.inf.is.odysseus.parser.cql2.CQLRuntimeModule
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.AccessFramework
@@ -18,19 +17,16 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateChannelFrameworkViaPort
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateDatabaseSink
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateDatabaseStream
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.CreateView
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Query
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SchemaDefinition
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StreamTo
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLBuilderModule
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.CacheModule
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser
@@ -38,19 +34,16 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ISelectParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParserModule
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.UtilityModule
-import java.util.Collection
 import java.util.List
 import java.util.Map
-import java.util.stream.Collectors
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -103,7 +96,7 @@ class CQLGenerator implements IGenerator2 {
 		selectParser.clear()
 //		existenceParser.clear()//TODO add clear()-method
 		cacheService.getOperatorCache().flush()
-		cacheService.getSourceCache().clear()
+		cacheService.getSystemSources().clear()
 		cacheService.getSelectCache().flush()
 //		cacheService.getQueryCache().flush()
 		cacheService.getExpressionCache().clear()
@@ -417,40 +410,6 @@ class CQLGenerator implements IGenerator2 {
 	}
 
 //
-	def List<SelectExpression> extractAggregationsFromArgument(List<SelectArgument> args) {
-		var List<SelectExpression> list = newArrayList
-		for (SelectArgument a : args)
-			if (a.expression !== null)
-				if (a.expression.expressions.size == 1) {
-					var aggregation = a.expression.expressions.get(0)
-					var function = aggregation.value
-					if (function instanceof Function) {
-						if (utilityService.isAggregateFunctionName(function.name))
-							list.add(a.expression)
-					}
-				}
-		return list
-	}
-
-//
-	def Collection<SelectExpression> extractSelectExpressionsFromArgument(List<SelectArgument> args) {
-		var Collection<SelectExpression> list = newArrayList
-		for (SelectArgument a : args)
-			if (a.expression !== null) {
-				if (a.expression.expressions.size == 1) {
-					var aggregation = a.expression.expressions.get(0)
-					var function = aggregation.value
-					if (function instanceof Function) {
-						if (utilityService.isMEPFunctionMame(function.name, selectParser.parseExpression(a.expression as SelectExpression).toString))
-							list.add(a.expression)
-					} else
-						list.add(a.expression)
-				} else
-					list.add(a.expression)
-			}
-		return list
-	}
-
 	def void setSchema(List<SystemSource> schemata) { utilityService.sourcesStructs = schemata }
 
 	def setDatabaseConnections(Map<String, String> connections) {

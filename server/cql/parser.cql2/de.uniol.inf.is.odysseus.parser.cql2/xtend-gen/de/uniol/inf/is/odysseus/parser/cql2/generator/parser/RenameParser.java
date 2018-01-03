@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -71,8 +71,8 @@ public class RenameParser implements IRenameParser {
     final String sourcealias = _xifexpression;
     for (int j = 0; (j < source.getAttributeList().size()); j++) {
       {
-        Collection<AttributeStruct> _attributeList = source.getAttributeList();
-        AttributeStruct attr = ((AttributeStruct[])Conversions.unwrapArray(_attributeList, AttributeStruct.class))[j];
+        Collection<SystemAttribute> _attributeList = source.getAttributeList();
+        SystemAttribute attr = ((SystemAttribute[])Conversions.unwrapArray(_attributeList, SystemAttribute.class))[j];
         int k = 0;
         int l = 0;
         while ((l < attr.aliases.size())) {
@@ -109,14 +109,14 @@ public class RenameParser implements IRenameParser {
         {
           List<String> list = listOfLists.get(j);
           for (int k = 0; (k < source.getAttributeList().size()); k++) {
-            Collection<AttributeStruct> _attributeList = source.getAttributeList();
-            AttributeStruct _get = ((AttributeStruct[])Conversions.unwrapArray(_attributeList, AttributeStruct.class))[k];
+            Collection<SystemAttribute> _attributeList = source.getAttributeList();
+            SystemAttribute _get = ((SystemAttribute[])Conversions.unwrapArray(_attributeList, SystemAttribute.class))[k];
             boolean _contains = list.contains(_get.attributename);
             boolean _not = (!_contains);
             if (_not) {
               String alias = null;
-              Collection<AttributeStruct> _attributeList_1 = source.getAttributeList();
-              AttributeStruct _get_1 = ((AttributeStruct[])Conversions.unwrapArray(_attributeList_1, AttributeStruct.class))[k];
+              Collection<SystemAttribute> _attributeList_1 = source.getAttributeList();
+              SystemAttribute _get_1 = ((SystemAttribute[])Conversions.unwrapArray(_attributeList_1, SystemAttribute.class))[k];
               String name = _get_1.attributename;
               if ((sourcealias != null)) {
                 if (((j > 0) && (listOfLists.size() > 1))) {
