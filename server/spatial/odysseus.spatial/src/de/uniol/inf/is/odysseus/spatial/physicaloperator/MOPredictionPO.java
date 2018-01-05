@@ -102,10 +102,13 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		double latitude = geometry.getGeometry().getCoordinate().x;
 		double longitude = geometry.getGeometry().getCoordinate().y;
+		
+		// TODO Calculate this from the movement, not reading this from the attributes
 		double courseOverGround = object.getAttribute(this.courseOverGroundPosition);
 		double speedOverGround = object.getAttribute(this.speedOverGroundPosition);
 		String id = object.getAttribute(this.idPosition).toString();
 
+		// TODO Why not a TrajectoryElement?
 		LocationMeasurement locationMeasurement = new LocationMeasurement(latitude, longitude, courseOverGround,
 				speedOverGround, object.getMetadata().getStart(), id);
 

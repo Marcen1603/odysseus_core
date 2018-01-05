@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.spatial.datatype;
 
+import java.util.concurrent.TimeUnit;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 import ch.hsr.geohash.GeoHash;
@@ -55,7 +57,7 @@ public class TrajectoryElement {
 		this.measurementTime = measurementTime;
 		this.streamElement = streamElement;
 
-		// Calculate distance to previous element
+		// Calculate distance to previous element in meters
 		if (previousElement != null) {
 			distanceToPreviousElement = MetrticSpatialUtils.getInstance().calculateDistance(null,
 					new Coordinate(geoHash.getPoint().getLatitude(), geoHash.getPoint().getLongitude()),
@@ -65,6 +67,39 @@ public class TrajectoryElement {
 			// This element is the next element of the previous one
 			previousElement.setNextElement(this);
 		}
+	}
+
+	/**
+	 * Calculates the azimuth (direction) of the last trajectory element (from the
+	 * previous to this location)
+	 * 
+	 * @return The azimuth.
+	 */
+	public double getAzimuth() {
+		Coordinate previousCoord = new Coordinate(this.previousElement.getGeoHash().getPoint().getLatitude(),
+				this.previousElement.getGeoHash().getPoint().getLongitude());
+		Coordinate currentCoord = new Coordinate(this.geoHash.getPoint().getLatitude(),
+				this.geoHash.getPoint().getLongitude());
+		return MetrticSpatialUtils.getInstance().calculateAzimuth(null, previousCoord, currentCoord);
+	}
+
+	/**
+	 * Calculates the speed in meters per second of the last trajectory element
+	 * (from the previous to this location)
+	 * 
+	 * @param baseTimeUnit
+	 *            time unit of the data stream to interpret the timestamps
+	 * @return The speed in meters per second
+	 */
+	public double getSpeed(TimeUnit baseTimeUnit) {
+		double speed = 0.0;
+
+		if (this.previousElement != null) {
+			long duration = (this.measurementTime.minus(this.previousElement.measurementTime)).getMainPoint();
+			long seconds = baseTimeUnit.toSeconds(duration);
+			speed = this.distanceToPreviousElement / seconds;
+		}
+		return speed;
 	}
 
 	public void decoupleFromNextElement() {
@@ -105,6 +140,10 @@ public class TrajectoryElement {
 		this.streamElement = streamElement;
 	}
 
+	/**
+	 * 
+	 * @return distance in meters
+	 */
 	public double getDistanceToPreviousElement() {
 		return distanceToPreviousElement;
 	}
