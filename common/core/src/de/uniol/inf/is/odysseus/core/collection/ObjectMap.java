@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.objectmap.datatype;
+package de.uniol.inf.is.odysseus.core.collection;
 
 import java.util.HashMap;
 
@@ -89,5 +89,4 @@ public class ObjectMap<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	public void setAttribute(String key, Object value) {
 		this.data.put(key, value);
 	}
-
 }

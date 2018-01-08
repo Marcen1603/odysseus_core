@@ -32,6 +32,11 @@ import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.keyvalue.KeyValueMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeTypeHandlerRegistry;
 
+/**
+ * 
+ * @author Thomas Vogelgesang
+ *
+ */
 public abstract class AbstractMailTransportHandler
 		extends AbstractSimplePullTransportHandler<KeyValueObject<IMetaAttribute>> {
 
