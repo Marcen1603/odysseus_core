@@ -14,6 +14,13 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
+/**
+ * One element in a trajectory. The trajectory is made of a double linked list
+ * (to previous and next element).
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TrajectoryElement {
 
 	static Logger logger = LoggerFactory.getLogger(TrajectoryElement.class);
@@ -21,7 +28,7 @@ public class TrajectoryElement {
 	private static final int BIT_PRECISION = 64;
 
 	private String movingObjectID;
-	
+
 	// Double linked list
 	private transient TrajectoryElement previousElement;
 	private transient TrajectoryElement nextElement;
@@ -34,7 +41,7 @@ public class TrajectoryElement {
 	// Time
 	private PointInTime measurementTime;
 	private IStreamObject<? extends IMetaAttribute> streamElement;
-	
+
 	// For possible rounding errors
 	private static double DISTANCE_TOLERANCE_METERS = 0.01;
 
