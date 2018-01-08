@@ -82,7 +82,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class CQLParser implements IQueryParser {
 
-	private static final InfoService infoService = InfoServiceFactory.getInfoService("CQLParser");
+	private static final InfoService infoService = InfoServiceFactory.getInfoService(CQLParser.class);
 
 	private static Map<String, String> databaseConnections = new HashMap<>();
 	private static Set<SDFSchema> currentSchema;
@@ -107,9 +107,6 @@ public class CQLParser implements IQueryParser {
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
 		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 		generator = injector.getInstance(CQLGenerator.class);
-//		generator.setFunctionStore(getFunctionStore());
-//		generator.setMEP(getMEP());
-//		generator.setAggregatePattern(getAggregateFunctionPattern());
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(

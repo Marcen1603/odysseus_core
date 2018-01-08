@@ -31,7 +31,7 @@ public interface IUtilityService {
 	Map<String, Collection<String>> getSubQuerySources();
 	SystemSource getSource(@NotNull String name);
 	SystemSource getSource(@NotNull SimpleSource source); 
-	void addAggregationAttribute(SelectExpression aggregation, String alias);
+//	void addAggregationAttribute(SelectExpression aggregation, String alias);
 //	void addQueryAttributes(@NotNull SimpleSelect select, @NotNull Map<String, List<String>> attributes);
 	void registerSourceAlias(@NotNull SimpleSource source);
 //	Collection<SelectExpression> getQueryExpression(SimpleSelect select);
@@ -63,6 +63,10 @@ public interface IUtilityService {
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);
 	Collection<String> getSourceNames();
-	String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename, String sourcenamealias, boolean isSubQuery); 
+	String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename, String sourcenamealias, boolean isSubQuery);
+	QueryAttribute getQueryAttribute(Attribute attribute);
+	String getDataTypeFrom(Attribute attribute);
+	boolean containsAllAggregates(SimpleSelect query);
+	boolean containsAllPredicates(Collection<String> predicates);
 	
 }

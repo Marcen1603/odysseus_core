@@ -44,6 +44,7 @@ import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -55,7 +56,8 @@ class CQLGenerator implements IGenerator2 {
 	var IPredicateParser predicateParser;	
 	var IUtilityService utilityService;
 	var ICacheService cacheService;
-	var IAttributeNameParser attributeParser;
+	var IAttributeNameParser nameParser;
+	var IAttributeParser attributeParser;
 	var IRenameParser renameParser;
 	var IJoinParser joinParser;
 	var ISelectParser selectParser;
@@ -78,7 +80,8 @@ class CQLGenerator implements IGenerator2 {
 		utilityService = injector.getInstance(IUtilityService);
 		cacheService = injector.getInstance(ICacheService);
 		predicateParser = injector.getInstance(IPredicateParser);
-		attributeParser = injector.getInstance(IAttributeNameParser);
+		nameParser = injector.getInstance(IAttributeNameParser);
+		attributeParser = injector.getInstance(IAttributeParser);
 		renameParser = injector.getInstance(IRenameParser);
 		joinParser = injector.getInstance(IJoinParser);
 		selectParser = injector.getInstance(ISelectParser);
@@ -94,12 +97,15 @@ class CQLGenerator implements IGenerator2 {
 		joinParser.clear()
 		renameParser.clear()
 		selectParser.clear()
+		attributeParser.clear()
+		
 //		existenceParser.clear()//TODO add clear()-method
 		cacheService.getOperatorCache().flush()
 		cacheService.getSystemSources().clear()
 		cacheService.getSelectCache().flush()
-//		cacheService.getQueryCache().flush()
+		cacheService.getQueryCache().clear()
 		cacheService.getExpressionCache().clear()
+		
 		SystemSource.clearQuerySources()
 		SystemSource.clearAttributeAliases()
 		

@@ -1,7 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.utility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
-
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.EcoreUtil2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +29,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.impl.FunctionImpl;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -228,6 +223,12 @@ public class ParserUtilityService implements IUtilityService {
 			throw new IllegalArgumentException("given source was null");
 		}
 		
+//		String n = name;
+		
+//		if (n.contains(".")) {
+//			n = n.split("\\.")[0];
+//		}
+		
 		for (SystemSource source : cacheService.getSystemSources()) {
 			if (source.getName().equals(name) || source.hasAlias(name)) {
 				return source;
@@ -245,7 +246,7 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public SystemSource getSource( SimpleSource source) {
+	public SystemSource getSource(SimpleSource source) {
 		return getSource(source.getName());
 	}
 	
@@ -292,18 +293,19 @@ public class ParserUtilityService implements IUtilityService {
 	
 	@Override
 	public String getAttributenameFromAlias(String name) {
+		
 		SystemAttribute attribute = getAttributeFromAlias(name);
 		if (attribute != null) {
 			return attribute.getAttributename();
 		}
 
-		Collection<Pair<SelectExpression, String>> l = cacheService.getAggregationAttributeCache();
-		if (l.stream().map(e -> e.getE2()).collect(Collectors.toList()).contains(name)
-				|| cacheService.getExpressionCache().values().contains(name)) {
+		if (cacheService.getExpressionCache().values().contains(name)) {
 			return name;
 		}
 
-		return null;
+		return cacheService.getQueryCache().getAllQueryAggregations()
+				.stream()
+				.anyMatch(p -> p.name.equals(name)) ? name : null;
 	}
 
 	@Override
@@ -323,8 +325,8 @@ public class ParserUtilityService implements IUtilityService {
 		return map;
 	}
 
-	protected Collection<SelectExpression> getAggregations(Collection<SelectArgument> selectArguments,
-			int expressionType) {
+	//TODO unuseds
+	protected Collection<SelectExpression> getAggregations(Collection<SelectArgument> selectArguments, int expressionType) {
 		Collection<SelectExpression> col = new ArrayList<>();
 		for (SelectArgument selectArgument : selectArguments) {
 			SelectExpression expression = selectArgument.getExpression();
@@ -411,7 +413,7 @@ public class ParserUtilityService implements IUtilityService {
 	public Collection<String> getAllQueryAttributes(SimpleSelect select) {
 		List<String> l = new ArrayList<>();
 		
-		cacheService.getQueryCache().getQueryAggregations(select).forEach(e -> l.add(e.getAlias().getName()));
+		cacheService.getQueryCache().getQueryAggregations(select).forEach(e -> l.add(e.name));
 		cacheService.getQueryCache().getQueryAttributes(select).stream().forEach(e -> l.add(e.name));
 		
 		return l;
@@ -445,18 +447,15 @@ public class ParserUtilityService implements IUtilityService {
 	}
 	
 	@Override
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void addAggregationAttribute(SelectExpression aggregation, String alias) {
-		cacheService.getAggregationAttributeCache().add(new Pair(aggregation, alias));
-	}
-	
-	@Override
 	public String getSourceNameFromAlias(String sourcealias) {
-		SystemSource source = getSource(sourcealias);
-		if(source != null) {
-			return source.getName();
+
+		if (isSourceAlias(sourcealias)) {
+			SystemSource source = getSource(sourcealias);
+			if (source != null) {
+				return source.getName();
+			}
 		}
-		
+
 		return null;
 	}
 	
@@ -486,7 +485,7 @@ public class ParserUtilityService implements IUtilityService {
 
 	@Override
 	public boolean isAggregationAttribute(String name) {
-		return cacheService.getAggregationAttributeCache().stream().anyMatch(e -> e.getE2().equals(name));
+		return cacheService.getQueryCache().getAllQueryAggregations().stream().anyMatch(p -> p.name.equals(name));
 	}
 	
 	@Override
@@ -537,43 +536,59 @@ public class ParserUtilityService implements IUtilityService {
 		return "";
 	}
 	
+	@Override
 	public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.getName()); }
 
 	public String getDataTypeFrom(String attribute) {
+		
 		String attributename = attribute; // getAttributename(attribute)
 		String sourcename = "";
+		
 		if (attribute.contains(".")) {
+			
 			String[] splitted = attribute.split("\\.");
+			
 			if (isAttributeAlias(attributename)) {
-				String sourceFromAlias = getSourceNameFromAlias(attributename);
-				if (isSourceAlias(sourceFromAlias))
-					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
-				attributename = getAttributenameFromAlias(attributename);
-				sourcename = sourceFromAlias;
-				for (SystemAttribute attr : getSource(sourcename).getAttributeList())
-					if (attr.attributename.equals(attributename))
-						return attr.datatype;
+				////
+//				String sourceFromAlias = getSourceNameFromAlias(attributename);
+//				
+//				if (isSourceAlias(sourceFromAlias)) {
+//					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
+//				}
+//				
+//				attributename = getAttributenameFromAlias(attributename);
+//				sourcename = sourceFromAlias;
+//				
+//				for (SystemAttribute attr : getSource(sourcename).getAttributeList()) {
+//					if (attr.attributename.equals(attributename))
+//						return attr.datatype;
+//				}
+//				
 			}
+			
 			sourcename = splitted[0];
 			attributename = splitted[1];
 			if (isAttributeAlias(attributename))
 				attributename = getAttributenameFromAlias(attributename);
 			if (isSourceAlias(sourcename))
 				sourcename = getSourceNameFromAlias(sourcename);
-			try {
+//			try {
 				for (SystemAttribute attr : getSource(sourcename).getAttributeList())
 					if (attr.attributename.equals(attributename))
 						return attr.getDatatype();
-			} catch (IllegalArgumentException e) {
-				//TODO is still used?
-//				for (String attr : getSubQuerySources().get(sourcename)) {
-//					if (attributeParser.parse(attr).equals(attributename)) {
-//						return getAttribute(attr).getDatatype();
-//
-//					}
-//				}
-			}
+//			} catch (IllegalArgumentException e) {
+//				//TODO is still used?
+////				for (String attr : getSubQuerySources().get(sourcename)) {
+////					if (attributeParser.parse(attr).equals(attributename)) {
+////						return getAttribute(attr).getDatatype();
+////
+////					}
+////				}
+//			}
+				
+				
 		} else {
+			
 			if (isAttributeAlias(attributename)) {
 				String sourceFromAlias = getSourceNameFromAlias(attributename);
 				if (isSourceAlias(sourceFromAlias))
@@ -586,7 +601,48 @@ public class ParserUtilityService implements IUtilityService {
 						return attr.getDatatype();
 			}
 		}
+		
 		return "Double"; // TODO change to null if you are done with debugging
+	}
+	
+	@Override
+	public QueryAttribute getQueryAttribute(Attribute attribute) {
+
+		QueryAttribute r = null;
+
+		cacheService.getQueryCache().getAllQueryAttributes()
+			.stream()
+			.filter(p -> p.attribute.equals(attribute))
+			.findFirst()
+			.ifPresent(p -> p = r);
+		
+		return r;
+	}
+	
+	//TODO rename
+	@Override
+	public boolean containsAllAggregates(SimpleSelect query) {
+		
+		final Collection<String> projection = cacheService.getQueryCache().getProjectionAttributes(query)
+				.stream()
+				.map(e -> e.name)
+				.collect(Collectors.toList());
+
+		return cacheService.getQueryCache().getAllQueryAggregations()
+				.stream()
+				.map(e -> e.name)
+				.collect(Collectors.toList())
+				.containsAll(projection);
+	}
+	
+	//TODO rename
+	@Override
+	public boolean containsAllPredicates(Collection<String> predicates) {
+		return cacheService.getQueryCache().getAllQueryAggregations()
+				.stream()
+				.map(e -> e.name)
+				.collect(Collectors.toList())
+				.containsAll(predicates);
 	}
 	
 }

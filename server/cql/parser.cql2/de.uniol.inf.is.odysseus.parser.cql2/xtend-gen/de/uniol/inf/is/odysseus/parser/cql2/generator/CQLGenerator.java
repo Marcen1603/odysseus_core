@@ -35,9 +35,11 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.PQLBuilderModule;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.CacheModule;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.SelectCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
@@ -80,7 +82,9 @@ public class CQLGenerator implements IGenerator2 {
   
   private ICacheService cacheService;
   
-  private IAttributeNameParser attributeParser;
+  private IAttributeNameParser nameParser;
+  
+  private IAttributeParser attributeParser;
   
   private IRenameParser renameParser;
   
@@ -108,19 +112,21 @@ public class CQLGenerator implements IGenerator2 {
     IPredicateParser _instance_2 = injector.<IPredicateParser>getInstance(IPredicateParser.class);
     this.predicateParser = _instance_2;
     IAttributeNameParser _instance_3 = injector.<IAttributeNameParser>getInstance(IAttributeNameParser.class);
-    this.attributeParser = _instance_3;
-    IRenameParser _instance_4 = injector.<IRenameParser>getInstance(IRenameParser.class);
-    this.renameParser = _instance_4;
-    IJoinParser _instance_5 = injector.<IJoinParser>getInstance(IJoinParser.class);
-    this.joinParser = _instance_5;
-    ISelectParser _instance_6 = injector.<ISelectParser>getInstance(ISelectParser.class);
-    this.selectParser = _instance_6;
-    IExistenceParser _instance_7 = injector.<IExistenceParser>getInstance(IExistenceParser.class);
-    this.existenceParser = _instance_7;
-    IAggregationParser _instance_8 = injector.<IAggregationParser>getInstance(IAggregationParser.class);
-    this.aggregationParser = _instance_8;
-    AbstractPQLOperatorBuilder _instance_9 = injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
-    this.builder = _instance_9;
+    this.nameParser = _instance_3;
+    IAttributeParser _instance_4 = injector.<IAttributeParser>getInstance(IAttributeParser.class);
+    this.attributeParser = _instance_4;
+    IRenameParser _instance_5 = injector.<IRenameParser>getInstance(IRenameParser.class);
+    this.renameParser = _instance_5;
+    IJoinParser _instance_6 = injector.<IJoinParser>getInstance(IJoinParser.class);
+    this.joinParser = _instance_6;
+    ISelectParser _instance_7 = injector.<ISelectParser>getInstance(ISelectParser.class);
+    this.selectParser = _instance_7;
+    IExistenceParser _instance_8 = injector.<IExistenceParser>getInstance(IExistenceParser.class);
+    this.existenceParser = _instance_8;
+    IAggregationParser _instance_9 = injector.<IAggregationParser>getInstance(IAggregationParser.class);
+    this.aggregationParser = _instance_9;
+    AbstractPQLOperatorBuilder _instance_10 = injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
+    this.builder = _instance_10;
   }
   
   public void clear() {
@@ -129,12 +135,15 @@ public class CQLGenerator implements IGenerator2 {
     this.joinParser.clear();
     this.renameParser.clear();
     this.selectParser.clear();
+    this.attributeParser.clear();
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
     _operatorCache.flush();
     Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
     _systemSources.clear();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     _selectCache.flush();
+    QueryCache _queryCache = this.cacheService.getQueryCache();
+    _queryCache.clear();
     Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
     _expressionCache.clear();
     SystemSource.clearQuerySources();

@@ -3,18 +3,17 @@
  */
 package de.uniol.inf.is.odysseus.iql.qdl.generator
 
+import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
+import de.uniol.inf.is.odysseus.iql.basic.generator.AbstractIQLGenerator
+import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLCompiler
+import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
+import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery
+import java.net.URI
+import javax.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.AbstractGenerator
+import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import javax.inject.Inject
-import de.uniol.inf.is.odysseus.iql.qdl.generator.compiler.IQDLCompiler
-import de.uniol.inf.is.odysseus.iql.basic.basicIQL.IQLModelElement
-import java.net.URI
-import de.uniol.inf.is.odysseus.iql.basic.generator.AbstractIQLGenerator
-import org.eclipse.xtext.generator.IFileSystemAccess
-import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery
-import de.uniol.inf.is.odysseus.iql.qdl.generator.context.IQDLGeneratorContext
 
 /**
  * Generates code from your model files on save.

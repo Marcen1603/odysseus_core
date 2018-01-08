@@ -75,9 +75,8 @@ class AttributeNameParser implements IAttributeNameParser {
 			}
 		} else {
 			attribute = attributename
-			log.info("HERE-1::" + attribute)
-			log.info("aggregationAttributes=" + cacheService.getAggregationAttributeCache())
-			if (cacheService.getAggregationAttributeCache().stream().map(e | e.e2).filter(p | p.equals(attributename)).findFirst().isPresent()) {
+			
+			if (utilityService.isAggregationAttribute(attribute)) {
 				return attributename
 			}
 			// TODO could be also containsKey

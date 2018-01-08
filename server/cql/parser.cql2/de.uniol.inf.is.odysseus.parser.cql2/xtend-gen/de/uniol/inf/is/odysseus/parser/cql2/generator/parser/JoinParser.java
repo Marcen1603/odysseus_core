@@ -26,13 +26,9 @@ import java.util.stream.Stream;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class JoinParser implements IJoinParser {
-  private final Logger log = LoggerFactory.getLogger(JoinParser.class);
-  
   private IUtilityService utilityService;
   
   private ICacheService cacheService;

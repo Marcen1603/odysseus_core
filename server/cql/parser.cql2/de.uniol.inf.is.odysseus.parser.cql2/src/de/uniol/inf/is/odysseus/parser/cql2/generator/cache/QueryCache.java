@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -40,6 +41,15 @@ public class QueryCache implements Cache {
 		}
 	}
 
+	
+	public void clear() {
+		projectionAttributes.clear();
+		sourceEntries.clear();
+		attributeEntries.clear();
+		subQueryEntries.clear();
+		aggreateEntries.clear();
+	}
+	
 //////	 
 	
 	private Map<SimpleSelect, Collection<QueryAttribute>> projectionAttributes = new HashMap<>();
@@ -117,6 +127,7 @@ public class QueryCache implements Cache {
 		
 		public String name;
 		public String alias;
+		public String datatype; 
 		public Collection<String> sources;
 		public Attribute attribute;
 		public Type type;
@@ -128,29 +139,27 @@ public class QueryCache implements Cache {
 			STANDARD,
 		}
 		
-		public QueryAttribute(Attribute obj, Type type) {
+		public QueryAttribute(Attribute obj, Type type, String datatype) {
 			this.attribute = obj;
 			this.type = type;
 			this.name = obj.getName();
 			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
+			this.sources = new ArrayList<>();
 		}
 
-		public QueryAttribute(Attribute e, Type type, SystemSource systemSource) {
-			this.attribute = e;
-			this.type = type;
-			this.alias = e.getAlias() != null ? e.getAlias().getName() : "";
-			this.sources = new ArrayList<>();
+		public QueryAttribute(Attribute e, Type type, String datatype, SystemSource systemSource) {
+			this(e, type, datatype);
 			this.sources.add(systemSource.name);
 		}
 
-		public QueryAttribute(String name, Type type, SystemSource systemSource) {
+		public QueryAttribute(String name, Type type, String datatype, SystemSource systemSource) {
 			this.name = name;
 			this.type = type;
 			this.sources = new ArrayList<>();
 			this.sources.add(systemSource.name);
 		}
 
-		public QueryAttribute(String name, Type type, Collection<String> sources) {
+		public QueryAttribute(String name, Type type, String datatype, Collection<String> sources) {
 			this.name = name;
 			this.type = type;
 			this.sources = sources;
@@ -162,7 +171,36 @@ public class QueryCache implements Cache {
 	private Map<SimpleSelect, Collection<QueryAttribute>> attributeEntries = new HashMap<>();
 	
 	public void putQueryAttributes(SimpleSelect query, Collection<QueryAttribute> entry) {
+		
+//TODO remove
+//		entry.stream().forEach(e -> {
+//			
+//			// add QueryAggregate to aggregateEntries
+//			if (e instanceof QueryAggregate) {
+//				
+//				Collection<QueryAggregate> col;
+//				
+//				if (aggreateEntries.containsKey(query)) {
+//					
+//					col = aggreateEntries.get(query);
+//					if (!col.contains(e)) {
+//						col.add((QueryAggregate) e);
+//					}
+//					
+//				} else {
+//					col = new ArrayList<>();
+//					col.add((QueryAggregate) e);
+//				}
+//				aggreateEntries.put(query, col);
+//				
+//			}
+//			
+//			
+//			
+//		});
+//		
 		attributeEntries.put(query, entry);
+		
 	}
 	
 	public Collection<QueryAttribute> getQueryAttributes(SimpleSelect query) {
@@ -180,15 +218,35 @@ public class QueryCache implements Cache {
 
 	
 	/////
-	public Collection<SelectExpression> getQueryAggregations(SimpleSelect query) {
-		return (Collection<SelectExpression>) getCollection(query, Type.QUERY_AGGREGATION);
+	
+	private Map<SimpleSelect, Collection<QueryAggregate>> aggreateEntries = new HashMap<>();
+	
+	public Collection<QueryAggregate> getQueryAggregations(SimpleSelect query) {
+		return aggreateEntries.containsKey(query) ? aggreateEntries.get(query) : new ArrayList<>();
 	}
 
 
-	public void putQueryAggregations(SimpleSelect query, Collection<SelectExpression> aggregations) {
-		putCollection(query, aggregations, Type.QUERY_AGGREGATION);
+	public void putQueryAggregations(SimpleSelect query, Collection<QueryAggregate> aggregations) {
+		aggreateEntries.put(query, aggregations);
 	}
 	
+	
+	public static class QueryAggregate extends QueryAttribute {
+		
+		public SelectExpression expression;
+		
+		private QueryAggregate(String name, Type type, String datatype, Collection<String> sources) {
+			super(name, type, datatype, sources);
+		}
+
+		public QueryAggregate(String name, Type type, String datatype, Collection<String> sources, SelectExpression expression) {
+			this(name, type, datatype, sources);
+			this.expression = expression;			
+		}
+		
+	}
+	
+	///
 	public Collection<SelectExpression> getQueryExpressions(SimpleSelect query) {
 		return (Collection<SelectExpression>) getCollection(query, Type.QUERY_EXPRESSION);
 	}
@@ -382,6 +440,28 @@ public class QueryCache implements Cache {
 	@Override
 	public void flush() {
 		flushMe();
+	}
+
+	public Collection<QueryAggregate> getAllQueryAggregations() {
+		
+		Collection<QueryAggregate> col = new ArrayList<>();
+		
+		aggreateEntries.values().stream().forEach(e -> {
+			e.stream().forEach(p -> col.add(p));
+		});
+		
+		return col;
+	}
+
+	public Collection<QueryAttribute> getAllQueryAttributes() {
+		
+		Collection<QueryAttribute> col = new ArrayList<>();
+		
+		attributeEntries.values().stream().forEach(e -> {
+			e.stream().forEach(p -> col.add(p));
+		});
+		
+		return col;
 	}
 
 

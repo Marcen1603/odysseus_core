@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.inject.Inject;
+
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
@@ -14,17 +16,18 @@ public class CacheService implements ICacheService {
 
 	private QueryCache queryCache;
 	private Collection<SystemSource> sourceCache;
-	private Collection<Pair<SelectExpression, String>> aggAttributeCache;
+//	private Collection<Pair<SelectExpression, String>> aggAttributeCache;
 	private Map<String, String> expressionCache;
 	private Map<String, String> attributeAliasCache;
 	private Map<String, SystemAttribute> renamedAttributes;
 	private OperatorCache operatorCache;
 	private SelectCache selectCache;
 
+	@Inject
 	public CacheService() {
 		queryCache = new QueryCache();
 		sourceCache = new ArrayList<>();
-		aggAttributeCache = new ArrayList<>();
+//		aggAttributeCache = new ArrayList<>();
 		expressionCache = new HashMap<>();
 		attributeAliasCache = new HashMap<>();
 		operatorCache = new OperatorCache();
@@ -42,10 +45,10 @@ public class CacheService implements ICacheService {
 		return sourceCache;
 	}
 	
-	@Override
-	public Collection<Pair<SelectExpression, String>> getAggregationAttributeCache() {
-		return aggAttributeCache;
-	}
+//	@Override
+//	public Collection<Pair<SelectExpression, String>> getAggregationAttributeCache() {
+//		return aggAttributeCache;
+//	}
 	
 	@Override
 	public Map<String, String> getExpressionCache() {
@@ -61,7 +64,7 @@ public class CacheService implements ICacheService {
 	public void flushAll() {
 		queryCache.flush();
 		sourceCache.clear();
-		aggAttributeCache.clear();
+//		aggAttributeCache.clear();
 		expressionCache.clear();
 		operatorCache.flush();
 		selectCache.flush();

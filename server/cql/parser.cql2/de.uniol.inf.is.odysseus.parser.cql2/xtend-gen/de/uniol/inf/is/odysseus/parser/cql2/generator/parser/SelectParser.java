@@ -117,6 +117,7 @@ public class SelectParser implements ISelectParser {
     String projectInput = null;
     String operator1 = this.parseAdditionalOperator(SelectParser.Operator.MAP, select);
     String operator2 = this.parseAdditionalOperator(SelectParser.Operator.AGGREGATE, select);
+    this.attributeParser.clear();
     if ((((operator1 == null) && (operator2 == null)) && select.getArguments().isEmpty())) {
       EList<Source> _sources = select.getSources();
       String _buildJoin = this.joinParser.buildJoin(_sources);
@@ -195,12 +196,11 @@ public class SelectParser implements ISelectParser {
           AttributeParser.QueryAttributeOrder _attributeOrder = this.attributeParser.getAttributeOrder();
           _queryCache_2.putProjectionAttributes(select, _attributeOrder);
           QueryCache _queryCache_3 = this.cacheService.getQueryCache();
-          EList<SelectArgument> _arguments = select.getArguments();
-          Collection<SelectExpression> _extractAggregationsFromArgument = this.aggregateParser.extractAggregationsFromArgument(_arguments);
-          _queryCache_3.putQueryAggregations(select, _extractAggregationsFromArgument);
+          Collection<QueryCache.QueryAggregate> _aggregates = this.attributeParser.getAggregates();
+          _queryCache_3.putQueryAggregations(select, _aggregates);
           QueryCache _queryCache_4 = this.cacheService.getQueryCache();
-          EList<SelectArgument> _arguments_1 = select.getArguments();
-          Collection<SelectExpression> _extractSelectExpressionsFromArgument = this.expressionParser.extractSelectExpressionsFromArgument(_arguments_1);
+          EList<SelectArgument> _arguments = select.getArguments();
+          Collection<SelectExpression> _extractSelectExpressionsFromArgument = this.expressionParser.extractSelectExpressionsFromArgument(_arguments);
           _queryCache_4.putQueryExpressions(select, _extractSelectExpressionsFromArgument);
           SelectCache _selectCache_1 = this.cacheService.getSelectCache();
           _selectCache_1.add(select);
@@ -370,13 +370,9 @@ public class SelectParser implements ISelectParser {
               _xifexpression_2 = null;
             }
             List<String> predicateAttributes = _xifexpression_2;
-            Collection<de.uniol.inf.is.odysseus.core.collection.Pair<SelectExpression, String>> _aggregationAttributeCache = this.cacheService.getAggregationAttributeCache();
-            QueryCache _queryCache = this.cacheService.getQueryCache();
-            Collection<QueryCache.QueryAttribute> _projectionAttributes = _queryCache.getProjectionAttributes(select);
-            boolean _containsAll = _aggregationAttributeCache.containsAll(_projectionAttributes);
-            if (_containsAll) {
-              if ((((predicateAttributes != null) && (!predicateAttributes.isEmpty())) && 
-                this.cacheService.getAggregationAttributeCache().containsAll(predicateAttributes))) {
+            boolean _containsAllAggregates = this.utilityService.containsAllAggregates(select);
+            if (_containsAllAggregates) {
+              if ((((predicateAttributes != null) && (!predicateAttributes.isEmpty())) && this.utilityService.containsAllPredicates(predicateAttributes))) {
                 return aggregateOperator;
               } else {
                 EList<Source> _sources_2 = select.getSources();
@@ -456,7 +452,7 @@ public class SelectParser implements ISelectParser {
           break;
         case AGGREGATE:
           QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-          Collection<SelectExpression> aggregations = _queryCache_1.getQueryAggregations(select);
+          Collection<QueryCache.QueryAggregate> aggregations = _queryCache_1.getQueryAggregations(select);
           if (((aggregations != null) && (!aggregations.isEmpty()))) {
             EList<Attribute> _order = select.getOrder();
             EList<Source> _sources = select.getSources();

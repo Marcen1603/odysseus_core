@@ -3,14 +3,11 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.cache;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 
 public class SelectCache implements Cache {
 
-	private final Logger log = LoggerFactory.getLogger(SelectCache.class);
+//	private final Logger log = LoggerFactory.getLogger(SelectCache.class);
 	
 	private Collection<SimpleSelect> selects;
 

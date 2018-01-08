@@ -82,6 +82,8 @@ class SelectParser implements ISelectParser {
 		var String operator1 = parseAdditionalOperator(Operator.MAP, select)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, select)
 
+		attributeParser.clear()
+
 		// Query corresponds to a select all	
 		if (operator1 === null && operator2 === null && select.arguments.empty) {
 			projectInput = joinParser.buildJoin(select.sources).toString
@@ -137,7 +139,7 @@ class SelectParser implements ISelectParser {
 				cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
 				cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
 				cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
-				cacheService.getQueryCache().putQueryAggregations(select, aggregateParser.extractAggregationsFromArgument(select.arguments));
+				cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
 				cacheService.getQueryCache().putQueryExpressions(select, expressionParser.extractSelectExpressionsFromArgument(select.arguments));
 
 				cacheService.getSelectCache().add(select);
@@ -229,12 +231,14 @@ class SelectParser implements ISelectParser {
 					} else {
 						null
 					}
+						
+					
 				// If the aggregate operator outputs the same attributes that are selected in the select clause
-				if (cacheService.getAggregationAttributeCache().containsAll(
-					cacheService.getQueryCache().getProjectionAttributes(select))) {
+				if (utilityService.containsAllAggregates(select)) {
 					// If the aggregate operator outputs the same attributes that
-					if (predicateAttributes !== null && !predicateAttributes.empty &&
-						cacheService.getAggregationAttributeCache().containsAll(predicateAttributes)) {
+					if (predicateAttributes !== null 
+						&& !predicateAttributes.empty 
+						&& utilityService.containsAllPredicates(predicateAttributes)) {
 						return aggregateOperator
 					} else {
 						return checkForGroupAttributes(aggregateOperator, select,
@@ -245,6 +249,7 @@ class SelectParser implements ISelectParser {
 						joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(select.sources)]))
 				}
 			}
+			
 		}
 		return joinParser.buildJoin(select.sources)
 	}

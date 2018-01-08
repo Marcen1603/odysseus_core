@@ -7,19 +7,16 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
 import java.util.List
-import java.util.Map.Entry
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class JoinParser implements IJoinParser {
 
-	val Logger log = LoggerFactory.getLogger(typeof(JoinParser))
+//	val Logger log = LoggerFactory.getLogger(typeof(JoinParser))
 
 	var IUtilityService utilityService
 	var ICacheService cacheService

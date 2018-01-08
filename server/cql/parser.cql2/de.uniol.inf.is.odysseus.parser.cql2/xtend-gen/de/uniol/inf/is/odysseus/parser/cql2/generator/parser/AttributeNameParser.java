@@ -1,9 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
 import com.google.inject.Inject;
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -14,10 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,23 +105,8 @@ public class AttributeNameParser implements IAttributeNameParser {
       }
     } else {
       attribute = attributename;
-      this.log.info(("HERE-1::" + attribute));
-      Collection<Pair<SelectExpression, String>> _aggregationAttributeCache = this.cacheService.getAggregationAttributeCache();
-      String _plus = ("aggregationAttributes=" + _aggregationAttributeCache);
-      this.log.info(_plus);
-      Collection<Pair<SelectExpression, String>> _aggregationAttributeCache_1 = this.cacheService.getAggregationAttributeCache();
-      Stream<Pair<SelectExpression, String>> _stream = _aggregationAttributeCache_1.stream();
-      final Function<Pair<SelectExpression, String>, String> _function = (Pair<SelectExpression, String> e) -> {
-        return e.getE2();
-      };
-      Stream<String> _map = _stream.<String>map(_function);
-      final Predicate<String> _function_1 = (String p) -> {
-        return p.equals(attributename);
-      };
-      Stream<String> _filter = _map.filter(_function_1);
-      Optional<String> _findFirst = _filter.findFirst();
-      boolean _isPresent = _findFirst.isPresent();
-      if (_isPresent) {
+      boolean _isAggregationAttribute_1 = this.utilityService.isAggregationAttribute(attribute);
+      if (_isAggregationAttribute_1) {
         return attributename;
       }
       Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
@@ -155,8 +134,8 @@ public class AttributeNameParser implements IAttributeNameParser {
         }
       }
       String _string = containedBySources.toString();
-      String _plus_1 = ("HERE1::" + _string);
-      this.log.info(_plus_1);
+      String _plus = ("HERE1::" + _string);
+      this.log.info(_plus);
       int _size = containedBySources.size();
       boolean _equals = (_size == 1);
       if (_equals) {
@@ -168,8 +147,8 @@ public class AttributeNameParser implements IAttributeNameParser {
         boolean _isEmpty_1 = aliases.isEmpty();
         boolean _not_1 = (!_isEmpty_1);
         if (_not_1) {
-          boolean _isAggregationAttribute_1 = this.utilityService.isAggregationAttribute(attribute);
-          if (_isAggregationAttribute_1) {
+          boolean _isAggregationAttribute_2 = this.utilityService.isAggregationAttribute(attribute);
+          if (_isAggregationAttribute_2) {
             return attribute;
           }
           this.log.info("HERE1 ALIASES NOT EMPTY");
@@ -183,21 +162,21 @@ public class AttributeNameParser implements IAttributeNameParser {
         boolean _not_2 = (!_isEmpty_2);
         if (_not_2) {
           String _get_5 = sourceStruct.aliasList.get(0);
-          String _plus_2 = (_get_5 + ".");
-          return (_plus_2 + attributename);
+          String _plus_1 = (_get_5 + ".");
+          return (_plus_1 + attributename);
         }
         this.log.info("HERE3");
         SystemSource _get_6 = containedBySources.get(0);
         String _name_2 = _get_6.getName();
-        String _plus_3 = (_name_2 + ".");
-        return (_plus_3 + attribute);
+        String _plus_2 = (_name_2 + ".");
+        return (_plus_2 + attribute);
       }
       boolean _contains_2 = attributename.contains("()");
       if (_contains_2) {
         String _replace = attributename.replace("(", "");
         String _replace_1 = _replace.replace(")", "");
-        String _plus_4 = ("${" + _replace_1);
-        return (_plus_4 + "}");
+        String _plus_3 = ("${" + _replace_1);
+        return (_plus_3 + "}");
       }
       this.log.info("HERE4");
       boolean _contains_3 = attributename.contains("$(");
