@@ -21,15 +21,15 @@ import javax.mail.search.SubjectTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.collection.ObjectMap;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.IMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.keyvalue.KeyValueMimeTypeHandlerRegistry;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.objectmap.KeyValueMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeTypeHandlerRegistry;
 
 /**
@@ -38,14 +38,14 @@ import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeT
  *
  */
 public abstract class AbstractMailTransportHandler
-		extends AbstractSimplePullTransportHandler<KeyValueObject<IMetaAttribute>> {
+		extends AbstractSimplePullTransportHandler<ObjectMap<IMetaAttribute>> {
 
 	/** Logger */
 	private final Logger LOG = LoggerFactory.getLogger(AbstractMailTransportHandler.class);
 
 	private MailConfiguration mailConfig = null;
 
-	private Queue<KeyValueObject<IMetaAttribute>> messageQueue;
+	private Queue<ObjectMap<IMetaAttribute>> messageQueue;
 
 	private IMimeTypeHandlerRegistry<?> mimeTypeHandlers;
 
@@ -72,7 +72,7 @@ public abstract class AbstractMailTransportHandler
 		mailConfig.init(options);
 		InitMimeTypeHandlers();
 		InitCommandMap();
-		messageQueue = new LinkedList<KeyValueObject<IMetaAttribute>>();
+		messageQueue = new LinkedList<ObjectMap<IMetaAttribute>>();
 	}
 
 	private void InitCommandMap() {
@@ -161,8 +161,8 @@ public abstract class AbstractMailTransportHandler
 		return !messageQueue.isEmpty();
 	}
 
-	private KeyValueObject<IMetaAttribute> BuildOutputElement(Message message) {
-		KeyValueObject<IMetaAttribute> kvo = KeyValueObject.createInstance();
+	private ObjectMap<IMetaAttribute> BuildOutputElement(Message message) {
+		ObjectMap<IMetaAttribute> kvo = new  ObjectMap<IMetaAttribute>();
 
 		try {
 			addAddresses(kvo, message);
@@ -181,7 +181,7 @@ public abstract class AbstractMailTransportHandler
 		return kvo;
 	}
 
-	private void addContent(KeyValueObject<IMetaAttribute> kvo, Message message)
+	private void addContent(ObjectMap<IMetaAttribute> kvo, Message message)
 			throws MessagingException, MimeTypeException, IOException {
 		if (mailConfig.isReadContent()) {
 			Object content = this.mimeTypeHandlers.HandlePart(message);
@@ -190,12 +190,12 @@ public abstract class AbstractMailTransportHandler
 	}
 
 	@Override
-	public KeyValueObject<IMetaAttribute> getNext() {
-		KeyValueObject<IMetaAttribute> kvo = messageQueue.poll();
+	public ObjectMap<IMetaAttribute> getNext() {
+		ObjectMap<IMetaAttribute> kvo = messageQueue.poll();
 		return kvo;
 	}
 
-	private void addAddresses(KeyValueObject<IMetaAttribute> kvo, Message message) throws MessagingException {
+	private void addAddresses(ObjectMap<IMetaAttribute> kvo, Message message) throws MessagingException {
 		addAddresses(kvo, FROM, message.getFrom());
 		addAddresses(kvo, TO, message.getRecipients(RecipientType.TO));
 		addAddresses(kvo, CC, message.getRecipients(RecipientType.CC));
@@ -203,7 +203,7 @@ public abstract class AbstractMailTransportHandler
 		addAddresses(kvo, REPLY_TO, message.getReplyTo());
 	}
 
-	private void addFlags(KeyValueObject<IMetaAttribute> kvo, Message message) throws MessagingException {
+	private void addFlags(ObjectMap<IMetaAttribute> kvo, Message message) throws MessagingException {
 		Flags flags = message.getFlags();
 		if (flags != null) {
 			addFlag(kvo, flags, Flag.ANSWERED);
@@ -216,11 +216,11 @@ public abstract class AbstractMailTransportHandler
 		}
 	}
 
-	private void addFlag(KeyValueObject<IMetaAttribute> kvo, Flags flags, Flag flag) {
+	private void addFlag(ObjectMap<IMetaAttribute> kvo, Flags flags, Flag flag) {
 		kvo.setAttribute(flag.toString() + FLAG_EXTENSION, flags.contains(flag));
 	}
 
-	private void addAddresses(KeyValueObject<IMetaAttribute> kvo, String key, Address[] addresses) {
+	private void addAddresses(ObjectMap<IMetaAttribute> kvo, String key, Address[] addresses) {
 		if (addresses != null && addresses.length > 0) {
 			kvo.setAttribute(key, addressesToStrings(addresses));
 		}
@@ -262,7 +262,7 @@ public abstract class AbstractMailTransportHandler
 
 			if (messages.length > 0) {
 				for (Message message : messages) {
-					KeyValueObject<IMetaAttribute> kvo = BuildOutputElement(message);
+					ObjectMap<IMetaAttribute> kvo = BuildOutputElement(message);
 					messageQueue.add(kvo);
 					if (!mailConfig.isKeep()) {
 						message.setFlag(Flags.Flag.DELETED, true);

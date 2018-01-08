@@ -1,13 +1,13 @@
-package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.keyvalue;
+package de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.objectmap;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.collection.ObjectMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.keyvalue.datatype.KeyValueObject;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.generic.IContentCombiner;
 
-public class KeyValueContentCombiner implements IContentCombiner<KeyValueObject<IMetaAttribute>> {
+public class KeyValueContentCombiner implements IContentCombiner<ObjectMap<IMetaAttribute>> {
 
 	private String mimeType;
 
@@ -16,19 +16,19 @@ public class KeyValueContentCombiner implements IContentCombiner<KeyValueObject<
 	}
 
 	@Override
-	public KeyValueObject<IMetaAttribute> CombineSubContents(
-			List<Pair<String, KeyValueObject<IMetaAttribute>>> subcontents) {
+	public ObjectMap<IMetaAttribute> CombineSubContents(
+			List<Pair<String, ObjectMap<IMetaAttribute>>> subcontents) {
 		@SuppressWarnings("rawtypes")
-		KeyValueObject[] content = null;
+		ObjectMap[] content = null;
 
 		if (!subcontents.isEmpty()) {
-			content = new KeyValueObject[subcontents.size()];
+			content = new ObjectMap[subcontents.size()];
 			for (int i = 0; i < subcontents.size(); i++) {
 				content[i] = subcontents.get(i).getE2();
 			}
 		}
 
-		return Util.BuildKeyValueObject(this.mimeType, content);
+		return Util.BuildObjectMap(this.mimeType, content);
 
 	}
 }
