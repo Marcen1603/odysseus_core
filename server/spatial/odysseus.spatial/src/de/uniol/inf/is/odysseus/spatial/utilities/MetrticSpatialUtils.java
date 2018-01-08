@@ -147,7 +147,7 @@ public class MetrticSpatialUtils {
 
 		org.geotools.referencing.GeodeticCalculator calculator = new GeodeticCalculator(crs);
 		calculator.setStartingGeographicPoint(coordinate1.y, coordinate1.x);
-		calculator.setDestinationGeographicPoint(coordinate1.y, coordinate1.x);
+		calculator.setDestinationGeographicPoint(coordinate2.y, coordinate2.x);
 		return calculator.getAzimuth();
 	}
 

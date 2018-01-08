@@ -46,7 +46,7 @@ public class MovingObjectLinearLocationPredictor implements IMovingObjectLocatio
 		geodeticCalculator.setDirection(trajectoryElement.getAzimuth(), distanceInMeters);
 		Point2D destinationGeographicPoint = geodeticCalculator.getDestinationGeographicPoint();
 
-		TrajectoryElement destination = new TrajectoryElement(null, movingObjectId, destinationGeographicPoint.getY(),
+		TrajectoryElement destination = new TrajectoryElement(trajectoryElement, movingObjectId, destinationGeographicPoint.getY(),
 				destinationGeographicPoint.getX(), time, null);
 		return destination;
 	}
