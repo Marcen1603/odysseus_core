@@ -197,6 +197,7 @@ public class AttributeParser implements IAttributeParser {
 					
 				});
 				attributeOrder = new QueryAttributeOrder(list);
+				
 			}
 	
 			// but why?
@@ -583,14 +584,11 @@ public class AttributeParser implements IAttributeParser {
 
 				if (!utilityService.getSourceNames().contains(sourcename)) {
 					sourcealias = sourcename;
-					if ((sourcename = utilityService.getSourcenameFromAlias(sourcename)) == null
-							&& utilityService.existsQueryExpressionString(split[0])
-//							&& (cacheService.getExpressionCache().get(split[0]) != null)
-							
-							) {
+					if (utilityService.getSourcenameFromAlias(sourcename) == null
+							&& utilityService.existsQueryExpressionString(split[0])) {
 						subQuery = true;
+						sourcename = utilityService.getSourcenameFromAlias(sourcename);
 					}
-
 				}
 
 				if (split[1].contains("*")) {
@@ -600,8 +598,11 @@ public class AttributeParser implements IAttributeParser {
 						sourcename = utilityService.getSourcenameFromAlias(sourcename);
 					}
 				}
-				for (String name : utilityService.getAttributeNamesFromSource(sourcename)) {
-					containedBySource.add(name);
+				
+				if (sourcename != null && !utilityService.isSubQuery(sourcename)) {
+					for (String name : utilityService.getAttributeNamesFromSource(sourcename)) {
+						containedBySource.add(name);
+					}
 				}
 
 			}

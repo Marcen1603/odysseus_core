@@ -74,5 +74,6 @@ public interface IUtilityService {
 	Optional<String> getQueryExpressionName(String name);
 	boolean existsQueryExpressionString(String name);
 	boolean existsQueryExpression(String name);
+	boolean isSubQuery(String sourcename);
 	
 }

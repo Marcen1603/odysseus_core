@@ -36,7 +36,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -143,26 +145,41 @@ public class SelectParser implements ISelectParser {
   }
   
   public Collection<NestedSource> registerAllSource(final SimpleSelect select) {
-    ArrayList<NestedSource> list = CollectionLiterals.<NestedSource>newArrayList();
+    final ArrayList<NestedSource> col = CollectionLiterals.<NestedSource>newArrayList();
     EList<Source> _sources = select.getSources();
-    for (final Source source : _sources) {
-      {
-        String name = "";
-        if ((source instanceof SimpleSource)) {
-          String _name = ((SimpleSource) source).getName();
-          String _name_1 = name = _name;
-          SystemSource.addQuerySource(_name_1);
-          if (((((SimpleSource)source).getAlias() != null) && (!this.utilityService.getSource(((SimpleSource)source)).hasAlias(((SimpleSource)source).getAlias())))) {
-            this.utilityService.registerSourceAlias(((SimpleSource) source));
-          }
-        } else {
-          if ((source instanceof NestedSource)) {
-            list.add(((NestedSource)source));
-          }
+    Stream<Source> _stream = _sources.stream();
+    final Consumer<Source> _function = (Source e) -> {
+      if ((e instanceof SimpleSource)) {
+        final String name = ((SimpleSource) e).getName();
+        SystemSource.addQuerySource(name);
+        if (((((SimpleSource)e).getAlias() != null) && (!this.utilityService.getSource(((SimpleSource)e)).hasAlias(((SimpleSource)e).getAlias())))) {
+          this.utilityService.registerSourceAlias(((SimpleSource) e));
+        }
+      } else {
+        if ((e instanceof NestedSource)) {
+          col.add(((NestedSource)e));
+          QueryCache _queryCache = this.cacheService.getQueryCache();
+          InnerSelect _statement = ((NestedSource)e).getStatement();
+          SimpleSelect _select = _statement.getSelect();
+          EList<Source> _sources_1 = _select.getSources();
+          Stream<Source> _stream_1 = _sources_1.stream();
+          final Predicate<Source> _function_1 = (Source p) -> {
+            return (p instanceof SimpleSource);
+          };
+          Stream<Source> _filter = _stream_1.filter(_function_1);
+          final Function<Source, QueryCache.QuerySource> _function_2 = (Source k) -> {
+            return new QueryCache.QuerySource(((SimpleSource) k));
+          };
+          Stream<QueryCache.QuerySource> _map = _filter.<QueryCache.QuerySource>map(_function_2);
+          Collector<QueryCache.QuerySource, ?, List<QueryCache.QuerySource>> _list = Collectors.<QueryCache.QuerySource>toList();
+          List<QueryCache.QuerySource> _collect = _map.collect(_list);
+          QueryCache.SubQuery _subQuery = new QueryCache.SubQuery(_collect, ((NestedSource)e));
+          _queryCache.addSubQuerySource(_subQuery);
         }
       }
-    }
-    return list;
+    };
+    _stream.forEach(_function);
+    return col;
   }
   
   @Override
@@ -174,15 +191,11 @@ public class SelectParser implements ISelectParser {
         boolean _contains = _selects.contains(select);
         boolean _not = (!_contains);
         if (_not) {
-          Collection<NestedSource> subQueries = this.registerAllSource(select);
-          for (final NestedSource subQuery : subQueries) {
-            {
-              InnerSelect _statement = subQuery.getStatement();
-              SimpleSelect _select = _statement.getSelect();
-              this.prepare(_select);
-              QueryCache _queryCache = this.cacheService.getQueryCache();
-              _queryCache.putSubQuerySources(subQuery);
-            }
+          Collection<NestedSource> _registerAllSource = this.registerAllSource(select);
+          for (final NestedSource subQuery : _registerAllSource) {
+            InnerSelect _statement = subQuery.getStatement();
+            SimpleSelect _select = _statement.getSelect();
+            this.prepare(_select);
           }
           this.attributeParser.registerAttributesFromPredicate(select);
           QueryCache _queryCache = this.cacheService.getQueryCache();

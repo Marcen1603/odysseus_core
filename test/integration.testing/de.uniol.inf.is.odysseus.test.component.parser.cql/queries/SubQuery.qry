@@ -1,6 +1,7 @@
 #PARSER CQL
-#QUERY 
-DROP STREAM bid IF EXISTS
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
 #QUERY
 CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
     		WRAPPER 'GenericPush'
@@ -8,6 +9,7 @@ CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, da
 		    TRANSPORT 'NonBlockingTcp'
 		    DATAHANDLER 'Tuple'
     		OPTIONS ('port' '65442', 'host' 'localhost')
+    		
 #QUERY
 SELECT B2.price as price2
 FROM   (SELECT B1.price, COUNT(B1.auction) AS num

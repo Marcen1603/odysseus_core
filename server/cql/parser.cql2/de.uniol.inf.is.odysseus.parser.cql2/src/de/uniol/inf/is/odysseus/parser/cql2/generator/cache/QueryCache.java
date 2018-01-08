@@ -5,12 +5,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
@@ -68,9 +70,17 @@ public class QueryCache implements Cache {
 		expressionEntries.put(query, expressions.stream().map(e -> new QueryExpression(e)).collect(Collectors.toList()));
 	}
 
-	public void putSubQuerySources(NestedSource subQuery) {
-		String name = subQuery.getAlias().getName();
-		subQueryEntries.put(name, new SubQuery(name, subQuery, attributeEntries.get(subQuery.getStatement().getSelect())));
+	public void addSubQuerySource(SubQuery subQuery) {
+		
+//		final String name = subQuery.getAlias().getName();
+//		subQueryEntries.put(name, new SubQuery(
+//				name, 
+//				subQuery, 
+//				attributeEntries.get(subQuery.getStatement().getSelect()))
+//			);
+		
+		subQueryEntries.put(subQuery.alias, subQuery);
+		
 	}
 
 	public Collection<SubQuery> getAllSubQueries() {
@@ -138,6 +148,13 @@ public class QueryCache implements Cache {
 			this.alias = sourcealias;
 		}
 		
+		public QuerySource(SimpleSource source) {
+			this(source.getName());
+			if (source.getAlias() != null) {
+				this.alias = source.getAlias().getName();
+			}
+		}
+		
 		public QuerySource(QuerySource obj) {
 			this.name = obj.name;
 			this.alias = obj.alias;
@@ -147,15 +164,15 @@ public class QueryCache implements Cache {
 
 	public static class SubQuery {
 		
-		public String parent;
+		public String alias;
+		public Collection<QuerySource> querySources;
 		public NestedSource subQuery;
-		public Collection<QueryAttribute> attributes;
 		
-		public SubQuery(String parent, NestedSource subQuery, Collection<QueryAttribute> attributes) {
+		public SubQuery(Collection<QuerySource> querySources, NestedSource subQuery) {
 			super();
-			this.parent = parent;
+			this.querySources = querySources.stream().map(e -> new QuerySource(e)).collect(Collectors.toList());
 			this.subQuery = subQuery;
-			this.attributes = attributes;
+			this.alias = subQuery.getAlias().getName();
 		}
 	}
 
@@ -250,6 +267,14 @@ public class QueryCache implements Cache {
 			this.expression = expression;
 			
 		}
+	}
+
+	public Optional<SubQuery> getSubQuery(String sourcename) {
+		return subQueryEntries.entrySet()
+				.stream()
+				.filter(p -> p.getKey().equals(sourcename))
+				.map(e -> e.getValue())
+				.findFirst();
 	}
 
 }

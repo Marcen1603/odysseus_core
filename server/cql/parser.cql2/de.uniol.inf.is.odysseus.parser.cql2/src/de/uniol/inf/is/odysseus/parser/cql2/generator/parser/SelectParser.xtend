@@ -22,6 +22,8 @@ import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 
 class SelectParser implements ISelectParser {
 
@@ -106,33 +108,41 @@ class SelectParser implements ISelectParser {
 	}
 
 	def Collection<NestedSource> registerAllSource(SimpleSelect select) {
-		var list = newArrayList
-		for (Source source : select.sources) {
-			var name = ''
-			if (source instanceof SimpleSource) {
 
-//				if(!SourceStruct.existQuerySource(name = (source as SimpleSource).getName())) {
-				SystemSource.addQuerySource(name = (source as SimpleSource).getName());
-//				}
-				if (source.alias !== null && !utilityService.getSource(source).hasAlias(source.alias)) {
-					utilityService.registerSourceAlias(source as SimpleSource);
+		val col = newArrayList
+		
+		select.sources.stream().forEach(e | {
+			if (e instanceof SimpleSource) {
+
+				val name = (e as SimpleSource).getName()
+				SystemSource.addQuerySource(name);
+
+				if (e.alias !== null && !utilityService.getSource(e).hasAlias(e.alias)) {
+					utilityService.registerSourceAlias(e as SimpleSource);
 				}
-			} else if (source instanceof NestedSource)
-				list.add(source)
-		}
-		return list
+				
+			} else if (e instanceof NestedSource) {
+				col.add(e);
+				cacheService.getQueryCache().addSubQuerySource(new SubQuery(
+					e.statement.select.sources
+						.stream()
+						.filter(p | p instanceof SimpleSource)
+						.map(k | new QuerySource((k as SimpleSource))).collect(Collectors.toList()),
+					e
+				));
+			}
+		})
+		
+		return col
 	}
 
 	override prepare(SimpleSelect select) {
 		try {
 			
 			if (!cacheService.getSelectCache().getSelects().contains(select)) {
-				var subQueries = registerAllSource(select)
-				for (NestedSource subQuery : subQueries) {
+				
+				for (NestedSource subQuery : registerAllSource(select)) {
 					prepare(subQuery.statement.select)
-					// key=simpleSelect, value=subQuery++ 
-//					utilityServicetil.getSubQuerySources().put(subQuery.alias.name,utilityServicetil.getQueryCacheAttributes(subQuery.statement.select).keySet)
-					cacheService.getQueryCache().putSubQuerySources(subQuery);
 				}
 
 				attributeParser.registerAttributesFromPredicate(select);

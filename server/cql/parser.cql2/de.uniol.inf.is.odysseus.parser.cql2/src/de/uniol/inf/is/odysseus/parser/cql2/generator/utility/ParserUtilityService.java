@@ -33,10 +33,11 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
+
 
 public class ParserUtilityService implements IUtilityService {
-
 	private final Logger LOGGER = LoggerFactory.getLogger(ParserUtilityService.class);
 	private final FunctionStore functionStore;
 	private final Pattern aggregatePattern;
@@ -141,16 +142,15 @@ public class ParserUtilityService implements IUtilityService {
 		return null;
 	}
 
+	//TODO should be contained by SystemSource as static method
 	@Override
-	public void registerSourceAlias( SimpleSource source) {
+	public void registerSourceAlias(SimpleSource source) {
 		
-		LOGGER.info("step3");
-	
 		SystemSource sourceStruct = getSource(source.getName());
 		if (sourceStruct != null) {
-			LOGGER.info("step4");	
 			sourceStruct.addAlias(source.getAlias());
 		}
+		
 	}
 	
 	@Override
@@ -169,7 +169,17 @@ public class ParserUtilityService implements IUtilityService {
 
 	@Override
 	public Collection<String> getAttributeNamesFromSource(String name) {
-		return getSource(name).attributeList.stream().map(e -> e.getAttributename()).collect(Collectors.toList());
+		
+		final SystemSource source = getSource(name);
+		
+		if (source != null) {
+			return source.attributeList
+					.stream()
+					.map(e -> e.getAttributename())
+					.collect(Collectors.toList());
+		}
+		
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -220,12 +230,6 @@ public class ParserUtilityService implements IUtilityService {
 		if (name == null) {
 			throw new IllegalArgumentException("given source was null");
 		}
-		
-//		String n = name;
-		
-//		if (n.contains(".")) {
-//			n = n.split("\\.")[0];
-//		}
 		
 		for (SystemSource source : cacheService.getSystemSources()) {
 			if (source.getName().equals(name) || source.hasAlias(name)) {
@@ -446,18 +450,38 @@ public class ParserUtilityService implements IUtilityService {
 //		cacheService.getExpressionCache().flush();
 //		cacheService.getSourceCache().flush();
 //		cacheService.getAggregationAttributeCache().flush();
-	
-		
 	}
 	
 	@Override
 	public String getSourceNameFromAlias(String sourcealias) {
 
 		if (isSourceAlias(sourcealias)) {
+			
 			SystemSource source = getSource(sourcealias);
 			if (source != null) {
 				return source.getName();
 			}
+			
+		} else {
+			
+			Optional<SubQuery> subQuery = cacheService.getQueryCache().getAllSubQueries().stream()
+				.filter(p -> p.alias.equals(sourcealias))
+				.findFirst();
+			
+			if (subQuery.isPresent()) {
+				
+				// 
+				
+//				Optional<QuerySource> querySource = 
+				subQuery.get().querySources.stream().forEach(e -> {
+					
+					
+					
+				});
+				
+				
+			}
+			
 		}
 
 		return null;
@@ -546,7 +570,9 @@ public class ParserUtilityService implements IUtilityService {
 	public String getDataTypeFrom(String attribute) {
 		
 		String attributename = attribute; // getAttributename(attribute)
+		String attributealias = "";
 		String sourcename = "";
+		String sourcealias = "";
 		
 		if (attribute.contains(".")) {
 			
@@ -572,14 +598,71 @@ public class ParserUtilityService implements IUtilityService {
 			
 			sourcename = splitted[0];
 			attributename = splitted[1];
-			if (isAttributeAlias(attributename))
+			
+			if (isAttributeAlias(attributename)) {
+				attributealias = attributename;
 				attributename = getAttributenameFromAlias(attributename);
-			if (isSourceAlias(sourcename))
+			}
+			
+			if (isSourceAlias(sourcename)) {
+				sourcealias = sourcename;
 				sourcename = getSourceNameFromAlias(sourcename);
+			}
+			
 //			try {
-				for (SystemAttribute attr : getSource(sourcename).getAttributeList())
-					if (attr.attributename.equals(attributename))
+			
+			if (isSubQuery(sourcename)) {
+				
+				final String aname = attributename;
+				final String aalias = attributealias;
+				
+				final String asourcename = sourcename;
+				final String asourcealias = sourcealias;
+				
+				Optional<SubQuery> subQuery = cacheService.getQueryCache().getSubQuery(sourcename);
+				
+				if (subQuery.isPresent()) {
+					
+					for (QuerySource e : subQuery.get().querySources) {
+						
+						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
+							
+							final String kname = k.name.split("\\.")[1];
+							final String ksource = k.name.split("\\.")[0];
+							String ksourcealias = "";
+							
+							if(isSourceAlias(ksource)) {
+								ksourcealias = getSourceNameFromAlias(ksource);
+							}
+							
+							String datatype = null;
+							
+							if (kname.equals(aname) && (ksource.equals(e.name) || ksourcealias.equals(e.name))) {
+								for (SystemAttribute attr : getSource(e.name).getAttributeList()) {
+									if (attr.attributename.equals(aname)) {
+										 datatype = attr.getDatatype();
+									}
+								}
+							}
+							
+							return datatype;
+						}).findFirst();
+						
+						if (o.isPresent()) {
+							return o.get();
+						}
+						
+					}
+				}
+			} else {
+			
+				for (SystemAttribute attr : getSource(sourcename).getAttributeList()) {
+					if (attr.attributename.equals(attributename)) {
 						return attr.getDatatype();
+					}
+				}
+			}
+				
 //			} catch (IllegalArgumentException e) {
 //				//TODO is still used?
 ////				for (String attr : getSubQuerySources().get(sourcename)) {
@@ -607,6 +690,13 @@ public class ParserUtilityService implements IUtilityService {
 		}
 		
 		return "Double"; // TODO change to null if you are done with debugging
+	}
+	
+	public Collection<QueryAttribute> getAttributesFrom(QuerySource querySource) {
+		 return cacheService.getQueryCache().getAllQueryAttributes()
+				.stream()
+				.filter(e -> e.sources.contains(querySource.name))
+				.collect(Collectors.toList());
 	}
 	
 	@Override
@@ -675,6 +765,11 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	public boolean existsQueryExpression(String name) {
 		return getQueryExpressionName(name).isPresent();
+	}
+
+	@Override
+	public boolean isSubQuery(String sourcename) {
+		return cacheService.getQueryCache().getAllSubQueries().stream().anyMatch(p -> p.alias.equals(sourcename));
 	}
 	
 }
