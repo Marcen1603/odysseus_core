@@ -2,8 +2,6 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
@@ -18,8 +16,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -42,6 +38,8 @@ public class ProjectionParser implements IProjectionParser {
   
   private IExpressionParser expressionParser;
   
+  private String curStrRep = "";
+  
   @Inject
   public ProjectionParser(final AbstractPQLOperatorBuilder builder, final ISelectParser selectParser, final IRenameParser renameParser, final IUtilityService utilityService, final ICacheService cacheService, final IAttributeParser attributeParser, final IExpressionParser expressionParser) {
     this.builder = builder;
@@ -54,7 +52,7 @@ public class ProjectionParser implements IProjectionParser {
   }
   
   @Override
-  public Object[] parse(final Collection<SelectExpression> expressions, final String input) {
+  public Object[] parse(final Collection<QueryCache.QueryExpression> expressions, final String input) {
     return this.buildMapOperator(expressions);
   }
   
@@ -63,57 +61,41 @@ public class ProjectionParser implements IProjectionParser {
     return this.buildProjection(select, operator);
   }
   
-  private Object[] buildMapOperator(final Collection<SelectExpression> expressions) {
+  private Object[] buildMapOperator(final Collection<QueryCache.QueryExpression> expressions) {
     return this.buildMapOperator(expressions, null);
   }
   
-  private Object[] buildMapOperator(final Collection<SelectExpression> expressions, final String input) {
-    String expressionArgument = "";
-    List<String> expressionStrings = CollectionLiterals.<String>newArrayList();
-    List<String> attributeNames = CollectionLiterals.<String>newArrayList();
-    for (int i = 0; (i < expressions.size()); i++) {
-      {
-        String expressionName = "";
-        SelectExpression _get = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
-        String _parse = this.expressionParser.parse(_get);
-        String expressionString = _parse.toString();
-        SelectExpression _get_1 = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
-        Alias _alias = _get_1.getAlias();
-        boolean _tripleEquals = (_alias == null);
-        if (_tripleEquals) {
-          String _expressionName = this.attributeParser.getExpressionName();
-          expressionName = _expressionName;
-        } else {
-          SelectExpression _get_2 = ((SelectExpression[])Conversions.unwrapArray(expressions, SelectExpression.class))[i];
-          Alias _alias_1 = _get_2.getAlias();
-          String _name = _alias_1.getName();
-          expressionName = _name;
-        }
-        expressionStrings.add(expressionString);
-        expressionStrings.add(expressionName);
-        expressionStrings.add(",");
-        final List<String> _converted_expressionStrings = (List<String>)expressionStrings;
-        String t = this.utilityService.generateKeyValueString(((String[])Conversions.unwrapArray(_converted_expressionStrings, String.class)));
-        String _expressionArgument = expressionArgument;
-        expressionArgument = (_expressionArgument + t);
-        Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
-        _expressionCache.put(expressionName, t);
-        int _size = expressions.size();
-        int _minus = (_size - 1);
-        boolean _notEquals = (i != _minus);
-        if (_notEquals) {
-          String _expressionArgument_1 = expressionArgument;
-          expressionArgument = (_expressionArgument_1 + ",");
-        }
-        expressionStrings.clear();
-        attributeNames.add(expressionName);
+  private Object[] buildMapOperator(final Collection<QueryCache.QueryExpression> queryExpressions, final String input) {
+    this.curStrRep = "";
+    final Collection<String> stringList = CollectionLiterals.<String>newArrayList();
+    final Collection<String> attributes = CollectionLiterals.<String>newArrayList();
+    Stream<QueryCache.QueryExpression> _stream = queryExpressions.stream();
+    final Consumer<QueryCache.QueryExpression> _function = (QueryCache.QueryExpression e) -> {
+      String expressionName = "";
+      String expressionString = e.alias;
+      if ((e.name == null)) {
+        String _expressionName = this.attributeParser.getExpressionName();
+        expressionName = _expressionName;
+      } else {
+        expressionName = e.name;
       }
-    }
-    Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", expressionArgument);
+      stringList.add(expressionString);
+      stringList.add(expressionName);
+      stringList.add(",");
+      String t = this.utilityService.generateKeyValueString(((String[])Conversions.unwrapArray(stringList, String.class)));
+      String _curStrRep = this.curStrRep;
+      this.curStrRep = (_curStrRep + (t + ","));
+      stringList.clear();
+      attributes.add(expressionName);
+    };
+    _stream.forEach(_function);
+    String _replaceAll = this.curStrRep.replaceAll(",$", "");
+    this.curStrRep = _replaceAll;
+    Pair<String, String> _mappedTo = Pair.<String, String>of("expressions", this.curStrRep);
     Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", input);
     LinkedHashMap<String, String> _newLinkedHashMap = CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1);
-    String _build = this.builder.build(MapAO.class, _newLinkedHashMap);
-    return new Object[] { attributeNames, _build };
+    String build = this.builder.build(MapAO.class, _newLinkedHashMap);
+    return new Object[] { attributes, build };
   }
   
   private String buildProjection(final SimpleSelect select, final CharSequence operator) {

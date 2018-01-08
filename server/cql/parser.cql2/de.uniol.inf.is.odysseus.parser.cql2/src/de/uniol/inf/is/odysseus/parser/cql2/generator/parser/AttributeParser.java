@@ -4,15 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.xtext.EcoreUtil2;
 
 import com.google.inject.Inject;
-import com.ibm.icu.impl.CalendarUtil;
 
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
@@ -20,13 +17,12 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.impl.FunctionImpl;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute.Type;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class AttributeParser implements IAttributeParser {
@@ -35,6 +31,7 @@ public class AttributeParser implements IAttributeParser {
 	
 	private IUtilityService utilityService;
 	private ICacheService cacheService;
+	private IExpressionParser expressionParser;
 	private int expressionCounter = 0;
 	private int aggregationCounter = 0;
 	private int index = 0;
@@ -42,12 +39,15 @@ public class AttributeParser implements IAttributeParser {
 	private QuerySourceOrder sourceOrder;
 	private QueryAttributeOrder attributeOrder;
 	private Collection<QueryAggregate> aggregates;
+	private Collection<QueryExpression> expressions;
 	
 	@Inject
-	public AttributeParser(IUtilityService utilityService, ICacheService cacheService) {
+	public AttributeParser(IUtilityService utilityService, ICacheService cacheService, IExpressionParser expressionParser) {
 		this.utilityService = utilityService;
 		this.cacheService = cacheService;
+		this.expressionParser = expressionParser;
 		this.aggregates = new ArrayList<>();
+		this.expressions = new ArrayList<>();
 	}
 	
 	@Override
@@ -227,6 +227,11 @@ public class AttributeParser implements IAttributeParser {
 		return aggregates;
 	}
 	
+	@Override
+	public Collection<QueryExpression> getExpressions() {
+		return expressions;
+	}
+
 	private Collection<SystemSource> computeSourceCandidates(Attribute attribute,  Collection<Source> sources) {
 		
 		Collection<SystemSource> containedBySources = new ArrayList<>();
@@ -362,10 +367,8 @@ public class AttributeParser implements IAttributeParser {
 				attributeOrder.array = parseExpression(attributeOrder.array, argument, index2);
 				index2++;
 			});
+			
 		} else {
-			
-			Object candidate = null;
-			
 			for (SelectArgument argument : select.getArguments()) {
 				attributeOrder.array = parseExpression(attributeOrder.array, argument, index2);
 				index2++;
@@ -410,40 +413,26 @@ public class AttributeParser implements IAttributeParser {
 							
 						} else {
 						
-							final QueryAttribute aggregate = new QueryAttribute(
-									name,
-									QueryAttribute.Type.EXPRESSION, 
-									utilityService.getDataTypeFrom(name), 
-									new ArrayList<>()
-								);
-							
-							attributeOrder[i] = aggregate;
+//							final QueryExpression aggregate = new QueryExpression(
+//									name,
+//									QueryAttribute.Type.EXPRESSION, 
+//									utilityService.getDataTypeFrom(name), 
+//									new ArrayList<>(),
+//									candidate
+//								);
+//							
+//							attributeOrder[i] = aggregate;
+//							expressions.add(aggregate);
+//							1
+							attributeOrder = createQueryExpression(attributeOrder, candidate, name, i);
 							
 						}
 						
 					} else {
-						
-						final QueryAttribute aggregate = new QueryAttribute(
-								name,
-								QueryAttribute.Type.EXPRESSION, 
-								utilityService.getDataTypeFrom(name), 
-								new ArrayList<>()
-							);
-						
-						attributeOrder[i] = aggregate;
-						
+						attributeOrder = createQueryExpression(attributeOrder, candidate, name, i);
 					}
 				} else {
-					
-					final QueryAttribute aggregate = new QueryAttribute(
-							name,
-							QueryAttribute.Type.EXPRESSION, 
-							utilityService.getDataTypeFrom(name), 
-							new ArrayList<>()
-						);
-					
-					attributeOrder[i] = aggregate;
-					
+					attributeOrder = createQueryExpression(attributeOrder, candidate, name, i);					
 				}
 			} else {
 
@@ -468,44 +457,14 @@ public class AttributeParser implements IAttributeParser {
 							aggregates.add(aggregate);
 	
 						} else {
-	
-							final String name = getExpressionName();
-							final QueryAttribute aggregate = new QueryAttribute(
-									name, 
-									QueryAttribute.Type.EXPRESSION,
-									utilityService.getDataTypeFrom(name), 
-									new ArrayList<>()
-								);
-	
-							attributeOrder[i] = aggregate;
-	
+							attributeOrder = createQueryExpression(attributeOrder, candidate, getExpressionName(), i);
 						}
 					} else {
-						
-						final String name = getExpressionName();
-						final QueryAttribute aggregate = new QueryAttribute(
-								name, 
-								QueryAttribute.Type.EXPRESSION,
-								utilityService.getDataTypeFrom(name), 
-								new ArrayList<>()
-							);
-
-						attributeOrder[i] = aggregate;
-
+						attributeOrder = createQueryExpression(attributeOrder, candidate, getExpressionName(), i);
 					}
 
 				} else {
-
-					final String name = getExpressionName();
-					final QueryAttribute aggregate = new QueryAttribute(
-							name, 
-							QueryAttribute.Type.EXPRESSION,
-							utilityService.getDataTypeFrom(name), 
-							new ArrayList<>()
-						);
-
-					attributeOrder[i] = aggregate;
-
+					attributeOrder = createQueryExpression(attributeOrder, candidate, getExpressionName(), i);
 				}
 
 			}
@@ -515,6 +474,27 @@ public class AttributeParser implements IAttributeParser {
 		return attributeOrder;
 	}
 
+	private QueryAttribute[] createQueryExpression(QueryAttribute[] attributeOrder, SelectExpression candidate, String name, int i) {
+		
+		if (!expressions.stream().map(e -> e.name).anyMatch(p -> p.equals(name))) {
+			
+			final QueryExpression queryExpression = new QueryExpression(
+					name,
+					QueryAttribute.Type.EXPRESSION, 
+					utilityService.getDataTypeFrom(name), 
+					new ArrayList<>(),
+					candidate
+				);
+		
+			queryExpression.alias = expressionParser.parse(candidate).toString();
+		
+			expressions.add(queryExpression);
+			attributeOrder[i] = queryExpression;
+		}
+		
+		return attributeOrder;
+	}
+	
 	@Override
 	public String getExpressionName() {
 		return EXPRESSSION_NAME_PREFIX + (expressionCounter++);
@@ -528,12 +508,13 @@ public class AttributeParser implements IAttributeParser {
 	@Override
 	public void clear() {
 		aggregates.clear();
+		expressions.clear();
 		index = 0;
 		index2 = 0;
 		expressionCounter = 0;
 		aggregationCounter = 0;
-		attributeOrder = null;
-		sourceOrder = null;
+		attributeOrder = new QueryAttributeOrder(1);
+		sourceOrder = new QuerySourceOrder(1);
 	}
 	
 	public static class QueryAttributeOrder {
@@ -545,13 +526,21 @@ public class AttributeParser implements IAttributeParser {
 		}
 		
 		public QueryAttributeOrder(QueryAttribute[] array) {
-			this.array = Arrays.copyOf(array, array.length);
+			this.array = new QueryAttribute[array.length];
+			// deep copy
+			for(int i = 0; i < array.length; i++) {
+				if (array[i] != null) {
+					this.array[i] = new QueryAttribute(array[i]);
+				}
+			}
 		}
 		
 		public QueryAttributeOrder(List<QueryAttribute> col) {
 			this.array = new QueryAttribute[col.size()];
 			for(int i = 0; i < col.size(); i++) {
-				this.array[i] = col.get(i);
+				if (col.get(i) != null) {
+					this.array[i] = new QueryAttribute(col.get(i));
+				}
 			}
 		}
 	}
@@ -565,7 +554,13 @@ public class AttributeParser implements IAttributeParser {
 		}
 		
 		public QuerySourceOrder(QuerySource[] array) {
-			this.array = Arrays.copyOf(array, array.length);
+			this.array = new QuerySource[array.length];
+			// deep copy
+			for(int i = 0; i < array.length; i++) {
+				if (array[i] != null) {
+					this.array[i] = new QuerySource(array[i]);
+				}
+			}
 		}
 		
 	}
@@ -589,7 +584,10 @@ public class AttributeParser implements IAttributeParser {
 				if (!utilityService.getSourceNames().contains(sourcename)) {
 					sourcealias = sourcename;
 					if ((sourcename = utilityService.getSourcenameFromAlias(sourcename)) == null
-							&& (cacheService.getExpressionCache().get(split[0]) != null)) {
+							&& utilityService.existsQueryExpressionString(split[0])
+//							&& (cacheService.getExpressionCache().get(split[0]) != null)
+							
+							) {
 						subQuery = true;
 					}
 

@@ -12,7 +12,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggr
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
-import java.util.regex.Pattern
 import java.util.stream.Collectors
 
 class AggregationParser implements IAggregationParser {
@@ -25,7 +24,6 @@ class AggregationParser implements IAggregationParser {
 	var String argsstr = ''
 
 	val String regex = ",$";
-	val Pattern pattern = Pattern.compile(regex);
 
 	@Inject
 	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser nameParser, IAttributeParser attributeParser) {

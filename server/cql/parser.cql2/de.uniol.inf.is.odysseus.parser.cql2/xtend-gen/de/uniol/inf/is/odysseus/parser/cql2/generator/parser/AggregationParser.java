@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,8 +45,6 @@ public class AggregationParser implements IAggregationParser {
   private String argsstr = "";
   
   private final String regex = ",$";
-  
-  private final Pattern pattern = Pattern.compile(this.regex);
   
   @Inject
   public AggregationParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final IAttributeNameParser nameParser, final IAttributeParser attributeParser) {

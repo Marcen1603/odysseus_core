@@ -10,7 +10,6 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.InnerSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
@@ -199,9 +198,8 @@ public class SelectParser implements ISelectParser {
           Collection<QueryCache.QueryAggregate> _aggregates = this.attributeParser.getAggregates();
           _queryCache_3.putQueryAggregations(select, _aggregates);
           QueryCache _queryCache_4 = this.cacheService.getQueryCache();
-          EList<SelectArgument> _arguments = select.getArguments();
-          Collection<SelectExpression> _extractSelectExpressionsFromArgument = this.expressionParser.extractSelectExpressionsFromArgument(_arguments);
-          _queryCache_4.putQueryExpressions(select, _extractSelectExpressionsFromArgument);
+          Collection<QueryCache.QueryExpression> _expressions = this.attributeParser.getExpressions();
+          _queryCache_4.putQueryExpressions(select, _expressions);
           SelectCache _selectCache_1 = this.cacheService.getSelectCache();
           _selectCache_1.add(select);
         }
@@ -441,7 +439,7 @@ public class SelectParser implements ISelectParser {
       switch (operator) {
         case MAP:
           QueryCache _queryCache = this.cacheService.getQueryCache();
-          Collection<SelectExpression> expressions = _queryCache.getQueryExpressions(select);
+          Collection<QueryCache.QueryExpression> expressions = _queryCache.getQueryExpressions(select);
           if (((expressions != null) && (!expressions.isEmpty()))) {
             Object[] _parse = this.projectionParser.parse(expressions, null);
             result = _parse;

@@ -5,6 +5,7 @@ import java.util.Collection;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
 
@@ -18,5 +19,6 @@ public interface IAttributeParser {
 	QueryAttributeOrder getAttributeOrder();
 	Collection<QueryAggregate> getAggregates();
 	void clear();
+	Collection<QueryExpression> getExpressions();
 
 }

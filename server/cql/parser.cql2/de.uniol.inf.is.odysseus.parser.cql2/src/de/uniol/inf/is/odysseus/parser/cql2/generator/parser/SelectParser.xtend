@@ -82,6 +82,7 @@ class SelectParser implements ISelectParser {
 		var String operator1 = parseAdditionalOperator(Operator.MAP, select)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, select)
 
+		
 		attributeParser.clear()
 
 		// Query corresponds to a select all	
@@ -137,10 +138,11 @@ class SelectParser implements ISelectParser {
 				attributeParser.registerAttributesFromPredicate(select);
 				
 				cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
+				
 				cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
 				cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
 				cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
-				cacheService.getQueryCache().putQueryExpressions(select, expressionParser.extractSelectExpressionsFromArgument(select.arguments));
+				cacheService.getQueryCache().putQueryExpressions(select, attributeParser.getExpressions());
 
 				cacheService.getSelectCache().add(select);
 				

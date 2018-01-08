@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,12 +109,10 @@ public class AttributeNameParser implements IAttributeNameParser {
       if (_isAggregationAttribute_1) {
         return attributename;
       }
-      Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
-      boolean _containsValue = _expressionCache.containsValue(attribute);
-      if (_containsValue) {
-        Map<String, String> _expressionCache_1 = this.cacheService.getExpressionCache();
-        String _get_2 = _expressionCache_1.get(attribute);
-        return ((String) _get_2);
+      Optional<String> expressionString = this.utilityService.getQueryExpressionString(attribute);
+      boolean _isPresent = expressionString.isPresent();
+      if (_isPresent) {
+        return expressionString.get();
       }
       this.log.info("HERE0");
       boolean _isAttributeAlias = this.utilityService.isAttributeAlias(attribute);
@@ -139,8 +137,8 @@ public class AttributeNameParser implements IAttributeNameParser {
       int _size = containedBySources.size();
       boolean _equals = (_size == 1);
       if (_equals) {
-        SystemSource _get_3 = containedBySources.get(0);
-        String _name = _get_3.getName();
+        SystemSource _get_2 = containedBySources.get(0);
+        String _name = _get_2.getName();
         SystemSource _source_2 = this.utilityService.getSource(_name);
         SystemAttribute _findByName_1 = _source_2.findByName(attribute);
         List<String> aliases = _findByName_1.getAliases();
@@ -155,19 +153,19 @@ public class AttributeNameParser implements IAttributeNameParser {
           return aliases.get(0);
         }
         this.log.info("HERE2");
-        SystemSource _get_4 = containedBySources.get(0);
-        String _name_1 = _get_4.getName();
+        SystemSource _get_3 = containedBySources.get(0);
+        String _name_1 = _get_3.getName();
         SystemSource sourceStruct = this.utilityService.getSource(_name_1);
         boolean _isEmpty_2 = sourceStruct.aliasList.isEmpty();
         boolean _not_2 = (!_isEmpty_2);
         if (_not_2) {
-          String _get_5 = sourceStruct.aliasList.get(0);
-          String _plus_1 = (_get_5 + ".");
+          String _get_4 = sourceStruct.aliasList.get(0);
+          String _plus_1 = (_get_4 + ".");
           return (_plus_1 + attributename);
         }
         this.log.info("HERE3");
-        SystemSource _get_6 = containedBySources.get(0);
-        String _name_2 = _get_6.getName();
+        SystemSource _get_5 = containedBySources.get(0);
+        String _name_2 = _get_5.getName();
         String _plus_2 = (_name_2 + ".");
         return (_plus_2 + attribute);
       }

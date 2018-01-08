@@ -144,8 +144,6 @@ public class CQLGenerator implements IGenerator2 {
     _selectCache.flush();
     QueryCache _queryCache = this.cacheService.getQueryCache();
     _queryCache.clear();
-    Map<String, String> _expressionCache = this.cacheService.getExpressionCache();
-    _expressionCache.clear();
     SystemSource.clearQuerySources();
     SystemSource.clearAttributeAliases();
   }

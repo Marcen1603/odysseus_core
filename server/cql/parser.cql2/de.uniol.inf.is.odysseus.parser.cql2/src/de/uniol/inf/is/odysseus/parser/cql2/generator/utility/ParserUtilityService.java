@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
@@ -32,8 +32,8 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
 
 public class ParserUtilityService implements IUtilityService {
 
@@ -174,16 +174,14 @@ public class ParserUtilityService implements IUtilityService {
 
 	@Override
 	public String getProjectAttribute(String name) {
-	
-		
-		if (name.contains(getExpressionPrefix())) {
-			return (String) cacheService.getExpressionCache().get(name);
+
+		// check if attribute is an expression and return its string representation
+		Optional<String> expressionString = getQueryExpressionString(name);
+		if (expressionString.isPresent()) {
+			return expressionString.get();
 		}
 
-		if (cacheService.getExpressionCache().get(name) != null) {
-			return (String) cacheService.getExpressionCache().get(name);
-		}
-
+		// otherwise parse attibute's name and return it
 		if (name.contains(".")) {
 			if (isAttributeAlias(name)) {
 				return name;
@@ -299,10 +297,14 @@ public class ParserUtilityService implements IUtilityService {
 			return attribute.getAttributename();
 		}
 
-		if (cacheService.getExpressionCache().values().contains(name)) {
+//		if (cacheService.getExpressionCache().values().contains(name)) {
+//			return name;
+//		}
+
+		if (existsQueryExpressionString(name)) {
 			return name;
 		}
-
+		
 		return cacheService.getQueryCache().getAllQueryAggregations()
 				.stream()
 				.anyMatch(p -> p.name.equals(name)) ? name : null;
@@ -427,7 +429,9 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	@SuppressWarnings("unchecked")
 	public Map<String, Collection<String>> getSubQuerySources() {
-		return (Map<String, Collection<String>>) cacheService.getQueryCache().getAll(QueryCache.Type.QUERY_SUBQUERY);
+		//TODO do it right!
+//		return (Map<String, Collection<String>>) cacheService.getQueryCache().getAll(QueryCache.Type.QUERY_SUBQUERY);
+		return new HashMap<>();
 	}
 	
 	@Override
@@ -643,6 +647,34 @@ public class ParserUtilityService implements IUtilityService {
 				.map(e -> e.name)
 				.collect(Collectors.toList())
 				.containsAll(predicates);
+	}
+	
+	@Override
+	public Optional<String> getQueryExpressionString(String name) {
+		return cacheService.getQueryCache().getAllQueryExpressions()
+				.stream()
+				.filter(p -> p.name.equals(name))
+				.map(e -> e.alias)
+				.findFirst();
+	}
+	
+	@Override 
+	public Optional<String> getQueryExpressionName(String name) {
+		return cacheService.getQueryCache().getAllQueryExpressions()
+			.stream()
+			.map(e -> e.name)
+			.filter(p -> p.equals(name))
+			.findFirst();
+	}
+	
+	@Override 
+	public boolean existsQueryExpressionString(String name) {
+		return getQueryExpressionString(name).isPresent();
+	}
+	
+	@Override
+	public boolean existsQueryExpression(String name) {
+		return getQueryExpressionName(name).isPresent();
 	}
 	
 }

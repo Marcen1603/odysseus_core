@@ -104,7 +104,7 @@ class CQLGenerator implements IGenerator2 {
 		cacheService.getSystemSources().clear()
 		cacheService.getSelectCache().flush()
 		cacheService.getQueryCache().clear()
-		cacheService.getExpressionCache().clear()
+//		cacheService.getExpressionCache().clear()
 		
 		SystemSource.clearQuerySources()
 		SystemSource.clearAttributeAliases()

@@ -1,15 +1,14 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
-import java.util.Collection
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
-import java.util.List
-import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import java.util.Collection
 
 class ProjectionParser implements IProjectionParser {
 
@@ -20,6 +19,7 @@ class ProjectionParser implements IProjectionParser {
 	private ICacheService cacheService;
 	private IAttributeParser attributeParser;
 	private IExpressionParser expressionParser;
+	private var curStrRep = ''
 
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ISelectParser selectParser, IRenameParser renameParser,
@@ -36,7 +36,7 @@ class ProjectionParser implements IProjectionParser {
 
 	}
 
-	override parse(Collection<SelectExpression> expressions, String input) {
+	override parse(Collection<QueryExpression> expressions, String input) {
 		buildMapOperator(expressions)
 	}
 
@@ -44,39 +44,51 @@ class ProjectionParser implements IProjectionParser {
 		return buildProjection(select, operator);
 	}
 
-	def private Object[] buildMapOperator(Collection<SelectExpression> expressions) {
+	def private Object[] buildMapOperator(Collection<QueryExpression> expressions) {
 		return buildMapOperator(expressions, null)
 	}
-
-	def private Object[] buildMapOperator(Collection<SelectExpression> expressions, String input) {
-		var expressionArgument = ''
-		var List<String> expressionStrings = newArrayList()
-		var List<String> attributeNames = newArrayList()
-		for (var i = 0; i < expressions.size; i++) {
+	
+	def private Object[] buildMapOperator(Collection<QueryExpression> queryExpressions, String input) {
+		
+		curStrRep = ''
+		val Collection<String> stringList = newArrayList()
+		val Collection<String> attributes = newArrayList()
+		
+		queryExpressions.stream().forEach(e | {
+			
 			var expressionName = ''
-			var expressionString = expressionParser.parse(expressions.get(i)).toString
-//			var expressionType = MEP.instance.parse(expressionString).returnType.toString //parseSelectExpressionType(expressionComponents)
-//			println("expressiontype:: " + expressionType)
-			if (expressions.get(i).alias === null)
+			var expressionString = e.alias
+			
+			if (e.name === null) {
 				expressionName = attributeParser.getExpressionName()
-			else
-				expressionName = expressions.get(i).alias.name
-			expressionStrings.add(expressionString)
-			expressionStrings.add(expressionName)
-			expressionStrings.add(',')
-			var t = utilityService.generateKeyValueString(expressionStrings)
-			expressionArgument += t
-			cacheService.getExpressionCache().put(expressionName, t)
-			if(i != expressions.size - 1) expressionArgument += ','
-			expressionStrings.clear
-			attributeNames.add(expressionName)
-		}
-//		Collections.sort(attributeNames)
-		return #[attributeNames, builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> expressionArgument, 'input' -> input))]
+			} else {
+				expressionName = e.name
+			}
+			
+			stringList.add(expressionString)
+			stringList.add(expressionName)
+			stringList.add(',')
+			
+			var t = utilityService.generateKeyValueString(stringList)
+			
+			curStrRep += t + ','
+			
+			stringList.clear()
+			attributes.add(expressionName)
+			
+		})
+		
+		curStrRep = curStrRep.replaceAll(",$", "");
+		
+		var String build = builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> curStrRep, 'input' -> input));
+		
+		return #[attributes, build]
 	}
 
 	def private String buildProjection(SimpleSelect select, CharSequence operator) {
+		
 		var Collection<QueryAttribute> attributes = cacheService.getQueryCache().getProjectionAttributes(select)
+		
 		// Add new aliases from the rename operation		
 		for (var i = 0; i < renameParser.getAliases().size - 2; i = i + 3) {
 			var attributename = renameParser.getAliases().get(i)
@@ -87,8 +99,7 @@ class ProjectionParser implements IProjectionParser {
 
 		val list = newArrayList
 		
-		attributes.stream().forEach(e | {
-			list.add(utilityService.getProjectAttribute(e.name));
+		attributes.stream().forEach(e | {			list.add(utilityService.getProjectAttribute(e.name));
 		})
 		
 		// Add new aliases from the rename operation		

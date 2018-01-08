@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.utility;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
 
@@ -68,5 +69,10 @@ public interface IUtilityService {
 	String getDataTypeFrom(Attribute attribute);
 	boolean containsAllAggregates(SimpleSelect query);
 	boolean containsAllPredicates(Collection<String> predicates);
+	
+	Optional<String> getQueryExpressionString(String name);
+	Optional<String> getQueryExpressionName(String name);
+	boolean existsQueryExpressionString(String name);
+	boolean existsQueryExpression(String name);
 	
 }

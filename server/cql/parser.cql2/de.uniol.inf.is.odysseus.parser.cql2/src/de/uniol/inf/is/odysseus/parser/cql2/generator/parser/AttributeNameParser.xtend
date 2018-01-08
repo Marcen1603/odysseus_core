@@ -7,6 +7,7 @@ import org.slf4j.Logger
 import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
+import java.util.Optional
 
 class AttributeNameParser implements IAttributeNameParser {
 
@@ -80,9 +81,17 @@ class AttributeNameParser implements IAttributeNameParser {
 				return attributename
 			}
 			// TODO could be also containsKey
-			if (cacheService.getExpressionCache().containsValue(attribute)) {
-				return cacheService.getExpressionCache().get(attribute) as String
+			
+			var Optional<String> expressionString = utilityService.getQueryExpressionString(attribute);
+			
+			if (expressionString.isPresent()) {
+				return expressionString.get();
 			}
+			
+//			if (cacheService.getExpressionCache().containsValue(attribute)) {
+//				return cacheService.getExpressionCache().get(attribute) as String
+//			}
+			
 			log.info("HERE0")
 			if (utilityService.isAttributeAlias(attribute)) {
 				return attribute
