@@ -2,6 +2,9 @@ package de.uniol.inf.is.odysseus.spatial.datatype;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 import ch.hsr.geohash.GeoHash;
@@ -12,6 +15,8 @@ import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class TrajectoryElement {
+	
+	static Logger logger = LoggerFactory.getLogger(TrajectoryElement.class);
 
 	private static final int BIT_PRECISION = 64;
 
@@ -76,11 +81,16 @@ public class TrajectoryElement {
 	 * @return The azimuth.
 	 */
 	public double getAzimuth() {
-		Coordinate previousCoord = new Coordinate(this.previousElement.getGeoHash().getPoint().getLatitude(),
-				this.previousElement.getGeoHash().getPoint().getLongitude());
-		Coordinate currentCoord = new Coordinate(this.geoHash.getPoint().getLatitude(),
-				this.geoHash.getPoint().getLongitude());
-		return MetrticSpatialUtils.getInstance().calculateAzimuth(null, previousCoord, currentCoord);
+		double azimuth = 0.0;
+
+		if (this.previousElement != null) {
+			Coordinate previousCoord = new Coordinate(this.previousElement.getGeoHash().getPoint().getLatitude(),
+					this.previousElement.getGeoHash().getPoint().getLongitude());
+			Coordinate currentCoord = new Coordinate(this.geoHash.getPoint().getLatitude(),
+					this.geoHash.getPoint().getLongitude());
+			azimuth = MetrticSpatialUtils.getInstance().calculateAzimuth(null, previousCoord, currentCoord);
+		}
+		return azimuth;
 	}
 
 	/**
@@ -97,7 +107,15 @@ public class TrajectoryElement {
 		if (this.previousElement != null) {
 			long duration = (this.measurementTime.minus(this.previousElement.measurementTime)).getMainPoint();
 			long seconds = baseTimeUnit.toSeconds(duration);
-			speed = this.distanceToPreviousElement / seconds;
+			if (seconds != 0) {
+				speed = this.distanceToPreviousElement / seconds;				
+			} else if (this.distanceToPreviousElement == 0 && seconds == 0) {
+				// Avoid infinitive speeds
+				speed = 0;
+			} else {
+				speed = Double.MAX_VALUE;
+				logger.warn("Possibly infinitive speed value.");
+			}
 		}
 		return speed;
 	}

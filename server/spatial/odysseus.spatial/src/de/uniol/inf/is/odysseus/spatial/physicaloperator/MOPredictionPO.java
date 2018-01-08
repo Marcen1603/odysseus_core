@@ -36,7 +36,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 	// On the enrich-port
 	private int pointInTimeFuturePosition;
-	private int pointInTimeNowPosition;
+	private int pointInTimeNowPosition = -1;
 	private int movingObjectListPosition = -1;
 	private int centerMovingObjectIdAttribute;
 
@@ -51,7 +51,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	// Trajectories
 	// TODO Use window to limit data
 	private Map<String, TrajectoryElement> trajectories;
-	
+
 	private TimeUnit baseTimeUnit;
 
 	private IMovingObjectLocationPredictor movingObjectInterpolator;
@@ -127,11 +127,18 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 	 *            Tuple with time information
 	 */
 	private void processTimeTuple(T object) {
-		Collection<String> movingObjectIds = null;
+
+		/*
+		 * In case that the IDs which are to predict are not given, all "known" IDs are
+		 * predicted. In case that a window is used, these IDs should be limited by the
+		 * window.
+		 */
+		Collection<String> movingObjectIds = this.trajectories.keySet();
+
 		if (this.movingObjectListPosition != -1) {
 			/*
-			 * Only use if we have this given. If we only predict one object, this may not
-			 * be given
+			 * If we have a list of the objects that need to be predicted given (e.g.,
+			 * through the prefiltering approach), we only predict these.
 			 */
 			movingObjectIds = object.getAttribute(this.movingObjectListPosition);
 		}
@@ -202,8 +209,7 @@ public class MOPredictionPO<T extends Tuple<? extends ITimeInterval>> extends Ab
 
 		// We predict some more objects
 		for (String movingObjectId : idsToPredict) {
-			TrajectoryElement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId,
-					predictedTime);
+			TrajectoryElement prediction = this.movingObjectInterpolator.predictLocation(movingObjectId, predictedTime);
 			Tuple<IMetaAttribute> tuple = createTuple(prediction, centerPrediction, originalStreamElement);
 			this.transfer((T) tuple);
 		}
