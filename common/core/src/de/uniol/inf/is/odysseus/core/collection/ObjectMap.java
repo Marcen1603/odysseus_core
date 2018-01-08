@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.core.collection;
 
 import java.util.HashMap;
 
+import com.sun.xml.internal.bind.v2.runtime.RuntimeUtil.ToStringAdapter;
+
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
@@ -23,7 +25,7 @@ public class ObjectMap<T extends IMetaAttribute> extends AbstractStreamObject<T>
 	private HashMap<String, Object> data;
 
 	// --------------------------------------------
-	// Inherited Methods from AbstractStreamObject
+	// Inherited Method implementation
 	// --------------------------------------------
 
 	@Override
@@ -36,6 +38,13 @@ public class ObjectMap<T extends IMetaAttribute> extends AbstractStreamObject<T>
 
 		return sb.toString();
 	}
+	
+	@Override
+	public String toString() {
+		return toString(false);
+	}
+
+
 
 	@Override
 	public AbstractStreamObject<T> clone() {

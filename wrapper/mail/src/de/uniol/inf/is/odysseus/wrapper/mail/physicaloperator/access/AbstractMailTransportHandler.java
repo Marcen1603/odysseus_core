@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import javax.activation.CommandMap;
@@ -23,10 +26,15 @@ import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.ObjectMap;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.IProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.AbstractSimplePullTransportHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.IMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.objectmap.KeyValueMimeTypeHandlerRegistry;
@@ -37,27 +45,64 @@ import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeT
  * @author Thomas Vogelgesang
  *
  */
-public abstract class AbstractMailTransportHandler
-		extends AbstractSimplePullTransportHandler<ObjectMap<IMetaAttribute>> {
+public abstract class AbstractMailTransportHandler extends AbstractSimplePullTransportHandler<Tuple<IMetaAttribute>> {
 
 	/** Logger */
 	private final Logger LOG = LoggerFactory.getLogger(AbstractMailTransportHandler.class);
 
 	private MailConfiguration mailConfig = null;
 
-	private Queue<ObjectMap<IMetaAttribute>> messageQueue;
+	private Queue<Tuple<IMetaAttribute>> messageQueue;
 
 	private IMimeTypeHandlerRegistry<?> mimeTypeHandlers;
 
-	/* Keys for Key-Value objects */
+	/* attribute index in tuple */
 	private static final String FLAG_EXTENSION = "Flags";
-	private static final String SENT_DATE = "SentDate";
-	private static final String SUBJECT = "Subject";
-	private static final String REPLY_TO = "ReplyTo";
-	private static final String BCC = "BCC";
-	private static final String CC = "CC";
-	private static final String FROM = "From";
-	private static final String TO = "To";
+	private static final int FROM = 0;
+	private static final int TO = 1;
+	private static final int CC = 2;
+	private static final int BCC = 3;
+	private static final int REPLY_TO = 4;
+	private static final int SUBJECT = 5;
+	private static final int SENT_DATE = 6;
+	private static final HashMap<Flag, Integer> FLAG_INDICES;
+	static {
+		FLAG_INDICES = new HashMap<Flag, Integer>();
+		FLAG_INDICES.put(Flag.DELETED, 7);
+		FLAG_INDICES.put(Flag.ANSWERED, 8);
+		FLAG_INDICES.put(Flag.DRAFT, 9);
+		FLAG_INDICES.put(Flag.FLAGGED, 10);
+		FLAG_INDICES.put(Flag.RECENT, 11);
+		FLAG_INDICES.put(Flag.SEEN, 12);
+		FLAG_INDICES.put(Flag.USER, 13);
+	}
+	private static final int CONTENT = 14;
+
+	private static final SDFSchema DEFAULT_SCHEMA;
+	static {
+		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
+		// TODO define tuple attributes with their respective types
+		attributes.add(new SDFAttribute("", "From", SDFDatatype.STRING));
+		attributes.add(new SDFAttribute("", "To", SDFDatatype.LIST_STRING));
+		attributes.add(new SDFAttribute("", "CC", SDFDatatype.LIST_STRING));
+		attributes.add(new SDFAttribute("", "BCC", SDFDatatype.LIST_STRING));
+		attributes.add(new SDFAttribute("", "ReplyTo", SDFDatatype.STRING));
+		attributes.add(new SDFAttribute("", "Subject", SDFDatatype.STRING));
+		attributes.add(new SDFAttribute("", "SendDate", SDFDatatype.DATE));
+
+		attributes.add(new SDFAttribute("", "FlagDeleted", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagAnswered", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagDraft", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagFlagged", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagRecent", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagSeen", SDFDatatype.BOOLEAN));
+		attributes.add(new SDFAttribute("", "FlagUser", SDFDatatype.BOOLEAN));
+
+		// TODO make this dynamic depending on mime type handler!!!
+		attributes.add(new SDFAttribute("", "Content", SDFDatatype.OBJECT_MAP));
+
+		DEFAULT_SCHEMA = SDFSchemaFactory.createNewSchema("", Tuple.class, attributes);
+	}
 
 	/**
 	 * 
@@ -72,7 +117,8 @@ public abstract class AbstractMailTransportHandler
 		mailConfig.init(options);
 		InitMimeTypeHandlers();
 		InitCommandMap();
-		messageQueue = new LinkedList<ObjectMap<IMetaAttribute>>();
+		messageQueue = new LinkedList<Tuple<IMetaAttribute>>();
+		setSchema(DEFAULT_SCHEMA);
 	}
 
 	private void InitCommandMap() {
@@ -161,76 +207,76 @@ public abstract class AbstractMailTransportHandler
 		return !messageQueue.isEmpty();
 	}
 
-	private ObjectMap<IMetaAttribute> BuildOutputElement(Message message) {
-		ObjectMap<IMetaAttribute> kvo = new  ObjectMap<IMetaAttribute>();
+	private Tuple<IMetaAttribute> BuildOutputElement(Message message) {
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>();
 
 		try {
-			addAddresses(kvo, message);
+			addAddresses(tuple, message);
 
-			kvo.setAttribute(SUBJECT, message.getSubject());
-			kvo.setAttribute(SENT_DATE, message.getSentDate());
+			tuple.setAttribute(SUBJECT, message.getSubject());
+			tuple.setAttribute(SENT_DATE, message.getSentDate());
 
-			addFlags(kvo, message);
+			addFlags(tuple, message);
 
-			addContent(kvo, message);
+			addContent(tuple, message);
 
 		} catch (MessagingException | MimeTypeException | IOException e) {
 			this.LOG.error(e.getMessage(), e);
 		}
 
-		return kvo;
+		return tuple;
 	}
 
-	private void addContent(ObjectMap<IMetaAttribute> kvo, Message message)
+	private void addContent(Tuple<IMetaAttribute> tuple, Message message)
 			throws MessagingException, MimeTypeException, IOException {
 		if (mailConfig.isReadContent()) {
 			Object content = this.mimeTypeHandlers.HandlePart(message);
-			kvo.setAttribute("content", content);
+			tuple.setAttribute(CONTENT, content);
 		}
 	}
 
 	@Override
-	public ObjectMap<IMetaAttribute> getNext() {
-		ObjectMap<IMetaAttribute> kvo = messageQueue.poll();
-		return kvo;
+	public Tuple<IMetaAttribute> getNext() {
+		Tuple<IMetaAttribute> next = messageQueue.poll();
+		return next;
 	}
 
-	private void addAddresses(ObjectMap<IMetaAttribute> kvo, Message message) throws MessagingException {
-		addAddresses(kvo, FROM, message.getFrom());
-		addAddresses(kvo, TO, message.getRecipients(RecipientType.TO));
-		addAddresses(kvo, CC, message.getRecipients(RecipientType.CC));
-		addAddresses(kvo, BCC, message.getRecipients(RecipientType.BCC));
-		addAddresses(kvo, REPLY_TO, message.getReplyTo());
+	private void addAddresses(Tuple<IMetaAttribute> tuple, Message message) throws MessagingException {
+		addAddresses(tuple, FROM, message.getFrom());
+		addAddresses(tuple, TO, message.getRecipients(RecipientType.TO));
+		addAddresses(tuple, CC, message.getRecipients(RecipientType.CC));
+		addAddresses(tuple, BCC, message.getRecipients(RecipientType.BCC));
+		addAddresses(tuple, REPLY_TO, message.getReplyTo());
 	}
 
-	private void addFlags(ObjectMap<IMetaAttribute> kvo, Message message) throws MessagingException {
+	private void addFlags(Tuple<IMetaAttribute> tuple, Message message) throws MessagingException {
 		Flags flags = message.getFlags();
 		if (flags != null) {
-			addFlag(kvo, flags, Flag.ANSWERED);
-			addFlag(kvo, flags, Flag.DELETED);
-			addFlag(kvo, flags, Flag.DRAFT);
-			addFlag(kvo, flags, Flag.FLAGGED);
-			addFlag(kvo, flags, Flag.RECENT);
-			addFlag(kvo, flags, Flag.SEEN);
-			addFlag(kvo, flags, Flag.USER);
+			addFlag(tuple, flags, Flag.DELETED);
+			addFlag(tuple, flags, Flag.ANSWERED);
+			addFlag(tuple, flags, Flag.DRAFT);
+			addFlag(tuple, flags, Flag.FLAGGED);
+			addFlag(tuple, flags, Flag.RECENT);
+			addFlag(tuple, flags, Flag.SEEN);
+			addFlag(tuple, flags, Flag.USER);
 		}
 	}
 
-	private void addFlag(ObjectMap<IMetaAttribute> kvo, Flags flags, Flag flag) {
-		kvo.setAttribute(flag.toString() + FLAG_EXTENSION, flags.contains(flag));
+	private void addFlag(Tuple<IMetaAttribute> kvo, Flags flags, Flag flag) {
+		kvo.setAttribute(FLAG_INDICES.get(flag), flags.contains(flag));
 	}
 
-	private void addAddresses(ObjectMap<IMetaAttribute> kvo, String key, Address[] addresses) {
+	private void addAddresses(Tuple<IMetaAttribute> tuple, int pos, Address[] addresses) {
 		if (addresses != null && addresses.length > 0) {
-			kvo.setAttribute(key, addressesToStrings(addresses));
+			tuple.setAttribute(pos, addressesToStrings(addresses));
 		}
 	}
 
-	private String[] addressesToStrings(Address[] addresses) {
-		String[] strings = new String[addresses.length];
+	private ArrayList<String> addressesToStrings(Address[] addresses) {
+		ArrayList<String> strings = new ArrayList<>();
 
 		for (int i = 0; i < addresses.length; i++) {
-			strings[i] = addresses[i].toString();
+			strings.set(i, addresses[i].toString());
 		}
 
 		return strings;
@@ -262,8 +308,8 @@ public abstract class AbstractMailTransportHandler
 
 			if (messages.length > 0) {
 				for (Message message : messages) {
-					ObjectMap<IMetaAttribute> kvo = BuildOutputElement(message);
-					messageQueue.add(kvo);
+					Tuple<IMetaAttribute> tuple = BuildOutputElement(message);
+					messageQueue.add(tuple);
 					if (!mailConfig.isKeep()) {
 						message.setFlag(Flags.Flag.DELETED, true);
 					}
