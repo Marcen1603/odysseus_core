@@ -34,7 +34,7 @@ public abstract class MailConfiguration {
 	private static final String DEFAULT_PATTERN = "";
 	private static final String DEFAULT_FOLDER = "INBOX";
 	private static final String DEFAULT_HOST = "localhost";
-	private static final String DEFAULT_MIME_TYPE_HANDLER = "keyValue";
+	private static final String DEFAULT_MIME_TYPE_HANDLER = "objectmap";
 
 	private String host;
 	private String username;
