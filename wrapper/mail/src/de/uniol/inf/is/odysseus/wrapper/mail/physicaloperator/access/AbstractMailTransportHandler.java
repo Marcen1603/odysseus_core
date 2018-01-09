@@ -24,7 +24,6 @@ import javax.mail.search.SubjectTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.is.odysseus.core.collection.ObjectMap;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -57,7 +56,6 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 	private IMimeTypeHandlerRegistry<?> mimeTypeHandlers;
 
 	/* attribute index in tuple */
-	private static final String FLAG_EXTENSION = "Flags";
 	private static final int FROM = 0;
 	private static final int TO = 1;
 	private static final int CC = 2;
@@ -78,10 +76,26 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 	}
 	private static final int CONTENT = 14;
 
-	private static final SDFSchema DEFAULT_SCHEMA;
-	static {
+	/**
+	 * 
+	 */
+	public AbstractMailTransportHandler() {
+		super();
+	}
+
+	public AbstractMailTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
+		super(protocolHandler, options);
+		mailConfig = CreateMailConfiguration();
+		mailConfig.init(options);
+		InitMimeTypeHandlers();
+		InitCommandMap();
+		messageQueue = new LinkedList<Tuple<IMetaAttribute>>();
+		setSchema(buildOutputSchema());
+	}
+	
+	private SDFSchema buildOutputSchema() {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		// TODO define tuple attributes with their respective types
+
 		attributes.add(new SDFAttribute("", "From", SDFDatatype.STRING));
 		attributes.add(new SDFAttribute("", "To", SDFDatatype.LIST_STRING));
 		attributes.add(new SDFAttribute("", "CC", SDFDatatype.LIST_STRING));
@@ -98,27 +112,10 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 		attributes.add(new SDFAttribute("", "FlagSeen", SDFDatatype.BOOLEAN));
 		attributes.add(new SDFAttribute("", "FlagUser", SDFDatatype.BOOLEAN));
 
-		// TODO make this dynamic depending on mime type handler!!!
-		attributes.add(new SDFAttribute("", "Content", SDFDatatype.OBJECT_MAP));
+		
+		attributes.add(new SDFAttribute("", "Content", mimeTypeHandlers.GetOutputSchemaDataType()));
 
-		DEFAULT_SCHEMA = SDFSchemaFactory.createNewSchema("", Tuple.class, attributes);
-	}
-
-	/**
-	 * 
-	 */
-	public AbstractMailTransportHandler() {
-		super();
-	}
-
-	public AbstractMailTransportHandler(final IProtocolHandler<?> protocolHandler, OptionMap options) {
-		super(protocolHandler, options);
-		mailConfig = CreateMailConfiguration();
-		mailConfig.init(options);
-		InitMimeTypeHandlers();
-		InitCommandMap();
-		messageQueue = new LinkedList<Tuple<IMetaAttribute>>();
-		setSchema(DEFAULT_SCHEMA);
+		return SDFSchemaFactory.createNewSchema("", Tuple.class, attributes);
 	}
 
 	private void InitCommandMap() {
@@ -208,7 +205,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 	}
 
 	private Tuple<IMetaAttribute> BuildOutputElement(Message message) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(DEFAULT_SCHEMA.size(), false);
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(this.getSchema().size(), false);
 
 		try {
 			addAddresses(tuple, message);
@@ -285,7 +282,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 	private void InitMimeTypeHandlers() {
 		if (mailConfig.getMimeTypeHandler().equals("string")) {
 			mimeTypeHandlers = new StringMimeTypeHandlerRegistry();
-		} else if (mailConfig.getMimeTypeHandler().equals("keyvalue")) {
+		} else if (mailConfig.getMimeTypeHandler().equals("objectmap")) {
 			mimeTypeHandlers = new KeyValueMimeTypeHandlerRegistry();
 		} else {
 			throw new IllegalArgumentException("unknown mime type handler: " + mailConfig.getMimeTypeHandler());
