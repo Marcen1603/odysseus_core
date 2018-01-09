@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.List;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.TupleDataHandler;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
@@ -55,21 +56,21 @@ public class CSVFileSource extends AbstractAccessAO {
 
 	@Parameter(type = StringParameter.class, name = "delimiter", optional = true, doc = "Default delimiter is ','")
 	public void setDelimiter(String delimiter) {
-		addOption(AbstractCSVHandler.CSV_DELIMITER, delimiter);
+		addOption(ConversionOptions.CSV_DELIMITER, delimiter);
 	}
 	
 	public String getDelimiter() {
-		return getOption(AbstractCSVHandler.CSV_DELIMITER);
+		return getOption(ConversionOptions.CSV_DELIMITER);
 	}
 
 	@Parameter(type = StringParameter.class, name = "textdelimiter", optional = true, doc = "Delimiter for Strings. No default.")
 	public void setTextDelimiter(String textDelimiter) {
-		addOption(AbstractCSVHandler.CSV_TEXT_DELIMITER, textDelimiter);
+		addOption(ConversionOptions.CSV_TEXT_DELIMITER, textDelimiter);
 		textDelimiterSet = true;
 	}
 	
 	public String getTextDelimiter() {
-		return getOption(AbstractCSVHandler.CSV_TEXT_DELIMITER);
+		return getOption(ConversionOptions.CSV_TEXT_DELIMITER);
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "trim", optional = true, doc = "If set to true, for each element leading and trailing whitespaces are removed. Default false.")

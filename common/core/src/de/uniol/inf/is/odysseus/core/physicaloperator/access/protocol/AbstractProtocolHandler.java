@@ -20,13 +20,10 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.base.Objects;
-
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -44,8 +41,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends IMetaAttribute>>
 		implements IProtocolHandler<T> {
 
-	public final String CHARSET = "charset";
-
 	private final ITransportDirection direction;
 	private final IAccessPattern access;
 	private ITransportHandler transportHandler;
@@ -55,11 +50,9 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 	private IExecutor executor;
 	private SDFSchema schema;
 
-	private Charset charset;
-	private CharsetDecoder decoder;
-	private CharsetEncoder encoder;
-
 	protected final OptionMap optionsMap;
+	
+    private boolean done = false;
 
 	public AbstractProtocolHandler() {
 		direction = null;
@@ -74,42 +67,39 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		this.access = access;
 		this.dataHandler = datahandler;
 		this.optionsMap = optionsMap;
-		setCharset(optionsMap.get(CHARSET, "UTF-8"));
+		updateConversionOptions(optionsMap);
 	}
 
-	private void setCharset(String charSetName) {
-		this.charset = Charset.forName(charSetName);
-		this.encoder = charset.newEncoder();
-		this.decoder = charset.newDecoder();
-		getDataHandler().setCharset(charset);
-
-	}
-
-	public Charset getCharset() {
-		return charset;
+	private void updateConversionOptions(OptionMap optionsMap) {
+		ConversionOptions convOpts = getDataHandler().getConversionOptions();
+		if (convOpts != null) {
+			getDataHandler().setConversionOptions(new ConversionOptions(convOpts, optionsMap));
+		}else {
+			getDataHandler().setConversionOptions(new ConversionOptions(optionsMap));
+		}
 	}
 	
-	public CharsetEncoder getEncoder() {
-		return encoder;
-	}
 	
-	public CharsetDecoder getDecoder() {
-		return decoder;
-	}
 	
 	@Override
 	public final void updateOption(String key, String value) {
 		optionsMap.setOption(key, value);
-		if (optionsMap.containsKey(CHARSET)) {
-			setCharset(optionsMap.get(CHARSET));
-		}
+		updateConversionOptions(optionsMap);
 		optionsMapChanged(key, value);
 	}
 
 	void optionsMapChanged(String key, String value) {
 		throw new UnsupportedOperationException("Sorry. Update of options not supported by " + this.getName());
 	}
+	
+	protected Charset getCharset() {
+		return getDataHandler().getConversionOptions().getCharset();
+	}
 
+	protected ConversionOptions getConversionOptions() {
+		return getDataHandler().getConversionOptions();
+	}
+	
 	@Override
 	public IExecutor getExecutor() {
 		return executor;
@@ -257,7 +247,11 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 
 	@Override
 	public boolean isDone() {
-		return transportHandler.isDone();
+		return done || transportHandler.isDone();
+	}
+	
+	public void setDone(boolean done) {
+		this.done = done;
 	}
 
 	@Override
@@ -298,9 +292,6 @@ abstract public class AbstractProtocolHandler<T extends IStreamObject<? extends 
 		} else if (!this.dataHandler.isSemanticallyEqual(other.getDataHandler())) {
 			return false;
 		} else if (!this.transportHandler.isSemanticallyEqual(other.getTransportHandler())) {
-			return false;
-		}
-		if (!Objects.equal(this.charset, other.charset)) {
 			return false;
 		}
 		return isSemanticallyEqualImpl(other);

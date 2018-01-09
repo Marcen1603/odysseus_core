@@ -19,6 +19,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParam
  * port n will contain the nth attributes of incoming tuples.
  * 
  * @author Dennis Nowak
+ * @author Marco Grawunder
  * 
  */
 @LogicalOperator(name = "COMBINE", minInputPorts = 2, doc = "Takes values of attributes from the input operators and combines them in one tuple", category = { LogicalOperatorCategory.PROCESSING }, maxInputPorts = Integer.MAX_VALUE)
@@ -26,6 +27,7 @@ public class CombineAO extends AbstractLogicalOperator {
 
 	private boolean waitForAllChanged;
 	private boolean bufferNewInputElements;
+	private boolean outputOnHeartsbeat;
 
 	private static final long serialVersionUID = 4265752462231737808L;
 
@@ -44,6 +46,8 @@ public class CombineAO extends AbstractLogicalOperator {
 	public CombineAO(CombineAO combineAO) {
 		super(combineAO);
 		this.waitForAllChanged = combineAO.getWaitForAllChanged();
+		this.bufferNewInputElements = combineAO.bufferNewInputElements;
+		this.outputOnHeartsbeat = combineAO.outputOnHeartsbeat;
 	}
 
 	@Override
@@ -84,6 +88,15 @@ public class CombineAO extends AbstractLogicalOperator {
 	 */
 	public boolean getWaitForAllChanged() {
 		return this.waitForAllChanged;
+	}
+	
+	@Parameter(optional = true, type = BooleanParameter.class, doc = "If true, output will also be triggered by an heartbeat")
+	public void setOutputOnHeartsbeat(boolean outputOnHeartsbeat) {
+		this.outputOnHeartsbeat = outputOnHeartsbeat;
+	}
+	
+	public boolean isOutputOnHeartsbeat() {
+		return outputOnHeartsbeat;
 	}
 
 	/**

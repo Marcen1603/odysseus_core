@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="cc.kuka.odysseus.wrapper.snmp.feature"
-      label="Feature"
+      label="SNMP Feature"
       version="1.0.0.qualifier">
 
    <description url="https://www.kuka.cc/software/odysseus/">

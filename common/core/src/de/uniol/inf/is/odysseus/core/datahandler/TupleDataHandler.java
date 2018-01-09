@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.core.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -28,6 +27,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -98,11 +98,11 @@ public class TupleDataHandler extends AbstractStreamObjectDataHandler<Tuple<? ex
 	}
 	
 	@Override
-	public void setCharset(Charset charset) {
-		super.setCharset(charset);
+	public void setConversionOptions(ConversionOptions conversionOptions) {
+		super.setConversionOptions(conversionOptions);
 		if (dataHandlers != null) {
 			for (IDataHandler<?> handler : dataHandlers) {
-				handler.setCharset(charset);
+				handler.setConversionOptions(conversionOptions);
 			}
 		}
 	}
