@@ -9,12 +9,12 @@ public final class Util {
 	public static final String CONTENT = "content";
 
 	public static ObjectMap<IMetaAttribute> BuildObjectMap(String mimeType, Object content) {
-		ObjectMap<IMetaAttribute> kvo = new ObjectMap<IMetaAttribute>();
+		ObjectMap<IMetaAttribute> objectMap = new ObjectMap<IMetaAttribute>();
 
-		kvo.setAttribute(Util.MIME_TYPE, mimeType);
-		kvo.setAttribute(Util.CONTENT, content);
+		objectMap.setAttribute(Util.MIME_TYPE, mimeType);
+		objectMap.setAttribute(Util.CONTENT, content);
 
-		return kvo;
+		return objectMap;
 	}
 
 }

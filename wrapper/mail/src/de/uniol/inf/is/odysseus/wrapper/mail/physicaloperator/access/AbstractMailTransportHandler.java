@@ -36,7 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.IMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeException;
-import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.objectmap.KeyValueMimeTypeHandlerRegistry;
+import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.objectmap.ObjectMapMimeTypeHandlerRegistry;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.string.StringMimeTypeHandlerRegistry;
 
 /**
@@ -282,7 +282,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 		if (mailConfig.getMimeTypeHandler().equals("string")) {
 			mimeTypeHandlers = new StringMimeTypeHandlerRegistry();
 		} else if (mailConfig.getMimeTypeHandler().equals("objectmap")) {
-			mimeTypeHandlers = new KeyValueMimeTypeHandlerRegistry();
+			mimeTypeHandlers = new ObjectMapMimeTypeHandlerRegistry();
 		} else {
 			throw new IllegalArgumentException("unknown mime type handler: " + mailConfig.getMimeTypeHandler());
 		}

@@ -5,7 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.wrapper.mail.mimetype.handler.MimeTypeHandlerRegistry;
 
-public class KeyValueMimeTypeHandlerRegistry extends MimeTypeHandlerRegistry<ObjectMap<IMetaAttribute>> {
+public class ObjectMapMimeTypeHandlerRegistry extends MimeTypeHandlerRegistry<ObjectMap<IMetaAttribute>> {
 
 	@Override
 	protected void Init() {

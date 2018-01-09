@@ -8,7 +8,7 @@ public class MultipartMixedHandler extends AbstractMultipartMixedhandler<ObjectM
 
 	public MultipartMixedHandler() {
 		super();
-		this.setCombiner(new KeyValueContentCombiner(this.getMimeType()));
+		this.setCombiner(new ObjectMapContentCombiner(this.getMimeType()));
 	}
 
 }

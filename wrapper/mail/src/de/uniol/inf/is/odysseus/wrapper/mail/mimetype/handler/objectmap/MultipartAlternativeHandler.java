@@ -8,7 +8,7 @@ public class MultipartAlternativeHandler extends AbstractMultipartAlternativeHan
 
 	public MultipartAlternativeHandler(){
 		super();
-		this.setCombiner(new KeyValueContentCombiner(this.getMimeType()));
+		this.setCombiner(new ObjectMapContentCombiner(this.getMimeType()));
 	}
 
 }
