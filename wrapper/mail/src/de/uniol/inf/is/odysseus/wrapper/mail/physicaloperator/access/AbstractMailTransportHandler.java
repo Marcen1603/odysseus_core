@@ -208,7 +208,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 	}
 
 	private Tuple<IMetaAttribute> BuildOutputElement(Message message) {
-		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>();
+		Tuple<IMetaAttribute> tuple = new Tuple<IMetaAttribute>(DEFAULT_SCHEMA.size(), false);
 
 		try {
 			addAddresses(tuple, message);
@@ -276,7 +276,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 		ArrayList<String> strings = new ArrayList<>();
 
 		for (int i = 0; i < addresses.length; i++) {
-			strings.set(i, addresses[i].toString());
+			strings.add(addresses[i].toString());
 		}
 
 		return strings;
