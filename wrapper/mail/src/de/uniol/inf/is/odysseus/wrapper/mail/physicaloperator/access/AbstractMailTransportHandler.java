@@ -92,7 +92,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 		messageQueue = new LinkedList<Tuple<IMetaAttribute>>();
 		setSchema(buildOutputSchema());
 	}
-	
+
 	private SDFSchema buildOutputSchema() {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 
@@ -112,7 +112,6 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 		attributes.add(new SDFAttribute("", "FlagSeen", SDFDatatype.BOOLEAN));
 		attributes.add(new SDFAttribute("", "FlagUser", SDFDatatype.BOOLEAN));
 
-		
 		attributes.add(new SDFAttribute("", "Content", mimeTypeHandlers.GetOutputSchemaDataType()));
 
 		return SDFSchemaFactory.createNewSchema("", Tuple.class, attributes);
@@ -305,10 +304,15 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 
 			if (messages.length > 0) {
 				for (Message message : messages) {
-					Tuple<IMetaAttribute> tuple = BuildOutputElement(message);
-					messageQueue.add(tuple);
-					if (!mailConfig.isKeep()) {
-						message.setFlag(Flags.Flag.DELETED, true);
+					if (!mailConfig.isUnreadOnly() || !message.getFlags().contains(Flag.SEEN)) {
+						Tuple<IMetaAttribute> tuple = BuildOutputElement(message);
+						messageQueue.add(tuple);
+						if (!mailConfig.isKeep()) {
+							message.setFlag(Flags.Flag.DELETED, true);
+						}
+						if (mailConfig.isMarkAsRead()) {
+							message.setFlag(Flags.Flag.SEEN, true);
+						}
 					}
 				}
 			}
@@ -336,7 +340,7 @@ public abstract class AbstractMailTransportHandler extends AbstractSimplePullTra
 			throw new MessagingException("Folder not found: " + mailConfig.getFolder());
 		}
 		if (!inbox.isOpen()) {
-			inbox.open(Folder.READ_ONLY);
+			inbox.open(Folder.READ_WRITE);
 		}
 		return inbox;
 	}

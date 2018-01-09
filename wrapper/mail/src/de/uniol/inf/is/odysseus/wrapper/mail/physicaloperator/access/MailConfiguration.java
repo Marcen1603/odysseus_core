@@ -28,6 +28,9 @@ public abstract class MailConfiguration {
 	private static final String READ_CONTENT = "readcontent";
 	private static final String MIME_TYPE_HANDLER = "mimetypehandler";
 
+	private static final String MARK_AS_READ = "markasread";
+	private static final String UNREAD_ONLY = "unreadonly";
+
 	private static final String DEFAULT_PATTERN = "";
 	private static final String DEFAULT_FOLDER = "INBOX";
 	private static final String DEFAULT_HOST = "localhost";
@@ -44,6 +47,8 @@ public abstract class MailConfiguration {
 	private Session session;
 	private boolean readContent;
 	private String mimeTypeHandler;
+	private boolean markAsRead;
+	private boolean unreadOnly;
 
 	public Store getStore() {
 		return store;
@@ -198,6 +203,42 @@ public abstract class MailConfiguration {
 
 	/**
 	 * 
+	 * @return true if mails should be marked as read after reading, false
+	 *         otherwise
+	 */
+	public boolean isMarkAsRead() {
+		return markAsRead;
+	}
+
+	/**
+	 * set to to true if mails should be marked as read after reading them,
+	 * false otherwise
+	 * 
+	 * @param markAsRead
+	 */
+	public void setMarkAsRead(boolean markAsRead) {
+		this.markAsRead = markAsRead;
+	}
+
+	/**
+	 * 
+	 * @return true if only unread mails should be loaded, false otherwise.
+	 */
+	public boolean isUnreadOnly() {
+		return unreadOnly;
+	}
+
+	/**
+	 * set to true if only unread mails should be read, false otherwise
+	 * 
+	 * @param unreadOnly
+	 */
+	public void setUnreadOnly(boolean unreadOnly) {
+		this.unreadOnly = unreadOnly;
+	}
+
+	/**
+	 * 
 	 * @return the name of the mail protocol
 	 */
 	public abstract String getProviderName();
@@ -262,10 +303,16 @@ public abstract class MailConfiguration {
 		if (options.containsKey(MailConfiguration.READ_CONTENT)) {
 			this.setReadContent(Boolean.parseBoolean(options.get(MailConfiguration.READ_CONTENT)));
 		}
-		if (options.containsKey(MailConfiguration.MIME_TYPE_HANDLER)){
+		if (options.containsKey(MailConfiguration.MIME_TYPE_HANDLER)) {
 			this.setMimeTypeHandler(options.get(MailConfiguration.MIME_TYPE_HANDLER));
 		} else {
 			this.setMimeTypeHandler(MailConfiguration.DEFAULT_MIME_TYPE_HANDLER);
+		}
+		if (options.containsKey(MailConfiguration.MARK_AS_READ)) {
+			this.setMarkAsRead(Boolean.parseBoolean(options.get(MailConfiguration.MARK_AS_READ)));
+		}
+		if (options.containsKey(MailConfiguration.UNREAD_ONLY)) {
+			this.setUnreadOnly(Boolean.parseBoolean(options.get(MailConfiguration.UNREAD_ONLY)));
 		}
 	}
 
