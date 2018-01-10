@@ -16,6 +16,7 @@
 
 package de.uniol.inf.is.odysseus.probabilistic.math.genz;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -741,18 +742,7 @@ public class Matrix {
      */
     @Override
     public final String toString() {
-        final StringBuffer str = new StringBuffer();
-
-        for (int i = 0; i < this.getRowDimension(); i++) {
-            str.append("[");
-            for (int k = 0; k < this.getColumnDimension(); k++) {
-                str.append("[" + this.data[i][k] + "]");
-            }
-            str.append("]");
-            str.append(System.getProperty("line.separator"));
-        }
-
-        return str.toString();
+        return Arrays.deepToString(data);
     }
 
     /**

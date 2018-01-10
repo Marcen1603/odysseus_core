@@ -405,6 +405,7 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
                             newDistributionAttributes[dimension] = attributeIndex;
                             // Update the link from the payload to the right
                             // index in the distribution layer
+                            //FIXME Wrong index overrides existing attribute!!!!
                             ((ProbabilisticDouble) newAttributes[attributeIndex]).setDistribution(newLayerIndex);
                             dimension++;
                             break;
@@ -630,5 +631,22 @@ public class ProbabilisticTuple<T extends IMetaAttribute> extends Tuple<T> {
 
         return retBuff.toString();
     }
+    
+//    public final boolean equals(Object o) {
+//        if (this == o) {
+//            // o is a reference of this and therefore equal
+//            return true;
+//        }
+//        if (!(o instanceof Tuple)) {
+//            return false;
+//        }
+//        Tuple<?> t = (Tuple<?>) o;
+//        return Arrays.deepEquals(this.attributes, t.attributes);
+//    }
+    
+//    @Override
+//    public final int hashCode() {
+//        return Arrays.deepHashCode(this.attributes);
+//    }
 
 }
