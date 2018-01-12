@@ -229,7 +229,7 @@ public class CQLPredicateParser implements IPredicateParser {
             this.predicateString = "";
             InnerSelect _select = complexPredicate.getSelect();
             SimpleSelect select = _select.getSelect();
-            this.selectParser.prepare(select);
+            this.selectParser.prepare(select, null);
             String predicate = "";
             ExpressionsModel _predicates = select.getPredicates();
             boolean _tripleEquals = (_predicates == null);
@@ -328,7 +328,7 @@ public class CQLPredicateParser implements IPredicateParser {
                 this.predicateString = "";
                 InnerSelect _select_1 = complexPredicate.getSelect();
                 SimpleSelect select_1 = _select_1.getSelect();
-                this.selectParser.prepare(select_1);
+                this.selectParser.prepare(select_1, null);
                 String predicate_1 = "";
                 ExpressionsModel _predicates_1 = select_1.getPredicates();
                 boolean _tripleEquals_1 = (_predicates_1 == null);
@@ -482,7 +482,7 @@ public class CQLPredicateParser implements IPredicateParser {
       InnerSelect _select = complexPredicate.getSelect();
       SimpleSelect _select_1 = _select.getSelect();
       SimpleSelect subQuery = ((SimpleSelect) _select_1);
-      this.selectParser.prepare(subQuery);
+      this.selectParser.prepare(subQuery, null);
       this.selectParser.parse(subQuery);
       InnerSelect _select_2 = complexPredicate.getSelect();
       SimpleSelect _select_3 = _select_2.getSelect();

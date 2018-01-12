@@ -14,20 +14,19 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.SelectCache
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.List
 import java.util.Map
 import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
+import java.util.Optional
 
 class SelectParser implements ISelectParser {
 
-	val Logger log = LoggerFactory.getLogger(SelectParser);
+//	val Logger log = LoggerFactory.getLogger(SelectParser);
 
 	var AbstractPQLOperatorBuilder builder;
 	var ICacheService cacheService;
@@ -41,13 +40,12 @@ class SelectParser implements ISelectParser {
 	var IExistenceParser existenceParser;
 	var IAttributeParser attributeParser;
 	var IExpressionParser expressionParser;
-	
 	var boolean prepare;
 
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, ICacheService cacheService, IUtilityService utilityService,
 		IAttributeNameParser nameParser, IPredicateParser predicateParser, IJoinParser joinParser,
-		IProjectionParser projectionParser, IRenameParser renameParser, IAggregationParser aggregateParser, 
+		IProjectionParser projectionParser, IRenameParser renameParser, IAggregationParser aggregateParser,
 		IExistenceParser existenceParser, IAttributeParser attributeParser, IExpressionParser expressionParser) {
 
 		this.builder = builder;
@@ -70,40 +68,86 @@ class SelectParser implements ISelectParser {
 		
 		//
 		if (prepare) {
-			prepare(select);
+			prepare(select, null);
 			prepare = false;
 		}
 		
-		if (select.predicates !== null) {
-			return parseWithPredicate(select);
-		}
-
-		//
-		var String projectInput
-		// Build additional operators for aggregatations, expressions, ...
-		var String operator1 = parseAdditionalOperator(Operator.MAP, select)
-		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, select)
-
+		attributeParser.clear()// is this still necessary?
 		
-		attributeParser.clear()
-
-		// Query corresponds to a select all	
-		if (operator1 === null && operator2 === null && select.arguments.empty) {
-			projectInput = joinParser.buildJoin(select.sources).toString
-
-			// Return a join over all query sources
-			if (select.sources.size > 1)
-				return cacheService.getOperatorCache().registerOperator(projectInput)
-			// Return a projection with one source
-			else {
-
-				return cacheService.getOperatorCache().registerOperator(projectionParser.parse(select, projectInput))
+		// process select statements by the given order of the prepare method
+		cacheService.getSelectCache().getSelects().stream().forEach(e | {
+			
+			// determine if current select is the root select or an inner select
+			var boolean root = true;
+			if (!select.equals(e)) {
+				root = false;
 			}
-		} // Arbitrary query with aggregations and/or expressions and/or simple attributes
-		else {
-			projectInput = buildInput2(select, operator1, operator2)
-			return cacheService.getOperatorCache().registerOperator(projectionParser.parse(select, projectInput));
-		}
+			
+			if (e.predicates !== null) {
+				parseWithPredicate(e);
+				
+				if (!root) {
+					val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
+					if (o.isPresent()) {
+						o.get().operator = cacheService.getOperatorCache().lastOperatorId();
+					}
+				}
+				
+				return;
+			}
+	
+			//
+			var String projectInput
+			// Build additional operators for aggregatations, expressions, ...
+			var String operator1 = parseAdditionalOperator(Operator.MAP, e)
+			var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, e)
+	
+			// Query corresponds to a select all	
+			if (operator1 === null && operator2 === null && e.arguments.empty) {
+				projectInput = joinParser.buildJoin(e.sources).toString
+	
+				// Return a join over all query sources
+				if (e.sources.size > 1) {
+					cacheService.getOperatorCache().registerOperator(projectInput)
+					
+					if (!root) {
+						val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
+						if (o.isPresent()) {
+							o.get().operator = cacheService.getOperatorCache().lastOperatorId();
+						}
+					}
+					
+					return;
+				}
+				// Return a projection with one source
+				else {
+					cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput))
+					
+					if (!root) {
+						val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
+						if (o.isPresent()) {
+							o.get().operator = cacheService.getOperatorCache().lastOperatorId();
+						}
+					}
+					
+					return;
+				}
+			} // Arbitrary query with aggregations and/or expressions and/or simple attributes
+			else {
+				projectInput = buildInput2(e, operator1, operator2)
+				cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput));
+				
+				if (!root) {
+					val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
+					if (o.isPresent()) {
+						o.get().operator = cacheService.getOperatorCache().lastOperatorId();
+					}
+				}
+				
+				return;
+			}
+		})
+		
 
 	}
 
@@ -117,52 +161,49 @@ class SelectParser implements ISelectParser {
 				val name = (e as SimpleSource).getName()
 				SystemSource.addQuerySource(name);
 
-				if (e.alias !== null && !utilityService.getSource(e).hasAlias(e.alias)) {
+				if (e.alias !== null && !utilityService.getSystemSource(e).hasAlias(e.alias)) {
 					utilityService.registerSourceAlias(e as SimpleSource);
 				}
 				
 			} else if (e instanceof NestedSource) {
 				col.add(e);
-				cacheService.getQueryCache().addSubQuerySource(new SubQuery(
-					e.statement.select.sources
-						.stream()
-						.filter(p | p instanceof SimpleSource)
-						.map(k | new QuerySource((k as SimpleSource))).collect(Collectors.toList()),
-					e
-				));
+				cacheService.getQueryCache().addSubQuerySource(new SubQuery(e));
 			}
 		})
 		
 		return col
 	}
 
-	override prepare(SimpleSelect select) {
-		try {
+	/** 
+	 * Collects and saves attribute, aggregation and expression information about a select statement before it will be parsed.
+	 * This method is called recursively such that the most nested select statement will be processed first. Therefore, the 
+	 * processing order of the selects statements is determined by this method and is retained by {@link SelectCache}.
+	 */
+	override prepare(SimpleSelect select, NestedSource innerSelect) {
+
+		if (!cacheService.getSelectCache().getSelects().contains(select)) {
+
+			// register all sources and call prepare recursively
+			registerAllSource(select).stream().forEach(e | {
+				prepare(e.statement.select, e);
+			});				
 			
-			if (!cacheService.getSelectCache().getSelects().contains(select)) {
-				
-				for (NestedSource subQuery : registerAllSource(select)) {
-					prepare(subQuery.statement.select)
-				}
-
-				attributeParser.registerAttributesFromPredicate(select);
-				
-				cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
-				
-				cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
-				cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
-				cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
-				cacheService.getQueryCache().putQueryExpressions(select, attributeParser.getExpressions());
-
-				cacheService.getSelectCache().add(select);
-				
-			}
-		} catch (Exception e) {
-			// TODO remove this after debugging
-			log.error("error occurred while parsing select: " + e.message)
-			throw e
+			// register attributes that are contained by the predicate of the select statement	
+			attributeParser.registerAttributesFromPredicate(select);
+			
+			// retrieve attributes that are selected by the statement
+			cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
+			// save some information that were retrieved by the attributeParser
+			cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
+			cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
+			cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
+			cacheService.getQueryCache().putQueryExpressions(select, attributeParser.getExpressions());
+			
+			// save select object
+			cacheService.getSelectCache().add(select);
 		}
 	}
+	
 	override parseComplex(SimpleSelect left, SimpleSelect right, String operator) {
 		parse(left)
 		var rightSelectOperatorName = cacheService.getOperatorCache().lastOperatorId();

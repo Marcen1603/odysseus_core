@@ -33,7 +33,7 @@ class AttributeNameParser implements IAttributeNameParser {
 		if (sourcename !== null && !sourcename.equals("")) {
 			var SystemSource tmp
 			attribute = attributename
-			source = if((tmp = utilityService.getSource(sourcename)) !== null) tmp.getName else null
+			source = if((tmp = utilityService.getSystemSource(sourcename)) !== null) tmp.getName else null
 		} else if (attributename.contains(".")) {
 			var String[] split = attributename.split('\\.')
 			attribute = split.get(1)
@@ -57,7 +57,7 @@ class AttributeNameParser implements IAttributeNameParser {
 						return r
 					} else {
 //						var sourcenameFromalias = utilityService.getSourceNameFromAlias(source)
-						var attributeAliases = utilityService.getSource(source).findByName(attributename).getAliases
+						var attributeAliases = utilityService.getSystemSource(source).findByName(attributename).getAliases
 						if (!attributeAliases.empty) {
 							log.info("YO0")
 							return attributeAliases.get(0)
@@ -103,7 +103,7 @@ class AttributeNameParser implements IAttributeNameParser {
 //				if (!usedNames.contains(name)) {
 //					usedNames.add(name)
 				log.info("querySource::" + name)
-				var source2 = utilityService.getSource(name)
+				var source2 = utilityService.getSystemSource(name)
 				if (source2.hasAttribute(attribute)) {
 					containedBySources.add(source2)
 				}
@@ -113,7 +113,7 @@ class AttributeNameParser implements IAttributeNameParser {
 			log.info("HERE1::" + containedBySources.toString())
 
 			if (containedBySources.size == 1) {
-				var aliases = utilityService.getSource(containedBySources.get(0).getName()).findByName(attribute).
+				var aliases = utilityService.getSystemSource(containedBySources.get(0).getName()).findByName(attribute).
 					getAliases // getAliasFromAttributename(attribute, containedBySources.get(0).getName)
 				if (!aliases.empty) {
 //					var renames = //registry_RenamedAttributes.get(attribute)
@@ -125,7 +125,7 @@ class AttributeNameParser implements IAttributeNameParser {
 					return aliases.get(0)
 				}
 				log.info("HERE2")
-				var sourceStruct = utilityService.getSource(containedBySources.get(0).getName)
+				var sourceStruct = utilityService.getSystemSource(containedBySources.get(0).getName)
 				if (!sourceStruct.aliasList.empty) {
 //					var renames = registry_RenamedAttributes.get(attribute)
 //					if (renames === null || renames.empty) {

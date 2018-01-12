@@ -13,9 +13,10 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class QueryCache implements Cache {
 	
@@ -26,6 +27,14 @@ public class QueryCache implements Cache {
 	private Map<SimpleSelect, Collection<QueryExpression>> 	expressionEntries 	= new HashMap<>();
 	private Map<String, SubQuery> 							subQueryEntries 		= new HashMap<>();
 
+	private static IUtilityService utilityService;
+	private static QueryCache queryCache;
+	
+	public QueryCache() {
+		queryCache = this;
+		utilityService = CQLGenerator.injector.getInstance(IUtilityService.class);
+	}
+	
 	public Collection<QueryAttribute> getProjectionAttributes(SimpleSelect query) {
 		return projectionAttributes.containsKey(query) ? projectionAttributes.get(query) : new ArrayList<>();
 	}
@@ -71,16 +80,7 @@ public class QueryCache implements Cache {
 	}
 
 	public void addSubQuerySource(SubQuery subQuery) {
-		
-//		final String name = subQuery.getAlias().getName();
-//		subQueryEntries.put(name, new SubQuery(
-//				name, 
-//				subQuery, 
-//				attributeEntries.get(subQuery.getStatement().getSelect()))
-//			);
-		
 		subQueryEntries.put(subQuery.alias, subQuery);
-		
 	}
 
 	public Collection<SubQuery> getAllSubQueries() {
@@ -165,13 +165,13 @@ public class QueryCache implements Cache {
 	public static class SubQuery {
 		
 		public String alias;
-		public Collection<QuerySource> querySources;
-		public NestedSource subQuery;
+		public SimpleSelect select;
+		public NestedSource source;
+		public String operator;
 		
-		public SubQuery(Collection<QuerySource> querySources, NestedSource subQuery) {
-			super();
-			this.querySources = querySources.stream().map(e -> new QuerySource(e)).collect(Collectors.toList());
-			this.subQuery = subQuery;
+		public SubQuery(NestedSource subQuery) {
+			this.source = subQuery;
+			this.select = subQuery.getStatement().getSelect();
 			this.alias = subQuery.getAlias().getName();
 		}
 	}
@@ -180,10 +180,14 @@ public class QueryCache implements Cache {
 	public static class QueryAttribute {
 		
 		public String name;
+		public String prefix = "";
+		public String suffix = "";
 		public String alias;
 		public String datatype; 
-		public Collection<String> sources;
+		public Collection<QuerySource> sources;
 		public Attribute attribute;
+		public QueryAttribute referencedBy;
+		public QueryAttribute referenceOf;
 		public Type type;
 		
 		public enum Type {
@@ -193,39 +197,64 @@ public class QueryCache implements Cache {
 			STANDARD,
 		}
 		
+		// copy constructor
 		public QueryAttribute(QueryAttribute obj) {
-			this.name = obj.name;
+			this(obj.name, obj.type);
 			this.alias = obj.alias;
 			this.datatype = obj.datatype;
-			this.attribute = obj.attribute;// is this cloneable?
-			this.type = obj.type;
+			this.attribute = obj.attribute;
+			this.referencedBy = obj.referencedBy;
 			this.sources = new ArrayList<>(obj.sources);
 		}
 		
+		private QueryAttribute(String name, Type type) {
+			this.name = name;
+			this.type = type;
+			
+			if (name.contains(".")) {
+				
+				final String[] split = name.split("\\.");
+				this.prefix = split[0] != null ? split[0] : "";
+				this.suffix = split[1] != null ? split[1] : "";
+				
+				Optional<SubQuery> o = utilityService.isSubQuery(this.prefix);
+				if (o.isPresent()) {
+					Optional<QueryAttribute> queryAttribute = queryCache.getProjectionAttributes(o.get().select)
+						.stream()
+						.filter(p -> p.suffix.equals(this.suffix))
+						.findFirst();
+					
+					if (queryAttribute.isPresent()) {
+						this.referencedBy = queryAttribute.get();
+						queryAttribute.get().referenceOf = this;
+					}
+				}
+			}
+			
+			this.sources = new ArrayList<>();
+			
+		}
+		
  		public QueryAttribute(Attribute obj, Type type, String datatype) {
+ 			this(obj.getName(), type);
 			this.attribute = obj;
-			this.type = type;
-			this.name = obj.getName();
 			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
-			this.sources = new ArrayList<>();
 		}
 	
-		public QueryAttribute(Attribute e, Type type, String datatype, SystemSource systemSource) {
+		public QueryAttribute(Attribute e, Type type, String datatype, QuerySource systemSource) {
 			this(e, type, datatype);
-			this.sources.add(systemSource.name);
+			this.sources.add(systemSource);
 		}
 	
-		public QueryAttribute(String name, Type type, String datatype, SystemSource systemSource) {
-			this.name = name;
-			this.type = type;
+		public QueryAttribute(String name, Type type, String datatype, QuerySource systemSource) {
+			this(name, type);
 			this.sources = new ArrayList<>();
-			this.sources.add(systemSource.name);
+			this.sources.add(systemSource);
 		}
 	
-		public QueryAttribute(String name, Type type, String datatype, Collection<String> sources) {
-			this.name = name;
-			this.type = type;
-			this.sources = sources;
+		public QueryAttribute(String name, Type type, String datatype, Collection<QuerySource> sources) {
+			this(name, type);
+			this.sources = sources.stream().map(e -> new QuerySource(e.name, e.alias)).collect(Collectors.toList());
 		}
 		
 	}
@@ -234,7 +263,7 @@ public class QueryCache implements Cache {
 		
 		public SelectExpression expression;
 		
-		private QueryAggregate(String name, Type type, String datatype, Collection<String> sources) {
+		private QueryAggregate(String name, Type type, String datatype, Collection<QuerySource> sources) {
 			super(name, type, datatype, sources);
 		}
 	
@@ -243,7 +272,7 @@ public class QueryCache implements Cache {
 			this.expression = obj.expression;
 		}
 		
-		public QueryAggregate(String name, Type type, String datatype, Collection<String> sources, SelectExpression expression) {
+		public QueryAggregate(String name, Type type, String datatype, Collection<QuerySource> sources, SelectExpression expression) {
 			this(name, type, datatype, sources);
 			this.expression = expression;			
 		}
@@ -253,7 +282,7 @@ public class QueryCache implements Cache {
 	
 		public SelectExpression expression;
 		
-		private QueryExpression(String name, Type type, String datatype, Collection<String> sources) {
+		private QueryExpression(String name, Type type, String datatype, Collection<QuerySource> sources) {
 			super(name, type, datatype, sources);
 		}
 		
@@ -262,7 +291,7 @@ public class QueryCache implements Cache {
 			this.expression = obj.expression;// is this cloneable?
 		}
 	
-		public QueryExpression(String name, Type type, String datatype, Collection<String> sources, SelectExpression expression) {
+		public QueryExpression(String name, Type type, String datatype, Collection<QuerySource> sources, SelectExpression expression) {
 			this(name, type, datatype, sources);
 			this.expression = expression;
 			
@@ -275,6 +304,20 @@ public class QueryCache implements Cache {
 				.filter(p -> p.getKey().equals(sourcename))
 				.map(e -> e.getValue())
 				.findFirst();
+	}
+	
+	public Optional<SubQuery> getSubQuery(SimpleSelect select) {
+		return subQueryEntries.entrySet()
+				.stream()
+				.filter(p -> p.getValue().select.equals(select))
+				.map(e -> e.getValue())
+				.findFirst();
+	}
+
+	public void updateSubQuery(String name, QueryCache.SubQuery query) {
+		if (name != null && query != null) {
+			subQueryEntries.put(name, query);
+		}
 	}
 
 }

@@ -41,8 +41,8 @@ public class AttributeNameParser implements IAttributeNameParser {
       SystemSource tmp = null;
       attribute = attributename;
       String _xifexpression = null;
-      SystemSource _source = this.utilityService.getSource(sourcename);
-      SystemSource _tmp = (tmp = _source);
+      SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
+      SystemSource _tmp = (tmp = _systemSource);
       boolean _tripleNotEquals = (_tmp != null);
       if (_tripleNotEquals) {
         _xifexpression = tmp.getName();
@@ -80,8 +80,8 @@ public class AttributeNameParser implements IAttributeNameParser {
             this.log.info("YO-1");
             return r;
           } else {
-            SystemSource _source_1 = this.utilityService.getSource(source);
-            SystemAttribute _findByName = _source_1.findByName(attributename);
+            SystemSource _systemSource_1 = this.utilityService.getSystemSource(source);
+            SystemAttribute _findByName = _systemSource_1.findByName(attributename);
             List<String> attributeAliases = _findByName.getAliases();
             boolean _isEmpty = attributeAliases.isEmpty();
             boolean _not = (!_isEmpty);
@@ -124,7 +124,7 @@ public class AttributeNameParser implements IAttributeNameParser {
       for (final String name : _querySources) {
         {
           this.log.info(("querySource::" + name));
-          SystemSource source2 = this.utilityService.getSource(name);
+          SystemSource source2 = this.utilityService.getSystemSource(name);
           boolean _hasAttribute = source2.hasAttribute(attribute);
           if (_hasAttribute) {
             containedBySources.add(source2);
@@ -139,8 +139,8 @@ public class AttributeNameParser implements IAttributeNameParser {
       if (_equals) {
         SystemSource _get_2 = containedBySources.get(0);
         String _name = _get_2.getName();
-        SystemSource _source_2 = this.utilityService.getSource(_name);
-        SystemAttribute _findByName_1 = _source_2.findByName(attribute);
+        SystemSource _systemSource_2 = this.utilityService.getSystemSource(_name);
+        SystemAttribute _findByName_1 = _systemSource_2.findByName(attribute);
         List<String> aliases = _findByName_1.getAliases();
         boolean _isEmpty_1 = aliases.isEmpty();
         boolean _not_1 = (!_isEmpty_1);
@@ -155,7 +155,7 @@ public class AttributeNameParser implements IAttributeNameParser {
         this.log.info("HERE2");
         SystemSource _get_3 = containedBySources.get(0);
         String _name_1 = _get_3.getName();
-        SystemSource sourceStruct = this.utilityService.getSource(_name_1);
+        SystemSource sourceStruct = this.utilityService.getSystemSource(_name_1);
         boolean _isEmpty_2 = sourceStruct.aliasList.isEmpty();
         boolean _not_2 = (!_isEmpty_2);
         if (_not_2) {

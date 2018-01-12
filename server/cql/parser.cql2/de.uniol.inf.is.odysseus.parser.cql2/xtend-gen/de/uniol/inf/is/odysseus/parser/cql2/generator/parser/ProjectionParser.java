@@ -109,15 +109,19 @@ public class ProjectionParser implements IProjectionParser {
         String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
         Collection<String> _aliases_2 = this.renameParser.getAliases();
         String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SystemSource _source = this.utilityService.getSource(sourcename);
-        _source.addAliasTo(attributename, alias);
+        SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
+        _systemSource.addAliasTo(attributename, alias);
       }
     }
     final ArrayList<String> list = CollectionLiterals.<String>newArrayList();
     Stream<QueryCache.QueryAttribute> _stream = attributes.stream();
     final Consumer<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute e) -> {
-      String _projectAttribute = this.utilityService.getProjectAttribute(e.name);
-      list.add(_projectAttribute);
+      boolean _equals = e.type.equals(QueryCache.QueryAttribute.Type.EXPRESSION);
+      if (_equals) {
+        list.add(e.alias);
+      } else {
+        list.add(e.name);
+      }
     };
     _stream.forEach(_function);
     for (int i = 0; (i < (this.renameParser.getAliases().size() - 2)); i = (i + 3)) {
@@ -128,8 +132,8 @@ public class ProjectionParser implements IProjectionParser {
         String sourcename = ((String[])Conversions.unwrapArray(_aliases_1, String.class))[(i + 1)];
         Collection<String> _aliases_2 = this.renameParser.getAliases();
         String alias = ((String[])Conversions.unwrapArray(_aliases_2, String.class))[(i + 2)];
-        SystemSource _source = this.utilityService.getSource(sourcename);
-        _source.removeAliasFrom(attributename, alias);
+        SystemSource _systemSource = this.utilityService.getSystemSource(sourcename);
+        _systemSource.removeAliasFrom(attributename, alias);
       }
     }
     String _generateListString = this.utilityService.generateListString(list);

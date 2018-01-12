@@ -8,16 +8,12 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
-
-import java.util.ArrayList;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
 
 public interface IUtilityService {
 
@@ -30,8 +26,8 @@ public interface IUtilityService {
 	boolean isAggregateFunctionName(String name);
 	boolean isMEPFunctionMame(String name, String parsedMEP);
 	Map<String, Collection<String>> getSubQuerySources();
-	SystemSource getSource(@NotNull String name);
-	SystemSource getSource(@NotNull SimpleSource source); 
+	SystemSource getSystemSource(@NotNull String name);
+	SystemSource getSystemSource(@NotNull SimpleSource source); 
 //	void addAggregationAttribute(SelectExpression aggregation, String alias);
 //	void addQueryAttributes(@NotNull SimpleSelect select, @NotNull Map<String, List<String>> attributes);
 	void registerSourceAlias(@NotNull SimpleSource source);
@@ -46,7 +42,7 @@ public interface IUtilityService {
 	List<String> getSourceAliasesAsList();
 //	String getExpressionName();
 //	String getAggregationName(String name);
-	String getProjectAttribute(String name);
+//	String getProjectAttribute(String name);
 	boolean isSourceAlias(String name);
 	void clear();
 	void setSourcesStructs(Collection<SystemSource> sources);
@@ -64,7 +60,7 @@ public interface IUtilityService {
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);
 	Collection<String> getSourceNames();
-	String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename, String sourcenamealias, boolean isSubQuery);
+//	String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename, String sourcenamealias, boolean isSubQuery);
 	QueryAttribute getQueryAttribute(Attribute attribute);
 	String getDataTypeFrom(Attribute attribute);
 	boolean containsAllAggregates(SimpleSelect query);
@@ -74,6 +70,6 @@ public interface IUtilityService {
 	Optional<String> getQueryExpressionName(String name);
 	boolean existsQueryExpressionString(String name);
 	boolean existsQueryExpression(String name);
-	boolean isSubQuery(String sourcename);
+	Optional<SubQuery> isSubQuery(String sourcename);
 	
 }

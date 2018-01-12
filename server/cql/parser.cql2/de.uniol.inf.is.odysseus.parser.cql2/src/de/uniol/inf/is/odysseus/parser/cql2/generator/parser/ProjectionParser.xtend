@@ -94,12 +94,19 @@ class ProjectionParser implements IProjectionParser {
 			var attributename = renameParser.getAliases().get(i)
 			var sourcename = renameParser.getAliases().get(i + 1)
 			var alias = renameParser.getAliases().get(i + 2)
-			utilityService.getSource(sourcename).addAliasTo(attributename, alias);
+			utilityService.getSystemSource(sourcename).addAliasTo(attributename, alias);
 		}
 
 		val list = newArrayList
 		
-		attributes.stream().forEach(e | {			list.add(utilityService.getProjectAttribute(e.name));
+		attributes.stream().forEach(e | {
+			
+			if (e.type.equals(QueryAttribute.Type.EXPRESSION)) {
+				list.add(e.alias)			
+			} else {
+				list.add(e.name);
+			}
+			
 		})
 		
 		// Add new aliases from the rename operation		
@@ -107,7 +114,7 @@ class ProjectionParser implements IProjectionParser {
 			var attributename = renameParser.getAliases().get(i)
 			var sourcename = renameParser.getAliases().get(i + 1)
 			var alias = renameParser.getAliases().get(i + 2)
-			utilityService.getSource(sourcename).removeAliasFrom(attributename, alias)
+			utilityService.getSystemSource(sourcename).removeAliasFrom(attributename, alias)
 		}
 		var argument = utilityService.generateListString(list).replace("'['", "['").replace("']'", "']")
 		return builder.build(typeof(MapAO), newLinkedHashMap('expressions' -> argument, 'input' -> operator.toString))

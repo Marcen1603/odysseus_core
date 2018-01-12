@@ -45,11 +45,14 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser
+import com.google.inject.Injector
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
 
 	val private Logger log = LoggerFactory.getLogger(CQLGenerator);
+
+	public var static Injector injector;
 
 	var Map<String, String> databaseConnections = newHashMap
 
@@ -68,7 +71,7 @@ class CQLGenerator implements IGenerator2 {
 	new () {
 		
 		// create injector for dependency management
-		var injector = Guice.createInjector(
+		injector = Guice.createInjector(
 			new CQLRuntimeModule(),
 			new UtilityModule(), 
 			new CacheModule(),

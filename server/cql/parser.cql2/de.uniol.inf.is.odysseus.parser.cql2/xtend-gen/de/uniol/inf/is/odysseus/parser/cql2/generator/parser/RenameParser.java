@@ -58,7 +58,7 @@ public class RenameParser implements IRenameParser {
   @Override
   public CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final int selfJoin) {
     final ArrayList<List<String>> listOfLists = CollectionLiterals.<List<String>>newArrayList();
-    final SystemSource source = this.utilityService.getSource(simpleSource);
+    final SystemSource source = this.utilityService.getSystemSource(simpleSource);
     String _xifexpression = null;
     Alias _alias = simpleSource.getAlias();
     boolean _tripleNotEquals = (_alias != null);

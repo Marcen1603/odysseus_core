@@ -36,9 +36,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,10 +46,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
-import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class SelectParser implements ISelectParser {
@@ -58,8 +55,6 @@ public class SelectParser implements ISelectParser {
     
     AGGREGATE;
   }
-  
-  private final Logger log = LoggerFactory.getLogger(SelectParser.class);
   
   private AbstractPQLOperatorBuilder builder;
   
@@ -105,43 +100,103 @@ public class SelectParser implements ISelectParser {
   }
   
   @Override
-  public String parse(final SimpleSelect select) {
+  public void parse(final SimpleSelect select) {
     if (this.prepare) {
-      this.prepare(select);
+      this.prepare(select, null);
       this.prepare = false;
     }
-    ExpressionsModel _predicates = select.getPredicates();
-    boolean _tripleNotEquals = (_predicates != null);
-    if (_tripleNotEquals) {
-      return this.parseWithPredicate(select);
-    }
-    String projectInput = null;
-    String operator1 = this.parseAdditionalOperator(SelectParser.Operator.MAP, select);
-    String operator2 = this.parseAdditionalOperator(SelectParser.Operator.AGGREGATE, select);
     this.attributeParser.clear();
-    if ((((operator1 == null) && (operator2 == null)) && select.getArguments().isEmpty())) {
-      EList<Source> _sources = select.getSources();
-      String _buildJoin = this.joinParser.buildJoin(_sources);
-      String _string = _buildJoin.toString();
-      projectInput = _string;
-      EList<Source> _sources_1 = select.getSources();
-      int _size = _sources_1.size();
-      boolean _greaterThan = (_size > 1);
-      if (_greaterThan) {
-        OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-        return _operatorCache.registerOperator(projectInput);
-      } else {
-        OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
-        String _parse = this.projectionParser.parse(select, projectInput);
-        return _operatorCache_1.registerOperator(_parse);
+    SelectCache _selectCache = this.cacheService.getSelectCache();
+    Collection<SimpleSelect> _selects = _selectCache.getSelects();
+    Stream<SimpleSelect> _stream = _selects.stream();
+    final Consumer<SimpleSelect> _function = (SimpleSelect e) -> {
+      boolean root = true;
+      boolean _equals = select.equals(e);
+      boolean _not = (!_equals);
+      if (_not) {
+        root = false;
       }
-    } else {
-      String _buildInput2 = this.buildInput2(select, operator1, operator2);
-      projectInput = _buildInput2;
-      OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-      String _parse_1 = this.projectionParser.parse(select, projectInput);
-      return _operatorCache_2.registerOperator(_parse_1);
-    }
+      ExpressionsModel _predicates = e.getPredicates();
+      boolean _tripleNotEquals = (_predicates != null);
+      if (_tripleNotEquals) {
+        this.parseWithPredicate(e);
+        if ((!root)) {
+          QueryCache _queryCache = this.cacheService.getQueryCache();
+          final Optional<QueryCache.SubQuery> o = _queryCache.getSubQuery(e);
+          boolean _isPresent = o.isPresent();
+          if (_isPresent) {
+            QueryCache.SubQuery _get = o.get();
+            OperatorCache _operatorCache = this.cacheService.getOperatorCache();
+            String _lastOperatorId = _operatorCache.lastOperatorId();
+            _get.operator = _lastOperatorId;
+          }
+        }
+        return;
+      }
+      String projectInput = null;
+      String operator1 = this.parseAdditionalOperator(SelectParser.Operator.MAP, e);
+      String operator2 = this.parseAdditionalOperator(SelectParser.Operator.AGGREGATE, e);
+      if ((((operator1 == null) && (operator2 == null)) && e.getArguments().isEmpty())) {
+        EList<Source> _sources = e.getSources();
+        String _buildJoin = this.joinParser.buildJoin(_sources);
+        String _string = _buildJoin.toString();
+        projectInput = _string;
+        EList<Source> _sources_1 = e.getSources();
+        int _size = _sources_1.size();
+        boolean _greaterThan = (_size > 1);
+        if (_greaterThan) {
+          OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
+          _operatorCache_1.registerOperator(projectInput);
+          if ((!root)) {
+            QueryCache _queryCache_1 = this.cacheService.getQueryCache();
+            final Optional<QueryCache.SubQuery> o_1 = _queryCache_1.getSubQuery(e);
+            boolean _isPresent_1 = o_1.isPresent();
+            if (_isPresent_1) {
+              QueryCache.SubQuery _get_1 = o_1.get();
+              OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
+              String _lastOperatorId_1 = _operatorCache_2.lastOperatorId();
+              _get_1.operator = _lastOperatorId_1;
+            }
+          }
+          return;
+        } else {
+          OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
+          String _parse = this.projectionParser.parse(e, projectInput);
+          _operatorCache_3.registerOperator(_parse);
+          if ((!root)) {
+            QueryCache _queryCache_2 = this.cacheService.getQueryCache();
+            final Optional<QueryCache.SubQuery> o_2 = _queryCache_2.getSubQuery(e);
+            boolean _isPresent_2 = o_2.isPresent();
+            if (_isPresent_2) {
+              QueryCache.SubQuery _get_2 = o_2.get();
+              OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
+              String _lastOperatorId_2 = _operatorCache_4.lastOperatorId();
+              _get_2.operator = _lastOperatorId_2;
+            }
+          }
+          return;
+        }
+      } else {
+        String _buildInput2 = this.buildInput2(e, operator1, operator2);
+        projectInput = _buildInput2;
+        OperatorCache _operatorCache_5 = this.cacheService.getOperatorCache();
+        String _parse_1 = this.projectionParser.parse(e, projectInput);
+        _operatorCache_5.registerOperator(_parse_1);
+        if ((!root)) {
+          QueryCache _queryCache_3 = this.cacheService.getQueryCache();
+          final Optional<QueryCache.SubQuery> o_3 = _queryCache_3.getSubQuery(e);
+          boolean _isPresent_3 = o_3.isPresent();
+          if (_isPresent_3) {
+            QueryCache.SubQuery _get_3 = o_3.get();
+            OperatorCache _operatorCache_6 = this.cacheService.getOperatorCache();
+            String _lastOperatorId_3 = _operatorCache_6.lastOperatorId();
+            _get_3.operator = _lastOperatorId_3;
+          }
+        }
+        return;
+      }
+    };
+    _stream.forEach(_function);
   }
   
   public Collection<NestedSource> registerAllSource(final SimpleSelect select) {
@@ -152,28 +207,14 @@ public class SelectParser implements ISelectParser {
       if ((e instanceof SimpleSource)) {
         final String name = ((SimpleSource) e).getName();
         SystemSource.addQuerySource(name);
-        if (((((SimpleSource)e).getAlias() != null) && (!this.utilityService.getSource(((SimpleSource)e)).hasAlias(((SimpleSource)e).getAlias())))) {
+        if (((((SimpleSource)e).getAlias() != null) && (!this.utilityService.getSystemSource(((SimpleSource)e)).hasAlias(((SimpleSource)e).getAlias())))) {
           this.utilityService.registerSourceAlias(((SimpleSource) e));
         }
       } else {
         if ((e instanceof NestedSource)) {
           col.add(((NestedSource)e));
           QueryCache _queryCache = this.cacheService.getQueryCache();
-          InnerSelect _statement = ((NestedSource)e).getStatement();
-          SimpleSelect _select = _statement.getSelect();
-          EList<Source> _sources_1 = _select.getSources();
-          Stream<Source> _stream_1 = _sources_1.stream();
-          final Predicate<Source> _function_1 = (Source p) -> {
-            return (p instanceof SimpleSource);
-          };
-          Stream<Source> _filter = _stream_1.filter(_function_1);
-          final Function<Source, QueryCache.QuerySource> _function_2 = (Source k) -> {
-            return new QueryCache.QuerySource(((SimpleSource) k));
-          };
-          Stream<QueryCache.QuerySource> _map = _filter.<QueryCache.QuerySource>map(_function_2);
-          Collector<QueryCache.QuerySource, ?, List<QueryCache.QuerySource>> _list = Collectors.<QueryCache.QuerySource>toList();
-          List<QueryCache.QuerySource> _collect = _map.collect(_list);
-          QueryCache.SubQuery _subQuery = new QueryCache.SubQuery(_collect, ((NestedSource)e));
+          QueryCache.SubQuery _subQuery = new QueryCache.SubQuery(((NestedSource)e));
           _queryCache.addSubQuerySource(_subQuery);
         }
       }
@@ -182,53 +223,44 @@ public class SelectParser implements ISelectParser {
     return col;
   }
   
+  /**
+   * Collects and saves attribute, aggregation and expression information about a select statement before it will be parsed.
+   * This method is called recursively such that the most nested select statement will be processed first. Therefore, the
+   * processing order of the selects statements is determined by this method and is retained by {@link SelectCache}.
+   */
   @Override
-  public void prepare(final SimpleSelect select) {
-    try {
-      try {
-        SelectCache _selectCache = this.cacheService.getSelectCache();
-        Collection<SimpleSelect> _selects = _selectCache.getSelects();
-        boolean _contains = _selects.contains(select);
-        boolean _not = (!_contains);
-        if (_not) {
-          Collection<NestedSource> _registerAllSource = this.registerAllSource(select);
-          for (final NestedSource subQuery : _registerAllSource) {
-            InnerSelect _statement = subQuery.getStatement();
-            SimpleSelect _select = _statement.getSelect();
-            this.prepare(_select);
-          }
-          this.attributeParser.registerAttributesFromPredicate(select);
-          QueryCache _queryCache = this.cacheService.getQueryCache();
-          Collection<QueryCache.QueryAttribute> _selectedAttributes = this.attributeParser.getSelectedAttributes(select);
-          _queryCache.putQueryAttributes(select, _selectedAttributes);
-          QueryCache _queryCache_1 = this.cacheService.getQueryCache();
-          AttributeParser.QuerySourceOrder _sourceOrder = this.attributeParser.getSourceOrder();
-          _queryCache_1.putProjectionSources(select, _sourceOrder);
-          QueryCache _queryCache_2 = this.cacheService.getQueryCache();
-          AttributeParser.QueryAttributeOrder _attributeOrder = this.attributeParser.getAttributeOrder();
-          _queryCache_2.putProjectionAttributes(select, _attributeOrder);
-          QueryCache _queryCache_3 = this.cacheService.getQueryCache();
-          Collection<QueryCache.QueryAggregate> _aggregates = this.attributeParser.getAggregates();
-          _queryCache_3.putQueryAggregations(select, _aggregates);
-          QueryCache _queryCache_4 = this.cacheService.getQueryCache();
-          Collection<QueryCache.QueryExpression> _expressions = this.attributeParser.getExpressions();
-          _queryCache_4.putQueryExpressions(select, _expressions);
-          SelectCache _selectCache_1 = this.cacheService.getSelectCache();
-          _selectCache_1.add(select);
-        }
-      } catch (final Throwable _t) {
-        if (_t instanceof Exception) {
-          final Exception e = (Exception)_t;
-          String _message = e.getMessage();
-          String _plus = ("error occurred while parsing select: " + _message);
-          this.log.error(_plus);
-          throw e;
-        } else {
-          throw Exceptions.sneakyThrow(_t);
-        }
-      }
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
+  public void prepare(final SimpleSelect select, final NestedSource innerSelect) {
+    SelectCache _selectCache = this.cacheService.getSelectCache();
+    Collection<SimpleSelect> _selects = _selectCache.getSelects();
+    boolean _contains = _selects.contains(select);
+    boolean _not = (!_contains);
+    if (_not) {
+      Collection<NestedSource> _registerAllSource = this.registerAllSource(select);
+      Stream<NestedSource> _stream = _registerAllSource.stream();
+      final Consumer<NestedSource> _function = (NestedSource e) -> {
+        InnerSelect _statement = e.getStatement();
+        SimpleSelect _select = _statement.getSelect();
+        this.prepare(_select, e);
+      };
+      _stream.forEach(_function);
+      this.attributeParser.registerAttributesFromPredicate(select);
+      QueryCache _queryCache = this.cacheService.getQueryCache();
+      Collection<QueryCache.QueryAttribute> _selectedAttributes = this.attributeParser.getSelectedAttributes(select);
+      _queryCache.putQueryAttributes(select, _selectedAttributes);
+      QueryCache _queryCache_1 = this.cacheService.getQueryCache();
+      AttributeParser.QuerySourceOrder _sourceOrder = this.attributeParser.getSourceOrder();
+      _queryCache_1.putProjectionSources(select, _sourceOrder);
+      QueryCache _queryCache_2 = this.cacheService.getQueryCache();
+      AttributeParser.QueryAttributeOrder _attributeOrder = this.attributeParser.getAttributeOrder();
+      _queryCache_2.putProjectionAttributes(select, _attributeOrder);
+      QueryCache _queryCache_3 = this.cacheService.getQueryCache();
+      Collection<QueryCache.QueryAggregate> _aggregates = this.attributeParser.getAggregates();
+      _queryCache_3.putQueryAggregations(select, _aggregates);
+      QueryCache _queryCache_4 = this.cacheService.getQueryCache();
+      Collection<QueryCache.QueryExpression> _expressions = this.attributeParser.getExpressions();
+      _queryCache_4.putQueryExpressions(select, _expressions);
+      SelectCache _selectCache_1 = this.cacheService.getSelectCache();
+      _selectCache_1.add(select);
     }
   }
   

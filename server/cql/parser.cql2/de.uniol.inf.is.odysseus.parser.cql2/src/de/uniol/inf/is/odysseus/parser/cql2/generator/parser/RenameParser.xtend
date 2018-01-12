@@ -46,7 +46,7 @@ class RenameParser implements IRenameParser {
 		val listOfLists= newArrayList()
 		
 		// get SourceStruct to the given source
-		val SystemSource source = utilityService.getSource(simpleSource)	
+		val SystemSource source = utilityService.getSystemSource(simpleSource)	
 		// get alias from source if available
 		val String sourcealias = if (simpleSource.alias !== null) simpleSource.alias.name else null;
 		

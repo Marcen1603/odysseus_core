@@ -74,6 +74,8 @@ import org.slf4j.LoggerFactory;
 public class CQLGenerator implements IGenerator2 {
   private final Logger log = LoggerFactory.getLogger(CQLGenerator.class);
   
+  public static Injector injector;
+  
   private Map<String, String> databaseConnections = CollectionLiterals.<String, String>newHashMap();
   
   private IPredicateParser predicateParser;
@@ -104,28 +106,29 @@ public class CQLGenerator implements IGenerator2 {
     CacheModule _cacheModule = new CacheModule();
     PQLBuilderModule _pQLBuilderModule = new PQLBuilderModule();
     ParserModule _parserModule = new ParserModule();
-    Injector injector = Guice.createInjector(_cQLRuntimeModule, _utilityModule, _cacheModule, _pQLBuilderModule, _parserModule);
-    IUtilityService _instance = injector.<IUtilityService>getInstance(IUtilityService.class);
+    Injector _createInjector = Guice.createInjector(_cQLRuntimeModule, _utilityModule, _cacheModule, _pQLBuilderModule, _parserModule);
+    CQLGenerator.injector = _createInjector;
+    IUtilityService _instance = CQLGenerator.injector.<IUtilityService>getInstance(IUtilityService.class);
     this.utilityService = _instance;
-    ICacheService _instance_1 = injector.<ICacheService>getInstance(ICacheService.class);
+    ICacheService _instance_1 = CQLGenerator.injector.<ICacheService>getInstance(ICacheService.class);
     this.cacheService = _instance_1;
-    IPredicateParser _instance_2 = injector.<IPredicateParser>getInstance(IPredicateParser.class);
+    IPredicateParser _instance_2 = CQLGenerator.injector.<IPredicateParser>getInstance(IPredicateParser.class);
     this.predicateParser = _instance_2;
-    IAttributeNameParser _instance_3 = injector.<IAttributeNameParser>getInstance(IAttributeNameParser.class);
+    IAttributeNameParser _instance_3 = CQLGenerator.injector.<IAttributeNameParser>getInstance(IAttributeNameParser.class);
     this.nameParser = _instance_3;
-    IAttributeParser _instance_4 = injector.<IAttributeParser>getInstance(IAttributeParser.class);
+    IAttributeParser _instance_4 = CQLGenerator.injector.<IAttributeParser>getInstance(IAttributeParser.class);
     this.attributeParser = _instance_4;
-    IRenameParser _instance_5 = injector.<IRenameParser>getInstance(IRenameParser.class);
+    IRenameParser _instance_5 = CQLGenerator.injector.<IRenameParser>getInstance(IRenameParser.class);
     this.renameParser = _instance_5;
-    IJoinParser _instance_6 = injector.<IJoinParser>getInstance(IJoinParser.class);
+    IJoinParser _instance_6 = CQLGenerator.injector.<IJoinParser>getInstance(IJoinParser.class);
     this.joinParser = _instance_6;
-    ISelectParser _instance_7 = injector.<ISelectParser>getInstance(ISelectParser.class);
+    ISelectParser _instance_7 = CQLGenerator.injector.<ISelectParser>getInstance(ISelectParser.class);
     this.selectParser = _instance_7;
-    IExistenceParser _instance_8 = injector.<IExistenceParser>getInstance(IExistenceParser.class);
+    IExistenceParser _instance_8 = CQLGenerator.injector.<IExistenceParser>getInstance(IExistenceParser.class);
     this.existenceParser = _instance_8;
-    IAggregationParser _instance_9 = injector.<IAggregationParser>getInstance(IAggregationParser.class);
+    IAggregationParser _instance_9 = CQLGenerator.injector.<IAggregationParser>getInstance(IAggregationParser.class);
     this.aggregationParser = _instance_9;
-    AbstractPQLOperatorBuilder _instance_10 = injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
+    AbstractPQLOperatorBuilder _instance_10 = CQLGenerator.injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
     this.builder = _instance_10;
   }
   

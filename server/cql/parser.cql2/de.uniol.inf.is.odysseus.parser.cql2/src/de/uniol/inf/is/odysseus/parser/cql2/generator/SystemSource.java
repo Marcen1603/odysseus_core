@@ -171,7 +171,7 @@ public class SystemSource {
 
 	@Override
 	public String toString() {
-		return "[SourceStruct::name=" + name + ", aliases=" + aliasList.toString() + "]";
+		return "["+ this.getClass() +"::name=" + name + ", aliases=" + aliasList.toString() + "]";
 	}
 
 	public Collection<SystemAttribute> getAttributeList() {

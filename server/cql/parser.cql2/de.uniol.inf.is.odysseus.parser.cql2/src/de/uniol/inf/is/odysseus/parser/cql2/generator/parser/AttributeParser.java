@@ -1,9 +1,10 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.xtext.EcoreUtil2;
 
@@ -17,12 +18,14 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class AttributeParser implements IAttributeParser {
@@ -62,11 +65,10 @@ public class AttributeParser implements IAttributeParser {
 					String sourcename = split[0];
 					String attributename2 = split[1];
 					if (utilityService.isSourceAlias(sourcename) && utilityService.isAttributeAlias(attributename2)) {
-						utilityService.registerAttributeAliases(e, e.getName(),
-								utilityService.getSourcenameFromAlias(sourcename), sourcename, false);
+						registerAttributeAliases(new ParsedAttribute(e));
 					} else if (utilityService.isSourceAlias(sourcename)
 							&& !utilityService.isAttributeAlias(attributename2)) {
-						SystemSource s = utilityService.getSource(sourcename);
+						SystemSource s = utilityService.getSystemSource(sourcename);
 						s.findByName(attributename2).addAlias(sourcename + "." + attributename2);
 						s.associateAttributeAliasWithSourceAlias(sourcename + "." + attributename2, sourcename);
 					}
@@ -98,54 +100,45 @@ public class AttributeParser implements IAttributeParser {
 
 						
 						if (candidates.size() == 1) {
-							if(parsed.containedBySource != null) {
+//							if(parsed.containedBySubQuery != null) {
 								SystemSource source = candidates.stream().findFirst().get();
-								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), source);
+								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(source.name));
 								parsed.sourcename = source.name;
-							}
+//							}
 						} else if (candidates.size() > 1) {
 							if (parsed.sourcename == null) {
-								throw new IllegalArgumentException("attribute " + parsed.attributename + " is ambiguous: possible sources are " + candidates.toString());
+								throw new IllegalArgumentException("attribute " + parsed.name + " is ambiguous: possible sources are " + candidates.toString());
 							}
 						}
+						
+//TODO is this still needed?
+//						if(parsed.subQuery) {
+//							utilityService.getSystemSource(parsed.sourcename).addAlias(parsed.sourcealias);
+//						}
 
-						if(parsed.subQuery) {
-							utilityService.getSource(parsed.sourcename).addAlias(parsed.sourcealias);
-						}
-
-						attributealias = utilityService.registerAttributeAliases(
-								e, 
-								parsed.attributename, 
-								parsed.sourcename, 
-								parsed.sourcealias, 
-								parsed.subQuery
-						);
+						attributealias = registerAttributeAliases(parsed);
 
 						entryCol.add(queryAttribute);
 						
 					} else {
-						if (parsed.containedBySource != null) {
-							for (String name : parsed.containedBySource) {
-								
-								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), utilityService.getSource(parsed.sourcename));
-								entryCol.add(queryAttribute);
-								
-								utilityService.registerAttributeAliases(
-										e, 
-										parsed.sourcename + "." + name, 
-										parsed.sourcename, 
-										parsed.sourcealias, 
-										parsed.subQuery
-								);
-							}
-						}
+//TODO does it make any sense?
+//						if (parsed.containedBySubQuery != null) {
+//							for (String name : parsed.containedBySubQuery) {
+//								
+//								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(parsed.sourcename));
+//								entryCol.add(queryAttribute);
+//								
+//								registerAttributeAliases(parsed);
+//								
+//							}
+//						}
 					}
 					
 					attributeOrder.array = computeProjectionAttributes(
 						attributeOrder.array, 
 						select, 
 						e, 
-						parsed.attributename,
+						parsed.name,
 						attributealias, 
 						parsed.sourcename
 					);
@@ -165,7 +158,7 @@ public class AttributeParser implements IAttributeParser {
 				select.getSources().stream().filter(p -> p instanceof SimpleSource).forEach(e -> {
 					
 					String sourcename = ((SimpleSource) e).getName();
-					SystemSource struct = utilityService.getSource(sourcename);
+					SystemSource struct = utilityService.getSystemSource(sourcename);
 					
 					struct.attributeList.stream().forEach(k -> {
 						
@@ -188,7 +181,7 @@ public class AttributeParser implements IAttributeParser {
 								attributename, 
 								QueryAttribute.Type.SELECTALL,
 								data, 
-								struct)
+								new QuerySource(struct.name))
 								);
 						
 					});
@@ -252,10 +245,10 @@ public class AttributeParser implements IAttributeParser {
 				
 				String subQueryAlias = ((NestedSource) s).getAlias().getName();
 				cacheService.getQueryCache().getAllSubQueries().stream()
-					.filter(p -> p.subQuery.getAlias().getName().equals(subQueryAlias))
+					.filter(p -> p.source.getAlias().getName().equals(subQueryAlias))
 					.forEach(q -> {
 						
-						utilityService.getAllSubQuerySource(q.subQuery.getStatement().getSelect()).stream().forEach(sub -> {
+						utilityService.getAllSubQuerySource(q.source.getStatement().getSelect()).stream().forEach(sub -> {
 							cacheService.getSystemSources().stream().forEach(sys -> {
 								
 								String realName = attribute.getName();
@@ -289,9 +282,9 @@ public class AttributeParser implements IAttributeParser {
 		aggregationCounter = 0;
 		index2 = 0;
 		attributeOrder = new QueryAttributeOrder(list);
-		Collection<String> sources = new ArrayList<>();
+		Collection<QuerySource> sources = new ArrayList<>();
 		if (sourcename != null) {
-			sources.add(sourcename);
+			sources.add(new QuerySource(sourcename));
 		}
 
 		if (attribute != null) {
@@ -413,20 +406,7 @@ public class AttributeParser implements IAttributeParser {
 							aggregates.add(aggregate);
 							
 						} else {
-						
-//							final QueryExpression aggregate = new QueryExpression(
-//									name,
-//									QueryAttribute.Type.EXPRESSION, 
-//									utilityService.getDataTypeFrom(name), 
-//									new ArrayList<>(),
-//									candidate
-//								);
-//							
-//							attributeOrder[i] = aggregate;
-//							expressions.add(aggregate);
-//							1
 							attributeOrder = createQueryExpression(attributeOrder, candidate, name, i);
-							
 						}
 						
 					} else {
@@ -474,6 +454,46 @@ public class AttributeParser implements IAttributeParser {
 		
 		return attributeOrder;
 	}
+	
+	private String registerAttributeAliases(ParsedAttribute parsed) {
+
+		String sourceAlias = parsed.sourcealias;
+		String simpleName = parsed.name;//attribute.getAlias() != null ? attribute.getName() : attributename;
+//		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
+		SystemSource sourceStruct = utilityService.getSystemSource(parsed.sourcename);
+
+		for (SystemAttribute sysAttribute : sourceStruct.getAttributeList()) {
+			
+			if (parsed.matches(sysAttribute)) {//parsed.name.equals(systemAttributename)|| (parsed.prefix != null && systemAttributename.equals(parsed.prefix))) {
+				if (sourceAlias == null) {
+					sourceAlias = parsed.sourcename;
+				}
+				if (parsed.alias != null) {
+					
+					if (sourceStruct.isAssociatedToASource(parsed.alias)) {
+						throw new IllegalArgumentException("given alias " + parsed.alias + " is ambiguous");
+					}
+
+					if (!sysAttribute.hasAlias(parsed.alias)) {
+						sysAttribute.addAlias(parsed.alias);
+						sourceStruct.associateAttributeAliasWithSourceAlias(parsed.alias, sourceAlias);
+					}
+
+					return parsed.alias;
+					
+				} else if (parsed.alias == null && utilityService.getSourceAliasesAsList().contains(sourceAlias)) {
+					if (!sysAttribute.hasAlias(parsed.name)) {
+						sysAttribute.addAlias(parsed.name);
+						sourceStruct.associateAttributeAliasWithSourceAlias(parsed.name, sourceAlias);
+					}
+				}
+				
+				return parsed.name;
+			}
+		}
+
+		return parsed.alias;
+	}
 
 	private QueryAttribute[] createQueryExpression(QueryAttribute[] attributeOrder, SelectExpression candidate, String name, int i) {
 		
@@ -487,7 +507,7 @@ public class AttributeParser implements IAttributeParser {
 					candidate
 				);
 		
-			queryExpression.alias = expressionParser.parse(candidate).toString();
+			queryExpression.alias = "['" + expressionParser.parse(candidate).toString() +"','" + name + "']";
 		
 			expressions.add(queryExpression);
 			attributeOrder[i] = queryExpression;
@@ -568,47 +588,65 @@ public class AttributeParser implements IAttributeParser {
 	
 	private class ParsedAttribute {
 
-		String attributename = null;
+		String name = null;
+		String prefix = null;
+		String alias = null;
 		String sourcename = null;
 		String sourcealias = null;
-		Collection<String> containedBySource = new ArrayList<>();
-		boolean subQuery = false;
+		Collection<String> containedBySubQuery = new ArrayList<>();
 
 		public ParsedAttribute(Attribute e) {
 
-			attributename = e.getName();
+			name = e.getName();
 
-			if (e.getName().contains(".")) {
-				String[] split = e.getName().split("\\.");
+			if (name.contains(".")) {
+				
+				final String[] split = e.getName().split("\\.");
+				
+				prefix = split[1];
 				sourcename = split[0];
 
-				if (!utilityService.getSourceNames().contains(sourcename)) {
+				if (utilityService.isSourceAlias(sourcename)) {
 					sourcealias = sourcename;
-					if (utilityService.getSourcenameFromAlias(sourcename) == null
-							&& utilityService.existsQueryExpressionString(split[0])) {
-						subQuery = true;
-						sourcename = utilityService.getSourcenameFromAlias(sourcename);
-					}
+					sourcename = utilityService.getSourcenameFromAlias(sourcename);
 				}
+//TODO is this still needed?				
+//				if (!utilityService.getSourceNames().contains(sourcename)) {
+//					sourcealias = sourcename;
+//					if (utilityService.getSourcenameFromAlias(sourcename) == null && utilityService.existsQueryExpressionString(split[0])) {
+//						sourcename = utilityService.getSourcenameFromAlias(sourcename);
+//					}
+//				}
 
-				if (split[1].contains("*")) {
-					sourcename = split[0];
-					if (utilityService.isSourceAlias(sourcename)) {
-						sourcealias = sourcename;
-						sourcename = utilityService.getSourcenameFromAlias(sourcename);
-					}
-				}
 				
-				if (sourcename != null && !utilityService.isSubQuery(sourcename)) {
-					for (String name : utilityService.getAttributeNamesFromSource(sourcename)) {
-						containedBySource.add(name);
-					}
+				Optional<SubQuery> o = utilityService.isSubQuery(sourcename);
+				
+				if (o.isPresent()) {
+					
+					
+					final SubQuery subQuery = o.get();
+					containedBySubQuery.addAll(cacheService.getQueryCache().getQueryAttributes(subQuery.select)
+							.stream()
+							.map(k -> k.name)
+							.collect(Collectors.toList())
+					);
+					
 				}
 
 			}
+			
+			alias = e.getAlias() != null ? e.getAlias().getName() : null;
 
 		}
+		
+		public boolean matches(SystemAttribute e) {
+			return name.equals(e.getAttributename())|| (prefix != null && e.getAttributename().equals(prefix));
+		}
 
+		public boolean hasStarPrefix() {
+			return prefix != null ? prefix.equals("*") : false;
+		}
+		
 	}
 	
 }

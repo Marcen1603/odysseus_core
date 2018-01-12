@@ -23,16 +23,14 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
-import java.util.Collection
 import java.util.List
 import java.util.Map
-import java.util.Map.Entry
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class CQLPredicateParser implements IPredicateParser {
 
@@ -145,7 +143,7 @@ class CQLPredicateParser implements IPredicateParser {
 //						var attributeAliasesBackup = registry_AttributeAliases
 //						registry_AttributeAliases = newHashMap
 							var select = complexPredicate.select.select
-							selectParser.prepare(select)
+							selectParser.prepare(select, null)
 							var predicate = ''
 							if (select.predicates === null) {
 								selectParser.parse(select)
@@ -208,7 +206,7 @@ class CQLPredicateParser implements IPredicateParser {
 							predicateString = ''
 
 							var select = complexPredicate.select.select
-							selectParser.prepare(select)
+							selectParser.prepare(select, null)
 							var predicate = ''
 							if (select.predicates === null) {
 								selectParser.parse(select)
@@ -302,7 +300,7 @@ class CQLPredicateParser implements IPredicateParser {
 		args.put('type', type)
 
 		var subQuery = complexPredicate.select.select as SimpleSelect
-		selectParser.prepare(subQuery)
+		selectParser.prepare(subQuery, null)
 		selectParser.parse(subQuery)
 		parse(complexPredicate.select.select.predicates.elements.get(0))
 

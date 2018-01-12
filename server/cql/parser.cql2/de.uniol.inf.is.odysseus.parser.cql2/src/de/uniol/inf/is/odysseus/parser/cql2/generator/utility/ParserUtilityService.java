@@ -103,50 +103,50 @@ public class ParserUtilityService implements IUtilityService {
 		return map;
 	}
 
-	@Override
-	public String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
-			String sourcenamealias, boolean isSubQuery) {
-
-		String sourceAlias = sourcenamealias;
-		String simpleName = attribute.getAlias() != null ? attribute.getName() : attributename;
-		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
-		SystemSource sourceStruct = getSource(realSourcename);
-
-		for (SystemAttribute struct : sourceStruct.getAttributeList()) {
-			if (struct.getAttributename().equals(simpleName)) {
-				if (sourceAlias == null) {
-					sourceAlias = realSourcename;
-				}
-				if (attribute.getAlias() != null) {
-					if (sourceStruct.isAssociatedToASource(attribute)) {
-						throw new IllegalArgumentException("given alias " + attribute.getAlias().getName() + " is ambiguous");
-					}
-
-					if (!struct.hasAlias(attribute.getAlias())) {
-						struct.addAlias(attribute.getAlias());
-						sourceStruct.associateAttributeAliasWithSourceAlias(attribute.getAlias(), sourceAlias);
-					}
-
-					return attribute.getAlias().getName();
-				} else if (attribute.getAlias() == null && getSourceAliasesAsList().contains(sourceAlias)) {
-					if (!struct.hasAlias(attributename)) {
-						struct.addAlias(attributename);
-						sourceStruct.associateAttributeAliasWithSourceAlias(attributename, sourceAlias);
-					}
-				}
-				
-				return attributename;
-			}
-		}
-
-		return null;
-	}
+//	@Override
+//	public String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
+//			String sourcenamealias, boolean isSubQuery) {
+//
+//		String sourceAlias = sourcenamealias;
+//		String simpleName = attribute.getAlias() != null ? attribute.getName() : attributename;
+//		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
+//		SystemSource sourceStruct = getSystemSource(realSourcename);
+//
+//		for (SystemAttribute struct : sourceStruct.getAttributeList()) {
+//			if (struct.getAttributename().equals(simpleName)) {
+//				if (sourceAlias == null) {
+//					sourceAlias = realSourcename;
+//				}
+//				if (attribute.getAlias() != null) {
+//					if (sourceStruct.isAssociatedToASource(attribute)) {
+//						throw new IllegalArgumentException("given alias " + attribute.getAlias().getName() + " is ambiguous");
+//					}
+//
+//					if (!struct.hasAlias(attribute.getAlias())) {
+//						struct.addAlias(attribute.getAlias());
+//						sourceStruct.associateAttributeAliasWithSourceAlias(attribute.getAlias(), sourceAlias);
+//					}
+//
+//					return attribute.getAlias().getName();
+//				} else if (attribute.getAlias() == null && getSourceAliasesAsList().contains(sourceAlias)) {
+//					if (!struct.hasAlias(attributename)) {
+//						struct.addAlias(attributename);
+//						sourceStruct.associateAttributeAliasWithSourceAlias(attributename, sourceAlias);
+//					}
+//				}
+//				
+//				return attributename;
+//			}
+//		}
+//
+//		return null;
+//	}
 
 	//TODO should be contained by SystemSource as static method
 	@Override
 	public void registerSourceAlias(SimpleSource source) {
 		
-		SystemSource sourceStruct = getSource(source.getName());
+		SystemSource sourceStruct = getSystemSource(source.getName());
 		if (sourceStruct != null) {
 			sourceStruct.addAlias(source.getAlias());
 		}
@@ -170,7 +170,7 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	public Collection<String> getAttributeNamesFromSource(String name) {
 		
-		final SystemSource source = getSource(name);
+		final SystemSource source = getSystemSource(name);
 		
 		if (source != null) {
 			return source.attributeList
@@ -182,37 +182,56 @@ public class ParserUtilityService implements IUtilityService {
 		return new ArrayList<>();
 	}
 
-	@Override
-	public String getProjectAttribute(String name) {
-
-		// check if attribute is an expression and return its string representation
-		Optional<String> expressionString = getQueryExpressionString(name);
-		if (expressionString.isPresent()) {
-			return expressionString.get();
-		}
-
-		// otherwise parse attibute's name and return it
-		if (name.contains(".")) {
-			if (isAttributeAlias(name)) {
-				return name;
-			}
-
-			String[] split = name.split("\\.");
-			String realAttributename = split[1];
-			String sourcename = split[0];
-			String sourcealias = sourcename;
-			if (isSourceAlias(sourcename)) {
-				sourcename = getSourcenameFromAlias(sourcealias);
-			}
-			List<String> aliases = getSource(sourcename).findByName(realAttributename).getAliases();
-			if (!aliases.isEmpty()) {
-				return aliases.get(aliases.size() - 1);
-			}
-
-		}
-
-		return name;
-	}
+//	@Override
+//	public String getProjectAttribute(String attribute) {
+//
+//		// check if attribute is an expression and return its string representation
+//		Optional<String> expressionString = getQueryExpressionString(attribute);
+//		if (expressionString.isPresent()) {
+//			return expressionString.get();
+//		}
+//
+//		// otherwise parse attibute's name and return it
+//		if (attribute.contains(".")) {
+//			if (isAttributeAlias(attribute)) {
+//				return attribute;
+//			}
+//
+//			String[] split = attribute.split("\\.");
+//			String realAttributename = split[1];
+//			String sourcename = split[0];
+//			String sourcealias = sourcename;
+//			if (isSourceAlias(sourcename)) {
+//				sourcename = getSourcenameFromAlias(sourcealias);
+//			}
+//			
+//			// check if the source relates to a sub query
+//			Optional<SubQuery> o = isSubQuery(sourcename);
+//			if (o.isPresent()) {
+//				
+//				
+//				Optional<QueryAttribute> queryAttribute = cacheService.getQueryCache().getProjectionAttributes(o.get().select)
+//					.stream()
+//					.filter(p -> p.name.equals(attribute) 
+//							|| p.name.equals(realAttributename)
+//							|| p.alias.equals(attribute))
+//					.findFirst();
+//				
+//				if (queryAttribute.isPresent()) {
+//					return queryAttribute.get().name;
+//				}
+//				
+//			} else {
+//				List<String> aliases = getSystemSource(sourcename).findByName(realAttributename).getAliases();
+//				if (!aliases.isEmpty()) {
+//					return aliases.get(aliases.size() - 1);//TODO could lead to errors
+//				}
+//			}
+//
+//		}
+//
+//		return attribute;
+//	}
 
 	@Override
 	public boolean isAttributeAlias(String name) {
@@ -225,11 +244,28 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public SystemSource getSource(String name) {
+	public SystemSource getSystemSource(String name) {
 		
 		if (name == null) {
 			throw new IllegalArgumentException("given source was null");
 		}
+		
+		if (isSubQuery(name).isPresent()) {
+			throw new IllegalArgumentException("given source " + name + " relates to a sub query");
+		}
+		
+		// check if name relates to a sub query
+//		Optional<SubQuery> o = isSubQuery(name);
+// 		if (o.isPresent()) {
+// 			
+////			
+////			if (subQuery.isPresent()) {
+////				if (subQuery.get().querySources.size() == 1) {
+////					return subQuery.get().querySources.stream().findFirst().get().name;
+////				}
+////			}
+//			
+//		}
 		
 		for (SystemSource source : cacheService.getSystemSources()) {
 			if (source.getName().equals(name) || source.hasAlias(name)) {
@@ -241,15 +277,16 @@ public class ParserUtilityService implements IUtilityService {
 		// as source alias and try again
 		String source =  getSourceNameFromAlias(name);
 		if (source != null) {
-			return getSource(source);
+			return getSystemSource(source);
 		}
+		
 		
 		throw new IllegalArgumentException("given source " + name + " is not registered");
 	}
 
 	@Override
-	public SystemSource getSource(SimpleSource source) {
-		return getSource(source.getName());
+	public SystemSource getSystemSource(SimpleSource source) {
+		return getSystemSource(source.getName());
 	}
 	
 	protected String getExpressionPrefix() {
@@ -367,18 +404,6 @@ public class ParserUtilityService implements IUtilityService {
 		return col;
 	}
 
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public void addSubQuerySources( NestedSource subQuery) {
-//		
-//		cacheService.getQueryCache().put(
-//				subQuery.getAlias().getName(), 
-//				((Map<String, List<String>>) cacheService.getQueryCache().get(subQuery.getStatement().getSelect(), QueryCache.Type.QUERY_ATTRIBUTE)).keySet(), 
-//				QueryCache.Type.QUERY_SUBQUERY
-//		);
-//		
-//	}
-	
 	@Override
 	public boolean isMEPFunctionMame(String name, String parsedMEP) {
 		if (functionStore.containsSymbol(name)) {
@@ -394,26 +419,6 @@ public class ParserUtilityService implements IUtilityService {
 		return false;
 	}
 
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public Collection<SelectExpression> getQueryExpression(SimpleSelect select) {
-//		return (Collection<SelectExpression>) cacheService.getQueryCache().get(select,
-//				QueryCache.Type.QUERY_EXPRESSION);
-//	}
-
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public Collection<SelectExpression> getQueryAggregations(SimpleSelect select) {
-//		return (Collection<SelectExpression>) cacheService.getQueryCache().get(select,
-//				QueryCache.Type.QUERY_AGGREGATION);
-//	}
-//
-//	@Override
-//	@SuppressWarnings("unchecked")
-//	public Collection<String> getQueryProjectionAttributes(SimpleSelect select) {
-//		return (Collection<String>) cacheService.getQueryCache().get(select, QueryCache.Type.PROJECTION_ATTRIBUTE);
-//	}
-
 	@Override
 	/** Returns all attribute names (including aggregations) of a {@link SimpleSelect}. */
 	public Collection<String> getAllQueryAttributes(SimpleSelect select) {
@@ -424,11 +429,6 @@ public class ParserUtilityService implements IUtilityService {
 		
 		return l;
 	}
-
-//	@Override
-//	public void addQueryAttributes( SimpleSelect select,  Map<String, List<String>> attributes) {
-//		cacheService.getQueryCache().put(select, attributes, QueryCache.Type.QUERY_ATTRIBUTE);
-//	}
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -457,33 +457,12 @@ public class ParserUtilityService implements IUtilityService {
 
 		if (isSourceAlias(sourcealias)) {
 			
-			SystemSource source = getSource(sourcealias);
+			SystemSource source = getSystemSource(sourcealias);
 			if (source != null) {
 				return source.getName();
 			}
 			
-		} else {
-			
-			Optional<SubQuery> subQuery = cacheService.getQueryCache().getAllSubQueries().stream()
-				.filter(p -> p.alias.equals(sourcealias))
-				.findFirst();
-			
-			if (subQuery.isPresent()) {
-				
-				// 
-				
-//				Optional<QuerySource> querySource = 
-				subQuery.get().querySources.stream().forEach(e -> {
-					
-					
-					
-				});
-				
-				
-			}
-			
-		}
-
+		} 
 		return null;
 	}
 	
@@ -611,7 +590,7 @@ public class ParserUtilityService implements IUtilityService {
 			
 //			try {
 			
-			if (isSubQuery(sourcename)) {
+			if (isSubQuery(sourcename).isPresent()) {
 				
 				final String aname = attributename;
 				final String aalias = attributealias;
@@ -623,7 +602,7 @@ public class ParserUtilityService implements IUtilityService {
 				
 				if (subQuery.isPresent()) {
 					
-					for (QuerySource e : subQuery.get().querySources) {
+					for (QuerySource e : cacheService.getQueryCache().getProjectionSourcess(subQuery.get().select)) {
 						
 						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
 							
@@ -635,17 +614,15 @@ public class ParserUtilityService implements IUtilityService {
 								ksourcealias = getSourceNameFromAlias(ksource);
 							}
 							
-							String datatype = null;
-							
 							if (kname.equals(aname) && (ksource.equals(e.name) || ksourcealias.equals(e.name))) {
-								for (SystemAttribute attr : getSource(e.name).getAttributeList()) {
+								for (SystemAttribute attr : getSystemSource(e.name).getAttributeList()) {
 									if (attr.attributename.equals(aname)) {
-										 datatype = attr.getDatatype();
+										 return attr.getDatatype();
 									}
 								}
 							}
 							
-							return datatype;
+							return "Double";//TODO this should always return the real datatype
 						}).findFirst();
 						
 						if (o.isPresent()) {
@@ -656,7 +633,7 @@ public class ParserUtilityService implements IUtilityService {
 				}
 			} else {
 			
-				for (SystemAttribute attr : getSource(sourcename).getAttributeList()) {
+				for (SystemAttribute attr : getSystemSource(sourcename).getAttributeList()) {
 					if (attr.attributename.equals(attributename)) {
 						return attr.getDatatype();
 					}
@@ -683,7 +660,7 @@ public class ParserUtilityService implements IUtilityService {
 				attributename = getAttributenameFromAlias(attributename);
 				if (attributename == null)
 					attributename = attribute;
-				for (SystemAttribute attr : getSource(sourceFromAlias).getAttributeList())
+				for (SystemAttribute attr : getSystemSource(sourceFromAlias).getAttributeList())
 					if (attr.attributename.equals(attributename))
 						return attr.getDatatype();
 			}
@@ -768,8 +745,10 @@ public class ParserUtilityService implements IUtilityService {
 	}
 
 	@Override
-	public boolean isSubQuery(String sourcename) {
-		return cacheService.getQueryCache().getAllSubQueries().stream().anyMatch(p -> p.alias.equals(sourcename));
+	public Optional<SubQuery> isSubQuery(String sourcename) {
+		return cacheService.getQueryCache().getAllSubQueries().stream().filter(p -> p.alias.equals(sourcename)).findFirst();
 	}
+	
+	
 	
 }
