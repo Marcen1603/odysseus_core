@@ -10,11 +10,11 @@ public class SelectCache implements Cache {
 //	private final Logger log = LoggerFactory.getLogger(SelectCache.class);
 	
 	private Collection<SimpleSelect> selects;
+	private Collection<MetaInfo> metas;
 
 	public SelectCache() {
-
 		selects = new ArrayList<>();
-
+		metas = new ArrayList<>();
 	}
 
 	public Collection<SimpleSelect> getSelects() {
@@ -39,8 +39,37 @@ public class SelectCache implements Cache {
 		
 		if (select != null) {
 			selects.add(select);
+			metas.add(null);
 		}
 
 	}
 
+	public void add(SimpleSelect select, MetaInfo meta) {
+		
+		if (select != null) {
+			selects.add(select);
+			metas.add(meta);
+		}
+
+	}
+	
+	public void remove(SimpleSelect select) {
+		if (selects.contains(select) ) {
+			selects.remove(select);
+		}
+	}
+
+	public static class MetaInfo {
+		
+		public SimpleSelect containedBy;
+		public boolean containedByPredicate;
+		
+		public MetaInfo(SimpleSelect containedBy, boolean containedByPredicate) {
+			super();
+			this.containedBy = containedBy;
+			this.containedByPredicate = containedByPredicate;
+		}
+		
+	}
+	
 }

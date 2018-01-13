@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IQuantificationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ISelectParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParserModule;
@@ -98,6 +99,8 @@ public class CQLGenerator implements IGenerator2 {
   
   private IAggregationParser aggregationParser;
   
+  private IQuantificationParser quantificationParser;
+  
   private AbstractPQLOperatorBuilder builder;
   
   public CQLGenerator() {
@@ -128,8 +131,10 @@ public class CQLGenerator implements IGenerator2 {
     this.existenceParser = _instance_8;
     IAggregationParser _instance_9 = CQLGenerator.injector.<IAggregationParser>getInstance(IAggregationParser.class);
     this.aggregationParser = _instance_9;
-    AbstractPQLOperatorBuilder _instance_10 = CQLGenerator.injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
-    this.builder = _instance_10;
+    IQuantificationParser _instance_10 = CQLGenerator.injector.<IQuantificationParser>getInstance(IQuantificationParser.class);
+    this.quantificationParser = _instance_10;
+    AbstractPQLOperatorBuilder _instance_11 = CQLGenerator.injector.<AbstractPQLOperatorBuilder>getInstance(AbstractPQLOperatorBuilder.class);
+    this.builder = _instance_11;
   }
   
   public void clear() {

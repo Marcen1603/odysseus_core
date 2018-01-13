@@ -9,9 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 public interface ICacheService {
 	
 	Collection<SystemSource> getSystemSources();
-//	Collection<Pair<SelectExpression, String>> getAggregationAttributeCache();
 	OperatorCache getOperatorCache();
-//	Map<String, String> getExpressionCache();
 	Map<String, String> getAttributeAliases();
 	QueryCache getQueryCache();
 	void flushAll();

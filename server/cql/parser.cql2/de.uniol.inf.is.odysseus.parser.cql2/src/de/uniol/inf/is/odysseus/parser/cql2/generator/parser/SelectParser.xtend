@@ -23,6 +23,7 @@ import java.util.Map
 import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
 import java.util.Optional
+import java.util.Iterator
 
 class SelectParser implements ISelectParser {
 
@@ -73,79 +74,70 @@ class SelectParser implements ISelectParser {
 		}
 		
 		// process select statements by the given order of the prepare method
-		cacheService.getSelectCache().getSelects().stream().forEach(e | {
+		
+		var Iterator<SimpleSelect> iter = cacheService.getSelectCache().getSelects().iterator;
+		
+		while (iter.hasNext()) {
+			
+			val SimpleSelect e = iter.next;
 			
 			// determine if current select is the root select or an inner select
 			var boolean root = true;
 			if (!select.equals(e)) {
 				root = false;
 			}
+
+			parseSingleSelect(e)
+	
+			if (!root) {
+				val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
+				if (o.isPresent()) {
+					o.get().operator = cacheService.getOperatorCache().lastOperatorId();
+				}
+			}
 			
-			if (e.predicates !== null) {
-				parseWithPredicate(e);
-				
-				if (!root) {
-					val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
-					if (o.isPresent()) {
-						o.get().operator = cacheService.getOperatorCache().lastOperatorId();
-					}
-				}
-				
+		}
+
+	}
+
+	override parseSingleSelect(SimpleSelect e) {
+
+		if (e.predicates !== null) {
+			parseWithPredicate(e);
+			cacheService.getOperatorCache().registerLastOperator(e, cacheService.getOperatorCache().lastOperatorId)
+			return;
+		}
+
+		var String projectInput
+		// Build additional operators for aggregatations, expressions, ...
+		var String operator1 = parseAdditionalOperator(Operator.MAP, e)
+		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, e)
+
+		// Query corresponds to a select all	
+		if (operator1 === null && operator2 === null && e.arguments.empty) {
+			projectInput = joinParser.buildJoin(e.sources).toString
+
+			// Return a join over all query sources
+			if (e.sources.size > 1) {
+				cacheService.getOperatorCache().registerOperator(projectInput)
+				cacheService.getOperatorCache().registerLastOperator(e, cacheService.getOperatorCache().lastOperatorId)
+
 				return;
-			}
-	
-			//
-			var String projectInput
-			// Build additional operators for aggregatations, expressions, ...
-			var String operator1 = parseAdditionalOperator(Operator.MAP, e)
-			var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, e)
-	
-			// Query corresponds to a select all	
-			if (operator1 === null && operator2 === null && e.arguments.empty) {
-				projectInput = joinParser.buildJoin(e.sources).toString
-	
-				// Return a join over all query sources
-				if (e.sources.size > 1) {
-					cacheService.getOperatorCache().registerOperator(projectInput)
-					
-					if (!root) {
-						val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
-						if (o.isPresent()) {
-							o.get().operator = cacheService.getOperatorCache().lastOperatorId();
-						}
-					}
-					
-					return;
-				}
-				// Return a projection with one source
-				else {
-					cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput))
-					
-					if (!root) {
-						val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
-						if (o.isPresent()) {
-							o.get().operator = cacheService.getOperatorCache().lastOperatorId();
-						}
-					}
-					
-					return;
-				}
-			} // Arbitrary query with aggregations and/or expressions and/or simple attributes
+			} // Return a projection with one source
 			else {
-				projectInput = buildInput2(e, operator1, operator2)
-				cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput));
-				
-				if (!root) {
-					val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(e);
-					if (o.isPresent()) {
-						o.get().operator = cacheService.getOperatorCache().lastOperatorId();
-					}
-				}
-				
+				cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput))
+				cacheService.getOperatorCache().registerLastOperator(e, cacheService.getOperatorCache().lastOperatorId)
+
 				return;
 			}
-		})
-		
+		} // Arbitrary query with aggregations and/or expressions and/or simple attributes
+		else {
+			projectInput = buildInput2(e, operator1, operator2)
+			cacheService.getOperatorCache().registerOperator(projectionParser.parse(e, projectInput));
+			cacheService.getOperatorCache().registerLastOperator(e, cacheService.getOperatorCache().lastOperatorId)
+
+			return;
+		}
 
 	}
 
@@ -224,47 +216,54 @@ class SelectParser implements ISelectParser {
 		var List<Expression> predicates = newArrayList
 		var List<Source> sources = newArrayList
 		if (stmt.predicates !== null) {
+
 			predicates.add(0, stmt.predicates.elements.get(0))
 			var complexPredicates = EcoreUtil2.getAllContentsOfType(stmt.predicates, ComplexPredicate)
-			if (complexPredicates !== null && !complexPredicates.empty && complexPredicates.size > 1)
+			
+			if (complexPredicates !== null && !complexPredicates.empty && complexPredicates.size > 1) {
 				throw new IllegalArgumentException('queries with more then one complex predicates are not supported')
+			}
+			
 		}
 
-		if (stmt.having !== null) // extract predicates from having clause
+		// extract predicates from having clause
+		if (stmt.having !== null) {
 			predicates.add(0, stmt.having.elements.get(0))
+		}
+		
 		sources.addAll(stmt.sources)
 
 		var String operator1 = parseAdditionalOperator(Operator.MAP, stmt)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, stmt)
 
-		predicateParser.clear() // predicateStringList.clear()
-		predicateParser.parse(predicates)
+		predicateParser.clear() 
+		predicateParser.parse(predicates, stmt)
 		var selectInput = buildInput2(stmt, operator1, operator2).toString
 		var predicate = predicateParser.parsePredicateString(predicateParser.getPredicateStringList())
 		var select = ''
-		if (!predicate.equals(''))
+		
+		if (!predicate.equals('')) {
 			select = cacheService.getOperatorCache().registerOperator(
 				builder.build(typeof(SelectAO),
 					newLinkedHashMap('predicate' -> predicate.toString, 'input' -> selectInput)))
-		else {
-			var Map<String, String> newArgs = existenceParser.getOperator(0);
-			newArgs.put('input', newArgs.get('input') + ',' + selectInput)
-			cacheService.getOperatorCache().registerOperator(builder.build(typeof(ExistenceAO), newArgs))
-			return cacheService.getOperatorCache().registerOperator(
-				projectionParser.parse(stmt,
-					'JOIN(' + cacheService.getOperatorCache().lastOperatorId() + ',' + selectInput + ')'))
+		} else {
+			//TODO add join
+			return cacheService.getOperatorCache().registerOperator(projectionParser.parse(stmt, cacheService.getOperatorCache().lastOperatorId()))
 		}
 
 		// TODO are parameters correct?
-		existenceParser.register(stmt, select)
+//		existenceParser.register(stmt, select)
 		var attributes = newArrayList
-		for (SelectArgument arg : stmt.arguments)
-			if (arg.attribute !== null)
+		for (SelectArgument arg : stmt.arguments) {
+			if (arg.attribute !== null) {
 				attributes.add(arg.attribute)
+			}
+		}
 
 		if (!checkIfSelectAll(attributes) || !cacheService.getQueryCache().getQueryAggregations(stmt).empty ||
-			!cacheService.getQueryCache().getQueryExpressions(stmt).empty)
+			!cacheService.getQueryCache().getQueryExpressions(stmt).empty) {
 			return cacheService.getOperatorCache().registerOperator(projectionParser.parse(stmt, select))
+		}
 			
 		return select
 	}

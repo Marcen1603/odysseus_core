@@ -46,6 +46,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser
 import com.google.inject.Injector
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IQuantificationParser
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -66,6 +67,7 @@ class CQLGenerator implements IGenerator2 {
 	var ISelectParser selectParser;
 	var IExistenceParser existenceParser;
 	var IAggregationParser aggregationParser;
+	var IQuantificationParser quantificationParser;
 	var AbstractPQLOperatorBuilder builder;
 	
 	new () {
@@ -90,6 +92,7 @@ class CQLGenerator implements IGenerator2 {
 		selectParser = injector.getInstance(ISelectParser);
 		existenceParser = injector.getInstance(IExistenceParser);
 		aggregationParser = injector.getInstance(IAggregationParser)
+		quantificationParser = injector.getInstance(IQuantificationParser);
 		builder = injector.getInstance(AbstractPQLOperatorBuilder);
 		
 	}

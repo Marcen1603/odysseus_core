@@ -7,7 +7,7 @@ public class ParserModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		
-		bind(IPredicateParser.class).to(CQLPredicateParser.class);
+		bind(IPredicateParser.class).to(PredicateParser.class);
 		bind(IAttributeNameParser.class).to(AttributeNameParser.class);
 		bind(IRenameParser.class).to(RenameParser.class);
 		bind(IJoinParser.class).to(JoinParser.class);
@@ -18,6 +18,7 @@ public class ParserModule extends AbstractModule {
 		bind(IAggregationParser.class).to(AggregationParser.class);
 		bind(IAttributeParser.class).to(AttributeParser.class);
 		bind(IExpressionParser.class).to(ExpressionParser.class);
+		bind(IQuantificationParser.class).to(QuantificationParser.class);
 		
 	}
 

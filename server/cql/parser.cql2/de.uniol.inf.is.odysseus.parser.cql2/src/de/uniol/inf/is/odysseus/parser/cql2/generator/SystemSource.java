@@ -56,8 +56,6 @@ public class SystemSource {
 	}
 
 	public String getAssociatedSource(String attributealias) {
-		log.info("attributealias=" + attributealias);
-		log.info("attributeAliases=" + attributeAliases.toString());
 		return isAssociatedToASource(attributealias) ? attributeAliases.get(attributealias) : null;
 	}
 

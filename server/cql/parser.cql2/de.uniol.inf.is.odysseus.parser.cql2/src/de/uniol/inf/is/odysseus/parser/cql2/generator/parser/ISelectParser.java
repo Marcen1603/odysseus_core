@@ -8,6 +8,7 @@ public interface ISelectParser {
 	void clear();
 	void prepare(SimpleSelect select, NestedSource innerSelect);
 	void parse(SimpleSelect select);
+	void parseSingleSelect(SimpleSelect select);
 	String parseWithPredicate(SimpleSelect select);
 	String parseComplex(SimpleSelect left, SimpleSelect right, String operator);
 	

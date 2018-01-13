@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 
 public class OperatorCache implements Cache {
@@ -20,6 +23,8 @@ public class OperatorCache implements Cache {
 	private Map<String, String> streamTo;
 	private Map<String, String> sinks;
 	private Map<SimpleSelect, String> subQueries;
+	private Map<SimpleSelect, String> lastOperators;
+	private Map<SimpleSelect, String> generated;
 	private boolean backupState;
 
 	final String VIEW = "VIEW_KEY_";
@@ -31,15 +36,17 @@ public class OperatorCache implements Cache {
 	final String replacement2 = "BNHUEOLASJJKEOOS12312309203";
 	final String DISTINCT_KEY = "DISTINCT";
 
-	//TODO counter does not increases in the right sense
 	private static int counter;
 
 	public OperatorCache() {
+		
 		ids = new ArrayList<>();
 		operators = new HashMap<>();
 		streamTo = new HashMap<>();
 		sinks = new HashMap<>();
 		subQueries = new HashMap<>();
+		lastOperators = new HashMap<>();
+		generated = new HashMap<>();
 
 	}
 
@@ -55,18 +62,29 @@ public class OperatorCache implements Cache {
 	}
 
 	public String getPQL() {
+		
 		final StringBuilder builder = new StringBuilder();
 		final String sep = System.getProperty("line.separator");
 
+		Collection<String> existenceOperators = new ArrayList<>();
+		
 		ids.stream().forEach(e -> {
-			if (e.contains(VIEW)) {
-				builder.append(formatPQLString(e.replace(VIEW, "") + ASSIG2 + operators.get(e)));
+			
+			if (operators.get(e).contains("EXISTENCE(")) {
+				existenceOperators.add(e);
 			} else {
-				builder.append(formatPQLString(e + ASSIG1 + operators.get(e)));
+
+				if (e.contains(VIEW)) {
+					builder.append(formatPQLString(e.replace(VIEW, "") + ASSIG2 + operators.get(e)));
+				} else {
+					builder.append(formatPQLString(e + ASSIG1 + operators.get(e)));
+				}
+				builder.append(sep);
 			}
-			builder.append(sep);
 		});
 
+		existenceOperators.stream().forEach(e -> builder.append(formatPQLString(e + ASSIG1 + operators.get(e))));
+		
 		return builder.toString();
 	}
 
@@ -81,6 +99,8 @@ public class OperatorCache implements Cache {
 		trimed = trimed.trim().replace(" ", "");
 		trimed = trimed.replace(replacement2, " " + ASSIG1 + " ");
 		trimed = trimed.replace(replacement1, " " + ASSIG2 + " ");
+		
+		
 
 		return trimed;
 	}
@@ -180,6 +200,33 @@ public class OperatorCache implements Cache {
 		
 	}
 
+	public void registerLastOperator(SimpleSelect select, String lastOperator) {
+		
+		lastOperators.put(select, lastOperator);
+		if (generated.containsKey(select)) {
+			String r = generated.get(select);
+			operators.entrySet().stream().forEach(e -> {
+				if (e.getValue().contains(r)) {
+					e.setValue(e.getValue().replace(r, lastOperator));
+				}
+			});
+		}
+		
+	}
+	
+	public String getLastOperator(SimpleSelect select) {
+		
+		if (lastOperators.containsKey(select)) {
+			return lastOperators.get(select);
+		} else {
+			final String gen = UUID.randomUUID().toString();
+			lastOperators.put(select, gen);
+			generated.put(select, gen);
+			return gen;
+		}
+		
+	}
+	
 	public Collection<String> getOperatorId() {
 		return ids;
 	}
@@ -203,7 +250,7 @@ public class OperatorCache implements Cache {
 	public Map<SimpleSelect, String> getSubQueries() {
 		return subQueries;
 	}
-
+	
 	@Override
 	public void flush() {
 		ids.clear();
@@ -215,6 +262,21 @@ public class OperatorCache implements Cache {
 
 	public boolean isBACKUPState() {
 		return backupState;
+	}
+	
+	public static class OperatorListener {
+		
+		public OperatorListener() {
+			
+		}
+		
+		public String handle(SimpleSelect select) {
+			
+			
+			
+			return null;
+		}
+		
 	}
 
 }
