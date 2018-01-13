@@ -62,7 +62,7 @@ class JoinParser implements IJoinParser {
 					col.stream().forEach(e | {
 						
 						renames.add(e.name.replace(".", "_"));
-						renames.add(e.referenceOf.name)
+						renames.add(if (e.referenceOf.alias != null) e.referenceOf.alias else e.referenceOf.name)
 						
 					})					
 					

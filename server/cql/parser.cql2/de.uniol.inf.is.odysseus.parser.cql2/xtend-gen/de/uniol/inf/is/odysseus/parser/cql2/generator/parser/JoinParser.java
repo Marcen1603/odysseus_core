@@ -80,7 +80,14 @@ public class JoinParser implements IJoinParser {
             final Consumer<QueryCache.QueryAttribute> _function_1 = (QueryCache.QueryAttribute e) -> {
               String _replace = e.name.replace(".", "_");
               renames.add(_replace);
-              renames.add(e.referenceOf.name);
+              String _xifexpression = null;
+              boolean _notEquals = (!Objects.equal(e.referenceOf.alias, null));
+              if (_notEquals) {
+                _xifexpression = e.referenceOf.alias;
+              } else {
+                _xifexpression = e.referenceOf.name;
+              }
+              renames.add(_xifexpression);
             };
             _stream_1.forEach(_function_1);
             String _parse = this.renameParser.parse(renames, subQuery.operator);

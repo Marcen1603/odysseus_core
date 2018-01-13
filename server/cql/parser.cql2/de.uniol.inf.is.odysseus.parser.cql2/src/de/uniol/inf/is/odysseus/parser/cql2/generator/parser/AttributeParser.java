@@ -57,17 +57,18 @@ public class AttributeParser implements IAttributeParser {
 	public void registerAttributesFromPredicate(SimpleSelect select) {
 		// Get attributes from predicate
 		if (select.getPredicates() != null) {
+			
 			EcoreUtil2.getAllContentsOfType(select.getPredicates(), Attribute.class).stream().forEach(e -> {
 
-				String attributename = e.getName();
+				final String attributename = e.getName();
+				
 				if (attributename.contains(".")) {
 					String[] split = attributename.split("\\.");
 					String sourcename = split[0];
 					String attributename2 = split[1];
 					if (utilityService.isSourceAlias(sourcename) && utilityService.isAttributeAlias(attributename2)) {
 						registerAttributeAliases(new ParsedAttribute(e));
-					} else if (utilityService.isSourceAlias(sourcename)
-							&& !utilityService.isAttributeAlias(attributename2)) {
+					} else if (utilityService.isSourceAlias(sourcename) && !utilityService.isAttributeAlias(attributename2)) {
 						SystemSource s = utilityService.getSystemSource(sourcename);
 						s.findByName(attributename2).addAlias(sourcename + "." + attributename2);
 						s.associateAttributeAliasWithSourceAlias(sourcename + "." + attributename2, sourcename);
@@ -75,6 +76,7 @@ public class AttributeParser implements IAttributeParser {
 				}
 
 			});
+
 		}
 	}
 	
@@ -394,16 +396,12 @@ public class AttributeParser implements IAttributeParser {
 						
 						if (utilityService.isAggregateFunctionName(functionName)) {
 							
-							final QueryAggregate aggregate = new QueryAggregate(
-									name,
-									QueryAttribute.Type.AGGREGATE, 
-									utilityService.getDataTypeFrom(name), 
-									new ArrayList<>(),
-									candidate
-								);
+							Optional<QueryAggregate> aggregate = createQueryAggregate(name, utilityService.getDataTypeFrom(name), candidate);
 							
-							attributeOrder[i] = aggregate;
-							aggregates.add(aggregate);
+							if (aggregate.isPresent()) {
+								attributeOrder[i] = aggregate.get();
+								aggregates.add(aggregate.get());
+							}
 							
 						} else {
 							attributeOrder = createQueryExpression(attributeOrder, candidate, name, i);
@@ -426,16 +424,12 @@ public class AttributeParser implements IAttributeParser {
 						if (utilityService.isAggregateFunctionName(functionName)) {
 	
 							final String name = getAggregationName(((Function) functions.get(0).getValue()).getName());
-							final QueryAggregate aggregate = new QueryAggregate(
-									name, 
-									QueryAttribute.Type.AGGREGATE,
-									utilityService.getDataTypeFrom(name),
-									new ArrayList<>(), 
-									candidate
-								);
+							Optional<QueryAggregate> aggregate = createQueryAggregate(name, utilityService.getDataTypeFrom(name), candidate);
 	
-							attributeOrder[i] = aggregate;
-							aggregates.add(aggregate);
+							if (aggregate.isPresent()) {
+								attributeOrder[i] = aggregate.get();
+								aggregates.add(aggregate.get());
+							}
 	
 						} else {
 							attributeOrder = createQueryExpression(attributeOrder, candidate, getExpressionName(), i);
@@ -493,6 +487,23 @@ public class AttributeParser implements IAttributeParser {
 		}
 
 		return parsed.alias;
+	}
+
+	private Optional<QueryAggregate> createQueryAggregate(String name, String datatype, SelectExpression expression) {
+		
+		final QueryAggregate aggregate = new QueryAggregate(
+				name,
+				QueryAttribute.Type.AGGREGATE, 
+				datatype, 
+				new ArrayList<>(),
+				expression
+			);
+		
+		if (aggregates.stream().anyMatch(p -> p.name.equals(aggregate.name))) {
+			return Optional.empty();
+		}
+		
+		return Optional.of(aggregate);
 	}
 
 	private QueryAttribute[] createQueryExpression(QueryAttribute[] attributeOrder, SelectExpression candidate, String name, int i) {

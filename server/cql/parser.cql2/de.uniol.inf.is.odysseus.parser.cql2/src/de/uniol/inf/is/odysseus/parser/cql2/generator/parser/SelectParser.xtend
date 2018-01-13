@@ -72,8 +72,6 @@ class SelectParser implements ISelectParser {
 			prepare = false;
 		}
 		
-		attributeParser.clear()// is this still necessary?
-		
 		// process select statements by the given order of the prepare method
 		cacheService.getSelectCache().getSelects().stream().forEach(e | {
 			
@@ -201,6 +199,9 @@ class SelectParser implements ISelectParser {
 			
 			// save select object
 			cacheService.getSelectCache().add(select);
+			
+			// clear attribute parser
+			attributeParser.clear()
 		}
 	}
 	

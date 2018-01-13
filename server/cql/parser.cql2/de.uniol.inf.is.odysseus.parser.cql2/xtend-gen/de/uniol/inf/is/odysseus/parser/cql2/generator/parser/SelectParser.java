@@ -105,7 +105,6 @@ public class SelectParser implements ISelectParser {
       this.prepare(select, null);
       this.prepare = false;
     }
-    this.attributeParser.clear();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     Collection<SimpleSelect> _selects = _selectCache.getSelects();
     Stream<SimpleSelect> _stream = _selects.stream();
@@ -261,6 +260,7 @@ public class SelectParser implements ISelectParser {
       _queryCache_4.putQueryExpressions(select, _expressions);
       SelectCache _selectCache_1 = this.cacheService.getSelectCache();
       _selectCache_1.add(select);
+      this.attributeParser.clear();
     }
   }
   
