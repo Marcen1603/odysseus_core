@@ -271,12 +271,12 @@ public class SelectParser implements ISelectParser {
     String rightSelectOperatorName = _operatorCache.lastOperatorId();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     _selectCache.flush();
+    this.prepare = true;
     this.parse(right);
     OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
     String leftSelectOperatorName = _operatorCache_1.lastOperatorId();
     OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-    return _operatorCache_2.registerOperator(
-      (((((operator + "(") + rightSelectOperatorName) + ",") + leftSelectOperatorName) + ")"));
+    return _operatorCache_2.registerOperator((((((operator + "(") + rightSelectOperatorName) + ",") + leftSelectOperatorName) + ")"));
   }
   
   @Override

@@ -206,14 +206,17 @@ class SelectParser implements ISelectParser {
 	}
 	
 	override parseComplex(SimpleSelect left, SimpleSelect right, String operator) {
+		
 		parse(left)
 		var rightSelectOperatorName = cacheService.getOperatorCache().lastOperatorId();
 		cacheService.getSelectCache().flush()
+		prepare = true;
 		parse(right)
 		var leftSelectOperatorName = cacheService.getOperatorCache().lastOperatorId();
-		return cacheService.getOperatorCache().registerOperator(
-			operator + '(' + rightSelectOperatorName + ',' + leftSelectOperatorName + ')')
+		
+		return cacheService.getOperatorCache().registerOperator(operator + '(' + rightSelectOperatorName + ',' + leftSelectOperatorName + ')')
 	}
+	
 
 	override parseWithPredicate(SimpleSelect stmt) {
 
@@ -286,7 +289,6 @@ class SelectParser implements ISelectParser {
 						null
 					}
 						
-					
 				// If the aggregate operator outputs the same attributes that are selected in the select clause
 				if (utilityService.containsAllAggregates(select)) {
 					// If the aggregate operator outputs the same attributes that
@@ -305,6 +307,7 @@ class SelectParser implements ISelectParser {
 			}
 			
 		}
+		
 		return joinParser.buildJoin(select.sources)
 	}
 
