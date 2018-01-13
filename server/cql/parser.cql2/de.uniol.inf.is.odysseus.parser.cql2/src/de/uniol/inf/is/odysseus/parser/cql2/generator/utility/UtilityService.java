@@ -9,10 +9,6 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.eclipse.emf.ecore.EObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
@@ -21,11 +17,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.mep.FunctionStore;
 import de.uniol.inf.is.odysseus.mep.MEP;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
@@ -37,8 +29,9 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySour
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
 
 
-public class ParserUtilityService implements IUtilityService {
-	private final Logger LOGGER = LoggerFactory.getLogger(ParserUtilityService.class);
+public class UtilityService implements IUtilityService {
+	
+//	private final Logger log = LoggerFactory.getLogger(ParserUtilityService.class);
 	private final FunctionStore functionStore;
 	private final Pattern aggregatePattern;
 	private final MEP mep;
@@ -46,7 +39,7 @@ public class ParserUtilityService implements IUtilityService {
 	private ICacheService cacheService;
 
 	@Inject
-	public ParserUtilityService(ICacheService cacheService) {
+	public UtilityService(ICacheService cacheService) {
 		functionStore = FunctionStore.getInstance();
 		aggregatePattern = AggregateFunctionBuilderRegistry.getAggregatePattern();
 		mep = MEP.getInstance();
@@ -103,45 +96,6 @@ public class ParserUtilityService implements IUtilityService {
 		return map;
 	}
 
-//	@Override
-//	public String registerAttributeAliases(Attribute attribute, String attributename, String realSourcename,
-//			String sourcenamealias, boolean isSubQuery) {
-//
-//		String sourceAlias = sourcenamealias;
-//		String simpleName = attribute.getAlias() != null ? attribute.getName() : attributename;
-//		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
-//		SystemSource sourceStruct = getSystemSource(realSourcename);
-//
-//		for (SystemAttribute struct : sourceStruct.getAttributeList()) {
-//			if (struct.getAttributename().equals(simpleName)) {
-//				if (sourceAlias == null) {
-//					sourceAlias = realSourcename;
-//				}
-//				if (attribute.getAlias() != null) {
-//					if (sourceStruct.isAssociatedToASource(attribute)) {
-//						throw new IllegalArgumentException("given alias " + attribute.getAlias().getName() + " is ambiguous");
-//					}
-//
-//					if (!struct.hasAlias(attribute.getAlias())) {
-//						struct.addAlias(attribute.getAlias());
-//						sourceStruct.associateAttributeAliasWithSourceAlias(attribute.getAlias(), sourceAlias);
-//					}
-//
-//					return attribute.getAlias().getName();
-//				} else if (attribute.getAlias() == null && getSourceAliasesAsList().contains(sourceAlias)) {
-//					if (!struct.hasAlias(attributename)) {
-//						struct.addAlias(attributename);
-//						sourceStruct.associateAttributeAliasWithSourceAlias(attributename, sourceAlias);
-//					}
-//				}
-//				
-//				return attributename;
-//			}
-//		}
-//
-//		return null;
-//	}
-
 	//TODO should be contained by SystemSource as static method
 	@Override
 	public void registerSourceAlias(SimpleSource source) {
@@ -182,57 +136,6 @@ public class ParserUtilityService implements IUtilityService {
 		return new ArrayList<>();
 	}
 
-//	@Override
-//	public String getProjectAttribute(String attribute) {
-//
-//		// check if attribute is an expression and return its string representation
-//		Optional<String> expressionString = getQueryExpressionString(attribute);
-//		if (expressionString.isPresent()) {
-//			return expressionString.get();
-//		}
-//
-//		// otherwise parse attibute's name and return it
-//		if (attribute.contains(".")) {
-//			if (isAttributeAlias(attribute)) {
-//				return attribute;
-//			}
-//
-//			String[] split = attribute.split("\\.");
-//			String realAttributename = split[1];
-//			String sourcename = split[0];
-//			String sourcealias = sourcename;
-//			if (isSourceAlias(sourcename)) {
-//				sourcename = getSourcenameFromAlias(sourcealias);
-//			}
-//			
-//			// check if the source relates to a sub query
-//			Optional<SubQuery> o = isSubQuery(sourcename);
-//			if (o.isPresent()) {
-//				
-//				
-//				Optional<QueryAttribute> queryAttribute = cacheService.getQueryCache().getProjectionAttributes(o.get().select)
-//					.stream()
-//					.filter(p -> p.name.equals(attribute) 
-//							|| p.name.equals(realAttributename)
-//							|| p.alias.equals(attribute))
-//					.findFirst();
-//				
-//				if (queryAttribute.isPresent()) {
-//					return queryAttribute.get().name;
-//				}
-//				
-//			} else {
-//				List<String> aliases = getSystemSource(sourcename).findByName(realAttributename).getAliases();
-//				if (!aliases.isEmpty()) {
-//					return aliases.get(aliases.size() - 1);//TODO could lead to errors
-//				}
-//			}
-//
-//		}
-//
-//		return attribute;
-//	}
-
 	@Override
 	public boolean isAttributeAlias(String name) {
 		return getAttributeAliasesAsList().contains(name);
@@ -253,19 +156,6 @@ public class ParserUtilityService implements IUtilityService {
 		if (isSubQuery(name).isPresent()) {
 			throw new IllegalArgumentException("given source " + name + " relates to a sub query");
 		}
-		
-		// check if name relates to a sub query
-//		Optional<SubQuery> o = isSubQuery(name);
-// 		if (o.isPresent()) {
-// 			
-////			
-////			if (subQuery.isPresent()) {
-////				if (subQuery.get().querySources.size() == 1) {
-////					return subQuery.get().querySources.stream().findFirst().get().name;
-////				}
-////			}
-//			
-//		}
 		
 		for (SystemSource source : cacheService.getSystemSources()) {
 			if (source.getName().equals(name) || source.hasAlias(name)) {
@@ -338,10 +228,6 @@ public class ParserUtilityService implements IUtilityService {
 			return attribute.getAttributename();
 		}
 
-//		if (cacheService.getExpressionCache().values().contains(name)) {
-//			return name;
-//		}
-
 		if (existsQueryExpressionString(name)) {
 			return name;
 		}
@@ -363,45 +249,7 @@ public class ParserUtilityService implements IUtilityService {
 			}
 		}
 
-		LOGGER.info("getAttributeAliasesAsMap=" + map.toString());
-		
 		return map;
-	}
-
-	//TODO unuseds
-	protected Collection<SelectExpression> getAggregations(Collection<SelectArgument> selectArguments, int expressionType) {
-		Collection<SelectExpression> col = new ArrayList<>();
-		for (SelectArgument selectArgument : selectArguments) {
-			SelectExpression expression = selectArgument.getExpression();
-			if (expression != null) {
-				if (expression.getExpressions().size() == 1) {
-					ExpressionComponent component = expression.getExpressions().get(0);
-					EObject function = component.getValue();
-					if (function instanceof Function) {
-						if (expressionType == 0) {
-							if (isAggregateFunctionName(((Function) function).getName())) {
-								col.add(expression);
-							}
-						} else if (expressionType == 1) {
-							String parsedMEP = "";
-							if (isMEPFunctionMame(((Function) function).getName(), parsedMEP)) {
-								col.add(expression);
-							}
-						}
-					} else {
-						if (expressionType == 1) {
-							col.add(expression);
-						}
-					}
-				} else {
-					if (expressionType == 1) {
-						col.add(expression);
-					}
-				}
-			}
-		}
-
-		return col;
 	}
 
 	@Override
@@ -430,14 +278,6 @@ public class ParserUtilityService implements IUtilityService {
 		return l;
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public Map<String, Collection<String>> getSubQuerySources() {
-		//TODO do it right!
-//		return (Map<String, Collection<String>>) cacheService.getQueryCache().getAll(QueryCache.Type.QUERY_SUBQUERY);
-		return new HashMap<>();
-	}
-	
 	@Override
 	public boolean isAggregateFunctionName(String name) {
 		return aggregatePattern.matcher(name).toString().contains(name);
@@ -472,24 +312,6 @@ public class ParserUtilityService implements IUtilityService {
 		return col;
 	}
 	
-	//TODO method is missleading; if there are more attributes with the same name, only one is returned
-	@Override
-	public SystemAttribute getAttribute(String name) {
-		for (SystemAttribute attr : getAllAttributes()) {
-			if (attr.attributename.equals(name))
-				return attr;
-			else if (attr.aliases.contains(name))
-				return attr;
-		}
-		
-		return null;
-	}
-	
-//	@Override
-//	public Collection<String> getProjectionAttributes(SimpleSelect select) {
-//		return cacheService.getQueryCache().getP(select, QueryCache.Type.PROJECTION_ATTRIBUTE);
-//	}
-
 	@Override
 	public boolean isAggregationAttribute(String name) {
 		return cacheService.getQueryCache().getAllQueryAggregations().stream().anyMatch(p -> p.name.equals(name));
@@ -546,6 +368,7 @@ public class ParserUtilityService implements IUtilityService {
 	@Override
 	public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.getName()); }
 
+	//FIXME
 	public String getDataTypeFrom(String attribute) {
 		
 		String attributename = attribute; // getAttributename(attribute)
@@ -748,7 +571,5 @@ public class ParserUtilityService implements IUtilityService {
 	public Optional<SubQuery> isSubQuery(String sourcename) {
 		return cacheService.getQueryCache().getAllSubQueries().stream().filter(p -> p.alias.equals(sourcename)).findFirst();
 	}
-	
-	
-	
+
 }

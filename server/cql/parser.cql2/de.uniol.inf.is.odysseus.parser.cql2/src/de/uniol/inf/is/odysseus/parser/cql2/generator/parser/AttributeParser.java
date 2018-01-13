@@ -99,41 +99,17 @@ public class AttributeParser implements IAttributeParser {
 					ParsedAttribute parsed = new ParsedAttribute(e);
 
 					if (candidates.size() > 0) {
-
-						
 						if (candidates.size() == 1) {
-//							if(parsed.containedBySubQuery != null) {
-								SystemSource source = candidates.stream().findFirst().get();
-								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(source.name));
-								parsed.sourcename = source.name;
-//							}
+							SystemSource source = candidates.stream().findFirst().get();
+							queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(source.name));
+							parsed.sourcename = source.name;
 						} else if (candidates.size() > 1) {
 							if (parsed.sourcename == null) {
 								throw new IllegalArgumentException("attribute " + parsed.name + " is ambiguous: possible sources are " + candidates.toString());
 							}
 						}
-						
-//TODO is this still needed?
-//						if(parsed.subQuery) {
-//							utilityService.getSystemSource(parsed.sourcename).addAlias(parsed.sourcealias);
-//						}
-
 						attributealias = registerAttributeAliases(parsed);
-
 						entryCol.add(queryAttribute);
-						
-					} else {
-//TODO does it make any sense?
-//						if (parsed.containedBySubQuery != null) {
-//							for (String name : parsed.containedBySubQuery) {
-//								
-//								queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(parsed.sourcename));
-//								entryCol.add(queryAttribute);
-//								
-//								registerAttributeAliases(parsed);
-//								
-//							}
-//						}
 					}
 					
 					attributeOrder.array = computeProjectionAttributes(
@@ -148,7 +124,6 @@ public class AttributeParser implements IAttributeParser {
 					sourceOrder.array[index] = new QuerySource(parsed.sourcename);
 					index++;					
 				});
-		
 		
 			// Check if it is a select * query and add for each source its attributes
 			if (entryCol.isEmpty() && EcoreUtil2.getAllContentsOfType(select, SelectExpression.class).isEmpty()) {
@@ -452,8 +427,6 @@ public class AttributeParser implements IAttributeParser {
 	private String registerAttributeAliases(ParsedAttribute parsed) {
 
 		String sourceAlias = parsed.sourcealias;
-		String simpleName = parsed.name;//attribute.getAlias() != null ? attribute.getName() : attributename;
-//		simpleName = simpleName.contains(".") ? simpleName.split("\\.")[1] : simpleName;
 		SystemSource sourceStruct = utilityService.getSystemSource(parsed.sourcename);
 
 		for (SystemAttribute sysAttribute : sourceStruct.getAttributeList()) {
@@ -621,14 +594,6 @@ public class AttributeParser implements IAttributeParser {
 					sourcealias = sourcename;
 					sourcename = utilityService.getSourcenameFromAlias(sourcename);
 				}
-//TODO is this still needed?				
-//				if (!utilityService.getSourceNames().contains(sourcename)) {
-//					sourcealias = sourcename;
-//					if (utilityService.getSourcenameFromAlias(sourcename) == null && utilityService.existsQueryExpressionString(split[0])) {
-//						sourcename = utilityService.getSourcenameFromAlias(sourcename);
-//					}
-//				}
-
 				
 				Optional<SubQuery> o = utilityService.isSubQuery(sourcename);
 				

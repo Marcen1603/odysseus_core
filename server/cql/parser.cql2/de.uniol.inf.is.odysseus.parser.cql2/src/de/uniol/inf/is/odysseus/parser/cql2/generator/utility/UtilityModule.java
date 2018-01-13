@@ -7,7 +7,7 @@ public class UtilityModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(IUtilityService.class).to(ParserUtilityService.class).in(Singleton.class);;
+		bind(IUtilityService.class).to(UtilityService.class).in(Singleton.class);;
 	}
 
 	
