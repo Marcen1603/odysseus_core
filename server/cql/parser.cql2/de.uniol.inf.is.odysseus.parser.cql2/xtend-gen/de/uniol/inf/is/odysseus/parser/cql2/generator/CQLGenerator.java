@@ -306,7 +306,7 @@ public class CQLGenerator implements IGenerator2 {
         SchemaDefinition _attributes_2 = create.getAttributes();
         String _name_1 = _attributes_2.getName();
         String _plus = (this.VIEW + _name_1);
-        return _operatorCache.registerOperator(_plus, operator);
+        return _operatorCache.add(_plus, operator);
       } else {
         OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
         Map<String, String> _sinks = _operatorCache_1.getSinks();
@@ -320,7 +320,7 @@ public class CQLGenerator implements IGenerator2 {
       SchemaDefinition _attributes_4 = create.getAttributes();
       String _name_3 = _attributes_4.getName();
       String _plus_2 = (this.VIEW + _name_3);
-      _operatorCache_2.registerOperator(_plus_2, operator);
+      _operatorCache_2.add(_plus_2, operator);
     }
     return "";
   }
@@ -436,7 +436,7 @@ public class CQLGenerator implements IGenerator2 {
     SchemaDefinition _attributes_1 = stream.getAttributes();
     String _name_1 = _attributes_1.getName();
     String _plus = (this.VIEW + _name_1);
-    return _operatorCache.registerOperator(_plus, operator);
+    return _operatorCache.add(_plus, operator);
   }
   
   private CharSequence parseCreateStreamFile(final CreateChannelFormatViaFile file) {
@@ -464,7 +464,7 @@ public class CQLGenerator implements IGenerator2 {
     SchemaDefinition _attributes_2 = file.getAttributes();
     String _name_1 = _attributes_2.getName();
     String _plus = (this.VIEW + _name_1);
-    return _operatorCache.registerOperator(_plus, operator);
+    return _operatorCache.add(_plus, operator);
   }
   
   private CharSequence parseCreateStreamChannel(final CreateChannelFrameworkViaPort channel) {
@@ -494,7 +494,7 @@ public class CQLGenerator implements IGenerator2 {
     SchemaDefinition _attributes_2 = channel.getAttributes();
     String _name_1 = _attributes_2.getName();
     String _plus = (this.VIEW + _name_1);
-    return _operatorCache.registerOperator(_plus, operator);
+    return _operatorCache.add(_plus, operator);
   }
   
   private String parseStreamTo(final StreamTo query) {
@@ -530,8 +530,8 @@ public class CQLGenerator implements IGenerator2 {
         SimpleSelect _select = _statement_1.getSelect();
         this.selectParser.parse(((SimpleSelect) _select));
         OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
-        String _lastOperatorId = _operatorCache_1.lastOperatorId();
-        lastOperator = _lastOperatorId;
+        String _last = _operatorCache_1.last();
+        lastOperator = _last;
       } else {
         String _inputname = query.getInputname();
         lastOperator = _inputname;
@@ -553,7 +553,7 @@ public class CQLGenerator implements IGenerator2 {
           sinks.remove(_name_4);
           OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
           String _name_5 = query.getName();
-          _xblockexpression_1 = _operatorCache_4.registerOperator(sink, _name_5);
+          _xblockexpression_1 = _operatorCache_4.add(sink, _name_5);
         }
         _xifexpression = _xblockexpression_1;
       } else {

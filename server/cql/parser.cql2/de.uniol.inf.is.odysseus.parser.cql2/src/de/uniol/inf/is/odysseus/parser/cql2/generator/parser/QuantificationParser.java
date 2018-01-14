@@ -64,14 +64,14 @@ public class QuantificationParser implements IQuantificationParser {
 		cacheService.getSelectCache().remove(select);
 		
 		final String predicateString = createPredicateString(attribute, operator, select);
-		final String input = cacheService.getOperatorCache().getLastOperator(parent) + "," + cacheService.getOperatorCache().lastOperatorId();
+		final String input = cacheService.getOperatorCache().getLastOperator(parent) + "," + cacheService.getOperatorCache().last();
 		
 		Map<String, String> arguments = new HashMap<>();
 		arguments.put("input", input);
 		arguments.put("predicate", predicateString);
 		arguments.put("type", type);
 		
-		return cacheService.getOperatorCache().registerOperator(builder.build(ExistenceAO.class, arguments));
+		return cacheService.getOperatorCache().add(select, builder.build(ExistenceAO.class, arguments));
 	}
 
 	private String createPredicateString(Attribute attribute, String operator, SimpleSelect parent) {

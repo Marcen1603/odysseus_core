@@ -301,8 +301,8 @@ public class PredicateParser implements IPredicateParser {
       this.parse(_get, select);
       args.put("predicate", this.predicateString);
       OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-      String _lastOperatorId = _operatorCache.lastOperatorId();
-      args.put("input", _lastOperatorId);
+      String _last = _operatorCache.last();
+      args.put("input", _last);
       Collection<Map<String, String>> _operators = this.existenceParser.getOperators();
       _operators.add(args);
       this.predicateString = predicateBackup;

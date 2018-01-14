@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
@@ -51,7 +52,7 @@ public class JoinParser implements IJoinParser {
   }
   
   @Override
-  public String buildJoin(final Collection<Source> sources) {
+  public String buildJoin(final Collection<Source> sources, final SimpleSelect select) {
     int _size = sources.size();
     String[] sourceStrings = new String[_size];
     Collection<String> sourcenames = CollectionLiterals.<String>newArrayList();
@@ -90,7 +91,7 @@ public class JoinParser implements IJoinParser {
               renames.add(_xifexpression);
             };
             _stream_1.forEach(_function_1);
-            String _parse = this.renameParser.parse(renames, subQuery.operator);
+            String _parse = this.renameParser.parse(renames, subQuery.operator, select);
             sourceStrings[i] = _parse;
           }
         } else {
@@ -105,7 +106,7 @@ public class JoinParser implements IJoinParser {
             sourcenames.add(sourcename);
             this.renameParser.setSources(sources);
             String _parse_1 = this.windowParser.parse(((SimpleSource)source));
-            CharSequence _buildRename = this.renameParser.buildRename(_parse_1, ((SimpleSource)source), 
+            CharSequence _buildRename = this.renameParser.buildRename(_parse_1, ((SimpleSource)source), select, 
               ((int) count));
             String _string = _buildRename.toString();
             sourceStrings[i] = _string;

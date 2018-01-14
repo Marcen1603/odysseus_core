@@ -124,8 +124,8 @@ public class SelectParser implements ISelectParser {
           if (_isPresent) {
             QueryCache.SubQuery _get = o.get();
             OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-            String _lastOperatorId = _operatorCache.lastOperatorId();
-            _get.operator = _lastOperatorId;
+            String _last = _operatorCache.last();
+            _get.operator = _last;
           }
         }
       }
@@ -140,8 +140,8 @@ public class SelectParser implements ISelectParser {
       this.parseWithPredicate(e);
       OperatorCache _operatorCache = this.cacheService.getOperatorCache();
       OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
-      String _lastOperatorId = _operatorCache_1.lastOperatorId();
-      _operatorCache.registerLastOperator(e, _lastOperatorId);
+      String _last = _operatorCache_1.last();
+      _operatorCache.registerLastOperator(e, _last);
       return;
     }
     String projectInput = null;
@@ -149,7 +149,7 @@ public class SelectParser implements ISelectParser {
     String operator2 = this.parseAdditionalOperator(SelectParser.Operator.AGGREGATE, e);
     if ((((operator1 == null) && (operator2 == null)) && e.getArguments().isEmpty())) {
       EList<Source> _sources = e.getSources();
-      String _buildJoin = this.joinParser.buildJoin(_sources);
+      String _buildJoin = this.joinParser.buildJoin(_sources, e);
       String _string = _buildJoin.toString();
       projectInput = _string;
       EList<Source> _sources_1 = e.getSources();
@@ -157,20 +157,20 @@ public class SelectParser implements ISelectParser {
       boolean _greaterThan = (_size > 1);
       if (_greaterThan) {
         OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-        _operatorCache_2.registerOperator(projectInput);
+        _operatorCache_2.add(e, projectInput);
         OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
         OperatorCache _operatorCache_4 = this.cacheService.getOperatorCache();
-        String _lastOperatorId_1 = _operatorCache_4.lastOperatorId();
-        _operatorCache_3.registerLastOperator(e, _lastOperatorId_1);
+        String _last_1 = _operatorCache_4.last();
+        _operatorCache_3.registerLastOperator(e, _last_1);
         return;
       } else {
         OperatorCache _operatorCache_5 = this.cacheService.getOperatorCache();
         String _parse = this.projectionParser.parse(e, projectInput);
-        _operatorCache_5.registerOperator(_parse);
+        _operatorCache_5.add(e, _parse);
         OperatorCache _operatorCache_6 = this.cacheService.getOperatorCache();
         OperatorCache _operatorCache_7 = this.cacheService.getOperatorCache();
-        String _lastOperatorId_2 = _operatorCache_7.lastOperatorId();
-        _operatorCache_6.registerLastOperator(e, _lastOperatorId_2);
+        String _last_2 = _operatorCache_7.last();
+        _operatorCache_6.registerLastOperator(e, _last_2);
         return;
       }
     } else {
@@ -178,11 +178,11 @@ public class SelectParser implements ISelectParser {
       projectInput = _buildInput2;
       OperatorCache _operatorCache_8 = this.cacheService.getOperatorCache();
       String _parse_1 = this.projectionParser.parse(e, projectInput);
-      _operatorCache_8.registerOperator(_parse_1);
+      _operatorCache_8.add(e, _parse_1);
       OperatorCache _operatorCache_9 = this.cacheService.getOperatorCache();
       OperatorCache _operatorCache_10 = this.cacheService.getOperatorCache();
-      String _lastOperatorId_3 = _operatorCache_10.lastOperatorId();
-      _operatorCache_9.registerLastOperator(e, _lastOperatorId_3);
+      String _last_3 = _operatorCache_10.last();
+      _operatorCache_9.registerLastOperator(e, _last_3);
       return;
     }
   }
@@ -257,15 +257,15 @@ public class SelectParser implements ISelectParser {
   public String parseComplex(final SimpleSelect left, final SimpleSelect right, final String operator) {
     this.parse(left);
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-    String rightSelectOperatorName = _operatorCache.lastOperatorId();
+    String rightSelectOperatorName = _operatorCache.last();
     SelectCache _selectCache = this.cacheService.getSelectCache();
     _selectCache.flush();
     this.prepare = true;
     this.parse(right);
     OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
-    String leftSelectOperatorName = _operatorCache_1.lastOperatorId();
+    String leftSelectOperatorName = _operatorCache_1.last();
     OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-    return _operatorCache_2.registerOperator((((((operator + "(") + rightSelectOperatorName) + ",") + leftSelectOperatorName) + ")"));
+    return _operatorCache_2.add(right, (((((operator + "(") + rightSelectOperatorName) + ",") + leftSelectOperatorName) + ")"));
   }
   
   @Override
@@ -282,7 +282,7 @@ public class SelectParser implements ISelectParser {
       ExpressionsModel _predicates_2 = stmt.getPredicates();
       List<ComplexPredicate> complexPredicates = EcoreUtil2.<ComplexPredicate>getAllContentsOfType(_predicates_2, ComplexPredicate.class);
       if ((((complexPredicates != null) && (!complexPredicates.isEmpty())) && (complexPredicates.size() > 1))) {
-        throw new IllegalArgumentException("queries with more then one complex predicates are not supported");
+        throw new IllegalArgumentException("queries with more than one complex predicate are not supported");
       }
     }
     ExpressionsModel _having = stmt.getHaving();
@@ -313,14 +313,14 @@ public class SelectParser implements ISelectParser {
       Pair<String, String> _mappedTo_1 = Pair.<String, String>of("input", selectInput);
       LinkedHashMap<String, String> _newLinkedHashMap = CollectionLiterals.<String, String>newLinkedHashMap(_mappedTo, _mappedTo_1);
       String _build = this.builder.build(SelectAO.class, _newLinkedHashMap);
-      String _registerOperator = _operatorCache.registerOperator(_build);
-      select = _registerOperator;
+      String _add = _operatorCache.add(stmt, _build);
+      select = _add;
     } else {
       OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
       OperatorCache _operatorCache_2 = this.cacheService.getOperatorCache();
-      String _lastOperatorId = _operatorCache_2.lastOperatorId();
-      String _parse = this.projectionParser.parse(stmt, _lastOperatorId);
-      return _operatorCache_1.registerOperator(_parse);
+      String _last = _operatorCache_2.last();
+      String _parse = this.projectionParser.parse(stmt, _last);
+      return _operatorCache_1.add(stmt, _parse);
     }
     ArrayList<Attribute> attributes = CollectionLiterals.<Attribute>newArrayList();
     EList<SelectArgument> _arguments = stmt.getArguments();
@@ -336,7 +336,7 @@ public class SelectParser implements ISelectParser {
       (!this.cacheService.getQueryCache().getQueryExpressions(stmt).isEmpty()))) {
       OperatorCache _operatorCache_3 = this.cacheService.getOperatorCache();
       String _parse_1 = this.projectionParser.parse(stmt, select);
-      return _operatorCache_3.registerOperator(_parse_1);
+      return _operatorCache_3.add(stmt, _parse_1);
     }
     return select;
   }
@@ -363,13 +363,13 @@ public class SelectParser implements ISelectParser {
       String aggregateOperator = _xifexpression_1;
       if (((mapOperator != null) && (aggregateOperator != null))) {
         EList<Source> _sources = select.getSources();
-        String _buildJoin = this.joinParser.buildJoin(_sources);
+        String _buildJoin = this.joinParser.buildJoin(_sources, select);
         String _buildJoin_1 = this.joinParser.buildJoin(new String[] { aggregateOperator, _buildJoin });
         return this.checkForGroupAttributes(aggregateOperator, select, _buildJoin_1);
       } else {
         if ((mapOperator != null)) {
           EList<Source> _sources_1 = select.getSources();
-          return this.joinParser.buildJoin(_sources_1);
+          return this.joinParser.buildJoin(_sources_1, select);
         } else {
           if ((aggregateOperator != null)) {
             List<String> _xifexpression_2 = null;
@@ -395,13 +395,13 @@ public class SelectParser implements ISelectParser {
                 return aggregateOperator;
               } else {
                 EList<Source> _sources_2 = select.getSources();
-                String _buildJoin_2 = this.joinParser.buildJoin(_sources_2);
+                String _buildJoin_2 = this.joinParser.buildJoin(_sources_2, select);
                 String _buildJoin_3 = this.joinParser.buildJoin(new String[] { aggregateOperator, _buildJoin_2 });
                 return this.checkForGroupAttributes(aggregateOperator, select, _buildJoin_3);
               }
             } else {
               EList<Source> _sources_3 = select.getSources();
-              String _buildJoin_4 = this.joinParser.buildJoin(_sources_3);
+              String _buildJoin_4 = this.joinParser.buildJoin(_sources_3, select);
               String _buildJoin_5 = this.joinParser.buildJoin(new String[] { aggregateOperator, _buildJoin_4 });
               return this.checkForGroupAttributes(aggregateOperator, select, _buildJoin_5);
             }
@@ -410,28 +410,34 @@ public class SelectParser implements ISelectParser {
       }
     }
     EList<Source> _sources_4 = select.getSources();
-    return this.joinParser.buildJoin(_sources_4);
+    return this.joinParser.buildJoin(_sources_4, select);
   }
   
   private String checkForGroupAttributes(final String aggregateOperator, final SimpleSelect select, final String output) {
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
-    String _operator = _operatorCache.getOperator(aggregateOperator);
-    boolean _contains = _operator.contains("group_by");
-    if (_contains) {
-      EList<Source> _sources = select.getSources();
-      String join = this.joinParser.buildJoin(_sources);
-      ArrayList<String> groupAttributes = CollectionLiterals.<String>newArrayList();
-      for (int i = 0; (i < select.getOrder().size()); i++) {
-        {
-          EList<Attribute> _order = select.getOrder();
-          Attribute _get = _order.get(i);
-          String groupAttribute = _get.getName();
-          groupAttributes.add(groupAttribute);
-          groupAttributes.add(((groupAttribute + "_groupAttribute#") + Integer.valueOf(i)));
+    Optional<String> o = _operatorCache.getOperator(aggregateOperator);
+    boolean _isPresent = o.isPresent();
+    if (_isPresent) {
+      OperatorCache _operatorCache_1 = this.cacheService.getOperatorCache();
+      Optional<String> _operator = _operatorCache_1.getOperator(aggregateOperator);
+      String _get = _operator.get();
+      boolean _contains = _get.contains("group_by");
+      if (_contains) {
+        EList<Source> _sources = select.getSources();
+        String join = this.joinParser.buildJoin(_sources, select);
+        ArrayList<String> groupAttributes = CollectionLiterals.<String>newArrayList();
+        for (int i = 0; (i < select.getOrder().size()); i++) {
+          {
+            EList<Attribute> _order = select.getOrder();
+            Attribute _get_1 = _order.get(i);
+            String groupAttribute = _get_1.getName();
+            groupAttributes.add(groupAttribute);
+            groupAttributes.add(((groupAttribute + "_groupAttribute#") + Integer.valueOf(i)));
+          }
         }
+        String _parse = this.renameParser.parse(groupAttributes, aggregateOperator, select);
+        return this.joinParser.buildJoin(new String[] { _parse, join });
       }
-      String _parse = this.renameParser.parse(groupAttributes, aggregateOperator);
-      return this.joinParser.buildJoin(new String[] { _parse, join });
     }
     return output;
   }
@@ -475,13 +481,13 @@ public class SelectParser implements ISelectParser {
           if (((aggregations != null) && (!aggregations.isEmpty()))) {
             EList<Attribute> _order = select.getOrder();
             EList<Source> _sources = select.getSources();
-            Object[] _parse_1 = this.aggregateParser.parse(aggregations, _order, _sources);
+            Object[] _parse_1 = this.aggregateParser.parse(aggregations, _order, _sources, select);
             result = _parse_1;
             OperatorCache _operatorCache = this.cacheService.getOperatorCache();
             Object _get_1 = result[1];
             String _string_1 = _get_1.toString();
-            String _registerOperator = _operatorCache.registerOperator(_string_1);
-            operatorName = _registerOperator;
+            String _add = _operatorCache.add(select, _string_1);
+            operatorName = _add;
           }
           break;
         default:

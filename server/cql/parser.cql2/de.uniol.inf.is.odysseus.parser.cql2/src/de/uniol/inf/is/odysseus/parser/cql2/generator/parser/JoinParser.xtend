@@ -15,6 +15,7 @@ import java.util.Collection
 import java.util.List
 import java.util.Optional
 import java.util.stream.Collectors
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 
 class JoinParser implements IJoinParser {
 
@@ -39,7 +40,7 @@ class JoinParser implements IJoinParser {
 
 	}
 
-	override public String buildJoin(Collection<Source> sources) {
+	override public String buildJoin(Collection<Source> sources, SimpleSelect select) {
 		var String[] sourceStrings = newArrayOfSize(sources.size)
 		var Collection<String> sourcenames = newArrayList
 
@@ -65,7 +66,7 @@ class JoinParser implements IJoinParser {
 						
 					})					
 					
-					sourceStrings.set(i, renameParser.parse(renames, subQuery.operator))
+					sourceStrings.set(i, renameParser.parse(renames, subQuery.operator, select))
 				}
 			} else if (source instanceof SimpleSource) {
 				
@@ -79,6 +80,7 @@ class JoinParser implements IJoinParser {
 					renameParser.buildRename(
 						windowParser.parse(source),
 						source,
+						select,
 						count as int
 					).toString
 				)

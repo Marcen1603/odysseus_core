@@ -33,23 +33,23 @@ class ExistenceParser implements IExistenceParser {
 				for (Map<String, String> args : registry_existenceOperators) {
 					var Map<String, String> newArgs = args
 					newArgs.put('input', args.get('input') + ',' + selectInput)
-					cacheService.getOperatorCache().registerOperator(builder.build(typeof(ExistenceAO), newArgs))
+//					cacheService.getOperatorCache().registerOperator(builder.build(typeof(ExistenceAO), newArgs))
 				}
 				var t = cacheService.getOperatorCache().getOperator(select)
-				cacheService.getOperatorCache().addOperator(select,
-					t.substring(0, t.lastIndexOf('}')) + '},' + 'JOIN(' + cacheService.getOperatorCache().lastOperatorId() + ',' + selectInput + '))')
+//				cacheService.getOperatorCache().addOperator(select,
+//					t.substring(0, t.lastIndexOf('}')) + '},' + 'JOIN(' + cacheService.getOperatorCache().lastOperatorId() + ',' + selectInput + '))')
 					
 				//TODO this does not nothing, probably the reason for a bug	
 //				var lastOperator = registry_OperatorNames.get(registry_OperatorNames.size - 1)
 //				registry_OperatorNames.remove(lastOperator)
 //				registry_OperatorNames.add(registry_OperatorNames.size - 1, lastOperator)
 				// new method to swap operators
-				cacheService.getOperatorCache().swapLastOperators();
+//				cacheService.getOperatorCache().swapLastOperators();
 			} else {
 				for (Map<String, String> args : registry_existenceOperators) {
 					var Map<String, String> newArgs = args
 					newArgs.put('input', args.get('input') + ',' + selectInput)
-					cacheService.getOperatorCache().registerOperator(builder.build(typeof(ExistenceAO), newArgs))
+//					cacheService.getOperatorCache().registerOperator(builder.build(typeof(ExistenceAO), newArgs))
 				}
 			}
 		}

@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionComponent;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
@@ -56,8 +57,8 @@ public class AggregationParser implements IAggregationParser {
   }
   
   @Override
-  public Object[] parse(final Collection<QueryCache.QueryAggregate> list, final Collection<Attribute> list2, final Collection<Source> srcs) {
-    return this.buildAggregateOP(list, list2, srcs);
+  public Object[] parse(final Collection<QueryCache.QueryAggregate> list, final Collection<Attribute> list2, final Collection<Source> srcs, final SimpleSelect select) {
+    return this.buildAggregateOP(list, list2, srcs, select);
   }
   
   private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> aggAttr, final Collection<Attribute> orderAttr, final CharSequence input) {
@@ -172,8 +173,8 @@ public class AggregationParser implements IAggregationParser {
     return new Object[] { aliases, _build };
   }
   
-  private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> list, final Collection<Attribute> list2, final Collection<Source> srcs) {
-    String _buildJoin = this.joinParser.buildJoin(srcs);
+  private Object[] buildAggregateOP(final Collection<QueryCache.QueryAggregate> list, final Collection<Attribute> list2, final Collection<Source> srcs, final SimpleSelect select) {
+    String _buildJoin = this.joinParser.buildJoin(srcs, select);
     return this.buildAggregateOP(list, list2, _buildJoin);
   }
 }

@@ -210,12 +210,12 @@ class CQLGenerator implements IGenerator2 {
 		if (type.toUpperCase.equals('SINK'))
 			if (!operator.contains(SINK_INPUT_KEYWORD))
 //				return cacheService.getOperatorCache().registerOperator(operator, VIEW + create.attributes.name)
-				return cacheService.getOperatorCache().registerOperator(VIEW + create.attributes.name, operator)
+				return cacheService.getOperatorCache().add(VIEW + create.attributes.name, operator)
 			else
 				cacheService.getOperatorCache().getSinks().put(VIEW + create.attributes.name, operator)
 		else
 //			cacheService.getOperatorCache().registerOperator(operator, VIEW + create.attributes.name)
-			cacheService.getOperatorCache().registerOperator(VIEW + create.attributes.name, operator)
+			cacheService.getOperatorCache().add(VIEW + create.attributes.name, operator)
 		return ''
 	}
 
@@ -279,7 +279,7 @@ class CQLGenerator implements IGenerator2 {
 			args.put('waiteach', waitMillis)
 		// TODO not working
 //		operator = builder.build(typeof(DatabasesourceAO), args)
-		return cacheService.getOperatorCache().registerOperator(VIEW + stream.attributes.name, operator)
+		return cacheService.getOperatorCache().add(VIEW + stream.attributes.name, operator)
 	}
 
 	def private CharSequence parseCreateStreamFile(CreateChannelFormatViaFile file) {
@@ -292,7 +292,7 @@ class CQLGenerator implements IGenerator2 {
 		args.put('schema', extractSchema(file.attributes).toString)
 		args.put('options', '''['filename','«file.filename»'],['delimiter',';'],['textDelimiter',"'"]''')
 		var operator = builder.build(typeof(AccessAO), args)
-		return cacheService.getOperatorCache().registerOperator(VIEW + file.attributes.name, operator)
+		return cacheService.getOperatorCache().add(VIEW + file.attributes.name, operator)
 	}
 
 	def private CharSequence parseCreateStreamChannel(CreateChannelFrameworkViaPort channel) {
@@ -305,7 +305,7 @@ class CQLGenerator implements IGenerator2 {
 		args.put('schema', extractSchema(channel.attributes).toString)
 		args.put('options', '''['port','«channel.port»'],['host', '«channel.host»']''')
 		var operator = builder.build(typeof(AccessAO), args)
-		return cacheService.getOperatorCache().registerOperator(VIEW + channel.attributes.name, operator)
+		return cacheService.getOperatorCache().add(VIEW + channel.attributes.name, operator)
 	}
 
 	def private parseStreamTo(StreamTo query) {
@@ -319,7 +319,7 @@ class CQLGenerator implements IGenerator2 {
 
 		if (query.statement !== null) {
 			selectParser.parse(query.statement.select as SimpleSelect)
-			lastOperator = cacheService.getOperatorCache().lastOperatorId()
+			lastOperator = cacheService.getOperatorCache().last()
 		} else
 			lastOperator = query.inputname
 
@@ -329,7 +329,7 @@ class CQLGenerator implements IGenerator2 {
 				cacheService.getOperatorCache().changeToBACKUP();
 			}
 			sinks.remove(query.name)
-			cacheService.getOperatorCache().registerOperator(sink, query.name)
+			cacheService.getOperatorCache().add(sink, query.name)
 		} else {
 			cacheService.getOperatorCache().getStreamTo().put(query.name, query.name)
 			cacheService.getOperatorCache().changeToBACKUP();

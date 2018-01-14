@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
@@ -56,7 +57,7 @@ public class RenameParser implements IRenameParser {
   }
   
   @Override
-  public CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final int selfJoin) {
+  public CharSequence buildRename(final CharSequence input, final SimpleSource simpleSource, final SimpleSelect select, final int selfJoin) {
     final ArrayList<List<String>> listOfLists = CollectionLiterals.<List<String>>newArrayList();
     final SystemSource source = this.utilityService.getSystemSource(simpleSource);
     String _xifexpression = null;
@@ -144,7 +145,7 @@ public class RenameParser implements IRenameParser {
     for (int j = 0; (j < listOfLists.size()); j++) {
       List<String> _get = listOfLists.get(j);
       String _string = input.toString();
-      String _parse = this.parse(_get, _string);
+      String _parse = this.parse(_get, _string, select);
       renames.add(_parse);
     }
     int _size = renames.size();
@@ -162,7 +163,7 @@ public class RenameParser implements IRenameParser {
   }
   
   @Override
-  public String parse(final Collection<String> groupAttributes, final String input) {
+  public String parse(final Collection<String> groupAttributes, final String input, final SimpleSelect select) {
     OperatorCache _operatorCache = this.cacheService.getOperatorCache();
     Pair<String, String> _mappedTo = Pair.<String, String>of("pairs", "true");
     String _generateListString = this.utilityService.generateListString(groupAttributes);
@@ -170,7 +171,7 @@ public class RenameParser implements IRenameParser {
     Pair<String, String> _mappedTo_2 = Pair.<String, String>of("input", input);
     HashMap<String, String> _newHashMap = CollectionLiterals.<String, String>newHashMap(_mappedTo, _mappedTo_1, _mappedTo_2);
     String _build = this.builder.build(RenameAO.class, _newHashMap);
-    return _operatorCache.registerOperator(_build);
+    return _operatorCache.add(select, _build);
   }
   
   private String generateAlias(final String attributename, final String sourcename, final int number) {

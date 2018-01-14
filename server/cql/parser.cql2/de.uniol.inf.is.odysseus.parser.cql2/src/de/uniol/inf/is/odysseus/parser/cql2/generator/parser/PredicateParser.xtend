@@ -328,7 +328,7 @@ class PredicateParser implements IPredicateParser {
 
 //		println("exists() -> " + predicateString)
 		args.put('predicate', predicateString)
-		args.put('input', cacheService.getOperatorCache().lastOperatorId())
+		args.put('input', cacheService.getOperatorCache().last())
 		existenceParser.getOperators().add(args)
 
 		// restore predicate

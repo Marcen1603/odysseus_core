@@ -2,17 +2,18 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
 import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Collection
 import java.util.List
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 
 class RenameParser implements IRenameParser {
 
@@ -41,7 +42,7 @@ class RenameParser implements IRenameParser {
 		
 	}
 
-	override CharSequence buildRename(CharSequence input, SimpleSource simpleSource, int selfJoin) {
+	override CharSequence buildRename(CharSequence input, SimpleSource simpleSource, SimpleSelect select, int selfJoin) {
 		
 		val listOfLists= newArrayList()
 		
@@ -115,7 +116,7 @@ class RenameParser implements IRenameParser {
 		var renames = newArrayList
 		processedSources.add(source.getName)
 		for (var j = 0; j < listOfLists.size; j++) {
-			renames.add(parse(listOfLists.get(j), input.toString))
+			renames.add(parse(listOfLists.get(j), input.toString, select))
 		}
 		
 		if (renames.size > 1) {
@@ -129,8 +130,8 @@ class RenameParser implements IRenameParser {
 		return input
 	}
 	
-	override parse(Collection<String> groupAttributes, String input) {
-		return cacheService.getOperatorCache().registerOperator(builder.build(typeof(RenameAO), newHashMap('pairs' -> 'true', 'aliases' -> utilityService.generateListString(groupAttributes), 'input' -> input)))
+	override parse(Collection<String> groupAttributes, String input, SimpleSelect select) {
+		return cacheService.getOperatorCache().add(select, builder.build(typeof(RenameAO), newHashMap('pairs' -> 'true', 'aliases' -> utilityService.generateListString(groupAttributes), 'input' -> input)))
 	}
 
 	def private String generateAlias(String attributename, String sourcename, int number) {
