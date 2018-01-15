@@ -11,5 +11,6 @@ public interface ISelectParser {
 	void parseSingleSelect(SimpleSelect select);
 	String parseWithPredicate(SimpleSelect select);
 	String parseComplex(SimpleSelect left, SimpleSelect right, String operator);
+	void fooor(SimpleSelect select);
 	
 }

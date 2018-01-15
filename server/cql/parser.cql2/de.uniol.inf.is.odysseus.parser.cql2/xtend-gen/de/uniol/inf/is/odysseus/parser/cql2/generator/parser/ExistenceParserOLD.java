@@ -1,6 +1,7 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
 import com.google.inject.Inject;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -13,7 +14,7 @@ import java.util.Optional;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 
 @SuppressWarnings("all")
-public class ExistenceParser implements IExistenceParser {
+public class ExistenceParserOLD implements IExistenceParser {
   private List<Map<String, String>> registry_existenceOperators = CollectionLiterals.<Map<String, String>>newArrayList();
   
   private AbstractPQLOperatorBuilder builder;
@@ -21,14 +22,14 @@ public class ExistenceParser implements IExistenceParser {
   private ICacheService cacheService;
   
   @Inject
-  public ExistenceParser(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService) {
+  public ExistenceParserOLD(final AbstractPQLOperatorBuilder builder, final ICacheService cacheService) {
     this.builder = builder;
     this.cacheService = cacheService;
   }
   
   @Override
-  public String parse() {
-    throw new UnsupportedOperationException("TODO: auto-generated method stub");
+  public Object parse(final ComplexPredicate predicate, final SimpleSelect parent) {
+    return null;
   }
   
   @Override

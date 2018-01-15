@@ -2,11 +2,12 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
 import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
@@ -15,7 +16,6 @@ import java.util.Collection
 import java.util.List
 import java.util.Optional
 import java.util.stream.Collectors
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 
 class JoinParser implements IJoinParser {
 
@@ -40,14 +40,14 @@ class JoinParser implements IJoinParser {
 
 	}
 
-	override public String buildJoin(Collection<Source> sources, SimpleSelect select) {
+	override public String buildJoin(Collection<QuerySource> sources, SimpleSelect select) {
 		var String[] sourceStrings = newArrayOfSize(sources.size)
 		var Collection<String> sourcenames = newArrayList
 
 		for (var i = 0; i < sources.size; i++) {
-			var source = sources.get(i)
+			
+			var source = sources.get(i).source
 			if (source instanceof NestedSource) {
-				
 				
 				val Optional<SubQuery> o = cacheService.getQueryCache().getSubQuery(source.alias.name)
 				if (o.isPresent()) {

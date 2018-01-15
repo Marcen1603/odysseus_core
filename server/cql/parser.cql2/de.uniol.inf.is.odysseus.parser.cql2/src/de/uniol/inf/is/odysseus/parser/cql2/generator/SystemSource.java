@@ -153,6 +153,10 @@ public class SystemSource {
 				if (((SimpleSource) source).getName().equals(this.getName())) {
 					return true;
 				}
+				Alias alias = ((SimpleSource) source).getAlias();
+				if (alias != null && alias.getName().equals(this.getName()) || this.hasAlias(alias)) {
+					return true;
+				}
 			}
 		}
 
@@ -212,7 +216,7 @@ public class SystemSource {
 	}
 
 	public boolean hasAlias(Alias alias) {
-		return hasAlias(alias.getName());
+		return alias!= null ? hasAlias(alias.getName()) : false;
 	}
 
 	public boolean hasAlias(String alias) {

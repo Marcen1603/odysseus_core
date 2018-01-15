@@ -10,21 +10,17 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Comparision
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicateRef
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Equality
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExistPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.InPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.IntConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Minus
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.MulOrDiv
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NOT
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.OrPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.List
@@ -63,66 +59,78 @@ class PredicateParser implements IPredicateParser {
 		
 	}
 
-	 def CharSequence parse(Expression e, SimpleSelect select) {
-//		try {
-			if (!e.eContents.empty) {
-				switch e {
-					OrPredicate: {
-						parse(e.left, select)
-						buildPredicateString('||')
-						parse(e.right, select)
+	def CharSequence parse(Expression e, SimpleSelect select) {
+		if (!e.eContents.empty) {
+			switch e {
+				OrPredicate: {
+					parse(e.left, select)
+					buildPredicateString('||')
+					parse(e.right, select)
 
-					}
-					AndPredicate: {
-						parse(e.left, select)
-						buildPredicateString('&&')
-						parse(e.right, select)
-					}
-					Equality: {
-						parse(e.left, select)
-						if (e.op.equals("="))
-							buildPredicateString('==')
-						else
-							buildPredicateString(e.op)
-						parse(e.right, select)
-					}
-					Comparision: {
-						parse(e.left, select)
+				}
+				AndPredicate: {
+					parse(e.left, select)
+					buildPredicateString('&&')
+					parse(e.right, select)
+				}
+				Equality: {
+					parse(e.left, select)
+					if (e.op.equals("="))
+						buildPredicateString('==')
+					else
 						buildPredicateString(e.op)
-						parse(e.right, select)
-					}
-					Plus: {
-						parse(e.left, select)
-						buildPredicateString('+')
-						parse(e.right, select)
-					}
-					Minus: {
-						parse(e.left, select)
-						buildPredicateString('-')
-						parse(e.right, select)
-					}
-					MulOrDiv: {
-						parse(e.left, select)
-						buildPredicateString(e.op)
-						parse(e.right, select)
-					}
-					NOT: {
-						buildPredicateString('!')
-						parse(e.expression, select)
-					}
-					Bracket: {
-						buildPredicateString('(')
-						parse(e.inner, select)
-						buildPredicateString(')')
-					}
-					AttributeRef: {
-						buildPredicateString(attributeParser.parse(e.value as Attribute))
-					}
-					ComplexPredicateRef: {
-						
+					parse(e.right, select)
+				}
+				Comparision: {
+					parse(e.left, select)
+					buildPredicateString(e.op)
+					parse(e.right, select)
+				}
+				Plus: {
+					parse(e.left, select)
+					buildPredicateString('+')
+					parse(e.right, select)
+				}
+				Minus: {
+					parse(e.left, select)
+					buildPredicateString('-')
+					parse(e.right, select)
+				}
+				MulOrDiv: {
+					parse(e.left, select)
+					buildPredicateString(e.op)
+					parse(e.right, select)
+				}
+				NOT: {
+					buildPredicateString('!')
+					parse(e.expression, select)
+				}
+				Bracket: {
+					buildPredicateString('(')
+					parse(e.inner, select)
+					buildPredicateString(')')
+				}
+				AttributeRef: {
+					buildPredicateString(attributeParser.parse(e.value as Attribute))
+				}
+				ComplexPredicateRef: {
+					
+					if (e.value.quantification != null) {
 						quantificationParser.parse(e.value, select);
 						return "";
+					}
+					
+					if (e.value.exists != null) {
 						
+						predicateStringList = existenceParser.parse(e.value, select, predicateStringList, false);
+						predicateString = "";
+						predicateStringList.stream().forEach(k | {
+							buildPredicateString(k)
+						})
+						
+						return predicateString;
+					}
+					
 //						var complexPredicate = e.value as ComplexPredicate
 //						var QuantificationPredicate quantification = null
 //						var ExistPredicate exists = null
@@ -252,23 +260,20 @@ class PredicateParser implements IPredicateParser {
 //							predicateString = predicateBackup
 //							predicateStringList = new ArrayList(predicateStringListBackup)
 //						}
-					}
-					
 				}
-			} else {
-				var str = ''
-				switch e {
-					IntConstant: str = e.value + ''
-					FloatConstant: str = e.value + ''
-					StringConstant: str = '"' + e.value + '"'
-					BoolConstant: str = e.value + ''
-				}
-				buildPredicateString(str)
+				
 			}
-//		} catch (NullPointerException exc) {
-//			log.error("while parsing predicate an object was null: following predicate string was constructed \"" + predicateString + "\"")
-//		}
-		log.info("PREDICATESTRING::" + predicateString)
+		} else {
+			var str = ''
+			switch e {
+				IntConstant: str = e.value + ''
+				FloatConstant: str = e.value + ''
+				StringConstant: str = '"' + e.value + '"'
+				BoolConstant: str = e.value + ''
+			}
+			buildPredicateString(str)
+		}
+
 		return predicateString
 	}
 

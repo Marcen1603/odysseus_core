@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.eclipse.xtext.EcoreUtil2;
+
 import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
@@ -425,7 +427,7 @@ public class UtilityService implements IUtilityService {
 				
 				if (subQuery.isPresent()) {
 					
-					for (QuerySource e : cacheService.getQueryCache().getProjectionSourcess(subQuery.get().select)) {
+					for (QuerySource e : cacheService.getQueryCache().getQuerySources(subQuery.get().select)) {
 						
 						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
 							
@@ -569,7 +571,68 @@ public class UtilityService implements IUtilityService {
 
 	@Override
 	public Optional<SubQuery> isSubQuery(String sourcename) {
-		return cacheService.getQueryCache().getAllSubQueries().stream().filter(p -> p.alias.equals(sourcename)).findFirst();
+		return cacheService.getQueryCache().getAllSubQueries()
+				.stream()
+				.filter(p -> p.alias.equals(sourcename))
+				.findFirst();
 	}
-
+	
+	@Override
+	public Optional<SimpleSelect> getCorrespondingSelect(Attribute attribute) {
+		Optional<SimpleSelect> select = cacheService.getSelectCache().getSelects()
+			.stream()
+			.filter(p -> p.getArguments()
+					.stream()
+					.filter(i -> i.getAttribute() != null && i.getAttribute().getName().equals(attribute.getName()))
+					.findFirst()
+					.isPresent())
+			.findFirst();
+		
+		if (select.isPresent()) {
+			return select;
+		} 
+		
+		return cacheService.getSelectCache().getSelects()
+				.stream()
+				.filter(p -> p.getPredicates() != null && EcoreUtil2.getAllContentsOfType(p.getPredicates(), Attribute.class)
+						.stream()
+						.filter(i -> i.getName().equals(attribute.getName()))
+						.findFirst()
+						.isPresent())
+				.findFirst();
+	}
+	
+	@Override
+	public Optional<SimpleSelect> getCorrespondingSelect(QueryAttribute queryAttribute) {
+		Optional<SimpleSelect> o =  cacheService.getSelectCache().getSelects()
+			.stream()
+			.filter(p -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(i -> i.name.equals(queryAttribute.name)))
+			.findFirst();
+		
+		if (o.isPresent()) {
+			return o;
+		}
+		
+		return cacheService.getSelectCache().getSelects()
+				.stream()
+				.filter(p -> p.getPredicates() != null && EcoreUtil2.getAllContentsOfType(p.getPredicates(), SimpleSelect.class)
+						.stream()
+						.filter(i -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(k -> k.name.equals(queryAttribute.name)))
+						.findFirst()
+						.isPresent())
+				.findFirst();
+	}
+	
+	@Override
+	public Optional<SubQuery> containedBySubQuery(Source source) {
+		return cacheService.getQueryCache().getAllSubQueries()
+				.stream()
+				.filter(p -> p.select.getSources()
+						.stream()
+						.filter(i -> i.equals(source))
+						.findFirst()
+						.isPresent())
+				.findFirst();
+	}
+	
 }

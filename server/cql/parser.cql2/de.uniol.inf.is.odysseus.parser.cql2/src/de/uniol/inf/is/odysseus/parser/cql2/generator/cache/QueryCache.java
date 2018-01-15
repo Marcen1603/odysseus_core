@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.xtext.EcoreUtil2;
+
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class QueryCache implements Cache {
@@ -26,20 +32,23 @@ public class QueryCache implements Cache {
 	private Map<SimpleSelect, Collection<QueryAggregate>> 	aggreateEntries 		= new HashMap<>();
 	private Map<SimpleSelect, Collection<QueryExpression>> 	expressionEntries 	= new HashMap<>();
 	private Map<String, SubQuery> 							subQueryEntries 		= new HashMap<>();
+	private Map<SimpleSelect, QueryPredicate>				predicateEntries 	= new HashMap<>();
 
 	private static IUtilityService utilityService;
+	private static IPredicateParser predicateParser;
 	private static QueryCache queryCache;
 	
 	public QueryCache() {
 		queryCache = this;
 		utilityService = CQLGenerator.injector.getInstance(IUtilityService.class);
+		predicateParser = CQLGenerator.injector.getInstance(IPredicateParser.class);
 	}
 	
 	public Collection<QueryAttribute> getProjectionAttributes(SimpleSelect query) {
 		return projectionAttributes.containsKey(query) ? projectionAttributes.get(query) : new ArrayList<>();
 	}
 
-	public Collection<QuerySource> getProjectionSourcess(SimpleSelect query) {
+	public Collection<QuerySource> getQuerySources(SimpleSelect query) {
 		return sourceEntries.containsKey(query) ? sourceEntries.get(query) : new ArrayList<>();
 	}
 	
@@ -66,9 +75,7 @@ public class QueryCache implements Cache {
 	}
 
 	public void putProjectionSources(SimpleSelect query, QuerySourceOrder sources) {
-		if (sources != null) {
-			sourceEntries.put(query, Arrays.asList(sources.array).stream().filter(p -> p != null).map(e -> new QuerySource(e)).collect(Collectors.toList()));
-		}
+		sourceEntries.put(query, sources.get().stream().map(e -> new QuerySource(e)).collect(Collectors.toList()));
 	}
 
 	public void putQueryAggregations(SimpleSelect query, Collection<QueryAggregate> aggregations) {
@@ -138,19 +145,14 @@ public class QueryCache implements Cache {
 	
 		public String name;
 		public String alias;
-	
-		public QuerySource(String sourcename) {
-			this.name = sourcename;
-		}
-	
-		public QuerySource(String sourcename, String sourcealias) {
-			this(sourcename);
-			this.alias = sourcealias;
-		}
+		public Source source;
 		
-		public QuerySource(SimpleSource source) {
-			this(source.getName());
-			if (source.getAlias() != null) {
+		public QuerySource(Source source) {
+			this.source = source;
+			if (source instanceof SimpleSource) {
+				this.name =  ((SimpleSource) source).getName();
+			}
+			if (source != null && source.getAlias() != null) {
 				this.alias = source.getAlias().getName();
 			}
 		}
@@ -158,21 +160,19 @@ public class QueryCache implements Cache {
 		public QuerySource(QuerySource obj) {
 			this.name = obj.name;
 			this.alias = obj.alias;
+			this.source = obj.source;
 		}
 		
 	}
 
-	public static class SubQuery {
+	public static class SubQuery extends QuerySource {
 		
-		public String alias;
 		public SimpleSelect select;
-		public NestedSource source;
 		public String operator;
 		
 		public SubQuery(NestedSource subQuery) {
-			this.source = subQuery;
+			super(subQuery);
 			this.select = subQuery.getStatement().getSelect();
-			this.alias = subQuery.getAlias().getName();
 		}
 	}
 
@@ -254,7 +254,19 @@ public class QueryCache implements Cache {
 	
 		public QueryAttribute(String name, Type type, String datatype, Collection<QuerySource> sources) {
 			this(name, type);
-			this.sources = sources.stream().map(e -> new QuerySource(e.name, e.alias)).collect(Collectors.toList());
+			this.sources = sources.stream().map(e -> new QuerySource(e.source)).collect(Collectors.toList());
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			
+			if (obj instanceof QueryAttribute) {
+				return this.name.equals(((QueryAttribute) obj).name) &&
+						this.datatype.equals(((QueryAttribute) obj).datatype) &&
+						this.sources.equals(((QueryAttribute) obj).sources);
+			}
+			
+			return false;
 		}
 		
 	}
@@ -318,6 +330,45 @@ public class QueryCache implements Cache {
 		if (name != null && query != null) {
 			subQueryEntries.put(name, query);
 		}
+	}
+	
+	
+	public static class QueryPredicate {
+		
+		public String stringPredicate;
+		public List<Expression> predicate;
+		public Collection<QueryAttribute> attributes;
+
+		public QueryPredicate(String stringPredicate, List<Expression> predicate, Collection<QueryAttribute> attributes) {
+			super();
+			this.stringPredicate = stringPredicate;
+			this.predicate = predicate;
+			this.attributes = attributes.stream().map(e -> new QueryAttribute(e)).collect(Collectors.toList());
+		}
+		
+		
+		
+	}
+
+	public synchronized void addPredicate(SimpleSelect select, List<Expression> predicate, String stringPredicate) {
+		
+		final Collection<QueryAttribute> attributes = new ArrayList<>(); 
+				
+//		predicate.stream().forEach(e -> {
+//			EcoreUtil2.getAllContentsOfType(e, Attribute.class).forEach(k -> {
+//				Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(k);
+//				if (queryAttribute.isPresent()) {
+//					attributes.add(queryAttribute.get());
+//				}
+////				attributes.add(new QueryAttribute(k, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(k)));
+//			});
+//		});
+		
+		predicateEntries.put(select, new QueryPredicate(stringPredicate, predicate, attributes));
+	}
+	
+	public Optional<QueryPredicate> getPredicate(SimpleSelect select) {
+		return predicateEntries.containsKey(select) ? Optional.of(predicateEntries.get(select)) : Optional.empty();
 	}
 
 }

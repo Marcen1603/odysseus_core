@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
@@ -56,5 +57,8 @@ public interface IUtilityService {
 	boolean existsQueryExpressionString(String name);
 	boolean existsQueryExpression(String name);
 	Optional<SubQuery> isSubQuery(String sourcename);
+	Optional<SubQuery> containedBySubQuery(Source source);
+	Optional<SimpleSelect> getCorrespondingSelect(Attribute attribute);
+	Optional<SimpleSelect> getCorrespondingSelect(QueryAttribute queryAttribute);
 	
 }

@@ -52,13 +52,14 @@ public class JoinParser implements IJoinParser {
   }
   
   @Override
-  public String buildJoin(final Collection<Source> sources, final SimpleSelect select) {
+  public String buildJoin(final Collection<QueryCache.QuerySource> sources, final SimpleSelect select) {
     int _size = sources.size();
     String[] sourceStrings = new String[_size];
     Collection<String> sourcenames = CollectionLiterals.<String>newArrayList();
     for (int i = 0; (i < sources.size()); i++) {
       {
-        Source source = ((Source[])Conversions.unwrapArray(sources, Source.class))[i];
+        QueryCache.QuerySource _get = ((QueryCache.QuerySource[])Conversions.unwrapArray(sources, QueryCache.QuerySource.class))[i];
+        Source source = _get.source;
         if ((source instanceof NestedSource)) {
           QueryCache _queryCache = this.cacheService.getQueryCache();
           Alias _alias = ((NestedSource)source).getAlias();

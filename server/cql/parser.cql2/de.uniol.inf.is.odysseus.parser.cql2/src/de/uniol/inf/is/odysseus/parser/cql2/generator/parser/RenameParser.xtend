@@ -4,20 +4,18 @@ import com.google.inject.Inject
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Collection
 import java.util.List
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class RenameParser implements IRenameParser {
 
-	var Logger log = LoggerFactory.getLogger(RenameParser)
+//	var Logger log = LoggerFactory.getLogger(RenameParser)
 
 	var IUtilityService utilityService
 	var AbstractPQLOperatorBuilder builder
@@ -26,7 +24,7 @@ class RenameParser implements IRenameParser {
 
 	var Collection<String> renameAliases
 	var Collection<String> processedSources
-	var Collection<Source> sourcesDuringRename
+	var Collection<QuerySource> sourcesDuringRename
 	
 	@Inject
 	new(AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, ICacheService cacheService) {
@@ -97,11 +95,13 @@ class RenameParser implements IRenameParser {
 						
 						var String alias = null
 						var name = source.getAttributeList().get(k).attributename
-						if (sourcealias !== null)
-							if (j > 0 && listOfLists.size > 1)
+						if (sourcealias !== null) {
+							if (j > 0 && listOfLists.size > 1) {
 								alias = generateAlias(name, source.getName, j)
-							else
-								alias = sourcealias + '.' + name						
+							} else {
+								alias = sourcealias + '.' + name
+							}						
+						}
 						renameAliases.add(name)
 						renameAliases.add(source.getName)
 						renameAliases.add(alias)
@@ -136,8 +136,9 @@ class RenameParser implements IRenameParser {
 
 	def private String generateAlias(String attributename, String sourcename, int number) {
 		var alias = sourcename + '.' + attributename + '#' + (number)
-		if (renameAliases.contains(alias))
+		if (renameAliases.contains(alias)) {
 			return alias = generateAlias(attributename, sourcename, number + 1)
+		}
 		return alias
 	}
 	
@@ -155,11 +156,10 @@ class RenameParser implements IRenameParser {
 		sourcesDuringRename.clear();
 	}
 	
-	override setSources(Collection<Source> sources) {
+	override setSources(Collection<QuerySource> sources) {
 		if(sources !== null) {
 			sourcesDuringRename = new ArrayList(sources)
 		}
-		
 	}
 	
 }

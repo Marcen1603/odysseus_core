@@ -22,6 +22,7 @@ import java.util.List
 import java.util.Optional
 import java.util.stream.Collectors
 import org.eclipse.xtext.EcoreUtil2
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 
 class SelectParser implements ISelectParser {
 
@@ -64,15 +65,29 @@ class SelectParser implements ISelectParser {
 	}
 
 	override parse(SimpleSelect select) {
-		
-		//
+			
 		if (prepare) {
+			// save all select objects at once
+//			cacheService.getSelectCache().addAll(EcoreUtil2.getAllContentsOfType(select, SimpleSelect));
+			
+			if (select.getPredicates() != null) {
+				EcoreUtil2.getAllContentsOfType(select.getPredicates(), SimpleSelect).stream().forEach(e | {
+					registerAllSource(e);
+					fooor(e);
+				});
+			}
+			
+			// gather information about every select in reverse order
 			prepare(select, null);
+			
+			cacheService.getSelectCache().getSelects().forEach(e | {
+				fooor(e)
+			})
+			
 			prepare = false;
 		}
 		
 		// process select statements by the given order of the prepare method
-		
 		var Iterator<SimpleSelect> iter = cacheService.getSelectCache().getSelects().iterator;
 		
 		while (iter.hasNext()) {
@@ -113,7 +128,7 @@ class SelectParser implements ISelectParser {
 
 		// Query corresponds to a select all	
 		if (operator1 === null && operator2 === null && e.arguments.empty) {
-			projectInput = joinParser.buildJoin(e.sources, e).toString
+			projectInput = joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(e), e).toString
 
 			// Return a join over all query sources
 			if (e.sources.size > 1) {
@@ -175,24 +190,31 @@ class SelectParser implements ISelectParser {
 			registerAllSource(select).stream().forEach(e | {
 				prepare(e.statement.select, e);
 			});				
-			
-			// register attributes that are contained by the predicate of the select statement	
-			attributeParser.registerAttributesFromPredicate(select);
-			
-			// retrieve attributes that are selected by the statement
-			cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
-			// save some information that were retrieved by the attributeParser
-			cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
-			cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
-			cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
-			cacheService.getQueryCache().putQueryExpressions(select, attributeParser.getExpressions());
-			
-			// save select object
+
 			cacheService.getSelectCache().add(select);
-			
-			// clear attribute parser
-			attributeParser.clear()
 		}
+	}
+	
+	override fooor(SimpleSelect select) {
+		
+		// clear attribute parser
+		attributeParser.clear()
+		
+		// register attributes that are contained by the predicate of the select statement	
+		attributeParser.registerAttributesFromPredicate(select);
+		
+		// retrieve attributes that are selected by the statement
+		cacheService.getQueryCache().putQueryAttributes(select, attributeParser.getSelectedAttributes(select));
+		// save some information that were retrieved by the attributeParser
+		select.getSources().forEach(e | {
+			//TODO add without check!
+			attributeParser.getSourceOrder().add2(new QuerySource(e))
+		});
+		cacheService.getQueryCache().putProjectionSources(select, attributeParser.getSourceOrder());
+		cacheService.getQueryCache().putProjectionAttributes(select, attributeParser.getAttributeOrder());
+		cacheService.getQueryCache().putQueryAggregations(select, attributeParser.getAggregates());
+		cacheService.getQueryCache().putQueryExpressions(select, attributeParser.getExpressions());
+		
 	}
 	
 	override parseComplex(SimpleSelect left, SimpleSelect right, String operator) {
@@ -234,8 +256,10 @@ class SelectParser implements ISelectParser {
 		var String operator1 = parseAdditionalOperator(Operator.MAP, stmt)
 		var String operator2 = parseAdditionalOperator(Operator.AGGREGATE, stmt)
 
-		predicateParser.clear() 
-		predicateParser.parse(predicates, stmt)
+		predicateParser.clear()
+		var String predicateString = predicateParser.parse(predicates, stmt).toString(); 
+		cacheService.getQueryCache().addPredicate(stmt, predicates, predicateString);
+		
 		var selectInput = buildInput2(stmt, operator1, operator2).toString
 		var predicate = predicateParser.parsePredicateString(predicateParser.getPredicateStringList())
 		var select = ''
@@ -274,9 +298,9 @@ class SelectParser implements ISelectParser {
 
 			if (mapOperator !== null && aggregateOperator !== null) {
 				return checkForGroupAttributes(aggregateOperator, select,
-					joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(select.sources, select)]))
+					joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)]))
 			} else if (mapOperator !== null) {
-				return joinParser.buildJoin(select.sources, select)
+				return joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)
 			} else if (aggregateOperator !== null) {
 				// Get all names of the attributes in the predicate clause
 				var List<String> predicateAttributes = if (select.predicates !== null) {
@@ -295,17 +319,17 @@ class SelectParser implements ISelectParser {
 						return aggregateOperator
 					} else {
 						return checkForGroupAttributes(aggregateOperator, select,
-							joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(select.sources, select)]))
+							joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)]))
 					}
 				} else {
 					return checkForGroupAttributes(aggregateOperator, select,
-						joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(select.sources, select)]))
+						joinParser.buildJoin(#[aggregateOperator, joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)]))
 				}
 			}
 			
 		}
 		
-		return joinParser.buildJoin(select.sources, select)
+		return joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)
 	}
 
 	def private String checkForGroupAttributes(String aggregateOperator, SimpleSelect select, String output) {
@@ -314,7 +338,7 @@ class SelectParser implements ISelectParser {
 		
 		if (o.isPresent) {
 			if (cacheService.getOperatorCache().getOperator(aggregateOperator).get().contains('group_by')) {
-				var String join = joinParser.buildJoin(select.sources, select)
+				var String join = joinParser.buildJoin(cacheService.getQueryCache().getQuerySources(select), select)
 				var groupAttributes = newArrayList
 				// Compute group attributes
 				for (var i = 0; i < select.order.size; i++) {
@@ -360,7 +384,7 @@ class SelectParser implements ISelectParser {
 				var aggregations = cacheService.getQueryCache().getQueryAggregations(select)
 				if (aggregations !== null && !aggregations.empty) {
 					//TODO add aggregate parser
-					result = aggregateParser.parse(aggregations, select.order, select.sources, select);
+					result = aggregateParser.parse(aggregations, select.order, cacheService.getQueryCache().getQuerySources(select), select);
 					operatorName = cacheService.getOperatorCache().add(select, result.get(1).toString)
 				}
 			}

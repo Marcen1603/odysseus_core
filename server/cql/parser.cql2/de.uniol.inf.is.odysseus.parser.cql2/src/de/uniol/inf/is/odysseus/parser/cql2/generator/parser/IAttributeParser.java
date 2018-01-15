@@ -14,7 +14,7 @@ public interface IAttributeParser {
 	Collection<QueryAttribute> getSelectedAttributes(SimpleSelect select);
 	String getExpressionName();
 	String getAggregationName(String name);
-	void registerAttributesFromPredicate(SimpleSelect select);
+	void registerAttributesFromPredicate(SimpleSelect select) ;
 	QuerySourceOrder getSourceOrder();
 	QueryAttributeOrder getAttributeOrder();
 	Collection<QueryAggregate> getAggregates();

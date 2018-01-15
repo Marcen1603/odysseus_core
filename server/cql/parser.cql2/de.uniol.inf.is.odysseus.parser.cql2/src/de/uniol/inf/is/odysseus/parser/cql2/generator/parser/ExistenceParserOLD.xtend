@@ -1,14 +1,14 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
+import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
+import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import java.util.List
 import java.util.Map
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO
-import com.google.inject.Inject
 
-class ExistenceParser implements IExistenceParser {
+class ExistenceParserOLD implements IExistenceParser {
 	
 	var List<Map<String, String>> registry_existenceOperators = newArrayList
 	
@@ -23,8 +23,20 @@ class ExistenceParser implements IExistenceParser {
 		
 	}
 	
-	override parse() {
-		throw new UnsupportedOperationException("TODO: auto-generated method stub")
+	override parse(ComplexPredicate predicate, SimpleSelect parent) {
+		
+		
+		//							var type = 'EXISTS'
+//							if (lastPredicateElement.equals('!')) {
+//								type = 'NOT_EXISTS'
+//								predicateStringList.remove(predicateStringList.size() - 1)
+//								if (predicateStringList.size() - 1 > 0) {
+//									var index = predicateStringList.size() - 2
+//									var element = predicateStringList.get(index)
+//									if (element.equals('&&') || element.equals('||'))
+//										predicateStringList.remove(index)
+//								}
+		
 	}
 	
 	override register(SimpleSelect selectInput, String select) {

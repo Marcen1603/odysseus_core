@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
+import java.util.List;
 
 public class SelectCache implements Cache {
 
@@ -37,7 +38,7 @@ public class SelectCache implements Cache {
 
 	public void add(SimpleSelect select) {
 		
-		if (select != null) {
+		if (select != null && !selects.contains(select)) {
 			selects.add(select);
 			metas.add(null);
 		}
@@ -46,7 +47,7 @@ public class SelectCache implements Cache {
 
 	public void add(SimpleSelect select, MetaInfo meta) {
 		
-		if (select != null) {
+		if (select != null && !selects.contains(select)) {
 			selects.add(select);
 			metas.add(meta);
 		}
@@ -70,6 +71,10 @@ public class SelectCache implements Cache {
 			this.containedByPredicate = containedByPredicate;
 		}
 		
+	}
+
+	public void addAll(List<SimpleSelect> selects) {
+		selects.stream().forEach(e -> add(e));
 	}
 	
 }

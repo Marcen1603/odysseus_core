@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
+import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.AndPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
@@ -10,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Comparision;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicateRef;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Equality;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExistPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExpressionsModel;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.FloatConstant;
@@ -20,6 +22,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.MulOrDiv;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NOT;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.OrPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.QuantificationPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
@@ -34,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
@@ -188,8 +193,28 @@ public class PredicateParser implements IPredicateParser {
         if (e instanceof ComplexPredicateRef) {
           _matched=true;
           ComplexPredicate _value = ((ComplexPredicateRef)e).getValue();
-          this.quantificationParser.parse(_value, select);
-          return "";
+          QuantificationPredicate _quantification = _value.getQuantification();
+          boolean _notEquals = (!Objects.equal(_quantification, null));
+          if (_notEquals) {
+            ComplexPredicate _value_1 = ((ComplexPredicateRef)e).getValue();
+            this.quantificationParser.parse(_value_1, select);
+            return "";
+          }
+          ComplexPredicate _value_2 = ((ComplexPredicateRef)e).getValue();
+          ExistPredicate _exists = _value_2.getExists();
+          boolean _notEquals_1 = (!Objects.equal(_exists, null));
+          if (_notEquals_1) {
+            ComplexPredicate _value_3 = ((ComplexPredicateRef)e).getValue();
+            List<String> _parse = this.existenceParser.parse(_value_3, select, this.predicateStringList, false);
+            this.predicateStringList = _parse;
+            this.predicateString = "";
+            Stream<String> _stream = this.predicateStringList.stream();
+            final Consumer<String> _function = (String k) -> {
+              this.buildPredicateString(k);
+            };
+            _stream.forEach(_function);
+            return this.predicateString;
+          }
         }
       }
     } else {
@@ -228,7 +253,6 @@ public class PredicateParser implements IPredicateParser {
       }
       this.buildPredicateString(str);
     }
-    this.log.info(("PREDICATESTRING::" + this.predicateString));
     return this.predicateString;
   }
   

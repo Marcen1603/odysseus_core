@@ -14,6 +14,8 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.stream.Collectors
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
+import java.util.Optional
 
 class AggregationParser implements IAggregationParser {
 
@@ -37,7 +39,7 @@ class AggregationParser implements IAggregationParser {
 		
 	}
 	
-	override public Object[] parse(Collection<QueryAggregate> list, Collection<Attribute> list2, Collection<Source> srcs, SimpleSelect select) {
+	override public Object[] parse(Collection<QueryAggregate> list, Collection<Attribute> list2, Collection<QuerySource> srcs, SimpleSelect select) {
 		return buildAggregateOP(list, list2, srcs, select);
 	}
 
@@ -134,7 +136,7 @@ class AggregationParser implements IAggregationParser {
 					'input' -> if(mapName != '') mapName else input.toString))] // '''AGGREGATE({AGGREGATIONS=[«argsstr»]«groupby»}, «IF mapName != ''»«mapName»«ELSE»«»«input»«ENDIF»)''']
 	}
 
-	def private Object[] buildAggregateOP(Collection<QueryAggregate> list, Collection<Attribute> list2, Collection<Source> srcs, SimpleSelect select) {
+	def private Object[] buildAggregateOP(Collection<QueryAggregate> list, Collection<Attribute> list2, Collection<QuerySource> srcs, SimpleSelect select) {
 		return buildAggregateOP(list, list2, joinParser.buildJoin(srcs, select))
 	}
 

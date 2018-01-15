@@ -5,12 +5,12 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.RenameAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
@@ -21,13 +21,9 @@ import java.util.List;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("all")
 public class RenameParser implements IRenameParser {
-  private Logger log = LoggerFactory.getLogger(RenameParser.class);
-  
   private IUtilityService utilityService;
   
   private AbstractPQLOperatorBuilder builder;
@@ -40,7 +36,7 @@ public class RenameParser implements IRenameParser {
   
   private Collection<String> processedSources;
   
-  private Collection<Source> sourcesDuringRename;
+  private Collection<QueryCache.QuerySource> sourcesDuringRename;
   
   @Inject
   public RenameParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final ICacheService cacheService) {
@@ -52,7 +48,7 @@ public class RenameParser implements IRenameParser {
     this.renameAliases = _newArrayList;
     ArrayList<String> _newArrayList_1 = CollectionLiterals.<String>newArrayList();
     this.processedSources = _newArrayList_1;
-    ArrayList<Source> _newArrayList_2 = CollectionLiterals.<Source>newArrayList();
+    ArrayList<QueryCache.QuerySource> _newArrayList_2 = CollectionLiterals.<QueryCache.QuerySource>newArrayList();
     this.sourcesDuringRename = _newArrayList_2;
   }
   
@@ -190,7 +186,7 @@ public class RenameParser implements IRenameParser {
   }
   
   @Override
-  public Collection<Source> getSources() {
+  public Collection<QueryCache.QuerySource> getSources() {
     return this.sourcesDuringRename;
   }
   
@@ -202,9 +198,9 @@ public class RenameParser implements IRenameParser {
   }
   
   @Override
-  public void setSources(final Collection<Source> sources) {
+  public void setSources(final Collection<QueryCache.QuerySource> sources) {
     if ((sources != null)) {
-      ArrayList<Source> _arrayList = new ArrayList<Source>(sources);
+      ArrayList<QueryCache.QuerySource> _arrayList = new ArrayList<QueryCache.QuerySource>(sources);
       this.sourcesDuringRename = _arrayList;
     }
   }
