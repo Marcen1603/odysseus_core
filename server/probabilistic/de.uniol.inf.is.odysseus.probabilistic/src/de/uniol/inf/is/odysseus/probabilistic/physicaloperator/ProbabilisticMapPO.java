@@ -195,6 +195,16 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         return OutputMode.NEW_ELEMENT;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe#
+     * process_open()
+     */
+    @Override
+    public final void process_open() {
+    }
+
     /**
      * 
      * {@inheritDoc}
@@ -239,21 +249,19 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                 }
 
                 try {
-//                    this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
-//                    this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
+                    // this.expressions[i].bindMetaAttribute(restrictedObject.getMetadata());
+                    // this.expressions[i].bindAdditionalContent(restrictedObject.getAdditionalContent());
                     this.expressions[i].bindVariables(positions, values);
                     final Object expr = this.expressions[i].getValue();
                     if (expr == null) {
                         nullValueOccured = true;
-                    }
-                    else {
+                    } else {
                         if (this.expressions[i].getType().equals(SDFProbabilisticDatatype.PROBABILISTIC_DOUBLE)) {
                             final MultivariateMixtureDistribution distribution = (MultivariateMixtureDistribution) expr;
 
                             if (distribution.getDimension() == 1) {
                                 distribution.getAttributes()[0] = i;
-                            }
-                            else {
+                            } else {
                                 ProbabilisticMapPO.LOG.error("Multivariate distribution not supported as a result");
                             }
                             outputVal.setDistribution(distributionIndex, distribution);
@@ -265,13 +273,11 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                             // factor. Thus, all changes on the distribution has
                             // to be stored back in the meta data
                             outputVal.getMetadata().setExistence((outputVal.getMetadata().getExistence() * (1.0 / distribution.getScale())) / existence);
-                        }
-                        else {
+                        } else {
                             outputVal.setAttribute(i, expr);
                         }
                     }
-                }
-                catch (final Exception e) {
+                } catch (final Exception e) {
                     nullValueOccured = true;
                     if (!(e instanceof NullPointerException)) {
                         ProbabilisticMapPO.LOG.error("Cannot calc result for " + object + " with expression " + this.expressions[i], e);
@@ -288,11 +294,11 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
         }
     }
 
-	@Override
-	public void processPunctuation(IPunctuation punctuation, int port) {
-		sendPunctuation(punctuation);
-	}
-    
+    @Override
+    public void processPunctuation(IPunctuation punctuation, int port) {
+        sendPunctuation(punctuation);
+    }
+
     public ProbabilisticTuple<T> determineObjectForExpression(final ProbabilisticTuple<T> object, final LinkedList<ProbabilisticTuple<T>> preProcessResult, final int i, final int j) {
         return object;
     }
@@ -312,8 +318,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
             return false;
         }
         final ProbabilisticMapPO po = (ProbabilisticMapPO) ipo;
-
-        if (!this.getOutputSchema().equals(po.getOutputSchema())) {
+        if ((this.getOutputSchema() != null) && (!this.getOutputSchema().equals(po.getOutputSchema()))) {
             return false;
         }
 
@@ -324,8 +329,7 @@ public class ProbabilisticMapPO<T extends IProbabilistic> extends AbstractPipe<P
                         return false;
                     }
                 }
-            }
-            else {
+            } else {
                 return false;
             }
             return true;

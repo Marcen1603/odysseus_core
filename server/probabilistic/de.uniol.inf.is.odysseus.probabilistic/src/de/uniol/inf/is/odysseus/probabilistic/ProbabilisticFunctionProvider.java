@@ -28,15 +28,30 @@ import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticAndOpe
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticNotOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.bool.ProbabilisticOrOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsOperatorInverse;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsProbabilisticNumberOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticEqualsVectorOperatorInverse;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperator;
-import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperatorVector;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsOperatorInverse;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsProbabilisticNumberOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterEqualsVectorOperatorInverse;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterOperatorInverse;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterProbabilisticNumberOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticGreaterVectorOperatorInverse;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsOperatorInverse;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsProbabilisticNumberOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerEqualsVectorOperatorInverse;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerOperatorInverse;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerProbabilisticNumberOperator;
 import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerVectorOperator;
+import de.uniol.inf.is.odysseus.probabilistic.functions.compare.ProbabilisticSmallerVectorOperatorInverse;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.As2DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.As3DVectorFunction;
 import de.uniol.inf.is.odysseus.probabilistic.functions.math.BhattacharyyaDistanceFunction;
@@ -119,15 +134,44 @@ public class ProbabilisticFunctionProvider implements IFunctionProvider {
 
             /** Compare operators. */
             functions.add(new ProbabilisticSmallerEqualsOperator());
+            functions.add(new ProbabilisticSmallerEqualsOperatorInverse());
+
             functions.add(new ProbabilisticSmallerEqualsVectorOperator());
+            functions.add(new ProbabilisticSmallerEqualsVectorOperatorInverse());
+
+            functions.add(new ProbabilisticSmallerEqualsProbabilisticNumberOperator());
+
             functions.add(new ProbabilisticSmallerOperator());
+            functions.add(new ProbabilisticSmallerOperatorInverse());
+
             functions.add(new ProbabilisticSmallerVectorOperator());
+            functions.add(new ProbabilisticSmallerVectorOperatorInverse());
+
+            functions.add(new ProbabilisticSmallerProbabilisticNumberOperator());
+
             functions.add(new ProbabilisticGreaterEqualsOperator());
-            functions.add(new ProbabilisticGreaterEqualsOperatorVector());
+            functions.add(new ProbabilisticGreaterEqualsOperatorInverse());
+
+            functions.add(new ProbabilisticGreaterEqualsVectorOperator());
+            functions.add(new ProbabilisticGreaterEqualsVectorOperatorInverse());
+
+            functions.add(new  ProbabilisticGreaterEqualsProbabilisticNumberOperator());
+
             functions.add(new ProbabilisticGreaterOperator());
+            functions.add(new ProbabilisticGreaterOperatorInverse());
+
             functions.add(new ProbabilisticGreaterVectorOperator());
+            functions.add(new ProbabilisticGreaterVectorOperatorInverse());
+
+            functions.add(new ProbabilisticGreaterProbabilisticNumberOperator());
+
             functions.add(new ProbabilisticEqualsOperator());
+            functions.add(new ProbabilisticEqualsOperatorInverse());
+
             functions.add(new ProbabilisticEqualsVectorOperator());
+            functions.add(new ProbabilisticEqualsVectorOperatorInverse());
+
+            functions.add(new ProbabilisticEqualsProbabilisticNumberOperator());
 
             /** Convert functions */
             functions.add(new ToProbabilisticContinuousDouble());
