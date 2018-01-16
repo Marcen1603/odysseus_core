@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.CQLFactory;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument;
@@ -117,11 +119,12 @@ public class AttributeParser implements IAttributeParser {
 							Pair<Source, String> pair = noDuplicates.stream().findFirst().get();
 							source = pair.getE1();
 							String sourcename = pair.getE2();
-							queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(source));
+//							queryAttribute = new QueryAttribute(e, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(e), new QuerySource(source));
+							queryAttribute = new QueryAttribute(e,  new ParsedAttribute(e), Collections.singletonList(new QuerySource(source)));
 							parsed.sourcename = sourcename;
 						} else if (noDuplicates.size() > 1) {
 							if (parsed.sourcename == null) {
-								throw new IllegalArgumentException("attribute " + parsed.name + " is ambiguous: possible sources are " + noDuplicates.toString());
+								throw new IllegalArgumentException("attribute " + parsed.getName() + " is ambiguous: possible sources are " + noDuplicates.toString());
 							}
 						}
 						attributealias = registerAttributeAliases(parsed);
@@ -132,7 +135,7 @@ public class AttributeParser implements IAttributeParser {
 						attributeOrder.array, 
 						select, 
 						e, 
-						parsed.name,
+						parsed.getName(),
 						attributealias, 
 						parsed.sourcename,
 						source
@@ -170,12 +173,16 @@ public class AttributeParser implements IAttributeParser {
 							attributename = sourcename + "." + name;
 						}
 						
-						list.add(new QueryAttribute(
-								attributename, 
-								QueryAttribute.Type.SELECTALL,
-								data, 
-								new QuerySource(e))
-								);
+//						list.add(new QueryAttribute(
+//								attributename, 
+//								QueryAttribute.Type.SELECTALL,
+//								data, 
+//								new QuerySource(e))
+//								);
+						
+						Attribute obj = CQLFactory.eINSTANCE.createAttribute();
+						obj.setName(attributename);
+						list.add(createQueryAttribute(obj, Collections.singletonList(new QuerySource(e))));
 						
 					});
 					sourceOrder.add(new QuerySource(e));
@@ -252,7 +259,8 @@ public class AttributeParser implements IAttributeParser {
 		return expressions;
 	}
 
-	private Collection<Pair<Source, String>> computeSourceCandidates(Attribute attribute,  Collection<Source> sources) {
+	@Override
+	public Collection<Pair<Source, String>> computeSourceCandidates(Attribute attribute,  Collection<Source> sources) {
 		
 		Collection<Pair<Source, String>> containedBySources = new ArrayList<>();
 		
@@ -340,20 +348,25 @@ public class AttributeParser implements IAttributeParser {
 					if (candidateAttribute.getName().equals(attribute.getName())) {
 						if (candidateAttribute.getAlias() != null) {
 							
-							attributeOrder.array[index2] = new QueryAttribute(
-									candidateAttribute.getAlias().getName(), 
-									QueryAttribute.Type.STANDARD, 
-									utilityService.getDataTypeFrom(candidateAttribute), 
-									sources
-								);
+//							attributeOrder.array[index2] = new QueryAttribute(
+//									candidateAttribute.getAlias().getName(), 
+//									QueryAttribute.Type.STANDARD, 
+//									utilityService.getDataTypeFrom(candidateAttribute), 
+//									sources
+//								);
+							
+							attributeOrder.array[index2] = createQueryAttribute(candidateAttribute, sources);
 							
 						} else if (attributealias != null) {
-							attributeOrder.array[index2] = new QueryAttribute(
-									attributealias, 
-									QueryAttribute.Type.STANDARD,
-									utilityService.getDataTypeFrom(candidateAttribute),
-									sources
-								);
+//							attributeOrder.array[index2] = new QueryAttribute(
+//									attributealias, 
+//									QueryAttribute.Type.STANDARD,
+//									utilityService.getDataTypeFrom(candidateAttribute),
+//									sources
+//								);
+							
+							attributeOrder.array[index2] = createQueryAttribute(candidateAttribute, sources);
+							
 						} else {
 
 							if (attributename.contains(".")) {
@@ -369,32 +382,46 @@ public class AttributeParser implements IAttributeParser {
 									// TODO Query with stream1.*, stream.* would be overriden!
 									Collection<QueryAttribute> attributeOrderList = new ArrayList<>(attributeOrder.array.length);
 									for (String str : utilityService.getAttributeNamesFromSource(sourcen)) {
-										attributeOrderList.add(new QueryAttribute(
-												salias + "." + str, 
-												QueryAttribute.Type.STANDARD, 
-												utilityService.getDataTypeFrom(candidateAttribute), 
-												sources
-											)
-										);
+//										attributeOrderList.add(new QueryAttribute(
+//												salias + "." + str, 
+//												QueryAttribute.Type.STANDARD, 
+//												utilityService.getDataTypeFrom(candidateAttribute), 
+//												sources
+//											)
+//										);
+										
+										Attribute obj = CQLFactory.eINSTANCE.createAttribute();
+										obj.setName(salias + "." + str);
+										attributeOrderList.add(createQueryAttribute(obj, sources));
+										
 										index2++;
 									}
 									attributeOrder.array = attributeOrderList.toArray(new QueryAttribute[attributeOrderList.size()]);
 								} else {
-									attributeOrder.array[index2] = new QueryAttribute(
-											attributename, 
-											QueryAttribute.Type.STANDARD,
-											utilityService.getDataTypeFrom(candidateAttribute), 
-											sources
-										);
+//									attributeOrder.array[index2] = new QueryAttribute(
+//											attributename, 
+//											QueryAttribute.Type.STANDARD,
+//											utilityService.getDataTypeFrom(candidateAttribute), 
+//											sources
+//										);
+									
+									Attribute obj = CQLFactory.eINSTANCE.createAttribute();
+									obj.setName(attributename);
+									attributeOrder.array[index2] = createQueryAttribute(obj, sources);
 								}
 
 							} else {
-								attributeOrder.array[index2] = new QueryAttribute(
-										sourcename + "." + attributename, 
-										QueryAttribute.Type.STANDARD,
-										utilityService.getDataTypeFrom(candidateAttribute), 
-										sources
-									);
+//								attributeOrder.array[index2] = new QueryAttribute(
+//										sourcename + "." + attributename, 
+//										QueryAttribute.Type.STANDARD,
+//										utilityService.getDataTypeFrom(candidateAttribute), 
+//										sources
+//									);
+								
+								Attribute obj = CQLFactory.eINSTANCE.createAttribute();
+								obj.setName(sourcename + "." + attributename);
+								attributeOrder.array[index2] = createQueryAttribute(attribute, sources);
+								
 							}
 						}
 					}
@@ -413,6 +440,10 @@ public class AttributeParser implements IAttributeParser {
 		expressionCounter = 0;
 		aggregationCounter = 0;
 		return attributeOrder.array;
+	}
+
+	private QueryAttribute createQueryAttribute(Attribute attribute, Collection<QuerySource> sources) {
+		return new QueryAttribute(attribute, new ParsedAttribute(attribute), sources);
 	}
 
 	private QueryAttribute[] parseExpression(SimpleSelect select, QueryAttribute[] attributeOrder, SelectArgument argument, int i) {
@@ -514,13 +545,13 @@ public class AttributeParser implements IAttributeParser {
 					return parsed.alias;
 					
 				} else if (parsed.alias == null && utilityService.getSourceAliasesAsList().contains(sourceAlias)) {
-					if (!sysAttribute.hasAlias(parsed.name)) {
-						sysAttribute.addAlias(parsed.name);
-						sourceStruct.associateAttributeAliasWithSourceAlias(parsed.name, sourceAlias);
+					if (!sysAttribute.hasAlias(parsed.getName())) {
+						sysAttribute.addAlias(parsed.getName());
+						sourceStruct.associateAttributeAliasWithSourceAlias(parsed.getName(), sourceAlias);
 					}
 				}
 				
-				return parsed.name;
+				return parsed.getName();
 			}
 		}
 
@@ -529,21 +560,32 @@ public class AttributeParser implements IAttributeParser {
 
 	private Optional<QueryAggregate> createQueryAggregate(SimpleSelect select, String name, String datatype, SelectExpression expression) {
 		
-		EcoreUtil2.getAllContentsOfType(expression, Attribute.class).forEach(e -> {
-			computeSourceCandidates(e, select.getSources()).forEach(k -> {
-				sourceOrder.add(new QuerySource(k.getE1()));
-			});
-		});
+//		Collection<QuerySource> sources = new ArrayList<>();
+//		Collection<QueryAttribute> attributes = new ArrayList<>();
+//		
+//		EcoreUtil2.getAllContentsOfType(expression, Attribute.class).forEach(e -> {
+//			Collection<QuerySource> attributeSources = new ArrayList<>();
+//			computeSourceCandidates(e, select.getSources()).forEach(k -> {
+//				final QuerySource querySource = new QuerySource(k.getE1()); 
+//				sourceOrder.add(querySource);
+//				sources.add(querySource);
+//				attributeSources.add(querySource);
+//			});
+//			attributes.add(new QueryAttribute(e, new ParsedAttribute(e), attributeSources));
+//		});
+//		
+//		final QueryAggregate aggregate = new QueryAggregate(
+//				name,
+//				QueryAttribute.Type.AGGREGATE, 
+//				datatype, 
+//				sources,
+//				attributes,
+//				expression
+//			);
 		
-		final QueryAggregate aggregate = new QueryAggregate(
-				name,
-				QueryAttribute.Type.AGGREGATE, 
-				datatype, 
-				new ArrayList<>(),
-				expression
-			);
+		final QueryAggregate aggregate = new QueryAggregate(new ParsedAggregation(select, expression, name));
 		
-		if (aggregates.stream().anyMatch(p -> p.name.equals(aggregate.name))) {
+		if (aggregates.stream().anyMatch(p -> p.parsedAggregation.getName().equals(aggregate.parsedAggregation.getName()))) {
 			return Optional.empty();
 		}
 		
@@ -552,23 +594,25 @@ public class AttributeParser implements IAttributeParser {
 
 	private QueryAttribute[] createQueryExpression(SimpleSelect select, QueryAttribute[] attributeOrder, SelectExpression candidate, String name, int i) {
 		
-		if (!expressions.stream().map(e -> e.name).anyMatch(p -> p.equals(name))) {
+		if (!expressions.stream().map(e -> e.parsedExpression.getName()).anyMatch(p -> p.equals(name))) {
 			
-			EcoreUtil2.getAllContentsOfType(candidate, Attribute.class).forEach(e -> {
-				computeSourceCandidates(e, select.getSources()).forEach(k -> {
-					sourceOrder.add(new QuerySource(k.getE1()));
-				});
-			});
+//			EcoreUtil2.getAllContentsOfType(candidate, Attribute.class).forEach(e -> {
+//				computeSourceCandidates(e, select.getSources()).forEach(k -> {
+//					sourceOrder.add(new QuerySource(k.getE1()));
+//				});
+//			});
 			
-			final QueryExpression queryExpression = new QueryExpression(
-					name,
-					QueryAttribute.Type.EXPRESSION, 
-					utilityService.getDataTypeFrom(name), 
-					new ArrayList<>(),
-					candidate
-				);
+//			final QueryExpression queryExpression = new QueryExpression(
+//					name,
+//					QueryAttribute.Type.EXPRESSION, 
+//					utilityService.getDataTypeFrom(name), 
+//					new ArrayList<>(),
+//					candidate
+//				);
 		
-			queryExpression.alias = "['" + expressionParser.parse(candidate).toString() +"','" + name + "']";
+			QueryExpression queryExpression = new QueryExpression(new ParsedExpression(select, candidate, name));
+			
+//			queryExpression.parsed.alias = "['" + expressionParser.parse(candidate).toString() +"','" + name + "']";
 		
 			expressions.add(queryExpression);
 			attributeOrder[i] = queryExpression;
@@ -612,7 +656,7 @@ public class AttributeParser implements IAttributeParser {
 			// deep copy
 			for(int i = 0; i < array.length; i++) {
 				if (array[i] != null) {
-					this.array[i] = new QueryAttribute(array[i]);
+					this.array[i] = array[i];//new QueryAttribute(array[i]);
 				}
 			}
 		}
@@ -621,7 +665,7 @@ public class AttributeParser implements IAttributeParser {
 			this.array = new QueryAttribute[col.size()];
 			for(int i = 0; i < col.size(); i++) {
 				if (col.get(i) != null) {
-					this.array[i] = new QueryAttribute(col.get(i));
+					this.array[i] = array[i];//new QueryAttribute(col.get(i));
 				}
 			}
 		}
@@ -663,60 +707,4 @@ public class AttributeParser implements IAttributeParser {
 		}
 		
 	}
-	
-	private class ParsedAttribute {
-
-		String name = null;
-		String prefix = null;
-		String alias = null;
-		String sourcename = null;
-		String sourcealias = null;
-		Collection<String> containedBySubQuery = new ArrayList<>();
-
-		public ParsedAttribute(Attribute e) {
-
-			name = e.getName();
-
-			if (name.contains(".")) {
-				
-				final String[] split = e.getName().split("\\.");
-				
-				prefix = split[1];
-				sourcename = split[0];
-
-				if (utilityService.isSourceAlias(sourcename)) {
-					sourcealias = sourcename;
-					sourcename = utilityService.getSourcenameFromAlias(sourcename);
-				}
-				
-				Optional<SubQuery> o = utilityService.isSubQuery(sourcename);
-				
-				if (o.isPresent()) {
-					
-					
-					final SubQuery subQuery = o.get();
-					containedBySubQuery.addAll(cacheService.getQueryCache().getQueryAttributes(subQuery.select)
-							.stream()
-							.map(k -> k.name)
-							.collect(Collectors.toList())
-					);
-					
-				}
-
-			}
-			
-			alias = e.getAlias() != null ? e.getAlias().getName() : null;
-
-		}
-		
-		public boolean matches(SystemAttribute e) {
-			return name.equals(e.getAttributename())|| (prefix != null && e.getAttributename().equals(prefix));
-		}
-
-		public boolean hasStarPrefix() {
-			return prefix != null ? prefix.equals("*") : false;
-		}
-		
-	}
-	
 }

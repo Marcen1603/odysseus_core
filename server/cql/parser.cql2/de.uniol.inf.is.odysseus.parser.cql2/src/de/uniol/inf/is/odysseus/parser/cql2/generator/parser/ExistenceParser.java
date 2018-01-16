@@ -1,14 +1,18 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.xtext.EcoreUtil2;
+
 import com.google.inject.Inject;
 
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExistPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
@@ -75,7 +79,7 @@ public class ExistenceParser implements IExistenceParser {
 			predString = queryPredicate.stringPredicate;
 			
 			for(QueryAttribute queryAttribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
-				String name = queryAttribute.name;
+				String name = queryAttribute.getName();
 				if (name.contains(".")) {
 					if (cacheService.getOperatorCache().getOperator(cacheService.getOperatorCache().getLastOperator(select)).get().contains("MAP(")) {
 						predString = predString.replaceAll(name, name.replaceAll("\\.", "_"));
@@ -83,10 +87,21 @@ public class ExistenceParser implements IExistenceParser {
 				}
 			}
 			
-			for(QueryAttribute e : queryPredicate.attributes) {
-				String name = e.name;
+			final Collection<QueryAttribute> attributes = new ArrayList<>(); 
+			
+			queryPredicate.predicate.stream().forEach(e -> {
+				EcoreUtil2.getAllContentsOfType(e, Attribute.class).forEach(k -> {
+					Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(k);
+					if (queryAttribute.isPresent()) {
+						attributes.add(queryAttribute.get());
+					}
+				});
+			});
+			
+			for(QueryAttribute e : attributes) {
+				String name = e.getName();
 				if (!name.contains(".")) {
-					name = e.sources.stream().findFirst().get().name + "." + e.name;
+					name = e.sources.stream().findFirst().get().name + "." + e.getName();
 				}
 				if (cacheService.getOperatorCache().getOperator(cacheService.getOperatorCache().getLastOperator(select)).get().contains("MAP(")) {
 					predString = predString.replaceAll(name, name.replaceAll("\\.", "_"));

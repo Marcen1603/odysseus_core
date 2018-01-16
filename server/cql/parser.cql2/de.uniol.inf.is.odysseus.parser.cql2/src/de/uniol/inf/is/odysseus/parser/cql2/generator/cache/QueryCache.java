@@ -14,14 +14,17 @@ import org.eclipse.xtext.EcoreUtil2;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Expression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.NestedSource;
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IParsedObject;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAggregation;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class QueryCache implements Cache {
@@ -65,13 +68,27 @@ public class QueryCache implements Cache {
 	}
 
 	public void putQueryAttributes(SimpleSelect query, Collection<QueryAttribute> attributes) {
-		attributeEntries.put(query, attributes.stream().map(e -> new QueryAttribute(e)).collect(Collectors.toList()));
+		attributeEntries.put(query, attributes.stream().map(e -> {
+			if (e instanceof QueryAggregate) {
+				return new QueryAggregate(((QueryAggregate) e).parsedAggregation);
+			} else if (e instanceof QueryExpression) {
+				return new QueryExpression(((QueryExpression) e).parsedExpression);
+			} else {
+				return new QueryAttribute(e);
+			}
+		}).collect(Collectors.toList()));
 	}
 
 	public void putProjectionAttributes(SimpleSelect query, QueryAttributeOrder attributes) {
-		if (attributes != null) {
-			projectionAttributes.put(query, Arrays.asList(attributes.array).stream().filter(p -> p != null).map(e -> new QueryAttribute(e)).collect(Collectors.toList()));
-		}
+		projectionAttributes.put(query, Arrays.asList(attributes.array).stream().filter(p -> p != null).map(e -> {
+			if (e instanceof QueryAggregate) {
+				return new QueryAggregate(((QueryAggregate) e).parsedAggregation);
+			} else if (e instanceof QueryExpression) {
+				return new QueryExpression(((QueryExpression) e).parsedExpression);
+			} else {
+				return new QueryAttribute(e);
+			}
+		}).collect(Collectors.toList()));
 	}
 
 	public void putProjectionSources(SimpleSelect query, QuerySourceOrder sources) {
@@ -163,6 +180,18 @@ public class QueryCache implements Cache {
 			this.source = obj.source;
 		}
 		
+		@Override
+		public boolean equals(Object obj) {
+			
+			if (obj instanceof QuerySource) {
+				return this.name.equals(((QuerySource) obj).name) 
+						&& this.alias.equals(((QuerySource) obj).alias)
+						&& this.source.equals(((QuerySource) obj).source);
+			}
+			
+			return false;
+		}
+		
 	}
 
 	public static class SubQuery extends QuerySource {
@@ -179,135 +208,104 @@ public class QueryCache implements Cache {
 	
 	public static class QueryAttribute {
 		
-		public String name;
-		public String prefix = "";
-		public String suffix = "";
-		public String alias;
-		public String datatype; 
-		public Collection<QuerySource> sources;
 		public Attribute attribute;
+		public ParsedAttribute parsedAttribute;
+		public IParsedObject parsedObject;
+		public Collection<QuerySource> sources;
+		
 		public QueryAttribute referencedBy;
 		public QueryAttribute referenceOf;
-		public Type type;
+		public IParsedObject.Type type;
 		
-		public enum Type {
-			SELECTALL,
-			EXPRESSION,
-			AGGREGATE,
-			STANDARD,
+		private QueryAttribute(Collection<QuerySource> sources){
+			this.sources = sources.stream().map(e -> new QuerySource(e)).collect(Collectors.toList());
 		}
 		
-		// copy constructor
+		public QueryAttribute(Attribute attribute, ParsedAttribute parsed, Collection<QuerySource> sources) {
+			this(sources);
+			this.parsedAttribute = parsed;
+			this.parsedObject = parsed;
+			this.attribute = attribute;
+			this.type = parsed.getType();
+		}
+		
+//		 copy constructor
 		public QueryAttribute(QueryAttribute obj) {
-			this(obj.name, obj.type);
-			this.alias = obj.alias;
-			this.datatype = obj.datatype;
+			this(obj.sources);
+			this.parsedAttribute = new ParsedAttribute(obj.parsedAttribute);
+			this.parsedObject = this.parsedAttribute;
 			this.attribute = obj.attribute;
-			this.referencedBy = obj.referencedBy;
-			this.sources = new ArrayList<>(obj.sources);
+			this.type = obj.type;
 		}
 		
-		private QueryAttribute(String name, Type type) {
-			this.name = name;
-			this.type = type;
-			
-			if (name.contains(".")) {
-				
-				final String[] split = name.split("\\.");
-				this.prefix = split[0] != null ? split[0] : "";
-				this.suffix = split[1] != null ? split[1] : "";
-				
-				Optional<SubQuery> o = utilityService.isSubQuery(this.prefix);
-				if (o.isPresent()) {
-					Optional<QueryAttribute> queryAttribute = queryCache.getProjectionAttributes(o.get().select)
-						.stream()
-						.filter(p -> p.suffix.equals(this.suffix))
-						.findFirst();
-					
-					if (queryAttribute.isPresent()) {
-						this.referencedBy = queryAttribute.get();
-						queryAttribute.get().referenceOf = this;
-					}
-				}
-			}
-			
-			this.sources = new ArrayList<>();
-			
+		public String getName() {
+			return parsedObject.getName();
 		}
 		
- 		public QueryAttribute(Attribute obj, Type type, String datatype) {
- 			this(obj.getName(), type);
-			this.attribute = obj;
-			this.alias = obj.getAlias() != null ? obj.getAlias().getName() : "";
-		}
-	
-		public QueryAttribute(Attribute e, Type type, String datatype, QuerySource systemSource) {
-			this(e, type, datatype);
-			this.sources.add(systemSource);
-		}
-	
-		public QueryAttribute(String name, Type type, String datatype, QuerySource systemSource) {
-			this(name, type);
-			this.sources = new ArrayList<>();
-			this.sources.add(systemSource);
-		}
-	
-		public QueryAttribute(String name, Type type, String datatype, Collection<QuerySource> sources) {
-			this(name, type);
-			this.sources = sources.stream().map(e -> new QuerySource(e.source)).collect(Collectors.toList());
+		public String getDataType() {
+			return parsedObject.getDataType();
 		}
 		
 		@Override
 		public boolean equals(Object obj) {
 			
 			if (obj instanceof QueryAttribute) {
-				return this.name.equals(((QueryAttribute) obj).name) &&
-						this.datatype.equals(((QueryAttribute) obj).datatype) &&
+				return this.parsedAttribute.getName().equals(((QueryAttribute) obj).parsedAttribute.getName()) &&
+						this.parsedAttribute.getDataType().equals(((QueryAttribute) obj).parsedAttribute.getDataType()) &&
 						this.sources.equals(((QueryAttribute) obj).sources);
 			}
 			
 			return false;
 		}
 		
+		public boolean equals(Attribute obj) {
+			
+			if (obj.getName().contains(".")) {
+				
+			}
+			
+			
+			return this.parsedAttribute.getName().equals(obj.getName());
+		}
+		
 	}
 
 	public static class QueryAggregate extends QueryAttribute {
+
+		public ParsedAggregation parsedAggregation;
 		
-		public SelectExpression expression;
-		
-		private QueryAggregate(String name, Type type, String datatype, Collection<QuerySource> sources) {
-			super(name, type, datatype, sources);
-		}
-	
 		public QueryAggregate(QueryAggregate obj) {
-			super(obj);
-			this.expression = obj.expression;
+			super(obj.parsedAggregation.relatedSources);
+			this.parsedAggregation = new ParsedAggregation(obj.parsedAggregation);
+			this.parsedObject = this.parsedAggregation;
 		}
 		
-		public QueryAggregate(String name, Type type, String datatype, Collection<QuerySource> sources, SelectExpression expression) {
-			this(name, type, datatype, sources);
-			this.expression = expression;			
+		public QueryAggregate(ParsedAggregation parsed) {
+			super(parsed.relatedSources);
+			this.parsedAggregation = parsed;
+			this.parsedObject = this.parsedAggregation;
+			this.type = parsed.getType();
 		}
+		
 	}
 
 	public static class QueryExpression extends QueryAttribute {
 	
-		public SelectExpression expression;
+		public ParsedExpression parsedExpression;
 		
-		private QueryExpression(String name, Type type, String datatype, Collection<QuerySource> sources) {
-			super(name, type, datatype, sources);
+		public QueryExpression(ParsedExpression parsed) {
+			super(parsed.relatedSources);
+			this.parsedExpression = parsed;
+			this.parsedObject = parsed;
+			this.type = parsed.getType();
 		}
 		
-		public QueryExpression(QueryExpression obj) {
-			super(obj);
-			this.expression = obj.expression;// is this cloneable?
+		public QueryExpression(QueryExpression expression) {
+			super(expression.parsedExpression.relatedSources);
+			this.parsedExpression = new ParsedExpression(expression.parsedExpression);
+			this.parsedObject = this.parsedExpression;
 		}
-	
-		public QueryExpression(String name, Type type, String datatype, Collection<QuerySource> sources, SelectExpression expression) {
-			this(name, type, datatype, sources);
-			this.expression = expression;
-			
-		}
+		
 	}
 
 	public Optional<SubQuery> getSubQuery(String sourcename) {
@@ -343,7 +341,7 @@ public class QueryCache implements Cache {
 			super();
 			this.stringPredicate = stringPredicate;
 			this.predicate = predicate;
-			this.attributes = attributes.stream().map(e -> new QueryAttribute(e)).collect(Collectors.toList());
+			this.attributes = attributes;//attributes.stream().map(e -> new QueryAttribute(e)).collect(Collectors.toList());
 		}
 		
 		
@@ -354,15 +352,15 @@ public class QueryCache implements Cache {
 		
 		final Collection<QueryAttribute> attributes = new ArrayList<>(); 
 				
-//		predicate.stream().forEach(e -> {
-//			EcoreUtil2.getAllContentsOfType(e, Attribute.class).forEach(k -> {
-//				Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(k);
-//				if (queryAttribute.isPresent()) {
-//					attributes.add(queryAttribute.get());
-//				}
-////				attributes.add(new QueryAttribute(k, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(k)));
-//			});
-//		});
+		predicate.stream().forEach(e -> {
+			EcoreUtil2.getAllContentsOfType(e, Attribute.class).forEach(k -> {
+				Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(k);
+				if (queryAttribute.isPresent()) {
+					attributes.add(queryAttribute.get());
+				}
+//				attributes.add(new QueryAttribute(k, QueryAttribute.Type.STANDARD, utilityService.getDataTypeFrom(k)));
+			});
+		});
 		
 		predicateEntries.put(select, new QueryPredicate(stringPredicate, predicate, attributes));
 	}

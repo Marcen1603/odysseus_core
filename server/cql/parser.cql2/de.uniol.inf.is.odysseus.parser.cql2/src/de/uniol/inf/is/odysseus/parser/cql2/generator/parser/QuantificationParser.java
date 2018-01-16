@@ -87,7 +87,7 @@ public class QuantificationParser implements IQuantificationParser {
 				name1 = name1.replace(".", "_");
 			}
 			
-			String name2 = queryAttribute.name;
+			String name2 = queryAttribute.getName();
 			if (name2.contains(".")) {
 				name2 = name2.replace(".", "_");
 			}

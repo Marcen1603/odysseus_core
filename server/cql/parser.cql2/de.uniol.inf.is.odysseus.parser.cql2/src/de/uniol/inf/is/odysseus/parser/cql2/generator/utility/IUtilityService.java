@@ -47,7 +47,7 @@ public interface IUtilityService {
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);
 	Collection<String> getSourceNames();
-	QueryAttribute getQueryAttribute(Attribute attribute);
+	Optional<QueryAttribute> getQueryAttribute(Attribute attribute);
 	String getDataTypeFrom(Attribute attribute);
 	boolean containsAllAggregates(SimpleSelect query);
 	boolean containsAllPredicates(Collection<String> predicates);

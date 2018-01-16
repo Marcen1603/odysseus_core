@@ -42,36 +42,29 @@ class AttributeNameParser implements IAttributeNameParser {
 		// //
 		if (source !== null) {
 			if (utilityService.isAggregationAttribute(attribute)) {
-				log.info("YO-2")
 				return attribute
 			}
 			var isAlias = utilityService.isAttributeAlias(attribute)
 			if (utilityService.isSourceAlias(source)) {
 				if (isAlias) {
-					log.info("YO-2")
 					return attribute
 				} else {
 					var r = source + '.' + attribute
 					if (utilityService.getAttributeAliasesAsList().contains(r)) {
-						log.info("YO-1")
 						return r
 					} else {
 //						var sourcenameFromalias = utilityService.getSourceNameFromAlias(source)
 						var attributeAliases = utilityService.getSystemSource(source).findByName(attributename).getAliases
 						if (!attributeAliases.empty) {
-							log.info("YO0")
 							return attributeAliases.get(0)
 						} else {
-							log.info("YO1")
 							return source + '.' + attribute
 						}
 					}
 				}
 			} else if (isAlias) {
-				log.info("YO2")
 				return attribute
 			} else {
-				log.info("Y3")
 				return source + '.' + attribute
 			}
 		} else {
@@ -92,7 +85,6 @@ class AttributeNameParser implements IAttributeNameParser {
 //				return cacheService.getExpressionCache().get(attribute) as String
 //			}
 			
-			log.info("HERE0")
 			if (utilityService.isAttributeAlias(attribute)) {
 				return attribute
 			}
@@ -102,7 +94,6 @@ class AttributeNameParser implements IAttributeNameParser {
 			for (String name : SystemSource.getQuerySources()) {
 //				if (!usedNames.contains(name)) {
 //					usedNames.add(name)
-				log.info("querySource::" + name)
 				var source2 = utilityService.getSystemSource(name)
 				if (source2.hasAttribute(attribute)) {
 					containedBySources.add(source2)
@@ -110,7 +101,6 @@ class AttributeNameParser implements IAttributeNameParser {
 //				}
 			}
 
-			log.info("HERE1::" + containedBySources.toString())
 
 			if (containedBySources.size == 1) {
 				var aliases = utilityService.getSystemSource(containedBySources.get(0).getName()).findByName(attribute).
@@ -121,10 +111,8 @@ class AttributeNameParser implements IAttributeNameParser {
 					if (utilityService.isAggregationAttribute(attribute)) {
 						return attribute
 					}
-					log.info("HERE1 ALIASES NOT EMPTY")
 					return aliases.get(0)
 				}
-				log.info("HERE2")
 				var sourceStruct = utilityService.getSystemSource(containedBySources.get(0).getName)
 				if (!sourceStruct.aliasList.empty) {
 //					var renames = registry_RenamedAttributes.get(attribute)
@@ -133,17 +121,14 @@ class AttributeNameParser implements IAttributeNameParser {
 //					}
 					return sourceStruct.aliasList.get(0) + '.' + attributename
 				}
-				log.info("HERE3")
 				return containedBySources.get(0).getName + '.' + attribute
 			}
 			if (attributename.contains("()")) {
 				return "${" + attributename.replace("(", "").replace(")", "") + "}"
 			}
-			log.info("HERE4")
 			if (attributename.contains("$(")) {
 				return attributename
 			}
-			log.info("HERE5")
 		}
 
 		throw new IllegalArgumentException("attribute " + attribute + " could not be resolved")

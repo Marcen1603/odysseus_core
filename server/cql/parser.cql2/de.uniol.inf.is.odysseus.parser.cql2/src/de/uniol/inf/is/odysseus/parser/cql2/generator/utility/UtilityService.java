@@ -236,7 +236,7 @@ public class UtilityService implements IUtilityService {
 		
 		return cacheService.getQueryCache().getAllQueryAggregations()
 				.stream()
-				.anyMatch(p -> p.name.equals(name)) ? name : null;
+				.anyMatch(p -> p.getName().equals(name)) ? name : null;
 	}
 
 	@Override
@@ -274,8 +274,8 @@ public class UtilityService implements IUtilityService {
 	public Collection<String> getAllQueryAttributes(SimpleSelect select) {
 		List<String> l = new ArrayList<>();
 		
-		cacheService.getQueryCache().getQueryAggregations(select).forEach(e -> l.add(e.name));
-		cacheService.getQueryCache().getQueryAttributes(select).stream().forEach(e -> l.add(e.name));
+		cacheService.getQueryCache().getQueryAggregations(select).forEach(e -> l.add(e.getName()));
+		cacheService.getQueryCache().getQueryAttributes(select).stream().forEach(e -> l.add(e.getName()));
 		
 		return l;
 	}
@@ -316,7 +316,7 @@ public class UtilityService implements IUtilityService {
 	
 	@Override
 	public boolean isAggregationAttribute(String name) {
-		return cacheService.getQueryCache().getAllQueryAggregations().stream().anyMatch(p -> p.name.equals(name));
+		return cacheService.getQueryCache().getAllQueryAggregations().stream().anyMatch(p -> p.getName().equals(name));
 	}
 	
 	@Override
@@ -431,8 +431,8 @@ public class UtilityService implements IUtilityService {
 						
 						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
 							
-							final String kname = k.name.split("\\.")[1];
-							final String ksource = k.name.split("\\.")[0];
+							final String kname = k.getName().split("\\.")[1];
+							final String ksource = k.getName().split("\\.")[0];
 							String ksourcealias = "";
 							
 							if(isSourceAlias(ksource)) {
@@ -502,17 +502,11 @@ public class UtilityService implements IUtilityService {
 	}
 	
 	@Override
-	public QueryAttribute getQueryAttribute(Attribute attribute) {
-
-		QueryAttribute r = null;
-
-		cacheService.getQueryCache().getAllQueryAttributes()
+	public Optional<QueryAttribute> getQueryAttribute(Attribute attribute) {
+		return cacheService.getQueryCache().getAllQueryAttributes()
 			.stream()
-			.filter(p -> p.attribute.equals(attribute))
-			.findFirst()
-			.ifPresent(p -> p = r);
-		
-		return r;
+			.filter(p -> p.equals(attribute))
+			.findFirst();
 	}
 	
 	//TODO rename
@@ -521,12 +515,12 @@ public class UtilityService implements IUtilityService {
 		
 		final Collection<String> projection = cacheService.getQueryCache().getProjectionAttributes(query)
 				.stream()
-				.map(e -> e.name)
+				.map(e -> e.getName())
 				.collect(Collectors.toList());
 
 		return cacheService.getQueryCache().getAllQueryAggregations()
 				.stream()
-				.map(e -> e.name)
+				.map(e -> e.getName())
 				.collect(Collectors.toList())
 				.containsAll(projection);
 	}
@@ -536,7 +530,7 @@ public class UtilityService implements IUtilityService {
 	public boolean containsAllPredicates(Collection<String> predicates) {
 		return cacheService.getQueryCache().getAllQueryAggregations()
 				.stream()
-				.map(e -> e.name)
+				.map(e -> e.getName())
 				.collect(Collectors.toList())
 				.containsAll(predicates);
 	}
@@ -545,8 +539,8 @@ public class UtilityService implements IUtilityService {
 	public Optional<String> getQueryExpressionString(String name) {
 		return cacheService.getQueryCache().getAllQueryExpressions()
 				.stream()
-				.filter(p -> p.name.equals(name))
-				.map(e -> e.alias)
+				.filter(p -> p.parsedExpression.getName().equals(name))
+				.map(e -> e.parsedExpression.toString())
 				.findFirst();
 	}
 	
@@ -554,7 +548,7 @@ public class UtilityService implements IUtilityService {
 	public Optional<String> getQueryExpressionName(String name) {
 		return cacheService.getQueryCache().getAllQueryExpressions()
 			.stream()
-			.map(e -> e.name)
+			.map(e -> e.parsedExpression.getName())
 			.filter(p -> p.equals(name))
 			.findFirst();
 	}
@@ -606,7 +600,7 @@ public class UtilityService implements IUtilityService {
 	public Optional<SimpleSelect> getCorrespondingSelect(QueryAttribute queryAttribute) {
 		Optional<SimpleSelect> o =  cacheService.getSelectCache().getSelects()
 			.stream()
-			.filter(p -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(i -> i.name.equals(queryAttribute.name)))
+			.filter(p -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(i -> i.getName().equals(queryAttribute.getName())))
 			.findFirst();
 		
 		if (o.isPresent()) {
@@ -617,7 +611,7 @@ public class UtilityService implements IUtilityService {
 				.stream()
 				.filter(p -> p.getPredicates() != null && EcoreUtil2.getAllContentsOfType(p.getPredicates(), SimpleSelect.class)
 						.stream()
-						.filter(i -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(k -> k.name.equals(queryAttribute.name)))
+						.filter(i -> cacheService.getQueryCache().getQueryAttributes(p).stream().anyMatch(k -> k.getName().equals(queryAttribute.getName())))
 						.findFirst()
 						.isPresent())
 				.findFirst();

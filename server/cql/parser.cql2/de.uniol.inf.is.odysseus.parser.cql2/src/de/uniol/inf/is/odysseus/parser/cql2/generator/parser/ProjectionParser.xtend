@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttr
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate
 
 class ProjectionParser implements IProjectionParser {
 
@@ -57,12 +58,12 @@ class ProjectionParser implements IProjectionParser {
 		queryExpressions.stream().forEach(e | {
 			
 			var expressionName = ''
-			var expressionString = e.alias
+			var expressionString = e.parsedExpression.toString()
 			
-			if (e.name === null) {
+			if (e.parsedExpression.name === null) {
 				expressionName = attributeParser.getExpressionName()
 			} else {
-				expressionName = e.name
+				expressionName = e.parsedExpression.name
 			}
 			
 			stringList.add(expressionString)
@@ -101,10 +102,19 @@ class ProjectionParser implements IProjectionParser {
 		
 		attributes.stream().forEach(e | {
 			
-			if (e.type.equals(QueryAttribute.Type.EXPRESSION)) {
-				list.add(e.alias)			
+			if (e.type.equals(IParsedObject.Type.EXPRESSION)) {
+				list.add((e as QueryExpression).parsedExpression.toString())			
 			} else {
-				list.add(e.name);
+				
+				var String name = "";
+				
+				if (e.type.equals(IParsedObject.Type.AGGREGATION)) {
+					name = (e as QueryAggregate).parsedAggregation.getName();
+				} else {
+					name = e.parsedAttribute.toString();
+				}
+				
+				list.add(name);
 			}
 			
 		})

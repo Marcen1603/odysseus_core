@@ -80,14 +80,15 @@ public class JoinParser implements IJoinParser {
             final Collection<String> renames = CollectionLiterals.<String>newArrayList();
             Stream<QueryCache.QueryAttribute> _stream_1 = col.stream();
             final Consumer<QueryCache.QueryAttribute> _function_1 = (QueryCache.QueryAttribute e) -> {
-              String _replace = e.name.replace(".", "_");
+              String _name_1 = e.parsedAttribute.getName();
+              String _replace = _name_1.replace(".", "_");
               renames.add(_replace);
               String _xifexpression = null;
-              boolean _notEquals = (!Objects.equal(e.referenceOf.alias, null));
+              boolean _notEquals = (!Objects.equal(e.referenceOf.parsedAttribute.alias, null));
               if (_notEquals) {
-                _xifexpression = e.referenceOf.alias;
+                _xifexpression = e.referenceOf.parsedAttribute.alias;
               } else {
-                _xifexpression = e.referenceOf.name;
+                _xifexpression = e.referenceOf.parsedAttribute.getName();
               }
               renames.add(_xifexpression);
             };

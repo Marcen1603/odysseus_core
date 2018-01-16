@@ -63,21 +63,18 @@ public class AttributeNameParser implements IAttributeNameParser {
     if ((source != null)) {
       boolean _isAggregationAttribute = this.utilityService.isAggregationAttribute(attribute);
       if (_isAggregationAttribute) {
-        this.log.info("YO-2");
         return attribute;
       }
       boolean isAlias = this.utilityService.isAttributeAlias(attribute);
       boolean _isSourceAlias = this.utilityService.isSourceAlias(source);
       if (_isSourceAlias) {
         if (isAlias) {
-          this.log.info("YO-2");
           return attribute;
         } else {
           String r = ((source + ".") + attribute);
           List<String> _attributeAliasesAsList = this.utilityService.getAttributeAliasesAsList();
           boolean _contains_1 = _attributeAliasesAsList.contains(r);
           if (_contains_1) {
-            this.log.info("YO-1");
             return r;
           } else {
             SystemSource _systemSource_1 = this.utilityService.getSystemSource(source);
@@ -86,20 +83,16 @@ public class AttributeNameParser implements IAttributeNameParser {
             boolean _isEmpty = attributeAliases.isEmpty();
             boolean _not = (!_isEmpty);
             if (_not) {
-              this.log.info("YO0");
               return attributeAliases.get(0);
             } else {
-              this.log.info("YO1");
               return ((source + ".") + attribute);
             }
           }
         }
       } else {
         if (isAlias) {
-          this.log.info("YO2");
           return attribute;
         } else {
-          this.log.info("Y3");
           return ((source + ".") + attribute);
         }
       }
@@ -114,7 +107,6 @@ public class AttributeNameParser implements IAttributeNameParser {
       if (_isPresent) {
         return expressionString.get();
       }
-      this.log.info("HERE0");
       boolean _isAttributeAlias = this.utilityService.isAttributeAlias(attribute);
       if (_isAttributeAlias) {
         return attribute;
@@ -123,7 +115,6 @@ public class AttributeNameParser implements IAttributeNameParser {
       Collection<String> _querySources = SystemSource.getQuerySources();
       for (final String name : _querySources) {
         {
-          this.log.info(("querySource::" + name));
           SystemSource source2 = this.utilityService.getSystemSource(name);
           boolean _hasAttribute = source2.hasAttribute(attribute);
           if (_hasAttribute) {
@@ -131,9 +122,6 @@ public class AttributeNameParser implements IAttributeNameParser {
           }
         }
       }
-      String _string = containedBySources.toString();
-      String _plus = ("HERE1::" + _string);
-      this.log.info(_plus);
       int _size = containedBySources.size();
       boolean _equals = (_size == 1);
       if (_equals) {
@@ -149,10 +137,8 @@ public class AttributeNameParser implements IAttributeNameParser {
           if (_isAggregationAttribute_2) {
             return attribute;
           }
-          this.log.info("HERE1 ALIASES NOT EMPTY");
           return aliases.get(0);
         }
-        this.log.info("HERE2");
         SystemSource _get_3 = containedBySources.get(0);
         String _name_1 = _get_3.getName();
         SystemSource sourceStruct = this.utilityService.getSystemSource(_name_1);
@@ -160,28 +146,25 @@ public class AttributeNameParser implements IAttributeNameParser {
         boolean _not_2 = (!_isEmpty_2);
         if (_not_2) {
           String _get_4 = sourceStruct.aliasList.get(0);
-          String _plus_1 = (_get_4 + ".");
-          return (_plus_1 + attributename);
+          String _plus = (_get_4 + ".");
+          return (_plus + attributename);
         }
-        this.log.info("HERE3");
         SystemSource _get_5 = containedBySources.get(0);
         String _name_2 = _get_5.getName();
-        String _plus_2 = (_name_2 + ".");
-        return (_plus_2 + attribute);
+        String _plus_1 = (_name_2 + ".");
+        return (_plus_1 + attribute);
       }
       boolean _contains_2 = attributename.contains("()");
       if (_contains_2) {
         String _replace = attributename.replace("(", "");
         String _replace_1 = _replace.replace(")", "");
-        String _plus_3 = ("${" + _replace_1);
-        return (_plus_3 + "}");
+        String _plus_2 = ("${" + _replace_1);
+        return (_plus_2 + "}");
       }
-      this.log.info("HERE4");
       boolean _contains_3 = attributename.contains("$(");
       if (_contains_3) {
         return attributename;
       }
-      this.log.info("HERE5");
     }
     throw new IllegalArgumentException((("attribute " + attribute) + " could not be resolved"));
   }

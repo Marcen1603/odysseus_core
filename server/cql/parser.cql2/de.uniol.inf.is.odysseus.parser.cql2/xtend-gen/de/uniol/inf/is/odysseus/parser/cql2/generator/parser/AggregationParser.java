@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
@@ -20,6 +21,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -42,17 +44,20 @@ public class AggregationParser implements IAggregationParser {
   
   private IAttributeParser attributeParser;
   
+  private ICacheService cacheService;
+  
   private String argsstr = "";
   
   private final String regex = ",$";
   
   @Inject
-  public AggregationParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final IAttributeNameParser nameParser, final IAttributeParser attributeParser) {
+  public AggregationParser(final AbstractPQLOperatorBuilder builder, final IUtilityService utilityService, final IJoinParser joinParser, final IAttributeNameParser nameParser, final IAttributeParser attributeParser, final ICacheService cacheService) {
     this.builder = builder;
     this.utilityService = utilityService;
     this.joinParser = joinParser;
     this.nameParser = nameParser;
     this.attributeParser = attributeParser;
+    this.cacheService = cacheService;
   }
   
   @Override
@@ -68,7 +73,7 @@ public class AggregationParser implements IAggregationParser {
     Stream<QueryCache.QueryAggregate> _stream = aggAttr.stream();
     final Consumer<QueryCache.QueryAggregate> _function = (QueryCache.QueryAggregate e) -> {
       this.argsstr = "";
-      EList<ExpressionComponent> _expressions = e.expression.getExpressions();
+      EList<ExpressionComponent> _expressions = e.parsedAggregation.expression.getExpressions();
       ExpressionComponent _get = _expressions.get(0);
       EObject _value = _get.getValue();
       final Function aggregate = ((Function) _value);
@@ -84,14 +89,18 @@ public class AggregationParser implements IAggregationParser {
         boolean _matched = false;
         if (comp instanceof Attribute) {
           _matched=true;
-          QueryCache.QueryAttribute queryAttribute = this.utilityService.getQueryAttribute(((Attribute)comp));
-          boolean _notEquals = (!Objects.equal(queryAttribute, null));
-          if (_notEquals) {
-            attributename = queryAttribute.name;
-            datatype = queryAttribute.datatype;
+          Optional<QueryCache.QueryAttribute> queryAttribute = this.utilityService.getQueryAttribute(((Attribute)comp));
+          boolean _isPresent = queryAttribute.isPresent();
+          if (_isPresent) {
+            QueryCache.QueryAttribute _get_2 = queryAttribute.get();
+            String _name = _get_2.getName();
+            attributename = _name;
+            QueryCache.QueryAttribute _get_3 = queryAttribute.get();
+            String _dataType = _get_3.getDataType();
+            datatype = _dataType;
           } else {
-            String _name = ((Attribute)comp).getName();
-            String _parse = this.nameParser.parse(_name);
+            String _name_1 = ((Attribute)comp).getName();
+            String _parse = this.nameParser.parse(_name_1);
             attributename = _parse;
             String _dataTypeFrom = this.utilityService.getDataTypeFrom(attributename);
             datatype = _dataTypeFrom;
@@ -109,10 +118,10 @@ public class AggregationParser implements IAggregationParser {
       args.add(_name);
       args.add(attributename);
       String alias = "";
-      Alias _alias = e.expression.getAlias();
+      Alias _alias = e.parsedAggregation.expression.getAlias();
       boolean _tripleNotEquals = (_alias != null);
       if (_tripleNotEquals) {
-        Alias _alias_1 = e.expression.getAlias();
+        Alias _alias_1 = e.parsedAggregation.expression.getAlias();
         String _name_1 = _alias_1.getName();
         alias = _name_1;
       } else {

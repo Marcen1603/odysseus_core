@@ -5,17 +5,17 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AggregateAO
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Function
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
-import java.util.stream.Collectors
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 import java.util.Optional
+import java.util.stream.Collectors
 
 class AggregationParser implements IAggregationParser {
 
@@ -24,18 +24,20 @@ class AggregationParser implements IAggregationParser {
 	var IJoinParser joinParser;
 	var IAttributeNameParser nameParser;
 	var IAttributeParser attributeParser;
+	var ICacheService cacheService;
 	var String argsstr = ''
 
 	val String regex = ",$";
 
 	@Inject
-	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser nameParser, IAttributeParser attributeParser) {
+	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser nameParser, IAttributeParser attributeParser, ICacheService cacheService) {
 
 		this.builder = builder;
 		this.utilityService = utilityService;
 		this.joinParser = joinParser;
 		this.nameParser = nameParser;
 		this.attributeParser = attributeParser;
+		this.cacheService = cacheService;
 		
 	}
 	
@@ -53,7 +55,7 @@ class AggregationParser implements IAggregationParser {
 		aggAttr.stream.forEach(e | {
 			
 			argsstr = ''
-			val aggregate = e.expression.expressions.get(0).value as Function
+			val aggregate = e.parsedAggregation.expression.expressions.get(0).value as Function
 			val components = (aggregate.value as SelectExpression).expressions
 			var attributename = ''
 			var datatype = ''
@@ -65,11 +67,16 @@ class AggregationParser implements IAggregationParser {
 				switch (comp) {
 					Attribute: {
 						
+						
+//						if (e.attribute.contains(comp)) {
+//							
+//						}
+						
 						// check if attribute is already known
-						var QueryAttribute queryAttribute = utilityService.getQueryAttribute(comp);
-						if (queryAttribute != null) {
-							attributename = queryAttribute.name;
-							datatype = queryAttribute.datatype;
+						var Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(comp);
+						if (queryAttribute.isPresent()) {
+							attributename = queryAttribute.get().getName();
+							datatype = queryAttribute.get().getDataType();
 						// otherwise
 						} else {
 							attributename = nameParser.parse(comp.name)
@@ -77,6 +84,7 @@ class AggregationParser implements IAggregationParser {
 						}
 						
 					}
+					// only working with COUNT(*)
 					Starthing: {
 						attributename = '*'
 					}
@@ -97,8 +105,8 @@ class AggregationParser implements IAggregationParser {
 			args.add(attributename)
 			var alias = ''
 			
-			if (e.expression.alias !== null) {
-				alias = e.expression.alias.name
+			if (e.parsedAggregation.expression.alias !== null) {
+				alias = e.parsedAggregation.expression.alias.name
 			} else {
 				alias = attributeParser.getAggregationName(aggregate.name)
 			}

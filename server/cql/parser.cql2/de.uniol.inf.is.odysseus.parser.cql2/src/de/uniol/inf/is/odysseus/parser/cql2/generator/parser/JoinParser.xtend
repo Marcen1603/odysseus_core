@@ -61,8 +61,8 @@ class JoinParser implements IJoinParser {
 					val Collection<String> renames = newArrayList()
 					col.stream().forEach(e | {
 						
-						renames.add(e.name.replace(".", "_"));
-						renames.add(if (e.referenceOf.alias != null) e.referenceOf.alias else e.referenceOf.name)
+						renames.add(e.parsedAttribute.name.replace(".", "_"));
+						renames.add(if (e.referenceOf.parsedAttribute.alias != null) e.referenceOf.parsedAttribute.alias else e.referenceOf.parsedAttribute.name)
 						
 					})					
 					

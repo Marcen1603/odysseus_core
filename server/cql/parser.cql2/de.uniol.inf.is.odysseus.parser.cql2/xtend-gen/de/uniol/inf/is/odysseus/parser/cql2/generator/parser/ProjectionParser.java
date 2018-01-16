@@ -9,6 +9,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExpressionParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IParsedObject;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IProjectionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IRenameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ISelectParser;
@@ -72,12 +73,15 @@ public class ProjectionParser implements IProjectionParser {
     Stream<QueryCache.QueryExpression> _stream = queryExpressions.stream();
     final Consumer<QueryCache.QueryExpression> _function = (QueryCache.QueryExpression e) -> {
       String expressionName = "";
-      String expressionString = e.alias;
-      if ((e.name == null)) {
+      String expressionString = e.parsedExpression.toString();
+      String _name = e.parsedExpression.getName();
+      boolean _tripleEquals = (_name == null);
+      if (_tripleEquals) {
         String _expressionName = this.attributeParser.getExpressionName();
         expressionName = _expressionName;
       } else {
-        expressionName = e.name;
+        String _name_1 = e.parsedExpression.getName();
+        expressionName = _name_1;
       }
       stringList.add(expressionString);
       stringList.add(expressionName);
@@ -116,11 +120,21 @@ public class ProjectionParser implements IProjectionParser {
     final ArrayList<String> list = CollectionLiterals.<String>newArrayList();
     Stream<QueryCache.QueryAttribute> _stream = attributes.stream();
     final Consumer<QueryCache.QueryAttribute> _function = (QueryCache.QueryAttribute e) -> {
-      boolean _equals = e.type.equals(QueryCache.QueryAttribute.Type.EXPRESSION);
+      boolean _equals = e.type.equals(IParsedObject.Type.EXPRESSION);
       if (_equals) {
-        list.add(e.alias);
+        String _string = ((QueryCache.QueryExpression) e).parsedExpression.toString();
+        list.add(_string);
       } else {
-        list.add(e.name);
+        String name = "";
+        boolean _equals_1 = e.type.equals(IParsedObject.Type.AGGREGATION);
+        if (_equals_1) {
+          String _name = ((QueryCache.QueryAggregate) e).parsedAggregation.getName();
+          name = _name;
+        } else {
+          String _string_1 = e.parsedAttribute.toString();
+          name = _string_1;
+        }
+        list.add(name);
       }
     };
     _stream.forEach(_function);
