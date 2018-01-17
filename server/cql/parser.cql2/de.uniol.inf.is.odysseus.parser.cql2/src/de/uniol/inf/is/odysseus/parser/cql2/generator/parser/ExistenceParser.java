@@ -101,7 +101,9 @@ public class ExistenceParser implements IExistenceParser {
 			for(QueryAttribute e : attributes) {
 				String name = e.getName();
 				if (!name.contains(".")) {
-					name = e.sources.stream().findFirst().get().name + "." + e.getName();
+					if (e.sources.size() == 1) {
+						name = e.sources.stream().findFirst().get().name + "." + e.getName();
+					}
 				}
 				if (cacheService.getOperatorCache().getOperator(cacheService.getOperatorCache().getLastOperator(select)).get().contains("MAP(")) {
 					predString = predString.replaceAll(name, name.replaceAll("\\.", "_"));

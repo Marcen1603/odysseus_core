@@ -2,7 +2,7 @@
 #DROPALLQUERIES
 #DROPALLSOURCES
 #DROPALLSINKS
-DROP STREAM bid IF EXISTS
+
 #QUERY
 CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
     		WRAPPER 'GenericPush'
@@ -10,8 +10,7 @@ CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, da
 		    TRANSPORT 'NonBlockingTcp'
 		    DATAHANDLER 'Tuple'
     		OPTIONS ('port' '65442', 'host' 'localhost')
-#QUERY 
-DROP STREAM category IF EXISTS
+
 #QUERY
 CREATE STREAM category (id INTEGER, name STRING, description STRING, parentid INTEGER) 
     		WRAPPER 'GenericPush'
@@ -19,6 +18,7 @@ CREATE STREAM category (id INTEGER, name STRING, description STRING, parentid IN
 		    TRANSPORT 'NonBlockingTcp'
 		    DATAHANDLER 'Tuple'
     		OPTIONS ('port' '65443', 'host' 'localhost')
+    		
 #QUERY
 SELECT DolToEur(price) FROM bid;
 #QUERY
@@ -29,9 +29,9 @@ FROM bid, category;
 #QUERY
 SELECT DolToEur(DolToEur(price)) FROM bid [SIZE 5 SECONDS TIME];
 #QUERY
-SELECT DolToEur(price), AVG(price) as avgPrice, auction as A
+SELECT DolToEur(price), AVG(price) as avgPrice, auction
 FROM bid [SIZE 1 SECONDS TIME]
-GROUP BY A
+GROUP BY auction
 HAVING avgPrice > 150
 #QUERY
 SELECT 'hello' + 'world' FROM bid;

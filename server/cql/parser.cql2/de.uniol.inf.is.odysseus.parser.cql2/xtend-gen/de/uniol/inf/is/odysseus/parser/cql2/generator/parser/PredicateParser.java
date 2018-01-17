@@ -27,6 +27,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.OperatorCache;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IExistenceParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.eclipse.emf.common.util.EList;
@@ -185,8 +187,27 @@ public class PredicateParser implements IPredicateParser {
         if (e instanceof AttributeRef) {
           _matched=true;
           Attribute _value = ((AttributeRef)e).getValue();
-          String _parse = this.attributeParser.parse(((Attribute) _value));
-          this.buildPredicateString(_parse);
+          final Optional<QueryCache.QueryAttribute> queryAttribute = this.utilityService.getQueryAttribute(((Attribute) _value));
+          boolean _isPresent = queryAttribute.isPresent();
+          if (_isPresent) {
+            QueryCache.QueryAttribute _get = queryAttribute.get();
+            String _alias = _get.getAlias();
+            boolean _notEquals = (!Objects.equal(_alias, null));
+            if (_notEquals) {
+              QueryCache.QueryAttribute _get_1 = queryAttribute.get();
+              String _alias_1 = _get_1.getAlias();
+              this.buildPredicateString(_alias_1);
+            } else {
+              QueryCache.QueryAttribute _get_2 = queryAttribute.get();
+              String _name = _get_2.getName();
+              this.buildPredicateString(_name);
+            }
+          } else {
+            Attribute _value_1 = ((AttributeRef)e).getValue();
+            String _name_1 = _value_1.getName();
+            String _plus = ("could not find attribute " + _name_1);
+            throw new IllegalArgumentException(_plus);
+          }
         }
       }
       if (!_matched) {

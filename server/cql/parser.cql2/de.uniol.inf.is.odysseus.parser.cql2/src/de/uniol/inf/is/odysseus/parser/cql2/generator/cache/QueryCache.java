@@ -227,6 +227,20 @@ public class QueryCache implements Cache {
 			this.parsedObject = parsed;
 			this.attribute = attribute;
 			this.type = parsed.getType();
+			
+			Optional<SubQuery> o = utilityService.isSubQuery(parsedAttribute.prefix);
+			if (o.isPresent()) {
+				Optional<QueryAttribute> queryAttribute = queryCache.getProjectionAttributes(o.get().select)
+					.stream()
+					.filter(p -> p.parsedAttribute.suffix.equals(this.parsedAttribute.suffix))
+					.findFirst();
+				
+				if (queryAttribute.isPresent()) {
+					this.referencedBy = queryAttribute.get();
+					queryAttribute.get().referenceOf = this;
+				}
+			}
+			
 		}
 		
 //		 copy constructor
@@ -236,6 +250,8 @@ public class QueryCache implements Cache {
 			this.parsedObject = this.parsedAttribute;
 			this.attribute = obj.attribute;
 			this.type = obj.type;
+			this.referencedBy = obj.referencedBy;
+			this.referenceOf = obj.referenceOf;
 		}
 		
 		public String getName() {
@@ -244,6 +260,10 @@ public class QueryCache implements Cache {
 		
 		public String getDataType() {
 			return parsedObject.getDataType();
+		}
+		
+		public String getAlias() {
+			return parsedObject.getAlias();
 		}
 		
 		@Override
@@ -259,13 +279,7 @@ public class QueryCache implements Cache {
 		}
 		
 		public boolean equals(Attribute obj) {
-			
-			if (obj.getName().contains(".")) {
-				
-			}
-			
-			
-			return this.parsedAttribute.getName().equals(obj.getName());
+			return this.parsedAttribute.equals(new ParsedAttribute(obj));
 		}
 		
 	}
@@ -285,9 +299,16 @@ public class QueryCache implements Cache {
 			this.parsedAggregation = parsed;
 			this.parsedObject = this.parsedAggregation;
 			this.type = parsed.getType();
+			
+		}
+		
+		@Override
+		public String getAlias() {
+			return parsedAggregation.getAlias();
 		}
 		
 	}
+	
 
 	public static class QueryExpression extends QueryAttribute {
 	
@@ -369,4 +390,6 @@ public class QueryCache implements Cache {
 		return predicateEntries.containsKey(select) ? Optional.of(predicateEntries.get(select)) : Optional.empty();
 	}
 
+	
+	
 }

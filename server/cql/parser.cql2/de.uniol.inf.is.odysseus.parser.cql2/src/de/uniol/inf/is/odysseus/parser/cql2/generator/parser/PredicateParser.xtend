@@ -27,6 +27,8 @@ import java.util.List
 import java.util.Map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.Optional
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class PredicateParser implements IPredicateParser {
 
@@ -111,7 +113,17 @@ class PredicateParser implements IPredicateParser {
 					buildPredicateString(')')
 				}
 				AttributeRef: {
-					buildPredicateString(attributeParser.parse(e.value as Attribute))
+//					buildPredicateString(attributeParser.parse(e.value as Attribute))
+					val Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(e.value as Attribute);
+					if (queryAttribute.isPresent()) {
+						if (queryAttribute.get().getAlias() != null) {
+							buildPredicateString(queryAttribute.get().getAlias())
+						} else {
+							buildPredicateString(queryAttribute.get().getName())
+						}
+					} else {
+						throw new IllegalArgumentException("could not find attribute " + e.value.name);
+					}
 				}
 				ComplexPredicateRef: {
 					
@@ -125,7 +137,7 @@ class PredicateParser implements IPredicateParser {
 						predicateStringList = existenceParser.parse(e.value, select, predicateStringList, false);
 						predicateString = "";
 						predicateStringList.stream().forEach(k | {
-							buildPredicateString(k)
+							buildPredicateString(k) 
 						})
 						
 						return predicateString;

@@ -2,6 +2,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAttribute;
 
 
 public class UtilityService implements IUtilityService {
@@ -485,9 +487,11 @@ public class UtilityService implements IUtilityService {
 				attributename = getAttributenameFromAlias(attributename);
 				if (attributename == null)
 					attributename = attribute;
-				for (SystemAttribute attr : getSystemSource(sourceFromAlias).getAttributeList())
-					if (attr.attributename.equals(attributename))
-						return attr.getDatatype();
+				if (sourceFromAlias != null) {
+					for (SystemAttribute attr : getSystemSource(sourceFromAlias).getAttributeList())
+						if (attr.attributename.equals(attributename))
+							return attr.getDatatype();
+				}
 			}
 		}
 		
@@ -503,10 +507,16 @@ public class UtilityService implements IUtilityService {
 	
 	@Override
 	public Optional<QueryAttribute> getQueryAttribute(Attribute attribute) {
-		return cacheService.getQueryCache().getAllQueryAttributes()
+		Optional<QueryAttribute> o = cacheService.getQueryCache().getAllQueryAttributes()
 			.stream()
-			.filter(p -> p.equals(attribute))
+			.filter(p -> p.equals(attribute) || (p.parsedAttribute.getAlias() != null && p.parsedAttribute.getAlias().equals(attribute.getName())))
 			.findFirst();
+		
+		if (o.isPresent()) {
+			return o;
+		}
+
+		return Optional.of(new QueryAttribute(attribute, new ParsedAttribute(attribute), Collections.EMPTY_LIST));
 	}
 	
 	//TODO rename

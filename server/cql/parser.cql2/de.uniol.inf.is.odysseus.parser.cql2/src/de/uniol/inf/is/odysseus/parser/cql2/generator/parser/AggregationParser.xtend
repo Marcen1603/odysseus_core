@@ -31,14 +31,12 @@ class AggregationParser implements IAggregationParser {
 
 	@Inject
 	new (AbstractPQLOperatorBuilder builder, IUtilityService utilityService, IJoinParser joinParser, IAttributeNameParser nameParser, IAttributeParser attributeParser, ICacheService cacheService) {
-
 		this.builder = builder;
 		this.utilityService = utilityService;
 		this.joinParser = joinParser;
 		this.nameParser = nameParser;
 		this.attributeParser = attributeParser;
 		this.cacheService = cacheService;
-		
 	}
 	
 	override public Object[] parse(Collection<QueryAggregate> list, Collection<Attribute> list2, Collection<QuerySource> srcs, SimpleSelect select) {
@@ -78,6 +76,7 @@ class AggregationParser implements IAggregationParser {
 							attributename = queryAttribute.get().getName();
 							datatype = queryAttribute.get().getDataType();
 						// otherwise
+						//TODO check if this is still needed?
 						} else {
 							attributename = nameParser.parse(comp.name)
 							datatype = utilityService.getDataTypeFrom(attributename)
@@ -118,10 +117,6 @@ class AggregationParser implements IAggregationParser {
 				args.add(datatype)
 			}
 			
-			// utilityServicetil.getRegisteredAggregationAttributes().add(alias)
-			
-//			cacheService.getAggregationAttributeCache().add(new Pair(aggregation, alias));
-			
 			args.add(',')
 			argsstr += utilityService.generateKeyValueString(args)
 			
@@ -135,7 +130,9 @@ class AggregationParser implements IAggregationParser {
 		// Generates the group by argument that is formed like ['attr1', attr2', ...]
 		var groupby = ''
 		if (!orderAttr.empty) {
-			groupby += utilityService.generateListString(orderAttr.stream.map(e|nameParser.parse(e.name, null)).collect(Collectors.toList))
+			groupby += utilityService.generateListString(
+				orderAttr.stream.map(e| e.name).collect(Collectors.toList)					
+			);
 		}
 		
 		return #[aliases,

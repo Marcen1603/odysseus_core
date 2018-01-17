@@ -68,7 +68,6 @@ class SelectParser implements ISelectParser {
 			
 		if (prepare) {
 			// save all select objects at once
-//			cacheService.getSelectCache().addAll(EcoreUtil2.getAllContentsOfType(select, SimpleSelect));
 			
 			if (select.getPredicates() != null) {
 				EcoreUtil2.getAllContentsOfType(select.getPredicates(), SimpleSelect).stream().forEach(e | {

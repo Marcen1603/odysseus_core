@@ -84,9 +84,10 @@ public class JoinParser implements IJoinParser {
               String _replace = _name_1.replace(".", "_");
               renames.add(_replace);
               String _xifexpression = null;
-              boolean _notEquals = (!Objects.equal(e.referenceOf.parsedAttribute.alias, null));
+              String _alias_1 = e.referenceOf.parsedAttribute.getAlias();
+              boolean _notEquals = (!Objects.equal(_alias_1, null));
               if (_notEquals) {
-                _xifexpression = e.referenceOf.parsedAttribute.alias;
+                _xifexpression = e.referenceOf.parsedAttribute.getAlias();
               } else {
                 _xifexpression = e.referenceOf.parsedAttribute.getName();
               }

@@ -150,8 +150,7 @@ public class AggregationParser implements IAggregationParser {
       String _groupby = groupby;
       Stream<Attribute> _stream_1 = orderAttr.stream();
       final java.util.function.Function<Attribute, String> _function_1 = (Attribute e) -> {
-        String _name = e.getName();
-        return this.nameParser.parse(_name, null);
+        return e.getName();
       };
       Stream<String> _map = _stream_1.<String>map(_function_1);
       Collector<String, ?, List<String>> _list = Collectors.<String>toList();
