@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.core.metadata;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
@@ -429,36 +430,12 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
 
 		TimeInterval left = target;
+		AtomicBoolean broken = new AtomicBoolean(false);
 
 		for (TimeInterval right : stencil) {
-
-			// handle different cases
-			if (right.getEnd().beforeOrEquals(left.getStart())) {
-				// right is completely before left: ignore right
-			} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(right.getEnd())
-					&& right.getEnd().before(left.getEnd())) {
-				// beginning of left is covered by right
-				left = new TimeInterval(right.getEnd(), left.getEnd());
-			} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(left.getEnd())
-					&& left.getEnd().beforeOrEquals(right.getEnd())) {
-				// left is fully covered by right
-				left = null;
-				break;
-			} else if (left.getStart().before(right.getStart()) && right.getEnd().before(left.getEnd())) {
-				// left is split by right
-				result.add(new TimeInterval(left.getStart(), right.getStart()));
-				left = new TimeInterval(right.getEnd(), left.getEnd());
-			} else if (left.getStart().before(right.getStart()) && right.getStart().before(left.getEnd())
-					&& left.getEnd().beforeOrEquals(right.getEnd())) {
-				// end of left is covered by right
-				result.add(new TimeInterval(left.getStart(), right.getStart()));
-			} else if (left.getEnd().beforeOrEquals(right.getStart())) {
-				// left is completely before right
-				break;
-			}
-
-			if (left.isZeroLength()) {
-				left = null;
+			left = cutoutInterval(result, left, broken, right);
+			
+			if (broken.get()) {
 				break;
 			}
 		}
@@ -468,6 +445,67 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 		}
 
 		return result;
+	}
+	
+	/**
+	 * cuts out the time interval stencil from the time interval target
+	 * @param target the time interval to be cut out
+	 * @param stencil the time interval to remove from target
+	 * @return a list of remaining time intervals after cut out. may be empty if target is completely covered by stencil.
+	 */
+	public static ArrayList<TimeInterval> cutOutInterval(TimeInterval target, TimeInterval stencil) {
+		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
+
+		TimeInterval left = cutoutInterval(result, target, new AtomicBoolean(false), stencil);
+		
+		if (left != null) {
+			result.add(left);
+		}
+		
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param result list for collecting resulting time intervals
+	 * @param left the left time interval (that should be cut out)
+	 * @param broken flag indicating if a calling loop should break because consecutive elements will not change the result due to their ordering
+	 * @param right the time interval that should be cut out from the other interval
+	 * @return the current remainder of the time interval (left) after cut out. may be null if the time interval left is totally covered by right 
+	 */
+	private static TimeInterval cutoutInterval(ArrayList<TimeInterval> result, TimeInterval left, AtomicBoolean broken,
+			TimeInterval right) {
+		// handle different cases
+		if (right.getEnd().beforeOrEquals(left.getStart())) {
+			// right is completely before left: ignore right
+			// TODO remove later
+		} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(right.getEnd())
+				&& right.getEnd().before(left.getEnd())) {
+			// beginning of left is covered by right
+			left = new TimeInterval(right.getEnd(), left.getEnd());
+		} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(left.getEnd())
+				&& left.getEnd().beforeOrEquals(right.getEnd())) {
+			// left is fully covered by right
+			left = null;
+			broken.set(true);
+		} else if (left.getStart().before(right.getStart()) && right.getEnd().before(left.getEnd())) {
+			// left is split by right
+			result.add(new TimeInterval(left.getStart(), right.getStart()));
+			left = new TimeInterval(right.getEnd(), left.getEnd());
+		} else if (left.getStart().before(right.getStart()) && right.getStart().before(left.getEnd())
+				&& left.getEnd().beforeOrEquals(right.getEnd())) {
+			// end of left is covered by right
+			result.add(new TimeInterval(left.getStart(), right.getStart()));
+		} else if (left.getEnd().beforeOrEquals(right.getStart())) {
+			// left is completely before right
+			broken.set(true);
+		}
+
+		if (left.isZeroLength()) {
+			left = null;
+			broken.set(true);
+		}
+		return left;
 	}
 
 	/**
