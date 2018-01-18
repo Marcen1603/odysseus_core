@@ -33,8 +33,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Marco Grawunder, Jonas Jacobi
  */
 
-final public class TimeInterval extends AbstractBaseMetaAttribute implements
-		ITimeInterval, Cloneable, Serializable {
+final public class TimeInterval extends AbstractBaseMetaAttribute implements ITimeInterval, Cloneable, Serializable {
 
 	private static final long serialVersionUID = 2210545271466064814L;
 
@@ -46,16 +45,12 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return classes;
 	}
 
-	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(
-			classes.length);
+	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("TimeInterval", "start",
-				SDFDatatype.TIMESTAMP));
-		attributes.add(new SDFAttribute("TimeInterval", "end",
-				SDFDatatype.TIMESTAMP));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("TimeInterval",
-				Tuple.class, attributes, ITimeInterval.class));
+		attributes.add(new SDFAttribute("TimeInterval", "start", SDFDatatype.TIMESTAMP));
+		attributes.add(new SDFAttribute("TimeInterval", "end", SDFDatatype.TIMESTAMP));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("TimeInterval", Tuple.class, attributes, ITimeInterval.class));
 	}
 
 	@Override
@@ -63,8 +58,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return schema;
 	}
 
-	private static final TimeInterval forever = new TimeInterval(
-			new PointInTime(0), PointInTime.getInfinityTime());
+	private static final TimeInterval forever = new TimeInterval(new PointInTime(0), PointInTime.getInfinityTime());
 
 	private PointInTime start;
 	private PointInTime end;
@@ -91,8 +85,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		// New: Allow elements with zero valid time
 		if (!start.beforeOrEquals(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
-					"start point is not before end point in time interval ["
-							+ start + "," + end + ")");
+					"start point is not before end point in time interval [" + start + "," + end + ")");
 		}
 		this.start = start;
 		this.end = end;
@@ -112,9 +105,9 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public <K> K getValue(int subtype, int index) {
 		switch (index) {
 		case 0:
-			return (K) (start.isInfinite()?null:start.point);
+			return (K) (start.isInfinite() ? null : start.point);
 		case 1:
-			return (K) (end.isInfinite()?null:end.point);
+			return (K) (end.isInfinite() ? null : end.point);
 		}
 		return null;
 	}
@@ -124,14 +117,14 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		Object v1 = value.getAttribute(0);
 		Object v2 = value.getAttribute(1);
 
-		if (v1 != null){
-			this.start = new PointInTime((long)v1);
-		}else{
+		if (v1 != null) {
+			this.start = new PointInTime((long) v1);
+		} else {
 			this.start = PointInTime.INFINITY;
 		}
-		if (v2 != null){
-			this.end = new PointInTime((long)v2);
-		}else{
+		if (v2 != null) {
+			this.end = new PointInTime((long) v2);
+		} else {
 			this.end = PointInTime.INFINITY;
 		}
 
@@ -150,8 +143,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public void setEnd(PointInTime end) {
 		if (!start.beforeOrEquals(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
-					"start point is not before end point in time interval ["
-							+ start + "," + end + ")");
+					"start point is not before end point in time interval [" + start + "," + end + ")");
 		}
 		this.end = end;
 	}
@@ -169,13 +161,11 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return p.before(this.getEnd()) && p.afterOrEquals(this.getStart());
 	}
 
-	public static boolean startsBefore(ITimeInterval interval,
-			ITimeInterval interval2) {
+	public static boolean startsBefore(ITimeInterval interval, ITimeInterval interval2) {
 		return interval.getStart().before(interval2.getStart());
 	}
 
-	public static boolean startsBeforeOrEqual(ITimeInterval interval,
-			ITimeInterval interval2) {
+	public static boolean startsBeforeOrEqual(ITimeInterval interval, ITimeInterval interval2) {
 		return interval.getStart().beforeOrEquals(interval2.getStart());
 	}
 
@@ -193,8 +183,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return totallyBefore(left, right.getStart());
 	}
 
-	public static boolean totallyBefore(ITimeInterval interval,
-			PointInTime point) {
+	public static boolean totallyBefore(ITimeInterval interval, PointInTime point) {
 		// ACHTUNG: Rechtsoffenes Intervall, d.h. der letzte Punkte geh�rt
 		// nicht
 		// mehr dazu
@@ -223,8 +212,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * @return true, wenn left inside right, false sonst
 	 */
 	public static boolean inside(ITimeInterval left, ITimeInterval right) {
-		return right.getStart().beforeOrEquals(left.getStart())
-				&& left.getEnd().beforeOrEquals(right.getEnd());
+		return right.getStart().beforeOrEquals(left.getStart()) && left.getEnd().beforeOrEquals(right.getEnd());
 	}
 
 	/**
@@ -235,18 +223,14 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * @return
 	 */
 	public static boolean inside(ITimeInterval interval, PointInTime timestamp) {
-		return interval.getStart().beforeOrEquals(timestamp)
-				&& interval.getEnd().after(timestamp);
+		return interval.getStart().beforeOrEquals(timestamp) && interval.getEnd().after(timestamp);
 	}
 
-	public static TimeInterval intersection(ITimeInterval left,
-			ITimeInterval right) {
+	public static TimeInterval intersection(ITimeInterval left, ITimeInterval right) {
 		if (overlaps(left, right)) {
 			// TODO fehler bei infinity (auch in anderen operationen vorhanden)
-			PointInTime newLeft = PointInTime.max(left.getStart(),
-					right.getStart());
-			PointInTime newRight = PointInTime.min(left.getEnd(),
-					right.getEnd());
+			PointInTime newLeft = PointInTime.max(left.getStart(), right.getStart());
+			PointInTime newRight = PointInTime.min(left.getEnd(), right.getEnd());
 			if (newLeft.before(newRight)) {
 				return new TimeInterval(newLeft, newRight);
 			}
@@ -256,9 +240,8 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 
 	public static TimeInterval union(ITimeInterval left, ITimeInterval right) {
 		if (overlaps(left, right)) {
-			return new TimeInterval(PointInTime.min(left.getStart(),
-					right.getStart()), PointInTime.max(left.getEnd(),
-					right.getEnd()));
+			return new TimeInterval(PointInTime.min(left.getStart(), right.getStart()),
+					PointInTime.max(left.getEnd(), right.getEnd()));
 		}
 		return null;
 	}
@@ -275,8 +258,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	@Override
 	public boolean equals(Object obj) {
 		ITimeInterval ti = (ITimeInterval) obj;
-		return ti.getStart().equals(this.getStart())
-				&& ti.getEnd().equals(this.getEnd());
+		return ti.getStart().equals(this.getStart()) && ti.getEnd().equals(this.getEnd());
 	}
 
 	/*
@@ -287,8 +269,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * minus method implements the difference
 	 */
 
-	public static ITimeInterval[] difference(ITimeInterval left,
-			ITimeInterval right) {
+	public static ITimeInterval[] difference(ITimeInterval left, ITimeInterval right) {
 		if (inside(left, right)) {
 			return new ITimeInterval[] { null, null };
 		}
@@ -320,59 +301,47 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	 * @author Jendrik Poloczek
 	 * @return
 	 */
-	public static List<TimeInterval> minus(ITimeInterval minuend,
-			ITimeInterval subtrahend) {
+	public static List<TimeInterval> minus(ITimeInterval minuend, ITimeInterval subtrahend) {
 		List<TimeInterval> difference = new ArrayList<TimeInterval>();
 
-		if (minuend.equals(subtrahend) || !overlaps(minuend, subtrahend)
-				|| TimeInterval.inside(minuend, subtrahend)) {
+		if (minuend.equals(subtrahend) || !overlaps(minuend, subtrahend) || TimeInterval.inside(minuend, subtrahend)) {
 			return difference;
 		}
 
 		if (minuend.getStart().equals(subtrahend.getStart())) {
 			if (subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(subtrahend.getEnd(), minuend
-						.getEnd()));
+				difference.add(new TimeInterval(subtrahend.getEnd(), minuend.getEnd()));
 				return difference;
 			}
-			difference.add(new TimeInterval(minuend.getEnd(), subtrahend
-					.getEnd()));
+			difference.add(new TimeInterval(minuend.getEnd(), subtrahend.getEnd()));
 			return difference;
 		}
 
 		if (minuend.getStart().before(subtrahend.getStart())) {
 			if (subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(minuend.getStart(), subtrahend
-						.getStart()));
-				difference.add(new TimeInterval(subtrahend.getEnd(), minuend
-						.getEnd()));
+				difference.add(new TimeInterval(minuend.getStart(), subtrahend.getStart()));
+				difference.add(new TimeInterval(subtrahend.getEnd(), minuend.getEnd()));
 				return difference;
 			}
 			if (minuend.getEnd().before(subtrahend.getEnd())) {
-				difference.add(new TimeInterval(minuend.getStart(), subtrahend
-						.getStart()));
+				difference.add(new TimeInterval(minuend.getStart(), subtrahend.getStart()));
 				return difference;
 			}
-			difference.add(new TimeInterval(minuend.getStart(), subtrahend
-					.getStart()));
+			difference.add(new TimeInterval(minuend.getStart(), subtrahend.getStart()));
 			return difference;
 		}
 
 		if (subtrahend.getStart().before(minuend.getStart())) {
 			if (minuend.getEnd().before(subtrahend.getEnd())) {
-				difference.add(new TimeInterval(subtrahend.getStart(), minuend
-						.getStart()));
-				difference.add(new TimeInterval(minuend.getEnd(), subtrahend
-						.getEnd()));
+				difference.add(new TimeInterval(subtrahend.getStart(), minuend.getStart()));
+				difference.add(new TimeInterval(minuend.getEnd(), subtrahend.getEnd()));
 				return difference;
 			}
 			if (subtrahend.getEnd().before(minuend.getEnd())) {
-				difference.add(new TimeInterval(subtrahend.getStart(), minuend
-						.getStart()));
+				difference.add(new TimeInterval(subtrahend.getStart(), minuend.getStart()));
 				return difference;
 			}
-			difference.add(new TimeInterval(subtrahend.getStart(), minuend
-					.getStart()));
+			difference.add(new TimeInterval(subtrahend.getStart(), minuend.getStart()));
 			return difference;
 		}
 
@@ -403,8 +372,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	public void setStart(PointInTime start) {
 		if (!start.before(end) && !(start.isInfinite() && end.isInfinite())) {
 			throw new IllegalArgumentException(
-					"start point is not before end point in time interval ["
-							+ start + "," + end + ")");
+					"start point is not before end point in time interval [" + start + "," + end + ")");
 		}
 		this.start = start;
 	}
@@ -430,7 +398,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 		return forever.clone();
 	}
 
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return this.start.equals(this.end);
 	}
 
@@ -442,5 +410,71 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements
 	@Override
 	public String getName() {
 		return "TimeInterval";
+	}
+
+	/**
+	 * cuts out all time intervals given in the interval list from the target
+	 * time interval
+	 * 
+	 * @param target
+	 *            the interval to cut
+	 * @param stencil
+	 *            list of intervals that should be cut out from the target
+	 * @return a list of time intervals that remain from the target time
+	 *         interval after cutting out. The list may be empty if the target
+	 *         time interval is fully covered by the given intervals in the
+	 *         input list.
+	 */
+	public static ArrayList<TimeInterval> cutOutIntervals(TimeInterval target, List<TimeInterval> stencil) {
+		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
+
+		TimeInterval left = target;
+
+		for (TimeInterval right : stencil) {
+
+			// handle different cases
+			if (right.getEnd().beforeOrEquals(left.getStart())) {
+				// right is completely before left: ignore right
+			} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(right.getEnd())
+					&& right.getEnd().before(left.getEnd())) {
+				// beginning of left is covered by right
+				left = new TimeInterval(right.getEnd(), left.getEnd());
+			} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(left.getEnd())
+					&& left.getEnd().beforeOrEquals(right.getEnd())) {
+				// left is fully covered by right
+				left = null;
+				break;
+			} else if (left.getStart().before(right.getStart()) && right.getEnd().before(left.getEnd())) {
+				// left is split by right
+				result.add(new TimeInterval(left.getStart(), right.getStart()));
+				left = new TimeInterval(right.getEnd(), left.getEnd());
+			} else if (left.getStart().before(right.getStart()) && right.getStart().before(left.getEnd())
+					&& left.getEnd().beforeOrEquals(right.getEnd())) {
+				// end of left is covered by right
+				result.add(new TimeInterval(left.getStart(), right.getStart()));
+			} else if (left.getEnd().beforeOrEquals(right.getStart())) {
+				// left is completely before right
+				break;
+			}
+
+			if (left.isZeroLength()) {
+				left = null;
+				break;
+			}
+		}
+
+		if (left != null) {
+			result.add(left);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @return true if start point and end point of the interval are equal
+	 */
+	public boolean isZeroLength() {
+		return this.getStart().equals(this.getEnd());
 	}
 }
