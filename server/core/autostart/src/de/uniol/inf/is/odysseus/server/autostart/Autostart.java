@@ -13,6 +13,7 @@ import de.uniol.inf.is.odysseus.core.util.ScriptRunner;
 
 public class Autostart implements BundleActivator {
 
+	private static Object lock = new Object();
 
 	private static BundleContext context;
 	private static IExecutor executor;
@@ -22,7 +23,6 @@ public class Autostart implements BundleActivator {
 	private static String[] PATHES = { "/autostart/autostart.qry",
 			OdysseusConfiguration.instance.getHomeDir() + "autostart" + File.separator + "autostart.qry" };
 
-	
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exec) {
 		if (exec == executor) {
@@ -43,13 +43,16 @@ public class Autostart implements BundleActivator {
 	}
 
 	private void runAutostartScripts(BundleContext context, IExecutor executor) {
-		if (!autostartExecuted && context != null && executor != null){
-			
-			@SuppressWarnings("deprecation")			
-			ISession user = SessionManagement.instance.loginSuperUser(null);
-			autostartExecuted = ScriptRunner.runScripts(context, executor, PATHES, user);
+		synchronized (lock) {
+
+			if (!autostartExecuted && context != null && executor != null) {
+
+				@SuppressWarnings("deprecation")
+				ISession user = SessionManagement.instance.loginSuperUser(null);
+				autostartExecuted = ScriptRunner.runScripts(context, executor, PATHES, user);
+			}
 		}
-		
+
 	}
 
 	@Override

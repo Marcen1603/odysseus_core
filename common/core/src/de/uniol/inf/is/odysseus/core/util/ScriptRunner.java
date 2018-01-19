@@ -19,31 +19,27 @@ public class ScriptRunner {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ScriptRunner.class);
 
-	private static Object lock = new Object();
-	
 	public static boolean runScripts(BundleContext ctx, IExecutor executor, String[] pathes, ISession user) {
 		boolean executed = false;
 
-		synchronized (lock) {
-			if (ctx != null && executor != null) {
+		if (ctx != null && executor != null) {
 
-				executed = true;
-				Bundle bundle = ctx.getBundle();
+			executed = true;
+			Bundle bundle = ctx.getBundle();
 
-				for (String path : pathes) {
-					URL url = bundle.getEntry(path);
-					try {
-						runScript(user, url, executor);
-					} catch (IOException e) {
-						// Could be ignored
-					}
+			for (String path : pathes) {
+				URL url = bundle.getEntry(path);
+				try {
+					runScript(user, url, executor);
+				} catch (IOException e) {
+					// Could be ignored
 				}
 			}
 
 		}
 		return executed;
 	}
-	
+
 	public static void runScript(ISession user, URL fileURL, IExecutor executor) throws IOException {
 		LOG.trace("Trying to start " + fileURL);
 		InputStream inputStream = null;
