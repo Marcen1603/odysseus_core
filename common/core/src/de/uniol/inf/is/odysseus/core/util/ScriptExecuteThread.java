@@ -1,16 +1,15 @@
-package de.uniol.inf.is.odysseus.server.autostart;
+package de.uniol.inf.is.odysseus.core.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.collection.Context;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
-import de.uniol.inf.is.odysseus.core.server.usermanagement.SessionManagement;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 
-public class AutostartExecuteThread extends Thread {
+public class ScriptExecuteThread extends Thread {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AutostartExecuteThread.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ScriptExecuteThread.class);
 
 	private static final int MAX_TRIES = 10;
 	private static final long WAIT_TIME_MILLIS = 10 * 1000;
@@ -19,38 +18,38 @@ public class AutostartExecuteThread extends Thread {
 	private final String queryText;
 	private final ISession user;
 
-	public AutostartExecuteThread(IExecutor executor, String queryText) {
+	public ScriptExecuteThread(IExecutor executor, String queryText, ISession user) {
 		this.executor = executor;
 		this.queryText = queryText;
-		this.user = SessionManagement.instance.loginSuperUser(null);
+		this.user = user;
 
 		setDaemon(true);
-		setName("Autostart execution thread");
+		setName("Script execution thread");
 	}
 
 	@Override
 	public void run() {
-		LOG.trace("Begin autostart execution...");
+		LOG.trace("Begin script execution...");
 		int tries = 0;
 
 		while (true) {
 			try {
 				executor.addQuery(queryText, "OdysseusScript", user, Context.empty());
-				LOG.trace("Autostart script executed");
+				LOG.trace("Script executed");
 				break;
 			} catch (Throwable t) {
 				tries++;
 				if (tries == MAX_TRIES) {
-					throw new RuntimeException("Autostart script failed " + MAX_TRIES + " times", t);
+					throw new RuntimeException("Script failed " + MAX_TRIES + " times", t);
 				}
 
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Could not start autostart script (try {}, waiting {} ms)", new Object[] { tries, WAIT_TIME_MILLIS, t });
+					LOG.debug("Could not start script (try {}, waiting {} ms)", new Object[] { tries, WAIT_TIME_MILLIS, t });
 				} else {
-					LOG.error("Autostart script failed in try {}. Waiting {} ms... (error was: {})", new Object[] { tries, WAIT_TIME_MILLIS, t.getClass().getSimpleName() });
+					LOG.error("Script failed in try {}. Waiting {} ms... (error was: {})", new Object[] { tries, WAIT_TIME_MILLIS, t.getClass().getSimpleName() });
 				}
 
-				setName("Autostart execution thread (fails: " + tries + ")");
+				setName("Script execution thread (fails: " + tries + ")");
 				tryWait();
 			}
 		}
