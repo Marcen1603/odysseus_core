@@ -89,9 +89,6 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	// ---------------------------------------------------
 
 	private void processLeft(T object) {
-		System.out.println("new element on LEFT input port: " + object.toString());
-		System.out.println("Matching elements:");
-		
 		rightSA.purgeElements(object, null);
 		Iterator<T> matchingElements = rightSA.query(object, Order.LeftRight);
 		ArrayList<ITimeInterval> intervalsRight = this.extractTimeIntervals(matchingElements);
@@ -114,15 +111,11 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		}
 		
 		Iterator<T> leftElements = leftSA.queryCopy(object, Order.RightLeft, true);
-		
-		System.out.println("new element on RIGHT input port: " + object.toString());
-		System.out.println("Matching elements:");
-		
+
 		ArrayList<T> replacements = new ArrayList<T>();
 
 		while (leftElements.hasNext()) {
 			T currentLeftElem = leftElements.next();
-			System.out.println(currentLeftElem.toString());
 			ArrayList<TimeInterval> intervals = TimeInterval.cutOutInterval(currentLeftElem.getMetadata(),
 					object.getMetadata());
 
@@ -133,10 +126,6 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 		if (!replacements.isEmpty()) {
 			leftSA.insertAll(replacements);
-			System.out.println("Replacements:");
-			for (T t : replacements) {
-				System.out.println(t.toString());
-			}
 		}
 		rightSA.insert(object);
 
@@ -149,7 +138,6 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 		while (matchingElements.hasNext()) {
 			T elem = matchingElements.next();
-			System.out.println(elem.toString());
 			intervals.add(elem.getMetadata());
 		}
 
