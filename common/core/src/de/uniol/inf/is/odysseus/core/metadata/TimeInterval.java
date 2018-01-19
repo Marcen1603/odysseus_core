@@ -434,7 +434,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 
 		for (ITimeInterval right : stencil) {
 			left = cutoutInterval(result, left, broken, right);
-			
+
 			if (broken.get()) {
 				break;
 			}
@@ -446,32 +446,45 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 
 		return result;
 	}
-	
+
 	/**
 	 * cuts out the time interval stencil from the time interval target
-	 * @param target the time interval to be cut out
-	 * @param stencil the time interval to remove from target
-	 * @return a list of remaining time intervals after cut out. may be empty if target is completely covered by stencil.
+	 * 
+	 * @param target
+	 *            the time interval to be cut out
+	 * @param stencil
+	 *            the time interval to remove from target
+	 * @return a list of remaining time intervals after cut out. may be empty if
+	 *         target is completely covered by stencil.
 	 */
 	public static ArrayList<TimeInterval> cutOutInterval(ITimeInterval target, ITimeInterval stencil) {
 		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
 
-		TimeInterval left = cutoutInterval(result, new TimeInterval(target.getStart(), target.getEnd()), new AtomicBoolean(false), stencil);
-		
+		TimeInterval left = cutoutInterval(result, new TimeInterval(target.getStart(), target.getEnd()),
+				new AtomicBoolean(false), stencil);
+
 		if (left != null) {
 			result.add(left);
 		}
-		
+
 		return result;
 	}
 
 	/**
 	 * 
-	 * @param result list for collecting resulting time intervals
-	 * @param left the left time interval (that should be cut out)
-	 * @param broken flag indicating if a calling loop should break because consecutive elements will not change the result due to their ordering
-	 * @param right the time interval that should be cut out from the other interval
-	 * @return the current remainder of the time interval (left) after cut out. may be null if the time interval left is totally covered by right 
+	 * @param result
+	 *            list for collecting resulting time intervals
+	 * @param left
+	 *            the left time interval (that should be cut out)
+	 * @param broken
+	 *            flag indicating if a calling loop should break because
+	 *            consecutive elements will not change the result due to their
+	 *            ordering
+	 * @param right
+	 *            the time interval that should be cut out from the other
+	 *            interval
+	 * @return the current remainder of the time interval (left) after cut out.
+	 *         may be null if the time interval left is totally covered by right
 	 */
 	private static TimeInterval cutoutInterval(ArrayList<TimeInterval> result, TimeInterval left, AtomicBoolean broken,
 			ITimeInterval right) {
@@ -501,7 +514,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 			broken.set(true);
 		}
 
-		if (TimeInterval.isZeroLength(left)) {
+		if (left != null && TimeInterval.isZeroLength(left)) {
 			left = null;
 			broken.set(true);
 		}

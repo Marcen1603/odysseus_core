@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
+import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -68,60 +69,79 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
+	protected void process_open() throws OpenFailedException {
+		transferArea.init(this, 2);
+	}
+
+	@Override
 	protected void process_next(T object, int port) {
 
 		if (port == LEFT) {
-			processLeft(object, port);
+			processLeft(object);
 		} else {
-			processRight(object, port);
+			processRight(object);
 		}
 	}
+	
 
 	// ---------------------------------------------------
 	// internal processing methods
 	// ---------------------------------------------------
 
-	private void processLeft(T object, int port) {
+	private void processLeft(T object) {
+		System.out.println("new element on LEFT input port: " + object.toString());
+		System.out.println("Matching elements:");
+		
 		rightSA.purgeElements(object, null);
 		Iterator<T> matchingElements = rightSA.query(object, Order.LeftRight);
 		ArrayList<ITimeInterval> intervalsRight = this.extractTimeIntervals(matchingElements);
 		ArrayList<TimeInterval> remainingIntervalsLeft = TimeInterval.cutOutIntervals(object.getMetadata(),
 				intervalsRight);
 
-		if (remainingIntervalsLeft.isEmpty()) {
-			leftSA.insert(object);
-		} else {
+		if (!remainingIntervalsLeft.isEmpty()) {
 			ArrayList<T> replacements = new ArrayList<T>();
 			this.projectElementToTimeIntervals(object, remainingIntervalsLeft, replacements);
 			leftSA.insertAll(replacements);
 		}
 	}
 
-	private void processRight(T object, int port) {
+	private void processRight(T object) {
 		Iterator<T> output = leftSA.extractElementsBefore(object.getMetadata().getStart());
 
 		while (output.hasNext()) {
-			transferArea.transfer(output.next());
+			T toTransfer = output.next();
+			transferArea.transfer(toTransfer);
 		}
 		
-		Iterator<T> leftElements = leftSA.query(object, Order.RightLeft);
+		Iterator<T> leftElements = leftSA.queryCopy(object, Order.RightLeft, true);
+		
+		System.out.println("new element on RIGHT input port: " + object.toString());
+		System.out.println("Matching elements:");
+		
 		ArrayList<T> replacements = new ArrayList<T>();
 
 		while (leftElements.hasNext()) {
 			T currentLeftElem = leftElements.next();
+			System.out.println(currentLeftElem.toString());
 			ArrayList<TimeInterval> intervals = TimeInterval.cutOutInterval(currentLeftElem.getMetadata(),
 					object.getMetadata());
 
 			if (!intervals.isEmpty()) {
-				leftElements.remove();
 				projectElementToTimeIntervals(currentLeftElem, intervals, replacements);
 			}
 		}
 
 		if (!replacements.isEmpty()) {
 			leftSA.insertAll(replacements);
+			System.out.println("Replacements:");
+			for (T t : replacements) {
+				System.out.println(t.toString());
+			}
 		}
 		rightSA.insert(object);
+
+		transferArea.newElement(object, 0);
+		transferArea.newElement(object, 1);
 	}
 
 	private ArrayList<ITimeInterval> extractTimeIntervals(Iterator<T> matchingElements) {
@@ -129,6 +149,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 		while (matchingElements.hasNext()) {
 			T elem = matchingElements.next();
+			System.out.println(elem.toString());
 			intervals.add(elem.getMetadata());
 		}
 

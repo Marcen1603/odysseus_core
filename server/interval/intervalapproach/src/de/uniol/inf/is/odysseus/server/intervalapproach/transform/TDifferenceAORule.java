@@ -24,7 +24,7 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.DefaultTISweepArea;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.intervalapproach.AntiJoinTIPO;
+import de.uniol.inf.is.odysseus.server.intervalapproach.DifferenceTIPO;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -44,7 +44,8 @@ public class TDifferenceAORule extends AbstractIntervalTransformationRule<Differ
 			throw new RuleException(e);
 		}
 		ITransferArea<IStreamObject<ITimeInterval>,IStreamObject<ITimeInterval>> transferArea = new TITransferArea<>();
-		AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO, left, right, transferArea);
+		//AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new AntiJoinTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO, left, right, transferArea);
+		DifferenceTIPO<ITimeInterval, IStreamObject<ITimeInterval>> po = new DifferenceTIPO<ITimeInterval, IStreamObject<ITimeInterval>>(differenceAO, left, right, transferArea);
 		defaultExecute(differenceAO, po, transformConfig, true, true);		
 	}
 
