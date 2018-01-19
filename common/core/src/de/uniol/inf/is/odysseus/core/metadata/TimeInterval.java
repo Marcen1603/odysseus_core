@@ -426,13 +426,13 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 *         time interval is fully covered by the given intervals in the
 	 *         input list.
 	 */
-	public static ArrayList<TimeInterval> cutOutIntervals(TimeInterval target, List<TimeInterval> stencil) {
+	public static ArrayList<TimeInterval> cutOutIntervals(ITimeInterval target, List<ITimeInterval> stencil) {
 		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
 
-		TimeInterval left = target;
+		TimeInterval left = new TimeInterval(target.getStart(), target.getEnd());
 		AtomicBoolean broken = new AtomicBoolean(false);
 
-		for (TimeInterval right : stencil) {
+		for (ITimeInterval right : stencil) {
 			left = cutoutInterval(result, left, broken, right);
 			
 			if (broken.get()) {
@@ -453,10 +453,10 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 * @param stencil the time interval to remove from target
 	 * @return a list of remaining time intervals after cut out. may be empty if target is completely covered by stencil.
 	 */
-	public static ArrayList<TimeInterval> cutOutInterval(TimeInterval target, TimeInterval stencil) {
+	public static ArrayList<TimeInterval> cutOutInterval(ITimeInterval target, ITimeInterval stencil) {
 		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
 
-		TimeInterval left = cutoutInterval(result, target, new AtomicBoolean(false), stencil);
+		TimeInterval left = cutoutInterval(result, new TimeInterval(target.getStart(), target.getEnd()), new AtomicBoolean(false), stencil);
 		
 		if (left != null) {
 			result.add(left);
@@ -474,7 +474,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 * @return the current remainder of the time interval (left) after cut out. may be null if the time interval left is totally covered by right 
 	 */
 	private static TimeInterval cutoutInterval(ArrayList<TimeInterval> result, TimeInterval left, AtomicBoolean broken,
-			TimeInterval right) {
+			ITimeInterval right) {
 		// handle different cases
 		if (right.getEnd().beforeOrEquals(left.getStart())) {
 			// right is completely before left: ignore right
@@ -501,7 +501,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 			broken.set(true);
 		}
 
-		if (left.isZeroLength()) {
+		if (TimeInterval.isZeroLength(left)) {
 			left = null;
 			broken.set(true);
 		}
@@ -512,7 +512,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 * 
 	 * @return true if start point and end point of the interval are equal
 	 */
-	public boolean isZeroLength() {
-		return this.getStart().equals(this.getEnd());
+	public static boolean isZeroLength(ITimeInterval interval) {
+		return interval.getStart().equals(interval.getEnd());
 	}
 }
