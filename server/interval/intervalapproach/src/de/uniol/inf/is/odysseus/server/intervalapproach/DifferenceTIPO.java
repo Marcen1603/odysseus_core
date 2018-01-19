@@ -38,14 +38,16 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		this.leftSA = leftArea;
 		this.rightSA = rightArea;
 		this.transferArea = transferArea;
-		IPredicate<? super T> predicate = ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(), EqualsPredicate.getInstance());
-        if (ao.getPredicate() != null) {
-            predicate = ComplexPredicateHelper.createOrPredicate(predicate, ComplexPredicateHelper.createNotPredicate(ao.getPredicate()));
-        }
+		IPredicate<? super T> predicate = ComplexPredicateHelper.createAndPredicate(OverlapsPredicate.getInstance(),
+				EqualsPredicate.getInstance());
+		if (ao.getPredicate() != null) {
+			predicate = ComplexPredicateHelper.createOrPredicate(predicate,
+					ComplexPredicateHelper.createNotPredicate(ao.getPredicate()));
+		}
 
-        leftArea.setQueryPredicate(predicate);
-        rightArea.setQueryPredicate(predicate);
-        setOutputSchema(ao.getOutputSchema());
+		leftArea.setQueryPredicate(predicate);
+		rightArea.setQueryPredicate(predicate);
+		setOutputSchema(ao.getOutputSchema());
 	}
 
 	@Override
@@ -83,54 +85,64 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		rightSA.purgeElements(object, null);
 		Iterator<T> matchingElements = rightSA.query(object, Order.LeftRight);
 		ArrayList<ITimeInterval> intervalsRight = this.extractTimeIntervals(matchingElements);
-		ArrayList<TimeInterval> remainingIntervalsLeft = TimeInterval.cutOutIntervals(object.getMetadata(), intervalsRight);
-		
-		if (remainingIntervalsLeft.isEmpty()){
+		ArrayList<TimeInterval> remainingIntervalsLeft = TimeInterval.cutOutIntervals(object.getMetadata(),
+				intervalsRight);
+
+		if (remainingIntervalsLeft.isEmpty()) {
 			leftSA.insert(object);
 		} else {
-			leftSA.insertAll(this.projectElementToTimeIntervals(object, remainingIntervalsLeft));
+			ArrayList<T> replacements = new ArrayList<T>();
+			this.projectElementToTimeIntervals(object, remainingIntervalsLeft, replacements);
+			leftSA.insertAll(replacements);
 		}
-
 	}
 
 	private void processRight(T object, int port) {
-		// 1. neues element in rechte sweep area einfügen
-		// 2. neues element mit jedem element e aus linker sweeparea vergleichen
-		// 2.a wenn sich ein element e mit dem neuen element zeitlich und
-		// inhaltlich überschneidet, muss das e aus der linken sweeparea
-		// entfernt und ggf.
-		// durch ein oder zwei neue Elemente ersetzt werden, die die
-		// überschneidungsfreien Zeiträume abdecken
-		// 2.b Was tun, wenn sich die elemente nicht zeitlich und/oder
-		// inhaltlich überschneiden?
-		// 3. alle element der linken sweep area in die transfer area schreiben,
-		// deren endzeitstempel kleiner ist als der startzeitstempel des neuen
-		// elements (zuerst diesen Schritt ausführen um unnötige Vergleiche zu sparen)
-	}
-	
-	private ArrayList<ITimeInterval> extractTimeIntervals(Iterator<T> matchingElements){
-		ArrayList<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+		Iterator<T> output = leftSA.extractElementsBefore(object.getMetadata().getStart());
+
+		while (output.hasNext()) {
+			transferArea.transfer(output.next());
+		}
 		
-		while(matchingElements.hasNext()){
+		Iterator<T> leftElements = leftSA.query(object, Order.RightLeft);
+		ArrayList<T> replacements = new ArrayList<T>();
+
+		while (leftElements.hasNext()) {
+			T currentLeftElem = leftElements.next();
+			ArrayList<TimeInterval> intervals = TimeInterval.cutOutInterval(currentLeftElem.getMetadata(),
+					object.getMetadata());
+
+			if (!intervals.isEmpty()) {
+				leftElements.remove();
+				projectElementToTimeIntervals(currentLeftElem, intervals, replacements);
+			}
+		}
+
+		if (!replacements.isEmpty()) {
+			leftSA.insertAll(replacements);
+		}
+		rightSA.insert(object);
+	}
+
+	private ArrayList<ITimeInterval> extractTimeIntervals(Iterator<T> matchingElements) {
+		ArrayList<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+
+		while (matchingElements.hasNext()) {
 			T elem = matchingElements.next();
 			intervals.add(elem.getMetadata());
 		}
-		
+
 		return intervals;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private ArrayList<T> projectElementToTimeIntervals(T element, ArrayList<TimeInterval> intervals){
-		ArrayList<T> projected = new ArrayList<T>();
-		
+	private void projectElementToTimeIntervals(T element, ArrayList<TimeInterval> intervals, ArrayList<T> result) {
 		for (TimeInterval interval : intervals) {
 			T copy = (T) element.clone();
 			copy.setMetadata((K) element.getMetadata().clone());
 			copy.getMetadata().setStart(interval.getStart());
 			copy.getMetadata().setEnd(interval.getEnd());
-			projected.add(copy);
+			result.add(copy);
 		}
-		
-		return projected;
 	}
 }
