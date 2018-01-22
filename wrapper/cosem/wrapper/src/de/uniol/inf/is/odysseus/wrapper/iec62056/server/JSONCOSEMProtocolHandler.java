@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.offis.estream.shared.iec62506.model.ProcessedData;
-import de.offis.estream.shared.iec62506.model.Result;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
@@ -30,6 +28,8 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 import de.uniol.inf.is.odysseus.core.server.metadata.ILatency;
+import de.uniol.inf.is.odysseus.shared.model.ProcessedData;
+import de.uniol.inf.is.odysseus.shared.model.Result;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.AbstractCOSEMParser;
 import de.uniol.inf.is.odysseus.wrapper.iec62056.parser.JSONCOSEMParser;
 
