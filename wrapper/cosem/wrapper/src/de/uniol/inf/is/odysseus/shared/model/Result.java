@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.iec62056.model;
+package de.uniol.inf.is.odysseus.shared.model;
 
 import java.util.Map;
 
@@ -24,14 +24,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 	"maxlstart",
 	"lend",
 	"latency",
-//	"datarates"
 })
 public abstract class Result {
-	
-/* 
- * Further information about odysseus meta data can be found here: 
- * https://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Meta+data 
- */	
 	
 	@JsonProperty("timeinterval_start")
 	private long timeintervalStart;
@@ -50,9 +44,6 @@ public abstract class Result {
 	
 	@JsonProperty("latency")
 	private long latency;
-	
-//	@JsonProperty("datarates")
-//	private Map<String, Double> datarates;
 	
 	@JsonGetter
 	public long getTimeintervalStart() {
@@ -84,11 +75,6 @@ public abstract class Result {
 		return latency;
 	}
 
-//	@JsonGetter
-//	public Map<String, Double> getDatarates() {
-//		return datarates;
-//	}
-
 	@JsonSetter
 	public void setTimeintervalStart(long timeintervalStart) {
 		this.timeintervalStart = timeintervalStart;
@@ -119,16 +105,9 @@ public abstract class Result {
 		this.latency = latency;
 	}
 
-//	@JsonSetter
-//	public void setDatarate(Map<String, Double> datarates) {
-//		this.datarates = datarates;
-//	}
-	
 	/**
 	 * Sets values for json properties that are defined by the class.
-	 * 
-	 * @param values
-	 *            a mapping from json properties to their values
+	 * @param values a mapping from json properties to their values
 	 */
 	public abstract void setValues(Map<String, Object> values);
 
@@ -145,7 +124,6 @@ public abstract class Result {
 	 * ...
 	 * 
 	 * </pre>
-	 * 
 	 * @return describes a mapping from its json properties to a tuple schema
 	 */
 	@JsonIgnore

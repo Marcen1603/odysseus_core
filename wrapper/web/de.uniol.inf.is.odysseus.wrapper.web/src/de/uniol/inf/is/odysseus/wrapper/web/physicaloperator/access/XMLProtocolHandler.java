@@ -15,11 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -203,6 +205,13 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             XMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
     }
+    
+	@Override
+	public void process(String[] message) {
+		for (String msg : message) {
+			process(new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8)));
+		}
+	}
 
     private T parseXml(InputStream input) throws IOException {
         // Deliver Input from former runs
