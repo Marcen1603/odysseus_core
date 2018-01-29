@@ -36,6 +36,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionaryWritable;
 import de.uniol.inf.is.odysseus.core.planmanagement.query.LogicalPlan;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractAccessAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TopAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -44,27 +45,22 @@ import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.ruleengine.rule.AbstractRule;
 import de.uniol.inf.is.odysseus.transform.engine.TransformationWorkingMemory;
 
-public abstract class AbstractTransformationRule<T> extends
-		AbstractRule<T, TransformationConfiguration> implements
-		ITransformationRule {
+public abstract class AbstractTransformationRule<T> extends AbstractRule<T, TransformationConfiguration>
+		implements ITransformationRule {
 
 	public static final String OPERATOR_IDS_SET = "OperatorIDsSet";
+	public static final String ACCESS_AOS_SET = "AccessAOsSet";
 
-	final static Logger LOG = LoggerFactory
-			.getLogger(AbstractTransformationRule.class);
+	final static Logger LOG = LoggerFactory.getLogger(AbstractTransformationRule.class);
 
 	protected ISession getCaller() {
-		return ((TransformationWorkingMemory) this.getCurrentWorkingMemory())
-				.getCaller();
+		return ((TransformationWorkingMemory) this.getCurrentWorkingMemory()).getCaller();
 	}
 
 	protected IDataDictionaryWritable getDataDictionary() {
-		return (IDataDictionaryWritable) ((TransformationWorkingMemory) this
-				.getCurrentWorkingMemory()).getDataDictionary();
+		return (IDataDictionaryWritable) ((TransformationWorkingMemory) this.getCurrentWorkingMemory())
+				.getDataDictionary();
 	}
-
-	static Logger logger = LoggerFactory
-			.getLogger(AbstractTransformationRule.class);
 
 	protected boolean isLastOne(ILogicalOperator operator) {
 		if (operator.getSubscriptions().size() == 1) {
@@ -76,9 +72,8 @@ public abstract class AbstractTransformationRule<T> extends
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void defaultExecute(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert, boolean ignoreSinkInput,
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical,
+			TransformationConfiguration config, boolean retract, boolean insert, boolean ignoreSinkInput,
 			boolean rename) {
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("Replacing " + logical + " with " + physical);
@@ -93,8 +88,7 @@ public abstract class AbstractTransformationRule<T> extends
 
 		if (LOG.isTraceEnabled()) {
 			if (physical instanceof ISubscribable) {
-				LOG.trace("Subscriptions of phyiscal "
-						+ ((ISubscribable) physical).getSubscriptions());
+				LOG.trace("Subscriptions of phyiscal " + ((ISubscribable) physical).getSubscriptions());
 			}
 
 		}
@@ -107,11 +101,10 @@ public abstract class AbstractTransformationRule<T> extends
 		}
 	}
 
-	protected void updatePhysicalOperator(ILogicalOperator logical,
-			IPhysicalOperator physical, boolean rename) {
+	protected void updatePhysicalOperator(ILogicalOperator logical, IPhysicalOperator physical, boolean rename) {
 		physical.setOutputSchema(logical.getOutputSchema());
 		if (logical.getOutputSchema() == null) {
-			logger.warn("Operator " + logical + " has not output schema");
+			LOG.warn("Operator " + logical + " has not output schema");
 		}
 		if (rename) {
 			physical.setName(logical.getName());
@@ -121,129 +114,133 @@ public abstract class AbstractTransformationRule<T> extends
 		physical.getParameterInfos().putAll(logical.getParameterInfos());
 	}
 
-	protected void handleOperatorID(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config) {
+	protected void handleOperatorID(ILogicalOperator logical, IPhysicalOperator physical,
+			TransformationConfiguration config) {
 		Resource id = logical.getUniqueIdentifier() == null ? null
-				: new Resource(getCaller().getUser(),
-						logical.getUniqueIdentifier());
+				: new Resource(getCaller().getUser(), logical.getUniqueIdentifier());
 
 		if (id != null) {
 			if (!config.isVirtualTransformation()) {
 
-				IPhysicalOperator op = getDataDictionary().getOperator(id,
-						getCaller());
+				IPhysicalOperator op = getDataDictionary().getOperator(id, getCaller());
 				if (op != null && !(op == physical)) {
 					// throw only an exception if this operator is not the same
-					throw new TransformationException("Operator with id " + id
-							+ " is already registered.");
+					throw new TransformationException("Operator with id " + id + " is already registered.");
 				} else {
 					if (op == null) {
-						getDataDictionary().setOperator(id, physical);
-						@SuppressWarnings("unchecked")
-						List<Resource> newDefinedRessources = (List<Resource>) this
-								.getCurrentWorkingMemory().getFromKeyValueMap(
-										OPERATOR_IDS_SET);
-						if (newDefinedRessources == null) {
-							newDefinedRessources = new LinkedList<Resource>();
-							this.getCurrentWorkingMemory().addToKeyValueMap(
-									OPERATOR_IDS_SET, newDefinedRessources);
-						}
-						newDefinedRessources.add(id);
+						setOPeratorId(physical, id);
 					}
 					for (IOperatorOwner owner : logical.getOwner()) {
 						physical.addUniqueId(owner, id);
 					}
 				}
 			} else {
-				logger.debug("Virtual Transformation: IDs ignored");
+				LOG.debug("Virtual Transformation: IDs ignored");
 				id = null;
 			}
 		}
 
 	}
 
-	protected void defaultExecute(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert) {
+	private void setOPeratorId(IPhysicalOperator physical, Resource id) {
+		getDataDictionary().setOperator(id, physical);
+		@SuppressWarnings("unchecked")
+		List<Resource> newDefinedRessources = (List<Resource>) this.getCurrentWorkingMemory()
+				.getFromKeyValueMap(OPERATOR_IDS_SET);
+		if (newDefinedRessources == null) {
+			newDefinedRessources = new LinkedList<Resource>();
+			this.getCurrentWorkingMemory().addToKeyValueMap(OPERATOR_IDS_SET, newDefinedRessources);
+		}
+		newDefinedRessources.add(id);
+	}
+
+	protected void putAccessOps(AbstractAccessAO operator, ISource<?> inputPO) {
+		// Remark: This is currently not used, could be used for transformation statistics 
+		@SuppressWarnings("unchecked")
+		List<AbstractAccessAO> operatorsPut = (List<AbstractAccessAO>) this.getCurrentWorkingMemory()
+				.getFromKeyValueMap(ACCESS_AOS_SET);
+		
+		if (operatorsPut == null) {
+			operatorsPut = new ArrayList<AbstractAccessAO>();
+			this.getCurrentWorkingMemory().addToKeyValueMap(ACCESS_AOS_SET, operatorsPut);
+		}
+		
+		operatorsPut.add(operator);
+		
+		getDataDictionary().putAccessPO(operator.getAccessAOName(), inputPO);
+		getDataDictionary().putAccessAO(operator);
+	}
+
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical,
+			TransformationConfiguration config, boolean retract, boolean insert) {
 		defaultExecute(logical, physical, config, retract, insert, false, true);
 	}
 
-	protected void defaultExecute(ILogicalOperator logical,
-			IPhysicalOperator physical, TransformationConfiguration config,
-			boolean retract, boolean insert, boolean rename) {
-		defaultExecute(logical, physical, config, retract, insert, false,
-				rename);
+	protected void defaultExecute(ILogicalOperator logical, IPhysicalOperator physical,
+			TransformationConfiguration config, boolean retract, boolean insert, boolean rename) {
+		defaultExecute(logical, physical, config, retract, insert, false, rename);
 	}
 
-	protected void replace(ILogicalOperator oldOperator,
-			IPhysicalOperator newOperator,
+	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator,
 			TransformationConfiguration transformationConfig) {
 		replace(oldOperator, newOperator, transformationConfig, false);
 	}
 
-	protected void replace(ILogicalOperator oldOperator,
-			ILogicalOperator newOperator,
+	protected void replace(ILogicalOperator oldOperator, ILogicalOperator newOperator,
 			TransformationConfiguration transformationConfig) {
-		transformationConfig.getTransformationHelper().replace(oldOperator,
-				newOperator);
+		transformationConfig.getTransformationHelper().replace(oldOperator, newOperator);
 	}
 
-	protected void replace(ILogicalOperator oldOperator,
-			IPhysicalOperator newOperator,
-			TransformationConfiguration transformationConfig,
-			boolean ignoreSinkInput) {
+	protected void replace(ILogicalOperator oldOperator, IPhysicalOperator newOperator,
+			TransformationConfiguration transformationConfig, boolean ignoreSinkInput) {
 
 		Collection<ILogicalOperator> toUpdate = new ArrayList<ILogicalOperator>();
 		if (newOperator.isPipe()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (IPipe<?, ?>) newOperator, ignoreSinkInput);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (IPipe<?, ?>) newOperator,
+					ignoreSinkInput);
 		} else if (newOperator.isSource()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (ISource<?>) newOperator);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISource<?>) newOperator);
 		} else if (newOperator.isSink()) {
-			toUpdate = transformationConfig.getTransformationHelper().replace(
-					oldOperator, (ISink<?>) newOperator, ignoreSinkInput);
+			toUpdate = transformationConfig.getTransformationHelper().replace(oldOperator, (ISink<?>) newOperator,
+					ignoreSinkInput);
 		} else {
-			throw new RuntimeException(
-					new TransformationException(
-							"replace in rule \""
-									+ getName()
-									+ "\" failed because the new operator is not an ISink, ISource or IPipe!"));
+			throw new RuntimeException(new TransformationException("replace in rule \"" + getName()
+					+ "\" failed because the new operator is not an ISink, ISource or IPipe!"));
 		}
 		for (ILogicalOperator o : toUpdate) {
 			update(o);
 		}
 	}
 
-	final protected TimestampAO insertTimestampAO(ILogicalOperator operator){
-		return insertTimestampAO(operator,null);
+	final protected TimestampAO insertTimestampAO(ILogicalOperator operator) {
+		return insertTimestampAO(operator, null);
 	}
-	
-	
+
 	/**
 	 * Allows to insert a timestamp operator after the given operator
-	 * @param operator the operator after that a timestamp operator should be set
-	 * @param dateFormat an optional string that describes in case of string based timestamps in input the java format of the timestamp attribute value, can be null
+	 * 
+	 * @param operator
+	 *            the operator after that a timestamp operator should be set
+	 * @param dateFormat
+	 *            an optional string that describes in case of string based
+	 *            timestamps in input the java format of the timestamp attribute
+	 *            value, can be null
 	 * @return
 	 */
-	protected TimestampAO insertTimestampAO(ILogicalOperator operator,
-			String dateFormat) {
+	protected TimestampAO insertTimestampAO(ILogicalOperator operator, String dateFormat) {
 		TimestampAO timestampAO = new TimestampAO();
 		timestampAO.setDateFormat(dateFormat);
 		if (operator.getOutputSchema() != null) {
 
 			for (SDFAttribute attr : operator.getOutputSchema()) {
-				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(
-						attr.getDatatype().getURI())
+				if (SDFDatatype.START_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI())
 						|| SDFDatatype.START_TIMESTAMP_STRING.toString()
 								.equalsIgnoreCase(attr.getDatatype().getURI())) {
 					timestampAO.setStartTimestamp(attr);
 				}
 
-				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(
-						attr.getDatatype().getURI())
-						|| SDFDatatype.END_TIMESTAMP_STRING.toString()
-								.equalsIgnoreCase(attr.getDatatype().getURI())) {
+				if (SDFDatatype.END_TIMESTAMP.toString().equalsIgnoreCase(attr.getDatatype().getURI())
+						|| SDFDatatype.END_TIMESTAMP_STRING.toString().equalsIgnoreCase(attr.getDatatype().getURI())) {
 					timestampAO.setEndTimestamp(attr);
 				}
 
