@@ -62,8 +62,6 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 				.getDataDictionary();
 	}
 
-	static Logger logger = LoggerFactory.getLogger(AbstractTransformationRule.class);
-
 	protected boolean isLastOne(ILogicalOperator operator) {
 		if (operator.getSubscriptions().size() == 1) {
 			if (operator.getSubscriptions().iterator().next().getSink() instanceof TopAO) {
@@ -106,7 +104,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 	protected void updatePhysicalOperator(ILogicalOperator logical, IPhysicalOperator physical, boolean rename) {
 		physical.setOutputSchema(logical.getOutputSchema());
 		if (logical.getOutputSchema() == null) {
-			logger.warn("Operator " + logical + " has not output schema");
+			LOG.warn("Operator " + logical + " has not output schema");
 		}
 		if (rename) {
 			physical.setName(logical.getName());
@@ -137,7 +135,7 @@ public abstract class AbstractTransformationRule<T> extends AbstractRule<T, Tran
 					}
 				}
 			} else {
-				logger.debug("Virtual Transformation: IDs ignored");
+				LOG.debug("Virtual Transformation: IDs ignored");
 				id = null;
 			}
 		}
