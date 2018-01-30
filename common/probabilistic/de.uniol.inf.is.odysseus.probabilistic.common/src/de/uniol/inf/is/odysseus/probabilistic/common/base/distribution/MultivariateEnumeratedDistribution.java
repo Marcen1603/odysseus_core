@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package de.uniol.inf.is.odysseus.probabilistic.common.base.distribution;
 
@@ -18,41 +18,40 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.MathArrays;
-import org.apache.commons.math3.util.Pair;
 
 /**
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
 public class MultivariateEnumeratedDistribution implements IMultivariateDistribution {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7901800746273849189L;
     private final RandomGenerator random = new Well19937c();
-    private List<Pair<double[], Double>> sampleSpace;
+    private  List<Sample> sampleSpace;
 
     public MultivariateEnumeratedDistribution(final double[] singleton, final double probability) {
-        this.sampleSpace = new ArrayList<Pair<double[], Double>>(1);
-        this.sampleSpace.add(new Pair<double[], Double>(singleton, probability));
+        this.sampleSpace = new ArrayList<>(1);
+        this.sampleSpace.add(new Sample(singleton, probability));
     }
 
     /**
-     * 
+     *
      * @param rng
      * @param singletons
      * @param probabilities
      */
     public MultivariateEnumeratedDistribution(final double[][] singletons, final double[] probabilities) {
-        this.sampleSpace = new ArrayList<Pair<double[], Double>>(singletons.length);
+        this.sampleSpace = new ArrayList<>(singletons.length);
         for (int i = 0; i < singletons.length; i++) {
-            this.sampleSpace.add(new Pair<double[], Double>(singletons[i], probabilities[i]));
+            this.sampleSpace.add(new Sample(singletons[i], probabilities[i]));
         }
 
     }
 
-    public MultivariateEnumeratedDistribution(final List<Pair<double[], Double>> sampleSpace) {
+    public MultivariateEnumeratedDistribution(final List<Sample> sampleSpace) {
         this.sampleSpace = sampleSpace;
     }
 
@@ -60,9 +59,9 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      * @param extendedMultivariateEnumeratedRealDistribution
      */
     public MultivariateEnumeratedDistribution(final MultivariateEnumeratedDistribution copy) {
-        this.sampleSpace = new ArrayList<Pair<double[], Double>>(copy.sampleSpace.size());
-        for (final Pair<double[], Double> sample : copy.sampleSpace) {
-            this.sampleSpace.add(new Pair<double[], Double>(MathArrays.copyOf(sample.getKey()), sample.getValue()));
+        this.sampleSpace = new ArrayList<>(copy.sampleSpace.size());
+        for (final Sample sample : copy.sampleSpace) {
+            this.sampleSpace.add(new Sample(MathArrays.copyOf(sample.getKey()), sample.getValue()));
         }
 
     }
@@ -71,7 +70,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     public double probability(final double[] a) {
         double probability = 0;
 
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        for (final Sample sample : this.sampleSpace) {
             boolean inBound = true;
             for (int d = 0; d < a.length; d++) {
                 if (sample.getKey()[d] > a[d]) {
@@ -92,17 +91,16 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
         double probability = 0;
         if (Arrays.equals(a, b)) {
             // This is the PMF
-            for (final Pair<double[], Double> sample : this.sampleSpace) {
+            for (final Sample sample : this.sampleSpace) {
                 if (((a == null) && (sample.getKey() == null)) || ((a != null) && Arrays.equals(a, sample.getKey()))) {
                     probability += sample.getValue();
                 }
             }
-        }
-        else {
-            for (final Pair<double[], Double> sample : this.sampleSpace) {
+        } else {
+            for (final Sample sample : this.sampleSpace) {
                 boolean inBound = true;
                 for (int d = 0; d < a.length; d++) {
-                    if ((sample.getKey()[d] <= a[d]) || (sample.getKey()[d] > b[d])) {
+                    if ((sample.getKey()[d] < a[d]) || (sample.getKey()[d] > b[d])) {
                         inBound = false;
                         break;
                     }
@@ -138,7 +136,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public double[] sample() {
-        final double randomValue = random.nextDouble();
+        final double randomValue = this.random.nextDouble();
         double sum = 0;
 
         for (int i = 0; i < this.sampleSpace.size(); i++) {
@@ -160,14 +158,14 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return {@code sum(singletons[i] * probabilities[i])}
      */
     @Override
     public double[] getMean() {
-        final double[] mean = new double[this.getDimension()];
+        final double[] mean = new double[getDimension()];
 
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        for (final Sample sample : this.sampleSpace) {
             for (int i = 0; i < sample.getKey().length; i++) {
                 mean[i] += sample.getValue() * sample.getKey()[i];
             }
@@ -178,21 +176,21 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @return {@code sum((singletons[i] - mean) ^ 2 * probabilities[i])}
      */
     @Override
     public double[][] getVariance() {
-        final double[] mean = new double[this.getDimension()];
-        final double[] meanOfSquares = new double[this.getDimension()];
-        final double[][] result = new double[this.getDimension()][this.getDimension()];
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        final double[] mean = new double[getDimension()];
+        final double[] meanOfSquares = new double[getDimension()];
+        final double[][] result = new double[getDimension()][getDimension()];
+        for (final Sample sample : this.sampleSpace) {
             for (int i = 0; i < sample.getKey().length; i++) {
                 mean[i] += sample.getValue() * sample.getKey()[i];
                 meanOfSquares[i] += sample.getValue() * sample.getKey()[i] * sample.getKey()[i];
             }
         }
-        for (int i = 0; i < this.getDimension(); i++) {
+        for (int i = 0; i < getDimension(); i++) {
             result[i][i] = meanOfSquares[i] - (mean[i] * mean[i]);
         }
         return result;
@@ -200,15 +198,15 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the lowest value with non-zero probability.
-     * 
+     *
      * @return the lowest value with non-zero probability.
      */
     public double[] getSupportLowerBound() {
-        final double[] min = new double[this.getDimension()];
+        final double[] min = new double[getDimension()];
         Arrays.fill(min, Double.POSITIVE_INFINITY);
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        for (final Sample sample : this.sampleSpace) {
             for (int i = 0; i < sample.getKey().length; i++) {
                 if ((sample.getKey()[i] < min[i]) && (sample.getValue() > 0)) {
                     min[i] = sample.getKey()[i];
@@ -221,15 +219,15 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the highest value with non-zero probability.
-     * 
+     *
      * @return the highest value with non-zero probability.
      */
     public double[] getSupportUpperBound() {
-        final double[] max = new double[this.getDimension()];
+        final double[] max = new double[getDimension()];
         Arrays.fill(max, Double.NEGATIVE_INFINITY);
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        for (final Sample sample : this.sampleSpace) {
             for (int i = 0; i < sample.getKey().length; i++) {
                 if ((sample.getKey()[i] > max[i]) && (sample.getValue() > 0)) {
                     max[i] = sample.getKey()[i];
@@ -242,9 +240,9 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * The support of this distribution includes the lower bound.
-     * 
+     *
      * @return {@code true}
      */
     public boolean isSupportLowerBoundInclusive() {
@@ -253,9 +251,9 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * The support of this distribution includes the upper bound.
-     * 
+     *
      * @return {@code true}
      */
     public boolean isSupportUpperBoundInclusive() {
@@ -264,9 +262,9 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * The support of this distribution is connected.
-     * 
+     *
      * @return {@code true}
      */
     public boolean isSupportConnected() {
@@ -278,15 +276,15 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public void restrict(final RealMatrix restrict) {
-        final ArrayList<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(this.sampleSpace.size());
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        final ArrayList<Sample> newSampleSpace = new ArrayList<>(this.sampleSpace.size());
+        for (final Sample sample : this.sampleSpace) {
             final RealMatrix singletonMatrix = restrict.multiply(MatrixUtils.createRealDiagonalMatrix(sample.getKey())).multiply(restrict.transpose());
             final double[] singleton = new double[singletonMatrix.getRowDimension()];
 
             for (int d = 0; d < singletonMatrix.getRowDimension(); d++) {
                 singleton[d] = singletonMatrix.getEntry(d, d);
             }
-            newSampleSpace.add(new Pair<double[], Double>(singleton, sample.getValue()));
+            newSampleSpace.add(new Sample(singleton, sample.getValue()));
         }
         this.sampleSpace = newSampleSpace;
     }
@@ -296,23 +294,22 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution add(final Double number) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
 
-        final Map<RealMatrix, Double> singletons = new HashMap<RealMatrix, Double>(thisSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
+        final Map<RealMatrix, Double> singletons = new HashMap<>(thisSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
             final RealMatrix thisSingleton = new Array2DRowRealMatrix(thisSample.getKey());
             final RealMatrix value = thisSingleton.scalarAdd(number);
             if (singletons.containsKey(value)) {
                 singletons.put(value, singletons.get(value) + (thisSample.getValue()));
-            }
-            else {
+            } else {
                 singletons.put(value, thisSample.getValue());
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealMatrix, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().getColumn(0), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().getColumn(0), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -330,23 +327,22 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution multiply(final Double number) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
 
-        final Map<RealMatrix, Double> singletons = new HashMap<RealMatrix, Double>(thisSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
+        final Map<RealMatrix, Double> singletons = new HashMap<>(thisSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
             final RealMatrix thisSingleton = new Array2DRowRealMatrix(thisSample.getKey());
             final RealMatrix value = thisSingleton.scalarMultiply(number);
             if (singletons.containsKey(value)) {
                 singletons.put(value, singletons.get(value) + (thisSample.getValue()));
-            }
-            else {
+            } else {
                 singletons.put(value, thisSample.getValue());
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealMatrix, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().getColumn(0), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().getColumn(0), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -364,27 +360,26 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution add(final IMultivariateDistribution other) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
-        final List<Pair<double[], Double>> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
+        final List<Sample> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
 
-        final Map<RealVector, Double> singletons = new HashMap<RealVector, Double>(thisSampleSpace.size() * otherSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
-            for (final Pair<double[], Double> otherSample : otherSampleSpace) {
+        final Map<RealVector, Double> singletons = new HashMap<>(thisSampleSpace.size() * otherSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
+            for (final Sample otherSample : otherSampleSpace) {
                 final RealVector thisSingleton = new ArrayRealVector(thisSample.getKey());
                 final RealVector otherSingleton = new ArrayRealVector(otherSample.getKey());
                 final RealVector value = thisSingleton.add(otherSingleton);
                 if (singletons.containsKey(value)) {
                     singletons.put(value, singletons.get(value) + (thisSample.getValue() * otherSample.getValue()));
-                }
-                else {
+                } else {
                     singletons.put(value, thisSample.getValue() * otherSample.getValue());
                 }
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealVector, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().toArray(), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().toArray(), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -394,27 +389,26 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution subtract(final IMultivariateDistribution other) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
-        final List<Pair<double[], Double>> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
+        final List<Sample> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
 
-        final Map<RealVector, Double> singletons = new HashMap<RealVector, Double>(thisSampleSpace.size() * otherSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
-            for (final Pair<double[], Double> otherSample : otherSampleSpace) {
+        final Map<RealVector, Double> singletons = new HashMap<>(thisSampleSpace.size() * otherSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
+            for (final Sample otherSample : otherSampleSpace) {
                 final RealVector thisSingleton = new ArrayRealVector(thisSample.getKey());
                 final RealVector otherSingleton = new ArrayRealVector(otherSample.getKey());
                 final RealVector value = thisSingleton.subtract(otherSingleton);
                 if (singletons.containsKey(value)) {
                     singletons.put(value, singletons.get(value) + (thisSample.getValue() * otherSample.getValue()));
-                }
-                else {
+                } else {
                     singletons.put(value, thisSample.getValue() * otherSample.getValue());
                 }
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealVector, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().toArray(), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().toArray(), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -424,27 +418,26 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution multiply(final IMultivariateDistribution other) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
-        final List<Pair<double[], Double>> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
+        final List<Sample> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
 
-        final Map<RealVector, Double> singletons = new HashMap<RealVector, Double>(thisSampleSpace.size() * otherSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
-            for (final Pair<double[], Double> otherSample : otherSampleSpace) {
+        final Map<RealVector, Double> singletons = new HashMap<>(thisSampleSpace.size() * otherSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
+            for (final Sample otherSample : otherSampleSpace) {
                 final RealVector thisSingleton = new ArrayRealVector(thisSample.getKey());
                 final RealVector otherSingleton = new ArrayRealVector(otherSample.getKey());
                 final RealVector value = thisSingleton.ebeMultiply(otherSingleton);
                 if (singletons.containsKey(value)) {
                     singletons.put(value, singletons.get(value) + (thisSample.getValue() * otherSample.getValue()));
-                }
-                else {
+                } else {
                     singletons.put(value, thisSample.getValue() * otherSample.getValue());
                 }
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealVector, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().toArray(), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().toArray(), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -454,27 +447,26 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
      */
     @Override
     public IMultivariateDistribution divide(final IMultivariateDistribution other) {
-        final List<Pair<double[], Double>> thisSampleSpace = this.sampleSpace;
-        final List<Pair<double[], Double>> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
+        final List<Sample> thisSampleSpace = this.sampleSpace;
+        final List<Sample> otherSampleSpace = ((MultivariateEnumeratedDistribution) other).sampleSpace;
 
-        final Map<RealVector, Double> singletons = new HashMap<RealVector, Double>(thisSampleSpace.size() * otherSampleSpace.size());
-        for (final Pair<double[], Double> thisSample : thisSampleSpace) {
-            for (final Pair<double[], Double> otherSample : otherSampleSpace) {
+        final Map<RealVector, Double> singletons = new HashMap<>(thisSampleSpace.size() * otherSampleSpace.size());
+        for (final Sample thisSample : thisSampleSpace) {
+            for (final Sample otherSample : otherSampleSpace) {
                 final RealVector thisSingleton = new ArrayRealVector(thisSample.getKey());
                 final RealVector otherSingleton = new ArrayRealVector(otherSample.getKey());
                 final RealVector value = thisSingleton.ebeDivide(otherSingleton);
                 if (singletons.containsKey(value)) {
                     singletons.put(value, singletons.get(value) + (thisSample.getValue() * otherSample.getValue()));
-                }
-                else {
+                } else {
                     singletons.put(value, thisSample.getValue() * otherSample.getValue());
                 }
             }
         }
-        final List<Pair<double[], Double>> newSampleSpace = new ArrayList<Pair<double[], Double>>(singletons.size());
+        final List<Sample> newSampleSpace = new ArrayList<>(singletons.size());
 
         for (final Entry<RealVector, Double> entry : singletons.entrySet()) {
-            newSampleSpace.add(new Pair<double[], Double>(entry.getKey().toArray(), entry.getValue()));
+            newSampleSpace.add(new Sample(entry.getKey().toArray(), entry.getValue()));
         }
         return new MultivariateEnumeratedDistribution(newSampleSpace);
     }
@@ -486,7 +478,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     public String toString() {
         final StringBuilder sb = new StringBuilder();
 
-        for (final Pair<double[], Double> sample : this.sampleSpace) {
+        for (final Sample sample : this.sampleSpace) {
             if (sb.length() > 0) {
                 sb.append(",");
             }
@@ -504,7 +496,12 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = (prime * result) + ((this.sampleSpace == null) ? 0 : this.sampleSpace.hashCode());
+        result = (prime * result);
+        if (this.sampleSpace != null) {
+            for (final Sample sample : this.sampleSpace) {
+                result += Arrays.hashCode(sample.getKey()) + sample.getValue().hashCode();
+            }
+        }
         return result;
     }
 
@@ -527,8 +524,7 @@ public class MultivariateEnumeratedDistribution implements IMultivariateDistribu
             if (other.sampleSpace != null) {
                 return false;
             }
-        }
-        else if (!this.sampleSpace.equals(other.sampleSpace)) {
+        } else if (!this.sampleSpace.equals(other.sampleSpace)) {
             return false;
         }
         return true;

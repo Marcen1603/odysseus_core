@@ -55,8 +55,13 @@ public class BooleanHandler  extends AbstractDataHandler<Boolean> {
 
 	@Override
 	public Boolean readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
         }
         if (string.equalsIgnoreCase("true")){
         	return Boolean.TRUE;

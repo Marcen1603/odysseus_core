@@ -2,7 +2,6 @@ package de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.text.DecimalFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.conversion.CSVParser;
 import de.uniol.inf.is.odysseus.core.datahandler.IStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
@@ -22,10 +20,6 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractCSVHandler.class);
 
-	protected char delimiter;
-	protected Character textDelimiter = null;
-	protected DecimalFormat floatingFormatter;
-	protected DecimalFormat numberFormatter;
 	protected boolean trim = false;
 	protected boolean addLineNumber = false;
 	protected String delimiterString;
@@ -33,17 +27,9 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 
 	private boolean notWrittenFirstLine = true;
 
-	public static final String DELIMITER = "delimiter";
-	public static final String CSV_DELIMITER = "csv.delimiter";
-	public static final String TEXT_DELIMITER = "textdelimiter";
-	public static final String CSV_TEXT_DELIMITER = "csv.textdelimiter";
-	public static final String CSV_FLOATING_FORMATTER = "csv.floatingformatter";
-	public static final String CSV_NUMBER_FORMATTER = "csv.numberformatter";
 	public static final String CSV_WRITE_METADATA = "csv.writemetadata";
 	public static final String CSV_TRIM = "csv.trim";
 	public static final String ADDLINENUMBERS = "addlinenumber";
-	public static final String NULL_VALUE_TEXT = "nullvaluetext";
-	public static final String CSV_WRITE_HEADING = "csv.writeheading";
 
 	public AbstractCSVHandler() {
 		super();
@@ -63,22 +49,9 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 	}
 
 	private void init_internal() {
+		
+		
 		OptionMap options = optionsMap;
-		if (options.containsKey(DELIMITER)) {
-			delimiter = CSVParser.determineDelimiter(options.get(DELIMITER));
-		} else if (options.containsKey(CSV_DELIMITER)) {
-			delimiter = CSVParser.determineDelimiter(options.get(CSV_DELIMITER));
-		} else {
-			delimiter = ',';
-		}
-		// only calc once
-		delimiterString = Character.toString(delimiter);
-		if (options.containsKey(CSV_FLOATING_FORMATTER)) {
-			floatingFormatter = new DecimalFormat(options.get(CSV_FLOATING_FORMATTER));
-		}
-		if (options.containsKey(CSV_NUMBER_FORMATTER)) {
-			numberFormatter = new DecimalFormat(options.get(CSV_NUMBER_FORMATTER));
-		}
 		if (options.containsKey(CSV_WRITE_METADATA)) {
 			INFOSERVICE.error(CSV_WRITE_METADATA
 					+ " no longer supported. Use 'writeMetadata' in SENDER instead. Meta data will not be written!",
@@ -91,13 +64,10 @@ abstract public class AbstractCSVHandler<T extends IStreamObject<IMetaAttribute>
 			addLineNumber = Boolean.parseBoolean(options.get(ADDLINENUMBERS));
 		}
 
-		writeOptions = new WriteOptions(delimiter, textDelimiter, floatingFormatter, numberFormatter);
+		// only calc once
+		delimiterString = Character.toString(getConversionOptions().getDelimiter());
 
-		if (options.containsKey(NULL_VALUE_TEXT)) {
-			writeOptions.setNullValueString(options.get(NULL_VALUE_TEXT));
-		}
-
-		writeOptions.setWriteHeading(options.getBoolean(CSV_WRITE_HEADING, false));
+		writeOptions = new WriteOptions(optionsMap);
 	}
 
 	@Override

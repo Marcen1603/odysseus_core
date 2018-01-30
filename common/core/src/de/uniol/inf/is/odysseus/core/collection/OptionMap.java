@@ -125,6 +125,11 @@ public class OptionMap {
 		String v = get(key);
 		return v != null ? v.toCharArray()[0] : defaultValue;
 	}
+	
+	public Character getCharacter(String key, Character defaultValue) {
+		String v = get(key);
+		return v != null ? new Character(v.toCharArray()[0]) : defaultValue;
+	}
 
     public short getShort(String key, short defaultValue) {
         String v = get(key);

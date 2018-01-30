@@ -5,15 +5,15 @@ import java.util.Map;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
-import de.uniol.inf.is.odysseus.spatial.datatype.LocationMeasurement;
+import de.uniol.inf.is.odysseus.spatial.datatype.TrajectoryElement;
 
 public interface IMovingObjectLocationPredictor {
 
-	public void addLocation(LocationMeasurement locationMeasurement,
+	public void addLocation(TrajectoryElement trajectoryElement,
 			IStreamObject<? extends IMetaAttribute> streamElement);
 
-	public LocationMeasurement predictLocation(String movingObjectId, PointInTime time);
+	public TrajectoryElement predictLocation(String movingObjectId, PointInTime time);
 
-	public Map<String, LocationMeasurement> predictAllLocations(PointInTime time);
+	public Map<String, TrajectoryElement> predictAllLocations(PointInTime time);
 
 }

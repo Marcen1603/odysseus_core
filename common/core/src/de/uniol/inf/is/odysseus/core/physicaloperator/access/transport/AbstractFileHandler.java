@@ -98,6 +98,15 @@ abstract public class AbstractFileHandler extends AbstractTransportHandler {
 	}
 
 	@Override
+	public boolean isDone() {
+		try {
+			return in.available() == 0;
+		} catch (IOException e) {
+			return true;
+		}
+	}
+	
+	@Override
 	public OutputStream getOutputStream() {
 		return out;
 	}

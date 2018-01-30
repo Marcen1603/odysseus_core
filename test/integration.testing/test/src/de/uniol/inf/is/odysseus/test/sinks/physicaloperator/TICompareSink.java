@@ -20,6 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Pair;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -29,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.AbstractCSVHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.SimpleCSVProtocolHandler;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPattern;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
@@ -71,7 +71,7 @@ public class TICompareSink<T extends IStreamObject<ITimeInterval>> extends Abstr
 						.getDataHandler(this.dataHandler, getOutputSchema());
 				dh.setMetaAttribute(MetadataRegistry.getMetadataType(getOutputSchema().getMetaAttributeNames()));
 				OptionMap options = new OptionMap();
-				options.setOption(AbstractCSVHandler.DELIMITER, "|");
+				options.setOption(ConversionOptions.DELIMITER, "|");
 				SimpleCSVProtocolHandler csvreader = (SimpleCSVProtocolHandler) new SimpleCSVProtocolHandler()
 						.createInstance(ITransportDirection.IN, IAccessPattern.PULL, options, dh);
 
