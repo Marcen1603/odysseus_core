@@ -329,16 +329,17 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements
 			return;
 		}
 		Collections.sort(toBeInserted, this.comparator);
-		T first = toBeInserted.get(0);
-		ListIterator<T> li = this.getElements().listIterator(
-				this.getElements().size());
-		while (li.hasPrevious()) {
-			if (this.comparator.compare(li.previous(), first) == -1) {
-				this.getElements().addAll(li.nextIndex(), toBeInserted);
-				return;
+
+		ListIterator<T> listToInsertInto = this.getElements().listIterator();
+		ListIterator<T> listToInsert = toBeInserted.listIterator();
+		
+		// Merge sort
+		while(listToInsert.hasNext()) {
+			T currentToInsert = listToInsert.next();
+			while(listToInsertInto.hasNext() && this.comparator.compare(currentToInsert,listToInsertInto.next()) == -1) {
 			}
-		}
-		this.getElements().addAll(0, toBeInserted);
+			listToInsertInto.add(currentToInsert);			
+		}			
 	}
 
 	/**
