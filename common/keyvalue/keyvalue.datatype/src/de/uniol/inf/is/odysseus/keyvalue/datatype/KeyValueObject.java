@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
@@ -31,6 +32,7 @@ import com.jayway.jsonpath.spi.json.JsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import com.jayway.jsonpath.spi.mapper.MappingProvider;
 
+import de.undercouch.bson4jackson.BsonFactory;
 import de.uniol.inf.is.odysseus.core.Order;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
@@ -54,6 +56,10 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	final private static long serialVersionUID = -94667746890198612L;
 	final static private ObjectMapper mapper = new ObjectMapper();
 	final static private ObjectMapper jsonMapper = new ObjectMapper(new JsonFactory());
+	final static private ObjectMapper xmlMapper = new ObjectMapper(new XmlFactory());
+	final static private ObjectMapper bsonMapper = new ObjectMapper(new BsonFactory());
+
+	///final static private
 
 	final static private JsonNodeFactory nodeFactory = JsonNodeFactory.instance;
 
@@ -80,11 +86,15 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(InputStream input) {
-		throw new RuntimeException("XML currently not supported!");
+		KeyValueObject<IMetaAttribute> obj = createInstance();
+		obj.initWithXML(input);
+		return obj;
 	}
 
 	public static KeyValueObject<IMetaAttribute> createFromXML(String input) {
-		throw new RuntimeException("XML currently not supported!");
+		KeyValueObject<IMetaAttribute> obj = createInstance();
+		obj.initWithXML(input);
+		return obj;
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------
@@ -120,6 +130,24 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	private void setNode(JsonNode node) {
 		this.node = node;
 		this.toKeyValue(node, this.flat, "");
+	}
+
+	private void initWithXML(InputStream input) {
+		try {
+			this.node = xmlMapper.reader().readTree(input);
+			this.setNode(this.node);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void initWithXML(String xml) {
+		try {
+			this.node = xmlMapper.reader().readTree(xml);
+			this.setNode(this.node);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	// -----------------------------------------------
@@ -329,14 +357,22 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 									((KeyValueObject<IMetaAttribute>) value).node.deepCopy());
 						} else if (value instanceof Object[]) {
 							ArrayNode node = new ArrayNode(nodeFactory);
-							for (Object o : (Object[]) value) {
-								processSublist(value, node, o);
+							if (((Object[]) value)[0] instanceof KeyValueObject) {
+								for (Object o : (Object[]) value) {
+									processKeyValueObjectSublist(value, node, o);
+								}
+							} else {
+								node = convertToJsonArray(value);
 							}
 							((ObjectNode) father).set(subkeys[i], node);
 						} else if (value instanceof List) {
 							ArrayNode node = new ArrayNode(nodeFactory);
-							for (Object o : (List<Object>) value) {
-								processSublist(value, node, o);
+							if (((List<Object>) value).get(0) instanceof KeyValueObject) {
+								for (Object o : (List<Object>) value) {
+									processKeyValueObjectSublist(value, node, o);
+								}
+							} else {
+								node = convertToJsonArray(value);
 							}
 							((ObjectNode) father).set(subkeys[i], node);
 
@@ -377,17 +413,22 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processSublist(Object value, ArrayNode node, Object o) {
+	private void processKeyValueObjectSublist(Object value, ArrayNode node, Object o) {
 		if (o instanceof KeyValueObject) {
 			node.add(((KeyValueObject<IMetaAttribute>) o).node.deepCopy());
 		} else {
-			try {
-				String arrayToJson = jsonMapper.writeValueAsString(value);
-				node.add(jsonMapper.readTree(arrayToJson));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			throw new IllegalArgumentException("This method can only be used with KeyValueObjets!");
 		}
+	}
+
+	private ArrayNode convertToJsonArray(Object value) {
+		try {
+			String arrayToJson = jsonMapper.writeValueAsString(value);
+			return (ArrayNode) jsonMapper.readTree(arrayToJson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public Object removeAttribute(String key) {
@@ -484,13 +525,21 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 	}
 
 	public String getAsXML() {
-		throw new RuntimeException("XML currently not supported!");
-		// try {
-		// return xmlMapper.writeValueAsString(node);
-		// } catch (JsonProcessingException e) {
-		// throw new RuntimeException(e);
-		// }
+		try {
+			return xmlMapper.writeValueAsString(node);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
+	
+	public byte[] getAsBSON() {
+		try {
+			return bsonMapper.writeValueAsBytes(node);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	// ------------------------------------
 
 	@Override
@@ -1802,7 +1851,20 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 		System.out.println(kv.toStringWithNewlines());
 
-		System.out.println(kv.path("sensordatavalues[0].value_type"));
+		List<String> liste = new ArrayList<>();
+		liste.add("Eins");
+		liste.add("Zwei");
+		liste.add("Drei");
+
+		kv.setAttribute("neu", liste);
+
+		System.out.println(kv.toStringWithNewlines());
+
+		Integer[] liste2 = new Integer[] { 1, 2, 3 };
+
+		kv.setAttribute("neu2", liste2);
+
+		System.out.println(kv.toStringWithNewlines());
 
 		// Map<String, Object> map;
 		// map = kv.getAsKeyValueMap();
@@ -1817,8 +1879,5 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	}
 
-	public byte[] getAsBSON() {
-		throw new RuntimeException("Currently not supported");
-	}
 
 }

@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.probabilistic.common.base.distribution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -59,6 +60,39 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         this.attributes = new int[components[0].getDimension()];
         for (int i = 0; i < this.distribution[0].getDimension(); i++) {
             this.support[i] = Interval.MAX;
+        }
+    }
+
+    public MultivariateMixtureDistribution(final double[] weights, final IMultivariateDistribution[] components, double scale) {
+        this.distribution = components;
+        this.weight = weights;
+        this.scale = scale;
+        this.support = new Interval[components[0].getDimension()];
+        this.attributes = new int[components[0].getDimension()];
+        for (int i = 0; i < this.distribution[0].getDimension(); i++) {
+            this.support[i] = Interval.MAX;
+        }
+    }
+
+    public MultivariateMixtureDistribution(final double[] weights, final IMultivariateDistribution[] components, final Interval[] supports) {
+        this.distribution = components;
+        this.weight = weights;
+        this.scale = 1.0;
+        this.support = new Interval[components[0].getDimension()];
+        this.attributes = new int[components[0].getDimension()];
+        for (int i = 0; i < this.distribution[0].getDimension(); i++) {
+            this.support[i] = supports[i];
+        }
+    }
+
+    public MultivariateMixtureDistribution(final double[] weights, final IMultivariateDistribution[] components, final Interval[] supports, double scale) {
+        this.distribution = components;
+        this.weight = weights;
+        this.scale = scale;
+        this.support = new Interval[components[0].getDimension()];
+        this.attributes = new int[components[0].getDimension()];
+        for (int i = 0; i < this.distribution[0].getDimension(); i++) {
+            this.support[i] = supports[i];
         }
     }
 
@@ -462,7 +496,13 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         }
         final MultivariateMixtureDistribution mixture = new MultivariateMixtureDistribution(weights, components);
         for (int i = 0; i < this.getDimension(); i++) {
-            mixture.support[i] = this.support[i].divide(o.support[i]);
+            Interval[] s = this.support[i].divide(o.support[i]);
+            if (s.length==1) {
+            mixture.support[i] = s[0];
+            }else {
+                // FIXME we are loosing interval information here. cku 20171231
+                mixture.support[i] = s[0].union(s[1]);
+            }
             mixture.attributes[i] = this.attributes[i];
         }
         mixture.scale = this.scale * o.scale;
@@ -491,7 +531,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
     }
 
     @Override
-	public double[] sample() {
+    public double[] sample() {
         double[] point = new double[getDimension()];
         final double randomValue = random.nextDouble();
         double sum = 0.0;
@@ -566,9 +606,6 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
             return false;
         }
         final MultivariateMixtureDistribution other = (MultivariateMixtureDistribution) obj;
-        if (!Arrays.equals(this.distribution, other.distribution)) {
-            return false;
-        }
         if (Double.doubleToLongBits(this.scale) != Double.doubleToLongBits(other.scale)) {
             return false;
         }
@@ -578,7 +615,7 @@ public class MultivariateMixtureDistribution implements IMultivariateDistributio
         if (!Arrays.equals(this.weight, other.weight)) {
             return false;
         }
-        return true;
+        return (new HashSet<>(Arrays.asList(this.distribution)).equals(new HashSet<>(Arrays.asList(other.distribution))));
     }
 
     public static void main(final String[] args) {

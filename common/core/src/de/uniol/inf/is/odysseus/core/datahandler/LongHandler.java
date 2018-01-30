@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.datahandler;
 
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,20 @@ public class LongHandler extends AbstractDataHandler<Long> {
 
 	@Override
 	public Long readData(String string) {
-        if ((string == null) || (string.equals(""))|| ("null".equalsIgnoreCase(string))) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
+        }
+        if (getConversionOptions().hasFloatingFormatter()) {
+        	try {
+				return getConversionOptions().getFloatingFormatter().parse(string).longValue();
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
         }
 		return Long.parseLong(string);
 	}

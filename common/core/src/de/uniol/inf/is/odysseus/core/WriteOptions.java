@@ -1,73 +1,33 @@
 package de.uniol.inf.is.odysseus.core;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
-public class WriteOptions {
+import de.uniol.inf.is.odysseus.core.collection.OptionMap;
+
+public class WriteOptions extends ConversionOptions{
 	
 	public static final WriteOptions defaultOptions = new WriteOptions(',', (Character)null, (NumberFormat)null,(NumberFormat)null);
+	public static final WriteOptions defaultOptions2 = new WriteOptions(';', '\'', (DecimalFormat) null, (DecimalFormat) null); 
+
+	public static final String CSV_WRITE_HEADING = "csv.writeheading";
+
+	final private boolean writeHeading;
 	
-	// Standardfields
-	final char delimiter;
-	Character textSeperator;
-	final NumberFormat floatingFormatter;
-	final NumberFormat numberFormatter;
-	
-	// Add field, not via constructor
-	String nullValueString = "";
-	private boolean writeHeading;
-	
-	public WriteOptions(char delimiter, Character textSeperator,
+	private WriteOptions(char delimiter, Character textSeperator,
 			NumberFormat floatingFormatter, NumberFormat numberFormatter) {
-		super();
-		this.delimiter = delimiter;
-		this.textSeperator = textSeperator;
-		this.floatingFormatter = floatingFormatter;
-		this.numberFormatter = numberFormatter;
+		super(delimiter, textSeperator, floatingFormatter, numberFormatter);
+		this.writeHeading = false;
 	}
 	
-	public void setNullValueString(String nullValueString) {
-		this.nullValueString = nullValueString;
-	}
-	
-	public String getNullValueString() {
-		return nullValueString;
-	}
-	
-	public char getDelimiter() {
-		return delimiter;
-	}
-
-	public Character getTextSeperator() {
-		return textSeperator;
-	}
-	public boolean hasTextSeperator(){
-		return textSeperator != null;
-	}
-	public void setTextSeperator(Character textSeperator) {
-		this.textSeperator = textSeperator;
-	}
-	public NumberFormat getFloatingFormatter() {
-		return floatingFormatter;
-	}
-	public boolean hasFloatingFormatter(){
-		return floatingFormatter != null;
-	}
-
-	public NumberFormat getNumberFormatter() {
-		return numberFormatter;
-	}
-	public boolean hasNumberFormatter(){
-		return numberFormatter != null;
-	}
-
-	public void setWriteHeading(boolean writeHeading) {
-		this.writeHeading = writeHeading;
+	public WriteOptions(OptionMap optionsMap) {
+		super(optionsMap);
+		this.writeHeading = optionsMap.getBoolean(CSV_WRITE_HEADING, false);
 	}
 	
 	public boolean isWriteHeading() {
 		return writeHeading;
 	}
-	
 	
 
 }

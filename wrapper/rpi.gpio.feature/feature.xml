@@ -3,7 +3,7 @@
       id="de.uniol.inf.is.odysseus.wrapper.rpi.gpio.feature"
       label="Raspberry Pi GPIO TransportHandler Feature"
       version="1.0.0.qualifier"
-      provider-name="Andrej Albrecht">
+      provider-name="University of Oldenburg">
 
    <description url="http://www.example.com/description">
       Transport handler for Raspberry Pi GPIO-Port.
@@ -11,7 +11,7 @@ For some debug informations use the VM argument: -Dpi4j.debug=true
    </description>
 
    <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+      Copyright by the Odysseus Team (odysseus.informatik.uni-oldenburg.de)
    </copyright>
 
    <license url="http://www.example.com/license">

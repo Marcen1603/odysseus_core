@@ -15,11 +15,13 @@
  ******************************************************************************/
 package de.uniol.inf.is.odysseus.wrapper.web.physicaloperator.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -142,6 +144,7 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
 
     @Override
     public void open() throws UnknownHostException, IOException {
+    	setDone(false);
         this.getTransportHandler().open();
         if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
             if ((this.getAccessPattern().equals(IAccessPattern.PULL)) || (this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL))) {
@@ -172,10 +175,14 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             return result.size() > 0 || this.input.available() > 0;
         }
         catch (Throwable t) {
+        	if (t instanceof IOException) {
+        		setDone(true);
+        	}
+        	
             return false;
         }
     }
-
+    
     @Override
     public void process(InputStream message) {
         try {
@@ -198,6 +205,13 @@ public class XMLProtocolHandler<T extends Tuple<?>> extends AbstractProtocolHand
             XMLProtocolHandler.LOG.error(e.getMessage(), e);
         }
     }
+    
+	@Override
+	public void process(String[] message) {
+		for (String msg : message) {
+			process(new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8)));
+		}
+	}
 
     private T parseXml(InputStream input) throws IOException {
         // Deliver Input from former runs

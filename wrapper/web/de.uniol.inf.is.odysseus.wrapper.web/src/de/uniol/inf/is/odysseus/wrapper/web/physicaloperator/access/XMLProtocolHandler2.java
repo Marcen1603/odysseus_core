@@ -92,6 +92,7 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 
 	@Override
 	public void open() throws UnknownHostException, IOException {
+		setDone(false);
 		getTransportHandler().open();
 		if (getDirection().equals(ITransportDirection.IN)) {
 			if ((getAccessPattern().equals(IAccessPattern.PULL))
@@ -122,6 +123,9 @@ public class XMLProtocolHandler2<T extends KeyValueObject<? extends IMetaAttribu
 		try {
 			return result.size() > 0 || this.input.available() > 0;
 		} catch (Throwable t) {
+			if (t instanceof IOException) {
+				setDone(true);
+			}
 			return false;
 		}
 	}

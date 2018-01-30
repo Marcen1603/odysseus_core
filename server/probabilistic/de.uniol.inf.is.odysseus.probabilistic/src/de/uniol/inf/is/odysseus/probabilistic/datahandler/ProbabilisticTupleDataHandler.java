@@ -18,7 +18,6 @@ package de.uniol.inf.is.odysseus.probabilistic.datahandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +28,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniol.inf.is.odysseus.core.ConversionOptions;
 import de.uniol.inf.is.odysseus.core.WriteOptions;
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractStreamObjectDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
@@ -156,13 +156,13 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 			throw new RuntimeException("ProbabilisticTupleDataHandler is immutable. Values already set");
 		}
 	}
-
+	
 	@Override
-	public void setCharset(Charset charset) {
-		super.setCharset(charset);
+	public void setConversionOptions(ConversionOptions conversionOptions) {
+		super.setConversionOptions(conversionOptions);
 		if (dataHandlers != null) {
 			for (IDataHandler<?> handler : dataHandlers) {
-				handler.setCharset(charset);
+				handler.setConversionOptions(conversionOptions);
 			}
 		}
 	}

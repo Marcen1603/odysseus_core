@@ -164,6 +164,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype[] VECTORS = new SDFDatatype[] {
 			SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
 			SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+	
+	public static final SDFDatatype OBJECT_MAP = new SDFDatatype("ObjectMap");
 
 	/**
 	 * Datatypes for aggregations (partial aggregates
@@ -268,6 +270,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
+		
+		types.add(SDFDatatype.OBJECT_MAP);
 
 		for (SDFDatatype t:types){
 			nameMap.put(t.getURI().toLowerCase(), t);

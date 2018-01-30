@@ -36,28 +36,11 @@ public class CSVProtocolHandler<T extends IStreamObject<IMetaAttribute>> extends
 	public CSVProtocolHandler(ITransportDirection direction,
 			IAccessPattern access, IStreamObjectDataHandler<T> dataHandler,OptionMap optionsMap) {
 		super(direction, access, dataHandler, optionsMap);
-		init_internal();
-	}
-
-	@Override
-	void optionsMapChanged(String key, String value) {
-		// simply update options
-		init_internal();
-		super.optionsMapChanged(key, value);
-	}
-
-	private void init_internal() {
-        if (optionsMap.containsKey(TEXT_DELIMITER)) {
-            textDelimiter = optionsMap.get(TEXT_DELIMITER).toCharArray()[0];
-        } else {
-            textDelimiter = optionsMap.containsKey(CSV_TEXT_DELIMITER) ? optionsMap.get(CSV_TEXT_DELIMITER).toCharArray()[0] : "'".toCharArray()[0];
-        }
-        writeOptions.setTextSeperator(textDelimiter);
 	}
 
 	@Override
 	protected T readLine(String line, boolean readMeta) {
-		List<String> ret = CSVParser.parseCSV(line, textDelimiter, delimiter, trim);
+		List<String> ret = CSVParser.parseCSV(line, getConversionOptions().getTextSeperator(), getConversionOptions().getDelimiter(), trim);
         if ((this.getDataHandler().getSchema() != null) && (ret.size() < this.getDataHandler().getSchema().size())) {
             for (int i = ret.size(); i < this.getDataHandler().getSchema().size(); i++) {
                 ret.add(null);

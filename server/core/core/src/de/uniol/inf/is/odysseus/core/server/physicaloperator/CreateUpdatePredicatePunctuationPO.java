@@ -44,7 +44,7 @@ public class CreateUpdatePredicatePunctuationPO<T extends Tuple<? extends ITimeI
 				if (object.getAttribute(attributePosition) instanceof Double) {
 					replacement = String.valueOf((Double) object.getAttribute(attributePosition));
 				} else {
-					replacement = String.valueOf(object.getAttribute(attributePosition));
+					replacement = object.getAttribute(attributePosition).toString();
 				}
 				newPredicate = newPredicate.replace(templateStyle, replacement);
 			}

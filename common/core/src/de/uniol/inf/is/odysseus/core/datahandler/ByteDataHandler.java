@@ -45,8 +45,13 @@ public class ByteDataHandler extends AbstractDataHandler<Byte> {
 
 	@Override
 	public Byte readData(String string) {
-        if ((string == null) || ("null".equalsIgnoreCase(string))) {
+        if ((string == null)) {
             return null;
+        }
+        if (getConversionOptions().getNullValueString() != null) {
+        	if (getConversionOptions().getNullValueString().equalsIgnoreCase(string)) {
+        		return null;
+        	}
         }
 		return Byte.parseByte(string);		
 	}

@@ -15,64 +15,21 @@
  */
 package de.uniol.inf.is.odysseus.probabilistic.functions.compare;
 
-import java.util.Arrays;
-
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
-import de.uniol.inf.is.odysseus.probabilistic.base.common.ProbabilisticBooleanResult;
-import de.uniol.inf.is.odysseus.probabilistic.common.base.distribution.MultivariateMixtureDistribution;
-import de.uniol.inf.is.odysseus.probabilistic.common.sdf.schema.SDFProbabilisticDatatype;
-
 /**
  * Greater-Equals operator for continuous probabilistic values.
- * 
+ *
  * @author Christian Kuka <christian@kuka.cc>
- * 
+ *
  */
-public class ProbabilisticGreaterEqualsOperator extends AbstractProbabilisticCompareOperator {
+public class ProbabilisticGreaterEqualsOperator extends ProbabilisticGreaterOperator {
 
     /**
-	 * 
-	 */
+     *
+     */
     private static final long serialVersionUID = -9122605635777338549L;
 
     public ProbabilisticGreaterEqualsOperator() {
-        this(">=");
+        super(">=", true);
     }
-
-    protected ProbabilisticGreaterEqualsOperator(final String symbol) {
-        super(symbol, ProbabilisticGreaterEqualsOperator.ACC_TYPES);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public final ProbabilisticBooleanResult getValue() {
-        final MultivariateMixtureDistribution a = ((MultivariateMixtureDistribution) this.getInputValue(0)).clone();
-        final int pos = this.getInputPosition(0);
-        final Double b = this.getNumericalInputValue(1);
-        final double[] lowerBound = new double[a.getDimension()];
-        Arrays.fill(lowerBound, Double.NEGATIVE_INFINITY);
-        lowerBound[a.getDimension(pos)] = b;
-        final double[] upperBound = new double[a.getDimension()];
-        Arrays.fill(upperBound, Double.POSITIVE_INFINITY);
-
-        return this.getValueInternal(a, lowerBound, upperBound);
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
-     */
-    @Override
-    public int getPrecedence() {
-        return 8;
-    }
-
-    /**
-     * Accepted data types.
-     */
-    public static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFProbabilisticDatatype.PROBABILISTIC_NUMBERS, SDFDatatype.NUMBERS };
 
 }
