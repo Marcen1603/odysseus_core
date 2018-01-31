@@ -188,20 +188,34 @@ public abstract class AbstractSweepArea<T extends IStreamObject<?>> implements I
 	public Iterator<T> queryCopy(T element, Order order, boolean extract) {
 		LinkedList<T> result = new LinkedList<T>();
 		switch (order) {
-		case LeftRight:
-			for (T next : this.getElements()) {
+		case LeftRight: {
+			Iterator<T> iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
 				if (queryPredicate.evaluate(element, next)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
-			break;
-		case RightLeft:
-			for (T next : this.getElements()) {
+		}
+		break;
+		
+		case RightLeft: {
+			Iterator<T> iter = this.getElements().iterator();
+			while (iter.hasNext()) {
+				T next = iter.next();
 				if (queryPredicate.evaluate(next, element)) {
 					result.add(next);
+					if (extract) {
+						iter.remove();
+					}
 				}
 			}
-			break;
+		}
+		break;
+		
 		}
 		return result.iterator();
 	}
