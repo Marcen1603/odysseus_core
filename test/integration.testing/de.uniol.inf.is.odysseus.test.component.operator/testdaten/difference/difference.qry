@@ -1,6 +1,6 @@
 ///OdysseusScript
 ///#DEFINE PATH ${BUNDLE-ROOT}\testdaten\difference
-#DEFINE PATH E:/odysseus/test/integration.testing/de.uniol.inf.is.odysseus.test.component.operator/testdaten/difference/
+#DEFINE PATH D:/git/odysseus/odysseus/test/integration.testing/de.uniol.inf.is.odysseus.test.component.operator/testdaten/difference/
 
 #PARSER PQL
 #ADDQUERY
@@ -11,13 +11,14 @@ wind0 = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${PATH}\input0.csv'],
+		['filename', '${PATH}\inputLeft.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
 		['delay', '200']
 	], 
 	schema=[
-		['timestamp', 'STARTTIMESTAMP'], 
+		['timestamp', 'STARTTIMESTAMP'],
+		['timestamp2', 'ENDTIMESTAMP'],  
 		['speed', 'INTEGER'], 
 		['direction', 'STRING'], 
 		['name', 'STRING'],
@@ -30,18 +31,20 @@ wind1 = ACCESS({
 	protocol='SimpleCSV',
 	dataHandler='Tuple', 
 	options=[
-		['filename', '${PATH}\input1.csv'],
+		['filename', '${PATH}\inputRight.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true']
 	], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 
+		['timestamp2', 'ENDTIMESTAMP'],  
 		['speed', 'INTEGER'], 
 		['direction', 'STRING'], 
 		['name', 'STRING'],
 		['location', 'INTEGER']
 ]})
-window_wind0 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind0)
-window_wind1 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind1)
+///window_wind0 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind0)
+///window_wind1 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind1)
 
-result = DIFFERENCE(window_wind0, window_wind1)
+///result = DIFFERENCE(window_wind0, window_wind1)
+result = DIFFERENCE(wind0, wind1)

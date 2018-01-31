@@ -71,6 +71,8 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	@Override
 	protected void process_open() throws OpenFailedException {
 		transferArea.init(this, 2);
+		leftSA.clear();
+		rightSA.clear();
 	}
 
 	@Override
