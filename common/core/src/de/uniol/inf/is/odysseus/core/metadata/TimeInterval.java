@@ -496,8 +496,7 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 				&& right.getEnd().before(left.getEnd())) {
 			// beginning of left is covered by right
 			left = new TimeInterval(right.getEnd(), left.getEnd());
-		} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(left.getEnd())
-				&& left.getEnd().beforeOrEquals(right.getEnd())) {
+		} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getEnd().beforeOrEquals(right.getEnd())) {
 			// left is fully covered by right
 			left = null;
 			broken.set(true);
