@@ -50,6 +50,16 @@ public class DefaultSweepAreaTest {
 		sa.insertAll(toInsert);
 		
 		System.out.println(sa.toString());
+		
+		toInsert.clear();
+		toInsert.add(tuples.get(5));
+		toInsert.add(tuples.get(4));
+		toInsert.add(tuples.get(3));
+		
+		sa.insertAll(toInsert);
+
+		System.out.println(sa.toString());
+
 	}
 	
 }

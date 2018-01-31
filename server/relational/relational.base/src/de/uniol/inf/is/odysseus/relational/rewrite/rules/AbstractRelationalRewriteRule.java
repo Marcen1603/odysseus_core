@@ -36,8 +36,8 @@ import de.uniol.inf.is.odysseus.core.server.predicate.IUnaryFunctor;
 import de.uniol.inf.is.odysseus.rewrite.rule.AbstractRewriteRule;
 
 public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRule<T> {
-	
-	static final Logger LOG = LoggerFactory.getLogger(AbstractRelationalRewriteRule.class); 
+
+	static final Logger LOG = LoggerFactory.getLogger(AbstractRelationalRewriteRule.class);
 
 	public static boolean containsAllSources(ILogicalOperator op, Set<?> sources) {
 		Collection<SDFAttribute> schema = op.getOutputSchema().getAttributes();
@@ -297,9 +297,13 @@ public abstract class AbstractRelationalRewriteRule<T> extends AbstractRewriteRu
 
 				for (SDFAttribute curAttr : attributes) {
 					int index = son.getOutputSchema().indexOf(curAttr);
-					SDFAttribute newAttr = son.getInputSchema().get(index);
-					if (!curAttr.equals(newAttr)) {
-						((RelationalExpression<?>) curPred).replaceAttribute(curAttr, newAttr);
+					if (index != -1) {
+						SDFAttribute newAttr = son.getInputSchema().get(index);
+						if (!curAttr.equals(newAttr)) {
+							((RelationalExpression<?>) curPred).replaceAttribute(curAttr, newAttr);
+						}
+					}else {
+						// This could be in case of meta data and can be ignored
 					}
 				}
 			}
