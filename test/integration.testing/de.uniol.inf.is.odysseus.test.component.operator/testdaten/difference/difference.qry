@@ -4,7 +4,7 @@
 
 #PARSER PQL
 #ADDQUERY
-wind0 = ACCESS({
+wind0 = Project({attributes = ['speed', 'direction', 'name', 'location']}, ACCESS({
 	source='wind0', 
 	wrapper='GenericPull',
 	transport='file', 
@@ -23,8 +23,8 @@ wind0 = ACCESS({
 		['direction', 'STRING'], 
 		['name', 'STRING'],
 		['location', 'INTEGER']
-]})
-wind1 = ACCESS({
+]}))
+wind1 = Project({attributes = ['speed', 'direction', 'name', 'location']}, ACCESS({
 	source='wind1', 
 	wrapper='GenericPull',
 	transport='file', 
@@ -42,7 +42,7 @@ wind1 = ACCESS({
 		['direction', 'STRING'], 
 		['name', 'STRING'],
 		['location', 'INTEGER']
-]})
+]}))
 ///window_wind0 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind0)
 ///window_wind1 = timeWindow({size = [5, 'SECONDS'], slide = [5, 'SECONDS']}, wind1)
 
