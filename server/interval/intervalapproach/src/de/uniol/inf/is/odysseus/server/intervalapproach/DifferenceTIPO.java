@@ -150,7 +150,6 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	private void projectElementToTimeIntervals(T element, ArrayList<TimeInterval> intervals, ArrayList<T> result) {
 		for (TimeInterval interval : intervals) {
 			T copy = (T) element.clone();
-			copy.setMetadata((K) element.getMetadata().clone());
 			copy.getMetadata().setStart(interval.getStart());
 			copy.getMetadata().setEnd(interval.getEnd());
 			result.add(copy);
