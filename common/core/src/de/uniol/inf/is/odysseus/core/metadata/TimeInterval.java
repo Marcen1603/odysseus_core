@@ -489,10 +489,8 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	private static TimeInterval cutoutInterval(ArrayList<TimeInterval> result, TimeInterval left, AtomicBoolean broken,
 			ITimeInterval right) {
 		// handle different cases
-		if (right.getEnd().beforeOrEquals(left.getStart())) {
-			// right is completely before left: ignore right
-			// TODO remove later
-		} else if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(right.getEnd())
+		// if right is completely before left: ignore right
+		if (right.getStart().beforeOrEquals(left.getStart()) && left.getStart().before(right.getEnd())
 				&& right.getEnd().before(left.getEnd())) {
 			// beginning of left is covered by right
 			left = new TimeInterval(right.getEnd(), left.getEnd());
