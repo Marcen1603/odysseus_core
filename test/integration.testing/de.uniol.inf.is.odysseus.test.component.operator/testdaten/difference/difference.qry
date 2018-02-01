@@ -1,6 +1,5 @@
 ///OdysseusScript
-///#DEFINE PATH ${BUNDLE-ROOT}\testdaten\difference
-#DEFINE PATH D:/git/odysseus/odysseus/test/integration.testing/de.uniol.inf.is.odysseus.test.component.operator/testdaten/difference/
+#DEFINE PATH ${BUNDLE-ROOT}\testdaten\difference
 
 #PARSER PQL
 #ADDQUERY
