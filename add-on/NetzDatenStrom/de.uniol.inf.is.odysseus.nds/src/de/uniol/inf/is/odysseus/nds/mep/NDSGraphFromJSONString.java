@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology;
+package de.uniol.inf.is.odysseus.nds.mep;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: NetzDatenStrom Wrapper
-Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.netzdatenstrom
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.nds
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: University of Oldenburg
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
@@ -15,3 +15,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.keyvalue.datatype;bundle-version="1.0.0",
  de.uniol.inf.is.odysseus.keyvalue.mep;bundle-version="1.0.0"
 Service-Component: OSGI-INF/NetzDatenStromMEPFunctions.xml
+Bundle-ActivationPolicy: lazy

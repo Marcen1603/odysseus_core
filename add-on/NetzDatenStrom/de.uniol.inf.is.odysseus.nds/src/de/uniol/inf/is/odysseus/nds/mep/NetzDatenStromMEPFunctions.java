@@ -1,12 +1,10 @@
-package de.uniol.inf.is.odysseus.wrapper.netzdatenstrom;
+package de.uniol.inf.is.odysseus.nds.mep;
 
 import java.util.Arrays;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.mep.IMepFunction;
 import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
-import de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology.NDSAddSMsToGraph;
-import de.uniol.inf.is.odysseus.wrapper.netzdatenstrom.topology.NDSGraphFromJSONString;
 
 /**
  * Provides the MEP functions that closely related to the research project
