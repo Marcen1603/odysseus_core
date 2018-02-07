@@ -74,6 +74,11 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	private boolean evaluateAtDone = false;
 
 	private boolean outputOnlyChanges = false;
+	
+	/**
+	 * This flag is set if this operator should consider other meta data than time intervals (works for non-incremental aggregation functions only)
+	 */
+	private boolean processMetaData = true;
 
 	public AggregationAO() {
 		super();
@@ -94,6 +99,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		evaluateAtOutdatingElements = op.evaluateAtOutdatingElements;
 		evaluateBeforeRemovingOutdatingElements = op.evaluateBeforeRemovingOutdatingElements;
 		outputOnlyChanges = op.outputOnlyChanges;
+		processMetaData = op.processMetaData;
 	}
 
 	/*
@@ -212,6 +218,16 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 	@Parameter(name = "OUTPUT_ONLY_CHANGES", type = BooleanParameter.class, optional = true)
 	public void setOutputOnlyChanges(final boolean outputOnlyChanges) {
 		this.outputOnlyChanges = outputOnlyChanges;
+	}
+	
+	@GetParameter(name = "PROCESS_META_DATA")
+	public boolean isProcessMetaData(){
+		return processMetaData;
+	}
+	
+	@Parameter(name = "PROCESS_META_DATA", type = BooleanParameter.class, optional = true)
+	public void setProcessMetaData(final boolean processMetaData){
+		this.processMetaData = processMetaData;
 	}
 
 	/*
