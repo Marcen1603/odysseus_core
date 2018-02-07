@@ -38,7 +38,9 @@ import de.uniol.inf.is.odysseus.aggregation.sweeparea.IAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.IndexedByEndTsAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.StartTsTimeOrderedAggregationSweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
@@ -180,6 +182,13 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	private IMetaAttribute metaData;
 
 	/**
+	 * true iff meta data (other than time interval) should be processed
+	 */
+	protected final boolean processMetaData;
+
+	protected final IMetadataMergeFunction<M> metadataMergeFunc;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param nonIncrementalFunctions
@@ -210,7 +219,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtOutdatingElements, final boolean evaluateBeforeRemovingOutdatingElements,
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
-			final int[] groupingAttributesIdxOutputSchema) {
+			final int[] groupingAttributesIdxOutputSchema, final boolean processMetaData,
+			IMetadataMergeFunction<M> mmf) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -232,7 +242,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		this.hasFunctionsThatNeedStartTsOrder = this.nonIncrementalFunctions.stream()
 				.anyMatch(e -> e.needsOrderedElements());
-
+		this.processMetaData = processMetaData;
+		this.metadataMergeFunc = mmf;
 	}
 
 	/**
@@ -254,6 +265,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
 		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
+		this.processMetaData = other.processMetaData;
+		this.metadataMergeFunc = other.metadataMergeFunc;
 	}
 
 	@Override
@@ -300,7 +313,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	@Override
 	protected synchronized void process_next(final T object, final int port) {
 
-		if(metaData == null) {
+		if (metaData == null) {
 			metaData = object.getMetadata().clone();
 		}
 
@@ -472,7 +485,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			if (hasIncrementalFunctions) {
 				final List<IIncrementalAggregationFunction<M, T>> statefulFunctionsForKey = getStatefulFunctions(
 						groupKey);
-				processStatefulFunctionsRemove(result, statefulFunctionsForKey, outdatedTuples, triggerObj, pointInTime);
+				processStatefulFunctionsRemove(result, statefulFunctionsForKey, outdatedTuples, triggerObj,
+						pointInTime);
 			}
 
 			if (evaluate) {
@@ -721,17 +735,16 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (watermarkOut > startTs.getMainPoint()) {
-			LOG.warn("Out element " + result + " for start ts " + startTs
-					+ " is out of order!");
+			LOG.warn("Out element " + result + " for start ts " + startTs + " is out of order!");
 		} else {
 			watermarkOut = startTs.getMainPoint();
 		}
 
 		setGroupingAttributes(sampleOfGroup, result);
+		final Object groupKey = getGroupKey(result, groupingAttributesIndicesOutputSchema, defaultGroupingKey);
 
 		boolean output = true;
 		if (outputOnlyChanges) {
-			final Object groupKey = getGroupKey(result, groupingAttributesIndicesOutputSchema, defaultGroupingKey);
 			final T last = lastOutput.get(groupKey);
 			output = !result.equals(last);
 			if (output) {
@@ -740,7 +753,24 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (output) {
-			final M meta = (M) metaData.clone();
+			M meta = null;
+
+			if (processMetaData) {
+				final IAggregationSweepArea<M, T> sa = getSweepArea(groupKey);
+				final Iterator<T> iter = sa.getValidTuples().iterator();
+				M next = null;
+
+				while (iter.hasNext()) {
+					next = iter.next().getMetadata();
+					meta = meta == null ? (M) next.clone() : this.metadataMergeFunc.mergeMetadata(meta, next);
+				}
+
+			}
+
+			if (meta == null) {
+				meta = (M) metaData.clone();
+			}
+
 			meta.setEnd(PointInTime.INFINITY);
 			meta.setStart(startTs);
 			result.setMetadata(meta);
