@@ -43,6 +43,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
+import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IOperatorState;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperatorKeyValueProvider;
@@ -177,14 +178,9 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	long watermarkOut = 0l;
 
 	/**
-	 * A copy of the meta data of the first element.
-	 */
-	private IMetaAttribute metaData;
-
-	/**
 	 * true iff meta data (other than time interval) should be processed
 	 */
-	protected final boolean processMetaData;
+	protected final boolean supressFullMetaDataHandling;
 
 	protected final IMetadataMergeFunction<M> metadataMergeFunc;
 
@@ -219,7 +215,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtOutdatingElements, final boolean evaluateBeforeRemovingOutdatingElements,
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
-			final int[] groupingAttributesIdxOutputSchema, final boolean processMetaData,
+			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
 			IMetadataMergeFunction<M> mmf) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
@@ -242,7 +238,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 		this.hasFunctionsThatNeedStartTsOrder = this.nonIncrementalFunctions.stream()
 				.anyMatch(e -> e.needsOrderedElements());
-		this.processMetaData = processMetaData;
+		this.supressFullMetaDataHandling = supressFullMetaDataHandling;
 		this.metadataMergeFunc = mmf;
 	}
 
@@ -265,7 +261,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndices = other.groupingAttributesIndices;
 		this.hasFunctionsThatNeedStartTsOrder = other.hasFunctionsThatNeedStartTsOrder;
 		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
-		this.processMetaData = other.processMetaData;
+		this.supressFullMetaDataHandling = other.supressFullMetaDataHandling;
 		this.metadataMergeFunc = other.metadataMergeFunc;
 	}
 
@@ -287,7 +283,6 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		if (lastOutput != null) {
 			lastOutput.clear();
 		}
-		metaData = null;
 	}
 
 	/*
@@ -312,10 +307,6 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 */
 	@Override
 	protected synchronized void process_next(final T object, final int port) {
-
-		if (metaData == null) {
-			metaData = object.getMetadata().clone();
-		}
 
 		if (!hasOutdatingElements) {
 			if (!object.getMetadata().getEnd().isInfinite()) {
@@ -755,20 +746,22 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		if (output) {
 			M meta = null;
 
-			if (processMetaData) {
+			if (!supressFullMetaDataHandling) {
 				final IAggregationSweepArea<M, T> sa = getSweepArea(groupKey);
 				final Iterator<T> iter = sa.getValidTuples().iterator();
-				M next = null;
 
-				while (iter.hasNext()) {
-					next = iter.next().getMetadata();
-					meta = meta == null ? (M) next.clone() : this.metadataMergeFunc.mergeMetadata(meta, next);
+				if (iter.hasNext()) {
+					meta = (M)iter.next().getMetadata().clone();
+					while (iter.hasNext()) {
+						meta = this.metadataMergeFunc.mergeMetadata(meta, iter.next().getMetadata());
+					}
 				}
 
 			}
 
 			if (meta == null) {
-				meta = (M) metaData.clone();
+				// TODO if handling of incremental meta data changes
+				meta = (M) new TimeInterval();
 			}
 
 			meta.setEnd(PointInTime.INFINITY);
