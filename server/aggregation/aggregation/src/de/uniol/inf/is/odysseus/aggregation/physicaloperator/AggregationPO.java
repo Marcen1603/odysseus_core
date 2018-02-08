@@ -38,8 +38,6 @@ import de.uniol.inf.is.odysseus.aggregation.sweeparea.IAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.IndexedByEndTsAggregationSweepArea;
 import de.uniol.inf.is.odysseus.aggregation.sweeparea.StartTsTimeOrderedAggregationSweepArea;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
-import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -216,7 +214,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
 			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
-			IMetadataMergeFunction<M> mmf) {
+			final IMetadataMergeFunction<M> mmf) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
