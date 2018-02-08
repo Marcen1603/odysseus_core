@@ -96,12 +96,12 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			groupingAttributesIndices[i] = inputSchema.indexOf(groupingAttributes.get(i));
 		}
 		final int[] groupingAttributeIndicesOutputSchema = operator.getGroupingAttributeIndicesOnOutputSchema();
-		final boolean processMetaData = operator.isProcessMetaData();
+		final boolean supressFullMetaDataHandling = operator.isSupressFullMetaDataHandling();
 
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements,
 				evaluateAtNewElement, evaluateAtDone, outputOnlyChanges, outputSchema, groupingAttributesIndices,
-				groupingAttributeIndicesOutputSchema, processMetaData, mf);
+				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf);
 
 		defaultExecute(operator, po, config, true, true);
 	}
