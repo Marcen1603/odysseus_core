@@ -225,7 +225,7 @@ public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParal
 		return supressFullMetaDataHandling;
 	}
 	
-	@Parameter(name = "SUPPRESS_FULL_META_DATA_HANDLING", type = BooleanParameter.class, optional = false)
+	@Parameter(name = "SUPPRESS_FULL_META_DATA_HANDLING", type = BooleanParameter.class, optional = true)
 	public void setSupressFullMetaDataHandling(final boolean processMetaData){
 		this.supressFullMetaDataHandling = processMetaData;
 	}
