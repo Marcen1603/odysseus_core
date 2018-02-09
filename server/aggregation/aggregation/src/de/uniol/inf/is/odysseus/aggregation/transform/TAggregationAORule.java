@@ -24,9 +24,11 @@ import de.uniol.inf.is.odysseus.aggregation.functions.INonIncrementalAggregation
 import de.uniol.inf.is.odysseus.aggregation.logicaloperator.AggregationAO;
 import de.uniol.inf.is.odysseus.aggregation.physicaloperator.AggregationPO;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -43,23 +45,24 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
 
-		// temp check to avoid aggreation in scenarios where more that timeinterval is
+		// temp check to avoid aggreation in scenarios where more that
+		// timeinterval is
 		// used --> aggregation does not handle
 		// metadata correctly in this case
 
-		if (operator.getInputSchema().getMetaAttributeNames().size() == 0
-				|| operator.getInputSchema().getMetaAttributeNames().size() > 1
-				|| operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName()) {
-			throw new TransformationException(
-					"Aggregation currently only works with #METADATA TimeInterval! Use Aggregate instead");
-		}
+		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
+		// Attention: Time meta data is set in aggregation
+		metadataSet.remove(ITimeInterval.class.getName());
+		@SuppressWarnings("rawtypes")
+		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
 
 		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = new ArrayList<>();
 		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = new ArrayList<>();
@@ -72,6 +75,12 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			} else {
 				incrementalFunctions.add((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
 			}
+		}
+
+		if (operator.getInputSchema().getMetaAttributeNames().size() > 1 && incrementalFunctions.size() > 0
+				|| operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName()) {
+			throw new TransformationException(
+					"Aggregation currently only works with #METADATA TimeInterval for incremental functions! Use Aggregate instead");
 		}
 
 		final boolean evaluateAtOutdatingElements = operator.isEvaluateAtOutdatingElements();
@@ -87,18 +96,21 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			groupingAttributesIndices[i] = inputSchema.indexOf(groupingAttributes.get(i));
 		}
 		final int[] groupingAttributeIndicesOutputSchema = operator.getGroupingAttributeIndicesOnOutputSchema();
+		final boolean supressFullMetaDataHandling = operator.isSupressFullMetaDataHandling();
 
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements,
 				evaluateAtNewElement, evaluateAtDone, outputOnlyChanges, outputSchema, groupingAttributesIndices,
-				groupingAttributeIndicesOutputSchema);
+				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf);
+
 		defaultExecute(operator, po, config, true, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
+	 * @see
+	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
 	 * Object, java.lang.Object)
 	 */
 	@Override

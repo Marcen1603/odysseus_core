@@ -8,9 +8,11 @@ import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.INonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.core.usermanagement.IRole;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
@@ -47,6 +49,13 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 		final SDFSchema inputSchema = operator.getInputSchema();
 		final List<SDFAttribute> groupingAttributes = operator.getGroupingAttributes();
 		final int[] groupingAttributesIndices = new int[groupingAttributes.size()];
+		
+		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
+		// Attention: Time meta data is set in aggregation
+		metadataSet.remove(ITimeInterval.class.getName());
+		@SuppressWarnings("rawtypes")
+		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
+		
 		for (int i = 0; i < groupingAttributes.size(); ++i) {
 			groupingAttributesIndices[i] = inputSchema.indexOf(groupingAttributes.get(i));
 		}
@@ -54,7 +63,7 @@ public class TSAAggregationAORule extends AbstractTransformationRule<SAAggregati
 
 		final SAAggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new SAAggregationPO<ITimeInterval,Tuple<ITimeInterval>>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements, evaluateAtNewElement, evaluateAtDone,
-				outputOnlyChanges, outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, tupleRangeAttribute, roles);
+				outputOnlyChanges, outputSchema, groupingAttributesIndices, groupingAttributeIndicesOutputSchema, tupleRangeAttribute, roles, mf);
 		defaultExecute(operator, po, config, true, true);
 	}
 
