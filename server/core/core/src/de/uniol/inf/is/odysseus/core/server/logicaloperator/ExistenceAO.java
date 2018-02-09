@@ -27,7 +27,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(name = "EXISTENCE", minInputPorts = 2, maxInputPorts = 2, doc = "This operator tests an existence predicate and can be used with the type EXISTS (semi join) and NOT_EXISTS (anti semi join). The predicates can be evaluated against the element from the first input and the second input. Semi join: All elements in the first input for which there are elements in the second input that fulfills the predicate are sent. Semi anti join: All elements in the first input for which there is no element in the second input that fulfills the predicate are sent.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Existence+operator", category = {
+@LogicalOperator(name = "EXISTENCE", minInputPorts = 2, maxInputPorts = 2, doc = "This operator tests an existence predicate and can be used with the type EXISTS (semi join) and NOT_EXISTS (anti semi join). The predicates can be evaluated against the element from the first input and the second input. Semi join: All elements in the first input for which there are elements in the second input that fulfills the predicate are sent. Semi anti join: All elements in the first input for which there is no element in the second input that fulfills the predicate are sent.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Existence+operator", category = {
 		LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET })
 public class ExistenceAO extends BinaryLogicalOp implements Cloneable,
 		IHasPredicate {

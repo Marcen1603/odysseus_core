@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
  * Similar to select, but splits data into filtered and not filtered
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "FILTER", doc = "Filters elements of the input stream. If predicate evaluates to true, element will be sent to port 0 else to port 1.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Filter+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "FILTER", doc = "Filters elements of the input stream. If predicate evaluates to true, element will be sent to port 0 else to port 1.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Filter+operator", category = { LogicalOperatorCategory.BASE })
 public class FilterAO extends SelectAO {
 
 	private static final long serialVersionUID = 2008672448859070252L;

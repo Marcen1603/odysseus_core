@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Cornelius Ludmann
  *
  */
-@LogicalOperator(name = "AGGREGATION", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on inputAttributeIndices e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = {
+@LogicalOperator(name = "AGGREGATION", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on inputAttributeIndices e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = {
 		LogicalOperatorCategory.BASE })
 public class AggregationAO extends UnaryLogicalOp implements IStatefulAO, IParallelizableOperator {
 

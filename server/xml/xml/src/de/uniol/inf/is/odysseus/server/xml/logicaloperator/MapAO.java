@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
 /**
  * @author Jonas Jacobi
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XMLMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Map+operator", category = {LogicalOperatorCategory.BASE})
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XMLMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator", category = {LogicalOperatorCategory.BASE})
 public class MapAO extends UnaryLogicalOp
 {
 
