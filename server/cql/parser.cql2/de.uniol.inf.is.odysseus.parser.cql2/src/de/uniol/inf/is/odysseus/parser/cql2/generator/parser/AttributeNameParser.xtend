@@ -1,13 +1,15 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
 import com.google.inject.Inject
-import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Optional
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class AttributeNameParser implements IAttributeNameParser {
 

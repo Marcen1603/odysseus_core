@@ -12,6 +12,10 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAggregationParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IJoinParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.Collection
 import java.util.Optional
@@ -64,24 +68,13 @@ class AggregationParser implements IAggregationParser {
 				
 				switch (comp) {
 					Attribute: {
-						
-						
-//						if (e.attribute.contains(comp)) {
-//							
-//						}
-						
-						// check if attribute is already known
+						// Get concrete attribute name
 						var Optional<QueryAttribute> queryAttribute = utilityService.getQueryAttribute(comp);
 						if (queryAttribute.isPresent()) {
 							attributename = queryAttribute.get().getName();
+							// Shouldn't the data type specified by the aggregate? 
 							datatype = queryAttribute.get().getDataType();
-						// otherwise
-						//TODO check if this is still needed?
-						} else {
-							attributename = nameParser.parse(comp.name)
-							datatype = utilityService.getDataTypeFrom(attributename)
-						}
-						
+						}						
 					}
 					// only working with COUNT(*)
 					Starthing: {
@@ -90,15 +83,8 @@ class AggregationParser implements IAggregationParser {
 				}
 				
 			} else {
-				
-								// TODO HERE!
-//				var mapOperator = buildMapOperator(#[aggregation.value as SelectExpression], input.toString)
-//				mapName = cacheService.getOperatorCache().registerOperator(mapOperator.get(1) as CharSequence)
-//				attributename = (mapOperator.get(0) as List<String>).get(0)
-//				datatype = 'DOUBLE'
-				
+				//TODO Add here code for processing aggregates with MEP-expressions as input
 			}
-			
 			
 			args.add(aggregate.name)
 			args.add(attributename)

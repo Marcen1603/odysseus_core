@@ -29,6 +29,11 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttr
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryExpression;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAggregation;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IExpressionParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class AttributeParser implements IAttributeParser {
@@ -38,8 +43,8 @@ public class AttributeParser implements IAttributeParser {
 	private static IUtilityService utilityService;
 	private ICacheService cacheService;
 	private IExpressionParser expressionParser;
-	private int expressionCounter = 0;
-	private int aggregationCounter = 0;
+	private static int expressionCounter = 0;
+	private static int aggregationCounter = 0;
 	private int index = 0;
 	private int index2 = 0;
 	private QuerySourceOrder sourceOrder = new QuerySourceOrder();
@@ -121,7 +126,7 @@ public class AttributeParser implements IAttributeParser {
 							queryAttribute = createQueryAttribute(e, Collections.singletonList(new QuerySource(source)));//new QueryAttribute(e,  parsed, Collections.singletonList(new QuerySource(source)));
 							parsed = queryAttribute.parsedAttribute;
 						} else if (noDuplicates.size() > 1) {
-							throw new IllegalArgumentException("attribute could be parsed");
+							throw new IllegalArgumentException("attribute could not be parsed");
 						}
 						attributealias = registerAttributeAliases(parsed);
 						entryCol.add(queryAttribute);
@@ -381,21 +386,24 @@ public class AttributeParser implements IAttributeParser {
 	private QueryAttribute createQueryAttribute(Attribute attribute, Collection<QuerySource> sources) {
 		
 		Attribute obj = attribute;
+		String sourcename = null;
 		if (!attribute.getName().contains(".")) {
 			obj = CQLFactory.eINSTANCE.createAttribute();
-			String sourcename = null;
 			if (sources.stream().findFirst().get().alias != null) {
 				sourcename = sources.stream().findFirst().get().alias;
 			} else {
 				sourcename = sources.stream().findFirst().get().name;
 			}
-			obj.setName(sourcename + "." + attribute.getName());
+			sourcename = sourcename + "." + attribute.getName();
+			obj.setName(sourcename);
 		}
 		
 		Attribute clone = EcoreUtil2.clone(attribute);
 		obj.setAlias(clone.getAlias());
 		
-		return new QueryAttribute(attribute, new ParsedAttribute(obj), sources);
+		ParsedAttribute parsedAttribute = new ParsedAttribute(obj);
+		
+		return new QueryAttribute(attribute, parsedAttribute, sources, utilityService.getDataTypeFrom(parsedAttribute, sourcename));
 	}
 
 	private QueryAttribute[] parseExpression(SimpleSelect select, QueryAttribute[] attributeOrder, SelectArgument argument, int i) {
@@ -418,7 +426,7 @@ public class AttributeParser implements IAttributeParser {
 						
 						if (utilityService.isAggregateFunctionName(functionName)) {
 							
-							Optional<QueryAggregate> aggregate = createQueryAggregate(select, name, utilityService.getDataTypeFrom(name), candidate);
+							Optional<QueryAggregate> aggregate = createQueryAggregate(select, name, null, candidate);
 							
 							if (aggregate.isPresent()) {
 								attributeOrder[i] = aggregate.get();
@@ -445,8 +453,8 @@ public class AttributeParser implements IAttributeParser {
 
 						if (utilityService.isAggregateFunctionName(functionName)) {
 	
-							final String name = getAggregationName(((Function) functions.get(0).getValue()).getName());
-							Optional<QueryAggregate> aggregate = createQueryAggregate(select, name, utilityService.getDataTypeFrom(name), candidate);
+							final String name = getAggregationName(((Function) functions.get(0)).getName());
+							Optional<QueryAggregate> aggregate = createQueryAggregate(select, name, null, candidate);
 	
 							if (aggregate.isPresent()) {
 								attributeOrder[i] = aggregate.get();
@@ -468,6 +476,8 @@ public class AttributeParser implements IAttributeParser {
 
 		}
 		
+		aggregationCounter = 0;
+		expressionCounter = 0;
 		return attributeOrder;
 	}
 	

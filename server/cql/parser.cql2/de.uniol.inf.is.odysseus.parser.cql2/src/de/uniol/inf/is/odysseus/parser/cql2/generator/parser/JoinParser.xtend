@@ -9,6 +9,9 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IJoinParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IWindowParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Arrays

@@ -14,13 +14,15 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAttribute;
 
 public interface IUtilityService {
 
 	List<String> getAttributeAliasesAsList();
 	Map<SystemSource, Collection<String>> getSourceAliases();
-	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
+//	<K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value);
 	Map<SystemAttribute, Collection<String>> getAttributeAliasesAsMap();
 	boolean isAggregateFunctionName(String name);
 	boolean isMEPFunctionMame(String name, String parsedMEP);
@@ -42,13 +44,13 @@ public interface IUtilityService {
 	String generateListString(String s1);
 	String generateKeyValueString(List<String> l1, List<String> l2, String s);
 	String generateKeyValueString(String[] s);
-	String getDataTypeFrom(String attribute);
+//	String getDataTypeFrom(String attribute);
+//	String getDataTypeFrom(Attribute attribute);
 	Collection<String> getAttributeNamesFromSource(String name);
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);
 	Collection<String> getSourceNames();
 	Optional<QueryAttribute> getQueryAttribute(Attribute attribute);
-	String getDataTypeFrom(Attribute attribute);
 	boolean containsAllAggregates(SimpleSelect query);
 	boolean containsAllPredicates(Collection<String> predicates);
 	
@@ -60,5 +62,7 @@ public interface IUtilityService {
 	Optional<SubQuery> containedBySubQuery(Source source);
 	Optional<SimpleSelect> getCorrespondingSelect(Attribute attribute);
 	Optional<SimpleSelect> getCorrespondingSelect(QueryAttribute queryAttribute);
+	String getDataTypeFrom(ParsedAttribute parsedAttribute, String sourcename);
+	String getDataTypeFrom(ParsedAttribute parsedAttribute, Collection<QuerySource> attributeSources);
 	
 }

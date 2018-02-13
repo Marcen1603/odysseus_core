@@ -1,14 +1,15 @@
 package de.uniol.inf.is.odysseus.parser.cql2.generator.parser
 
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
-import java.util.Map
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.TimebasedWindow
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time
-import de.uniol.inf.is.odysseus.parser.cql2.cQL.TuplebasedWindow
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO
 import com.google.inject.Inject
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ElementWindowAO
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimeWindowAO
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.Time
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.TimebasedWindow
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.TuplebasedWindow
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IWindowParser
+import java.util.Map
 
 class WindowParser implements IWindowParser {
 	

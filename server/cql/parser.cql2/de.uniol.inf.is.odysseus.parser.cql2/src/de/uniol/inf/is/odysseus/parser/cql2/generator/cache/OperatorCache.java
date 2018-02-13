@@ -3,19 +3,15 @@ package de.uniol.inf.is.odysseus.parser.cql2.generator.cache;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 
 public class OperatorCache implements Cache {
-
-	private final Logger log = LoggerFactory.getLogger(OperatorCache.class);
 
 	private Collection<OperatorPlan> operatorIdBACKUP;
 	private Map<SimpleSelect, OperatorPlan> operatorsBACKUP;
@@ -84,6 +80,8 @@ public class OperatorCache implements Cache {
 	
 	private void buildOperatorPlan(OperatorPlan plan) {
 		
+		removeUnusedOperators();
+		
 		plan.operators.stream().forEach(e -> {
 			if(plan.mapping.get(e).contains("EXISTENCE(")) {
 				StringBuilder b = new StringBuilder();
@@ -110,6 +108,10 @@ public class OperatorCache implements Cache {
 			}
 		});
 		
+	}
+	
+	private void removeUnusedOperators() {
+		operatorPlanList.stream().forEach(e -> e.cleanup());
 	}
 	
 	public String last() {
@@ -316,17 +318,13 @@ public class OperatorCache implements Cache {
 		}
 		
 		public void remove(String key) {
-			
 			if (operators.contains(key)) {
 				operators.remove(key);
 				mapping.remove(key);
-				
 				if (lastOperator.equals(key)) {
 					lastOperator = get(operators.size() - 1);
 				}
-				
 			}
-			
 		}
 		
 		public String get(int index) {
@@ -347,6 +345,66 @@ public class OperatorCache implements Cache {
 				mapping.put(key, value);
 				lastOperator = key;
 			}
+		}
+		
+		public void cleanup() {
+
+			
+			Iterator<String> iter = operators.iterator();
+			while (iter.hasNext()) {
+				
+				long count = 0L;
+				final String operator = iter.next();
+				final String value = mapping.get(operator);
+//TODO not working properly
+//				// 1) remove multiple definitions of the same operator
+//				mapping.entrySet()
+//					.stream()
+//					.filter(p -> p.getKey() != operator && p.getValue().equals(value))
+//					.forEach(e -> {
+//						
+//						operators
+//							.stream()
+//							.filter(q -> mapping.get(q).contains(e.getKey()))
+//							.forEach(k -> mapping.put(k, mapping.get(k).replaceAll(e.getKey(), operator)));
+//						
+////						mapping.entrySet()
+////							.stream()
+////							.filter(q -> q.getValue().contains(e.getKey()))
+////							.forEach(k -> mapping.put(k.getKey(), k.getValue().replaceAll(e.getKey(), operator)));
+//					});
+				
+				
+//				mapping.entrySet()
+//						.stream()
+//						.filter(p -> p.getKey() != operator && p.getValue().equals(mapping.get(operator)))
+//						.forEach(e -> {
+//							mapping.values().stream()
+//							.filter(p -> p.contains(e.getKey()))
+//							.map(k -> k.replaceAll(e.getKey(), operator))
+//							.forEach(k -> {
+//								mapping.put(e.getKey(), k);
+//							});
+//						});
+
+				// 2) remove unused operators
+				if (!operator.equals(lastOperator)) {
+					// count occurrences
+					count = mapping.values()
+							.stream()
+							.filter(p -> p.contains(operator))
+							.count();
+					// remove operator if it does not appear as an
+					// input in any other operator
+					if (count == 0) {
+						mapping.remove(operator);
+						iter.remove();
+					}
+				}
+				
+				
+			}
+			
 		}
 		
 	}

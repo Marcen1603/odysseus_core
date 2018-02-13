@@ -15,11 +15,14 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.ExistenceAO;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ComplexPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.ExistPredicate;
+import de.uniol.inf.is.odysseus.parser.cql2.cQL.InPredicate;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryPredicate;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IExistenceParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class ExistenceParser implements IExistenceParser {
@@ -42,8 +45,10 @@ public class ExistenceParser implements IExistenceParser {
 	public List<String> parse(ComplexPredicate predicate, SimpleSelect parent, List<String> predicateString, boolean negated) {
 		
 		final ExistPredicate qp = predicate.getExists();
+		final InPredicate ip = predicate.getIn();
 		final SimpleSelect select = predicate.getSelect().getSelect();
 		final String symbol = qp.getPredicate();
+		final boolean isExist = qp != null ? true : false;
 		
 		int max = predicateString.size();
 		
@@ -69,7 +74,6 @@ public class ExistenceParser implements IExistenceParser {
 		selectParser.prepare(select, null);
 		selectParser.fooor(select);
 		selectParser.parseSingleSelect(select);
-//		cacheService.getSelectCache().remove(select);
 		Optional<QueryPredicate> o = cacheService.getQueryCache().getPredicate(select);
 		QueryPredicate queryPredicate = null;
 		String predString = null;
@@ -120,26 +124,54 @@ public class ExistenceParser implements IExistenceParser {
 		arguments.put("input", input);
 		
 		cacheService.getOperatorCache().add(select, builder.build(ExistenceAO.class, arguments));
-		
+			
+//			var type = 'EXISTS'
+//					var operator = '=='
+//					// save the current predicate
+//					var predicateStringListBackup = new ArrayList(predicateStringList)
+//					predicateStringList = newArrayList
+//					var predicateBackup = predicateString
+//					predicateString = ''
+//
+//					var select = complexPredicate.select.select
+//					selectParser.prepare(select, null)
+//					var predicate = ''
+//					if (select.predicates === null) {
+//						selectParser.parse(select)
+//						for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+//							predicate += in.attribute.name + operator + attribute.name + '&&'	
+//						}
+//						predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
+//					} else {
+//						selectParser.parseWithPredicate(select)
+//						for (QueryAttribute attribute : cacheService.getQueryCache().getProjectionAttributes(select)) {
+//							predicate += in.attribute.name + operator + attribute.name + '&&'
+//						}
+//						predicate = predicate.substring(0, predicate.lastIndexOf('&') - 1)
+//					}
+////FIXME 31.12.17
+////					for (Entry<String, Collection<String>> l : cacheService.getQueryCache().getQueryAttributes(select).entrySet)
+////						for (String s : l.value) {
+////							var attributename = s
+////							if (!attributename.contains('.')) {
+////								attributename = l.key + '.' + attributename
+////							}
+//////						println(attributename)
+////							predicate = predicate.replace(attributename, attributename.replace('.', '_'))
+////						}
+//
+////				predicate = predicate.replace('\\.', '_')
+//					var Map<String, String> args = newHashMap
+//					args.put('type', type)
+//					args.put('input', cacheService.getOperatorCache().lastOperatorId())
+//					args.put('predicate', predicate)
+//					existenceParser.getOperators().add(args)
+//
+//					// restore predicate
+//					predicateString = predicateBackup
+//					predicateStringList = new ArrayList(predicateStringListBackup)
+			
 		return predicateString;
-	}
-
-	@Override
-	public void register(SimpleSelect input, String select) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Map<String, String> getOperator(int i) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<Map<String, String>> getOperators() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

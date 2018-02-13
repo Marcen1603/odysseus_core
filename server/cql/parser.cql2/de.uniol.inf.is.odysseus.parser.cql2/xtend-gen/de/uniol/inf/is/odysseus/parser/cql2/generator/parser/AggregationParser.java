@@ -13,10 +13,10 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Starthing;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAggregationParser;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeNameParser;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IAttributeParser;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IJoinParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAggregationParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeParser;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IJoinParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import java.util.Collection;
 import java.util.HashMap;
@@ -98,12 +98,6 @@ public class AggregationParser implements IAggregationParser {
             QueryCache.QueryAttribute _get_3 = queryAttribute.get();
             String _dataType = _get_3.getDataType();
             datatype = _dataType;
-          } else {
-            String _name_1 = ((Attribute)comp).getName();
-            String _parse = this.nameParser.parse(_name_1);
-            attributename = _parse;
-            String _dataTypeFrom = this.utilityService.getDataTypeFrom(attributename);
-            datatype = _dataTypeFrom;
           }
         }
         if (!_matched) {

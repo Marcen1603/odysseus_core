@@ -27,11 +27,11 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAggregate;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.SubQuery;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAttribute;
-
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAttribute;
 
 public class UtilityService implements IUtilityService {
 	
@@ -50,35 +50,6 @@ public class UtilityService implements IUtilityService {
 
 		this.cacheService = cacheService;
 
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <K, V extends Collection<E>, E> Map<K, V> addToMap(Map<K, V> map, K key, E value) {
-		V list = null;      
-		
-		if(map == null || key == null || value == null) {		
-			StringBuilder builder = new StringBuilder();
-			builder.append("[parameters were null:");
-			builder.append("map=").append(map);
-			builder.append(", key=").append(key);
-			builder.append(", value=").append(value);
-			builder.append("]");
-			String message = builder.toString();
-			throw new NullPointerException(message);
-		}
-		
-		if (map.containsKey(key)) {
-			list = map.get(key);
-			if (!list.contains(value)) {
-				list.add(value);
-			}
-		} else {
-			list = (V) new ArrayList<E>();
-			map.put(key, list);
-		}
-		
-		return map;
 	}
 
 	@Override
@@ -100,7 +71,6 @@ public class UtilityService implements IUtilityService {
 		return map;
 	}
 
-	//TODO should be contained by SystemSource as static method
 	@Override
 	public void registerSourceAlias(SimpleSource source) {
 		
@@ -174,6 +144,38 @@ public class UtilityService implements IUtilityService {
 			return getSystemSource(source);
 		}
 		
+		//TODO this is just a workaround
+		if (name.equals("TimeInterval")) {
+			
+			final SystemSource systemSource = new SystemSource();
+			systemSource.setName(name);
+			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
+			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
+			systemSource.add(attribute1);
+			systemSource.add(attribute2);
+			
+			return systemSource;
+		} else if (name.equals("Latency")) {
+			
+			final SystemSource systemSource = new SystemSource();
+			systemSource.setName(name);
+			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
+			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
+			systemSource.add(attribute1);
+			systemSource.add(attribute2);
+			
+			return systemSource;
+		}	else if (name.equals("Datarate")) {
+			
+			final SystemSource systemSource = new SystemSource();
+			systemSource.setName(name);
+			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
+			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
+			systemSource.add(attribute1);
+			systemSource.add(attribute2);
+			
+			return systemSource;
+		}
 		
 		throw new IllegalArgumentException("given source " + name + " is not registered");
 	}
@@ -183,10 +185,6 @@ public class UtilityService implements IUtilityService {
 		return getSystemSource(source.getName());
 	}
 	
-	protected String getExpressionPrefix() {
-		return "expression_";
-	}
-
 	@Override
 	public Collection<String> getSourceNames() {
 		return cacheService.getSystemSources().stream().map(e -> e.getName()).collect(Collectors.toList());
@@ -288,13 +286,7 @@ public class UtilityService implements IUtilityService {
 	}
 
 	@Override
-	public void clear() {
-//		cacheService.flushAll();
-//		cacheService.getQueryCache().flush();
-//		cacheService.getExpressionCache().flush();
-//		cacheService.getSourceCache().flush();
-//		cacheService.getAggregationAttributeCache().flush();
-	}
+	public void clear() { }
 	
 	@Override
 	public String getSourceNameFromAlias(String sourcealias) {
@@ -369,135 +361,6 @@ public class UtilityService implements IUtilityService {
 		return "";
 	}
 	
-	@Override
-	public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.getName()); }
-
-	//FIXME
-	public String getDataTypeFrom(String attribute) {
-		
-		String attributename = attribute; // getAttributename(attribute)
-		String attributealias = "";
-		String sourcename = "";
-		String sourcealias = "";
-		
-		if (attribute.contains(".")) {
-			
-			String[] splitted = attribute.split("\\.");
-			
-			if (isAttributeAlias(attributename)) {
-				////
-//				String sourceFromAlias = getSourceNameFromAlias(attributename);
-//				
-//				if (isSourceAlias(sourceFromAlias)) {
-//					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
-//				}
-//				
-//				attributename = getAttributenameFromAlias(attributename);
-//				sourcename = sourceFromAlias;
-//				
-//				for (SystemAttribute attr : getSource(sourcename).getAttributeList()) {
-//					if (attr.attributename.equals(attributename))
-//						return attr.datatype;
-//				}
-//				
-			}
-			
-			sourcename = splitted[0];
-			attributename = splitted[1];
-			
-			if (isAttributeAlias(attributename)) {
-				attributealias = attributename;
-				attributename = getAttributenameFromAlias(attributename);
-			}
-			
-			if (isSourceAlias(sourcename)) {
-				sourcealias = sourcename;
-				sourcename = getSourceNameFromAlias(sourcename);
-			}
-			
-//			try {
-			
-			if (isSubQuery(sourcename).isPresent()) {
-				
-				final String aname = attributename;
-				final String aalias = attributealias;
-				
-				final String asourcename = sourcename;
-				final String asourcealias = sourcealias;
-				
-				Optional<SubQuery> subQuery = cacheService.getQueryCache().getSubQuery(sourcename);
-				
-				if (subQuery.isPresent()) {
-					
-					for (QuerySource e : cacheService.getQueryCache().getQuerySources(subQuery.get().select)) {
-						
-						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
-							
-							final String kname = k.getName().split("\\.")[1];
-							final String ksource = k.getName().split("\\.")[0];
-							String ksourcealias = "";
-							
-							if(isSourceAlias(ksource)) {
-								ksourcealias = getSourceNameFromAlias(ksource);
-							}
-							
-							if (kname.equals(aname) && (ksource.equals(e.name) || ksourcealias.equals(e.name))) {
-								for (SystemAttribute attr : getSystemSource(e.name).getAttributeList()) {
-									if (attr.attributename.equals(aname)) {
-										 return attr.getDatatype();
-									}
-								}
-							}
-							
-							return "Double";//TODO this should always return the real datatype
-						}).findFirst();
-						
-						if (o.isPresent()) {
-							return o.get();
-						}
-						
-					}
-				}
-			} else {
-			
-				for (SystemAttribute attr : getSystemSource(sourcename).getAttributeList()) {
-					if (attr.attributename.equals(attributename)) {
-						return attr.getDatatype();
-					}
-				}
-			}
-				
-//			} catch (IllegalArgumentException e) {
-//				//TODO is still used?
-////				for (String attr : getSubQuerySources().get(sourcename)) {
-////					if (attributeParser.parse(attr).equals(attributename)) {
-////						return getAttribute(attr).getDatatype();
-////
-////					}
-////				}
-//			}
-				
-				
-		} else {
-			
-			if (isAttributeAlias(attributename)) {
-				String sourceFromAlias = getSourceNameFromAlias(attributename);
-				if (isSourceAlias(sourceFromAlias))
-					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
-				attributename = getAttributenameFromAlias(attributename);
-				if (attributename == null)
-					attributename = attribute;
-				if (sourceFromAlias != null) {
-					for (SystemAttribute attr : getSystemSource(sourceFromAlias).getAttributeList())
-						if (attr.attributename.equals(attributename))
-							return attr.getDatatype();
-				}
-			}
-		}
-		
-		return "Double"; // TODO change to null if you are done with debugging
-	}
-	
 	public Collection<QueryAttribute> getAttributesFrom(QuerySource querySource) {
 		 return cacheService.getQueryCache().getAllQueryAttributes()
 				.stream()
@@ -507,16 +370,57 @@ public class UtilityService implements IUtilityService {
 	
 	@Override
 	public Optional<QueryAttribute> getQueryAttribute(Attribute attribute) {
-		Optional<QueryAttribute> o = cacheService.getQueryCache().getAllQueryAttributes()
-			.stream()
-			.filter(p -> p.equals(attribute) || (p.parsedAttribute.getAlias() != null && p.parsedAttribute.getAlias().equals(attribute.getName())))
-			.findFirst();
 		
-		if (o.isPresent()) {
-			return o;
+		for (QueryAttribute o : cacheService.getQueryCache().getAllQueryAttributes()) {
+			
+			if (o instanceof QueryAggregate) {
+				
+				Optional<QueryAttribute> queryAttribute = ((QueryAggregate) o).parsedAggregation.relatedAttributes.stream()
+					.filter(p -> {
+						return p.equals(attribute) 
+								|| (p.parsedAttribute.getAlias() != null && p.parsedAttribute.getAlias().equals(attribute.getName()));
+					})
+					.findFirst();
+				
+				if (queryAttribute.isPresent()) {
+					return queryAttribute;
+				}
+				
+			} else {
+				if(o.equals(attribute) 
+						|| ((o.parsedAttribute.getAlias() != null && o.parsedAttribute.getAlias().equals(attribute.getName())))) {
+					return Optional.of(o);
+				}
+			}
+			
 		}
+		
+		
+//		Optional<QueryAttribute> o = cacheService.getQueryCache().getAllQueryAttributes()
+//			.stream()
+//			.filter(p -> {
+//				
+//				if (p instanceof QueryAggregate) {
+//					return ((QueryAggregate) p).parsedAggregation.relatedAttributes.stream()
+//						.filter(u -> {
+//							return u.equals(attribute) 
+//									|| (u.parsedAttribute.getAlias() != null && u.parsedAttribute.getAlias().equals(attribute.getName()));
+//						}).findFirst()
+//						.isPresent();// return related query attribute
+//					
+//				} else {
+//					return p.equals(attribute) 
+//							|| ((p.parsedAttribute.getAlias() != null && p.parsedAttribute.getAlias().equals(attribute.getName())));
+//				}
+//				
+//			})
+//			.findFirst();
+//		
+//		if (o.isPresent()) {
+//			return o;
+//		}
 
-		return Optional.of(new QueryAttribute(attribute, new ParsedAttribute(attribute), Collections.EMPTY_LIST));
+		return Optional.of(new QueryAttribute(attribute, new ParsedAttribute(attribute), Collections.EMPTY_LIST, null));//TODO retrieve correct datatype
 	}
 	
 	//TODO rename
@@ -637,6 +541,163 @@ public class UtilityService implements IUtilityService {
 						.findFirst()
 						.isPresent())
 				.findFirst();
+	}
+
+//	@Override
+//	public String getDataTypeFrom(Attribute attribute) { return getDataTypeFrom(attribute.getName()); }
+//
+//	//FIXME
+//	public String getDataTypeFrom(String attribute) {
+//		
+//		String attributename = attribute; // getAttributename(attribute)
+//		String attributealias = "";
+//		String sourcename = "";
+//		String sourcealias = "";
+//		
+//		if (attribute.contains(".")) {
+//			
+//			String[] splitted = attribute.split("\\.");
+//			
+//			if (isAttributeAlias(attributename)) {
+//				////
+////				String sourceFromAlias = getSourceNameFromAlias(attributename);
+////				
+////				if (isSourceAlias(sourceFromAlias)) {
+////					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
+////				}
+////				
+////				attributename = getAttributenameFromAlias(attributename);
+////				sourcename = sourceFromAlias;
+////				
+////				for (SystemAttribute attr : getSource(sourcename).getAttributeList()) {
+////					if (attr.attributename.equals(attributename))
+////						return attr.datatype;
+////				}
+////				
+//			}
+//			
+//			sourcename = splitted[0];
+//			attributename = splitted[1];
+//			
+//			if (isAttributeAlias(attributename)) {
+//				attributealias = attributename;
+//				attributename = getAttributenameFromAlias(attributename);
+//			}
+//			
+//			if (isSourceAlias(sourcename)) {
+//				sourcealias = sourcename;
+//				sourcename = getSourceNameFromAlias(sourcename);
+//			}
+//			
+////			try {
+//			
+//			if (isSubQuery(sourcename).isPresent()) {
+//				
+//				final String aname = attributename;
+//				final String aalias = attributealias;
+//				
+//				final String asourcename = sourcename;
+//				final String asourcealias = sourcealias;
+//				
+//				Optional<SubQuery> subQuery = cacheService.getQueryCache().getSubQuery(sourcename);
+//				
+//				if (subQuery.isPresent()) {
+//					
+//					for (QuerySource e : cacheService.getQueryCache().getQuerySources(subQuery.get().select)) {
+//						
+//						Optional<String> o = getAttributesFrom(e).stream().map(k -> {
+//							
+//							final String kname = k.getName().split("\\.")[1];
+//							final String ksource = k.getName().split("\\.")[0];
+//							String ksourcealias = "";
+//							
+//							if(isSourceAlias(ksource)) {
+//								ksourcealias = getSourceNameFromAlias(ksource);
+//							}
+//							
+//							if (kname.equals(aname) && (ksource.equals(e.name) || ksourcealias.equals(e.name))) {
+//								for (SystemAttribute attr : getSystemSource(e.name).getAttributeList()) {
+//									if (attr.attributename.equals(aname)) {
+//										 return attr.getDatatype();
+//									}
+//								}
+//							}
+//							
+//							return "Double";//TODO this should always return the real datatype
+//						}).findFirst();
+//						
+//						if (o.isPresent()) {
+//							return o.get();
+//						}
+//						
+//					}
+//				}
+//			} else {
+//			
+//				for (SystemAttribute attr : getSystemSource(sourcename).getAttributeList()) {
+//					if (attr.attributename.equals(attributename)) {
+//						return attr.getDatatype();
+//					}
+//				}
+//			}
+//				
+////			} catch (IllegalArgumentException e) {
+////				//TODO is still used?
+//////				for (String attr : getSubQuerySources().get(sourcename)) {
+//////					if (attributeParser.parse(attr).equals(attributename)) {
+//////						return getAttribute(attr).getDatatype();
+//////
+//////					}
+//////				}
+////			}
+//				
+//				
+//		} else {
+//			
+//			if (isAttributeAlias(attributename)) {
+//				String sourceFromAlias = getSourceNameFromAlias(attributename);
+//				if (isSourceAlias(sourceFromAlias))
+//					sourceFromAlias = getSourceNameFromAlias(sourceFromAlias);
+//				attributename = getAttributenameFromAlias(attributename);
+//				if (attributename == null)
+//					attributename = attribute;
+//				if (sourceFromAlias != null) {
+//					for (SystemAttribute attr : getSystemSource(sourceFromAlias).getAttributeList())
+//						if (attr.attributename.equals(attributename))
+//							return attr.getDatatype();
+//				}
+//			}
+//		}
+//		
+//		return null;//"Double"; // TODO change to null if you are done with debugging
+//	}
+	
+	@Override
+	public String getDataTypeFrom(ParsedAttribute parsedAttribute, String sourcename) {
+		
+		for (String source : SystemSource.getQuerySources()) {
+			for(SystemAttribute attribute : getSystemSource(source).getAttributeList()) {
+				boolean namesAreEqual = parsedAttribute.matches(attribute);
+				if (namesAreEqual || parsedAttribute.getName().equals(sourcename)) {
+					return attribute.getDatatype();
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public String getDataTypeFrom(ParsedAttribute parsedAttribute, Collection<QuerySource> attributeSources) {
+		
+		for (QuerySource source : attributeSources) {
+			String dataType = getDataTypeFrom(parsedAttribute, source.name);
+			if (dataType != null) {
+				return dataType;
+			}
+		}
+		
+		return null;
 	}
 	
 }

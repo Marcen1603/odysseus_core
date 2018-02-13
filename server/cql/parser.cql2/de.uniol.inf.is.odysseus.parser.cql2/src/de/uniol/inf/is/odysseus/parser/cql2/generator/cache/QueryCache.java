@@ -20,11 +20,12 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QueryAttributeOrder;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.AttributeParser.QuerySourceOrder;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IParsedObject;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.IPredicateParser;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAggregation;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedAttribute;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.ParsedExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAggregation;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedAttribute;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.helper.ParsedExpression;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IParsedObject;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IParsedObject.Type;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IPredicateParser;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 
 public class QueryCache implements Cache {
@@ -119,6 +120,10 @@ public class QueryCache implements Cache {
 			e.stream().forEach(p -> col.add(p));
 		});
 		
+		aggreateEntries.values().stream().forEach(e -> {
+			e.stream().forEach(p -> col.add(p));
+		});
+		
 		return col;
 	}
 	
@@ -210,6 +215,7 @@ public class QueryCache implements Cache {
 		
 		public Attribute attribute;
 		public ParsedAttribute parsedAttribute;
+		public String dataType;
 		public IParsedObject parsedObject;
 		public Collection<QuerySource> sources;
 		
@@ -221,24 +227,61 @@ public class QueryCache implements Cache {
 			this.sources = sources.stream().map(e -> new QuerySource(e)).collect(Collectors.toList());
 		}
 		
-		public QueryAttribute(Attribute attribute, ParsedAttribute parsed, Collection<QuerySource> sources) {
+		public QueryAttribute(Attribute attribute, ParsedAttribute parsed, Collection<QuerySource> sources, String dataType) {
 			this(sources);
 			this.parsedAttribute = parsed;
 			this.parsedObject = parsed;
 			this.attribute = attribute;
+			this.dataType = dataType;
 			this.type = parsed.getType();
 			
 			Optional<SubQuery> o = utilityService.isSubQuery(parsedAttribute.prefix);
+			
+			// check if this is referenced by another nested select
 			if (o.isPresent()) {
+				
+				Collection<QueryAggregate> queryAggregations = new ArrayList<>();
+				
 				Optional<QueryAttribute> queryAttribute = queryCache.getProjectionAttributes(o.get().select)
 					.stream()
-					.filter(p -> p.parsedAttribute.suffix.equals(this.parsedAttribute.suffix))
+					.map(p -> {
+						if(p.type.equals(Type.AGGREGATION)) {
+							queryAggregations.add((QueryAggregate) p);
+						}
+						return p;
+					})
+					.filter(p -> p.type.equals(Type.ATTRIBUTE))
+					.filter(p -> p.parsedAttribute.suffix.equals(parsedAttribute.suffix))
 					.findFirst();
 				
+				// if it is referenced, set referencedBy and referenceOf to associate both with each other
 				if (queryAttribute.isPresent()) {
 					this.referencedBy = queryAttribute.get();
 					queryAttribute.get().referenceOf = this;
+					return;
 				}
+
+				if (!queryAggregations.isEmpty()) {
+					Optional<QueryAggregate> queryAggregate = queryAggregations.stream()
+					.filter(p -> p.parsedAggregation.getAlias().equals(parsedAttribute.suffix))
+					.findFirst();
+					
+					if (queryAggregate.isPresent()) {
+						
+						ParsedAttribute newParsed = ParsedAttribute.convert(queryAggregate.get());
+						QueryAttribute newAttribute = new QueryAttribute(
+								null, 
+								newParsed, 
+								queryAggregate.get().sources,
+								queryAggregate.get().getDataType()
+						);
+						this.referencedBy = newAttribute;
+						queryAggregate.get().parsedAttribute = newParsed;
+						queryAggregate.get().referenceOf = this;
+					}
+					
+				}
+				
 			}
 			
 		}
@@ -249,6 +292,7 @@ public class QueryCache implements Cache {
 			this.parsedAttribute = new ParsedAttribute(obj.parsedAttribute);
 			this.parsedObject = this.parsedAttribute;
 			this.attribute = obj.attribute;
+			this.dataType = obj.dataType;
 			this.type = obj.type;
 			this.referencedBy = obj.referencedBy;
 			this.referenceOf = obj.referenceOf;
@@ -259,7 +303,7 @@ public class QueryCache implements Cache {
 		}
 		
 		public String getDataType() {
-			return parsedObject.getDataType();
+			return dataType;
 		}
 		
 		public String getAlias() {
@@ -271,7 +315,7 @@ public class QueryCache implements Cache {
 			
 			if (obj instanceof QueryAttribute) {
 				return this.parsedAttribute.getName().equals(((QueryAttribute) obj).parsedAttribute.getName()) &&
-						this.parsedAttribute.getDataType().equals(((QueryAttribute) obj).parsedAttribute.getDataType()) &&
+						this.getDataType().equals(((QueryAttribute) obj).getDataType()) &&
 						this.sources.equals(((QueryAttribute) obj).sources);
 			}
 			
@@ -279,7 +323,7 @@ public class QueryCache implements Cache {
 		}
 		
 		public boolean equals(Attribute obj) {
-			return this.parsedAttribute.equals(new ParsedAttribute(obj));
+			return this.parsedAttribute != null && this.parsedAttribute.equals(new ParsedAttribute(obj));
 		}
 		
 	}

@@ -21,14 +21,19 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Plus
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
+import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IExistenceParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IPredicateParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IQuantificationParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.List
 import java.util.Map
+import java.util.Optional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.Optional
-import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QueryAttribute
 
 class PredicateParser implements IPredicateParser {
 
@@ -346,7 +351,7 @@ class PredicateParser implements IPredicateParser {
 //		println("exists() -> " + predicateString)
 		args.put('predicate', predicateString)
 		args.put('input', cacheService.getOperatorCache().last())
-		existenceParser.getOperators().add(args)
+//		existenceParser.getOperators().add(args)
 
 		// restore predicate
 		predicateString = predicateBackup

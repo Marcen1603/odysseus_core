@@ -12,9 +12,11 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectArgument
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SelectExpression
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.StringConstant
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Vector
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IAttributeNameParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IExpressionParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
-import java.util.Collection
 import java.util.ArrayList
+import java.util.Collection
 
 class ExpressionParser implements IExpressionParser {
 	

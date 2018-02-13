@@ -8,6 +8,8 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource
 import de.uniol.inf.is.odysseus.parser.cql2.generator.builder.AbstractPQLOperatorBuilder
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.ICacheService
 import de.uniol.inf.is.odysseus.parser.cql2.generator.cache.QueryCache.QuerySource
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IJoinParser
+import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.IRenameParser
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService
 import java.util.ArrayList
 import java.util.Collection
