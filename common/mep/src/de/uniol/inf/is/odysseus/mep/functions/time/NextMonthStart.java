@@ -19,10 +19,12 @@ public class NextMonthStart extends AbstractUnaryDateFunction<Date> {
 		in.setTime(getInputValue(0));
 		Calendar calendar = Calendar.getInstance();
 		int month = in.get(Calendar.MONTH) + 2;
+		int year = in.get(Calendar.YEAR);
 		if (month > 12) {
 			month = 1;
+			year = year + 1;
 		}
-		calendar.set(in.get(Calendar.YEAR), month, 1, 0, 0, 0);
+		calendar.set(year, month, 1, 0, 0, 0);
 		return calendar.getTime();
 	}
 
