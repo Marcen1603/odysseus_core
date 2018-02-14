@@ -1,4 +1,4 @@
-<h1>Odysseus Project</h1>
+# Odysseus Project
 
 See https://odysseus.offis.uni-oldenburg.de/
 
