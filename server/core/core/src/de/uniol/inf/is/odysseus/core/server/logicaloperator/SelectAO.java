@@ -35,7 +35,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc = "The select operator filters the incoming data stream according to the given predicate.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Select+operator", category = {
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "SELECT", doc = "The select operator filters the incoming data stream according to the given predicate.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Select+operator", category = {
 		LogicalOperatorCategory.BASE })
 public class SelectAO extends UnaryLogicalOp implements IHasPredicate, IParallelizableOperator {
 	private static final long serialVersionUID = 3215936185841514846L;

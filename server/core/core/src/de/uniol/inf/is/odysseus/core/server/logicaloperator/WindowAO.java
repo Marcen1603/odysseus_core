@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
 
-@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW", category = { LogicalOperatorCategory.BASE }, doc = "use TimeWindow, ElementWindow or PredicateWindow instead", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Window+operator", hidden = true, deprecation = true)
+@LogicalOperator(minInputPorts = 1, maxInputPorts = 1, name = "WINDOW", category = { LogicalOperatorCategory.BASE }, doc = "use TimeWindow, ElementWindow or PredicateWindow instead", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Window+operator", hidden = true, deprecation = true)
 public class WindowAO extends AbstractWindowWithWidthAO {
 
 	private static final long serialVersionUID = 5024709707231623350L;
