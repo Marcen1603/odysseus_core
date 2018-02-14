@@ -18,7 +18,7 @@ public class MonthStart extends AbstractUnaryDateFunction<Date> {
 		Calendar in = Calendar.getInstance();
 		in.setTime(getInputValue(0));
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(in.get(Calendar.YEAR), in.get(Calendar.MONTH) + 1, 1, 0, 0, 0);
+		calendar.set(in.get(Calendar.YEAR), in.get(Calendar.MONTH), 1, 0, 0, 0);
 		return calendar.getTime();
 	}
 
