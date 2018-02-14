@@ -23,11 +23,14 @@ import com.google.common.base.Strings;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.LongParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpressionParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
@@ -40,6 +43,10 @@ public class TimestampAO extends UnaryLogicalOp {
 	// To be used if timestamps are given in one attribute
 	private SDFAttribute startTimestamp;
 	private SDFAttribute endTimestamp;
+	// expressions to calculate timestamps
+	private SDFExpression startExpression;
+	private SDFExpression endExpression;
+	
 	// an optional String representation of the date format
 	private String dateFormat;
 	private Locale locale;
@@ -80,11 +87,15 @@ public class TimestampAO extends UnaryLogicalOp {
 		setOffset(ao.offset);
 		this.isUsingSystemTime = ao.isUsingSystemTime;
 		this.isUsingNoTime = ao.isUsingNoTime;
+		this.startExpression = ao.startExpression != null? ao.startExpression.clone():null;
+		this.endExpression = ao.endExpression!=null? ao.endExpression.clone():null;
 	}
 
 	public TimestampAO() {
 		startTimestamp = null;
 		endTimestamp = null;
+		startExpression = null;
+		endExpression = null;
 		isUsingSystemTime = true;
 		isUsingNoTime = false;
 		clearEnd = false;
@@ -109,6 +120,16 @@ public class TimestampAO extends UnaryLogicalOp {
 			this.isUsingSystemTime = false;
 		}
 	}
+	
+	@Parameter(type = NamedExpressionParameter.class, name = "StartExpression", optional = true, doc="Calculate the start timestamp with an expression. In case of one attribute use START instead!")
+	public void setStartExpression2(NamedExpression expression) {
+		this.startExpression = expression.expression;
+		this.isUsingSystemTime = false;
+	}
+	
+	public SDFExpression getStartExpression() {
+		return startExpression;
+	}
 
 	public SDFAttribute getEndTimestamp() {
 		return endTimestamp;
@@ -118,6 +139,16 @@ public class TimestampAO extends UnaryLogicalOp {
 	public void setEndTimestamp(SDFAttribute endTimestamp) {
 		this.endTimestamp = endTimestamp;
 		addParameterInfoIfNeeded("END", endTimestamp);
+	}
+	
+	@Parameter(type = NamedExpressionParameter.class, name = "EndExpression", optional = true, doc="Calculate the end timestamp with an expression. In case of one attribute use END instead!")
+	public void setEndExpression2(NamedExpression expression) {
+		this.endExpression = expression.expression;
+		this.isUsingSystemTime = false;
+	}
+	
+	public SDFExpression getEndExpression() {
+		return endExpression;
 	}
 
 	@Parameter(type = BooleanParameter.class, name = "clearEnd", isList = false, optional = true, doc="If set to true, the end timestamp will be set to infinity")
@@ -325,6 +356,20 @@ public class TimestampAO extends UnaryLogicalOp {
 		} else {
 			addParameterInfo(key, null);
 		}
+	}
+	
+	@Override
+	public boolean isValid() {
+		if (this.startExpression != null && this.startTimestamp != null) {
+			addError("You cannot use start and startExpression at the same time!");
+			return false;
+		}
+		if (this.endExpression != null && this.endTimestamp != null) {
+			addError("You cannot use end and endExpression at the same time!");
+			return false;
+		}
+
+		return true;
 	}
 	
 }
