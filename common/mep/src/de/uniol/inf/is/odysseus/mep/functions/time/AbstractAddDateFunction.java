@@ -13,7 +13,7 @@ public abstract class AbstractAddDateFunction extends AbstractDateLongFunction {
 	
 	protected Date add(int position) {
 		Calendar in = Calendar.getInstance();
-		int amount = getInputValue(1);
+		int amount = ((Number)getInputValue(1)).intValue();
 		in.setTime(getInputValue(0));
 		in.add(position, amount);
 		return in.getTime();
