@@ -7,7 +7,7 @@ public class AddDayFunction extends AbstractAddDateFunction {
 
 	private static final long serialVersionUID = -1990168507355080275L;
 
-	AddDayFunction(){
+	public AddDayFunction(){
 		super("addDay");
 	}
 	

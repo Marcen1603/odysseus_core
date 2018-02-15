@@ -7,7 +7,7 @@ public class AddMonthFunction extends AbstractAddDateFunction {
 
 	private static final long serialVersionUID = -1990168507355080275L;
 
-	AddMonthFunction(){
+	public AddMonthFunction(){
 		super("addMonth");
 	}
 	

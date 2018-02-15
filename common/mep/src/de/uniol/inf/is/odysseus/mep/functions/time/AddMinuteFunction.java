@@ -7,7 +7,7 @@ public class AddMinuteFunction extends AbstractAddDateFunction {
 
 	private static final long serialVersionUID = -1990168507355080275L;
 
-	AddMinuteFunction(){
+	public AddMinuteFunction(){
 		super("addMinute");
 	}
 	
