@@ -5,12 +5,12 @@ import java.util.Date;
 
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 
-public class NextMonthStart extends AbstractUnaryDateFunction<Date> {
+public class DayStart extends AbstractUnaryDateFunction<Date> {
 
 	private static final long serialVersionUID = -6745977420912101273L;
 
-	public NextMonthStart() {
-		super("nextMonthStart", SDFDatatype.DATE);
+	public DayStart() {
+		super("dayStart", SDFDatatype.DATE);
 	}
 
 	@Override
@@ -18,8 +18,7 @@ public class NextMonthStart extends AbstractUnaryDateFunction<Date> {
 		Calendar in = Calendar.getInstance();
 		in.setTime(getInputValue(0));
 		Calendar calendar = Calendar.getInstance();
-		in.add(Calendar.MONTH,1);
-		calendar.set(in.get(Calendar.YEAR),in.get(Calendar.MONTH), 1, 0, 0, 0);
+		calendar.set(in.get(Calendar.YEAR), in.get(Calendar.MONTH), in.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
 		return calendar.getTime();
 	}
 
