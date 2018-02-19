@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Odysseus Spatio-temporal" uid="SpatioTemporal" id="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioProduct" application="de.uniol.inf.is.odysseus.generator.generic.application" version="1.0.0" useFeatures="true" includeLaunchers="true">
+<product name="Odysseus Spatio-temporal" uid="SpatioTemporal" id="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioProduct" application="de.uniol.inf.is.odysseus.client.starter.OdysseusStudioApplication" version="1.0.0" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
+      <vmArgs>-Xms1000M -Xmx1000M -Declipse.log.level=ERROR
+      </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
 
    <windowImages/>
+
 
    <launcher>
       <win useIco="false">
