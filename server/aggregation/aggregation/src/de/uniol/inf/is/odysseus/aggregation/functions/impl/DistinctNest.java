@@ -132,8 +132,17 @@ public class DistinctNest<M extends ITimeInterval, T extends Tuple<M>> extends A
 				"PRESERVE_ORDERING", false);
 		final boolean sort = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters, "SORT",
 				false);
-		final int[] uniqueAttributeIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, "UNIQUE_ATTR");
+		
+		/*
+		 * We need to test if the parameter exists. If not, we would get an error if we
+		 * don't test first. And the user does not deserve unnecessary errors.
+		 */
+		String parameterExists = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
+				"UNIQUE_ATTR");
+		final int[] uniqueAttributeIndices = parameterExists == null ? null
+				: AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters, attributeResolver,
+						"UNIQUE_ATTR");
+		
 		if (outputName == null) {
 			outputName = "distinct_nest";
 		}

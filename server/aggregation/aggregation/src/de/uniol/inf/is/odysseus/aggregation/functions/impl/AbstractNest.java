@@ -51,7 +51,7 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	protected final boolean preserveOrderingOfElements;
 	protected final boolean sortElements;
 
-	// For the "unique" element window
+	// For the "unique_attr" element window
 	protected final int[] uniqueAttributeIndices;
 	protected final Map<Object, T> mapByUniqueAttributes = new HashMap<>();
 	protected Serializable defaultGroupingKey = "__DEFAULT_GROUPING_KEY";
@@ -160,6 +160,10 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 
 		// Clean up the "element window"
 		if (uniqueAttributeIndices != null) {
+			/*
+			 * Remark: the "removeAll" does not work because we get whole sets, not only
+			 * elements
+			 */
 			mapByUniqueAttributes.entrySet().removeIf(e -> outdatedElements.contains(e.getValue()));
 		}
 	}

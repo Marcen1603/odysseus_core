@@ -43,7 +43,8 @@ public class Nest<M extends ITimeInterval, T extends Tuple<M>> extends AbstractN
 
 	public Nest(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
 			final boolean preserveOrderingOfElements, final boolean sortElements, final int[] uniqueAttributeIndices) {
-		super(new ArrayList<>(), attributes, outputAttributeName, subSchema, preserveOrderingOfElements, sortElements, uniqueAttributeIndices);
+		super(new ArrayList<>(), attributes, outputAttributeName, subSchema, preserveOrderingOfElements, sortElements,
+				uniqueAttributeIndices);
 	}
 
 	public Nest(final String outputAttributeName, final SDFSchema subSchema, final boolean preserveOrderingOfElements,
@@ -86,10 +87,17 @@ public class Nest<M extends ITimeInterval, T extends Tuple<M>> extends AbstractN
 				"PRESERVE_ORDERING", false);
 		final boolean sort = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters, "SORT",
 				false);
-		String parameterExists = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters, "UNIQUE_ATTR");
-		final int[] uniqueAttributeIndices = parameterExists == null ? null : AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, "UNIQUE_ATTR");
-		
+
+		/*
+		 * We need to test if the parameter exists. If not, we would get an error if we
+		 * don't test first. And the user does not deserve unnecessary errors.
+		 */
+		String parameterExists = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
+				"UNIQUE_ATTR");
+		final int[] uniqueAttributeIndices = parameterExists == null ? null
+				: AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters, attributeResolver,
+						"UNIQUE_ATTR");
+
 		if (outputName == null) {
 			outputName = "nest";
 		}
