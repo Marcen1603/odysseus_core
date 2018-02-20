@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sun.xml.internal.ws.util.StringUtils;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
@@ -46,7 +47,7 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 
 	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
 	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
-	private static final int SPACE_PIXELS = 100;
+	private static final int SPACE_HEIGHT_PIXELS = 100;
 	private static final int SPACE_WIDTH_PIXELS = 250; // 75;
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
 
@@ -84,10 +85,36 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 		/** PHASE 3 **/
 		// Arrays initialisieren
 		// Diese werden die X-Koordinaten beherbergen
+
+		int maxLayerSize = 0;
+
 		final int[][] posY = new int[layers.size()][];
 		for (int i = 0; i < layers.size(); i++) {
 			posY[i] = new int[layers.get(i).size()];
+			maxLayerSize = Math.max(maxLayerSize, layers.get(i).size());
 		}
+
+		// calculate maximum node height and width per layer / orthogonal
+		final int[] maxWidths = new int[layers.size()];
+		final int[] maxHeights = new int[maxLayerSize];
+
+		for (int i = 0; i < layers.size(); i++) {
+			for (int k = 0; k < layers.get(i).size(); k++) {
+				maxWidths[i] = Math.max(maxWidths[i], layers.get(i).get(k).getWidth());
+				maxHeights[k] = Math.max(maxHeights[k], layers.get(i).get(k).getHeight());
+			}
+		}
+
+		System.out.println("max widths:");
+		for (int i = 0; i < maxWidths.length; i++) {
+			System.out.print(maxWidths[i] + " ");
+		}
+		System.out.println();
+		System.out.println("max heights: ");
+		for (int i = 0; i < maxHeights.length; i++) {
+			System.out.print(maxHeights[i] + " ");
+		}
+		System.out.println();
 
 		// Abstand zwischen zwei Knoten
 		int highestY = Integer.MIN_VALUE;
@@ -104,8 +131,8 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 					posY[layer][index] = posY[layer - 1][med];
 				}
 
-				if (posY[layer][index] < lastY + lastHeight + SPACE_PIXELS) {
-					posY[layer][index] = lastY + lastHeight + SPACE_PIXELS;
+				if (posY[layer][index] < lastY + lastHeight + SPACE_HEIGHT_PIXELS) {
+					posY[layer][index] = lastY + lastHeight + SPACE_HEIGHT_PIXELS;
 				}
 
 				lastY = posY[layer][index];
@@ -118,7 +145,8 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 
 		logger.debug("Final NodeDisplay positions");
 		for (int layer = 0; layer < layers.size(); layer++) {
-//			final int posX = layers.size() * SPACE_WIDTH_PIXELS - SPACE_WIDTH_PIXELS * (layer + 1);
+			// final int posX = layers.size() * SPACE_WIDTH_PIXELS -
+			// SPACE_WIDTH_PIXELS * (layer + 1);
 			final int posX = SPACE_WIDTH_PIXELS * (layer + 1);
 			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
