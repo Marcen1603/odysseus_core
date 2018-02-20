@@ -47,7 +47,7 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
 	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
 	private static final int SPACE_PIXELS = 100;
-	private static final int SPACE_WIDTH_PIXELS = 250; //75;
+	private static final int SPACE_WIDTH_PIXELS = 250; // 75;
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
 
 	private final ISymbolElementFactory<IPhysicalOperator> symbolFactory;
@@ -118,11 +118,14 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 
 		logger.debug("Final NodeDisplay positions");
 		for (int layer = 0; layer < layers.size(); layer++) {
-			final int posX = layers.size() * SPACE_WIDTH_PIXELS - SPACE_WIDTH_PIXELS * (layer + 1);
+//			final int posX = layers.size() * SPACE_WIDTH_PIXELS - SPACE_WIDTH_PIXELS * (layer + 1);
+			final int posX = SPACE_WIDTH_PIXELS * (layer + 1);
 			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 				currNode.setPosition(new Vector(posX, posY[layer][index]));
-				System.out.println("( "+ posX + " | " + posY[layer][index] + " )");
+				if (currNode.getModelNode() != null) {
+					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
+				}
 			}
 		}
 
