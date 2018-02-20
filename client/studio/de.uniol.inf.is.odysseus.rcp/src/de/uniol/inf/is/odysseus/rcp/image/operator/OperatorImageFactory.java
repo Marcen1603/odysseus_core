@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images;
+package de.uniol.inf.is.odysseus.rcp.image.operator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 
 /**
  * @author DGeesen
@@ -165,7 +165,7 @@ public class OperatorImageFactory {
 			break;
 		}
 
-		return Activator.getImageDescriptor("operator-images/" + file);
+		return OdysseusRCPPlugIn.getImageDescriptor("operator-images/" + file);
 
 	}
 }

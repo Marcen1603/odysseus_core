@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.ConnectionFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.OperatorNodeFactory;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.OperatorImageFactory;
+import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
 
 /**
  * @author DGeesen

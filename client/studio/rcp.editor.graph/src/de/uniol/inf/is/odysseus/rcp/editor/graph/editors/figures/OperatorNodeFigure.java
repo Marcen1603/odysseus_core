@@ -28,8 +28,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.OperatorImageFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
+import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
 
 /**
  * @author DGeesen
