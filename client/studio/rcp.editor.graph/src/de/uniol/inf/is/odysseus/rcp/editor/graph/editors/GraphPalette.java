@@ -37,7 +37,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.ConnectionFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.OperatorNodeFactory;
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
+import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.OperatorImageFactory;
 
 /**
  * @author DGeesen
@@ -70,7 +70,7 @@ public class GraphPalette {
 			}
 		});
 		for (LogicalOperatorInformation op : ops) {
-			ImageDescriptor imgBig = ImageFactory.createImageForOperator(op.getOperatorName());
+			ImageDescriptor imgBig = OperatorImageFactory.createImageForOperator(op.getOperatorName());
 			ImageDescriptor imgSmall = ImageDescriptor.createFromImageData(resizeImage(imgBig.getImageData()));
 			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(), op.getDoc(), new OperatorNodeFactory(op), imgSmall, imgBig);
 			String category = op.getCategories()[0];
