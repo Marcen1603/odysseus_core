@@ -47,8 +47,8 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 
 	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
 	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
-	private static final int SPACE_HEIGHT_PIXELS = 100;
-	private static final int SPACE_WIDTH_PIXELS = 250; // 75;
+	private static final int SPACE_HEIGHT_PIXELS = 50;
+	private static final int SPACE_WIDTH_PIXELS = 50;
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
 
 	private final ISymbolElementFactory<IPhysicalOperator> symbolFactory;
@@ -105,62 +105,50 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 			}
 		}
 
-		System.out.println("max widths:");
-		for (int i = 0; i < maxWidths.length; i++) {
-			System.out.print(maxWidths[i] + " ");
-		}
-		System.out.println();
-		System.out.println("max heights: ");
-		for (int i = 0; i < maxHeights.length; i++) {
-			System.out.print(maxHeights[i] + " ");
-		}
-		System.out.println();
-
 		// Abstand zwischen zwei Knoten
-		int highestY = Integer.MIN_VALUE;
 		for (int layer = 0; layer < layers.size(); layer++) {
 
-			int lastY = 0;
-			int lastHeight = 0;
+			int offsetY = 0;
 			for (int index = 0; index < layers.get(layer).size(); index++) {
 				final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 
 				posY[layer][index] = 0;
+
 				if (layer > 0) {
 					final int med = getMedian(currNode, layers.get(layer - 1), true);
-					posY[layer][index] = posY[layer - 1][med];
+					posY[layer][index] = calcOffsetY(maxHeights, med) + (maxHeights[med] - currNode.getHeight()) / 2;
 				}
 
-				if (posY[layer][index] < lastY + lastHeight + SPACE_HEIGHT_PIXELS) {
-					posY[layer][index] = lastY + lastHeight + SPACE_HEIGHT_PIXELS;
+				if (posY[layer][index] < offsetY + (maxHeights[index] - currNode.getHeight()) / 2) {
+					posY[layer][index] = offsetY + (maxHeights[index] - currNode.getHeight()) / 2;
 				}
 
-				lastY = posY[layer][index];
-				lastHeight = currNode.getHeight();
-				if (highestY < lastY + lastHeight) {
-					highestY = lastY + lastHeight;
-				}
+				offsetY += maxHeights[index] + SPACE_HEIGHT_PIXELS;
 			}
 		}
 
 		logger.debug("Final NodeDisplay positions");
 		int offsetX = 0;
 		for (int layer = 0; layer < layers.size(); layer++) {
-			// final int posX = layers.size() * SPACE_WIDTH_PIXELS -
-			// SPACE_WIDTH_PIXELS * (layer + 1);
-			//final int posX = SPACE_WIDTH_PIXELS * (layer + 1);
-			 
 			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
 				final int posX = offsetX + (maxWidths[layer] - layers.get(layer).get(index).getWidth()) / 2;
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 				currNode.setPosition(new Vector(posX, posY[layer][index]));
-//				if (currNode.getModelNode() != null) {
-//					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
-//				}
+				if (currNode.getModelNode() != null) {
+					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
+				}
 			}
 			offsetX += maxWidths[layer] + SPACE_WIDTH_PIXELS;
 		}
 
+	}
+
+	private int calcOffsetY(int[] maxHeights, int index) {
+		int offsetY = 0;
+		for (int i = 0; i < index; i++) {
+			offsetY += maxHeights[i] + SPACE_HEIGHT_PIXELS;
+		}
+		return offsetY;
 	}
 
 	private static void layerByLayerSweep(List<List<INodeView<IPhysicalOperator>>> layers) {
