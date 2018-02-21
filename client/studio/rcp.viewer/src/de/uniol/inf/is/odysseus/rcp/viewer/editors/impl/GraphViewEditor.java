@@ -108,7 +108,7 @@ public class GraphViewEditor extends EditorPart implements IGraphViewEditor, ISe
 		canvasComposite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
 		canvasComposite.setLayout(new FillLayout());
 
-		INodePositioner<IPhysicalOperator> positioner = PositionerFactory.newInstance(PositionerFactory.HORIZONTAL_SUGIYAMA, SYMBOL_FACTORY);
+		INodePositioner<IPhysicalOperator> positioner = PositionerFactory.newInstance(SYMBOL_FACTORY);
 		renderManager = new SWTRenderManager<IPhysicalOperator>(canvasComposite, positioner);
 		renderManager.setDisplayedGraph(input.getGraphView());
 		renderManager.resetPositions();
