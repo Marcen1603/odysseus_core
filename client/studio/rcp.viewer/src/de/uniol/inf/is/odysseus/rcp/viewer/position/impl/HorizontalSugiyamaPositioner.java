@@ -144,17 +144,21 @@ public final class HorizontalSugiyamaPositioner implements INodePositioner<IPhys
 		}
 
 		logger.debug("Final NodeDisplay positions");
+		int offsetX = 0;
 		for (int layer = 0; layer < layers.size(); layer++) {
 			// final int posX = layers.size() * SPACE_WIDTH_PIXELS -
 			// SPACE_WIDTH_PIXELS * (layer + 1);
-			final int posX = SPACE_WIDTH_PIXELS * (layer + 1);
+			//final int posX = SPACE_WIDTH_PIXELS * (layer + 1);
+			 
 			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+				final int posX = offsetX + (maxWidths[layer] - layers.get(layer).get(index).getWidth()) / 2;
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 				currNode.setPosition(new Vector(posX, posY[layer][index]));
-				if (currNode.getModelNode() != null) {
-					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
-				}
+//				if (currNode.getModelNode() != null) {
+//					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
+//				}
 			}
+			offsetX += maxWidths[layer] + SPACE_WIDTH_PIXELS;
 		}
 
 	}
