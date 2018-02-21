@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.rcp;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -26,7 +27,7 @@ import de.uniol.inf.is.odysseus.rcp.l10n.OdysseusNLS;
 
 public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventListener {
 
-	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp";
+	public static final String PLUGIN_ID = "de.uniol.inf.is.odysseus.rcp.base";
 
 	public static final String QUERY_VIEW_ID = "de.uniol.inf.is.odysseus.rcp.views.query.QueryView";
 
@@ -120,6 +121,21 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 
 	public static ImageManager getImageManager() {
 		return imageManager;
+	}
+	
+	/**
+	 * Returns an image descriptor for the image file at the given
+	 * plug-in relative path
+	 *
+	 * @param path the path
+	 * @return the image descriptor
+	 */
+	public static ImageDescriptor getImageDescriptor(String path) {
+		ImageDescriptor i = imageDescriptorFromPlugin(PLUGIN_ID, path);
+		if (i == null){
+			throw new IllegalArgumentException("Image "+path+" not found");
+		}
+		return i;
 	}
 
 	public static IExecutor getExecutor() {
