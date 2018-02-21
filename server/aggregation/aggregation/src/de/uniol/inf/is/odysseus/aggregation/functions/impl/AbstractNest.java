@@ -160,11 +160,7 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 
 		// Clean up the "element window"
 		if (uniqueAttributeIndices != null) {
-			/*
-			 * Remark: the "removeAll" does not work because we get whole sets, not only
-			 * elements
-			 */
-			mapByUniqueAttributes.entrySet().removeIf(e -> outdatedElements.contains(e.getValue()));
+			mapByUniqueAttributes.values().removeAll(outdatedElements);
 		}
 	}
 
@@ -266,6 +262,6 @@ public abstract class AbstractNest<M extends ITimeInterval, T extends Tuple<M>>
 	 */
 	@Override
 	public boolean isIncremental() {
-		return inputAttributeIndices != null;
+		return (inputAttributeIndices != null || uniqueAttributeIndices != null);
 	}
 }
