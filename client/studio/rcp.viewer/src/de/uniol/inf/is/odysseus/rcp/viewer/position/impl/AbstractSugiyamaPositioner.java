@@ -29,7 +29,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
-import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.position.INodePositioner;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
@@ -44,13 +43,8 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractSugiyamaPositioner.class);
 	
-	private static final String VERTICAL_NODE_DISTANCE_CFG_KEY = "node.distance.vertical";
-	private static final String HORIZONTAL_NODE_DISTANCE_CFG_KEY = "node.distance.horizontal";
-
 	private static final int INVISIBLE_NODE_WIDTH_PIXELS = 160;
 	private static final int INVISIBLE_NODE_HEIGHT_PIXELS = 27;
-	protected static final int SPACE_WIDTH_PIXELS = Integer.parseInt(OdysseusRCPConfiguration.get(HORIZONTAL_NODE_DISTANCE_CFG_KEY, "100"));
-	protected static final int SPACE_HEIGHT_PIXELS = Integer.parseInt(OdysseusRCPConfiguration.get(VERTICAL_NODE_DISTANCE_CFG_KEY, "75"));
 	private static final SymbolElementInfo DUMMY_SYMBOL_INFO = new SymbolElementInfo("invisible", null, 5, 5);
 
 	private final ISymbolElementFactory<IPhysicalOperator> symbolFactory;
