@@ -82,6 +82,7 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 							throw new IllegalArgumentException("Attribute " + a + " cannot be found in schema");
 						}
 						positions[pos] = index;
+						pos++;
 					}
 				}else{
 					// When no schema --> use order of attributes
