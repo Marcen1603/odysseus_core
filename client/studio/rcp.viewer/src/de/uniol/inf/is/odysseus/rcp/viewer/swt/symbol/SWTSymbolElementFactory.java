@@ -75,6 +75,10 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 		if( type.equals( "image" )) 
 			element = createImageSymbolElement(params);
+
+		if( type.equals( "operator" )) 
+			element = createOperatorSymbolElement(params);
+
 		
 		if( type.equals( "invisible" ))
 			element = new SWTInvisibleSymbolElement< C >();
@@ -112,7 +116,17 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 			return createDefaultSymbolElement();
 		}
 		
-		return new SWTImageSymbolElement<C>(resourceName);
+		return new SWTImageSymbolElement<C>(resourceName, false);
+	}
+	
+	private ISymbolElement<C> createOperatorSymbolElement( Map<String, String> params) {
+		final String resourceName = params.get( "resource" );
+		if( resourceName == null || resourceName.length() == 0 ) {
+			logger.warn( "Parameter " + resourceName + " for OperatorSymbol not found or invalid" );
+			return createDefaultSymbolElement();
+		}
+		
+		return new SWTImageSymbolElement<C>(resourceName, true);
 	}
 	
 	private static Color getColorFromParams( Map<String, String> params ) {

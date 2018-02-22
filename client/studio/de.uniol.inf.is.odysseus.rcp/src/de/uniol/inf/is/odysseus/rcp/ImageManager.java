@@ -28,6 +28,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
+
 public class ImageManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImageManager.class);
@@ -93,6 +95,22 @@ public class ImageManager {
 
 		return loadedImages.get(imageID);
 	}
+	
+	public Image getOperatorImage( String operator) {
+
+		if (Strings.isNullOrEmpty(operator)){
+			operator = "broken";
+		}
+
+		if( !loadedImages.containsKey(operator)) {
+			Image image = OperatorImageFactory.createImageForOperator(operator).createImage();
+			
+			loadedImages.put(operator, image);
+		}
+
+		return loadedImages.get(operator);
+	}
+	
 
 	public boolean isLoaded( String imageID ) {
 		return loadedImages.containsKey(imageID);

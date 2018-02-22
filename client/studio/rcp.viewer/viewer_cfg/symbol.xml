@@ -16,8 +16,24 @@
 -->
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
 	
+	<Symbol nodeName="AccessPO">
+		<Size width="48" height="48"/>
+		<SymbolElement type="operator">
+			<Parameter key="resource" value="ACCESS"/>
+		</SymbolElement>
+		<SymbolElement type="ownerText"/>
+	</Symbol>
+	
+	<Symbol nodeName="SlidingTimeWindowTIPO">
+		<Size width="80" height="50"/>
+		<SymbolElement type="operator">
+			<Parameter key="resource" value="TIMEWINDOW"/>
+		</SymbolElement>
+		<SymbolElement type="ownerText"/>
+	</Symbol>
+
 	<Default>
-		<Size width="160" height="27"/>
+		<Size width="150" height="27"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="ownerText"/>
 	</Default>

@@ -27,39 +27,45 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	private Image image;
 	private int imageWidth;
 	private int imageHeight;
-	
-	public SWTImageSymbolElement( String imageName ) {
+	private boolean fromOperator;
+
+	public SWTImageSymbolElement(String imageName, boolean fromOperator) {
 		this.imageName = imageName;
+		this.fromOperator = fromOperator;
 		loadImage();
 	}
-	
+
 	@Override
-	public void draw( Vector pos, int width, int height, Vector screenShift, float zoomFactor  ) {
+	public void draw(Vector pos, int width, int height, Vector screenShift, float zoomFactor) {
 		loadImage();
-		if (image != null){
-		
+		if (image != null) {
+
 			GC gc = getActualGC();
-			
-			if( gc == null )
+
+			if (gc == null)
 				return;
-			
-			gc.drawImage( image, 0, 0, imageWidth, imageHeight, (int)pos.getX(), (int)pos.getY(), width, height );
+
+			gc.drawImage(image, 0, 0, imageWidth, imageHeight, (int) pos.getX(), (int) pos.getY(), width, height);
 		}
 	}
-	
+
 	public final int getImageHeight() {
 		return imageHeight;
 	}
-	
+
 	public final int getImageWidth() {
 		return imageWidth;
 	}
 
 	private void loadImage() {
-		if( image == null || image.isDisposed() ) {
+		if (image == null || image.isDisposed()) {
 			// Bild neu holen
-			image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
-			if( image != null ) {
+			if (fromOperator) {
+				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName);
+			} else {
+				image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
+			}
+			if (image != null) {
 				imageWidth = image.getBounds().width;
 				imageHeight = image.getBounds().height;
 			} else {
