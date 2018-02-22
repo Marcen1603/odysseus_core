@@ -93,9 +93,6 @@ public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPosition
 				final int posX = offsetX + (maxWidths[layer] - layers.get(layer).get(index).getWidth()) / 2;
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 				currNode.setPosition(new Vector(posX, posY[layer][index]));
-				if (currNode.getModelNode() != null) {
-					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
-				}
 			}
 			offsetX += maxWidths[layer] + SPACE_WIDTH_PIXELS;
 		}
