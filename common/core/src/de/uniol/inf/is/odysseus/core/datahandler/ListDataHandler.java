@@ -42,7 +42,7 @@ public class ListDataHandler extends AbstractDataHandler<List<?>> {
 
 	static {
 		types.add("MULTI_VALUE"); // ??
-		for (SDFDatatype d : SDFDatatype.LISTS) {
+		for (SDFDatatype d : SDFDatatype.getLists()) {
 			types.add(d.getURI());
 		}
 	}

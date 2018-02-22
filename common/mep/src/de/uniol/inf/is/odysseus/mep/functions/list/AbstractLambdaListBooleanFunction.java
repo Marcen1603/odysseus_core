@@ -76,7 +76,7 @@ abstract public class AbstractLambdaListBooleanFunction extends
 						KindOfDatatype.LIST, tuple_dt);
 				return dt;
 			} else {
-				for (SDFDatatype d : SDFDatatype.LISTS) {
+				for (SDFDatatype d : SDFDatatype.getLists()) {
 					if (d.getSubType() == subtype) {
 						return d;
 					}

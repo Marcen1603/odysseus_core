@@ -56,7 +56,7 @@ public class ListForeachPairFunction extends AbstractFunction<List<Object>> {
 			init(expr);
 			SDFDatatype subtype = expression.getType();
 
-			for (SDFDatatype d : SDFDatatype.LISTS) {
+			for (SDFDatatype d : SDFDatatype.getLists()) {
 				if (d.getSubType() == subtype) {
 					return d;
 				}
