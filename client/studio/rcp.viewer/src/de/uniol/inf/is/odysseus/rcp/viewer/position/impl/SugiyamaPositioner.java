@@ -28,125 +28,142 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 public final class SugiyamaPositioner extends AbstractSugiyamaPositioner {
 
 	private static final Logger logger = LoggerFactory.getLogger(SugiyamaPositioner.class);
-	
+
 	public SugiyamaPositioner(ISymbolElementFactory<IPhysicalOperator> symbolFactory) {
 		super(symbolFactory);
 	}
 
-
 	protected void setNodePositions(List<List<INodeView<IPhysicalOperator>>> layers) {
-		// Arrays initialisieren
-				// Diese werden die X-Koordinaten beherbergen
-				final int[][] posXRight = new int[layers.size()][];
-				for (int i = 0; i < layers.size(); i++) {
-					posXRight[i] = new int[layers.get(i).size()];
-				}
-				final int[][] posXLeft = new int[layers.size()][];
-				for (int i = 0; i < layers.size(); i++) {
-					posXLeft[i] = new int[layers.get(i).size()];
-				}
+		// Initialize arrays
+		// They will store the X coordinates
+		final int[][] posXRight = new int[layers.size()][];
+		for (int i = 0; i < layers.size(); i++) {
+			posXRight[i] = new int[layers.get(i).size()];
+		}
+		final int[][] posXLeft = new int[layers.size()][];
+		for (int i = 0; i < layers.size(); i++) {
+			posXLeft[i] = new int[layers.get(i).size()];
+		}
 
-				// Abstand zwischen zwei Knoten
-				int highestX = Integer.MIN_VALUE;
-				for (int layer = 0; layer < layers.size(); layer++) {
+		// Disctance between two nodes
+		int highestX = Integer.MIN_VALUE;
+		for (int layer = 0; layer < layers.size(); layer++) {
 
-					int lastX = 0;
-					int lastWidth = 0;
-					for (int index = 0; index < layers.get(layer).size(); index++) {
-						final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-//						final int currWidth = currNode.getWidth();
+			int lastX = 0;
+			int lastWidth = 0;
+			for (int index = 0; index < layers.get(layer).size(); index++) {
+				final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
+				// final int currWidth = currNode.getWidth();
 
-						posXRight[layer][index] = 0;
-						if (layer > 0) {
-							final int med = getMedian(currNode, layers.get(layer - 1), true);
-//							final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
-//							final int parentWidth = parentNode.getWidth();
+				posXRight[layer][index] = 0;
+				if (layer > 0) {
+					final int med = getMedian(currNode, layers.get(layer - 1), true);
+					// final INodeView<IPhysicalOperator> parentNode =
+					// layers.get(layer - 1).get(med);
+					// final int parentWidth = parentNode.getWidth();
 
-//							if (parentWidth < currWidth) {
-//								posXRight[layer][index] = posXRight[layer - 1][med] - (currWidth - parentWidth) / 2;
-//							} else if (parentWidth > currWidth) {
-//								posXRight[layer][index] = posXRight[layer - 1][med] + (parentWidth - currWidth) / 2;
-//							} else {
-								posXRight[layer][index] = posXRight[layer - 1][med];
-//							}
+					// if (parentWidth < currWidth) {
+					// posXRight[layer][index] = posXRight[layer - 1][med] -
+					// (currWidth - parentWidth) / 2;
+					// } else if (parentWidth > currWidth) {
+					// posXRight[layer][index] = posXRight[layer - 1][med] +
+					// (parentWidth - currWidth) / 2;
+					// } else {
+					posXRight[layer][index] = posXRight[layer - 1][med];
+					// }
 
-						}
-
-						if (posXRight[layer][index] < lastX + lastWidth + SPACE_WIDTH_PIXELS) {
-							posXRight[layer][index] = lastX + lastWidth + SPACE_WIDTH_PIXELS;
-						}
-
-						lastX = posXRight[layer][index];
-						lastWidth = currNode.getWidth();
-						if (highestX < lastX + lastWidth) {
-							highestX = lastX + lastWidth;
-						}
-					}
 				}
 
-				for (int layer = 0; layer < layers.size(); layer++) {
-
-					int lastX = highestX;
-					for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
-						final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-//						final int currWidth = currNode.getWidth();
-
-						posXLeft[layer][index] = highestX - currNode.getWidth();
-						if (layer > 0) {
-							final int med = getMedian(currNode, layers.get(layer - 1), true);
-//							final INodeView<IPhysicalOperator> parentNode = layers.get(layer - 1).get(med);
-//							final int parentWidth = parentNode.getWidth();
-
-//							if (parentWidth < currWidth) {
-//								posXLeft[layer][index] = posXLeft[layer - 1][med] - (currWidth - parentWidth) / 2;
-//							} else if (parentWidth > currWidth) {
-//								posXLeft[layer][index] = posXLeft[layer - 1][med] + (parentWidth - currWidth) / 2;
-//							} else {
-								posXLeft[layer][index] = posXLeft[layer - 1][med];
-//							}
-
-						}
-
-						if (posXLeft[layer][index] + currNode.getWidth() > lastX) {
-							posXLeft[layer][index] = lastX - currNode.getWidth() - SPACE_WIDTH_PIXELS;
-						}
-
-						lastX = posXLeft[layer][index] - currNode.getWidth();
-					}
+				if (posXRight[layer][index] < lastX + lastWidth + SPACE_WIDTH_PIXELS) {
+					posXRight[layer][index] = lastX + lastWidth + SPACE_WIDTH_PIXELS;
 				}
 
-				logger.debug("Final NodeDisplay positions");
-//				for (int layer = 0; layer < layers.size(); layer++) {
-//					final int posY = layers.size() * SPACE_HEIGHT_PIXELS - SPACE_HEIGHT_PIXELS * (layer + 1);
+				lastX = posXRight[layer][index];
+				lastWidth = currNode.getWidth();
+				if (highestX < lastX + lastWidth) {
+					highestX = lastX + lastWidth;
+				}
+			}
+		}
+
+		for (int layer = 0; layer < layers.size(); layer++) {
+
+			int lastX = highestX;
+			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+				final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
+				// final int currWidth = currNode.getWidth();
+
+				posXLeft[layer][index] = highestX - currNode.getWidth();
+				if (layer > 0) {
+					final int med = getMedian(currNode, layers.get(layer - 1), true);
+					// final INodeView<IPhysicalOperator> parentNode =
+					// layers.get(layer - 1).get(med);
+					// final int parentWidth = parentNode.getWidth();
+
+					// if (parentWidth < currWidth) {
+					// posXLeft[layer][index] = posXLeft[layer - 1][med] -
+					// (currWidth - parentWidth) / 2;
+					// } else if (parentWidth > currWidth) {
+					// posXLeft[layer][index] = posXLeft[layer - 1][med] +
+					// (parentWidth - currWidth) / 2;
+					// } else {
+					posXLeft[layer][index] = posXLeft[layer - 1][med];
+					// }
+
+				}
+
+				if (posXLeft[layer][index] + currNode.getWidth() > lastX) {
+					posXLeft[layer][index] = lastX - currNode.getWidth() - SPACE_WIDTH_PIXELS;
+				}
+
+				lastX = posXLeft[layer][index] - currNode.getWidth();
+			}
+		}
+
+		logger.debug("Final NodeDisplay positions");
+		// for (int layer = 0; layer < layers.size(); layer++) {
+		// final int posY = layers.size() * SPACE_HEIGHT_PIXELS -
+		// SPACE_HEIGHT_PIXELS * (layer + 1);
 		//
-//					if (layer == 0 || layer > 0 && layers.get(layer).size() > layers.get(layer - 1).size()) {
+		// if (layer == 0 || layer > 0 && layers.get(layer).size() >
+		// layers.get(layer - 1).size()) {
 		//
-//						for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
-//							final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-//							currNode.setPosition(new Vector((posXRight[layer][index] + posXLeft[layer][index]) / 2, posY));
-//							System.err.println("#1: Position of " + currNode.getModelNode().getContent().getClass().getSimpleName() + " set to " + currNode.getPosition());
-//						}
-//					} else {
+		// for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+		// final INodeView<IPhysicalOperator> currNode =
+		// layers.get(layer).get(index);
+		// currNode.setPosition(new Vector((posXRight[layer][index] +
+		// posXLeft[layer][index]) / 2, posY));
+		// System.err.println("#1: Position of " +
+		// currNode.getModelNode().getContent().getClass().getSimpleName() + "
+		// set to " + currNode.getPosition());
+		// }
+		// } else {
 		//
-//						for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
-//							final INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
-//							final Collection<IConnectionView<IPhysicalOperator>> connectionsAsEnd = currNode.getConnectionsAsEnd();
-//							double sumX = 0;
-//							for (final IConnectionView<IPhysicalOperator> con : connectionsAsEnd) {
-//								sumX += con.getViewedStartNode().getPosition().getX();
-//							}
-//							currNode.setPosition(new Vector(sumX / connectionsAsEnd.size(), posY));
-//							System.err.println("2#: Position of " + currNode.getModelNode().getContent().getClass().getSimpleName() + " set to " + currNode.getPosition());
-//						}
-//					}
-//				}
-				for( int layer = 0; layer < layers.size(); layer++) {
-					final int posY = layers.size() * SPACE_HEIGHT_PIXELS - SPACE_HEIGHT_PIXELS * (layer + 1);
-					for( int index = layers.get( layer ).size() - 1; index >= 0; index-- ) {
-						INodeView<IPhysicalOperator> currNode = layers.get( layer ).get( index );
-						currNode.setPosition( new Vector(posXRight[layer][index], posY ) );
-					}
-				}
+		// for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+		// final INodeView<IPhysicalOperator> currNode =
+		// layers.get(layer).get(index);
+		// final Collection<IConnectionView<IPhysicalOperator>> connectionsAsEnd
+		// = currNode.getConnectionsAsEnd();
+		// double sumX = 0;
+		// for (final IConnectionView<IPhysicalOperator> con : connectionsAsEnd)
+		// {
+		// sumX += con.getViewedStartNode().getPosition().getX();
+		// }
+		// currNode.setPosition(new Vector(sumX / connectionsAsEnd.size(),
+		// posY));
+		// System.err.println("2#: Position of " +
+		// currNode.getModelNode().getContent().getClass().getSimpleName() + "
+		// set to " + currNode.getPosition());
+		// }
+		// }
+		// }
+		for (int layer = 0; layer < layers.size(); layer++) {
+			final int posY = layers.size() * SPACE_HEIGHT_PIXELS - SPACE_HEIGHT_PIXELS * (layer + 1);
+			for (int index = layers.get(layer).size() - 1; index >= 0; index--) {
+				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
+				currNode.setPosition(new Vector(posXRight[layer][index], posY));
+			}
+		}
 	}
 
 }

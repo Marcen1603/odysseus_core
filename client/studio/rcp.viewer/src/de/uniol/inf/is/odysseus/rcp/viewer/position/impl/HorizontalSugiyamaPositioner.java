@@ -36,6 +36,7 @@ public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPosition
 	@Override
 	protected void setNodePositions(List<List<INodeView<IPhysicalOperator>>> layers) {
 
+		// init arrays for position on Y axis 
 		int maxLayerSize = 0;
 
 		final int[][] posY = new int[layers.size()][];
@@ -55,7 +56,7 @@ public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPosition
 			}
 		}
 
-		// Abstand zwischen zwei Knoten
+		// calculate node position on Y axis depending on the node height and the maximum node height on the the same level
 		for (int layer = 0; layer < layers.size(); layer++) {
 
 			int offsetY = 0;
@@ -76,7 +77,8 @@ public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPosition
 				offsetY += maxHeights[index] + SPACE_HEIGHT_PIXELS;
 			}
 		}
-
+		
+		// Calculate x position depending on node width and maximum node width of the layer. Set x and y positions of nodes.
 		logger.debug("Final NodeDisplay positions");
 		int offsetX = 0;
 		for (int layer = 0; layer < layers.size(); layer++) {

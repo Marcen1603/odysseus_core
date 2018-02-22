@@ -68,27 +68,30 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 		Preconditions.checkNotNull(graph, "Graph to positionize must not be null!");
 
 		/** PHASE 1 **/
-		// Quellen finden.. diese haben einen Eingangsgrad von 0
-		// Und Ebene der Knoten ermitteln und die Äquivalenzklassen/Ebene
-		// ermitteln
+		// Find sources (nodes having 0 inputs).
+		// Also determine level of nodes and their class of equivalance.
 		final Map<INodeView<IPhysicalOperator>, Integer> nodeLevels = determineNodeLevels(graph);
 		final int maxLevel = determineMaxLevel(nodeLevels);
 
-		// DummyNodes erzeugen, wenn eine Kante über mehr als zwei benachbarte
-		// Ebenen verl�uft
+		// Create DummyNodes if an edge crosses more than two levels
 		insertInvisibleNodes(graph, nodeLevels, symbolFactory);
 
 		/** PHASE 2 **/
-		// Knoten der Ebenen arrangieren, sodass möglichst wenige Kreuzungen
-		// vorkommen. Zahl der Knoten pro Ebene ermitteln und Knoten zuordnen
+		// Minimize crossings by rearranging levels.
+		// Determine number of nodes per level and assign to layer.
 		List<List<INodeView<IPhysicalOperator>>> layers = determineLayers(nodeLevels, maxLevel);
 		layerByLayerSweep(layers);
 
 		/** PHASE 3 **/
+		// Determine the position (pixel) of nodes on screen
 		setNodePositions(layers);
 		
 	}
 
+	/**
+	 * Calculates and sets the position of all nodes (in pixel) 
+	 * @param layers List containing list of nodes each representing a layer
+	 */
 	protected abstract void setNodePositions(List<List<INodeView<IPhysicalOperator>>> layers);
 
 	private static void layerByLayerSweep(List<List<INodeView<IPhysicalOperator>>> layers) {
@@ -99,16 +102,16 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 		while (changed && currentCycle < maxCycles) {
 			changed = false;
 
-			// ************** von oben nach unten
+			// ************** from top to bottom
 			for (int i = 0; i < layers.size() - 1; i++) {
-				final int fixedLayer = i; // Lesbarkeit...
+				final int fixedLayer = i; // Readability...
 				final int varLayer = i + 1;
 
-				// Median-Werte der Knoten der aktuellen Ebene bestimmen
+				// Determine median values of nodes of the current layer
 				final ArrayList<Integer> medians = new ArrayList<Integer>();
 				for (int e = 0; e < layers.get(varLayer).size(); e++) {
 
-					// Median der Nachfolgerknoten bestimmen
+					// Determine median of subsequent nodes
 					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), true);
 
 					medians.add(med);
@@ -117,16 +120,16 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 				changed = sortByMedians(layers.get(varLayer), medians) || changed;
 			}
 
-			// ****************** und von unten nach oben
+			// ****************** from bottom to top
 			for (int i = layers.size() - 1; i > 0; i--) {
 				final int fixedLayer = i; // Lesbarkeit...
 				final int varLayer = i - 1;
 
-				// Median-Werte der Knoten der aktuellen Ebene bestimmen
+				// Determine median values of nodes of the current layer
 				final ArrayList<Integer> medians = new ArrayList<Integer>();
 				for (int e = 0; e < layers.get(varLayer).size(); e++) {
 
-					// Median der Nachfolgerknoten bestimmen
+					// Determine median of subsequent nodes
 					final int med = getMedian(layers.get(varLayer).get(e), layers.get(fixedLayer), false);
 
 					medians.add(med);
@@ -169,7 +172,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 				INodeView<IPhysicalOperator> startNode = start;
 				for (int currentLevel = startLevel + 1; currentLevel < endLevel; currentLevel++) {
 
-					// unsichtbaren Knoten erzeugen
+					// Create invisible dummy nodes
 					final INodeView<IPhysicalOperator> dummyNode = new OdysseusNodeView();
 					dummyNode.setWidth(INVISIBLE_NODE_WIDTH_PIXELS);
 					dummyNode.setHeight(INVISIBLE_NODE_HEIGHT_PIXELS);
@@ -177,7 +180,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 					graph.insertViewedNode(dummyNode);
 					nodeLevels.put(dummyNode, currentLevel);
 
-					// Verbindung ohne Pfeil
+					// Connection without arc
 					final IConnectionView<IPhysicalOperator> dummyConnection = new OdysseusConnectionView(
 							conn.getModelConnection(), startNode, dummyNode);
 					final IConnectionSymbolElement<IPhysicalOperator> ele = symbolFactory.createForConnection("Normal");
@@ -187,7 +190,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 					startNode = dummyNode;
 				}
 
-				// Letzte Verbindung anlegen (mit Pfeil)
+				// Create last connection (with arc)
 				final IConnectionView<IPhysicalOperator> dummyConnection = new OdysseusConnectionView(
 						conn.getModelConnection(), startNode, end);
 				final IConnectionSymbolElement<IPhysicalOperator> ele = symbolFactory.createForConnection("Arrow");
@@ -254,7 +257,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 
 	protected static int getMedian(INodeView<IPhysicalOperator> node, List<INodeView<IPhysicalOperator>> fixedLayerNodes,
 			boolean fromTop) {
-		// Nachfolgerknoten holen
+		// get subsequnt nodes
 		final ArrayList<INodeView<IPhysicalOperator>> neighbours = new ArrayList<INodeView<IPhysicalOperator>>();
 		final Collection<? extends IConnectionView<IPhysicalOperator>> conns = (fromTop == true)
 				? node.getConnectionsAsEnd() : node.getConnectionsAsStart();
@@ -262,7 +265,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 			neighbours.add((fromTop == true) ? conn.getViewedStartNode() : conn.getViewedEndNode());
 		}
 
-		// Median der Nachfolgerknoten bestimmen
+		// Determine median of subsequent nodes
 		final int med;
 		if (!neighbours.isEmpty()) {
 
@@ -299,11 +302,11 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 		}
 
 		boolean changed = false;
-		// Knoten der aktuellen Ebene nach dem Median sortieren...
+		// Sort nodes of current layer by median
 		for (int p = 0; p < medians.size(); p++) {
 			for (int q = 0; q < medians.size() - 1; q++) {
 				if (medians.get(q) > medians.get(q + 1)) {
-					// Positionen tauschen
+					// switch positions
 					final int tmp = medians.get(q);
 					medians.set(q, medians.get(q + 1));
 					medians.set(q + 1, tmp);
@@ -314,7 +317,7 @@ public abstract class AbstractSugiyamaPositioner implements INodePositioner<IPhy
 				} else if (medians.get(q) == medians.get(q + 1)) {
 					if (nodes.get(q).getConnectionsAsEnd().size() % 2 == 1
 							&& nodes.get(q + 1).getConnectionsAsEnd().size() % 2 == 0) {
-						// Positionen tauschen
+						// switch positions
 						final int tmp = medians.get(q);
 						medians.set(q, medians.get(q + 1));
 						medians.set(q + 1, tmp);
