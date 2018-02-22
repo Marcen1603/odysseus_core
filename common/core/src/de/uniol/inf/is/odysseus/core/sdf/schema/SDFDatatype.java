@@ -669,7 +669,10 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	}
 
 	public static final SDFDatatype[] getLists(){
-		return Arrays.copyOf(LISTS, LISTS.length);
+		///return Arrays.copyOf(LISTS, LISTS.length);
+		// Copy should not be necessary anymore
+		return LISTS;
 	}
+	
 
 }
