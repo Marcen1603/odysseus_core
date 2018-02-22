@@ -23,13 +23,14 @@ import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
 public class PositionerFactory {
 
 	public static final String HORIZONTAL_SUGIYAMA = "horizontal";
+	public static final String VERTICAL_SUGIYAMA = "vertical";
 	public static final String CONFIG_KEY_LAYOUT = "node.layout";
 
 	public static INodePositioner<IPhysicalOperator> newInstance(
 			ISymbolElementFactory<IPhysicalOperator> symbolFactory) {
 		INodePositioner<IPhysicalOperator> positioner = null;
 		
-		String positionerName = OdysseusRCPConfiguration.get(CONFIG_KEY_LAYOUT, "");
+		String positionerName = OdysseusRCPConfiguration.get(CONFIG_KEY_LAYOUT, HORIZONTAL_SUGIYAMA);
 
 		if (positionerName.toLowerCase().equals((HORIZONTAL_SUGIYAMA))) {
 			positioner = new HorizontalSugiyamaPositioner(symbolFactory);
