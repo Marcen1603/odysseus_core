@@ -47,10 +47,19 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 			if (gc == null)
 				return;
+			
+			// calculate margin from percentage values
+			double leftMargin = margin.getLeft() / 100.0 * width;
+			double rightMargin = margin.getRight() / 100.0 * width;
+			double topMargin = margin.getTop() / 100.0 * height;
+			double bottomMargin = margin.getBottom() / 100.0 * height;
 
-			gc.drawImage(image, 0, 0, imageWidth, imageHeight, ((int) pos.getX()) + margin.getLeft(),
-					((int) pos.getY()) + margin.getTop(), width - margin.getLeft() - margin.getRight(),
-					height - margin.getTop() - margin.getBottom());
+//			gc.drawImage(image, 0, 0, imageWidth, imageHeight, ((int) pos.getX()) + margin.getLeft(),
+//					((int) pos.getY()) + margin.getTop(), width - margin.getLeft() - margin.getRight(),
+//					height - margin.getTop() - margin.getBottom());
+			gc.drawImage(image, 0, 0, imageWidth, imageHeight, (int)( pos.getX() + leftMargin),
+					(int)( pos.getY() + topMargin), (int)(width - leftMargin - rightMargin),
+					(int)(height - topMargin - bottomMargin));
 		}
 	}
 

@@ -64,7 +64,8 @@ public class OperatorImageFactory {
 		case "BUFFER":
 		case "CACHE":
 		case "ASSOCIATIVESTORAGE":
-			file = "database.png";
+			//file = "database.png";
+			file = "new/iconmonstr-database-2-240_white.png";
 			break;
 		case "CSVFILESOURCE":
 		case "CSVFILESINK":
@@ -111,7 +112,8 @@ public class OperatorImageFactory {
 			file = "element_window.png";
 			break;
 		case "TIMEWINDOW":
-			file = "time_window.png";
+//			file = "time_window.png";
+			file = "new/iconmonstr-window-22-240_white.png";
 			break;
 		case "PREDICATEWINDOW":
 			file = "predicate_window.png";

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.internal.win32.MARGINS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
@@ -92,7 +91,9 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 			element = createTextSymbolElement(params);
 		
 		if( type.equals( "ownerText" ))
-			element = new SWTOwnerTextSymbolElement<C>();
+			element = new SWTOwnerTextSymbolElement<C>(getOffsetFromParams(params), 
+							params.containsKey("offsetX"),
+							params.containsKey("offsetY"));
 		
 		if( type.equals("ownerRectangle"))
 			element = new SWTOwnerSymbolElement<C>();
@@ -166,7 +167,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 		return new Vector(offsetX, offsetY);
 	}
-
+	
 	private static int tryParseInt( String str, int defValue ) {
 		if( str == null )
 			return defValue;

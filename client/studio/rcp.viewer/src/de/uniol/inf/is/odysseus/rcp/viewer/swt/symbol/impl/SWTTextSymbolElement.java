@@ -89,11 +89,12 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		
 		if( font != null ) {
 			final int x = ((int)position.getX()) + (width / 2) - (lastTextWidth / 2); 
-			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
+//			final int y = ((int)position.getY()) + (height / 2) - ( lastTextHeight / 2);
+			final int y = (int)(position.getY() + offset.getY() / 100.0 * height);
 
 			gc.setFont(font);
 			gc.setForeground(color);
-			gc.drawText(name, x + (int) (offset.getX()), y + (int) (offset.getY()), true);
+			gc.drawText(name, x, y , true);
 		}
 	}
 

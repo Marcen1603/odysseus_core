@@ -33,20 +33,28 @@
 	</Symbol>
 	
 	<Symbol nodeName="ReceiverPO">
-		<Size width="100" height="100"/>
+		<Size width="64" height="64"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="operator">
+			<!-- 
 			<Parameter key="resource" value="ACCESS"/>
-			<Parameter key="marginLeft" value="10"/>
-			<Parameter key="marginRight" value="10"/>
-			<Parameter key="marginTop" value="10"/>
-			<Parameter key="marginBottom" value="10"/>
+			<Parameter key="resource" value="DATABASESOURCE"/>
+			 -->
+			 <Parameter key="resource" value="TIMEWINDOW"/>
+			<Parameter key="marginLeft" value="15"/>
+			<Parameter key="marginRight" value="15"/>
+			<Parameter key="marginTop" value="5"/>
+			<Parameter key="marginBottom" value="25"/>
 		</SymbolElement>
+		<!-- 
 		<SymbolElement type="text">
 			<Parameter key="r" value="255"/>
 			<Parameter key="g" value="255"/>
 			<Parameter key="b" value="255"/>
-			<Parameter key="offsetY" value="30"/>
+			<Parameter key="offsetY" value="80"/>
+		</SymbolElement> -->
+		<SymbolElement type="ownerText">
+			<Parameter key="offsetY" value="80"/>
 		</SymbolElement>
 	</Symbol>
 
