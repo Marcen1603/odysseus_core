@@ -47,7 +47,12 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 		INodeView<C> view = getNodeView();
 		C content = view.getModelNode().getContent();
 
-		String name = view.getModelNode().getContent().getClass().getSimpleName();
+		String name;
+		if (content instanceof IPhysicalOperator) {
+			name = getRealName((IPhysicalOperator) content);
+		} else {
+			name = view.getModelNode().getContent().getClass().getSimpleName();
+		}
 
 		boolean ok = false;
 		int textWidth = 0;
@@ -85,14 +90,11 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 				ok = true;
 				lastWidth = width;
 				lastTextHeight = textHeight;
+				System.out.println("Name: " + name +" | Font size: " + fontSize + " | text width: " + textWidth + " | text height: " + textHeight);
 			}
 		}
 
 		if (font != null) {
-			if (content instanceof IPhysicalOperator) {
-				name = getRealName((IPhysicalOperator) content);
-			}
-
 			final int realTextWidth = determineTextLength(gc, name);
 
 			final int x = useOffsetX ? (int) (position.getX() + offset.getX() / 100.0 * realTextWidth)
