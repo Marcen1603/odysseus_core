@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.Margin;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
@@ -28,10 +29,12 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	private int imageWidth;
 	private int imageHeight;
 	private boolean fromOperator;
+	private Margin margin;
 
-	public SWTImageSymbolElement(String imageName, boolean fromOperator) {
+	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin) {
 		this.imageName = imageName;
 		this.fromOperator = fromOperator;
+		this.margin = margin;
 		loadImage();
 	}
 
@@ -45,7 +48,9 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 			if (gc == null)
 				return;
 
-			gc.drawImage(image, 0, 0, imageWidth, imageHeight, (int) pos.getX(), (int) pos.getY(), width, height);
+			gc.drawImage(image, 0, 0, imageWidth, imageHeight, ((int) pos.getX()) + margin.getLeft(),
+					((int) pos.getY()) + margin.getTop(), width - margin.getLeft() - margin.getRight(),
+					height - margin.getTop() - margin.getBottom());
 		}
 	}
 

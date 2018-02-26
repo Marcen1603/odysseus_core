@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.internal.win32.MARGINS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.slf4j.Logger;
@@ -43,6 +44,7 @@ import de.uniol.inf.is.odysseus.rcp.viewer.symbol.IConnectionSymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElement;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.SymbolElementInfo;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 
 public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
@@ -87,7 +89,7 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 			element = new SWTSelectivitySymbolElement<C>();
 		
 		if( type.equals( "text" ))
-			element = new SWTTextSymbolElement<C>(getColorFromParams(params));
+			element = createTextSymbolElement(params);
 		
 		if( type.equals( "ownerText" ))
 			element = new SWTOwnerTextSymbolElement<C>();
@@ -103,6 +105,12 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		
 	}
 
+	private SWTTextSymbolElement<C> createTextSymbolElement(final Map<String, String> params) {
+		Vector offset = getOffsetFromParams(params);
+		
+		return new SWTTextSymbolElement<C>(getColorFromParams(params), offset);
+	}
+
 	@Override
 	public ISymbolElement<C> createDefaultSymbolElement() {
 		SWTRectSymbolElement<C> ele = new SWTRectSymbolElement<C>( Display.getDefault().getSystemColor( SWT.COLOR_BLACK ));
@@ -111,22 +119,28 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 	
 	private ISymbolElement<C> createImageSymbolElement( Map<String, String> params) {
 		final String resourceName = params.get( "resource" );
+			
 		if( resourceName == null || resourceName.length() == 0 ) {
 			logger.warn( "Parameter " + resourceName + " for ImageSymbol not found or invalid" );
 			return createDefaultSymbolElement();
 		}
 		
-		return new SWTImageSymbolElement<C>(resourceName, false);
+		final Margin margin = getMarginFromParams(params);
+		
+		return new SWTImageSymbolElement<C>(resourceName, false, margin);
 	}
 	
+	// TODO ist diese Methode redundant zur oberen?
 	private ISymbolElement<C> createOperatorSymbolElement( Map<String, String> params) {
 		final String resourceName = params.get( "resource" );
 		if( resourceName == null || resourceName.length() == 0 ) {
 			logger.warn( "Parameter " + resourceName + " for OperatorSymbol not found or invalid" );
 			return createDefaultSymbolElement();
 		}
+
+		final Margin margin = getMarginFromParams(params);
 		
-		return new SWTImageSymbolElement<C>(resourceName, true);
+		return new SWTImageSymbolElement<C>(resourceName, true, margin);
 	}
 	
 	private static Color getColorFromParams( Map<String, String> params ) {
@@ -135,6 +149,22 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 		int b = clampInt(tryParseInt( params.get( "b" ), 0), 0, 255);
 		
 		return new Color(PlatformUI.getWorkbench().getDisplay(), r, g, b );
+	}
+	
+	private static Margin getMarginFromParams( Map<String, String> params ) {
+		final int left = tryParseInt(params.get("marginLeft"), 0);
+		final int right = tryParseInt(params.get("marginRight"), 0);
+		final int top = tryParseInt(params.get("marginTop"), 0);
+		final int bottom = tryParseInt(params.get("marginBottom"), 0);
+				
+		return new Margin(left, right, top, bottom); 
+	}
+	
+	private static Vector getOffsetFromParams( Map<String, String> params ) {
+		final int offsetX = tryParseInt(params.get("offsetX"), 0);
+		final int offsetY = tryParseInt(params.get("offsetY"), 0);
+		
+		return new Vector(offsetX, offsetY);
 	}
 
 	private static int tryParseInt( String str, int defValue ) {

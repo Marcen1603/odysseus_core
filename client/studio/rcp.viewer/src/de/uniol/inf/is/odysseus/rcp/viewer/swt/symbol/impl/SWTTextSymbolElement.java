@@ -32,11 +32,13 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 	private int lastWidth;
 	private int lastTextWidth;
 	private int lastTextHeight;
+	private Vector offset;
 	
 	private Color color;
 	
-	public SWTTextSymbolElement(Color color){
+	public SWTTextSymbolElement(Color color, Vector offset){
 		this.color = color;
+		this.offset = offset;
 	}
 	
 	@Override
@@ -91,7 +93,7 @@ public class SWTTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 			gc.setFont(font);
 			gc.setForeground(color);
-			gc.drawText(name, x, y, true);
+			gc.drawText(name, x + (int) (offset.getX()), y + (int) (offset.getY()), true);
 		}
 	}
 
