@@ -1,5 +1,7 @@
 package de.uniol.inf.is.odysseus.nds.proxy;
 
+import java.io.File;
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -16,7 +18,7 @@ public class Autostart implements BundleActivator {
 	private static IExecutor executor;
 	private static boolean autostartExecuted = false;
 
-	private static String[] PATHES = { "/autostart/Usermanagement.qry" };
+	private static String[] PATHES = { File.separator + "autostart" + File.separator + "Usermanagement.qry" };
 
 	// called by OSGi-DS
 	public void unbindExecutor(IExecutor exec) {
