@@ -90,7 +90,6 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 				ok = true;
 				lastWidth = width;
 				lastTextHeight = textHeight;
-				System.out.println("Name: " + name +" | Font size: " + fontSize + " | text width: " + textWidth + " | text height: " + textHeight);
 			}
 		}
 
