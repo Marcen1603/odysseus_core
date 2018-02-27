@@ -46,7 +46,9 @@ public class OperatorImageFactory {
 			break;
 		case "MAP":
 		case "STATEMAP":
-			file = "calculator.png";
+//			file = "calculator.png";
+//			file = "new/iconmonstr-calculator-1-240_white.png";
+			file = "new/iconmonstr-calculator-1-64.png";
 			break;
 		case "ACCESS":
 		case "STREAM":
@@ -65,7 +67,8 @@ public class OperatorImageFactory {
 		case "CACHE":
 		case "ASSOCIATIVESTORAGE":
 			//file = "database.png";
-			file = "new/iconmonstr-database-2-240_white.png";
+//			file = "new/iconmonstr-database-2-64_white.png";
+			file = "new/iconmonstr-calculator-1-64_white.png";
 			break;
 		case "CSVFILESOURCE":
 		case "CSVFILESINK":
@@ -113,7 +116,8 @@ public class OperatorImageFactory {
 			break;
 		case "TIMEWINDOW":
 //			file = "time_window.png";
-			file = "new/iconmonstr-window-22-240_white.png";
+//			file = "new/iconmonstr-window-22-240_white.png";
+			file = "new/iconmonstr-window-22-64_white.png";
 			break;
 		case "PREDICATEWINDOW":
 			file = "predicate_window.png";

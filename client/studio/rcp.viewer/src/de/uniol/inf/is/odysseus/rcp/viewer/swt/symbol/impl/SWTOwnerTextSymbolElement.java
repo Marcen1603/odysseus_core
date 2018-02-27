@@ -18,6 +18,7 @@ package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
@@ -34,11 +35,13 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 	private Vector offset;
 	private boolean useOffsetX;
 	private boolean useOffsetY;
+	private Color color;
 
-	public SWTOwnerTextSymbolElement(Vector offsetFromParams, boolean useOffsetX, boolean useOffsetY) {
+	public SWTOwnerTextSymbolElement(Vector offsetFromParams, boolean useOffsetX, boolean useOffsetY, Color color) {
 		this.offset = offsetFromParams;
 		this.useOffsetX = useOffsetX;
 		this.useOffsetY = useOffsetY;
+		this.color = color;
 	}
 
 	@Override
@@ -103,10 +106,14 @@ public class SWTOwnerTextSymbolElement<C> extends UnfreezableSWTSymbolElement<C>
 			final int ownerID = determineFirstOwnerID(getNodeView().getModelNode().getContent());
 
 			gc.setFont(font);
-			if (isNodeContentOpen()) {
-				gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
+			if (color == null){
+				if (isNodeContentOpen()) {
+					gc.setForeground(OwnerColorManager.getOwnerTextColor(ownerID));
+				} else {
+					gc.setForeground(OwnerColorManager.getInactiveOwnerTextColor(ownerID));
+				}
 			} else {
-				gc.setForeground(OwnerColorManager.getInactiveOwnerTextColor(ownerID));
+				gc.setForeground(color);
 			}
 
 			gc.drawText(name, x, y, true);
