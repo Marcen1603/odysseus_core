@@ -33,9 +33,19 @@
 	</Symbol>
 	
 	<Default>
-		<Size width="150" height="27"/>
+		<Size width="80" height="100"/>
 		<SymbolElement type="ownerRectangle"/>
-		<SymbolElement type="ownerText"/>
+		<SymbolElement type="operator">
+			<Parameter key="resource" value="DEFAULT"/>
+			<Parameter key="style" value="white"/>
+			<Parameter key="marginLeft" value="10"/>
+			<Parameter key="marginRight" value="10"/>
+			<Parameter key="marginTop" value="10"/>
+			<Parameter key="marginBottom" value="26"/>
+		</SymbolElement>
+		<SymbolElement type="ownerText">
+			<Parameter key="offsetY" value="80"/>
+		</SymbolElement>
 	</Default>
 	
 			

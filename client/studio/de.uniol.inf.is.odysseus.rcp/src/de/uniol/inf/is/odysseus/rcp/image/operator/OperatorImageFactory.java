@@ -167,8 +167,10 @@ public class OperatorImageFactory {
 		case "GENERATOR":
 			file = "gear_add.png";
 			break;
+		case "DEFAULT":
 		default:
-			file = "gear.png";
+//			file = "gear.png";
+			file = "iconmonstr-gear-1-64.png";
 			break;
 		}
 
