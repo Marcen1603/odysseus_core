@@ -205,10 +205,13 @@ public class JSONCOSEMProtocolHandler extends AbstractProtocolHandler<IStreamObj
 		}
 		
 		// get the json schema from options
+		if (objectType == null) {
+			throw new IllegalArgumentException("no valid output schema:" + objectType);
+		}
 		Result data = ProcessedData.getResultType(objectType);
 		if (data == null) {
 			close();
-			throw new IllegalArgumentException("given output schema is unknown: " + objectType);
+			throw new IllegalArgumentException("given output schema is unknown:" + objectType);
 		}
 		
 		long timeintervalStart = -1;
