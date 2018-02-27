@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.mep.IOperator;
 public class ListMinusOperator2 extends AbstractBinaryOperator<List<?>> {
 
     private static final long serialVersionUID = -7611903907765383322L;
-    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.SIMPLE_TYPES };
+    private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(), SDFDatatype.SIMPLE_TYPES };
 
     public ListMinusOperator2() {
         super("-", accTypes, SDFDatatype.LIST);

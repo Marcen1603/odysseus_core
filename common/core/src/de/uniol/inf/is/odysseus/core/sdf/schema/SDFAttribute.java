@@ -385,5 +385,8 @@ public class SDFAttribute extends SDFElement implements
 		return input.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
 				.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
 	}
-
+	
+	public SDFAttribute createNewWithName(String newName) {
+		return new SDFAttribute(this.getSourceName(), newName, this);
+	}
 }

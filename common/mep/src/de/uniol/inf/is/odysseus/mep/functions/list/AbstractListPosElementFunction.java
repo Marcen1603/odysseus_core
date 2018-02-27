@@ -10,7 +10,7 @@ public abstract class AbstractListPosElementFunction extends AbstractFunction<Ob
 
 	private static final long serialVersionUID = 2477719899607385117L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS };
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists() };
 
 	public AbstractListPosElementFunction(String name) {
 		super(name, 1, accTypes, SDFDatatype.OBJECT, false);

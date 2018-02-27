@@ -47,7 +47,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.Aggregate
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.IAggregateFunctionBuilder;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.basefunctions.IAggregateFunction;
 
-@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(name = "AGGREGATE", minInputPorts = 1, maxInputPorts = 1, doc = "Aggretations on attributes e.g Min, Max, Count, Avg, Sum and grouping.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Aggregate+%28and+Group%29+operator", category = { LogicalOperatorCategory.BASE })
 public class AggregateAO extends UnaryLogicalOp implements IStatefulAO, IParallelizableOperator {
 	private static final long serialVersionUID = 2539966167342852544L;
 

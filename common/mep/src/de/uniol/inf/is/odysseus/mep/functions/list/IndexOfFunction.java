@@ -30,7 +30,7 @@ public class IndexOfFunction extends AbstractFunction<Integer> {
      * 
      */
     private static final long serialVersionUID = 5843632636388251029L;
-    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.SIMPLE_TYPES };
+    private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.getLists(), SDFDatatype.SIMPLE_TYPES };
 
     public IndexOfFunction() {
         super("IndexOf", 2, ACC_TYPES, SDFDatatype.INTEGER, false);

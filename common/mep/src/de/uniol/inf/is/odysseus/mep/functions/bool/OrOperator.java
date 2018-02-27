@@ -58,6 +58,9 @@ public class OrOperator extends AbstractBinaryBooleanOperator{
 	@Override
 	public Boolean getValue() {
 		Boolean left = getInputValue(0);
+		if (left != null && left == true) {
+			return Boolean.TRUE;
+		}
 		Boolean right = getInputValue(1);
 		if ((left == null) || (right == null)) {
 			if (((left == null) && (right == null)) || ((left == null) && (right != null) && (right == false))

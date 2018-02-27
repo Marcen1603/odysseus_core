@@ -42,7 +42,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * @author Marco Grawunder
  * 
  */
-@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Join+operator", category = { LogicalOperatorCategory.BASE })
+@LogicalOperator(minInputPorts = 2, maxInputPorts = 2, name = "JOIN", doc = "Operator to combine two datastreams based on the predicate", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Join+operator", category = { LogicalOperatorCategory.BASE })
 public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulAO, IParallelizableOperator, IOutOfOrderHandler {
 
 	private static final long serialVersionUID = 3710951139395164614L;

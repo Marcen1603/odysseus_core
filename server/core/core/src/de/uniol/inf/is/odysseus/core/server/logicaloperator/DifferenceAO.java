@@ -29,7 +29,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
  * @author Marco Grawunder
  *
  */
-@LogicalOperator(name = "DIFFERENCE", minInputPorts = 2, maxInputPorts = 2, doc = "This operator calculates the difference between two input sets.", url = "http://odysseus.offis.uni-oldenburg.de:8090/display/ODYSSEUS/Difference+operator", category = {
+@LogicalOperator(name = "DIFFERENCE", minInputPorts = 2, maxInputPorts = 2, doc = "This operator calculates the difference between two input sets.", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Difference+operator", category = {
         LogicalOperatorCategory.BASE, LogicalOperatorCategory.SET })
 public class DifferenceAO extends BinaryLogicalOp implements IHasPredicate {
 

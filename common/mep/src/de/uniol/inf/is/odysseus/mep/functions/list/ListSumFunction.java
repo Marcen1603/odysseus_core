@@ -9,7 +9,7 @@ public class ListSumFunction extends AbstractFunction<Double> {
 
 	private static final long serialVersionUID = -3282877303737235603L;
 
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS};
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists()};
 
 	public ListSumFunction() {
 		super("sum", 1, accTypes, SDFDatatype.DOUBLE, false);
