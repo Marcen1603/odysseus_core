@@ -27,4 +27,9 @@ public class ProxyTestComponent
 		return "NetzDatenStrom Test Component";
 	}
 
+	@Override
+	public boolean isActivated() {
+		return true;
+	}
+
 }
