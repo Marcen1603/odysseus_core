@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.test.set.TestSetFactory;
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class ProxyTestComponent
+public class BDATestComponent
 		extends AbstractQueryExpectedOutputTestComponent<BasicTestContext, ExpectedOutputTestSet> {
 
 	@Override
@@ -24,7 +24,7 @@ public class ProxyTestComponent
 
 	@Override
 	public String getName() {
-		return "NetzDatenStrom Proxy Test Component";
+		return "NetzDatenStrom BDA Test Component";
 	}
 
 	@Override
