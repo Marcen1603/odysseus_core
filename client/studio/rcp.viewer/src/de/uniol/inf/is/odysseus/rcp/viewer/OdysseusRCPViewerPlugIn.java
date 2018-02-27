@@ -23,6 +23,7 @@ import org.osgi.framework.BundleContext;
 
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.extension.StreamEditorRegistry;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.resource.XMLResourceLoader;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolConfiguration;
@@ -87,8 +88,9 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 		XMLResourceLoader.loadImages(bundle.getEntry("viewer_cfg/resources.xml"), bundle.getEntry("viewer_cfg/resourcesSchema.xsd"));
 
 		context = this;
-		//TODO: Make configurable
-		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(bundleContext.getBundle().getEntry("viewer_cfg/symbol.xml"), bundleContext.getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
+		String viewerConfigFileName = OdysseusRCPConfiguration.get("viewer.config", "symbol.xml");
+		String viewerConfig = "viewer_cfg/" + viewerConfigFileName;
+		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(bundleContext.getBundle().getEntry(viewerConfig), bundleContext.getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
 	}
 
 	@Override
