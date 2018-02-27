@@ -139,20 +139,25 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 
 		final Margin margin = getMarginFromParams(params);
 
-		return new SWTImageSymbolElement<C>(resourceName, false, margin);
+		return new SWTImageSymbolElement<C>(resourceName, false, margin, null);
 	}
 
-	// TODO ist diese Methode redundant zur oberen?
 	private ISymbolElement<C> createOperatorSymbolElement(Map<String, String> params) {
 		final String resourceName = params.get("resource");
 		if (resourceName == null || resourceName.length() == 0) {
-			logger.warn("Parameter " + resourceName + " for OperatorSymbol not found or invalid");
+			logger.warn("Parameter 'resource' for OperatorSymbol not found or invalid");
+			return createDefaultSymbolElement();
+		}
+		
+		final String styleName = params.get("style");
+		if (styleName == null || styleName.length() == 0){
+			logger.warn("Parameter 'style' for OperatorSymbol not found or invalid");
 			return createDefaultSymbolElement();
 		}
 
 		final Margin margin = getMarginFromParams(params);
 
-		return new SWTImageSymbolElement<C>(resourceName, true, margin);
+		return new SWTImageSymbolElement<C>(resourceName, true, margin, styleName);
 	}
 
 	private static Color getColorFromParams(Map<String, String> params) {

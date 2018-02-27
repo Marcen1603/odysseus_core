@@ -25,6 +25,7 @@
 		</SymbolElement>
 		<SymbolElement type="operator">
 			<Parameter key="resource" value="MAP"/>
+			<Parameter key="style" value="black"/>
 			<Parameter key="marginLeft" value="0"/>
 			<Parameter key="marginRight" value="0"/>
 			<Parameter key="marginTop" value="0"/>

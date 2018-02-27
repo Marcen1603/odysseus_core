@@ -16,75 +16,10 @@
 -->
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
 	
-	<Symbol nodeName="AccessPO">
-		<Size width="48" height="48"/>
-		<SymbolElement type="operator">
-			<Parameter key="resource" value="ACCESS"/>
-		</SymbolElement>
-		<SymbolElement type="ownerText"/>
-	</Symbol>
-	
-	<Symbol nodeName="SlidingTimeWindowTIPO">
-		<Size width="80" height="50"/>
-		<SymbolElement type="operator">
-			<Parameter key="resource" value="TIMEWINDOW"/>
-		</SymbolElement>
-		<SymbolElement type="ownerText"/>
-	</Symbol>
-	
-	<Symbol nodeName="ReceiverPO">
-		<Size width="80" height="100"/>
-		<SymbolElement type="ownerRectangle"/>
-		<SymbolElement type="operator">
-			<!-- 
-			<Parameter key="resource" value="ACCESS"/>
-			 <Parameter key="resource" value="TIMEWINDOW"/>
-			 -->
-			<Parameter key="resource" value="DATABASESOURCE"/>
-			<Parameter key="marginLeft" value="10"/>
-			<Parameter key="marginRight" value="10"/>
-			<Parameter key="marginTop" value="10"/>
-			<Parameter key="marginBottom" value="26"/>
-		</SymbolElement>
-		<!-- 
-		<SymbolElement type="text">
-			<Parameter key="r" value="255"/>
-			<Parameter key="g" value="255"/>
-			<Parameter key="b" value="255"/>
-			<Parameter key="offsetY" value="80"/>
-		</SymbolElement> -->
-		<SymbolElement type="ownerText">
-			<Parameter key="offsetY" value="80"/>
-		</SymbolElement>
-	</Symbol>
-	
-	<Symbol nodeName="RelationalMapPO">
-		<Size height="80" width="64"/>
-		<SymbolElement type="fillRectangle">
-			<Parameter key="r" value="255"/>
-			<Parameter key="g" value="255"/>
-			<Parameter key="b" value="255"/>
-		</SymbolElement>
-		<SymbolElement type="operator">
-			<Parameter key="resource" value="MAP"/>
-			<Parameter key="marginLeft" value="0"/>
-			<Parameter key="marginRight" value="0"/>
-			<Parameter key="marginTop" value="0"/>
-			<Parameter key="marginBottom" value="20"/>
-		</SymbolElement>
-		<SymbolElement type="ownerText">
-			<Parameter key="offsetY" value="80"/>
-			<Parameter key="r" value="0"/>
-			<Parameter key="g" value="0"/>
-			<Parameter key="b" value="0"/>
-		</SymbolElement>
-	</Symbol>
-
 	<Default>
 		<Size width="150" height="27"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="ownerText"/>
 	</Default>
-	
 			
 </Symbols>

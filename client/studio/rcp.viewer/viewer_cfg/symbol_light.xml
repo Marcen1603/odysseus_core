@@ -20,23 +20,13 @@
 		<Size width="80" height="100"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="operator">
-			<!-- 
-			<Parameter key="resource" value="ACCESS"/>
-			 <Parameter key="resource" value="TIMEWINDOW"/>
-			 -->
 			<Parameter key="resource" value="DATABASESOURCE"/>
+			<Parameter key="style" value="white"/>
 			<Parameter key="marginLeft" value="10"/>
 			<Parameter key="marginRight" value="10"/>
 			<Parameter key="marginTop" value="10"/>
 			<Parameter key="marginBottom" value="26"/>
 		</SymbolElement>
-		<!-- 
-		<SymbolElement type="text">
-			<Parameter key="r" value="255"/>
-			<Parameter key="g" value="255"/>
-			<Parameter key="b" value="255"/>
-			<Parameter key="offsetY" value="80"/>
-		</SymbolElement> -->
 		<SymbolElement type="ownerText">
 			<Parameter key="offsetY" value="80"/>
 		</SymbolElement>

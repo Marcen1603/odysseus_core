@@ -25,16 +25,18 @@ import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
 	private final String imageName;
+	private final String styleName;
 	private Image image;
 	private int imageWidth;
 	private int imageHeight;
 	private boolean fromOperator;
 	private Margin margin;
 
-	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin) {
+	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin, String styleName) {
 		this.imageName = imageName;
 		this.fromOperator = fromOperator;
 		this.margin = margin;
+		this.styleName = styleName;
 		loadImage();
 	}
 
@@ -75,7 +77,7 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		if (image == null || image.isDisposed()) {
 			// Bild neu holen
 			if (fromOperator) {
-				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName);
+				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName, styleName);
 			} else {
 				image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
 			}

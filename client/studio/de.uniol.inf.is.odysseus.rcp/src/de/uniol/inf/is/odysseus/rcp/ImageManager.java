@@ -96,14 +96,14 @@ public class ImageManager {
 		return loadedImages.get(imageID);
 	}
 	
-	public Image getOperatorImage( String operator) {
+	public Image getOperatorImage( String operator, String styleName) {
 
 		if (Strings.isNullOrEmpty(operator)){
 			operator = "broken";
 		}
 
 		if( !loadedImages.containsKey(operator)) {
-			Image image = OperatorImageFactory.createImageForOperator(operator).createImage();
+			Image image = OperatorImageFactory.createImageForOperator(operator, styleName).createImage();
 			
 			loadedImages.put(operator, image);
 		}

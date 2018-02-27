@@ -25,8 +25,12 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
  */
 public class OperatorImageFactory {
 
-	// TODO: Make config file
 	public static ImageDescriptor createImageForOperator(String operatorName) {
+		return createImageForOperator(operatorName, "black");
+	}
+	
+	// TODO: Make config file
+	public static ImageDescriptor createImageForOperator(String operatorName, String styleName) {
 		operatorName = operatorName.toUpperCase();
 		String file = "";
 		switch (operatorName) {
@@ -47,8 +51,7 @@ public class OperatorImageFactory {
 		case "MAP":
 		case "STATEMAP":
 //			file = "calculator.png";
-//			file = "new/iconmonstr-calculator-1-240_white.png";
-			file = "new/iconmonstr-calculator-1-64.png";
+			file = "iconmonstr-calculator-1-64.png";
 			break;
 		case "ACCESS":
 		case "STREAM":
@@ -67,8 +70,7 @@ public class OperatorImageFactory {
 		case "CACHE":
 		case "ASSOCIATIVESTORAGE":
 			//file = "database.png";
-//			file = "new/iconmonstr-database-2-64_white.png";
-			file = "new/iconmonstr-calculator-1-64_white.png";
+			file = "iconmonstr-calculator-1-64.png";
 			break;
 		case "CSVFILESOURCE":
 		case "CSVFILESINK":
@@ -116,8 +118,7 @@ public class OperatorImageFactory {
 			break;
 		case "TIMEWINDOW":
 //			file = "time_window.png";
-//			file = "new/iconmonstr-window-22-240_white.png";
-			file = "new/iconmonstr-window-22-64_white.png";
+			file = "iconmonstr-window-22-64.png";
 			break;
 		case "PREDICATEWINDOW":
 			file = "predicate_window.png";
@@ -171,7 +172,9 @@ public class OperatorImageFactory {
 			break;
 		}
 
-		return OdysseusRCPPlugIn.getImageDescriptor("operator-images/" + file);
+		String path = styleName != null ? "operator-images/" + styleName + "/" + file: "operator-images/" + file;
+		// TODO check if image path exists! if not return default image
+		return OdysseusRCPPlugIn.getImageDescriptor(path);
 
 	}
 }
