@@ -70,7 +70,7 @@ public class OperatorImageFactory {
 		case "CACHE":
 		case "ASSOCIATIVESTORAGE":
 			//file = "database.png";
-			file = "iconmonstr-calculator-1-64.png";
+			file = "iconmonstr-database-2-64.png";
 			break;
 		case "CSVFILESOURCE":
 		case "CSVFILESINK":
