@@ -15,29 +15,6 @@
   limitations under the License.
 -->
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
-		
-	<Symbol nodeName="RelationalMapPO">
-		<Size height="80" width="64"/>
-		<SymbolElement type="fillRectangle">
-			<Parameter key="r" value="255"/>
-			<Parameter key="g" value="255"/>
-			<Parameter key="b" value="255"/>
-		</SymbolElement>
-		<SymbolElement type="operator">
-			<Parameter key="resource" value="MAP"/>
-			<Parameter key="style" value="black"/>
-			<Parameter key="marginLeft" value="0"/>
-			<Parameter key="marginRight" value="0"/>
-			<Parameter key="marginTop" value="0"/>
-			<Parameter key="marginBottom" value="20"/>
-		</SymbolElement>
-		<SymbolElement type="ownerText">
-			<Parameter key="offsetY" value="80"/>
-			<Parameter key="r" value="0"/>
-			<Parameter key="g" value="0"/>
-			<Parameter key="b" value="0"/>
-		</SymbolElement>
-	</Symbol>
 
 	<Default>
 		<Size height="80" width="64"/>
@@ -47,8 +24,7 @@
 			<Parameter key="b" value="255"/>
 		</SymbolElement>
 		<SymbolElement type="operator">
-			<Parameter key="resource" value="DEFAULT"/>
-			<Parameter key="style" value="black"/>
+			<Parameter key="iconSetName" value="black"/>
 			<Parameter key="marginLeft" value="0"/>
 			<Parameter key="marginRight" value="0"/>
 			<Parameter key="marginTop" value="0"/>

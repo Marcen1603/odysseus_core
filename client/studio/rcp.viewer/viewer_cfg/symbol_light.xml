@@ -16,28 +16,11 @@
 -->
 <Symbols xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="symbolSchema.xsd">
 	
-	<Symbol nodeName="ReceiverPO">
-		<Size width="80" height="100"/>
-		<SymbolElement type="ownerRectangle"/>
-		<SymbolElement type="operator">
-			<Parameter key="resource" value="DATABASESOURCE"/>
-			<Parameter key="style" value="white"/>
-			<Parameter key="marginLeft" value="10"/>
-			<Parameter key="marginRight" value="10"/>
-			<Parameter key="marginTop" value="10"/>
-			<Parameter key="marginBottom" value="26"/>
-		</SymbolElement>
-		<SymbolElement type="ownerText">
-			<Parameter key="offsetY" value="80"/>
-		</SymbolElement>
-	</Symbol>
-	
 	<Default>
 		<Size width="80" height="100"/>
 		<SymbolElement type="ownerRectangle"/>
 		<SymbolElement type="operator">
-			<Parameter key="resource" value="DEFAULT"/>
-			<Parameter key="style" value="white"/>
+			<Parameter key="iconSetName" value="white"/>
 			<Parameter key="marginLeft" value="10"/>
 			<Parameter key="marginRight" value="10"/>
 			<Parameter key="marginTop" value="10"/>
@@ -48,5 +31,4 @@
 		</SymbolElement>
 	</Default>
 	
-			
 </Symbols>

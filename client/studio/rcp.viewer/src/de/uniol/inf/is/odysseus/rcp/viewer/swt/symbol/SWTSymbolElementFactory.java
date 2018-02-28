@@ -144,20 +144,15 @@ public class SWTSymbolElementFactory<C> implements ISymbolElementFactory<C> {
 
 	private ISymbolElement<C> createOperatorSymbolElement(Map<String, String> params) {
 		final String resourceName = params.get("resource");
-		if (resourceName == null || resourceName.length() == 0) {
-			logger.warn("Parameter 'resource' for OperatorSymbol not found or invalid");
-			return createDefaultSymbolElement();
-		}
-		
-		final String styleName = params.get("style");
-		if (styleName == null || styleName.length() == 0){
-			logger.warn("Parameter 'style' for OperatorSymbol not found or invalid");
+		final String iconSetName = params.get("iconSetName");
+		if ((resourceName == null || resourceName.length() == 0) && (iconSetName == null || iconSetName.length() == 0)) {
+			logger.warn("Both parameters 'resource' and 'iconSetName' for OperatorSymbol not found or invalid");
 			return createDefaultSymbolElement();
 		}
 
 		final Margin margin = getMarginFromParams(params);
 
-		return new SWTImageSymbolElement<C>(resourceName, true, margin, styleName);
+		return new SWTImageSymbolElement<C>(resourceName, true, margin, iconSetName);
 	}
 
 	private static Color getColorFromParams(Map<String, String> params) {

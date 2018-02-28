@@ -107,9 +107,12 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 		imageManager.register("role", "icons/tick-small-circle.png");
 		imageManager.register("function", "icons/function.png");
 
+		imageManager.registerImageSet("white", "operator-images/icons_white.xml");
+		imageManager.registerImageSet("black", "operator-images/icons_black.xml");
+
 		instance = this;
 	}
-
+	
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		super.stop(bundleContext);

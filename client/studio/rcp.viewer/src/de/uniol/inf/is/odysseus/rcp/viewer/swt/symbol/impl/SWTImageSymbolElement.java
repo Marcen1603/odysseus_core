@@ -18,26 +18,29 @@ package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
 import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.Margin;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
-	private final String imageName;
-	private final String styleName;
+	private String imageName;
+	private final String iconSetName;
 	private Image image;
 	private int imageWidth;
 	private int imageHeight;
 	private boolean fromOperator;
 	private Margin margin;
 
-	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin, String styleName) {
+	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin, String iconSetName) {
 		this.imageName = imageName;
 		this.fromOperator = fromOperator;
 		this.margin = margin;
-		this.styleName = styleName;
-		loadImage();
+		this.iconSetName = iconSetName;
+//		loadImage();
 	}
 
 	@Override
@@ -77,7 +80,15 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 		if (image == null || image.isDisposed()) {
 			// Bild neu holen
 			if (fromOperator) {
-				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName, styleName);
+				// if the image name is not explicitly set then retrieve image by icon set
+				if (this.imageName == null && getNodeView() != null) {
+					this.imageName = iconSetName + "." + getOperatorName();
+					if (!OdysseusRCPPlugIn.getImageManager().isRegistered(this.imageName)){
+						this.imageName = iconSetName + ".DEFAULT"; 
+					}
+				}
+				image = OdysseusRCPPlugIn.getImageManager().get(imageName);
+//				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName, iconSetName);
 			} else {
 				image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
 			}
@@ -89,5 +100,13 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 				return;
 			}
 		}
+	}
+
+	private String getOperatorName() {
+		INodeView<C> nodeView = getNodeView();
+		INodeModel<C> nodeModel = nodeView.getModelNode();
+		C content = nodeModel.getContent();
+		
+		return content.getClass().getSimpleName();
 	}
 }

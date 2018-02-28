@@ -15,7 +15,13 @@
   */
 package de.uniol.inf.is.odysseus.rcp;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -53,7 +59,28 @@ public class ImageManager {
 
 		imageIDs.put(imageID, fileName);
 	}
-
+	
+	public void registerImageSet(String imageSetName, String imageSetFileName) {
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetName), "imageSetName must not be null or empty!");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetFileName), "imageSetFileName must not be null or empty!");
+		
+		URL url = bundle.getEntry(imageSetFileName);
+		try(InputStream in = url.openConnection().getInputStream()) {
+			Properties props = new Properties();
+			props.loadFromXML(in);
+			
+			for (Object key : props.keySet()) {
+				String imageID = (String)key;
+				register(imageSetName + "." + imageID, props.getProperty(imageID));
+			}
+		} catch (FileNotFoundException e) {
+			LOG.error("image set file not found: " + imageSetFileName);
+		} catch (IOException e) {
+			LOG.error("Error while reading image set " + imageSetName + " (" + imageSetFileName + ")");
+			LOG.error(e.toString());
+		}
+	}
+	
 	public void unregister( String imageID ) {
 		if( imageIDs.containsKey(imageID)) {
 			imageIDs.remove(imageID);
@@ -96,6 +123,7 @@ public class ImageManager {
 		return loadedImages.get(imageID);
 	}
 	
+	@Deprecated
 	public Image getOperatorImage( String operator, String styleName) {
 
 		if (Strings.isNullOrEmpty(operator)){
@@ -139,5 +167,9 @@ public class ImageManager {
 				LOG.debug("ImageID {} was never loaded.", imageID);
 			}
 		}
+	}
+
+	public boolean isRegistered(String imageID) {
+		return imageIDs.containsKey(imageID);
 	}
 }
