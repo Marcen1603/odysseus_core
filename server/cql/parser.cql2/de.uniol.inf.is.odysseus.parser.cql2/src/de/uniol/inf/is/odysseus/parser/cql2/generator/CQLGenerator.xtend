@@ -35,6 +35,7 @@ import org.eclipse.xtext.generator.IGenerator2
 import org.eclipse.xtext.generator.IGeneratorContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.Collection
 
 /** Generates PQL text from a CQL text. */
 class CQLGenerator implements IGenerator2 {
@@ -143,7 +144,13 @@ class CQLGenerator implements IGenerator2 {
 		return cacheService.getOperatorCache().getPQL()
 	}
 
-	def void setSchema(List<SystemSource> schemata) { utilityService.sourcesStructs = schemata }
+	def void setSchema(Collection<SystemSource> schemas) {
+		schemas.stream().forEach(e | cacheService.getSystemSources().add(e))
+	}
+	
+	def void setMetaAttributes(Collection<SystemSource> schemas) {
+		schemas.stream().forEach(e | cacheService.getSystemSources().add(new SystemSource(e, true)))	
+	}
 
 	def setDatabaseConnections(Map<String, String> connections) {
 		databaseConnections = connections;

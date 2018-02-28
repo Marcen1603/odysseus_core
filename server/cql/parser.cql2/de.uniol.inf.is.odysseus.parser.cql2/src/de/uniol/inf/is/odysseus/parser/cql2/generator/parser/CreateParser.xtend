@@ -33,6 +33,8 @@ class CreateParser implements ICreateParser {
 	@Inject
 	var AbstractPQLOperatorBuilder builder
 
+	val String regex = ",$";
+
 	override parseCreate(Create statement) {
 		if (statement.create instanceof CreateView)
 			parseCreateView(statement.create as CreateView)
@@ -216,6 +218,12 @@ class CreateParser implements ICreateParser {
 		argss.put('schema', if(argss.containsKey('source')) extractSchema(schema).toString else null)
 		argss.put('options', utilityService.generateKeyValueString(pars.keys, pars.values, ','))
 		argss.put('input', if(argss.containsKey('sink')) input else null)
+		
+		//TODO refactor me
+		val StringBuilder b = new StringBuilder();
+		cacheService.getSystemSources().stream().filter(e | e.isMeta).forEach(e | b.append(e.getName) + ",")
+		argss.put('metaattribute', b.toString.replaceAll(regex, ""))
+		
 		return builder.build(t, argss)
 	}
 
