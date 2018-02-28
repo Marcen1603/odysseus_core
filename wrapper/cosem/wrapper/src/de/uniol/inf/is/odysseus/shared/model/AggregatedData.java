@@ -1,5 +1,6 @@
 package de.uniol.inf.is.odysseus.shared.model;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -153,8 +154,6 @@ public class AggregatedData extends Result {
 
 	@Override
 	public void setValues(Map<String, Object> values) {
-		super.setValues(values);
-		
 		for(Entry<String, Object> e : values.entrySet()) {
 			if (getSchema().get(AVG_VALUE).equalsIgnoreCase(e.getKey())) {
 				setAvg_value((Double) e.getValue());
@@ -175,7 +174,7 @@ public class AggregatedData extends Result {
 
 	@Override
 	public Map<String, String> getSchema() {
-		Map<String, String> schema = super.getSchema();
+		Map<String, String> schema = new HashMap<>();
 		schema.put(AVG_VALUE, "avg_value");
 		schema.put(MAX_VALUE, "max_value");
 		schema.put(MIN_VALUE, "min_value");
