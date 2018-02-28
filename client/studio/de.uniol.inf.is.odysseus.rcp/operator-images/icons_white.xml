@@ -4,4 +4,13 @@
 <comment>Icon set configuration file. edit only if you know what you are doing</comment>
 <entry key="DEFAULT">operator-images/white/iconmonstr-gear-1-64.png</entry>
 <entry key="RelationalMapPO">operator-images/white/iconmonstr-calculator-1-64.png</entry>
+<entry key="KeyValueMapPO">operator-images/white/iconmonstr-calculator-1-64.png</entry>
+<entry key="ReceiverPO">operator-images/white/iconmonstr-antenna-6-64.png</entry>
+<entry key="SelectPO">operator-images/white/iconmonstr-filter-8-64.png</entry>
+<entry key="SASelectPO">operator-images/white/iconmonstr-filter-8-64.png</entry>
+<entry key="JoinPO">operator-images/white/join2_64.png</entry>
+<entry key="JoinTIPO">operator-images/white/join2_64.png</entry>
+<entry key="LeftJoinTIPO">operator-images/white/join2_64.png</entry>
+<entry key="ProbabilisticJoinTIPO">operator-images/white/join2_64.png</entry>
+<entry key="SAJoinPO">operator-images/white/join2_64.png</entry>
 </properties>
