@@ -15,7 +15,6 @@
   */
 package de.uniol.inf.is.odysseus.rcp;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +32,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-
-import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
 
 public class ImageManager {
 
@@ -108,11 +105,7 @@ public class ImageManager {
 
 		if( !loadedImages.containsKey(imageID)) {
 			// Load image
-			String filename = imageIDs.get(imageID);
-			if( filename == null )
-				throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
-
-			ImageDescriptor img = ImageDescriptor.createFromURL(bundle.getEntry(filename));
+			ImageDescriptor img = getImageDescriptor(imageID);
 			Image image = img.createImage();
 			if( image == null )
 				throw new IllegalArgumentException("Returned image with imageID=" + imageID + " is null!");
@@ -122,24 +115,24 @@ public class ImageManager {
 
 		return loadedImages.get(imageID);
 	}
-	
-	@Deprecated
-	public Image getOperatorImage( String operator, String styleName) {
 
-		if (Strings.isNullOrEmpty(operator)){
-			operator = "broken";
-		}
+	private ImageDescriptor getImageDescriptor(String imageID) {
+		String filename = imageIDs.get(imageID);
+		if( filename == null )
+			throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
 
-		if( !loadedImages.containsKey(operator)) {
-			Image image = OperatorImageFactory.createImageForOperator(operator, styleName).createImage();
-			
-			loadedImages.put(operator, image);
-		}
-
-		return loadedImages.get(operator);
+		return ImageDescriptor.createFromURL(bundle.getEntry(filename));
 	}
 	
 
+	public ImageDescriptor getDescriptor(String imageID) {
+
+		if (Strings.isNullOrEmpty(imageID)){
+			imageID = "broken";
+		}
+		return getImageDescriptor(imageID);
+	}
+	
 	public boolean isLoaded( String imageID ) {
 		return loadedImages.containsKey(imageID);
 	}

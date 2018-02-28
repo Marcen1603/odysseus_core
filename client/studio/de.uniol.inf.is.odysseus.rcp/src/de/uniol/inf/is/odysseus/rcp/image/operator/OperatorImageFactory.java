@@ -23,13 +23,13 @@ import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
  * @author DGeesen
  * 
  */
+@Deprecated
 public class OperatorImageFactory {
 
 	public static ImageDescriptor createImageForOperator(String operatorName) {
 		return createImageForOperator(operatorName, "black");
 	}
 	
-	// TODO: Make config file
 	@Deprecated
 	public static ImageDescriptor createImageForOperator(String operatorName, String styleName) {
 		operatorName = operatorName.toUpperCase();

@@ -109,6 +109,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 
 		imageManager.registerImageSet("white", "operator-images/icons_white.xml");
 		imageManager.registerImageSet("black", "operator-images/icons_black.xml");
+		imageManager.registerImageSet("default", "operator-images/icons_default.xml");
 
 		instance = this;
 	}
