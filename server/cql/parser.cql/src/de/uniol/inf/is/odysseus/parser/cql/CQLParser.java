@@ -1491,7 +1491,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.getUnquotedName();
 		List<SDFAttribute> attributes = visit(defs, null);
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry.instance
+		Class<? extends IStreamObject> type = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getCreatedType(datahandler);
 		if (type == null) {
 			type = Tuple.class;
@@ -1576,7 +1576,7 @@ public class CQLParser implements NewSQLParserVisitor, IQueryParser {
 				.getUnquotedName();
 
 		@SuppressWarnings("rawtypes")
-		Class<? extends IStreamObject> type = DataHandlerRegistry.instance
+		Class<? extends IStreamObject> type = getDataDictionary().getDataHandlerRegistry(getCaller())
 				.getCreatedType(datahandler);
 		if (type == null) {
 			type = Tuple.class;
