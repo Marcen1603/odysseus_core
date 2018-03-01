@@ -51,6 +51,8 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 		// get options
 		this.fireOnce = "true".equals(options.get("fireOnce", "false"));
 	}
+	
+	
 
 	@Override
 	public IProtocolHandler<IStreamObject<? extends IMetaAttribute>> createInstance(ITransportDirection direction,
@@ -71,6 +73,7 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 		
 		logger.info("connection opened");
 	}
+	
 	
 
 	@Override
@@ -96,9 +99,11 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 		if(pmml == null)
 			logger.warn("pmml is null -> check stream");
 		else
-			logger.info("parser next: fireOnce="+(fireOnce?"true":"false")+" parsed="+(parsed?"true":"false"));
+			logger.debug("parser next: fireOnce="+(fireOnce?"true":"false")+" parsed="+(parsed?"true":"false"));
 		return (!fireOnce || !wasParsed) && wasRead;
 	}
+	
+	
 	
 	private boolean readPMMLFromStream() {
 		if(getDirection().equals(ITransportDirection.IN)) {
