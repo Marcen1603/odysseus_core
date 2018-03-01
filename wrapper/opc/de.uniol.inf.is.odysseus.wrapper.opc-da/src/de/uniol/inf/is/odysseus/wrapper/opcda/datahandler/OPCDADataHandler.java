@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.datahandler.AbstractDataHandler;
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.datahandler.IDataHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.IntegerHandler;
 import de.uniol.inf.is.odysseus.core.datahandler.LongHandler;
@@ -58,11 +57,11 @@ public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
 
 	public OPCDADataHandler(SDFSchema subType){
 		this.subType = subType;
-		this.valueHandler = DataHandlerRegistry.instance.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
+		this.valueHandler = getDataHandler(this.subType.getAttribute(0).getDatatype(), this.subType);
 
 		//Is needed for handling of KeyValueObject
 		if(this.valueHandler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
-			this.valueHandler = DataHandlerRegistry.instance.getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType().toString(), this.subType);
+			this.valueHandler = getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType(), this.subType);
 		}
 	}
     
