@@ -27,7 +27,7 @@ public class ObjectHandlerRegistry{
 	
 	private static Map<String, IObjectHandler<?>> objectHandlers = new HashMap<String, IObjectHandler<?>>();
 	
-	static public void register(IObjectHandler<?> handler){
+	public void register(IObjectHandler<?> handler){
 		logger.trace("Registering new object handler  "+handler.getName());
 		if (objectHandlers.containsKey(handler.getName().toLowerCase())){
 			logger.error("Object Handler with name "+handler.getName()+" is already registered!");
@@ -36,7 +36,7 @@ public class ObjectHandlerRegistry{
 		objectHandlers.put(handler.getName().toLowerCase(),handler);
 	}
 	
-	public static void remove(IObjectHandler<?> handler){
+	public void remove(IObjectHandler<?> handler){
 		logger.trace("Remove object Handler "+handler.getName());
 		objectHandlers.remove(handler.getName().toLowerCase());
 	}

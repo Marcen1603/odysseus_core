@@ -6,7 +6,7 @@ import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Resource;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.protocol.ProtocolHandlerRegistry;
-import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.TransportHandlerRegistry;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
@@ -46,7 +46,7 @@ public class ReceiveAO extends AbstractReceiveAO {
 	}
 	
 	public List<String> getTransportValues(){
-		return TransportHandlerRegistry.getHandlerNames();
+		return RegistryBinder.getTransportHandlerRegistry().getHandlerNames();
 	}
 	
 	@Override
@@ -56,7 +56,7 @@ public class ReceiveAO extends AbstractReceiveAO {
 	}
 	
 	public List<String> getProtocolValues(){
-		return ProtocolHandlerRegistry.getHandlerNames();
+		return RegistryBinder.getProtocolHandlerRegistry().getHandlerNames();
 	}
 	
 	@Override

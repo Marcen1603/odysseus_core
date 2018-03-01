@@ -429,11 +429,11 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 				this.requiresDeepClone = true;
 				this.maxDistributions++;
 			}
-			if (!DataHandlerRegistry.containsDataHandler(uri)) {
+			if (!DataHandlerRegistry.instance.containsDataHandler(uri)) {
 				throw new IllegalArgumentException("Unregistered datatype " + uri);
 			}
 
-			this.dataHandlers[i++] = DataHandlerRegistry.getDataHandler(uri, SDFSchemaFactory.createNewSchema("",
+			this.dataHandlers[i++] = DataHandlerRegistry.instance.getDataHandler(uri, SDFSchemaFactory.createNewSchema("",
 					(Class<? extends IStreamObject<?>>) ProbabilisticTuple.class, attribute));
 
 		}
@@ -452,7 +452,7 @@ public class ProbabilisticTupleDataHandler extends AbstractStreamObjectDataHandl
 		int i = 0;
 		for (final SDFDatatype attribute : schema) {
 
-			final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(attribute.toString(), (SDFSchema) null);
+			final IDataHandler<?> handler = DataHandlerRegistry.instance.getDataHandler(attribute.toString(), (SDFSchema) null);
 
 			if (handler == null) {
 				throw new IllegalArgumentException("Unregistered datatype " + attribute);

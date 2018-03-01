@@ -492,7 +492,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	//@SuppressWarnings("nls")
 	private static void buildDataHandlers(final StringBuilder builder) {
 		builder.append("<h3>Data Handlers</h3>\n");
-		final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
+		final List<String> datas = new ArrayList<>(DataHandlerRegistry.instance.getHandlerNames());
 		Collections.sort(datas);
 		builder.append("<ul class='list-inline'>\n");
 		for (final String data : datas) {
@@ -504,7 +504,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	//@SuppressWarnings("nls")
 	private static void buildProtocolHandlers(final StringBuilder builder) {
 		builder.append("<h3>Protocol Handlers</h3>\n");
-		final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
+		final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.instance.getHandlerNames());
 		Collections.sort(protocols);
 		builder.append("<ul class='list-inline'>\n");
 		for (final String protocol : protocols) {
@@ -517,7 +517,7 @@ public class GenerateHTMLCheatSheetCommand extends AbstractHandler {
 	//@SuppressWarnings("nls")
 	private static void buildTransportHandlers(final StringBuilder builder) {
 		builder.append("<h3>Transport Handlers</h3>\n");
-		final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+		final List<String> transports = new ArrayList<>(TransportHandlerRegistry.instance.getHandlerNames());
 		Collections.sort(transports);
 		builder.append("<ul class='list-inline'>\n");
 		for (final String transport : transports) {

@@ -471,7 +471,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
 
     private static void buildDataHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Data Handlers}\n");
-        final List<String> datas = new ArrayList<>(DataHandlerRegistry.getHandlerNames());
+        final List<String> datas = new ArrayList<>(DataHandlerRegistry.instance.getHandlerNames());
         Collections.sort(datas);
         builder.append("\\begin{multicols}{2}\n");
         for (final String data : datas) {
@@ -482,7 +482,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
 
     private static void buildProtocolHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Protocol Handlers}\n");
-        final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.getHandlerNames());
+        final List<String> protocols = new ArrayList<>(ProtocolHandlerRegistry.instance.getHandlerNames());
         Collections.sort(protocols);
         builder.append("\\begin{multicols}{2}\n");
         for (final String protocol : protocols) {
@@ -493,7 +493,7 @@ public class GeneratePDFCheatSheetCommand extends AbstractHandler {
 
     private static void buildTransportHandlers(final StringBuilder builder) {
         builder.append("\\subsection{Transport Handlers}\n");
-        final List<String> transports = new ArrayList<>(TransportHandlerRegistry.getHandlerNames());
+        final List<String> transports = new ArrayList<>(TransportHandlerRegistry.instance.getHandlerNames());
         Collections.sort(transports);
         builder.append("\\begin{multicols}{2}\n");
         for (final String transport : transports) {

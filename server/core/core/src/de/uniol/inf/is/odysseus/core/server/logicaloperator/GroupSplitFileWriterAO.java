@@ -3,9 +3,9 @@ package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uniol.inf.is.odysseus.core.datahandler.DataHandlerRegistry;
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.server.internal.RegistryBinder;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
@@ -41,7 +41,7 @@ public class GroupSplitFileWriterAO extends UnaryLogicalOp {
 	}
 	
 	public List<String> getDataHandlerValues() {
-		return DataHandlerRegistry.getStreamableDataHandlerNames();
+		return RegistryBinder.getDataHandlerRegistry().getStreamableDataHandlerNames();
 	}
 	
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "groupAttributes", optional = false, doc = "", isList = true)

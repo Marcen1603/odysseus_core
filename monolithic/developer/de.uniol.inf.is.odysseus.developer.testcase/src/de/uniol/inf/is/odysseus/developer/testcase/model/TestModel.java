@@ -99,7 +99,7 @@ public class TestModel implements Serializable {
 
 	public static Object getValue(final String value, /* @NonNull */final SDFDatatype type) {
 		Objects.requireNonNull(type);
-		final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(type.getQualName(), (SDFSchema) null);
+		final IDataHandler<?> handler = DataHandlerRegistry.instance.getDataHandler(type.getQualName(), (SDFSchema) null);
 		if (handler != null) {
 			return handler.readData(value);
 		}
@@ -109,7 +109,7 @@ public class TestModel implements Serializable {
 
 	public static String getString(final Object value, /* @NonNull */final SDFDatatype type) {
 		Objects.requireNonNull(type);
-		final IDataHandler<?> handler = DataHandlerRegistry.getDataHandler(type.getQualName(), (SDFSchema) null);
+		final IDataHandler<?> handler = DataHandlerRegistry.instance.getDataHandler(type.getQualName(), (SDFSchema) null);
 		if (handler != null) {
 			final StringBuilder sb = new StringBuilder();
 			handler.writeData(sb, value);

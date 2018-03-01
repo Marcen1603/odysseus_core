@@ -51,7 +51,7 @@ public class SplitStringToListWithDatatypeFunction extends AbstractFunction<List
 		String delim = getInputValue(1);
 		String datatype = getInputValue(2);
 		// no schema needed for simple datatypes
-		IDataHandler<?> dataHandler = DataHandlerRegistry.getDataHandler(datatype,
+		IDataHandler<?> dataHandler = DataHandlerRegistry.instance.getDataHandler(datatype,
 				SDFSchemaFactory.createNewTupleSchema("", Collections.emptyList()));
 
 		String[] v = value.split(delim);

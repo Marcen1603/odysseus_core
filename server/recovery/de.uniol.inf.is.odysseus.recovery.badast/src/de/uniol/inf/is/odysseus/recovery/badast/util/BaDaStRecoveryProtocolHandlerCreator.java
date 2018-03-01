@@ -34,7 +34,7 @@ public class BaDaStRecoveryProtocolHandlerCreator {
 	@SuppressWarnings("unchecked")
 	public static <StreamObject extends IStreamObject<IMetaAttribute>> IProtocolHandler<StreamObject> createProtocolHandler(
 			AbstractAccessAO access, ITransferHandler<StreamObject> transferHandler) {
-		IStreamObjectDataHandler<StreamObject> dataHandler = (IStreamObjectDataHandler<StreamObject>) DataHandlerRegistry
+		IStreamObjectDataHandler<StreamObject> dataHandler = (IStreamObjectDataHandler<StreamObject>) DataHandlerRegistry.instance
 				.getStreamObjectDataHandler(access.getDataHandler(), access.getOutputSchema());
 		dataHandler.setMetaAttribute(access.getLocalMetaAttribute());
 		OptionMap options = new OptionMap(access.getOptions());
@@ -45,7 +45,7 @@ public class BaDaStRecoveryProtocolHandlerCreator {
 		} else {
 			pattern = IAccessPattern.PUSH;
 		}
-		IProtocolHandler<StreamObject> protocolHandler = (IProtocolHandler<StreamObject>) ProtocolHandlerRegistry
+		IProtocolHandler<StreamObject> protocolHandler = (IProtocolHandler<StreamObject>) ProtocolHandlerRegistry.instance
 				.getInstance(access.getProtocolHandler(), ITransportDirection.IN, pattern, options, dataHandler);
 		protocolHandler.setTransfer(transferHandler);
 		return protocolHandler;

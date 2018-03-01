@@ -58,11 +58,11 @@ public class OPCDADataHandler<T> extends AbstractDataHandler<OPCValue<T>> {
 
 	public OPCDADataHandler(SDFSchema subType){
 		this.subType = subType;
-		this.valueHandler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
+		this.valueHandler = DataHandlerRegistry.instance.getDataHandler(this.subType.getAttribute(0).getAttributeName(), this.subType);
 
 		//Is needed for handling of KeyValueObject
 		if(this.valueHandler == null && subType.getAttribute(0).getDatatype().getSubType() != null) {
-			this.valueHandler = DataHandlerRegistry.getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType().toString(), this.subType);
+			this.valueHandler = DataHandlerRegistry.instance.getDataHandler(this.subType.getAttribute(0).getDatatype().getSubType().toString(), this.subType);
 		}
 	}
     

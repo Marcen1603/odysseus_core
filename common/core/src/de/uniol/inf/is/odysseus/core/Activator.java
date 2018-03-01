@@ -65,22 +65,6 @@ public class Activator implements BundleActivator {
 		
 		LOGGER.info("Running VM with: \t"+System.getProperty("os.arch"));
 		
-		ProtocolHandlerRegistry.register(new LineProtocolHandler());
-		ProtocolHandlerRegistry.register(new DocumentProtocolHandler());
-		ProtocolHandlerRegistry.register(new CSVProtocolHandler());
-		ProtocolHandlerRegistry.register(new SimpleCSVProtocolHandler());
-		ProtocolHandlerRegistry.register(new NoProtocolHandler());
-		ProtocolHandlerRegistry.register(new TextProtocolHandler());
-		ProtocolHandlerRegistry.register(new MarkerByteBufferHandler());
-		ProtocolHandlerRegistry.register(new SVMProtocolHandler());
-		
-		TransportHandlerRegistry.register(new TcpSocketHandler());
-		TransportHandlerRegistry.register(new FileHandler());
-		TransportHandlerRegistry.register(new TimerTransportHandler());
-        TransportHandlerRegistry.register(new DirectoryWatcherTransportHandler());
-		TransportHandlerRegistry.register(new NonBlockingTcpHandler());		
-		
-		DataHandlerRegistry.registerDataHandler(new ListDataHandler());	
 	}
 	
 	
