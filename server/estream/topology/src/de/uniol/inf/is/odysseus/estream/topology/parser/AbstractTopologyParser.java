@@ -31,10 +31,11 @@ public abstract class AbstractTopologyParser<T extends IStreamObject<? extends I
 	protected InputStream inputStream;
 	protected String[] tokens;
 	protected String rootNode;
+	protected String type;
 
 	private T t;
 
-	public AbstractTopologyParser(InputStream inputStream, SDFSchema schema) {
+	public AbstractTopologyParser(InputStream inputStream, SDFSchema schema, String type) {
 		this.isDone = false;
 		this.inputStream = inputStream;
 		this.schema = schema;
@@ -42,6 +43,7 @@ public abstract class AbstractTopologyParser<T extends IStreamObject<? extends I
 		this.schemaIndexMap = new HashMap<>();
 		this.attributeSize = schema.size();
 		this.currentTupleSize = 0;
+		this.type = type;
 
 		for (int i = 0; i < schema.getAttributes().size(); i++) {
 			SDFAttribute attribute = schema.getAttribute(i);

@@ -43,6 +43,8 @@ import de.uniol.inf.is.odysseus.estream.topology.parser.TopologyParser;
  */
 public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
 	private static String name = "TOPOLOGY";
+	private static final String TYPE = "type";
+	
 	private static final Logger log = LoggerFactory.getLogger(TopologyProtocolHandler.class.getSimpleName());
 	private AbstractTopologyParser<IStreamObject<? extends IMetaAttribute>> parser;
 	private boolean isDone;
@@ -123,17 +125,20 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 	 */
 	public void process(String[] message) {
 		try {
-			initParser(String.join("", message).getBytes());
-			
-			while(!parser.isDone()) {
-				Tuple<?> tuple = (Tuple<?>) parser.parse();
-	
-				if (tuple != null) {
-					log.info("tuple=" + tuple.toString());
-					getTransfer().transfer(getDataHandler().readData(tuple));
+			if (optionsMap.containsKey(TYPE)) {
+				initParser(String.join("", message).getBytes(), optionsMap.get(TYPE));
+				
+				while(!parser.isDone()) {
+					Tuple<?> tuple = (Tuple<?>) parser.parse();
+		
+					if (tuple != null) {
+						// log.info("tuple=" + tuple.toString());
+						getTransfer().transfer(getDataHandler().readData(tuple));
+					}
 				}
+			} else {
+				throw new IllegalArgumentException("Could not find type to parse!");
 			}
-
 			terminateParser();
 		} catch (IllegalArgumentException | NullPointerException e) {
 			log.error("exception occurred: " + e);
@@ -149,9 +154,9 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private void initParser(byte[] message) {
+	private void initParser(byte[] message, String type) {
 		InputStream reader = new ByteArrayInputStream(message);
-		parser = new TopologyParser(reader, getSchema());
+		parser = new TopologyParser(reader, getSchema(), type);
 	}
 
 	private void terminateParser() {
