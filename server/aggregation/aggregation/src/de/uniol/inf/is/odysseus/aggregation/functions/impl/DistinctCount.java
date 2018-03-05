@@ -50,15 +50,15 @@ public class DistinctCount<M extends ITimeInterval, T extends Tuple<M>> extends 
 	/**
 	 * 
 	 */
-	public DistinctCount(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema) {
-		super(attributes, outputAttributeName, subSchema, false, false);
+	public DistinctCount(final int[] attributes, final String outputAttributeName, final SDFSchema subSchema, final int[] uniqueAttributeIndices) {
+		super(attributes, outputAttributeName, subSchema, false, false, uniqueAttributeIndices);
 	}
 
 	/**
 	 * 
 	 */
-	public DistinctCount(final String outputAttributeName, final SDFSchema subSchema) {
-		super(outputAttributeName, subSchema, false, false);
+	public DistinctCount(final String outputAttributeName, final SDFSchema subSchema, final int[] uniqueAttributeIndices) {
+		super(outputAttributeName, subSchema, false, false, uniqueAttributeIndices);
 	}
 
 	/*
@@ -114,6 +114,8 @@ public class DistinctCount<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final IAttributeResolver attributeResolver) {
 		final int[] inputAttrs = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
 				attributeResolver);
+		final int[] uniqueAttributeIndices = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
+				attributeResolver, "UNIQUE_ATTR");
 		String outputName = AggregationFunctionParseOptionsHelper.getFunctionParameterAsString(parameters,
 				AggregationFunctionParseOptionsHelper.OUTPUT_ATTRIBUTES);
 		if (outputName == null) {
@@ -121,14 +123,14 @@ public class DistinctCount<M extends ITimeInterval, T extends Tuple<M>> extends 
 		}
 
 		if (inputAttrs == null) {
-			return new DistinctCount<>(outputName, attributeResolver.getSchema().get(0));
+			return new DistinctCount<>(outputName, attributeResolver.getSchema().get(0), uniqueAttributeIndices);
 		} else {
 			final List<SDFAttribute> attr = new ArrayList<>();
 			for (final int idx : inputAttrs) {
 				attr.add(attributeResolver.getSchema().get(0).getAttribute(idx).clone());
 			}
 			final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
-			return new DistinctCount<>(inputAttrs, outputName, subSchema);
+			return new DistinctCount<>(inputAttrs, outputName, subSchema, uniqueAttributeIndices);
 		}
 	}
 
