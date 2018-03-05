@@ -15,12 +15,21 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 	private static final long serialVersionUID = 6578575151834596318L;
 
 	final protected SDFExpression expression;
-	final protected List<SDFAttribute> neededAttributes;
+	final protected List<String> neededAttributes;
 	final protected List<SDFSchema> inputSchema;
 
 	public NamedAttributePredicate(SDFExpression expression, List<SDFSchema> inputSchema) {
 		this.expression = expression;
-		this.neededAttributes = expression.getAllAttributes();
+		this.neededAttributes = new ArrayList<String>();
+		// remove potential leading "."
+		for (SDFAttribute attribute:expression.getAllAttributes()) {
+			if (attribute.getAttributeName().startsWith(".")) {
+				neededAttributes.add(attribute.getAttributeName().substring(1));
+			}else{
+				neededAttributes.add(attribute.getAttributeName());
+			}
+		}
+		
 		if (inputSchema == null){
 			this.inputSchema = new ArrayList<>();
 		}else{
@@ -30,8 +39,15 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 
 	public NamedAttributePredicate(NamedAttributePredicate<T> predicate) {
 		this.expression = predicate.expression == null ? null : predicate.expression.clone();
-		this.neededAttributes = expression.getAllAttributes();
-		this.inputSchema = predicate.inputSchema;
+		this.neededAttributes = new ArrayList<String>();
+		// remove potential leading "."
+		for (SDFAttribute attribute:expression.getAllAttributes()) {
+			if (attribute.getAttributeName().startsWith(".")) {
+				neededAttributes.add(attribute.getAttributeName().substring(1));
+			}else{
+				neededAttributes.add(attribute.getAttributeName());
+			}
+		}		this.inputSchema = predicate.inputSchema;
 	}
 
 	@Override
@@ -51,15 +67,7 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 	private Object[] determineInputValues(T input) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
-			values[i] = input.getAttribute(neededAttributes.get(i).getURI());
-			if (values[i] == null) {
-				if (inputSchema.get(0) != null) {
-					Pair<Integer, Integer> pos = inputSchema.get(0).indexOfMetaAttribute(neededAttributes.get(i).getURI());
-					if (pos != null) {
-						values[i] = input.getMetadata().getValue(pos.getE1(), pos.getE2());
-					}
-				}
-			}
+			values[i] = determineValue(input, neededAttributes.get(i), inputSchema.get(0));			
 		}
 		return values;
 	}
@@ -68,14 +76,32 @@ public class NamedAttributePredicate<T extends INamedAttributeStreamObject<?>> e
 	public Boolean evaluate(T left, T right) {
 		Object[] values = new Object[neededAttributes.size()];
 		for (int i = 0; i < values.length; ++i) {
-			values[i] = left.getAttribute(neededAttributes.get(i).getURI());
+			values[i] = determineValue(left, neededAttributes.get(i), inputSchema.get(0));			
 			if (values[i] == null) {
-				values[i] = right.getAttribute(neededAttributes.get(i).getURI());
+				values[i] = determineValue(right, neededAttributes.get(i), inputSchema.get(1));			
 			}
 		}
 
 		this.expression.bindVariables(values);
 		return (Boolean) this.expression.getValue();
+	}
+	
+	private Object determineValue(T input, String neededAttribute, SDFSchema sdfSchema) {
+		Object value;
+		value = input.getAttribute(neededAttribute);
+		if (value == null) {
+			if (sdfSchema != null) {
+				Pair<Integer, Integer> pos = sdfSchema.indexOfMetaAttribute(neededAttribute);
+				if (pos != null) {
+					value = input.getMetadata().getValue(pos.getE1(), pos.getE2());
+				}
+			}
+		}
+		// Could be path expression
+		if (value == null) {
+			value = input.path(neededAttribute);
+		}
+		return value;
 	}
 
 	@Override

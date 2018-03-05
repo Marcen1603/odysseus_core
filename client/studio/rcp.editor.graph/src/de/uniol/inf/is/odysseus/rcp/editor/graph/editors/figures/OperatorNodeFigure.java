@@ -28,8 +28,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 
-import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.images.ImageFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.model.OperatorNode;
+import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
 
 /**
  * @author DGeesen
@@ -51,7 +51,7 @@ public class OperatorNodeFigure extends Figure {
 		// add(rectangle);
 		label = new Label();
 		toolTipLabel = new Label();
-		ImageDescriptor imageDesc = ImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
+		ImageDescriptor imageDesc = OperatorImageFactory.createImageForOperator(operatorNode.getOperatorInformation().getOperatorName());
 		imageData = imageDesc.getImageData();
 		image = new Label();
 		image.setIcon(imageDesc.createImage());

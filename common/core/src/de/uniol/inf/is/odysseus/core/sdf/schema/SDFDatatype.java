@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +124,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.TUPLE);
 	public static final SDFDatatype LIST_LIST = new SDFDatatype("List_List",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LIST);
-	public static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
+	private static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
 			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR,
 			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT, LIST_TUPLE, LIST_LIST };
 
@@ -164,6 +165,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 	public static final SDFDatatype[] VECTORS = new SDFDatatype[] {
 			SDFDatatype.VECTOR_BOOLEAN, SDFDatatype.VECTOR_BYTE,
 			SDFDatatype.VECTOR_FLOAT, SDFDatatype.VECTOR_DOUBLE };
+	
+	public static final SDFDatatype OBJECT_MAP = new SDFDatatype("ObjectMap");
 
 	/**
 	 * Datatypes for aggregations (partial aggregates
@@ -268,6 +271,8 @@ public class SDFDatatype extends SDFElement implements Serializable {
 		types.add(SDFDatatype.COUNT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.RELATIONAL_ELEMENT_PARTIAL_AGGREGATE);
 		types.add(SDFDatatype.LIST_PARTIAL_AGGREGATE);
+		
+		types.add(SDFDatatype.OBJECT_MAP);
 
 		for (SDFDatatype t:types){
 			nameMap.put(t.getURI().toLowerCase(), t);
@@ -663,6 +668,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	}
 
-
+	public static final SDFDatatype[] getLists(){
+		///return Arrays.copyOf(LISTS, LISTS.length);
+		// Copy should not be necessary anymore
+		return LISTS;
+	}
+	
 
 }

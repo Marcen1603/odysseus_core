@@ -367,7 +367,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 							((ObjectNode) father).set(subkeys[i], node);
 						} else if (value instanceof List) {
 							ArrayNode node = new ArrayNode(nodeFactory);
-							if (((List<Object>) value).get(0) instanceof KeyValueObject) {
+							if (((List<Object>)value).size() > 0 && ((List<Object>) value).get(0) instanceof KeyValueObject) {
 								for (Object o : (List<Object>) value) {
 									processKeyValueObjectSublist(value, node, o);
 								}

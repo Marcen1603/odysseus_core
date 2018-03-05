@@ -21,7 +21,7 @@ public class MDAInitFunction extends AbstractFunction<Void> {
 	 * 1: store name 2: list of dimensions
 	 */
 	private static final SDFDatatype[][] acceptedTypes = new SDFDatatype[][] { { SDFDatatype.STRING },
-			SDFDatatype.LISTS };
+			SDFDatatype.getLists() };
 
 	public MDAInitFunction() {
 		super("MDAInit", 2, acceptedTypes, null);

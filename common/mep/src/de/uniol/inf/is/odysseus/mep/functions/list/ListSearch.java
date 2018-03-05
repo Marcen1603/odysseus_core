@@ -10,7 +10,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 public class ListSearch extends AbstractFunction<Object> {
 
 	private static final long serialVersionUID = -4546365628234499380L;
-	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.LISTS, SDFDatatype.SIMPLE_TYPES,
+	private static final SDFDatatype[][] ACC_TYPES = new SDFDatatype[][] { SDFDatatype.getLists(), SDFDatatype.SIMPLE_TYPES,
 			{ SDFDatatype.BOOLEAN } };
 
 	public ListSearch() {
