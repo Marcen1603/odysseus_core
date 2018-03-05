@@ -15,9 +15,11 @@
   */
 package de.uniol.inf.is.odysseus.rcp;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -62,6 +64,29 @@ public class ImageManager {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetFileName), "imageSetFileName must not be null or empty!");
 		
 		URL url = bundle.getEntry(imageSetFileName);
+		registerImageSet(imageSetName, url);
+	}
+	
+	public void registerImageSet(File file) {
+		Preconditions.checkArgument(file.isFile(), "image set file " + file.getAbsolutePath() + " does not exist");
+		
+		URL url = null;
+		try {
+			url = file.toURI().toURL();
+		} catch (MalformedURLException e) {
+			LOG.error(e.getMessage());
+		}
+
+		if (url != null) {
+			String iconSetName = file.getName();
+			if (iconSetName.endsWith(".xml")) {
+				iconSetName = iconSetName.substring(0, iconSetName.length() - 4);
+			}
+			registerImageSet(iconSetName, url);
+		}
+	}
+	
+	private void registerImageSet(String imageSetName, URL url){
 		try(InputStream in = url.openConnection().getInputStream()) {
 			Properties props = new Properties();
 			props.loadFromXML(in);
@@ -71,9 +96,9 @@ public class ImageManager {
 				register(imageSetName + "." + imageID, props.getProperty(imageID));
 			}
 		} catch (FileNotFoundException e) {
-			LOG.error("image set file not found: " + imageSetFileName);
+			LOG.error("image set file not found: " + url.toString());
 		} catch (IOException e) {
-			LOG.error("Error while reading image set " + imageSetName + " (" + imageSetFileName + ")");
+			LOG.error("Error while reading image set " + imageSetName + " (" + url.toString() + ")");
 			LOG.error(e.toString());
 		}
 	}
@@ -121,7 +146,15 @@ public class ImageManager {
 		if( filename == null )
 			throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
 
-		return ImageDescriptor.createFromURL(bundle.getEntry(filename));
+		URL url = bundle.getEntry(filename);
+		if (url == null) {
+			try {
+				url = new File(filename).toURI().toURL();
+			} catch (MalformedURLException e) {
+				LOG.error("image cannot be found: " + filename);
+			}
+		}
+		return ImageDescriptor.createFromURL(url);
 	}
 	
 
