@@ -1,8 +1,5 @@
 package de.uniol.inf.is.odysseus.temporaltypes;
 
-import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
-
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
