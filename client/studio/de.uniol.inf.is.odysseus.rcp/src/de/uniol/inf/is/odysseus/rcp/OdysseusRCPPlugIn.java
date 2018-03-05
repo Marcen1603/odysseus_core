@@ -128,7 +128,7 @@ public class OdysseusRCPPlugIn extends AbstractUIPlugin implements IUpdateEventL
 			};
 			File[] files = iconSetDir.listFiles(filter);
 			for (File file : files) {
-				imageManager.registerImageSet(file);
+				imageManager.registerExternalImageSet(file);
 			}
 		}
 

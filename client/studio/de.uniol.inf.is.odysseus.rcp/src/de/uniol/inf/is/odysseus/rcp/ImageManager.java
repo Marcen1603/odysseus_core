@@ -35,28 +35,47 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
+import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
+
 public class ImageManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImageManager.class);
 
 	private final Bundle bundle;
 
-	private Map<String, String> imageIDs = Maps.newHashMap();
+	private Map<String, URL> imageIDs = Maps.newHashMap();
 	private Map<String, Image> loadedImages = Maps.newHashMap();
 
 	public ImageManager( Bundle bundle ) {
 		this.bundle = Preconditions.checkNotNull(bundle, "Bundle for ImageRegistry must not be null!");
 	}
 
-	public void register( String imageID, String fileName ) {
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+	/**
+	 * Registers an image contained in a bundle
+	 * @param imageID the id of the image
+	 * @param fileName the relative file path of the image inside the bundle
+	 */
+	public void register( String imageID, String fileName) {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(fileName), "Filename to register must not be null or empty!");
+
+		URL url = bundle.getEntry(fileName);
+		register(imageID, url);	
+	}
+	
+	/**
+	 * Registers an image with the given URL
+	 * @param imageID the ID of the image
+	 * @param url the image URL to register
+	 */
+	public void register(String imageID, URL url ){
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageID), "ImageID must be not null or empty!");
+		Preconditions.checkArgument(url != null, "URL must not be null");
 
 		if( imageIDs.containsKey(imageID)) {
 			LOG.warn("Registering already registered imageID {}.", imageID);
 		}
-
-		imageIDs.put(imageID, fileName);
+		
+		imageIDs.put(imageID, url);
 	}
 	
 	public void registerImageSet(String imageSetName, String imageSetFileName) {
@@ -64,41 +83,51 @@ public class ImageManager {
 		Preconditions.checkArgument(!Strings.isNullOrEmpty(imageSetFileName), "imageSetFileName must not be null or empty!");
 		
 		URL url = bundle.getEntry(imageSetFileName);
-		registerImageSet(imageSetName, url);
+		registerImageSet(imageSetName, url, true);
 	}
 	
-	public void registerImageSet(File file) {
-		Preconditions.checkArgument(file.isFile(), "image set file " + file.getAbsolutePath() + " does not exist");
+	/**
+	 * Registers an image set from an external file stored in the ODYSSEUS HOME directory
+	 * @param imageSetFile the file name of the image set
+	 */
+	public void registerExternalImageSet(File imageSetFile) {
+		Preconditions.checkArgument(imageSetFile.isFile(), "image set file " + imageSetFile.getAbsolutePath() + " does not exist");
 		
-		URL url = null;
+		URL imageSetURL = null;
 		try {
-			url = file.toURI().toURL();
+			imageSetURL = imageSetFile.toURI().toURL();
 		} catch (MalformedURLException e) {
 			LOG.error(e.getMessage());
 		}
 
-		if (url != null) {
-			String iconSetName = file.getName();
+		if (imageSetURL != null) {
+			String iconSetName = imageSetFile.getName();
 			if (iconSetName.endsWith(".xml")) {
 				iconSetName = iconSetName.substring(0, iconSetName.length() - 4);
 			}
-			registerImageSet(iconSetName, url);
+			registerImageSet(iconSetName, imageSetURL, false);
 		}
 	}
 	
-	private void registerImageSet(String imageSetName, URL url){
-		try(InputStream in = url.openConnection().getInputStream()) {
+	private void registerImageSet(String imageSetName, URL imageSetURL, boolean loadFromBundle){
+		try(InputStream in = imageSetURL.openConnection().getInputStream()) {
 			Properties props = new Properties();
 			props.loadFromXML(in);
 			
 			for (Object key : props.keySet()) {
 				String imageID = (String)key;
-				register(imageSetName + "." + imageID, props.getProperty(imageID));
+				String imagePath = props.getProperty(imageID);
+				URL imageURL = loadFromBundle? bundle.getEntry(imagePath) : OdysseusBaseConfiguration.getEntry(imagePath);
+				if (imageURL != null) {
+					register(imageSetName + "." + imageID, imageURL);
+				} else {
+					LOG.error("image cannot be found: " + imageURL);
+				}
 			}
 		} catch (FileNotFoundException e) {
-			LOG.error("image set file not found: " + url.toString());
+			LOG.error("image set file not found: " + imageSetURL.toString());
 		} catch (IOException e) {
-			LOG.error("Error while reading image set " + imageSetName + " (" + url.toString() + ")");
+			LOG.error("Error while reading image set " + imageSetName + " (" + imageSetURL.toString() + ")");
 			LOG.error(e.toString());
 		}
 	}
@@ -142,18 +171,10 @@ public class ImageManager {
 	}
 
 	private ImageDescriptor getImageDescriptor(String imageID) {
-		String filename = imageIDs.get(imageID);
-		if( filename == null )
+		URL url = imageIDs.get(imageID);
+		if( url == null )
 			throw new IllegalArgumentException("ImageID " + imageID + " not registered ");
 
-		URL url = bundle.getEntry(filename);
-		if (url == null) {
-			try {
-				url = new File(filename).toURI().toURL();
-			} catch (MalformedURLException e) {
-				LOG.error("image cannot be found: " + filename);
-			}
-		}
 		return ImageDescriptor.createFromURL(url);
 	}
 	

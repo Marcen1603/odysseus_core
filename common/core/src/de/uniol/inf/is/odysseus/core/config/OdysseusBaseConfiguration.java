@@ -48,9 +48,11 @@ public class OdysseusBaseConfiguration {
 	 */
 	public static URL getEntry(String path){
 		URL url = null;
-		String fullPath = getHomeDir() + "/" + path;
+		File homeDir = new File(getHomeDir());
+		
+		File fullPath = new File(homeDir, path);
 		try {
-			url = new URL(fullPath);
+			url = fullPath.toURI().toURL();
 		} catch (MalformedURLException e) {
 			LOG.error(e.getMessage());
 		}
