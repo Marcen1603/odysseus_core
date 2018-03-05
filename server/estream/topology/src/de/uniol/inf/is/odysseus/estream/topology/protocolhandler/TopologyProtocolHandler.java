@@ -18,6 +18,8 @@ package de.uniol.inf.is.odysseus.estream.topology.protocolhandler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.UnknownHostException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +46,7 @@ import de.uniol.inf.is.odysseus.estream.topology.parser.TopologyParser;
 public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObject<? extends IMetaAttribute>> {
 	private static String name = "TOPOLOGY";
 	private static final String TYPE = "type";
-	
+
 	private static final Logger log = LoggerFactory.getLogger(TopologyProtocolHandler.class.getSimpleName());
 	private AbstractTopologyParser<IStreamObject<? extends IMetaAttribute>> parser;
 	private boolean isDone;
@@ -85,6 +87,32 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 		super.onConnect(caller);
 	}
 
+	@Override
+	public void open() throws UnknownHostException, IOException {
+		getTransportHandler().open();
+		if (getDirection().equals(ITransportDirection.IN)) {
+			try {
+				InputStream initialStream = getTransportHandler().getInputStream();
+				initParser(initialStream, optionsMap.get(TYPE));
+				if (this.parser != null) {
+					parser.parse();
+				}
+
+				log.info("Parser initialized for " + optionsMap.get(TYPE));
+			} catch (IllegalArgumentException e) {
+				log.info("Given transport handler has no input stream");
+			}
+			isDone = false;
+		}
+	}
+
+	@Override
+	public void close() throws IOException {
+		terminateParser();
+		super.close();
+		log.info("connection closed");
+	}
+
 	/**
 	 * Is called when an existing connection to the transport handler is interrupted
 	 * 
@@ -111,12 +139,20 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 
 	@Override
 	public boolean hasNext() throws IOException {
-		
-		
-		
-		return super.hasNext();
+		if (this.parser != null) {
+			return parser.isDone() ? false : true;
+		}
+		return false;
 	}
-	
+
+	/**
+	 * pull-based processing
+	 */
+	@Override
+	public IStreamObject<? extends IMetaAttribute> getNext() throws IOException {
+		return hasNext() ? getDataHandler().readData(parser.parse()) : null;
+	}
+
 	/**
 	 * Implement this method to process the message
 	 * 
@@ -127,10 +163,10 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 		try {
 			if (optionsMap.containsKey(TYPE)) {
 				initParser(String.join("", message).getBytes(), optionsMap.get(TYPE));
-				
-				while(!parser.isDone()) {
+
+				while (!parser.isDone()) {
 					Tuple<?> tuple = (Tuple<?>) parser.parse();
-		
+
 					if (tuple != null) {
 						// log.info("tuple=" + tuple.toString());
 						getTransfer().transfer(getDataHandler().readData(tuple));
@@ -157,6 +193,11 @@ public class TopologyProtocolHandler extends AbstractProtocolHandler<IStreamObje
 	private void initParser(byte[] message, String type) {
 		InputStream reader = new ByteArrayInputStream(message);
 		parser = new TopologyParser(reader, getSchema(), type);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void initParser(InputStream message, String type) {
+		parser = new TopologyParser(message, getSchema(), type);
 	}
 
 	private void terminateParser() {
