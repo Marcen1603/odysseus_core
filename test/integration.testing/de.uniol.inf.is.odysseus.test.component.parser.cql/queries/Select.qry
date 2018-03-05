@@ -50,3 +50,6 @@ SELECT C1.name FROM category AS C1 WHERE C1.id != 108;
 SELECT C2.name FROM category AS C2 WHERE C2.id != 11;
 SELECT C3.name FROM category AS C3 WHERE C3.id != 2222;
 
+#QUERY
+SELECT itemname FROM auction WHERE expires < TimeInterval.start;
+

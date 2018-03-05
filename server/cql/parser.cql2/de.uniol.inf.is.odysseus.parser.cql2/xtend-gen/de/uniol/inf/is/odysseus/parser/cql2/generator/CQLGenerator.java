@@ -34,8 +34,9 @@ import de.uniol.inf.is.odysseus.parser.cql2.generator.parser.interfaces.ISelectP
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.IUtilityService;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.utility.UtilityModule;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -198,8 +199,23 @@ public class CQLGenerator implements IGenerator2 {
     return _operatorCache.getPQL();
   }
   
-  public void setSchema(final List<SystemSource> schemata) {
-    this.utilityService.setSourcesStructs(schemata);
+  public void setSchema(final Collection<SystemSource> schemas) {
+    Stream<SystemSource> _stream = schemas.stream();
+    final Consumer<SystemSource> _function = (SystemSource e) -> {
+      Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
+      _systemSources.add(e);
+    };
+    _stream.forEach(_function);
+  }
+  
+  public void setMetaAttributes(final Collection<SystemSource> schemas) {
+    Stream<SystemSource> _stream = schemas.stream();
+    final Consumer<SystemSource> _function = (SystemSource e) -> {
+      Collection<SystemSource> _systemSources = this.cacheService.getSystemSources();
+      SystemSource _systemSource = new SystemSource(e, true);
+      _systemSources.add(_systemSource);
+    };
+    _stream.forEach(_function);
   }
   
   public Map<String, String> setDatabaseConnections(final Map<String, String> connections) {

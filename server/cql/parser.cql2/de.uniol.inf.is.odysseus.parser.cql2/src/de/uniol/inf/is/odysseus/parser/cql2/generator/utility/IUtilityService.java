@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.validation.constraints.NotNull;
-
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSelect;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
@@ -26,9 +24,9 @@ public interface IUtilityService {
 	Map<SystemAttribute, Collection<String>> getAttributeAliasesAsMap();
 	boolean isAggregateFunctionName(String name);
 	boolean isMEPFunctionMame(String name, String parsedMEP);
-	SystemSource getSystemSource(@NotNull String name);
-	SystemSource getSystemSource(@NotNull SimpleSource source); 
-	void registerSourceAlias(@NotNull SimpleSource source);
+	SystemSource getSystemSource(String name);
+	SystemSource getSystemSource(SimpleSource source); 
+	void registerSourceAlias(SimpleSource source);
 	Collection<String> getAllQueryAttributes(SimpleSelect select);
 	String getSourceNameFromAlias(String sourcealias);
 	SystemAttribute getAttributeFromAlias(String attributealias);
@@ -36,7 +34,6 @@ public interface IUtilityService {
 	List<String> getSourceAliasesAsList();
 	boolean isSourceAlias(String name);
 	void clear();
-	void setSourcesStructs(Collection<SystemSource> sources);
 	boolean isAggregationAttribute(String name);
 	boolean isAttributeAlias(String string);
 	
@@ -44,8 +41,6 @@ public interface IUtilityService {
 	String generateListString(String s1);
 	String generateKeyValueString(List<String> l1, List<String> l2, String s);
 	String generateKeyValueString(String[] s);
-//	String getDataTypeFrom(String attribute);
-//	String getDataTypeFrom(Attribute attribute);
 	Collection<String> getAttributeNamesFromSource(String name);
 	Collection<SimpleSource> getAllSubQuerySource(SimpleSelect subQuery);
 	String getSourcenameFromAlias(String name);

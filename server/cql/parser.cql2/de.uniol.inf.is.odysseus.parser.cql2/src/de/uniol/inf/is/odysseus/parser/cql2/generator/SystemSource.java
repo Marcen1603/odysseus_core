@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Alias;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Attribute;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.SimpleSource;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Source;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class SystemSource {
 
@@ -25,11 +26,28 @@ public class SystemSource {
 	public String name;
 	public Collection<SystemAttribute> attributeList;
 	public List<String> aliasList;
+	public boolean meta;
 
 	public SystemSource() {
 		attributeList = new ArrayList<>();
 		aliasList = new ArrayList<>();
 
+	}
+	
+	public SystemSource(boolean meta) {
+		this();
+		this.meta = meta;
+	}
+	
+	public SystemSource(SystemSource source, boolean meta) {
+		this.name = source.name;
+		this.attributeList = source.attributeList;
+		this.aliasList = source.aliasList;
+		this.meta = meta;
+	}
+
+	public boolean isMeta() {
+		return meta;
 	}
 
 	public void associateAttributeAliasWithSourceAlias(Alias alias, String sourceAlias) {
@@ -163,10 +181,12 @@ public class SystemSource {
 		return false;
 	}
 
+	//TODO remove
 	public SystemAttribute getStartTimestampAttribute() {
 		return findByName("StartTimestamp");
 	}
 
+	//TODO remove
 	public SystemAttribute getEndTimestampAttribute() {
 		return findByName("EndTimestamp");
 	}

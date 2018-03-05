@@ -144,39 +144,6 @@ public class UtilityService implements IUtilityService {
 			return getSystemSource(source);
 		}
 		
-		//TODO this is just a workaround
-		if (name.equals("TimeInterval")) {
-			
-			final SystemSource systemSource = new SystemSource();
-			systemSource.setName(name);
-			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
-			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
-			systemSource.add(attribute1);
-			systemSource.add(attribute2);
-			
-			return systemSource;
-		} else if (name.equals("Latency")) {
-			
-			final SystemSource systemSource = new SystemSource();
-			systemSource.setName(name);
-			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
-			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
-			systemSource.add(attribute1);
-			systemSource.add(attribute2);
-			
-			return systemSource;
-		}	else if (name.equals("Datarate")) {
-			
-			final SystemSource systemSource = new SystemSource();
-			systemSource.setName(name);
-			SystemAttribute attribute1 = new SystemAttribute(systemSource, "Start", "Double");
-			SystemAttribute attribute2 = new SystemAttribute(systemSource, "End", "Double");
-			systemSource.add(attribute1);
-			systemSource.add(attribute2);
-			
-			return systemSource;
-		}
-		
 		throw new IllegalArgumentException("given source " + name + " is not registered");
 	}
 
@@ -312,11 +279,7 @@ public class UtilityService implements IUtilityService {
 	public boolean isAggregationAttribute(String name) {
 		return cacheService.getQueryCache().getAllQueryAggregations().stream().anyMatch(p -> p.getName().equals(name));
 	}
-	
-	@Override
-	public void setSourcesStructs(Collection<SystemSource> sources) {
-		sources.forEach(e -> cacheService.getSystemSources().add(e));
-	}
+
 	
 	@Override
 	public String generateKeyValueString(String ... s) {
