@@ -15,12 +15,15 @@
  */
 package de.uniol.inf.is.odysseus.rcp.viewer;
 
+import java.net.URL;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
+import de.uniol.inf.is.odysseus.core.config.OdysseusBaseConfiguration;
 import de.uniol.inf.is.odysseus.core.planmanagement.executor.IExecutor;
 import de.uniol.inf.is.odysseus.rcp.ImageManager;
 import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
@@ -84,13 +87,16 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 
         // images for operators
         
-        
-		XMLResourceLoader.loadImages(bundle.getEntry("viewer_cfg/resources.xml"), bundle.getEntry("viewer_cfg/resourcesSchema.xsd"));
+        XMLResourceLoader.loadImages(bundle.getEntry("viewer_cfg/resources.xml"), bundle.getEntry("viewer_cfg/resourcesSchema.xsd"));
 
 		context = this;
 		String viewerConfigFileName = OdysseusRCPConfiguration.get("viewer.config", "symbol.xml");
 		String viewerConfig = "viewer_cfg/" + viewerConfigFileName;
-		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(bundleContext.getBundle().getEntry(viewerConfig), bundleContext.getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
+		URL viewerConfigURL = bundleContext.getBundle().getEntry(viewerConfig);
+		if (viewerConfigURL == null) {
+			viewerConfigURL = OdysseusBaseConfiguration.getEntry(viewerConfigFileName);
+		}
+		SYMBOL_CONFIGURATION = new XMLSymbolConfiguration(viewerConfigURL, bundleContext.getBundle().getEntry("viewer_cfg/symbolSchema.xsd"));
 	}
 
 	@Override
@@ -99,14 +105,14 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
 
 		Platform.getExtensionRegistry().removeListener(StreamEditorRegistry.getInstance());
 		imageManager.disposeAll();
-		//OwnerColorManager.disposeColors();
+		// OwnerColorManager.disposeColors();
 
 		context = null;
 	}
-//
-//	public static OdysseusRCPViewerPlugIn getDefault() {
-//		return context;
-//	}
+	//
+	// public static OdysseusRCPViewerPlugIn getDefault() {
+	// return context;
+	// }
 
 	private static IExecutor executor;
 
