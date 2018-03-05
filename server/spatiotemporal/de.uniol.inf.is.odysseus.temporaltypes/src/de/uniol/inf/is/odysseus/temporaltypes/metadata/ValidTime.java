@@ -29,8 +29,8 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 	public static final List<SDFMetaSchema> schema = new ArrayList<SDFMetaSchema>(classes.length);
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
-		attributes.add(new SDFAttribute("ValidTime", "start", SDFDatatype.TIMESTAMP));
-		attributes.add(new SDFAttribute("ValidTime", "end", SDFDatatype.TIMESTAMP));
+		attributes.add(new SDFAttribute("ValidTime", "start_valid", SDFDatatype.TIMESTAMP));
+		attributes.add(new SDFAttribute("ValidTime", "end_valid", SDFDatatype.TIMESTAMP));
 		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTime", Tuple.class, attributes, ITimeInterval.class));
 	}
 
@@ -87,30 +87,35 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 	}
 
 	@Override
-	public PointInTime getStart() {
+	public PointInTime getValidStart() {
 		return this.delegateTimeInterval.getStart();
 	}
 
 	@Override
-	public PointInTime getEnd() {
+	public PointInTime getValidEnd() {
 		return this.delegateTimeInterval.getEnd();
 	}
 
 	@Override
-	public void setStart(PointInTime point) {
+	public void setValidStart(PointInTime point) {
 		this.delegateTimeInterval.setStart(point);
 	}
 
 	@Override
-	public void setEnd(PointInTime point) {
+	public void setValidEnd(PointInTime point) {
 		this.delegateTimeInterval.setEnd(point);
 	}
 
 	@Override
-	public void setStartAndEnd(PointInTime start, PointInTime end) {
+	public void setValidStartAndEnd(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval.setStartAndEnd(start, end);
 	}
 
+	@Override
+	public String toString() {
+		return getValidStart().toString() + "|" + getValidEnd().toString();
+	}
+	
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new TimeIntervalInlineMetadataMergeFunction();
