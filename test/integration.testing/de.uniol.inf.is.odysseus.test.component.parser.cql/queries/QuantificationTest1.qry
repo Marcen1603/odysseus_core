@@ -1,5 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT B.price 
-FROM bid AS B
-WHERE B.price > ALL (SELECT B2.price FROM bid AS B2);

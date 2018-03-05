@@ -6,6 +6,8 @@ package de.uniol.inf.is.odysseus.parser.cql2.tests;
 import com.google.inject.Inject;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.Model;
 import de.uniol.inf.is.odysseus.parser.cql2.tests.CQLInjectorProvider;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.XtextRunner;
@@ -30,7 +32,10 @@ public class CQLParsingTest {
       _builder.newLine();
       final Model result = this.parseHelper.parse(_builder);
       Assert.assertNotNull(result);
-      Assert.assertTrue(result.eResource().getErrors().isEmpty());
+      Resource _eResource = result.eResource();
+      EList<Resource.Diagnostic> _errors = _eResource.getErrors();
+      boolean _isEmpty = _errors.isEmpty();
+      Assert.assertTrue(_isEmpty);
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }

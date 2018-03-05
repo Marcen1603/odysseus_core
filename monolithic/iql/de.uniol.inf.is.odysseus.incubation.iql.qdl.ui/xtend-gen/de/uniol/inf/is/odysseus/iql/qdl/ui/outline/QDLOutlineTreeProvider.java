@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.iql.qdl.ui.outline;
 
 import de.uniol.inf.is.odysseus.iql.basic.ui.outline.AbstractIQLOutlineTreeProvider;
 import de.uniol.inf.is.odysseus.iql.qdl.qDL.QDLQuery;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.common.types.JvmMember;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 
@@ -25,6 +26,8 @@ public class QDLOutlineTreeProvider extends AbstractIQLOutlineTreeProvider {
   }
   
   protected void createOutlineNode(final IOutlineNode parentNode, final QDLQuery query) {
-    this.createEObjectNode(parentNode, query, this._image(query), query.getSimpleName(), true);
+    Image __image = this._image(query);
+    String _simpleName = query.getSimpleName();
+    this.createEObjectNode(parentNode, query, __image, _simpleName, true);
   }
 }

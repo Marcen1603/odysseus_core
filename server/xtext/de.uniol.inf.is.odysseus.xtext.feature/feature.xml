@@ -286,7 +286,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.debug.core"
+         id="org.hamcrest.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -300,7 +300,20 @@
          unpack="false"/>
 
    <plugin
-         id="org.hamcrest.core"
+         id="org.eclipse.jdt.debug"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.eclipse.text"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.debug.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -319,31 +332,5 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="org.eclipse.team.ui.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.text"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jdt.debug"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="org.eclipse.emf"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
+         
 </feature>

@@ -40,9 +40,12 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeDictionar
     if (isThis) {
       Collection<IQLClass> _sourceTypes = this.typeDictionary.getSourceTypes();
       for (final IQLClass source : _sourceTypes) {
-        Collection<JvmField> _publicAttributes = this.lookUp.getPublicAttributes(this.typeUtils.createTypeRef(source), false);
+        JvmTypeReference _createTypeRef = this.typeUtils.createTypeRef(source);
+        Collection<JvmField> _publicAttributes = this.lookUp.getPublicAttributes(_createTypeRef, false);
         for (final JvmField attr : _publicAttributes) {
-          boolean _equalsIgnoreCase = attr.getSimpleName().equalsIgnoreCase(source.getSimpleName());
+          String _simpleName = attr.getSimpleName();
+          String _simpleName_1 = source.getSimpleName();
+          boolean _equalsIgnoreCase = _simpleName.equalsIgnoreCase(_simpleName_1);
           if (_equalsIgnoreCase) {
             attributes.add(attr);
           }
@@ -59,9 +62,12 @@ public class QDLScopeProvider extends AbstractIQLScopeProvider<IQDLTypeDictionar
     if (((node instanceof QDLQuery) || (query != null))) {
       Collection<IQLClass> _sourceTypes = this.typeDictionary.getSourceTypes();
       for (final IQLClass source : _sourceTypes) {
-        Collection<JvmField> _publicAttributes = this.lookUp.getPublicAttributes(this.typeUtils.createTypeRef(source), false);
+        JvmTypeReference _createTypeRef = this.typeUtils.createTypeRef(source);
+        Collection<JvmField> _publicAttributes = this.lookUp.getPublicAttributes(_createTypeRef, false);
         for (final JvmField attr : _publicAttributes) {
-          boolean _equalsIgnoreCase = attr.getSimpleName().equalsIgnoreCase(source.getSimpleName());
+          String _simpleName = attr.getSimpleName();
+          String _simpleName_1 = source.getSimpleName();
+          boolean _equalsIgnoreCase = _simpleName.equalsIgnoreCase(_simpleName_1);
           if (_equalsIgnoreCase) {
             elements.add(attr);
           }
