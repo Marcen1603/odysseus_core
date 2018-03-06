@@ -33,7 +33,7 @@ public class QDLMetadataAnnotationCompiler extends AbstractIQLMetadataAnnotation
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("\"");
     String _value = o.getValue();
-    _builder.append(_value);
+    _builder.append(_value, "");
     _builder.append("\"");
     return _builder.toString();
   }

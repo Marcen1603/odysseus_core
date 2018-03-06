@@ -1,0 +1,40 @@
+#PARSER CQL
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+
+#QUERY
+CREATE STREAM category (id INTEGER, name STRING, description STRING, parentid INTEGER) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65443', 'host' 'localhost')
+    		
+#QUERY
+SELECT DolToEur(price) FROM bid;
+#QUERY
+SELECT price + price AS priceTwice FROM bid;
+#QUERY
+SELECT DolToEur(price * 2.5) - price + id AS complexPrice, DolToEur(price) AS priceToEuro 
+FROM bid, category;
+#QUERY
+SELECT DolToEur(DolToEur(price)) FROM bid [SIZE 5 SECONDS TIME];
+#QUERY
+SELECT DolToEur(price), AVG(price) as avgPrice, auction
+FROM bid [SIZE 1 SECONDS TIME]
+GROUP BY auction
+HAVING avgPrice > 150
+#QUERY
+SELECT 'hello' + 'world' FROM bid;
+#QUERY
+SELECT [1.0,2.0,3.0;3.0,4.0,6.0] + [2.0,4.0,5.0;12.0,5.0,1.0] * 0.5 AS matrix, price, auction 
+FROM bid;

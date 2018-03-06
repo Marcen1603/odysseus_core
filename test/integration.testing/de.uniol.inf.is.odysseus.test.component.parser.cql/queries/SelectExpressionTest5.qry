@@ -1,6 +1,0 @@
-#PARSER CQL
-#RUNQUERY
-SELECT DolToEur(price), AVG(price) as avgPrice, auction as A
-FROM bid [SIZE 1 SECONDS TIME]
-GROUP BY A
-HAVING avgPrice > 150

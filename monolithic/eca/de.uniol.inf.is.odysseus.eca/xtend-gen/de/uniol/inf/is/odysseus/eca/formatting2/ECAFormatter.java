@@ -30,8 +30,10 @@ public class ECAFormatter extends AbstractFormatter2 {
     for (final DefinedEvent definedEvent : _defEvents) {
       document.<DefinedEvent>format(definedEvent);
     }
-    document.<Window>format(model.getWindowSize());
-    document.<Timer>format(model.getTimeIntervall());
+    Window _windowSize = model.getWindowSize();
+    document.<Window>format(_windowSize);
+    Timer _timeIntervall = model.getTimeIntervall();
+    document.<Timer>format(_timeIntervall);
     EList<Rule> _rules = model.getRules();
     for (final Rule rule : _rules) {
       document.<Rule>format(rule);
@@ -39,8 +41,10 @@ public class ECAFormatter extends AbstractFormatter2 {
   }
   
   protected void _format(final DefinedEvent definedEvent, @Extension final IFormattableDocument document) {
-    document.<Source>format(definedEvent.getDefinedSource());
-    document.<EcaValue>format(definedEvent.getDefinedValue());
+    Source _definedSource = definedEvent.getDefinedSource();
+    document.<Source>format(_definedSource);
+    EcaValue _definedValue = definedEvent.getDefinedValue();
+    document.<EcaValue>format(_definedValue);
   }
   
   public void format(final Object definedEvent, final IFormattableDocument document) {

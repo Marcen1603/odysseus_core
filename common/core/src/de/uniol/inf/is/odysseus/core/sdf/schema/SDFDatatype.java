@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.core.sdf.schema;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -123,7 +124,7 @@ public class SDFDatatype extends SDFElement implements Serializable {
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.TUPLE);
 	public static final SDFDatatype LIST_LIST = new SDFDatatype("List_List",
 			SDFDatatype.KindOfDatatype.LIST, SDFDatatype.LIST);
-	public static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
+	private static final SDFDatatype[] LISTS = new SDFDatatype[] { LIST,
 			LIST_STRING, LIST_LONG, LIST_INTEGER, LIST_BYTE, LIST_CHAR,
 			LIST_FLOAT, LIST_DOUBLE, LIST_DATE, LIST_BOOLEAN, LIST_SHORT, LIST_TUPLE, LIST_LIST };
 
@@ -667,6 +668,11 @@ public class SDFDatatype extends SDFElement implements Serializable {
 
 	}
 
-
+	public static final SDFDatatype[] getLists(){
+		///return Arrays.copyOf(LISTS, LISTS.length);
+		// Copy should not be necessary anymore
+		return LISTS;
+	}
+	
 
 }

@@ -15,10 +15,14 @@
  */
 package de.uniol.inf.is.odysseus.relational_interval.transform;
 
+import java.util.List;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.TimestampAO;
 import de.uniol.inf.is.odysseus.core.server.metadata.IMetadataInitializer;
@@ -43,30 +47,35 @@ public class TApplicationTimestampRule extends AbstractRelationalIntervalTransfo
 	public void execute(TimestampAO timestampAO, TransformationConfiguration transformConfig) throws RuleException {
 		SDFSchema schema = timestampAO.getInputSchema();
 		boolean clearEnd = timestampAO.isClearEnd();
-		int pos = schema.indexOf(timestampAO.getStartTimestamp());
-		int posEnd = timestampAO.hasEndTimestamp() ? timestampAO.getInputSchema().indexOf(timestampAO.getEndTimestamp())
-				: -1;
+		int pos = -1;
+		int posEnd = -1;
 
 		RelationalExpression<ITimeInterval> startExpression = null;
 		RelationalExpression<ITimeInterval> endExpression = null;
-		
+
 		if (timestampAO.getStartExpression() != null) {
-			startExpression = new RelationalExpression<>(timestampAO.getStartExpression());
-			startExpression.initVars(timestampAO.getInputSchema());
-		}
-		
-		if (timestampAO.getEndExpression() != null) {
-			endExpression = new RelationalExpression<>(timestampAO.getEndExpression());
-			endExpression.initVars(timestampAO.getInputSchema());
+			pos = onlyOneAttributeInExpression(timestampAO.getStartExpression(), schema);
+
+			if (pos == -1) {
+				startExpression = new RelationalExpression<>(timestampAO.getStartExpression());
+				startExpression.initVars(timestampAO.getInputSchema());
+			}
 		}
 
-		
+		if (timestampAO.getEndExpression() != null) {
+			posEnd = onlyOneAttributeInExpression(timestampAO.getEndExpression(), schema);
+			if (posEnd == -1) {
+				endExpression = new RelationalExpression<>(timestampAO.getEndExpression());
+				endExpression.initVars(timestampAO.getInputSchema());
+			}
+		}
+
 		IMetadataUpdater mUpdater;
 		if (Tuple.class.isAssignableFrom(timestampAO.getInputSchema().getType())) {
-			if (pos >= 0 || posEnd >= 0 || startExpression != null || endExpression !=null) {
+			if (pos >= 0 || posEnd >= 0 || startExpression != null || endExpression != null) {
 				mUpdater = new RelationalTimestampAttributeTimeIntervalMFactory(pos, posEnd, clearEnd,
 						timestampAO.getDateFormat(), timestampAO.getTimezone(), timestampAO.getLocale(),
-						timestampAO.getFactor(), timestampAO.getOffset(), startExpression, endExpression);		
+						timestampAO.getFactor(), timestampAO.getOffset(), startExpression, endExpression);
 			} else {
 
 				int year = schema.indexOf(timestampAO.getStartTimestampYear());
@@ -96,6 +105,19 @@ public class TApplicationTimestampRule extends AbstractRelationalIntervalTransfo
 			MetadataUpdatePO<?, ?> po = new MetadataUpdatePO<ITimeInterval, Tuple<? extends ITimeInterval>>(mUpdater);
 			defaultExecute(timestampAO, po, transformConfig, true, true);
 		}
+	}
+
+	private int onlyOneAttributeInExpression(SDFExpression expression, SDFSchema schema) {
+		List<SDFAttribute> attributes = expression.getAllAttributes();
+
+		if (attributes.size() == 1) {
+			SDFAttribute attr = schema.findAttribute(attributes.get(0).getAttributeName());
+			if (attr != null) {
+				return schema.indexOf(attr);
+			}
+		}
+
+		return -1;
 	}
 
 	@Override

@@ -1,4 +1,0 @@
-operator_1 = RENAME({aliases=['bidder','auctioneer1','timestamp','B1.timestamp','auction','B1.auction','datetime','B1.datetime','price','B1.price'],pairs='true'},TIMEWINDOW({size=[5,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_2 = RENAME({aliases=['auction','B2.auction','bidder','auctioneer2','timestamp','B2.timestamp','datetime','B2.datetime','price','B2.price'],pairs='true'},TIMEWINDOW({size=[15,'SECONDS'],advance=[1,'SECONDS']},bid))
-operator_3 = SELECT({predicate='auctioneer1==B2.auction'},JOIN(operator_1,operator_2))
-operator_4 = MAP({expressions=['auctioneer1','auctioneer2','B2.auction']},operator_3)

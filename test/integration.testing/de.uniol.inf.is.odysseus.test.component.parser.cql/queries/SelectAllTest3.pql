@@ -1,2 +1,0 @@
-operator_1 = RENAME({aliases=['timestamp','P.timestamp','id','P.id','name','P.name','email','P.email','creditcard','P.creditcard','city','P.city','state','P.state'],pairs='true'},person)
-operator_2 = SELECT({predicate='bid.auction>2&&P.name=="Max Mustermann"'},JOIN(bid,JOIN(operator_1,category)))

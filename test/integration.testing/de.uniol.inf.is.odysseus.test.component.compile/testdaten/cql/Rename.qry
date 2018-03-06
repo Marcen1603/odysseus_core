@@ -1,0 +1,57 @@
+#PARSER CQL
+#DROPALLQUERIES
+#QUERY 
+DROP STREAM person IF EXISTS
+#QUERY
+CREATE STREAM person (timestamp STARTTIMESTAMP, id INTEGER, name STRING, email STRING, creditcard STRING, city STRING, state STRING) CHANNEL localhost : 65440
+#QUERY 
+DROP STREAM bid IF EXISTS
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+#QUERY 
+DROP STREAM auction IF EXISTS
+#QUERY
+CREATE STREAM auction (timestamp STARTTIMESTAMP, id INTEGER, itemname STRING, description STRING, initialbid INTEGER, reserve INTEGER, expires LONG, seller INTEGER, category INTEGER) CHANNEL localhost : 65441
+#QUERY 
+DROP STREAM category IF EXISTS
+#QUERY
+CREATE STREAM category (id INTEGER, name STRING, description STRING, parentid INTEGER) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65443', 'host' 'localhost')
+#QUERY
+SELECT B.auction, B.bidder, C.email, C.id
+FROM bid AS B, person AS C
+WHERE B.auction=C.id;
+#QUERY
+SELECT B.bidder AS auctioneer, C.email
+FROM bid AS B, person AS C
+WHERE auction=id;
+#QUERY
+SELECT B.bidder AS auctioneer, C.email
+FROM bid AS B, person AS C
+WHERE auction=C.id;
+#QUERY
+SELECT B1.auction, B2.auction 
+FROM bid AS B1, bid AS B2;
+#QUERY
+SELECT B1.auction, B2.auction
+FROM bid AS B1, bid AS B2
+WHERE B1.bidder!=B2.bidder;
+#QUERY
+SELECT B1.auction AS auctioneer, B2.auction
+FROM bid AS B1, bid AS B2
+WHERE B1.auction!=B2.bidder
+#QUERY
+SELECT B1.bidder AS auctioneer1, B2.bidder AS auctioneer2, B2.auction 
+FROM bid [SIZE 5 SECONDS TIME] AS B1, bid [SIZE 15 SECONDS TIME] AS B2 WHERE auctioneer1=B2.auction;
+#QUERY
+SELECT B1.bidder AS auctioneer1, B1.bidder AS auctioneer11, B1.bidder AS auctioneer111, B2.bidder AS auctioneer2, B2.bidder AS auctioneer22, B2.auction 
+FROM bid [SIZE 5 SECONDS TIME] AS B1, bid [SIZE 15 SECONDS TIME] AS B2 WHERE auctioneer1=B2.auction;

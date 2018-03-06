@@ -82,6 +82,7 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 							throw new IllegalArgumentException("Attribute " + a + " cannot be found in schema");
 						}
 						positions[pos] = index;
+						pos++;
 					}
 				}else{
 					// When no schema --> use order of attributes
@@ -105,7 +106,7 @@ abstract public class AbstractLambdaListFunction extends AbstractFunction<List<O
 				SDFDatatype dt = new SDFDatatype("LIST_TUPLE", KindOfDatatype.LIST, tuple_dt);
 				return dt;
 			} else {
-				for (SDFDatatype d : SDFDatatype.LISTS) {
+				for (SDFDatatype d : SDFDatatype.getLists()) {
 					if (d.getSubType() == subtype) {
 						return d;
 					}

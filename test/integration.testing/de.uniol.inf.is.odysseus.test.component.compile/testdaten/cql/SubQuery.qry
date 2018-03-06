@@ -1,0 +1,25 @@
+#PARSER CQL
+#DROPALLQUERIES
+#DROPALLSINKS
+#DROPALLSOURCES
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+
+
+#QUERY
+SELECT B1.price, B1.bidder, B4.price 
+FROM 
+	(SELECT B2.price, B2.bidder FROM bid AS B2) AS B1, 
+	(SELECT B3.price FROM bid AS B3) AS B4
+WHERE B1.price > 1000 && B4.price < 100;
+    		
+#QUERY
+SELECT B2.price as price2
+FROM   (SELECT B1.price, COUNT(B1.auction) AS num
+        FROM bid [SIZE 60 MINUTES ADVANCE 1 MINUTES TIME] AS B1) AS B2
+WHERE num >= 200;
