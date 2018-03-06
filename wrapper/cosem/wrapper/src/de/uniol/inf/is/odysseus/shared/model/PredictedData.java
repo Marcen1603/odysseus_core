@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * 
@@ -38,30 +40,37 @@ public class PredictedData extends Result {
 		return prediction;
 	}
 
+	@JsonSetter
 	public void setClazz(Object object) {
 		this.prediction = object.toString();
 	}
 	
+	@JsonGetter
 	public String getId() {
 		return id;
 	}
 
+	@JsonSetter
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	@JsonGetter
 	public String getType() {
 		return type;
 	}
 
+	@JsonSetter
 	public void setType(String type) {
 		this.type = type;
 	}
 
+	@JsonGetter
 	public Collection<String> getFeatures() {
 		return features;
 	}
 
+	@JsonSetter
 	public void setFeatures(Collection<Object> features) {
 		this.features = features.stream().map(e -> e.toString()).collect(Collectors.toList());
 	}

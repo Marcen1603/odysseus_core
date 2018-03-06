@@ -44,7 +44,9 @@ public final class ProcessedData {
 			return new AggregatedData();
 		case ("PREDICTEDDATA"):
 			 return new PredictedData();
-		} 
+		case ("ANOMALYDATA"):
+			return new AnomalyData();
+		}
 		return null;
 	}
     
