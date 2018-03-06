@@ -90,7 +90,7 @@ public class OdysseusRCPViewerPlugIn extends AbstractUIPlugin {
         XMLResourceLoader.loadImages(bundle.getEntry("viewer_cfg/resources.xml"), bundle.getEntry("viewer_cfg/resourcesSchema.xsd"));
 
 		context = this;
-		String viewerConfigFileName = OdysseusRCPConfiguration.get("viewer.config", "symbol.xml");
+		String viewerConfigFileName = OdysseusRCPConfiguration.get("viewer.config", "symbol_light.xml");
 		String viewerConfig = "viewer_cfg/" + viewerConfigFileName;
 		URL viewerConfigURL = bundleContext.getBundle().getEntry(viewerConfig);
 		if (viewerConfigURL == null) {
