@@ -121,7 +121,7 @@ public class SimpleSelectImpl extends MinimalEObjectImpl.Container implements Si
    * <!-- end-user-doc -->
    * @generated
    */
-  protected SimpleSelectImpl()
+  public SimpleSelectImpl()
   {
     super();
   }

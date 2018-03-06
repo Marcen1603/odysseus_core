@@ -21,12 +21,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
+import de.uniol.inf.is.odysseus.rcp.config.OdysseusRCPConfiguration;
 import de.uniol.inf.is.odysseus.rcp.viewer.symbol.ISymbolElementFactory;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPositioner {
 
+	private static final String HORIZONTAL_NODE_DISTANCE_CFG_KEY = "layout.horizontal.distance.x";
+	private static final String VERTICAL_NODE_DISTANCE_CFG_KEY = "layout.horizontal.distance.y";
+
+	private static final int SPACE_WIDTH_PIXELS = Integer.parseInt(OdysseusRCPConfiguration.get(HORIZONTAL_NODE_DISTANCE_CFG_KEY, "50"));
+	private static final int SPACE_HEIGHT_PIXELS = Integer.parseInt(OdysseusRCPConfiguration.get(VERTICAL_NODE_DISTANCE_CFG_KEY, "50"));
+	
 	private static final Logger logger = LoggerFactory.getLogger(HorizontalSugiyamaPositioner.class);
 	
 	public HorizontalSugiyamaPositioner(ISymbolElementFactory<IPhysicalOperator> symbolFactory) {
@@ -86,9 +93,6 @@ public final class HorizontalSugiyamaPositioner extends AbstractSugiyamaPosition
 				final int posX = offsetX + (maxWidths[layer] - layers.get(layer).get(index).getWidth()) / 2;
 				INodeView<IPhysicalOperator> currNode = layers.get(layer).get(index);
 				currNode.setPosition(new Vector(posX, posY[layer][index]));
-				if (currNode.getModelNode() != null) {
-					System.out.println(currNode.getModelNode().toString() + ": " + currNode.getPosition());
-				}
 			}
 			offsetX += maxWidths[layer] + SPACE_WIDTH_PIXELS;
 		}

@@ -5,6 +5,7 @@ package de.uniol.inf.is.odysseus.parser.cql2.ide;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import de.uniol.inf.is.odysseus.parser.cql2.CQLRuntimeModule;
 import de.uniol.inf.is.odysseus.parser.cql2.CQLStandaloneSetup;
 import de.uniol.inf.is.odysseus.parser.cql2.ide.CQLIdeModule;
@@ -19,6 +20,7 @@ public class CQLIdeSetup extends CQLStandaloneSetup {
   public Injector createInjector() {
     CQLRuntimeModule _cQLRuntimeModule = new CQLRuntimeModule();
     CQLIdeModule _cQLIdeModule = new CQLIdeModule();
-    return Guice.createInjector(Modules2.mixin(_cQLRuntimeModule, _cQLIdeModule));
+    Module _mixin = Modules2.mixin(_cQLRuntimeModule, _cQLIdeModule);
+    return Guice.createInjector(_mixin);
   }
 }

@@ -42,7 +42,9 @@ public final class ProcessedData {
 			return new RawData();
 		case ("AGGREGATEDDATA"):
 			return new AggregatedData();
-		}
+		case ("PREDICTEDDATA"):
+			 return new PredictedData();
+		} 
 		return null;
 	}
     

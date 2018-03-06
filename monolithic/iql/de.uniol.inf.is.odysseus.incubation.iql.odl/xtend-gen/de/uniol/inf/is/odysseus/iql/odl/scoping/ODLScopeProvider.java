@@ -44,7 +44,8 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeDictionar
     Collection<JvmField> attributes = super.getIQLMemberSelectionAttributes(expr, typeRef, isThis, isSuper);
     ODLOperator operator = EcoreUtil2.<ODLOperator>getContainerOfType(expr, ODLOperator.class);
     if ((isThis && (operator != null))) {
-      attributes.addAll(EcoreUtil2.<IQLAttribute>getAllContentsOfType(operator, IQLAttribute.class));
+      List<IQLAttribute> _allContentsOfType = EcoreUtil2.<IQLAttribute>getAllContentsOfType(operator, IQLAttribute.class);
+      attributes.addAll(_allContentsOfType);
     }
     return attributes;
   }
@@ -83,7 +84,8 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeDictionar
     Collection<JvmIdentifiableElement> elements = super.getAttributesIQLJvmElementCallExpression(node, thisType, importedTypes);
     ODLOperator operator = EcoreUtil2.<ODLOperator>getContainerOfType(node, ODLOperator.class);
     if (((node instanceof ODLOperator) || (operator != null))) {
-      elements.addAll(EcoreUtil2.<IQLAttribute>getAllContentsOfType(operator, IQLAttribute.class));
+      List<IQLAttribute> _allContentsOfType = EcoreUtil2.<IQLAttribute>getAllContentsOfType(operator, IQLAttribute.class);
+      elements.addAll(_allContentsOfType);
     }
     return elements;
   }
@@ -122,7 +124,8 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeDictionar
     if ((node instanceof ODLMethod)) {
       method = ((ODLMethod) node);
     } else {
-      method = EcoreUtil2.<ODLMethod>getContainerOfType(node, ODLMethod.class);
+      ODLMethod _containerOfType = EcoreUtil2.<ODLMethod>getContainerOfType(node, ODLMethod.class);
+      method = _containerOfType;
     }
     if ((method != null)) {
       if ((method.isAo() || method.isValidate())) {
@@ -143,7 +146,8 @@ public class ODLScopeProvider extends AbstractIQLScopeProvider<IODLTypeDictionar
     if ((node instanceof ODLMethod)) {
       method = ((ODLMethod) node);
     } else {
-      method = EcoreUtil2.<ODLMethod>getContainerOfType(node, ODLMethod.class);
+      ODLMethod _containerOfType = EcoreUtil2.<ODLMethod>getContainerOfType(node, ODLMethod.class);
+      method = _containerOfType;
     }
     if ((method != null)) {
       boolean _isPo = method.isPo();

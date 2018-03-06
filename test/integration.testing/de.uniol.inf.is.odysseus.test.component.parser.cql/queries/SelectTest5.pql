@@ -1,4 +1,0 @@
-operator_1 = RENAME({aliases=['id','ID1'],pairs='true'},person)
-operator_2 = RENAME({aliases=['id','ID2','timestamp','person.timestamp#1','name','person.name#1','email','person.email#1','creditcard','person.creditcard#1','city','person.city#1','state','person.state#1'],pairs='true'},person)
-operator_3 = SELECT({predicate='ID1==ID2'},JOIN(operator_1,operator_2))
-operator_4 = MAP({expressions=['ID1','ID2']},operator_3)

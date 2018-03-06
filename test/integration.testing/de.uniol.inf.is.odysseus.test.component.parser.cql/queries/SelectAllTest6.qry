@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT B.*, P.* FROM bid AS B, person AS P WHERE B.auction > 1000 AND P.id = 108;

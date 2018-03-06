@@ -1,0 +1,14 @@
+#PARSER CQL
+#QUERY 
+DROP STREAM bid IF EXISTS
+#QUERY
+CREATE STREAM bid (timestamp STARTTIMESTAMP, auction INTEGER, bidder INTEGER, datetime LONG, price DOUBLE) 
+    		WRAPPER 'GenericPush'
+		    PROTOCOL 'SizeByteBuffer'
+		    TRANSPORT 'NonBlockingTcp'
+		    DATAHANDLER 'Tuple'
+    		OPTIONS ('port' '65442', 'host' 'localhost')
+#QUERY
+DROP VIEW view1 IF EXISTS
+#QUERY
+CREATE VIEW view1 FROM (SELECT * FROM bid)
