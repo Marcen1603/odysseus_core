@@ -18,48 +18,81 @@ package de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.impl;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.viewer.OdysseusRCPViewerPlugIn;
+import de.uniol.inf.is.odysseus.rcp.viewer.model.graph.INodeModel;
+import de.uniol.inf.is.odysseus.rcp.viewer.swt.symbol.Margin;
+import de.uniol.inf.is.odysseus.rcp.viewer.view.INodeView;
 import de.uniol.inf.is.odysseus.rcp.viewer.view.Vector;
 
 public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 
-	private final String imageName;
+	private String imageName;
+	private final String iconSetName;
 	private Image image;
 	private int imageWidth;
 	private int imageHeight;
-	
-	public SWTImageSymbolElement( String imageName ) {
+	private boolean fromOperator;
+	private Margin margin;
+
+	public SWTImageSymbolElement(String imageName, boolean fromOperator, Margin margin, String iconSetName) {
 		this.imageName = imageName;
-		loadImage();
+		this.fromOperator = fromOperator;
+		this.margin = margin;
+		this.iconSetName = iconSetName;
+//		loadImage();
 	}
-	
+
 	@Override
-	public void draw( Vector pos, int width, int height, Vector screenShift, float zoomFactor  ) {
+	public void draw(Vector pos, int width, int height, Vector screenShift, float zoomFactor) {
 		loadImage();
-		if (image != null){
-		
+		if (image != null) {
+
 			GC gc = getActualGC();
-			
-			if( gc == null )
+
+			if (gc == null)
 				return;
 			
-			gc.drawImage( image, 0, 0, imageWidth, imageHeight, (int)pos.getX(), (int)pos.getY(), width, height );
+			// calculate margin from percentage values
+			double leftMargin = margin.getLeft() / 100.0 * width;
+			double rightMargin = margin.getRight() / 100.0 * width;
+			double topMargin = margin.getTop() / 100.0 * height;
+			double bottomMargin = margin.getBottom() / 100.0 * height;
+
+//			gc.drawImage(image, 0, 0, imageWidth, imageHeight, ((int) pos.getX()) + margin.getLeft(),
+//					((int) pos.getY()) + margin.getTop(), width - margin.getLeft() - margin.getRight(),
+//					height - margin.getTop() - margin.getBottom());
+			gc.drawImage(image, 0, 0, imageWidth, imageHeight, (int)( pos.getX() + leftMargin),
+					(int)( pos.getY() + topMargin), (int)(width - leftMargin - rightMargin),
+					(int)(height - topMargin - bottomMargin));
 		}
 	}
-	
+
 	public final int getImageHeight() {
 		return imageHeight;
 	}
-	
+
 	public final int getImageWidth() {
 		return imageWidth;
 	}
 
 	private void loadImage() {
-		if( image == null || image.isDisposed() ) {
+		if (image == null || image.isDisposed()) {
 			// Bild neu holen
-			image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
-			if( image != null ) {
+			if (fromOperator) {
+				// if the image name is not explicitly set then retrieve image by icon set
+				if (this.imageName == null && getNodeView() != null) {
+					this.imageName = iconSetName + "." + getOperatorName();
+					if (!OdysseusRCPPlugIn.getImageManager().isRegistered(this.imageName)){
+						this.imageName = iconSetName + ".DEFAULT"; 
+					}
+				}
+				image = OdysseusRCPPlugIn.getImageManager().get(imageName);
+//				image = OdysseusRCPViewerPlugIn.getImageManager().getOperatorImage(imageName, iconSetName);
+			} else {
+				image = OdysseusRCPViewerPlugIn.getImageManager().get(imageName);
+			}
+			if (image != null) {
 				imageWidth = image.getBounds().width;
 				imageHeight = image.getBounds().height;
 			} else {
@@ -67,5 +100,13 @@ public class SWTImageSymbolElement<C> extends UnfreezableSWTSymbolElement<C> {
 				return;
 			}
 		}
+	}
+
+	private String getOperatorName() {
+		INodeView<C> nodeView = getNodeView();
+		INodeModel<C> nodeModel = nodeView.getModelNode();
+		C content = nodeModel.getContent();
+		
+		return content.getClass().getSimpleName();
 	}
 }

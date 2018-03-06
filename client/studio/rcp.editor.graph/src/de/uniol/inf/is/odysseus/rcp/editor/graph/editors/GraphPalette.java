@@ -34,10 +34,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorInformation;
+import de.uniol.inf.is.odysseus.rcp.OdysseusRCPPlugIn;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.Activator;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.ConnectionFactory;
 import de.uniol.inf.is.odysseus.rcp.editor.graph.editors.factories.OperatorNodeFactory;
-import de.uniol.inf.is.odysseus.rcp.image.operator.OperatorImageFactory;
 
 /**
  * @author DGeesen
@@ -70,7 +70,11 @@ public class GraphPalette {
 			}
 		});
 		for (LogicalOperatorInformation op : ops) {
-			ImageDescriptor imgBig = OperatorImageFactory.createImageForOperator(op.getOperatorName());
+			String imageID = "default." + op.getOperatorName();
+			if (!OdysseusRCPPlugIn.getImageManager().isRegistered(imageID)){
+				imageID = "default.DEFAULT";
+			}
+			ImageDescriptor imgBig = OdysseusRCPPlugIn.getImageManager().getDescriptor(imageID);
 			ImageDescriptor imgSmall = ImageDescriptor.createFromImageData(resizeImage(imgBig.getImageData()));
 			CreationToolEntry entry = new CreationToolEntry(op.getOperatorName(), op.getDoc(), new OperatorNodeFactory(op), imgSmall, imgBig);
 			String category = op.getCategories()[0];
