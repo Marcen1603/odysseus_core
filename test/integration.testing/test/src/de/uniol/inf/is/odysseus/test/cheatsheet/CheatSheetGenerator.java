@@ -499,7 +499,7 @@ public class CheatSheetGenerator {
         else if (types.equals(SDFDatatype.LONG_NUMBERS)) {
             sb.append("Long Number");
         }
-        else if (types.equals(SDFDatatype.LISTS)) {
+        else if (types.equals(SDFDatatype.getLists())) {
             sb.append("List");
         }
         else if (types.equals(SDFDatatype.NUMBERS_OBJECT)) {

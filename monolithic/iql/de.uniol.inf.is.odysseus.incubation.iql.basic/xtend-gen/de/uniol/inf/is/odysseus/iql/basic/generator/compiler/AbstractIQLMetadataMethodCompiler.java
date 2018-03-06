@@ -52,7 +52,7 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
       AtomicInteger counter = new AtomicInteger(0);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("public void ");
-      _builder.append(IIQLMetadataMethodCompiler.CREATE_METADATA_METHOD_NAME);
+      _builder.append(IIQLMetadataMethodCompiler.CREATE_METADATA_METHOD_NAME, "");
       _builder.append("() {");
       _builder.newLineIfNotEmpty();
       {
@@ -67,7 +67,8 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
             boolean _tripleNotEquals = (_value != null);
             if (_tripleNotEquals) {
               _builder.append("\t");
-              String _compile = this.compile(m.getValue(), varName, counter, context);
+              IQLMetadataValue _value_1 = m.getValue();
+              String _compile = this.compile(_value_1, varName, counter, context);
               _builder.append(_compile, "\t");
               _builder.newLineIfNotEmpty();
               _builder.append("\t");
@@ -138,10 +139,10 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleInt o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("int ");
-    _builder.append(varName);
+    _builder.append(varName, "");
     _builder.append(" = ");
     int _value = o.getValue();
-    _builder.append(_value);
+    _builder.append(_value, "");
     _builder.append(";");
     return _builder.toString();
   }
@@ -149,10 +150,10 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleDouble o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("double ");
-    _builder.append(varName);
+    _builder.append(varName, "");
     _builder.append(" = ");
     double _value = o.getValue();
-    _builder.append(_value);
+    _builder.append(_value, "");
     _builder.append(";");
     return _builder.toString();
   }
@@ -163,7 +164,8 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     boolean _tripleNotEquals = (_expectedTypeRef != null);
     if (_tripleNotEquals) {
       String _xifexpression_1 = null;
-      boolean _isCharacter = this.typeUtils.isCharacter(context.getExpectedTypeRef());
+      JvmTypeReference _expectedTypeRef_1 = context.getExpectedTypeRef();
+      boolean _isCharacter = this.typeUtils.isCharacter(_expectedTypeRef_1);
       if (_isCharacter) {
         String _value = o.getValue();
         String _plus = ((("String " + varName) + " = \'") + _value);
@@ -171,10 +173,10 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
       } else {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("String ");
-        _builder.append(varName);
+        _builder.append(varName, "");
         _builder.append(" = \"");
         String _value_1 = o.getValue();
-        _builder.append(_value_1);
+        _builder.append(_value_1, "");
         _builder.append("\";");
         _xifexpression_1 = _builder.toString();
       }
@@ -182,10 +184,10 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
     } else {
       StringConcatenation _builder_1 = new StringConcatenation();
       _builder_1.append("String ");
-      _builder_1.append(varName);
+      _builder_1.append(varName, "");
       _builder_1.append(" = \"");
       String _value_2 = o.getValue();
-      _builder_1.append(_value_2);
+      _builder_1.append(_value_2, "");
       _builder_1.append("\";");
       _xifexpression = _builder_1.toString();
     }
@@ -195,10 +197,10 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleBoolean o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("boolean ");
-    _builder.append(varName);
+    _builder.append(varName, "");
     _builder.append(" = ");
     boolean _isValue = o.isValue();
-    _builder.append(_isValue);
+    _builder.append(_isValue, "");
     _builder.append(";");
     return _builder.toString();
   }
@@ -206,9 +208,9 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleNull o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     String _simpleName = Object.class.getSimpleName();
-    _builder.append(_simpleName);
+    _builder.append(_simpleName, "");
     _builder.append(" ");
-    _builder.append(varName);
+    _builder.append(varName, "");
     _builder.append(" = null;");
     return _builder.toString();
   }
@@ -216,10 +218,11 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueSingleTypeRef o, final String varName, final G context) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("Class<?> ");
-    _builder.append(varName);
+    _builder.append(varName, "");
     _builder.append(" = ");
-    String _compile = this.typeCompiler.compile(o.getValue(), context, true);
-    _builder.append(_compile);
+    JvmTypeReference _value = o.getValue();
+    String _compile = this.typeCompiler.compile(_value, context, true);
+    _builder.append(_compile, "");
     _builder.append(".class; ");
     return _builder.toString();
   }
@@ -227,19 +230,21 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueList o, final String varName, final AtomicInteger counter, final G context) {
     String _xblockexpression = null;
     {
-      context.addImport(List.class.getCanonicalName());
-      context.addImport(ArrayList.class.getCanonicalName());
+      String _canonicalName = List.class.getCanonicalName();
+      context.addImport(_canonicalName);
+      String _canonicalName_1 = ArrayList.class.getCanonicalName();
+      context.addImport(_canonicalName_1);
       StringConcatenation _builder = new StringConcatenation();
       String _simpleName = List.class.getSimpleName();
-      _builder.append(_simpleName);
+      _builder.append(_simpleName, "");
       _builder.append("<");
       String _simpleName_1 = Object.class.getSimpleName();
-      _builder.append(_simpleName_1);
+      _builder.append(_simpleName_1, "");
       _builder.append("> ");
-      _builder.append(varName);
+      _builder.append(varName, "");
       _builder.append(" = new ");
       String _simpleName_2 = ArrayList.class.getSimpleName();
-      _builder.append(_simpleName_2);
+      _builder.append(_simpleName_2, "");
       _builder.append("<>(); ");
       _builder.newLineIfNotEmpty();
       {
@@ -249,11 +254,11 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
           String name = (AbstractIQLMetadataMethodCompiler.METADATA_VALUE_VAR_NAME + Integer.valueOf(_incrementAndGet));
           _builder.newLineIfNotEmpty();
           String _compile = this.compile(e, name, counter, context);
-          _builder.append(_compile);
+          _builder.append(_compile, "");
           _builder.newLineIfNotEmpty();
-          _builder.append(varName);
+          _builder.append(varName, "");
           _builder.append(".add(");
-          _builder.append(name);
+          _builder.append(name, "");
           _builder.append(");");
           _builder.newLineIfNotEmpty();
         }
@@ -266,22 +271,24 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
   public String compile(final IQLMetadataValueMap o, final String varName, final AtomicInteger counter, final G context) {
     String _xblockexpression = null;
     {
-      context.addImport(Map.class.getCanonicalName());
-      context.addImport(HashMap.class.getCanonicalName());
+      String _canonicalName = Map.class.getCanonicalName();
+      context.addImport(_canonicalName);
+      String _canonicalName_1 = HashMap.class.getCanonicalName();
+      context.addImport(_canonicalName_1);
       StringConcatenation _builder = new StringConcatenation();
       String _simpleName = Map.class.getSimpleName();
-      _builder.append(_simpleName);
+      _builder.append(_simpleName, "");
       _builder.append("<");
       String _simpleName_1 = Object.class.getSimpleName();
-      _builder.append(_simpleName_1);
+      _builder.append(_simpleName_1, "");
       _builder.append(",");
       String _simpleName_2 = Object.class.getSimpleName();
-      _builder.append(_simpleName_2);
+      _builder.append(_simpleName_2, "");
       _builder.append("> ");
-      _builder.append(varName);
+      _builder.append(varName, "");
       _builder.append(" = new ");
       String _simpleName_3 = HashMap.class.getSimpleName();
-      _builder.append(_simpleName_3);
+      _builder.append(_simpleName_3, "");
       _builder.append("<>(); ");
       _builder.newLineIfNotEmpty();
       {
@@ -293,17 +300,19 @@ public abstract class AbstractIQLMetadataMethodCompiler<H extends IIQLCompilerHe
           int _incrementAndGet_1 = counter.incrementAndGet();
           String valueVar = (AbstractIQLMetadataMethodCompiler.METADATA_VALUE_VAR_NAME + Integer.valueOf(_incrementAndGet_1));
           _builder.newLineIfNotEmpty();
-          String _compile = this.compile(e.getKey(), keyVar, counter, context);
-          _builder.append(_compile);
+          IQLMetadataValue _key = e.getKey();
+          String _compile = this.compile(_key, keyVar, counter, context);
+          _builder.append(_compile, "");
           _builder.newLineIfNotEmpty();
-          String _compile_1 = this.compile(e.getValue(), valueVar, counter, context);
-          _builder.append(_compile_1);
+          IQLMetadataValue _value = e.getValue();
+          String _compile_1 = this.compile(_value, valueVar, counter, context);
+          _builder.append(_compile_1, "");
           _builder.newLineIfNotEmpty();
-          _builder.append(varName);
+          _builder.append(varName, "");
           _builder.append(".put(");
-          _builder.append(keyVar);
+          _builder.append(keyVar, "");
           _builder.append(", ");
-          _builder.append(valueVar);
+          _builder.append(valueVar, "");
           _builder.append(");");
           _builder.newLineIfNotEmpty();
         }

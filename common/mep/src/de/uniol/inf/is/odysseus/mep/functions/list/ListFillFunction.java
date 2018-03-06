@@ -28,7 +28,7 @@ import de.uniol.inf.is.odysseus.mep.AbstractFunction;
  */
 public class ListFillFunction extends AbstractFunction<List<?>> {
 	private static final long serialVersionUID = -3114684384693799438L;
-	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.LISTS,
+	private static final SDFDatatype[][] accTypes = new SDFDatatype[][] { SDFDatatype.getLists(),
 			SDFDatatype.DISCRETE_NUMBERS, { SDFDatatype.OBJECT } };
 
 	public ListFillFunction() {

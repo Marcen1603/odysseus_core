@@ -183,6 +183,8 @@ public class PMMLModelEvaluatorPO<T extends Tuple> extends AbstractPipe<T, T>{
 					value = ((Computable)o).getResult();
 				} else if(o instanceof Value) {
 					value = ((Value)o).getValue();
+				} else if(o instanceof Number || o instanceof String) {
+					value = o;
 				} else {
 					logger.warn("unsupported pmml evaluation result type: " + o.getClass().getSimpleName());
 				}

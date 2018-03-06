@@ -1,1 +1,0 @@
-datastream := DATABASESOURCE({connection='con1',table='main',attributes=[['id','INTEGER'],['value','STRING']],waiteach=0})

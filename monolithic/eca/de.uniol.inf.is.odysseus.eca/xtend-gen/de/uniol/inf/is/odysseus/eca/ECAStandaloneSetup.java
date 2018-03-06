@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.eca.ECAStandaloneSetupGenerated;
 @SuppressWarnings("all")
 public class ECAStandaloneSetup extends ECAStandaloneSetupGenerated {
   public static void doSetup() {
-    new ECAStandaloneSetup().createInjectorAndDoEMFRegistration();
+    ECAStandaloneSetup _eCAStandaloneSetup = new ECAStandaloneSetup();
+    _eCAStandaloneSetup.createInjectorAndDoEMFRegistration();
   }
 }

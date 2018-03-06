@@ -284,7 +284,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
 		if (subSchema.size() == 1) {
-			for (final SDFDatatype listType : SDFDatatype.LISTS) {
+			for (final SDFDatatype listType : SDFDatatype.getLists()) {
 				if (listType.getSubType().equals(subSchema.get(0).getDatatype())) {
 					return Collections
 							.singleton(new SDFAttribute(null, outputAttributeNames[0], listType, null, null, null));

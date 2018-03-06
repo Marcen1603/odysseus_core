@@ -29,7 +29,6 @@
 	<Image source="viewer_cfg/projectPO.png" name="projectPO" />
 	<Image source="viewer_cfg/joinPO.png" name="joinPO" />
 
-	<Image source="viewer_cfg/metadataPO.png" name="metadataPO" />
 	<Image source="viewer_cfg/metadataUpdatePO.png" name="metadataUpdatePO" />	
 	<Image source="viewer_cfg/metadataCreationPO.png" name="metadataCreationPO" />
 

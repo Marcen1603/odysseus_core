@@ -16,6 +16,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.swing.plaf.metal.MetalIconFactory;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.URI;
@@ -37,8 +40,10 @@ import de.uniol.inf.is.odysseus.core.infoservice.InfoService;
 import de.uniol.inf.is.odysseus.core.infoservice.InfoServiceFactory;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.datadictionary.IDataDictionary;
+import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.aggregate.AggregateFunctionBuilderRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.IQueryParser;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.QueryParseException;
@@ -76,13 +81,13 @@ import de.uniol.inf.is.odysseus.parser.cql2.cQL.Query;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RightsManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.RoleManagement;
 import de.uniol.inf.is.odysseus.parser.cql2.cQL.UserManagement;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.AttributeStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemAttribute;
 import de.uniol.inf.is.odysseus.parser.cql2.generator.CQLGenerator;
-import de.uniol.inf.is.odysseus.parser.cql2.generator.SourceStruct;
+import de.uniol.inf.is.odysseus.parser.cql2.generator.SystemSource;
 
 public class CQLParser implements IQueryParser {
 
-	private static final InfoService infoService = InfoServiceFactory.getInfoService("CQLParser");
+	private static final InfoService infoService = InfoServiceFactory.getInfoService(CQLParser.class);
 
 	private static Map<String, String> databaseConnections = new HashMap<>();
 	private static Set<SDFSchema> currentSchema;
@@ -107,9 +112,6 @@ public class CQLParser implements IQueryParser {
 		new org.eclipse.emf.mwe.utils.StandaloneSetup().setPlatformUri(path);
 		injector = new CQLStandaloneSetupGenerated().createInjectorAndDoEMFRegistration();
 		generator = injector.getInstance(CQLGenerator.class);
-		generator.setFunctionStore(getFunctionStore());
-		generator.setMEP(getMEP());
-		generator.setAggregatePattern(getAggregateFunctionPattern());
 		resourceSet = injector.getInstance(XtextResourceSet.class);
 		resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
 		resource = resourceSet.createResource(
@@ -194,7 +196,18 @@ public class CQLParser implements IQueryParser {
 			if (issues.isEmpty()) {
 				Set<SDFSchema> schema = executor.getDataDictionary(user).getStreamsAndViews(user).stream()
 						.map(e -> e.getValue().getOutputSchema()).collect(Collectors.toSet());
-				generator.setSchema(convertSchema(schema, false));
+				generator.setSchema(convertSchemaToSystemSource(schema));
+				
+				//TODO use metaAttribute.getSchema()
+				// meta attributes in access operator
+				// or meta attributes with #
+				
+				 generator.setMetaAttributes(convertSchemaToSystemSource(metaAttribute.getSchema()));
+				
+//				generator.setMetaAttributes();
+				
+				// MetadataRegistry.getNames() use names to get meta data schemas
+				
 				executorCommands.clear();
 				// Translate query to executor commands
 				for (EObject component : components) {
@@ -367,32 +380,36 @@ public class CQLParser implements IQueryParser {
 		return MEP.getInstance();
 	}
 
-	public List<SourceStruct> convertSchema(Collection<SDFSchema> schema, boolean internal) {
-		ArrayList<SourceStruct> list = new ArrayList<>();
-		for (SDFSchema s : schema) {
-			for (String sourcename : s.getBaseSourceNames()) {
-				SourceStruct source = new SourceStruct();
-				source.internal = internal;
-				source.sourcename = sourcename;
-				source.attributes = new ArrayList<>();
-				source.aliases = new ArrayList<>();
-				for (SDFAttribute attributename : s.getAttributes()) {
-					if (sourcename.equals(attributename.getSourceName())) {
-						AttributeStruct attribute = new AttributeStruct();
-						attribute.attributename = attributename.getAttributeName();
-						attribute.sourcename = sourcename;
-						attribute.datatype = attributename.getDatatype().toString();
-						attribute.aliases = new ArrayList<>();
-						attribute.prefixes = new ArrayList<>();
-						source.attributes.add(attribute);
-					}
-				}
-				list.add(source);
-			}
-		}
-		return list;
+	public Collection<SystemSource> convertSchemaToSystemSource(Collection<SDFSchema> schema) {
+		return schema.stream().map(e -> convertSchemaToSystemSource(e)).flatMap(Collection::stream).collect(Collectors.toList());
 	}
-
+	
+	public Collection<SystemSource> convertSchemaToSystemSource(SDFSchema schema) {
+		
+		Collection<SystemSource> col = new ArrayList<>();
+		for (String sourcename : schema.getBaseSourceNames()) {
+			SystemSource sourceStruct = new SystemSource();
+			sourceStruct.setName(sourcename);
+			for (SDFAttribute struct : schema.getAttributes()) {
+				if (sourcename.equals(struct.getSourceName())) {
+					sourceStruct.add(new SystemAttribute(
+							sourceStruct, 
+							struct.getAttributeName(),
+							struct.getDatatype().toString()
+							)
+					);
+				}
+			}
+			col.add(sourceStruct);
+		}
+	
+		return col;
+	}
+	
+	private Collection<SystemSource> convertSchemaToSystemSource(List<SDFMetaSchema> schema) {
+		return convertSchemaToSystemSource(schema.stream().map(e -> (SDFSchema) e).collect(Collectors.toList()));
+	}
+	
 	public static Map<String, String> getDatabaseConnections() {
 		return databaseConnections;
 	}

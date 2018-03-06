@@ -1,3 +1,0 @@
-#PARSER CQL
-#QUERY
-SELECT auction FROM bid WHERE auction > 1000;
