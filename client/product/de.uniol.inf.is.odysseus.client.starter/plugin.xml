@@ -83,7 +83,20 @@
                   style="push">
             </command>
             <separator
-                  name="de.uniol.inf.is.odysseus.client.starter.separator1">
+                  name="FileSeparator5"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.file.import"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.export"
+                  style="push">
+            </command>
+            <separator
+                  name="de.uniol.inf.is.odysseus.client.starter.separator1"
+                  visible="true">
             </separator>
             <command
                   commandId="org.eclipse.ui.file.exit"
