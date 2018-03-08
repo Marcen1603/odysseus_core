@@ -110,7 +110,7 @@ public class BugReportEditor extends TitleAreaDialog {
 
 	static private String getJira() {
 		return OdysseusRCPConfiguration.get(BUGREPORT_BASEURL,
-				"http://jira.odysseus.informatik.uni-oldenburg.de/");
+				"https://jira.odysseus.informatik.uni-oldenburg.de/");
 	}
 	
 	@Override
