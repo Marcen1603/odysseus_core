@@ -10,5 +10,6 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0"
-Service-Component: OSGI-INF/ValidTime.xml
+Service-Component: OSGI-INF/ValidTime.xml,
+ OSGI-INF/TemporalDatatypeProvider.xml
 Bundle-ActivationPolicy: lazy
