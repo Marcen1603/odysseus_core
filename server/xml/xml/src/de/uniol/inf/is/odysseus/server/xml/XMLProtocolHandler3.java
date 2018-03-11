@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
