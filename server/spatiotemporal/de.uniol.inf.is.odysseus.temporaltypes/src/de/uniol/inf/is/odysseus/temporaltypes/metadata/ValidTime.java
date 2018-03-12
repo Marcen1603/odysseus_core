@@ -30,7 +30,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("ValidTime", "start_valid", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("ValidTime", "end_valid", SDFDatatype.TIMESTAMP));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTime", Tuple.class, attributes, ValidTime.class));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTime", Tuple.class, attributes, IValidTime.class));
 	}
 
 	/*
