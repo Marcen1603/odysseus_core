@@ -8,7 +8,6 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeIntervalInlineMetadataMergeFunction;
@@ -31,7 +30,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("ValidTime", "start_valid", SDFDatatype.TIMESTAMP));
 		attributes.add(new SDFAttribute("ValidTime", "end_valid", SDFDatatype.TIMESTAMP));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTime", Tuple.class, attributes, ITimeInterval.class));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTime", Tuple.class, attributes, ValidTime.class));
 	}
 
 	/*
