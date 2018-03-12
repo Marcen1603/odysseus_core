@@ -11,7 +11,8 @@ Import-Package: de.uniol.inf.is.odysseus.core.collection,
 Require-Bundle: org.eclipse.osgi,
  de.uniol.inf.is.odysseus.core.server,
  de.uniol.inf.is.odysseus.core;bundle-version="1.0.0",
- de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
-Service-Component: OSGI-INF/ValidTime.xml,OSGI-INF/TemporalDatatypeProvider.xml,
- OSGI-INF/TemporalFunctionProvider.xml
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16",
+ de.uniol.inf.is.odysseus.aggregation
+Service-Component: OSGI-INF/ValidTime.xml,OSGI-INF/TemporalDatatypeProvider.xml,OSGI-INF/TemporalFunctionProvider.xml,
+ OSGI-INF/AggregateFunctionTemporalizeInteger.xml
 Bundle-ActivationPolicy: lazy
