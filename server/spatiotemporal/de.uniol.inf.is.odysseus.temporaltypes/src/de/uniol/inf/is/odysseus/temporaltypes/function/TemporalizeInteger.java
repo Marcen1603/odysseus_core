@@ -19,6 +19,17 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
 
+/**
+ * Aggregation function to convert an integer to a TemporalInteger. Attention to
+ * the second metadata. The AggregationPO may not be able to deal with secondary
+ * metadata (ValidTime) in incremental mode. Use the non-incremental function
+ * instead.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <M>
+ * @param <T>
+ */
 public class TemporalizeInteger<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 

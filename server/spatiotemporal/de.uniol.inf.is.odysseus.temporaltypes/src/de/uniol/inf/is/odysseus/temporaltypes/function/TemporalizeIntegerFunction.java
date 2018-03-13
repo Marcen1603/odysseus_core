@@ -7,13 +7,17 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
 
+/**
+ * An example for a map function that converts an integer to a TemporalInteger.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalizeIntegerFunction extends AbstractFunction<TemporalInteger> {
-	
+
 	private static final long serialVersionUID = -3345543531201341289L;
-	
-	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] {
-		{ SDFDatatype.INTEGER }
-	};
+
+	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { { SDFDatatype.INTEGER } };
 
 	public TemporalizeIntegerFunction() {
 		super("TemporalizeInteger", 1, accTypes, TemporalDatatype.TEMPORAL_INTEGER);

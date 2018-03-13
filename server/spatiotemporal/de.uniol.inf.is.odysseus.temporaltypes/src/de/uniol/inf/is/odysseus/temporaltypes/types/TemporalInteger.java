@@ -6,12 +6,24 @@ import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 
+/**
+ * A temporal integer uses a temporal function for integers that returns a value
+ * for a certain point in time instead of having one fixed value.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalInteger implements IClone, Cloneable, Serializable, TemporalType<Integer> {
 
 	private static final long serialVersionUID = 6537783520942392777L;
 
 	private IntegerFunction function;
 
+	/**
+	 * 
+	 * @param function
+	 *            The function which is used to calculate the values
+	 */
 	public TemporalInteger(IntegerFunction function) {
 		this.function = function;
 	}

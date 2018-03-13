@@ -16,6 +16,13 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 
+/**
+ * Implementation of the ValidTime metadata. This is used for temporal
+ * attributes which are predicted to a certain point in time or a time interval.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 final public class ValidTime extends AbstractBaseMetaAttribute implements IValidTime, Cloneable, Serializable {
 
 	private static final long serialVersionUID = -4168542417427389337L;
@@ -50,7 +57,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 	public ValidTime() {
 		this.delegateTimeInterval = new TimeInterval();
 	}
-	
+
 	public ValidTime(ValidTime toCopy) {
 		this.delegateTimeInterval = new TimeInterval(toCopy.delegateTimeInterval);
 	}
@@ -114,7 +121,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 	public String toString() {
 		return getValidStart().toString() + "|" + getValidEnd().toString();
 	}
-	
+
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
 		return new TimeIntervalInlineMetadataMergeFunction();

@@ -3,6 +3,12 @@ package de.uniol.inf.is.odysseus.temporaltypes.types;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 
+/**
+ * This class lists all available temporal datatypes.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalDatatype extends SDFDatatype {
 
 	private static final long serialVersionUID = 4911387440959109155L;

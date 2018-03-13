@@ -19,6 +19,18 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
 
+/**
+ * Function for the aggregation operator to temporalize an integer attribute.
+ * Makes a TemporalInteger from an integer.
+ * 
+ * Remark: Uses the non-incremental interface to deal with the second metadata
+ * (ValidTime) correctly.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <M>
+ * @param <T>
+ */
 public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
