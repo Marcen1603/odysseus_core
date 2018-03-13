@@ -12,5 +12,10 @@ public class TemporalInteger implements IClone, Cloneable, Serializable {
 	public TemporalInteger clone() {
 		return new TemporalInteger();
 	}
+	
+	@Override
+	public String toString() {
+		return "tinteger";
+	}
 
 }
