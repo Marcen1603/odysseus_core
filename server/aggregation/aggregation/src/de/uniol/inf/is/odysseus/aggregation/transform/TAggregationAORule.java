@@ -77,7 +77,13 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			}
 		}
 
-		if (operator.getInputSchema().getMetaAttributeNames().size() > 1 && incrementalFunctions.size() > 0
+		/*
+		 * If there is at least one non-incremental function, the SweepArea is used and
+		 * hence, the merge of metadata for other types of metadata works. If there no
+		 * non-incremental function, the operator currently cannot handle other types of
+		 * metadata.
+		 */
+		if (operator.getInputSchema().getMetaAttributeNames().size() > 1 && nonIncrementalFunctions.size() <= 0
 				|| operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName()) {
 			throw new TransformationException(
 					"Aggregation currently only works with #METADATA TimeInterval for incremental functions! Use Aggregate instead");
