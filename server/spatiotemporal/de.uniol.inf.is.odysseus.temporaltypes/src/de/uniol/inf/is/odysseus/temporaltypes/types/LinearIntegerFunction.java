@@ -35,7 +35,7 @@ public class LinearIntegerFunction implements IntegerFunction {
 
 	@Override
 	public String toString() {
-		return "y = " + m + "x + " + b;
+		return "y = " + m + "x" + (b > 0 ? " + " : "") + b;
 	}
 
 }
