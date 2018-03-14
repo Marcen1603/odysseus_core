@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalSelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
+import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
 public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> {
@@ -27,8 +28,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 
 	@Override
 	public IRuleFlowGroup getRuleFlowGroup() {
-		// TODO Auto-generated method stub
-		return null;
+		return TransformRuleFlowGroup.TRANSFORMATION;
 	}
 
 	@Override
