@@ -45,8 +45,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
@@ -79,12 +78,16 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 
 		/*
 		 * If there is at least one non-incremental function, the SweepArea is used and
-		 * hence, the merge of metadata for other types of metadata works. If there no
-		 * non-incremental function, the operator currently cannot handle other types of
-		 * metadata.
+		 * hence, the merge of metadata for other types of metadata works. If there is
+		 * no non-incremental function, the operator currently cannot handle other types
+		 * of metadata.
 		 */
-		if (operator.getInputSchema().getMetaAttributeNames().size() > 1 && nonIncrementalFunctions.size() <= 0
-				|| operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName()) {
+		boolean hasMoreThanOneMetadata = operator.getInputSchema().getMetaAttributeNames().size() > 1;
+		boolean hasNonIncrementalFunction = nonIncrementalFunctions.size() > 0;
+		boolean hasOnlyOneMetadataButOtherThanTimeInterval = !hasMoreThanOneMetadata
+				&& operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName();
+		
+		if (hasMoreThanOneMetadata && !hasNonIncrementalFunction || hasOnlyOneMetadataButOtherThanTimeInterval) {
 			throw new TransformationException(
 					"Aggregation currently only works with #METADATA TimeInterval for incremental functions! Use Aggregate instead");
 		}
@@ -115,8 +118,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
 	 * Object, java.lang.Object)
 	 */
 	@Override
