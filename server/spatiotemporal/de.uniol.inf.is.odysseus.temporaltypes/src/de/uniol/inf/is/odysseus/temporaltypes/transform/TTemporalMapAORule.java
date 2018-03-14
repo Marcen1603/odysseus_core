@@ -11,7 +11,7 @@ import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalRelationalMapPO;
-import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
@@ -29,7 +29,8 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
-		return this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
+		return operator.isAllPhysicalInputSet()
+				&& this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	private boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
 		for (SDFExpression expression : expressions) {
 			for (SDFAttribute attribute : expression.getAllAttributes()) {
-				if (attribute instanceof TemporalType) {
+				if (attribute.getDatatype() instanceof TemporalDatatype) {
 					return true;
 				}
 			}

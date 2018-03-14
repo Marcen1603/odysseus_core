@@ -7,7 +7,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.physicaloperator.relational.RelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
 public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMapPO<T> {
 
@@ -33,7 +33,7 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 
 	private boolean expressionHasTemporalAttribute(SDFExpression expression) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
-			if (attribute instanceof TemporalType) {
+			if (attribute.getDatatype() instanceof TemporalDatatype) {
 				return true;
 			}
 		}

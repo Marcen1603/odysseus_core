@@ -55,5 +55,10 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	public IClone clone() {
 		return new GenericTemporalType<>(this);
 	}
+	
+	@Override
+	public String toString() {
+		return "GenericTemporalType: " + this.values;
+	}
 
 }
