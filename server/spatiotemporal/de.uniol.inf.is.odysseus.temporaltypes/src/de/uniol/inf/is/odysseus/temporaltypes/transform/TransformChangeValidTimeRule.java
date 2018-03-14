@@ -1,10 +1,10 @@
-package de.uniol.inf.is.odysseus.temporaltypes.metadata.transform;
+package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.logicaloperator.ChangeValidTimeAO;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.physicalopertor.ChangeValidTimePO;
+import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
+import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.ChangeValidTimePO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 

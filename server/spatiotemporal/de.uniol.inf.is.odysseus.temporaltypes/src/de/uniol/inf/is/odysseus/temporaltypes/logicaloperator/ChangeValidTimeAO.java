@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.temporaltypes.metadata.logicaloperator;
+package de.uniol.inf.is.odysseus.temporaltypes.logicaloperator;
 
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOperator;
