@@ -1,8 +1,6 @@
 package de.uniol.inf.is.odysseus.temporaltypes.expressions;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
@@ -10,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
 public class TemporalRelationalExpression<T extends IValidTime> extends RelationalExpression<T> {
@@ -23,18 +22,18 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 	@Override
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
 		
-		Map<PointInTime, Object> results = new HashMap<>();
+		GenericTemporalType<Object> temporalType = new GenericTemporalType<>();
 		
 		PointInTime validStart = object.getMetadata().getValidStart();
 		PointInTime validEnd = object.getMetadata().getValidEnd();
 		
-		for (PointInTime i = validStart.clone(); i.before(validEnd); i.plus(1)) {
+		for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
 			Tuple<T> nonTemporalObject = evaluateTemporalAttributes(object, i);
 			Object result = super.evaluate(nonTemporalObject, sessions, history);
-			results.put(i.clone(), result);
+			temporalType.setValue(i, result);
 		}
 		
-		return results;
+		return temporalType;
 	}
 	
 	private Tuple<T> evaluateTemporalAttributes(Tuple<T> object, PointInTime time) {
