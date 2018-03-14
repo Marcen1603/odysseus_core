@@ -20,6 +20,11 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6126935973966254984L;
 
+	/*
+	 * TODO Allow expressions to manipulate the timestamps to have a little more
+	 * flexibility. Maybe similar to the TimestampAO.
+	 */
+
 	private TimeValueItem valueToAddStart;
 	private TimeValueItem valueToAddEnd;
 
