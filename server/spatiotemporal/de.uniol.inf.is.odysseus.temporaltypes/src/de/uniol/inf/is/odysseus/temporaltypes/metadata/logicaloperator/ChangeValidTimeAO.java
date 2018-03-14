@@ -5,7 +5,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.AbstractLogicalOpera
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 
 /**
  * This operator is used to manipulate the ValidTime metadata field.
@@ -19,8 +20,8 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 
 	private static final long serialVersionUID = 6126935973966254984L;
 
-	private int valueToAddStart;
-	private int valueToAddEnd;
+	private TimeValueItem valueToAddStart;
+	private TimeValueItem valueToAddEnd;
 
 	public ChangeValidTimeAO() {
 
@@ -32,13 +33,13 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 		this.valueToAddEnd = other.getValueToAddEnd();
 	}
 
-	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the ValidTime.", type = IntegerParameter.class, optional = false)
-	public void setAddStartValue(int valueToAddStart) {
+	@Parameter(name = "addToStartValue", doc = "The value that is added to the start timestamp of the stream time to create the start timestamp of the ValidTime.", type = TimeParameter.class, optional = false)
+	public void setAddStartValue(TimeValueItem valueToAddStart) {
 		this.valueToAddStart = valueToAddStart;
 	}
 
-	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create end end timestamp of the ValidTime.", type = IntegerParameter.class, optional = false)
-	public void setAddEndValue(int valueToAddEnd) {
+	@Parameter(name = "addToEndValue", doc = "The value that is addd to the start timestamp of the stream time to create end end timestamp of the ValidTime.", type = TimeParameter.class, optional = false)
+	public void setAddEndValue(TimeValueItem valueToAddEnd) {
 		this.valueToAddEnd = valueToAddEnd;
 	}
 
@@ -47,7 +48,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	 * @return The value that is added to the start timestamp of the stream time to
 	 *         create the start timestamp of the ValidTime.
 	 */
-	public int getValueToAddStart() {
+	public TimeValueItem getValueToAddStart() {
 		return this.valueToAddStart;
 	}
 
@@ -56,7 +57,7 @@ public class ChangeValidTimeAO extends UnaryLogicalOp {
 	 * @return The value that is addd to the start timestamp of the stream time to
 	 *         create end end timestamp of the ValidTime.
 	 */
-	public int getValueToAddEnd() {
+	public TimeValueItem getValueToAddEnd() {
 		return this.valueToAddEnd;
 	}
 

@@ -1,10 +1,13 @@
 package de.uniol.inf.is.odysseus.temporaltypes.metadata.physicalopertor;
 
+import java.util.concurrent.TimeUnit;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.logicaloperator.ChangeValidTimeAO;
@@ -22,12 +25,14 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.logicaloperator.ChangeVal
  */
 public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<T, T> {
 
-	private int valueToAddStart;
-	private int valueToAddEnd;
+	private TimeValueItem valueToAddStart;
+	private TimeValueItem valueToAddEnd;
+	private TimeUnit streamBaseTimeUnit;
 
 	public ChangeValidTimePO(ChangeValidTimeAO ao) {
 		this.valueToAddStart = ao.getValueToAddStart();
 		this.valueToAddEnd = ao.getValueToAddEnd();
+		this.streamBaseTimeUnit = ao.getBaseTimeUnit();
 	}
 
 	@Override
@@ -46,8 +51,13 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 		if (metadata instanceof ITimeInterval) {
 			// Use the stream time as the starting point for the calculations
 			ITimeInterval streamTime = (ITimeInterval) metadata;
-			PointInTime newValidStart = streamTime.getStart().plus(valueToAddStart);
-			PointInTime newValidEnd = streamTime.getStart().plus(valueToAddEnd);
+
+			long convertedValueToAddStart = streamBaseTimeUnit.convert(valueToAddStart.getTime(),
+					valueToAddStart.getUnit());
+			long convertedValueToAddEnd = streamBaseTimeUnit.convert(valueToAddEnd.getTime(), valueToAddEnd.getUnit());
+
+			PointInTime newValidStart = streamTime.getStart().plus(convertedValueToAddStart);
+			PointInTime newValidEnd = streamTime.getStart().plus(convertedValueToAddEnd);
 			if (metadata instanceof IValidTime) {
 				// Use the calculated start and end timestamps for the ValidTime
 				IValidTime validTime = (IValidTime) metadata;
