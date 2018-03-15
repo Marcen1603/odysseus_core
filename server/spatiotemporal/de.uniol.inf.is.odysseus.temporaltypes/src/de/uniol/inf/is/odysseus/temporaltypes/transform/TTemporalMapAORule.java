@@ -59,7 +59,7 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	private boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
 		for (SDFExpression expression : expressions) {
 			for (SDFAttribute attribute : expression.getAllAttributes()) {
-				if (attribute.getDatatype() instanceof TemporalDatatype) {
+				if (TemporalDatatype.isTemporalAttribute(attribute)) {
 					return true;
 				}
 			}

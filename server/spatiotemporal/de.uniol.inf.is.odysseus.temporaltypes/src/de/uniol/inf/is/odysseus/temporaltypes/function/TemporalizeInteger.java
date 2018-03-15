@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.IntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
@@ -92,7 +93,7 @@ public class TemporalizeInteger<M extends ITimeInterval, T extends Tuple<M>>
 		final List<SDFAttribute> result = new ArrayList<>(this.temporalInteger.length);
 
 		for (final String attr : outputAttributeNames) {
-			result.add(new SDFAttribute(null, attr, TemporalDatatype.TEMPORAL_INTEGER, null, null, null));
+			result.add(new SDFAttribute(null, attr, SDFDatatype.INTEGER, null, TemporalDatatype.getTemporalConstraint(), null));
 		}
 
 		return result;

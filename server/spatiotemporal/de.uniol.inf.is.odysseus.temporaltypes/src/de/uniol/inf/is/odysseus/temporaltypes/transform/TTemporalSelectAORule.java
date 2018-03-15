@@ -63,7 +63,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 	 */
 	private boolean expressionContainsTemporalAttribute(IPredicate<?> predicate) {
 		for (SDFAttribute attribute : predicate.getAttributes()) {
-			if (attribute.getDatatype() instanceof TemporalDatatype) {
+			if (TemporalDatatype.isTemporalAttribute(attribute)) {
 				return true;
 			}
 		}

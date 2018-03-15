@@ -49,7 +49,7 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 	 */
 	private boolean expressionHasTemporalAttribute(SDFExpression expression) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
-			if (attribute.getDatatype() instanceof TemporalDatatype) {
+			if (TemporalDatatype.isTemporalAttribute(attribute)) {
 				return true;
 			}
 		}
