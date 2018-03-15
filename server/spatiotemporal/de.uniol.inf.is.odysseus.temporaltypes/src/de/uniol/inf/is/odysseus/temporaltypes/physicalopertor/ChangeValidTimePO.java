@@ -1,4 +1,4 @@
-package de.uniol.inf.is.odysseus.temporaltypes.metadata.physicalopertor;
+package de.uniol.inf.is.odysseus.temporaltypes.physicalopertor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -9,8 +9,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueItem;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
+import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.logicaloperator.ChangeValidTimeAO;
 
 /**
  * This operator manipulates the ValidTime metadata. It is doing this based on
