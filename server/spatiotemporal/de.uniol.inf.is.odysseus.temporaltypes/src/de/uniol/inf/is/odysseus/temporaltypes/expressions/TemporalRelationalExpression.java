@@ -18,6 +18,10 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 	public TemporalRelationalExpression(SDFExpression expression) {
 		super(expression);
 	}
+	
+	public TemporalRelationalExpression(RelationalExpression<T> expression) {
+		super(expression);
+	}
 
 	@Override
 	public Object evaluate(Tuple<T> object, List<ISession> sessions, List<Tuple<T>> history) {
