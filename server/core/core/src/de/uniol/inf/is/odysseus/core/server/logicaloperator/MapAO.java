@@ -194,6 +194,12 @@ public class MapAO extends UnaryLogicalOp {
 							allConstraints.addAll(attribute.getDtConstraints());
 						}
 
+						/*
+						 * The expressions themselves can add constraints, too. For example, to tell
+						 * that their output is a temporal type.
+						 */
+						allConstraints.addAll(expr.expression.getMEPExpression().getConstraintsToAdd());
+
 						attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
 								allConstraints, null);
 						attrs.add(attr);
