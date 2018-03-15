@@ -16,6 +16,7 @@
 package de.uniol.inf.is.odysseus.core.server.logicaloperator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
 import de.uniol.inf.is.odysseus.core.mep.IMepExpression;
 import de.uniol.inf.is.odysseus.core.sdf.SDFElement;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
@@ -84,7 +86,7 @@ public class MapAO extends UnaryLogicalOp {
 
 		List<SDFAttribute> attrs = new ArrayList<SDFAttribute>();
 		SDFSchema inputSchema = getInputSchema();
-		
+
 		if (keepInput) {
 			if (removeAttributes == null || removeAttributes.size() == 0) {
 				attrs.addAll(inputSchema.getAttributes());
@@ -100,11 +102,10 @@ public class MapAO extends UnaryLogicalOp {
 		if (namedExpressions != null) {
 			for (NamedExpression expr : namedExpressions) {
 
-				// TODO: Maybe here should an attribute resolver be used?
+				// TODO: Maybe an attribute resolver should be used here?
 
 				SDFAttribute attr = null;
-				IMepExpression<?> mepExpression = expr.expression
-						.getMEPExpression();
+				IMepExpression<?> mepExpression = expr.expression.getMEPExpression();
 				String exprString;
 				boolean isOnlyAttribute = false;
 
@@ -113,9 +114,7 @@ public class MapAO extends UnaryLogicalOp {
 				// as expression in the next operator (e.g. if it is a map)
 				exprString = SDFAttribute.replaceSpecialChars(exprString);
 
-				// Variable could be source.name oder name, we are looking
-				// for
-				// name!
+				// Variable could be source.name oder name, we are looking for name!
 				String lastString = null;
 				String toSplit;
 
@@ -148,7 +147,8 @@ public class MapAO extends UnaryLogicalOp {
 					if (attribute.equalsCQL(elem)) {
 						if (lastString != null) {
 							String attrName = elem.getURIWithoutQualName() != null
-									? elem.getURIWithoutQualName() + "." + elem.getQualName() : elem.getQualName();
+									? elem.getURIWithoutQualName() + "." + elem.getQualName()
+									: elem.getQualName();
 							attr = new SDFAttribute(lastString, attrName, attribute.getDatatype(), attribute.getUnit(),
 									attribute.getDtConstraints());
 						} else {
@@ -159,8 +159,7 @@ public class MapAO extends UnaryLogicalOp {
 					}
 				}
 
-				// Expression is an attribute and name is set --> keep Attribute
-				// type
+				// Expression is an attribute and name is set --> keep attribute type
 				if (isOnlyAttribute) {
 					if (!"".equals(expr.name)) {
 						if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
@@ -173,7 +172,7 @@ public class MapAO extends UnaryLogicalOp {
 
 				// else use the expression data type
 				if (attr == null) {
-					// Special Handling if return type if tuple
+					// Special handling if return type is tuple
 					if (mepExpression.getReturnType() == SDFDatatype.TUPLE) {
 						int card = mepExpression.getReturnTypeCard();
 						for (int i = 0; i < card; i++) {
@@ -185,8 +184,18 @@ public class MapAO extends UnaryLogicalOp {
 
 					} else {
 						SDFDatatype retType = expr.datatype != null ? expr.datatype : mepExpression.getReturnType();
+
+						/*
+						 * Copy all previous constraints to not loose them. Useful, for example, for
+						 * temporal data types which always stay temporal after a map operation.
+						 */
+						Collection<SDFConstraint> allConstraints = new ArrayList<>();
+						for (SDFAttribute attribute : expr.expression.getAllAttributes()) {
+							allConstraints.addAll(attribute.getDtConstraints());
+						}
+
 						attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
-								null, null);
+								allConstraints, null);
 						attrs.add(attr);
 					}
 				} else {
@@ -244,10 +253,10 @@ public class MapAO extends UnaryLogicalOp {
 
 	/**
 	 * Sets the number of threads used for processing the expressions. A value
-	 * greater than 1 indicates the number of simultaneous processing. A value
-	 * equal to 1 or 0 indicates that no threads should be used. And a value
-	 * lower than 0 indicates automatic threads number selection based on the
-	 * number of expressions and the number of available processors.
+	 * greater than 1 indicates the number of simultaneous processing. A value equal
+	 * to 1 or 0 indicates that no threads should be used. And a value lower than 0
+	 * indicates automatic threads number selection based on the number of
+	 * expressions and the number of available processors.
 	 *
 	 * @param threads
 	 *            The number of threads
@@ -328,7 +337,7 @@ public class MapAO extends UnaryLogicalOp {
 
 		return valid && super.isValid();
 	}
-	
+
 	/**
 	 * There should be no restriction for stateless operators
 	 */
@@ -336,6 +345,5 @@ public class MapAO extends UnaryLogicalOp {
 	public InputOrderRequirement getInputOrderRequirement(int inputPort) {
 		return InputOrderRequirement.NONE;
 	}
-
 
 }
