@@ -9,6 +9,14 @@ import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpr
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
+/**
+ * RelationalMapPO that can work with temporal expressions. This is done by
+ * initializing expressions with temporal attributes as temporal expressions.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <T>
+ */
 public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMapPO<T> {
 
 	public TemporalRelationalMapPO(SDFSchema inputSchema, SDFExpression[] expressions, boolean allowNullInOutput,
@@ -16,10 +24,11 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 			int[] keepList) {
 		super(inputSchema, expressions, allowNullInOutput, evaluateOnPunctuation, expressionsUpdateable, suppressErrors,
 				keepInput, keepList);
-		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void init(SDFSchema schema, SDFExpression[] expr) {
+		// It is not possible to create generic arrays, therefore the suppress warning.
 		this.expressions = new RelationalExpression[expr.length];
 		for (int i = 0; i < expr.length; ++i) {
 			if (this.expressionHasTemporalAttribute(expr[i])) {
@@ -31,6 +40,13 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 		}
 	}
 
+	/**
+	 * Tests if expression has at least one temporal attribute
+	 * 
+	 * @param expression
+	 *            The expression that is checked for the temporal attributes
+	 * @return true, if it has at least one temporal attribute, false otherwise
+	 */
 	private boolean expressionHasTemporalAttribute(SDFExpression expression) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
 			if (attribute.getDatatype() instanceof TemporalDatatype) {

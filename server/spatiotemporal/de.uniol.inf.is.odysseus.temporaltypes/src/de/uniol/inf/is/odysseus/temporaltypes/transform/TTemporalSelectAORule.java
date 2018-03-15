@@ -19,6 +19,12 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 
 	@Override
 	public void execute(SelectAO operator, TransformationConfiguration config) throws RuleException {
+
+		/*
+		 * The SelectAO returns a predicate, but due to the implementation history, it
+		 * contains an expression. We can use this and make a temporal expression from
+		 * it if necessary.
+		 */
 		if (operator.getPredicate() instanceof RelationalExpression) {
 			@SuppressWarnings("unchecked")
 			RelationalExpression<IValidTime> expression = (RelationalExpression<IValidTime>) operator.getPredicate();
@@ -31,6 +37,10 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 
 	@Override
 	public boolean isExecutable(SelectAO operator, TransformationConfiguration config) {
+		/*
+		 * Only use this rule if there is at least one temporal attribute in the
+		 * predicate.
+		 */
 		return operator.isAllPhysicalInputSet() && expressionContainsTemporalAttribute(operator.getPredicate());
 	}
 
@@ -44,6 +54,13 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		return 1;
 	}
 
+	/**
+	 * Checks if the expression contains at least one temporal attribute
+	 * 
+	 * @param predicate
+	 *            The expression / predicate to test
+	 * @return True, if it contains at least one temporal attribute, false otherwise
+	 */
 	private boolean expressionContainsTemporalAttribute(IPredicate<?> predicate) {
 		for (SDFAttribute attribute : predicate.getAttributes()) {
 			if (attribute.getDatatype() instanceof TemporalDatatype) {

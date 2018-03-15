@@ -29,6 +29,10 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
+		/*
+		 * Only use this rule if there is at least one expression with a temporal
+		 * attribute.
+		 */
 		return operator.isAllPhysicalInputSet()
 				&& this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
 	}
@@ -40,9 +44,18 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 
 	@Override
 	public int getPriority() {
+		// The priority needs to be higher than the priority of the normal rule.
 		return 1;
 	}
 
+	/**
+	 * Checks if at least one expression has a temporal attribute.
+	 * 
+	 * @param expressions
+	 *            The expressions to test
+	 * @return True, if at least one expression has a temporal attribute, false
+	 *         otherwise
+	 */
 	private boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
 		for (SDFExpression expression : expressions) {
 			for (SDFAttribute attribute : expression.getAllAttributes()) {
