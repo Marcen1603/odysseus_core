@@ -100,8 +100,8 @@ public class MapAO extends UnaryLogicalOp {
 		}
 
 		/*
-		 * The MAP operator does not have any expressions -> no further changes at the
-		 * output schema are necessary
+		 * The expressions are null, which should not happen, they should at least be an
+		 * empty list. Stop here.
 		 */
 		if (this.namedExpressions == null) {
 			return;
