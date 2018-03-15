@@ -52,7 +52,7 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 		 * evaluation process for this filled tuple.
 		 */
 		for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
-			Tuple<T> nonTemporalObject = evaluateTemporalAttributes(object, i);
+			Tuple<T> nonTemporalObject = this.atTimeInstance(object, i);
 			Object result = super.evaluate(nonTemporalObject, sessions, history);
 			temporalType.setValue(i, result);
 		}
@@ -73,7 +73,7 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 	 * @return A copy of the given tuple with the temporal attributes filled for the
 	 *         given point in time
 	 */
-	private Tuple<T> evaluateTemporalAttributes(Tuple<T> object, PointInTime time) {
+	private Tuple<T> atTimeInstance(Tuple<T> object, PointInTime time) {
 
 		Tuple<T> nonTemporalTuple = object.clone();
 
