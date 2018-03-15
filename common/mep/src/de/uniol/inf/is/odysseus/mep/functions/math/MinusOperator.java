@@ -27,10 +27,6 @@ public class MinusOperator extends AbstractBinaryNumberInputOperator<Double> {
 		super("-", SDFDatatype.DOUBLE);
 	}
 	
-	protected MinusOperator(SDFDatatype[][] accTypes) {
-		super("-", SDFDatatype.DOUBLE);
-	}
-	
 	@Override
 	public int getPrecedence() {
 		return 6;
