@@ -90,6 +90,11 @@ public class SDFAttribute extends SDFElement implements Comparable<SDFAttribute>
 				new LinkedList<>(toCopyFrom.dtConstraints.values()));
 	}
 
+	public SDFAttribute(SDFAttribute toCopyFrom, Collection<SDFConstraint> newConstraints) {
+		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), toCopyFrom.getDatatype(), toCopyFrom.getUnit(),
+				newConstraints);
+	}
+
 	/**
 	 * Creates a new SDFAttribute
 	 *
@@ -232,10 +237,6 @@ public class SDFAttribute extends SDFElement implements Comparable<SDFAttribute>
 	 */
 	public Collection<SDFConstraint> getDtConstraints() {
 		return dtConstraints.values();
-	}
-
-	public void addConstraint(SDFConstraint constraintToAdd) {
-		this.dtConstraints.put(constraintToAdd.getURI(), constraintToAdd);
 	}
 
 	/**
