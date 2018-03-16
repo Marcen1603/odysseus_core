@@ -63,8 +63,4 @@ public class TemporalDatatype extends SDFDatatype {
 		return false;
 	}
 
-	@Deprecated
-	public static final SDFDatatype TEMPORAL_INTEGER = new TemporalDatatype("TemporalInteger", KindOfDatatype.BASE,
-			SDFDatatype.INTEGER);
-
 }
