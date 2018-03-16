@@ -56,12 +56,19 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	 * @return True, if at least one expression has a temporal attribute, false
 	 *         otherwise
 	 */
-	private boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
+	protected boolean containsExpressionWithTemporalAttribute(List<SDFExpression> expressions) {
 		for (SDFExpression expression : expressions) {
-			for (SDFAttribute attribute : expression.getAllAttributes()) {
-				if (TemporalDatatype.isTemporalAttribute(attribute)) {
-					return true;
-				}
+			if (expressionHasTemporalAttribute(expression)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected boolean expressionHasTemporalAttribute(SDFExpression expression) {
+		for (SDFAttribute attribute : expression.getAllAttributes()) {
+			if (TemporalDatatype.isTemporalAttribute(attribute)) {
+				return true;
 			}
 		}
 		return false;

@@ -243,9 +243,9 @@ public class MapAO extends UnaryLogicalOp {
 		 * temporal data types which always stay temporal after a map operation.
 		 */
 		Collection<SDFConstraint> allConstraints = new ArrayList<>();
-		for (SDFAttribute attribute : expression.expression.getAllAttributes()) {
-			allConstraints.addAll(attribute.getDtConstraints());
-		}
+//		for (SDFAttribute attribute : expression.expression.getAllAttributes()) {
+//			allConstraints.addAll(attribute.getDtConstraints());
+//		}
 
 		/*
 		 * The expressions themselves can add constraints, too. For example, to tell
