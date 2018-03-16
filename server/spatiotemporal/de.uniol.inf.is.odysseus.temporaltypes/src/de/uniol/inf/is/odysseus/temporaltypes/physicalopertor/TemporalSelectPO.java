@@ -56,11 +56,11 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 			boolean value = temporalType.getValues().get(time);
 			if (value) {
 				if (currentInterval == null) {
-					currentInterval = new ValidTime(time.clone());
+					currentInterval = new ValidTime(time);
 				}
 			} else {
 				if (currentInterval != null) {
-					currentInterval.setValidEnd(time.clone());
+					currentInterval.setValidEnd(time);
 					validTimeIntervals.add(currentInterval);
 					currentInterval = null;
 				}

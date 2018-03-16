@@ -54,7 +54,7 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 		for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
 			Tuple<T> nonTemporalObject = this.atTimeInstance(object, i);
 			Object result = super.evaluate(nonTemporalObject, sessions, history);
-			temporalType.setValue(i.clone(), result);
+			temporalType.setValue(i, result);
 		}
 
 		return temporalType;
