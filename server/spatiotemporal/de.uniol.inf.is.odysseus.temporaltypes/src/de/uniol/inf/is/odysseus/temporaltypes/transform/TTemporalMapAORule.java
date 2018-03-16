@@ -65,6 +65,13 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 		return false;
 	}
 
+	/**
+	 * Checks if an expression contains a temporal attribute
+	 * 
+	 * @param expression
+	 *            The expression to check
+	 * @return True, if is has a temporal attribute, false otherwise
+	 */
 	protected boolean expressionHasTemporalAttribute(SDFExpression expression) {
 		for (SDFAttribute attribute : expression.getAllAttributes()) {
 			if (TemporalDatatype.isTemporalAttribute(attribute)) {

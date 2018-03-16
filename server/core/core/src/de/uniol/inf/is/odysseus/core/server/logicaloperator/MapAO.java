@@ -168,14 +168,9 @@ public class MapAO extends UnaryLogicalOp {
 
 			// Expression is an attribute and name is set --> keep attribute type
 			if (isOnlyAttribute) {
-				/*
-				 * The constraints don't have to be calculated as they are set by the
-				 * constructor: it copies the constraints.
-				 */
 				if (!"".equals(expr.name)) {
 					if (attr != null && attr.getSourceName() != null && !attr.getSourceName().startsWith("__")) {
 						attr = new SDFAttribute(attr.getSourceName(), expr.name, attr);
-
 					} else {
 						attr = new SDFAttribute(null, expr.name, attr);
 					}
@@ -191,7 +186,7 @@ public class MapAO extends UnaryLogicalOp {
 						String name = !"".equals(expr.name) ? expr.name : exprString;
 
 						// Calculate the constraints for the output
-						Collection<SDFConstraint> allConstraints = calculateConstraints(expr);
+						Collection<SDFConstraint> allConstraints = getExpressionConstraints(expr);
 
 						attr = new SDFAttribute(null, name + "_" + i, mepExpression.getReturnType(i), null,
 								allConstraints, null);
@@ -202,7 +197,7 @@ public class MapAO extends UnaryLogicalOp {
 					SDFDatatype retType = expr.datatype != null ? expr.datatype : mepExpression.getReturnType();
 
 					// Calculate the constraints for the output
-					Collection<SDFConstraint> allConstraints = calculateConstraints(expr);
+					Collection<SDFConstraint> allConstraints = getExpressionConstraints(expr);
 
 					attr = new SDFAttribute(null, !"".equals(expr.name) ? expr.name : exprString, retType, null,
 							allConstraints, null);
@@ -227,32 +222,19 @@ public class MapAO extends UnaryLogicalOp {
 	}
 
 	/**
-	 * Calculates the constraints for the output. Does so by combining all
-	 * constraints of the input attributes + all the constraints that the
-	 * expressions may add.
+	 * The constraints by the expression.
 	 * 
 	 * @param expression
-	 *            The expression for which output attribute the constraints have to
-	 *            be calculated
-	 * @return The cumulated constraints from the input attributes and the
-	 *         expressions
+	 *            The expression from which the added constraints are needed
+	 * @return The constraints added by the expression
 	 */
-	private Collection<SDFConstraint> calculateConstraints(NamedExpression expression) {
-		/*
-		 * Copy all previous constraints to not loose them. Useful, for example, for
-		 * temporal data types which always stay temporal after a map operation.
-		 */
-		Collection<SDFConstraint> allConstraints = new ArrayList<>();
-//		for (SDFAttribute attribute : expression.expression.getAllAttributes()) {
-//			allConstraints.addAll(attribute.getDtConstraints());
-//		}
+	private Collection<SDFConstraint> getExpressionConstraints(NamedExpression expression) {
 
 		/*
-		 * The expressions themselves can add constraints, too. For example, to tell
-		 * that their output is a temporal type.
+		 * The expressions themselves can add constraints. For example to tell that
+		 * their output is a temporal type.
 		 */
-		allConstraints.addAll(expression.expression.getMEPExpression().getConstraintsToAdd());
-		return allConstraints;
+		return expression.expression.getMEPExpression().getConstraintsToAdd();
 	}
 
 	@Parameter(type = NamedExpressionParameter.class, name = "EXPRESSIONS", aliasname = "kvExpressions", isList = true, optional = false, doc = "A list of expressions.")
