@@ -43,44 +43,39 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		 * We need to keep track at which position we are to insert attributes which are
 		 * not changed at the right position.
 		 */
-		int outputSchemaPosition = 0;
 
-		/*
-		 * Loop over all expressions. They are in the right order (the order of the
-		 * output schema)
-		 */
-		for (NamedExpression expression : operator.getExpressions()) {
-			if (containsTemporalAttribute(expression.expression.getAllAttributes())) {
+		for (int outputSchemaPosition = 0; outputSchemaPosition < operator.getOutputSchema()
+				.size(); outputSchemaPosition++) {
 
-				/*
-				 * Get the attribute which is created by the current expression. Note: this is
-				 * only one because the names of the expressions are unique.
-				 */
-				List<SDFAttribute> attributes = operator.getOutputSchema().getAttributes().stream()
-						.filter(e -> e.getAttributeName().equals(expression.name)).collect(Collectors.toList());
-
-				for (SDFAttribute attribute : attributes) {
-					// Copy the existing constraints from that output attribute
-					List<SDFConstraint> newConstraints = new LinkedList<>(attribute.getDtConstraints());
-
-					// Add the temporal constraints to the new constraints
-					for (SDFConstraint constraintToAdd : TemporalDatatype.getTemporalConstraint()) {
-						newConstraints.add(constraintToAdd);
-					}
-					// Create a new attribute from the old and add the new constraints
-					SDFAttribute newAttribute = new SDFAttribute(attribute, newConstraints);
-					newAttributes.add(newAttribute);
-				}
+			// Is this attribute made by an expression and if so, is it temporal?
+			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
+			List<NamedExpression> expressionForAttribute = operator.getExpressions().stream()
+					.filter(e -> e.name.equals(currentOutputAttribute.getAttributeName())).collect(Collectors.toList());
+			if (expressionForAttribute.size() == 1
+					&& containsTemporalAttribute(expressionForAttribute.get(0).expression.getAllAttributes())) {
+				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
+				newAttributes.add(newAttribute);
 			} else {
 				// In the case that no constraints are added, simply use the old attribute
 				newAttributes.add(operator.getOutputSchema().get(outputSchemaPosition));
 			}
-			outputSchemaPosition++;
 		}
 
 		// Create and set the new schema
 		SDFSchema newSchema = SDFSchemaFactory.createNewWithAttributes(operator.getOutputSchema(), newAttributes);
 		operator.setOutputSchema(newSchema);
+	}
+
+	private SDFAttribute addTemporalConstraintToAttribute(SDFAttribute attribute) {
+		// Copy the existing constraints from that output attribute
+		List<SDFConstraint> newConstraints = new LinkedList<>(attribute.getDtConstraints());
+
+		// Add the temporal constraints to the new constraints
+		for (SDFConstraint constraintToAdd : TemporalDatatype.getTemporalConstraint()) {
+			newConstraints.add(constraintToAdd);
+		}
+		// Create a new attribute from the old and add the new constraints
+		return new SDFAttribute(attribute, newConstraints);
 	}
 
 	@Override
@@ -110,6 +105,11 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int getPriority() {
+		return 1;
 	}
 
 }

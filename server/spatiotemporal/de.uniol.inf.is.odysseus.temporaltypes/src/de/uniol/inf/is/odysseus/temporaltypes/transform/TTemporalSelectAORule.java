@@ -1,5 +1,8 @@
 package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
@@ -41,7 +44,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		 * Only use this rule if there is at least one temporal attribute in the
 		 * predicate.
 		 */
-		return operator.isAllPhysicalInputSet() && expressionContainsTemporalAttribute(operator.getPredicate());
+		return operator.isAllPhysicalInputSet() && outputSchemaContaintsTemporalAttribte(operator);
 	}
 
 	@Override
@@ -65,6 +68,29 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		for (SDFAttribute attribute : predicate.getAttributes()) {
 			if (TemporalDatatype.isTemporalAttribute(attribute)) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if the output schema contains a temporal
+	 * 
+	 * @param operator
+	 * @return
+	 */
+	private boolean outputSchemaContaintsTemporalAttribte(SelectAO operator) {
+		for (SDFAttribute attribute : operator.getPredicate().getAttributes()) {
+			if (TemporalDatatype.isTemporalAttribute(attribute)) {
+				return true;
+			}
+			List<SDFAttribute> attributes = operator.getInputSchema().getAttributes().stream()
+					.filter(e -> e.getAttributeName().equals(attribute.getAttributeName()))
+					.collect(Collectors.toList());
+			for (SDFAttribute attr : attributes) {
+				if (TemporalDatatype.isTemporalAttribute(attr)) {
+					return true;
+				}
 			}
 		}
 		return false;

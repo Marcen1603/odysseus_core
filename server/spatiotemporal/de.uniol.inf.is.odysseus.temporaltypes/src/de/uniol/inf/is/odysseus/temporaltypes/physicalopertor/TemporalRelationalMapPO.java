@@ -31,7 +31,7 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 		// It is not possible to create generic arrays, therefore the suppress warning.
 		this.expressions = new RelationalExpression[expr.length];
 		for (int i = 0; i < expr.length; ++i) {
-			if (this.expressionHasTemporalAttribute(expr[i])) {
+			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])) {
 				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
 			} else {
 				this.expressions[i] = new RelationalExpression<T>(expr[i]);
@@ -54,6 +54,12 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 			}
 		}
 		return false;
+	}
+
+	private boolean isCopyExpression(SDFExpression expression) {
+		return expression.getAllAttributes().size() == 1
+				&& (expression.getAllAttributes().get(0).getAttributeName().equals(expression.getExpressionString())
+						|| expression.getAllAttributes().get(0).getURI().equals(expression.getExpressionString()));
 	}
 
 }
