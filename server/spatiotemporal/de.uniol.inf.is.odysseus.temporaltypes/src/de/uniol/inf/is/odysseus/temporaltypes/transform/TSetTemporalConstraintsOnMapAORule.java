@@ -40,10 +40,12 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		List<SDFAttribute> newAttributes = new ArrayList<>();
 
 		/*
-		 * We need to keep track at which position we are to insert attributes which are
-		 * not changed at the right position.
+		 * Loop through the output schema. In case that there is an expression with
+		 * temporal output (has temporal input), copy it to the output attribute.
+		 * Attention: it is necessary to loop through the output schema, not the
+		 * expressions, because "keepInput" could lead to a different output schema than
+		 * the only expressions would create.
 		 */
-
 		for (int outputSchemaPosition = 0; outputSchemaPosition < operator.getOutputSchema()
 				.size(); outputSchemaPosition++) {
 
@@ -51,6 +53,8 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 			SDFAttribute currentOutputAttribute = operator.getOutputSchema().getAttribute(outputSchemaPosition);
 			List<NamedExpression> expressionForAttribute = operator.getExpressions().stream()
 					.filter(e -> e.name.equals(currentOutputAttribute.getAttributeName())).collect(Collectors.toList());
+
+			// Names should be unique, so at maximum one result
 			if (expressionForAttribute.size() == 1
 					&& containsTemporalAttribute(expressionForAttribute.get(0).expression.getAllAttributes())) {
 				SDFAttribute newAttribute = addTemporalConstraintToAttribute(currentOutputAttribute);
@@ -66,6 +70,13 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		operator.setOutputSchema(newSchema);
 	}
 
+	/**
+	 * Adds a temporal constraint to the given attribute
+	 * 
+	 * @param attribute
+	 *            The attribute to add the temporal constraint to
+	 * @return A new attribute with the temporal constraint
+	 */
 	private SDFAttribute addTemporalConstraintToAttribute(SDFAttribute attribute) {
 		// Copy the existing constraints from that output attribute
 		List<SDFConstraint> newConstraints = new LinkedList<>(attribute.getDtConstraints());
@@ -76,19 +87,6 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 		}
 		// Create a new attribute from the old and add the new constraints
 		return new SDFAttribute(attribute, newConstraints);
-	}
-
-	@Override
-	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
-		// Only use this rule if the map has temporal expressions
-		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTime.class);
-		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
-		return hasValidTime && hasTemporalExpression;
-	}
-
-	@Override
-	public IRuleFlowGroup getRuleFlowGroup() {
-		return TransformRuleFlowGroup.INIT;
 	}
 
 	/**
@@ -105,6 +103,19 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
+		// Only use this rule if the map has temporal expressions
+		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTime.class);
+		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
+		return hasValidTime && hasTemporalExpression;
+	}
+
+	@Override
+	public IRuleFlowGroup getRuleFlowGroup() {
+		return TransformRuleFlowGroup.INIT;
 	}
 
 	@Override

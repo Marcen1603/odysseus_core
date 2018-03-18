@@ -31,6 +31,11 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 		// It is not possible to create generic arrays, therefore the suppress warning.
 		this.expressions = new RelationalExpression[expr.length];
 		for (int i = 0; i < expr.length; ++i) {
+			/*
+			 * In case of a copy expression do not use a temporal expression, cause this
+			 * could lead to an unwanted conversion from a temporal function to a generic
+			 * temporal function.
+			 */
 			if (this.expressionHasTemporalAttribute(expr[i]) && !isCopyExpression(expr[i])) {
 				this.expressions[i] = new TemporalRelationalExpression<>(expr[i]);
 			} else {
@@ -56,10 +61,29 @@ public class TemporalRelationalMapPO<T extends IValidTime> extends RelationalMap
 		return false;
 	}
 
+	/**
+	 * Checks if the expression simply copies / renames an attribute
+	 * 
+	 * @param expression
+	 *            The expression to test
+	 * @return True, if the expression simply copies an attribute, false otherwise
+	 */
 	private boolean isCopyExpression(SDFExpression expression) {
-		return expression.getAllAttributes().size() == 1
-				&& (expression.getAllAttributes().get(0).getAttributeName().equals(expression.getExpressionString())
-						|| expression.getAllAttributes().get(0).getURI().equals(expression.getExpressionString()));
+
+		SDFAttribute firstAttribute = expression.getAllAttributes().size() == 1 ? expression.getAllAttributes().get(0)
+				: null;
+
+		// If its more than one attribute, it cannot be a simple copy
+		if (firstAttribute == null) {
+			return false;
+		}
+
+		/*
+		 * Compare names of the attribute and the expression. If the names are equal
+		 * (with or without the source in front of the name), it is a simple copy.
+		 */
+		return firstAttribute.getAttributeName().equals(expression.getExpressionString())
+				|| firstAttribute.getURI().equals(expression.getExpressionString());
 	}
 
 }
