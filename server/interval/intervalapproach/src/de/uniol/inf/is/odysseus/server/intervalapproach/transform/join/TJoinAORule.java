@@ -61,32 +61,11 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		joinPO.setCardinalities(joinAO.getCard());
 		joinPO.setSweepAreaName(joinAO.getSweepAreaName());
 
-		// This is "bullsh*" The is no need for a window. The elements could
-		// already have start and end timestamps!
-
-		// if in both input paths there is no window, we
-		// use a persistent sweep area
-		// check the paths
-		// boolean windowFound=false;
-		// for(int port = 0; port<2; port++){
-		// if(!JoinTransformationHelper.checkLogicalPath(joinAO.getSubscribedToSource(port).getTarget())){
-		// windowFound = true;
-		// break;
-		// }
-		// }
-		//
-		// if(!windowFound){
-		// joinPO.setTransferFunction(new PersistentTransferArea());
-		// }
-		// // otherwise we use a LeftJoinTISweepArea
-		// else{
-
 		if (joinAO.isAssureOrder() == null || joinAO.isAssureOrder()) {
 			joinPO.setTransferFunction(new TITransferArea());
 		} else {
 			joinPO.setTransferFunction(new DirectTransferArea());
 		}
-		// }
 		
 		if (joinAO.getInputSchema(0).isInOrder() && joinAO.getInputSchema(1).isInOrder()) {
 			joinPO.setOutOfOrder(false);
@@ -100,7 +79,6 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		if (isCross && !joinAO.isNameSet()) {
 			joinPO.setName("Crossproduct");
 		}
-
 	}
 
 	protected void setJoinPredicate(JoinTIPO joinPO, JoinAO joinAO) {
