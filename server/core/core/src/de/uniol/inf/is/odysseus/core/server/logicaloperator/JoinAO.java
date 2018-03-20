@@ -147,7 +147,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		groupingAttributesPort0 = attributes;
 	}
 
-	@GetParameter(name = "GROUP_BY")
+	@GetParameter(name = "group_by_port_0")
 	public List<SDFAttribute> getGroupingAttributesPort0() {
 		if (groupingAttributesPort0 == null) {
 			return Collections.emptyList();
@@ -160,7 +160,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		groupingAttributesPort1 = attributes;
 	}
 
-	@GetParameter(name = "GROUP_BY")
+	@GetParameter(name = "group_by_port_1")
 	public List<SDFAttribute> getGroupingAttributesPort1() {
 		if (groupingAttributesPort1 == null) {
 			return Collections.emptyList();
