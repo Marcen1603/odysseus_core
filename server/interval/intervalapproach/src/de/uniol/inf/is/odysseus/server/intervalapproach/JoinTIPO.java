@@ -50,6 +50,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.JoinTIPOState;
+import de.uniol.inf.is.odysseus.sweeparea.ISweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
@@ -118,7 +119,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.dataMerge = dataMerge;
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
-		this.areas = areas;
 		this.elementSize = new int[2];
 		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
@@ -131,13 +131,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
 		super(join);
-		this.areas = join.areas.clone();
-		int i = 0;
-		for (ITimeIntervalSweepArea<T> ja : join.areas) {
-			this.areas[i] = ja.clone();
-			i++;
-		}
-
 		this.joinPredicate = join.joinPredicate.clone();
 		this.dataMerge = join.dataMerge.clone();
 		dataMerge.init();
@@ -193,10 +186,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	public void setJoinPredicate(IPredicate<? super T> joinPredicate) {
 		this.joinPredicate = joinPredicate;
-		if (this.areas != null && this.joinPredicate != null) {
-			areas[0].setQueryPredicate(this.joinPredicate);
-			areas[1].setQueryPredicate(this.joinPredicate.clone());
-		}
 	}
 
 	public void setCardinalities(Cardinalities card) {
@@ -658,40 +647,45 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	public IOperatorState getState() {
 		JoinTIPOState<K, T> state = new JoinTIPOState<K, T>();
-		state.setSweepAreas(areas);
+		state.setGroups(this.groups);
 		state.setTransferArea(transferFunction);
 		return state;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void setStateInternal(Serializable s) {
 		try {
 			JoinTIPOState<K, T> state = (JoinTIPOState<K, T>) s;
 
 			// set sweep area from state
-			synchronized (this.areas) {
-				for (int i = 0; i < state.getSweepAreas().length; i++) {
-					// save the remove predicate
-					IPredicate<? super IStreamObject<? extends ITimeInterval>> tempRemovePredicate = null;
-					if (this.areas[i] instanceof ITimeIntervalSweepArea) {
-						tempRemovePredicate = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
-								.getRemovePredicate();
-					} else {
-						throw new IllegalArgumentException(
-								"sweepArea type " + this.areas[i].getName() + " is not supported");
-					}
-
-					// set the sweep area from the state
-					this.areas[i] = state.getSweepAreas()[i];
-
-					// set and initialize query and remove predicate
-					if (this.joinPredicate != null && tempRemovePredicate != null) {
-						this.areas[i].setQueryPredicate(this.joinPredicate);
-						this.areas[i].setRemovePredicate(tempRemovePredicate);
-						this.areas[i].init();
-					} else {
-						throw new IllegalArgumentException("query predicate or remove predicate must not be null");
+			synchronized (this.groups) {
+				for (int port = 0; port < state.getGroups().size(); port++) {
+					for (Object groupKey : state.getGroups().get(port).keySet()) {
+						ISweepArea sweepArea = state.getGroups().get(port).get(groupKey);
+						
+						// save the remove predicate
+						IPredicate<? super IStreamObject<? extends ITimeInterval>> tempRemovePredicate = null;
+						if (sweepArea instanceof ITimeIntervalSweepArea) {
+							ITimeIntervalSweepArea timeSweepArea = (ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) sweepArea;
+							tempRemovePredicate = timeSweepArea.getRemovePredicate();
+							
+							// set the sweep area from the state
+							this.groups.get(port).put(groupKey, timeSweepArea);
+							
+							// set and initialize query and remove predicate
+							if (this.joinPredicate != null && tempRemovePredicate != null) {
+								timeSweepArea.setQueryPredicate(this.joinPredicate);
+								timeSweepArea.setRemovePredicate(tempRemovePredicate);
+								timeSweepArea.init();
+							} else {
+								throw new IllegalArgumentException("query predicate or remove predicate must not be null");
+							}
+							
+						} else {
+							throw new IllegalArgumentException(
+									"sweepArea type " + sweepArea.getName() + " is not supported");
+						}
 					}
 				}
 			}

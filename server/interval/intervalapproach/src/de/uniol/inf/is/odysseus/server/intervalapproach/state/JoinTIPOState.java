@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,25 +27,23 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 
 	private static final long serialVersionUID = 3316591729332909753L;
 
-	private ITimeIntervalSweepArea<T>[] sweepAreas;
+	private List<Map<Object, ITimeIntervalSweepArea<T>>> groups;;
 	private ITransferArea<T, T> transferArea;
 	
-	
-
 	/***
 	 * Logger
 	 */
 	private static final Logger LOG = LoggerFactory
 			.getLogger(JoinTIPOState.class);
 
-	public ITimeIntervalSweepArea<T>[] getSweepAreas() {
-		return sweepAreas;
+	public List<Map<Object, ITimeIntervalSweepArea<T>>> getGroups() {
+		return groups;
 	}
 
-	public void setSweepAreas(ITimeIntervalSweepArea<T>[] sweepAreas) {
-		this.sweepAreas = sweepAreas;
+	public void setGroups(List<Map<Object, ITimeIntervalSweepArea<T>>> groups) {
+		this.groups = groups;
 	}
-
+	
 	public ITransferArea<T, T> getTransferArea() {
 		return transferArea;
 	}
@@ -103,8 +102,10 @@ public class JoinTIPOState<K extends ITimeInterval, T extends IStreamObject<K>> 
 		
 		long totalSize = 0;
 		
-		for(ITimeIntervalSweepArea<T> area : sweepAreas) {
-			totalSize += estimateSweepAreaSizeInBytes(area, SIZE_ESTIMATION_SAMPLE_SIZE);
+		for (Map<Object, ITimeIntervalSweepArea<T>> port : groups ) {
+			for (ITimeIntervalSweepArea<T> sweepArea : port.values()) {
+				totalSize += estimateSweepAreaSizeInBytes(sweepArea, SIZE_ESTIMATION_SAMPLE_SIZE);
+			}
 		}
 		
 		totalSize += getSizeInBytesOfSerializable(transferArea);
