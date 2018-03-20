@@ -78,7 +78,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		return _logger;
 	}
 
-	// protected ITimeIntervalSweepArea<T>[] areas;
 	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T, K> dataMerge;
