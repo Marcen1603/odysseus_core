@@ -307,47 +307,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
-	/**
-	 * This method is used to implement the element-window behavior of the join
-	 * operator for an interval element window. It reduces the qualified elements to
-	 * the given n newest ones.
-	 * 
-	 * @param qualifies
-	 *            The unsorted, full set of qualified elements.
-	 * @param n
-	 *            The amount of the newest elements which are needed
-	 * @return An iterator for the n newest qualified elements. In case that there
-	 *         are less qualified elements than n, the original iterator is
-	 *         returned.
-	 */
-	private Iterator<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
-		List<T> elements = new ArrayList<>();
-		
-		while (qualifies.hasNext()) {
-			elements.add(qualifies.next());
-		}
-		
-		if (elements.size() < n) {
-			return elements.iterator();
-		}
-
-		elements.sort(new Comparator<T>() {
-
-			// Comparator so that the newest elements (highest start) are first
-			@Override
-			public int compare(T o1, T o2) {
-				if (o1.getMetadata().getStart().after(o2.getMetadata().getStart())) {
-					return -1;
-				} else if (o1.getMetadata().getStart().before(o2.getMetadata().getStart())) {
-					return 1;
-				}
-				return 0;
-			}
-		});
-
-		return elements.subList(0, n).iterator();
-	}
-
 	@Override
 	protected void process_open() throws OpenFailedException {
 		for (int i = 0; i < 2; ++i) {
@@ -618,6 +577,47 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		map.put("OutputQueue", transferFunction.size() + "");
 		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;
+	}
+	
+	/**
+	 * This method is used to implement the element-window behavior of the join
+	 * operator for an interval element window. It reduces the qualified elements to
+	 * the given n newest ones.
+	 * 
+	 * @param qualifies
+	 *            The unsorted, full set of qualified elements.
+	 * @param n
+	 *            The amount of the newest elements which are needed
+	 * @return An iterator for the n newest qualified elements. In case that there
+	 *         are less qualified elements than n, the original iterator is
+	 *         returned.
+	 */
+	private Iterator<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
+		List<T> elements = new ArrayList<>();
+		
+		while (qualifies.hasNext()) {
+			elements.add(qualifies.next());
+		}
+		
+		if (elements.size() < n) {
+			return elements.iterator();
+		}
+
+		elements.sort(new Comparator<T>() {
+
+			// Comparator so that the newest elements (highest start) are first
+			@Override
+			public int compare(T o1, T o2) {
+				if (o1.getMetadata().getStart().after(o2.getMetadata().getStart())) {
+					return -1;
+				} else if (o1.getMetadata().getStart().before(o2.getMetadata().getStart())) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+
+		return elements.subList(0, n).iterator();
 	}
 
 	@Override
