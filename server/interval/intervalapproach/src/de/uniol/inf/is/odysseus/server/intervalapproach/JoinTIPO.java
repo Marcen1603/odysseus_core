@@ -86,10 +86,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	protected Cardinalities card = null;
 	protected String sweepAreaName = null;
 
+	// For the element join (internal element window)
+	private int[] elementSize;
+
 	// ------------------------------------------------------------------------------------
 
 	public JoinTIPO(IMetadataMergeFunction<K> metadataMerge) {
 		this.metadataMerge = metadataMerge;
+		this.elementSize = new int[2];
 	}
 
 	public JoinTIPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
@@ -98,6 +102,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.metadataMerge = metadataMerge;
 		this.transferFunction = transferFunction;
 		this.areas = areas;
+		this.elementSize = new int[2];
 	}
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
@@ -120,6 +125,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.creationFunction = join.creationFunction.clone();
 		this.card = join.card;
 		this.sweepAreaName = join.sweepAreaName;
+
+		this.elementSize = join.elementSize.clone();
+		this.elementSize[0] = join.elementSize[0];
+		this.elementSize[1] = join.elementSize[1];
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -186,6 +195,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.inOrder = !outOfOrder;
 	}
 
+	public void setElementSizes(int elementSizePort0, int elementSizePort1) {
+		this.elementSize[0] = elementSizePort0;
+		this.elementSize[1] = elementSizePort1;
+	}
+
 	@Override
 	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
@@ -228,16 +242,16 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		Iterator<T> qualifies;
 		// Avoid removing elements while querying for potential hits
 
-			if (inOrder && object.isTimeProgressMarker()) {
-				areas[otherport].purgeElements(object, order);
-			}
+		if (inOrder && object.isTimeProgressMarker()) {
+			areas[otherport].purgeElements(object, order);
+		}
 
-			// status could change, if the other port was done and
-			// its sweeparea is now empty after purging
-			if (isDone()) {
-				propagateDone();
-				return;
-			}
+		// status could change, if the other port was done and
+		// its sweeparea is now empty after purging
+		if (isDone()) {
+			propagateDone();
+			return;
+		}
 
 		/*
 		 * depending on card, delete hits from areas
@@ -252,41 +266,38 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		 * ONE side element is later than some MANY side elements, find all
 		 * corresponding elements and remove them
 		 */
-			boolean extract = false;
-			if (card != null) {
-				switch (card) {
-				case ONE_ONE:
-					extract = true;
-					break;
-				case MANY_ONE:
-					extract = port == 1;
-					break;
-				case ONE_MANY:
-					extract = port == 0;
-					break;
-				default:
-					break;
-				}
+		boolean extract = false;
+		if (card != null) {
+			switch (card) {
+			case ONE_ONE:
+				extract = true;
+				break;
+			case MANY_ONE:
+				extract = port == 1;
+				break;
+			case ONE_MANY:
+				extract = port == 0;
+				break;
+			default:
+				break;
 			}
+		}
 
-			qualifies = areas[otherport].queryCopy(object, order, extract);
-			boolean hit = qualifies.hasNext();
-			
-			boolean isElementJoin = true;
-			int windowSize = 1;
-			if (isElementJoin) {
-				List<T> reducedElements = reduceToNewestNElements(qualifies, windowSize);
-				qualifies = reducedElements.iterator();
-			}
-			
-			while (qualifies.hasNext()) {
-				T next = qualifies.next();
-				T newElement = dataMerge.merge(object, next, metadataMerge, order);
-				transferFunction.transfer(newElement);
+		qualifies = areas[otherport].queryCopy(object, order, extract);
+		boolean hit = qualifies.hasNext();
 
-			}
-			insertElement(object,port,hit);
-			
+		// Internal element window
+		if (this.elementSize[otherport] > 0) {
+			qualifies = reduceToNewestNElements(qualifies, this.elementSize[otherport]);
+		}
+
+		while (qualifies.hasNext()) {
+			T next = qualifies.next();
+			T newElement = dataMerge.merge(object, next, metadataMerge, order);
+			transferFunction.transfer(newElement);
+		}
+		insertElement(object, port, hit);
+
 		PointInTime a = areas[port].getMinStartTs();
 		PointInTime b = areas[otherport].getMinStartTs();
 		PointInTime heartbeat = PointInTime.max(a, b);
@@ -295,32 +306,46 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			transferFunction.newHeartbeat(heartbeat, otherport);
 		}
 	}
-	
-	private List<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
+
+	/**
+	 * This method is used to implement the element-window behavior of the join
+	 * operator for an interval element window. It reduces the qualified elements to
+	 * the given n newest ones.
+	 * 
+	 * @param qualifies
+	 *            The unsorted, full set of qualified elements.
+	 * @param n
+	 *            The amount of the newest elements which are needed
+	 * @return An iterator for the n newest qualified elements. In case that there
+	 *         are less qualified elements than n, the original iterator is
+	 *         returned.
+	 */
+	private Iterator<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
 		List<T> elements = new ArrayList<>();
-				
-		while(qualifies.hasNext()) {
+		
+		while (qualifies.hasNext()) {
 			elements.add(qualifies.next());
 		}
 		
+		if (elements.size() < n) {
+			return elements.iterator();
+		}
+
 		elements.sort(new Comparator<T>() {
 
+			// Comparator so that the newest elements (highest start) are first
 			@Override
 			public int compare(T o1, T o2) {
 				if (o1.getMetadata().getStart().after(o2.getMetadata().getStart())) {
 					return -1;
-				} else if (o1.getMetadata().getStart().before(o2.getMetadata().getStart()) ) {
+				} else if (o1.getMetadata().getStart().before(o2.getMetadata().getStart())) {
 					return 1;
 				}
 				return 0;
 			}
 		});
-		
-		if (elements.size() < n) {
-			return elements;
-		}
-		
-		return elements.subList(0, n);
+
+		return elements.subList(0, n).iterator();
 	}
 
 	@Override
@@ -365,7 +390,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			return true;
 		}
 	}
-	
+
 	// Depending on card insert elements into sweep area
 	public void insertElement(T object, int port, boolean hit) {
 
@@ -597,6 +622,6 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
-		// TODO 
+		// TODO
 	}
 }

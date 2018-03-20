@@ -74,6 +74,8 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		}
 
 		joinPO.setCreationFunction(new DefaultTIDummyDataCreation());
+		
+		joinPO.setElementSizes(joinAO.getElementSizePort1(), joinAO.getElementSizePort2());
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
 		if (isCross && !joinAO.isNameSet()) {
