@@ -78,7 +78,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		return _logger;
 	}
 
-//	protected ITimeIntervalSweepArea<T>[] areas;
+	// protected ITimeIntervalSweepArea<T>[] areas;
 	protected IPredicate<? super T> joinPredicate;
 
 	protected IDataMergeFunction<T, K> dataMerge;
@@ -355,7 +355,8 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 		}
 
-		insertElement(object, port, hit);
+		Object groupKey = getGroupKey(object, this.groupingIndices[port]);
+		insertElement(object, port, hit, groupKey);
 
 		PointInTime a = getMinStartTs(port);
 		PointInTime b = getMinStartTs(otherport);
@@ -510,10 +511,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
-	// Depending on card insert elements into sweep area
+	/**
+	 * Insert with default group (no groups are used)
+	 * 
+	 * @param object
+	 * @param port
+	 * @param hit
+	 */
 	public void insertElement(T object, int port, boolean hit) {
+		this.insertElement(object, port, hit, this.defaultGroupingKey);
+	}
 
-		Object groupKey = getGroupKey(object, this.groupingIndices[port]);
+	// Depending on card insert elements into sweep area
+	public void insertElement(T object, int port, boolean hit, Object groupKey) {
+
 		ITimeIntervalSweepArea<T> sweepArea = this.getSweepArea(port, groupKey);
 
 		if (card == null || card == Cardinalities.MANY_MANY) {
@@ -556,20 +567,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		 * executable. As these are legacy implementations, we want to stay compatible
 		 * to this behavior.
 		 */
-		
+
 		boolean sweepAreasSet = false;
-		
+
 		for (Map<Object, ITimeIntervalSweepArea<T>> group : this.groups) {
 			if (group.get(this.defaultGroupingKey) != null) {
 				sweepAreasSet = true;
 				break;
 			}
 		}
-		
+
 		if (!sweepAreasSet) {
 			return null;
 		}
-		
+
 		return this.groups;
 	}
 
