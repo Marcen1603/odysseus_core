@@ -17,6 +17,7 @@ package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.is.odysseus.core.Order;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -49,6 +51,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.intervalapproach.sweeparea.AbstractTISweepArea;
 import de.uniol.inf.is.odysseus.server.intervalapproach.state.JoinTIPOState;
 import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
+import de.uniol.inf.is.odysseus.sweeparea.SweepAreaRegistry;
 
 /**
  * Der JoinOperator kann zwar von den Generics her gesehen unabhaengig von
@@ -84,16 +87,30 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	protected boolean inOrder = true;
 	protected Cardinalities card = null;
-	protected String sweepAreaName = null;
+
+	protected String sweepAreaName[];
 
 	// For the element join (internal element window)
-	private int[] elementSize;
+	protected int[] elementSize;
+	protected int[][] groupingIndices;
+	protected List<Map<Object, ITimeIntervalSweepArea<T>>> groups;
+	/**
+	 * This object will be used as fallback grouping key.
+	 */
+	protected Serializable defaultGroupingKey = "";
 
 	// ------------------------------------------------------------------------------------
 
 	public JoinTIPO(IMetadataMergeFunction<K> metadataMerge) {
 		this.metadataMerge = metadataMerge;
 		this.elementSize = new int[2];
+		this.sweepAreaName = new String[2];
+		this.groupingIndices = new int[2][];
+		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
+		this.groups.add(groupsPort0);
+		this.groups.add(groupsPort1);
 	}
 
 	public JoinTIPO(IDataMergeFunction<T, K> dataMerge, IMetadataMergeFunction<K> metadataMerge,
@@ -103,6 +120,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.transferFunction = transferFunction;
 		this.areas = areas;
 		this.elementSize = new int[2];
+		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
+		this.groups.add(groupsPort0);
+		this.groups.add(groupsPort1);
+		this.sweepAreaName = new String[2];
+		this.groupingIndices = new int[2][];
 	}
 
 	public JoinTIPO(JoinTIPO<K, T> join) {
@@ -124,11 +148,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.transferFunction.init(this, getSubscribedToSource().size());
 		this.creationFunction = join.creationFunction.clone();
 		this.card = join.card;
-		this.sweepAreaName = join.sweepAreaName;
+		this.sweepAreaName = join.sweepAreaName.clone();
+		this.sweepAreaName[0] = join.sweepAreaName[0];
+		this.sweepAreaName[1] = join.sweepAreaName[1];
 
 		this.elementSize = join.elementSize.clone();
 		this.elementSize[0] = join.elementSize[0];
 		this.elementSize[1] = join.elementSize[1];
+
+		this.groupingIndices = join.groupingIndices;
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -179,12 +207,23 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		return this.card;
 	}
 
-	public void setSweepAreaName(String name) {
-		this.sweepAreaName = name;
+	public void setSweepAreaName(String port0, String port1) {
+		this.sweepAreaName[0] = port0;
+		this.sweepAreaName[1] = port1;
+	}
+
+	public void setSweepAreaName(String both) {
+		this.sweepAreaName[0] = both;
+		this.sweepAreaName[1] = both;
+	}
+
+	public String getSweepAreaName(int port) {
+		return sweepAreaName[port];
 	}
 
 	public String getSweepAreaName() {
-		return sweepAreaName;
+		// Old implementation assuming that both are equal
+		return sweepAreaName[0];
 	}
 
 	public void setTransferFunction(ITransferArea<T, T> transferFunction) {
@@ -198,6 +237,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setElementSizes(int elementSizePort0, int elementSizePort1) {
 		this.elementSize[0] = elementSizePort0;
 		this.elementSize[1] = elementSizePort1;
+	}
+
+	public void setGroupingIndices(int[] port0, int[] port1) {
+		this.groupingIndices[0] = port0;
+		this.groupingIndices[1] = port1;
 	}
 
 	@Override
@@ -240,10 +284,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		int otherport = port ^ 1;
 		Order order = Order.fromOrdinal(port);
 		Iterator<T> qualifies;
-		// Avoid removing elements while querying for potential hits
 
 		if (inOrder && object.isTimeProgressMarker()) {
-			areas[otherport].purgeElements(object, order);
+			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
+				sweepArea.purgeElements(object, order);
+			}
 		}
 
 		// status could change, if the other port was done and
@@ -283,23 +328,34 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			}
 		}
 
-		qualifies = areas[otherport].queryCopy(object, order, extract);
-		boolean hit = qualifies.hasNext();
+		/*
+		 * For each group on the other side search for the qualified elements and use
+		 * the n newest (if n is set) or all.
+		 */
+		boolean hit = false;
+		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
+			qualifies = sweepArea.queryCopy(object, order, extract);
+			if (!hit) {
+				// If one group had a hit, this element had a hit
+				hit = qualifies.hasNext();
+			}
 
-		// Internal element window
-		if (this.elementSize[otherport] > 0) {
-			qualifies = reduceToNewestNElements(qualifies, this.elementSize[otherport]);
+			// Internal element window
+			if (this.elementSize[otherport] > 0) {
+				qualifies = reduceToNewestNElements(qualifies, this.elementSize[otherport]);
+			}
+
+			while (qualifies.hasNext()) {
+				T next = qualifies.next();
+				T newElement = dataMerge.merge(object, next, metadataMerge, order);
+				transferFunction.transfer(newElement);
+			}
 		}
 
-		while (qualifies.hasNext()) {
-			T next = qualifies.next();
-			T newElement = dataMerge.merge(object, next, metadataMerge, order);
-			transferFunction.transfer(newElement);
-		}
 		insertElement(object, port, hit);
 
-		PointInTime a = areas[port].getMinStartTs();
-		PointInTime b = areas[otherport].getMinStartTs();
+		PointInTime a = getMinStartTs(port);
+		PointInTime b = getMinStartTs(otherport);
 		PointInTime heartbeat = PointInTime.max(a, b);
 		if (heartbeat != null) {
 			transferFunction.newHeartbeat(heartbeat, port);
@@ -307,12 +363,85 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
+	private PointInTime getMinStartTs(int port) {
+		PointInTime minStartTs = null;
+		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(port).values()) {
+			if (minStartTs == null || sweepArea.getMinStartTs().before(minStartTs)) {
+				minStartTs = sweepArea.getMinStartTs();
+			}
+		}
+		return minStartTs;
+	}
+
+	/**
+	 * Returns an existing or creates and stores a new sweep area for a specific
+	 * group.
+	 *
+	 * @param groupKey
+	 *            The group key.
+	 * @return An existing or a new sweep area for a specific group.
+	 */
+	@SuppressWarnings("unchecked")
+	private ITimeIntervalSweepArea<T> getSweepArea(int port, Object groupKey) {
+		try {
+			ITimeIntervalSweepArea<T> sa = groups.get(port).get(groupKey);
+			if (sa == null) {
+				sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port]);
+				sa.setQueryPredicate(this.joinPredicate.clone());
+				groups.get(port).put(groupKey, sa);
+			}
+			return sa;
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	protected Object getGroupKey(final T object, final int[] groupingAttributeIndices) {
+		return getGroupKey(object, groupingAttributeIndices, this.defaultGroupingKey);
+	}
+
+	/**
+	 * Returns the grouping key for an object.
+	 *
+	 * If {@code groupingAttributeIndices} is {@code null} or empty, the default
+	 * groupkey will be returned.
+	 *
+	 * @param object
+	 *            The object.
+	 * @param groupingAttributeIndices
+	 *            The indices of the attributes that form the grouping key.
+	 * @return The grouping key.
+	 */
+	public Object getGroupKey(final T object, final int[] groupingAttributeIndices, final Object defaultGroupingKey) {
+
+		if (groupingAttributeIndices == null || groupingAttributeIndices.length == 0) {
+			return defaultGroupingKey;
+		}
+
+		if (object.isSchemaLess()) {
+			return this.defaultGroupingKey;
+		}
+
+		if (object instanceof Tuple) {
+			Tuple<K> tuple = (Tuple<K>) object;
+
+			if (groupingAttributeIndices.length == 1) {
+				return tuple.getAttribute(groupingAttributeIndices[0]);
+			}
+			return Arrays.asList(tuple.restrict(groupingAttributeIndices, true).getAttributes());
+		}
+
+		return this.defaultGroupingKey;
+	}
+
 	@Override
 	protected void process_open() throws OpenFailedException {
-		for (int i = 0; i < 2; ++i) {
-			this.areas[i].clear();
-			this.areas[i].init();
-		}
+		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
+		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
+		this.groups.add(groupsPort0);
+		this.groups.add(groupsPort1);
 		this.dataMerge.init();
 		this.metadataMerge.init();
 		this.transferFunction.init(this, getSubscribedToSource().size());
@@ -320,8 +449,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	protected synchronized void process_close() {
-		areas[0].clear();
-		areas[1].clear();
+		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
 		super.process_close();
 	}
 
@@ -338,11 +466,25 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	public boolean isDone() {
 		try {
-
 			if (getSubscribedToSource(0).isDone()) {
-				return getSubscribedToSource(1).isDone() || areas[0].isEmpty();
+				boolean sweepAreasEmpty = true;
+				for (ITimeIntervalSweepArea<T> sweepArea : groups.get(0).values()) {
+					if (!sweepArea.isEmpty()) {
+						sweepAreasEmpty = false;
+						break;
+					}
+				}
+				return getSubscribedToSource(1).isDone() || sweepAreasEmpty;
 			}
-			return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && areas[1].isEmpty();
+
+			boolean sweepAreasEmpty = true;
+			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(1).values()) {
+				if (!sweepArea.isEmpty()) {
+					sweepAreasEmpty = false;
+					break;
+				}
+			}
+			return getSubscribedToSource(1).isDone() && getSubscribedToSource(0).isDone() && sweepAreasEmpty;
 		} catch (ArrayIndexOutOfBoundsException e) {
 			// Can happen if sources are unsubscribed while asking for done
 			// Ignore
@@ -353,14 +495,17 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	// Depending on card insert elements into sweep area
 	public void insertElement(T object, int port, boolean hit) {
 
+		Object groupKey = getGroupKey(object, this.groupingIndices[port]);
+		ITimeIntervalSweepArea<T> sweepArea = this.getSweepArea(port, groupKey);
+
 		if (card == null || card == Cardinalities.MANY_MANY) {
-			areas[port].insert(object);
+			sweepArea.insert(object);
 		} else {
 			switch (card) {
 			case ONE_ONE:
 				// If one to one case, a hit cannot be produce another hit
 				if (!hit) {
-					areas[port].insert(object);
+					sweepArea.insert(object);
 				}
 				break;
 			case ONE_MANY:
@@ -368,7 +513,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				// if from right and no hit, insert (corresponding left
 				// element not found now)
 				if (port == 0 || (port == 1 && !hit)) {
-					areas[port].insert(object);
+					sweepArea.insert(object);
 				}
 				break;
 			case MANY_ONE:
@@ -376,11 +521,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				// if from left and no hit, insert (corresponding right
 				// element not found now)
 				if (port == 1 || (port == 0 && !hit)) {
-					areas[port].insert(object);
+					sweepArea.insert(object);
 				}
 				break;
 			default:
-				areas[port].insert(object);
+				sweepArea.insert(object);
 				break;
 			}
 		}
@@ -406,7 +551,9 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public synchronized void processPunctuation(IPunctuation inPunctuation, int port) {
 		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
-			this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(port ^ 1).values()) {
+				sweepArea.purgeElementsBefore(punctuation.getTime());
+			}
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
@@ -464,7 +611,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	/**
-	 * Returns the latest endtimestamp in both sweepareas.
+	 * Returns the latest endtimestamp in all sweepareas.
 	 *
 	 * @return
 	 */
@@ -472,11 +619,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public PointInTime getLatestEndTimestamp() {
 		PointInTime max = null;
 		for (int i = 0; i < 2; i++) {
-			synchronized (this.areas[i]) {
-				PointInTime maxi = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) this.areas[i])
-						.getMaxEndTs();
-				if (max == null || (maxi != null && maxi.after(max))) {
-					max = maxi;
+			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(i).values()) {
+				synchronized (sweepArea) {
+					PointInTime maxi = ((ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) sweepArea)
+							.getMaxEndTs();
+					if (max == null || (maxi != null && maxi.after(max))) {
+						max = maxi;
+					}
 				}
 			}
 		}
@@ -490,12 +639,20 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	public long getElementsStored1() {
-		return areas[0].size();
+		long count = 0;
+		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(0).values()) {
+			count += sweepArea.size();
+		}
+		return count;
 	}
 
 	@Override
 	public long getElementsStored2() {
-		return areas[1].size();
+		long count = 0;
+		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(1).values()) {
+			count += sweepArea.size();
+		}
+		return count;
 	}
 
 	@Override
@@ -550,25 +707,30 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	@Override
 	public Map<String, String> getKeyValues() {
 		Map<String, String> map = new HashMap<>();
-		map.put("Left Area Implementation", areas[0].getName());
-		map.put("Right Area Implementation", areas[1].getName());
-		map.put("Left Area Size", areas[0].size() + "");
-		map.put("Right Area Size", areas[1].size() + "");
-		if (areas[0] instanceof AbstractTISweepArea && areas[1] instanceof AbstractTISweepArea) {
-			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) areas[0]).hasEndTsOrder() + "");
-			map.put("Right Area Has End TS Order", ((AbstractTISweepArea<?>) areas[1]).hasEndTsOrder() + "");
+		map.put("Left Area Implementation", this.sweepAreaName[0]);
+		map.put("Right Area Implementation", this.sweepAreaName[1]);
+		map.put("Left Area Size", getElementsStored1() + "");
+		map.put("Right Area Size", getElementsStored2() + "");
+
+		ITimeIntervalSweepArea<T> sampleSweepAreaPort0 = this.getSweepArea(0, this.defaultGroupingKey);
+		ITimeIntervalSweepArea<T> sampleSweepAreaPort1 = this.getSweepArea(1, this.defaultGroupingKey);
+		if (sampleSweepAreaPort0 instanceof AbstractTISweepArea
+				&& sampleSweepAreaPort1 instanceof AbstractTISweepArea) {
+			map.put("Left Area Has End TS Order", ((AbstractTISweepArea<?>) sampleSweepAreaPort0).hasEndTsOrder() + "");
+			map.put("Right Area Has End TS Order",
+					((AbstractTISweepArea<?>) sampleSweepAreaPort1).hasEndTsOrder() + "");
 		}
 
-		if (areas[0] instanceof IPhysicalOperatorKeyValueProvider) {
-			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[0]).getKeyValues()
-					.entrySet().iterator(); iter.hasNext();) {
+		if (sampleSweepAreaPort0 instanceof IPhysicalOperatorKeyValueProvider) {
+			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) sampleSweepAreaPort0)
+					.getKeyValues().entrySet().iterator(); iter.hasNext();) {
 				Entry<String, String> e = iter.next();
 				map.put("Left Area - " + e.getKey(), e.getValue());
 			}
 		}
-		if (areas[1] instanceof IPhysicalOperatorKeyValueProvider) {
-			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) areas[1]).getKeyValues()
-					.entrySet().iterator(); iter.hasNext();) {
+		if (sampleSweepAreaPort1 instanceof IPhysicalOperatorKeyValueProvider) {
+			for (Iterator<Entry<String, String>> iter = ((IPhysicalOperatorKeyValueProvider) sampleSweepAreaPort1)
+					.getKeyValues().entrySet().iterator(); iter.hasNext();) {
 				Entry<String, String> e = iter.next();
 				map.put("Right Area - " + e.getKey(), e.getValue());
 			}
@@ -578,7 +740,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		map.put("Watermark", transferFunction.getWatermark() + "");
 		return map;
 	}
-	
+
 	/**
 	 * This method is used to implement the element-window behavior of the join
 	 * operator for an interval element window. It reduces the qualified elements to
@@ -594,11 +756,11 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 */
 	private Iterator<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
 		List<T> elements = new ArrayList<>();
-		
+
 		while (qualifies.hasNext()) {
 			elements.add(qualifies.next());
 		}
-		
+
 		if (elements.size() < n) {
 			return elements.iterator();
 		}
