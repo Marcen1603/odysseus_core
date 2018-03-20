@@ -95,6 +95,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	protected int[] elementSize;
 	protected int[][] groupingIndices;
 	protected List<Map<Object, ITimeIntervalSweepArea<T>>> groups;
+
+	/*
+	 * For implementations that set the SweepAreas from outside with the setAreas
+	 * method and cannot set the names.
+	 */
+	protected boolean useInstanceInseadOfName = false;
 	/**
 	 * This object will be used as fallback grouping key.
 	 */
@@ -165,13 +171,19 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	}
 
 	public void setAreas(ITimeIntervalSweepArea<T>[] areas) {
-		this.areas = areas;
-		if (this.joinPredicate != null) {
-			areas[0].setQueryPredicate(this.joinPredicate);
-			areas[0].setAreaName(this.getName());
-			areas[1].setQueryPredicate(this.joinPredicate.clone());
-			areas[1].setAreaName(this.getName());
+		for (int port = 0; port < this.groups.size(); port++) {
+			if (port > 1) {
+				break;
+			}
+			this.groups.get(port).put(this.defaultGroupingKey, areas[port]);
+			if (this.joinPredicate != null) {
+				this.groups.get(port).get(this.defaultGroupingKey).setQueryPredicate(this.joinPredicate.clone());
+				this.groups.get(port).get(this.defaultGroupingKey).setAreaName(this.getName());
+			}
 		}
+
+		// If this method is used we need to copy instead of use the SweepAreaRegistry
+		this.useInstanceInseadOfName = true;
 	}
 
 	public IPredicate<? super T> getJoinPredicate() {
@@ -199,11 +211,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public void setSweepAreaName(String port0, String port1) {
 		this.sweepAreaName[0] = port0;
 		this.sweepAreaName[1] = port1;
+		this.useInstanceInseadOfName = false;
 	}
 
 	public void setSweepAreaName(String both) {
 		this.sweepAreaName[0] = both;
 		this.sweepAreaName[1] = both;
+		this.useInstanceInseadOfName = false;
 	}
 
 	public String getSweepAreaName(int port) {
@@ -375,8 +389,23 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		try {
 			ITimeIntervalSweepArea<T> sa = groups.get(port).get(groupKey);
 			if (sa == null) {
-				sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port]);
+				if (this.useInstanceInseadOfName) {
+					/*
+					 * We need to copy it by ourself as we did not get the name but the instance we
+					 * shall use
+					 */
+					ISweepArea<T> newInstance = groups.get(port).get(this.defaultGroupingKey).newInstance(null);
+					if (newInstance instanceof ITimeIntervalSweepArea) {
+						sa = (ITimeIntervalSweepArea<T>) newInstance;
+					} else {
+						throw new InstantiationException(
+								"Cannot use a SweepArea from a different type than ITimeIntervalSweepArea.");
+					}
+				} else {
+					sa = (ITimeIntervalSweepArea<T>) SweepAreaRegistry.getSweepArea(this.sweepAreaName[port]);
+				}
 				sa.setQueryPredicate(this.joinPredicate.clone());
+				sa.setAreaName(this.sweepAreaName[port]);
 				groups.get(port).put(groupKey, sa);
 			}
 			return sa;
@@ -520,8 +549,28 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
-	public ITimeIntervalSweepArea<T>[] getAreas() {
-		return areas;
+	public List<Map<Object, ITimeIntervalSweepArea<T>>> getAreas() {
+		/*
+		 * This method is used to decide if transformation rules are executable. If the
+		 * areas are null (not yet set), they are. If they are set, they are not
+		 * executable. As these are legacy implementations, we want to stay compatible
+		 * to this behavior.
+		 */
+		
+		boolean sweepAreasSet = false;
+		
+		for (Map<Object, ITimeIntervalSweepArea<T>> group : this.groups) {
+			if (group.get(this.defaultGroupingKey) != null) {
+				sweepAreasSet = true;
+				break;
+			}
+		}
+		
+		if (!sweepAreasSet) {
+			return null;
+		}
+		
+		return this.groups;
 	}
 
 	public ITransferArea<T, T> getTransferFunction() {
@@ -663,25 +712,26 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				for (int port = 0; port < state.getGroups().size(); port++) {
 					for (Object groupKey : state.getGroups().get(port).keySet()) {
 						ISweepArea sweepArea = state.getGroups().get(port).get(groupKey);
-						
+
 						// save the remove predicate
 						IPredicate<? super IStreamObject<? extends ITimeInterval>> tempRemovePredicate = null;
 						if (sweepArea instanceof ITimeIntervalSweepArea) {
 							ITimeIntervalSweepArea timeSweepArea = (ITimeIntervalSweepArea<IStreamObject<? extends ITimeInterval>>) sweepArea;
 							tempRemovePredicate = timeSweepArea.getRemovePredicate();
-							
+
 							// set the sweep area from the state
 							this.groups.get(port).put(groupKey, timeSweepArea);
-							
+
 							// set and initialize query and remove predicate
 							if (this.joinPredicate != null && tempRemovePredicate != null) {
 								timeSweepArea.setQueryPredicate(this.joinPredicate);
 								timeSweepArea.setRemovePredicate(tempRemovePredicate);
 								timeSweepArea.init();
 							} else {
-								throw new IllegalArgumentException("query predicate or remove predicate must not be null");
+								throw new IllegalArgumentException(
+										"query predicate or remove predicate must not be null");
 							}
-							
+
 						} else {
 							throw new IllegalArgumentException(
 									"sweepArea type " + sweepArea.getName() + " is not supported");

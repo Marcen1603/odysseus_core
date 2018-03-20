@@ -98,8 +98,8 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 			throw new TransformationException("Cannot find sweep area of type " + areaName);
 		}
 		
-		joinPO.setSweepAreaName(areaName);
 		joinPO.setAreas(areas);
+		joinPO.setSweepAreaName(areaName);
 		/*
 		 * # no update, because otherwise # other rules may overwrite this rule
 		 * # example: rule with priority 5 setting the areas has been #
