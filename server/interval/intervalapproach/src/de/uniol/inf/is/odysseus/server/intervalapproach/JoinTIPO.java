@@ -16,8 +16,11 @@
 package de.uniol.inf.is.odysseus.server.intervalapproach;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -268,6 +271,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 			qualifies = areas[otherport].queryCopy(object, order, extract);
 			boolean hit = qualifies.hasNext();
+			
+			boolean isElementJoin = true;
+			int windowSize = 1;
+			if (isElementJoin) {
+				List<T> reducedElements = reduceToNewestNElements(qualifies, windowSize);
+				qualifies = reducedElements.iterator();
+			}
+			
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
 				T newElement = dataMerge.merge(object, next, metadataMerge, order);
@@ -283,6 +294,33 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			transferFunction.newHeartbeat(heartbeat, port);
 			transferFunction.newHeartbeat(heartbeat, otherport);
 		}
+	}
+	
+	private List<T> reduceToNewestNElements(Iterator<T> qualifies, int n) {
+		List<T> elements = new ArrayList<>();
+				
+		while(qualifies.hasNext()) {
+			elements.add(qualifies.next());
+		}
+		
+		elements.sort(new Comparator<T>() {
+
+			@Override
+			public int compare(T o1, T o2) {
+				if (o1.getMetadata().getStart().after(o2.getMetadata().getStart())) {
+					return -1;
+				} else if (o1.getMetadata().getStart().before(o2.getMetadata().getStart()) ) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+		
+		if (elements.size() < n) {
+			return elements;
+		}
+		
+		return elements.subList(0, n);
 	}
 
 	@Override
