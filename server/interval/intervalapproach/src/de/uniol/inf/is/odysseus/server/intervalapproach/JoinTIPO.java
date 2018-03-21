@@ -149,6 +149,17 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.sweepAreaName = join.sweepAreaName.clone();
 		this.sweepAreaName[0] = join.sweepAreaName[0];
 		this.sweepAreaName[1] = join.sweepAreaName[1];
+		
+		this.useInstanceInseadOfName = join.useInstanceInseadOfName;
+		// Copy empty instances of the SweepAreas
+		for (Map<Object, ITimeIntervalSweepArea<T>> oldGroup : join.groups) {
+			Map<Object, ITimeIntervalSweepArea<T>> newGroup = new HashMap<>();
+			
+			for (Object oldKey : oldGroup.keySet()) {
+				newGroup.put(oldKey, oldGroup.get(oldKey).clone());
+			}
+			this.groups.add(newGroup);
+		}
 
 		this.elementSize = join.elementSize.clone();
 		this.elementSize[0] = join.elementSize[0];
@@ -455,20 +466,46 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	protected void process_open() throws OpenFailedException {
+		
+		if (this.useInstanceInseadOfName) {
+			// We cannot throw away our default SweepAreas
+			ITimeIntervalSweepArea<T> defaultSweepAreaPort0 = this.groups.get(0).get(this.defaultGroupingKey);
+			defaultSweepAreaPort0.clear();
+			
+			ITimeIntervalSweepArea<T> defaultSweepAreaPort1 = this.groups.get(1).get(this.defaultGroupingKey);
+			defaultSweepAreaPort1.clear();
+			
+			this.createNewEmptySweepAreaGroups();
+			this.groups.get(0).put(defaultGroupingKey, defaultSweepAreaPort0);
+			this.groups.get(1).put(defaultGroupingKey, defaultSweepAreaPort1);
+			
+		} else {
+			this.createNewEmptySweepAreaGroups();
+		}
+		 
+		this.dataMerge.init();
+		this.metadataMerge.init();
+		this.transferFunction.init(this, getSubscribedToSource().size());
+	}
+	
+	private void createNewEmptySweepAreaGroups() {
 		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort1 = new HashMap<>();
 		this.groups.add(groupsPort0);
 		this.groups.add(groupsPort1);
-		this.dataMerge.init();
-		this.metadataMerge.init();
-		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
 
 	@Override
 	protected synchronized void process_close() {
-		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
+		this.clearAllSweepAreas();
 		super.process_close();
+	}
+	
+	private void clearAllSweepAreas() {
+		for (Map<Object, ITimeIntervalSweepArea<T>> groups : this.groups) {
+			groups.values().forEach(sweepArea -> sweepArea.clear());
+		}
 	}
 
 	@Override
