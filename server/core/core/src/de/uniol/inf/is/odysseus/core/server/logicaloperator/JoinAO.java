@@ -142,7 +142,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		return this.elementSizePort1;
 	}
 	
-	@Parameter(name = "group_by_port_0", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "group_by_port_0", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group the element window (if used) be these attributes on port 0.")
 	public void setGroupingAttributesPort0(final List<SDFAttribute> attributes) {
 		groupingAttributesPort0 = attributes;
 	}
@@ -155,7 +155,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		return Collections.unmodifiableList(groupingAttributesPort0);
 	}
 	
-	@Parameter(name = "group_by_port_1", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true)
+	@Parameter(name = "group_by_port_1", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group the element window (if used) be these attributes on port 1.")
 	public void setGroupingAttributesPort1(final List<SDFAttribute> attributes) {
 		groupingAttributesPort1 = attributes;
 	}
