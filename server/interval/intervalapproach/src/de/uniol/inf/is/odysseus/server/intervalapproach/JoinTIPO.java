@@ -149,12 +149,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.sweepAreaName = join.sweepAreaName.clone();
 		this.sweepAreaName[0] = join.sweepAreaName[0];
 		this.sweepAreaName[1] = join.sweepAreaName[1];
-		
+
 		this.useInstanceInseadOfName = join.useInstanceInseadOfName;
 		// Copy empty instances of the SweepAreas
 		for (Map<Object, ITimeIntervalSweepArea<T>> oldGroup : join.groups) {
 			Map<Object, ITimeIntervalSweepArea<T>> newGroup = new HashMap<>();
-			
+
 			for (Object oldKey : oldGroup.keySet()) {
 				newGroup.put(oldKey, oldGroup.get(oldKey).clone());
 			}
@@ -180,6 +180,15 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		return metadataMerge;
 	}
 
+	/**
+	 * You can set the areas to use manually from outside. If that is the case, the
+	 * SweepAreaRegistry is NOT used to create new instances of the SweepAreas (in
+	 * the case that groups are used), but these given areas are used to create new
+	 * instances. If you set the name of the SweepArea type after this call, the
+	 * SweepAreaRegistry is again used to create instances using that name.
+	 * 
+	 * @param areas
+	 */
 	public void setAreas(ITimeIntervalSweepArea<T>[] areas) {
 		for (int port = 0; port < this.groups.size(); port++) {
 			if (port > 1) {
@@ -224,6 +233,14 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.useInstanceInseadOfName = false;
 	}
 
+	/**
+	 * Set the name of the SweepArea types. If you do so, the SweepAreaRegistry will
+	 * be used to create new instances of that type if necessary (e.g., for
+	 * grouping)
+	 * 
+	 * @param both
+	 *            The name will be used for both input ports
+	 */
 	public void setSweepAreaName(String both) {
 		this.sweepAreaName[0] = both;
 		this.sweepAreaName[1] = both;
@@ -247,11 +264,24 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.inOrder = !outOfOrder;
 	}
 
+	/**
+	 * For the internal element window (if used). Restrict the number of results to
+	 * the n newest elements per port (per group, if grouping is used).
+	 * 
+	 * @param elementSizePort0
+	 * @param elementSizePort1
+	 */
 	public void setElementSizes(int elementSizePort0, int elementSizePort1) {
 		this.elementSize[0] = elementSizePort0;
 		this.elementSize[1] = elementSizePort1;
 	}
 
+	/**
+	 * Indices of attributes for the grouping (if used)
+	 * 
+	 * @param port0
+	 * @param port1
+	 */
 	public void setGroupingIndices(int[] port0, int[] port1) {
 		this.groupingIndices[0] = port0;
 		this.groupingIndices[1] = port1;
@@ -377,6 +407,12 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		}
 	}
 
+	/**
+	 * The minimum start timestamp of all SweepAreas of the given port
+	 * 
+	 * @param port
+	 * @return
+	 */
 	private PointInTime getMinStartTs(int port) {
 		PointInTime minStartTs = null;
 		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(port).values()) {
@@ -403,7 +439,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 				if (this.useInstanceInseadOfName) {
 					/*
 					 * We need to copy it by ourself as we did not get the name but the instance we
-					 * shall use
+					 * shall use or the type of SweepArea cannot be created using the registry.
 					 */
 					ISweepArea<T> newInstance = groups.get(port).get(this.defaultGroupingKey).newInstance(null);
 					if (newInstance instanceof ITimeIntervalSweepArea) {
@@ -466,28 +502,28 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 	@Override
 	protected void process_open() throws OpenFailedException {
-		
+
 		if (this.useInstanceInseadOfName) {
 			// We cannot throw away our default SweepAreas
 			ITimeIntervalSweepArea<T> defaultSweepAreaPort0 = this.groups.get(0).get(this.defaultGroupingKey);
 			defaultSweepAreaPort0.clear();
-			
+
 			ITimeIntervalSweepArea<T> defaultSweepAreaPort1 = this.groups.get(1).get(this.defaultGroupingKey);
 			defaultSweepAreaPort1.clear();
-			
+
 			this.createNewEmptySweepAreaGroups();
 			this.groups.get(0).put(defaultGroupingKey, defaultSweepAreaPort0);
 			this.groups.get(1).put(defaultGroupingKey, defaultSweepAreaPort1);
-			
+
 		} else {
 			this.createNewEmptySweepAreaGroups();
 		}
-		 
+
 		this.dataMerge.init();
 		this.metadataMerge.init();
 		this.transferFunction.init(this, getSubscribedToSource().size());
 	}
-	
+
 	private void createNewEmptySweepAreaGroups() {
 		this.groups = new ArrayList<Map<Object, ITimeIntervalSweepArea<T>>>(2);
 		Map<Object, ITimeIntervalSweepArea<T>> groupsPort0 = new HashMap<>();
@@ -501,7 +537,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.clearAllSweepAreas();
 		super.process_close();
 	}
-	
+
 	private void clearAllSweepAreas() {
 		for (Map<Object, ITimeIntervalSweepArea<T>> groups : this.groups) {
 			groups.values().forEach(sweepArea -> sweepArea.clear());
