@@ -29,7 +29,7 @@ temperature = ACCESS({
 		['filename', '${BUNDLE-ROOT}\testdaten\crossproduct_time\input1.csv'],
 		['csv.delimiter', ';'],
 		['csv.trim', 'true'],
-		['delay', '100']
+		['delay', '0']
 		], 
 	schema=[
 		['timestamp', 'STARTTIMESTAMP'], 
