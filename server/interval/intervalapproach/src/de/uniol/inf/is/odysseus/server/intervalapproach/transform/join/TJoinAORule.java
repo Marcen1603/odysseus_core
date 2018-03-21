@@ -92,6 +92,7 @@ public class TJoinAORule extends AbstractIntervalTransformationRule<JoinAO> {
 		}
 		
 		joinPO.setGroupingIndices(groupingAttributesIndicesPort0, groupingAttributesIndicesPort1);
+		joinPO.setKeepEndTimestamp(joinAO.keepEndTimestamp());
 		
 
 		defaultExecute(joinAO, joinPO, transformConfig, true, true);
