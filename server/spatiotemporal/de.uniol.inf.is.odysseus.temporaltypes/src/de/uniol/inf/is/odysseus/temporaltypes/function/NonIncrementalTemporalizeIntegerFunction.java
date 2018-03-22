@@ -52,6 +52,15 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
+	
+	public NonIncrementalTemporalizeIntegerFunction(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		this.temporalInteger = new TemporalInteger[inputAttributesLength];
+		// TODO Fill values?
+		if (outputNames.length != inputAttributesLength) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
 
 	public NonIncrementalTemporalizeIntegerFunction(NonIncrementalTemporalizeIntegerFunction<M, T> other) {
 		super(other);
@@ -144,7 +153,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 				attributeResolver);
 
 		if (attributes == null) {
-			return new TemporalizeInteger<>(attributeResolver.getSchema().get(0).size(), outputNames);
+			return new NonIncrementalTemporalizeIntegerFunction<>(attributeResolver.getSchema().get(0).size(), outputNames);
 		}
 
 		return new NonIncrementalTemporalizeIntegerFunction<>(attributes, outputNames);

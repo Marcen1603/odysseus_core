@@ -1,13 +1,17 @@
 package de.uniol.inf.odysseus.spatiotemporal.function;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
+import org.geotools.referencing.GeodeticCalculator;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractNonIncrementalAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
+import de.uniol.inf.is.odysseus.aggregation.functions.factory.AggregationFunctionParseOptionsHelper;
 import de.uniol.inf.is.odysseus.aggregation.functions.factory.IAggregationFunctionFactory;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
@@ -15,6 +19,8 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
@@ -24,41 +30,71 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	private static final long serialVersionUID = -564559788689771841L;
 
-	protected final TemporalPoint[] temporalPoint = new TemporalPoint[1];
+	protected TemporalPoint[] temporalPoint = new TemporalPoint[1];
+	
+	public ToLinearTemporalPoint(final int[] attributes, final String[] outputNames) {
+		super(attributes, outputNames);
+		temporalPoint = new TemporalPoint[attributes.length];
+		if (outputNames.length != attributes.length) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
+	
+	public ToLinearTemporalPoint(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		this.temporalPoint = new TemporalPoint[inputAttributesLength];
+		// TODO Fill values?
+		if (outputNames.length != inputAttributesLength) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
 		T oldestElement = popOldestElement(elements);
-		Geometry basePoint = getOldestPoint(oldestElement);
-		PointInTime basePointInTime = getOldestStartTime(oldestElement);
+		Geometry basePoint = getPointFromElement(oldestElement);
+		Geometry currentPoint = getPointFromElement(trigger);
+		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
+		
+		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
 		long timeInstancesTravelled = pointInTime.minus(basePointInTime).getMainPoint();
+		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
+		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
+		double azimuth = geodeticCalculator.getAzimuth();
 		
-		
-		double speedMetersPerTimeInstance = 0;
-		double azimuth = 0;
-		// TODO Auto-generated method stub
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,
 				basePointInTime, speedMetersPerTimeInstance, azimuth);
-		this.temporalPoint[0] = new TemporalPoint(null);
-		return null;
+		this.temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		return this.temporalPoint;
 	}
+	
+
+	private GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
+		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
+
+		double startLongitude = from.getCentroid().getY();
+		double startLatitude = from.getCentroid().getX();
+		geodeticCalculator.setStartingGeographicPoint(startLongitude, startLatitude);
+
+		double destinationLongitude = to.getCentroid().getY();
+		double destinationLatitude = to.getCentroid().getX();
+		geodeticCalculator.setDestinationGeographicPoint(destinationLongitude, destinationLatitude);
 		
-	private PointInTime getOldestStartTime(T oldestElement) {
-		return oldestElement.getMetadata().getStart();
+		return geodeticCalculator;
 	}
 
-	private Geometry getOldestPoint(T oldestElement) {
-		Geometry oldestPoint = null;
-		
-		Object[] attributesFromOldest = this.getAttributes(oldestElement);
+	private Geometry getPointFromElement(T element) {
+		Geometry point = null;
+
+		Object[] attributes = this.getAttributes(element);
 		// Should only be one attribute given for this function
-		Object pointFromOldest = attributesFromOldest[0];
-		if (pointFromOldest instanceof GeometryWrapper) {
-			oldestPoint = ((GeometryWrapper) pointFromOldest).getGeometry();
+		Object pointObject = attributes[0];
+		if (pointObject instanceof GeometryWrapper) {
+			point = ((GeometryWrapper) pointObject).getGeometry();
 		} else {
 			throw new ClassCastException("Cannot use any other attribute type than a Geometry.");
 		}
-		return oldestPoint;
+		return point;
 	}
 
 	private T popOldestElement(Collection<T> elements) {
@@ -76,20 +112,36 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		// TODO Auto-generated method stub
-		return null;
+		final List<SDFAttribute> result = new ArrayList<>(this.temporalPoint.length);
+
+		for (final String attr : outputAttributeNames) {
+			result.add(new SDFAttribute(null, attr, SDFSpatialDatatype.SPATIAL_POINT, null, TemporalDatatype.getTemporalConstraint(), null));
+		}
+
+		return result;
 	}
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		// TODO Auto-generated method stub
-		return false;
+		final boolean checkInputOutputLength = AggregationFunctionParseOptionsHelper
+				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
+		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
+				attributeResolver);
+		return checkInputOutputLength && checkNumericInput;
 	}
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
-		// TODO Auto-generated method stub
-		return null;
+		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver);
+		final String[] outputNames = AggregationFunctionParseOptionsHelper.getOutputAttributeNames(parameters,
+				attributeResolver);
+
+		if (attributes == null) {
+			return new ToLinearTemporalPoint<>(attributeResolver.getSchema().get(0).size(), outputNames);
+		}
+
+		return new ToLinearTemporalPoint<>(attributes, outputNames);
 	}
 
 }
