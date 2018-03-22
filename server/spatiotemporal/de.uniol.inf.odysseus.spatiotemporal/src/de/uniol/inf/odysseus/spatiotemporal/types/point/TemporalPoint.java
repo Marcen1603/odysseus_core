@@ -1,17 +1,26 @@
 package de.uniol.inf.odysseus.spatiotemporal.types.point;
 
+import java.io.Serializable;
+
+import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
-public class TemporalPoint implements TemporalType<GeometryWrapper> {
+public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalType<GeometryWrapper> {
+	
+	private static final long serialVersionUID = 7337746723249079888L;
 	
 	private TemporalFunction<GeometryWrapper> function;
 	
 	public TemporalPoint(TemporalFunction<GeometryWrapper> function) {
 		this.function = function;
+	}
+	
+	public TemporalPoint(TemporalPoint other) {
+		this.function = other.function;
 	}
 
 	@Override
@@ -32,6 +41,16 @@ public class TemporalPoint implements TemporalType<GeometryWrapper> {
 			results[counter] = this.getValue(new PointInTime(i));
 		}
 		return results;
+	}
+	
+	@Override
+	public TemporalPoint clone() {
+		return new TemporalPoint(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "tpoint: " + this.function.toString();
 	}
 
 }

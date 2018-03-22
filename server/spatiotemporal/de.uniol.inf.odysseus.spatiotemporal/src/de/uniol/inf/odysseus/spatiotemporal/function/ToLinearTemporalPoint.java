@@ -49,11 +49,16 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 	public ToLinearTemporalPoint(final int inputAttributesLength, final String[] outputNames) {
 		super(null, outputNames);
 		this.temporalPoint = new TemporalPoint[inputAttributesLength];
-		// TODO Fill values?
 		if (outputNames.length != inputAttributesLength) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
+	
+	public ToLinearTemporalPoint(ToLinearTemporalPoint<M, T> other) {
+		super(other);
+		this.temporalPoint = new TemporalPoint[other.temporalPoint.length];
+	}
+	
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
@@ -131,9 +136,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 		final boolean checkInputOutputLength = AggregationFunctionParseOptionsHelper
 				.checkInputAttributesLengthEqualsOutputAttributesLength(parameters, attributeResolver);
-		final boolean checkNumericInput = AggregationFunctionParseOptionsHelper.checkNumericInput(parameters,
-				attributeResolver);
-		return checkInputOutputLength && checkNumericInput;
+		return checkInputOutputLength;
 	}
 
 	@Override
@@ -148,6 +151,11 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		}
 
 		return new ToLinearTemporalPoint<>(attributes, outputNames);
+	}
+	
+	@Override
+	public AbstractNonIncrementalAggregationFunction<M, T> clone() {
+		return new ToLinearTemporalPoint<>(this);
 	}
 
 }

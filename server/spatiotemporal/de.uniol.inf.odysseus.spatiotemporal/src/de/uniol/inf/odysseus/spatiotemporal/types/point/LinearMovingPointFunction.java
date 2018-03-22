@@ -27,6 +27,13 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 		this.speedMeterPerTimeInstance = speedMetersPerTimeInstance;
 		this.azimuth = azimuth;
 	}
+	
+	public LinearMovingPointFunction(LinearMovingPointFunction other) {
+		this.basePoint = other.basePoint;
+		this.basePointInTime = other.basePointInTime;
+		this.speedMeterPerTimeInstance = other.speedMeterPerTimeInstance;
+		this.azimuth = other.azimuth;
+	}
 
 	@Override
 	public GeometryWrapper getValue(PointInTime time) {
@@ -43,6 +50,16 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 		Geometry destination = GeometryFactory.createPointFromInternalCoord(
 				new Coordinate(destinationGeographicPoint.getX(), destinationGeographicPoint.getY()), this.basePoint);
 		return new GeometryWrapper(destination);
+	}
+	
+	@Override
+	public LinearMovingPointFunction clone() {
+		return new LinearMovingPointFunction(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "speed: " + speedMeterPerTimeInstance + "m/s; azimuth: " + azimuth;
 	}
 
 }
