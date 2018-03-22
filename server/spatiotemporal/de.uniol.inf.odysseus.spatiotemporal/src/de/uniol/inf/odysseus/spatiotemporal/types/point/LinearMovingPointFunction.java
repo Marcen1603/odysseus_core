@@ -1,7 +1,6 @@
 package de.uniol.inf.odysseus.spatiotemporal.types.point;
 
 import java.awt.geom.Point2D;
-import java.util.concurrent.TimeUnit;
 
 import org.geotools.referencing.GeodeticCalculator;
 
@@ -17,24 +16,22 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 
 	private Geometry basePoint;
 	private PointInTime basePointInTime;
-	private TimeUnit baseTimeUnit;
-	private double speedMeterPerSecond;
+	private double speedMeterPerTimeInstance;
 	// azimuth = direction
 	private double azimuth;
 
-	public LinearMovingPointFunction(Geometry basePoint, PointInTime basePointInTime, double speedMetersPerSecond,
-			TimeUnit baseTimeUnit, double azimuth) {
+	public LinearMovingPointFunction(Geometry basePoint, PointInTime basePointInTime, double speedMetersPerTimeInstance,
+			double azimuth) {
 		this.basePoint = basePoint;
 		this.basePointInTime = basePointInTime;
-		this.speedMeterPerSecond = speedMetersPerSecond;
-		this.baseTimeUnit = baseTimeUnit;
+		this.speedMeterPerTimeInstance = speedMetersPerTimeInstance;
 		this.azimuth = azimuth;
 	}
 
 	@Override
 	public GeometryWrapper getValue(PointInTime time) {
-		long secondsTravelled = baseTimeUnit.toSeconds(time.minus(basePointInTime).getMainPoint());
-		double distanceMeters = speedMeterPerSecond * secondsTravelled;
+		long timeTravelled = time.minus(basePointInTime).getMainPoint();
+		double distanceMeters = speedMeterPerTimeInstance * timeTravelled;
 
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
 		double latitude = basePoint.getCentroid().getX();
@@ -42,7 +39,7 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 		geodeticCalculator.setStartingGeographicPoint(longitude, latitude);
 		geodeticCalculator.setDirection(azimuth, distanceMeters);
 		Point2D destinationGeographicPoint = geodeticCalculator.getDestinationGeographicPoint();
-		
+
 		Geometry destination = GeometryFactory.createPointFromInternalCoord(
 				new Coordinate(destinationGeographicPoint.getX(), destinationGeographicPoint.getY()), this.basePoint);
 		return new GeometryWrapper(destination);
