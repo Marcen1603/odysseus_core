@@ -30,7 +30,13 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	private static final long serialVersionUID = -564559788689771841L;
 
-	protected TemporalPoint[] temporalPoint = new TemporalPoint[1];
+	protected TemporalPoint[] temporalPoint;
+	
+	// For OSGi
+	public ToLinearTemporalPoint() {
+		super();
+		temporalPoint = new TemporalPoint[1];
+	}
 	
 	public ToLinearTemporalPoint(final int[] attributes, final String[] outputNames) {
 		super(attributes, outputNames);

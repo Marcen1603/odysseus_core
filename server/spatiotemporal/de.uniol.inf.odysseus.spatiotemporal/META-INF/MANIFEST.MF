@@ -12,3 +12,4 @@ Require-Bundle: de.uniol.inf.is.odysseus.temporaltypes,
  com.vividsolutions.jts,
  de.uniol.inf.is.odysseus.aggregation
 Service-Component: OSGI-INF/*
+Bundle-ActivationPolicy: lazy
