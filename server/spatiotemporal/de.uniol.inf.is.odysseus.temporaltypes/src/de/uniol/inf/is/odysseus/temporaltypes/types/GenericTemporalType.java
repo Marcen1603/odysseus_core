@@ -1,8 +1,8 @@
 package de.uniol.inf.is.odysseus.temporaltypes.types;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
@@ -20,10 +20,10 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, TemporalType<T> {
 
 	private static final long serialVersionUID = -903000410292576845L;
-	private Map<PointInTime, T> values;
+	private SortedMap<PointInTime, T> values;
 
 	public GenericTemporalType() {
-		this.values = new HashMap<>();
+		this.values = new TreeMap<>();
 	}
 
 	public GenericTemporalType(GenericTemporalType<T> other) {
@@ -87,7 +87,7 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 	 * 
 	 * @return The map which stores the values.
 	 */
-	public Map<PointInTime, T> getValues() {
+	public SortedMap<PointInTime, T> getValues() {
 		return this.values;
 	}
 
