@@ -1,8 +1,10 @@
 package de.uniol.inf.is.odysseus.temporaltypes.transform;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.expression.RelationalExpression;
-import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.SelectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
@@ -41,7 +43,7 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 		 * Only use this rule if there is at least one temporal attribute in the
 		 * predicate.
 		 */
-		return operator.isAllPhysicalInputSet() && expressionContainsTemporalAttribute(operator.getPredicate());
+		return operator.isAllPhysicalInputSet() && predicateContaintsTemporalAttribute(operator);
 	}
 
 	@Override
@@ -55,16 +57,40 @@ public class TTemporalSelectAORule extends AbstractTransformationRule<SelectAO> 
 	}
 
 	/**
-	 * Checks if the expression contains at least one temporal attribute
+	 * Checks if the output schema contains a temporal
 	 * 
-	 * @param predicate
-	 *            The expression / predicate to test
-	 * @return True, if it contains at least one temporal attribute, false otherwise
+	 * @param operator
+	 * @return
 	 */
-	private boolean expressionContainsTemporalAttribute(IPredicate<?> predicate) {
-		for (SDFAttribute attribute : predicate.getAttributes()) {
-			if (attribute.getDatatype() instanceof TemporalDatatype) {
+	private boolean predicateContaintsTemporalAttribute(SelectAO operator) {
+
+		/*
+		 * Loop through all attributes of the predicates to compare them to the input
+		 * schema. The input schema contains the info about temporal attributes.
+		 */
+		for (SDFAttribute attribute : operator.getPredicate().getAttributes()) {
+
+			/*
+			 * Maybe the attribute in the predicate already tells us if its temporal, but
+			 * probably the info cannot be found there.
+			 */
+			if (TemporalDatatype.isTemporalAttribute(attribute)) {
 				return true;
+			}
+
+			/*
+			 * So let us check if our attributes in the input schema are temporal. If the
+			 * URI of our attribute and one attribute from the input schema are equal, we
+			 * have a match.
+			 */
+			List<SDFAttribute> attributes = operator.getInputSchema().getAttributes().stream()
+					.filter(e -> (e.getURI().equals(attribute.getURI()))).collect(Collectors.toList());
+			
+			// Check for all matches if they are temporal
+			for (SDFAttribute attr : attributes) {
+				if (TemporalDatatype.isTemporalAttribute(attr)) {
+					return true;
+				}
 			}
 		}
 		return false;
