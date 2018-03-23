@@ -25,19 +25,28 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.LinearMovingPointFunction;
 import de.uniol.inf.odysseus.spatiotemporal.types.point.TemporalPoint;
 
+/**
+ * An aggregation function to create a temporal function for a point that is
+ * moving linearly in space.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <M>
+ * @param <T>
+ */
 public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractNonIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
 	private static final long serialVersionUID = -564559788689771841L;
 
 	protected TemporalPoint[] temporalPoint;
-	
+
 	// For OSGi
 	public ToLinearTemporalPoint() {
 		super();
 		temporalPoint = new TemporalPoint[1];
 	}
-	
+
 	public ToLinearTemporalPoint(final int[] attributes, final String[] outputNames) {
 		super(attributes, outputNames);
 		temporalPoint = new TemporalPoint[attributes.length];
@@ -45,7 +54,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
-	
+
 	public ToLinearTemporalPoint(final int inputAttributesLength, final String[] outputNames) {
 		super(null, outputNames);
 		this.temporalPoint = new TemporalPoint[inputAttributesLength];
@@ -53,12 +62,11 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
-	
+
 	public ToLinearTemporalPoint(ToLinearTemporalPoint<M, T> other) {
 		super(other);
 		this.temporalPoint = new TemporalPoint[other.temporalPoint.length];
 	}
-	
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
@@ -66,19 +74,18 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		Geometry basePoint = getPointFromElement(oldestElement);
 		Geometry currentPoint = getPointFromElement(trigger);
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
-		
+
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
 		long timeInstancesTravelled = pointInTime.minus(basePointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
 		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
 		double azimuth = geodeticCalculator.getAzimuth();
-		
+
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,
 				basePointInTime, speedMetersPerTimeInstance, azimuth);
 		this.temporalPoint[0] = new TemporalPoint(temporalPointFunction);
 		return this.temporalPoint;
 	}
-	
 
 	private GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
 		GeodeticCalculator geodeticCalculator = new GeodeticCalculator();
@@ -90,7 +97,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		double destinationLongitude = to.getCentroid().getY();
 		double destinationLatitude = to.getCentroid().getX();
 		geodeticCalculator.setDestinationGeographicPoint(destinationLongitude, destinationLatitude);
-		
+
 		return geodeticCalculator;
 	}
 
@@ -126,7 +133,8 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		final List<SDFAttribute> result = new ArrayList<>(this.temporalPoint.length);
 
 		for (final String attr : outputAttributeNames) {
-			result.add(new SDFAttribute(null, attr, SDFSpatialDatatype.SPATIAL_POINT, null, TemporalDatatype.getTemporalConstraint(), null));
+			result.add(new SDFAttribute(null, attr, SDFSpatialDatatype.SPATIAL_POINT, null,
+					TemporalDatatype.getTemporalConstraint(), null));
 		}
 
 		return result;
@@ -152,7 +160,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 		return new ToLinearTemporalPoint<>(attributes, outputNames);
 	}
-	
+
 	@Override
 	public AbstractNonIncrementalAggregationFunction<M, T> clone() {
 		return new ToLinearTemporalPoint<>(this);

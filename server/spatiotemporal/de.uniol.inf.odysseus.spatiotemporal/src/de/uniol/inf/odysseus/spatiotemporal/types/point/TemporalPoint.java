@@ -9,16 +9,23 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
+/**
+ * This class represents a temporal point (or, a moving point). It is a function
+ * of time represented by a temporal function.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalType<GeometryWrapper> {
-	
+
 	private static final long serialVersionUID = 7337746723249079888L;
-	
+
 	private TemporalFunction<GeometryWrapper> function;
-	
+
 	public TemporalPoint(TemporalFunction<GeometryWrapper> function) {
 		this.function = function;
 	}
-	
+
 	public TemporalPoint(TemporalPoint other) {
 		this.function = other.function;
 	}
@@ -42,12 +49,12 @@ public class TemporalPoint implements IClone, Cloneable, Serializable, TemporalT
 		}
 		return results;
 	}
-	
+
 	@Override
 	public TemporalPoint clone() {
 		return new TemporalPoint(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "tpoint: " + this.function.toString();
