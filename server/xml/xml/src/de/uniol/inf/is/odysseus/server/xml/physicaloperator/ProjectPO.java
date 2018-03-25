@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import org.w3c.dom.Node;
@@ -52,7 +53,7 @@ public class ProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamO
 			for (SDFAttribute path : this.paths) {
 				ArrayList<Node> nodeArray = new ArrayList<Node>();
 				String pathURI = path.getURI();
-				NodeList nl = object.xpathToNodeList(pathURI);
+				NodeList nl = object.getNodeList(pathURI);
 
 				for (int i = 0; i < nl.getLength(); i++) {
 					Node child = nl.item(i);
@@ -88,6 +89,9 @@ public class ProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamO
 			if (!newObject.isEmpty())
 				transfer((XMLStreamObject<T>) newObject);
 		} catch (ParserConfigurationException | XPathFactoryConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

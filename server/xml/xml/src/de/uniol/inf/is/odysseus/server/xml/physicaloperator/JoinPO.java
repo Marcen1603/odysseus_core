@@ -30,12 +30,8 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicate;
 
-/**
- * @author Dennis Geesen
- *
- */
-public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> implements IHasPredicate
-{
+public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>>
+		implements IHasPredicate {
 
 	private XMLStreamObjectPredicate<XMLStreamObject<T>> predicate;
 	private List<XMLStreamObject<T>> cache = new ArrayList<>();
@@ -44,81 +40,63 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 
 	private int minSize = 0;
 
-	public JoinPO(int minimalSize)
-	{
+	public JoinPO(int minimalSize) {
 		this.minSize = minimalSize;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public JoinPO(IPredicate predicate, int minimumSize, String _target)
-	{
+	public JoinPO(IPredicate predicate, int minimumSize, String _target) {
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) predicate;
 		this.minSize = minimumSize;
 		this.target = _target;
 	}
 
-	/**
-	 * @param enrichPO
-	 */
-	public JoinPO(JoinPO<T> po)
-	{
+	public JoinPO(JoinPO<T> po) {
 		super(po);
 		this.minSize = po.minSize;
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) po.predicate.clone();
 	}
 
 	@Override
-	public IPredicate<?> getPredicate()
-	{
+	public IPredicate<?> getPredicate() {
 		return this.predicate;
 	}
 
 	@Override
-	public OutputMode getOutputMode()
-	{
+	public OutputMode getOutputMode() {
 		return OutputMode.NEW_ELEMENT;
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException
-	{
+	protected void process_open() throws OpenFailedException {
 		super.process_open();
 		this.buffer.clear();
 		this.cache.clear();
 	}
 
 	@Override
-	protected void process_next(XMLStreamObject<T> object, int port)
-	{
+	protected void process_next(XMLStreamObject<T> object, int port) {
 		// if port == 0, it is a cached-object
-		if (port == 0)
-		{
+		if (port == 0) {
 			this.cache.add(object);
 			// check, whether there are enough items in cache to write out the
 			// buffer
-			if (this.cache.size() >= minSize)
-			{
-				synchronized (this.buffer)
-				{
-					for (XMLStreamObject<T> buffered : this.buffer)
-					{
+			if (this.cache.size() >= minSize) {
+				synchronized (this.buffer) {
+					for (XMLStreamObject<T> buffered : this.buffer) {
 						processJoin(buffered);
 					}
 					this.buffer.clear();
 				}
 			}
-		} else
-		{
+		} else {
 			// if we do not have enough items in cache, we put the objects into
 			// a buffer
-			if (this.cache.size() < minSize)
-			{
-				synchronized (this.buffer)
-				{
+			if (this.cache.size() < minSize) {
+				synchronized (this.buffer) {
 					buffer.add(object);
 				}
-			} else
-			{
+			} else {
 				// if we have enough, we can enrich the object without waiting
 				processJoin(object);
 			}
@@ -127,62 +105,52 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 	}
 
 	@SuppressWarnings("unchecked")
-	private void processJoin(XMLStreamObject<T> object)
-	{
-		synchronized (cache)
-		{
-			for (XMLStreamObject<T> cached : this.cache)
-			{
-				if (this.predicate.evaluate(cached, object))
-				{
-					XMLStreamObject<T> enriched;
-					try {
+	private void processJoin(XMLStreamObject<T> object) {
+		try {
+			synchronized (cache) {
+				
+				for (XMLStreamObject<T> cached : this.cache) {
+					if (this.predicate.evaluate(cached, object)) {
+						XMLStreamObject<T> enriched;
 						enriched = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, this.target);
 						transfer(enriched);
-					} catch (XPathFactoryConfigurationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (XPathExpressionException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
+				
 			}
+		} catch (XPathFactoryConfigurationException e) {
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
-	protected void process_close()
-	{
+	protected void process_close() {
 		super.process_close();
 		this.buffer.clear();
-		synchronized (cache)
-		{
+		synchronized (cache) {
 			this.cache.clear();
 		}
 	}
 
 	@Override
-	public void processPunctuation(IPunctuation punctuation, int port)
-	{
+	public void processPunctuation(IPunctuation punctuation, int port) {
 		predicate.processPunctuation(punctuation);
 	}
 
 	@Override
-	public long getElementsStored1()
-	{
+	public long getElementsStored1() {
 		return cache.size();
 	}
 
 	@Override
-	public long getElementsStored2()
-	{
+	public long getElementsStored2() {
 		return buffer.size();
 	}
 
 	@Override
-	public void setPredicate(IPredicate<?> predicate)
-	{
+	public void setPredicate(IPredicate<?> predicate) {
 		// TODO Auto-generated method stub
 
 	}
