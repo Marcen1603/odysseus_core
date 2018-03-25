@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,16 +41,16 @@ import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
  *
  */
 public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(XMLProtocolHandler3.class);
-	
+
 	public static final String NAME = "XML3";
 	public static final String TAG_TO_STRIP = "tag_to_strip";
 
 	private InputStream input;
 	private OutputStream output;
 	private String tagToStrip;
-	private List<T> result = new LinkedList<>();
+	private Collection<T> result = new LinkedList<>();
 	private XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	private XMLEventReader eventReader;
 
@@ -62,7 +63,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		super(direction, access, dataHandler, options);
 		init_internal();
 	}
-	
+
 	private void init_internal() {
 		OptionMap options = optionsMap;
 		if (options.get(TAG_TO_STRIP) != null) {
@@ -83,7 +84,8 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 	}
 
 	@Override
-	public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access, final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
+	public IProtocolHandler<T> createInstance(final ITransportDirection direction, final IAccessPattern access,
+			final OptionMap options, final IStreamObjectDataHandler<T> dataHandler) {
 		return new XMLProtocolHandler3<T>(direction, access, dataHandler, options);
 	}
 
@@ -122,20 +124,30 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		if (this.getDirection() != null && this.getDirection().equals(ITransportDirection.IN)) {
 			if (this.getAccessPattern().equals(IAccessPattern.PULL)
 					|| this.getAccessPattern().equals(IAccessPattern.ROBUST_PULL)) {
-				
+
 				input = this.getTransportHandler().getInputStream();
 			}
 		} else {
 			this.output = this.getTransportHandler().getOutputStream();
 		}
-		
+
 		log.debug("open()");
 	}
 
 	private T parseXml(InputStream input) {
+
+		// no tag was provided, close connection and throw exception
+		if (tagToStrip == null) {
+			try {
+				close();
+			} catch (IOException e) {  
+				e.printStackTrace();
+			}
+			throw new IllegalArgumentException("option " + TAG_TO_STRIP + " was null: ");
+		}
 		
 		try {
-			
+
 			if (input.available() == 0) {
 				return null;
 			}
@@ -162,7 +174,7 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 				}
 			}
 			eventReader.close();
-			
+
 		} catch (XMLStreamException | IOException e) {
 			e.printStackTrace();
 			log.error("error occurred during parseXml():" + e.getMessage());
@@ -175,12 +187,12 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 	public void process(String message) {
 		getTransfer().transfer(parseXml(new ByteArrayInputStream(message.getBytes())));
 	}
-	
+
 	@Override
 	public void process(String[] message) {
 		getTransfer().transfer(parseXml(new ByteArrayInputStream(String.join("", message).getBytes())));
 	}
-	
+
 	@Override
 	public void process(InputStream message) {
 		getTransfer().transfer(parseXml(message));

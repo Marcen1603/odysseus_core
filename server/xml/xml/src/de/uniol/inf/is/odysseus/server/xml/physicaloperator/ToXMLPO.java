@@ -51,7 +51,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 	private String xsdAttribute;
 	private Collection<String> xPathAttributes = new ArrayList<>(); 
 	private HashMap<String, String> xPathMapping = new HashMap<>();
-	private HashMap<String, Integer> mapping = new HashMap<>();
+	private HashMap<String, Integer> mapping = new HashMap();
 	private boolean dynamicXSD;
 	private boolean dynamicXPath;
 	private boolean setXpath;
@@ -117,19 +117,19 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 		if (!properties.containsKey("delimeter")) {
 			properties.put("delimeter", ",");
 		}
-		if (!properties.containsKey("showContentModel")) {
+		if (!properties.containsKey("showContentModel") && !properties.containsKey("showcontentmodel")) {
 			properties.put("showContentModel", "never");
 		}
-		if (!properties.containsKey("generateAllChoices")) {
+		if (!properties.containsKey("generateAllChoices") && !properties.containsKey("generateallchoices")) {
 			properties.put("generateAllChoices", "always");
 		}
-		if (!properties.containsKey("minimumElementsGenerated")) {
+		if (!properties.containsKey("minimumElementsGenerated") && !properties.containsKey("minimumelementsgenerated")) {
 			properties.put("minimumElementsGenerated", "1");
 		}
-		if (!properties.containsKey("maximumElementsGenerated")) {
+		if (!properties.containsKey("maximumElementsGenerated") && !properties.containsKey("maximumelementsgenerated")) {
 			properties.put("maximumElementsGenerated", "1");
 		}
-		if (!properties.containsKey("generateOptionalElements")) {
+		if (!properties.containsKey("generateOptionalElements") && !properties.containsKey("generateoptionalelements")) {
 			properties.put("generateOptionalElements", "always");
 		}
 		

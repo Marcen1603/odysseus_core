@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
+import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import jlibs.xml.sax.XMLDocument;
 import jlibs.xml.xsd.XSInstance;
 import jlibs.xml.xsd.XSParser;
@@ -40,7 +41,7 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 	private final String PROP_ENCODING = "encoding";
 	
 	public Document createXML(String rootElement, Tuple<T> object, String xsdSchema, SDFSchema sdfSchema,
-			Map<String, Integer> attributeMapping, Map<String, String> xpathMapping, Properties properties) throws XPathExpressionException {
+			Map<String, Integer> attributeMapping, Map<String, String> xPathMapping, Properties properties) throws XPathExpressionException {
 
 		Document xml = generateDocument(rootElement, xsdSchema, sdfSchema, properties);
 
@@ -52,32 +53,14 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 			Node node = nodeList.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				if (attributeMapping.containsKey(node.getNodeName().toLowerCase())
-						&& !xpathMapping.containsKey(node.getNodeName())) {
-					node.setTextContent(object.getAttribute(attributeMapping.get(node.getNodeName())));
+						&& !xPathMapping.containsKey(node.getNodeName())) {
+					node.setTextContent(object.getAttribute(attributeMapping.get(node.getNodeName())).toString());
 				}
 			}
 		}
 
 		// Set values of attributes or elements specified with x-path expressions.
-		for (Map.Entry<String, String> e : xpathMapping.entrySet()) {
-
-			String expression = e.getValue();
-			Object attributeValue = object.getAttribute(attributeMapping.get(e.getKey()));
-			String value = DEFAULT_VALUE;
-			if (attributeValue != null) {
-				value = attributeValue.toString();
-			}
-			
-			NodeList nodes = getNodeList(expression, xml);
-			if (nodes.item(0) instanceof Attr) {
-				((Attr) nodes.item(0)).setNodeValue(value);
-			} else if (nodes.item(0) instanceof Element) {
-				((Element) nodes.item(0)).setTextContent(value);
-			}
-
-		}
-
-		return xml;
+		return setValuesWithXPath(xPathMapping, attributeMapping, object, xml);
 	}
 
 	private Document generateDocument(String rootElement, String xsdSchema, SDFSchema sdfSchema, Properties properties) {
@@ -113,11 +96,29 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 
 		return null;
 	}
+	
+	public Document setValuesWithXPath(Map<String, String> xPathMapping, Map<String, Integer> attributeMapping, Tuple<T> object, Document xml) throws XPathExpressionException {
+		for (Map.Entry<String, String> e : xPathMapping.entrySet()) {
 
-	private NodeList getNodeList(String expression, Document document) throws XPathExpressionException {
-		return (NodeList) XPathFactory.newInstance().newXPath().compile(expression).evaluate(document, XPathConstants.NODESET);
+			String expression = e.getValue();
+			Object attributeValue = object.getAttribute(attributeMapping.get(e.getKey()));
+			String value = DEFAULT_VALUE;
+			if (attributeValue != null) {
+				value = attributeValue.toString();
+			}
+			
+			NodeList nodes = XMLStreamObject.getNodeList(expression, xml);
+			if (nodes.item(0) instanceof Attr) {
+				((Attr) nodes.item(0)).setNodeValue(value);
+			} else if (nodes.item(0) instanceof Element) {
+				((Element) nodes.item(0)).setTextContent(value);
+			}
+
+		}
+		
+		return xml;
 	}
-
+	
     public static class EmptySampleValueGenerator implements XSInstance.SampleValueGenerator{
 
 		@Override

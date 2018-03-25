@@ -18,6 +18,9 @@ package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactoryConfigurationException;
+
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
@@ -132,8 +135,17 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 			{
 				if (this.predicate.evaluate(cached, object))
 				{
-					XMLStreamObject<T> enriched = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, this.target);
-					transfer(enriched);
+					XMLStreamObject<T> enriched;
+					try {
+						enriched = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, this.target);
+						transfer(enriched);
+					} catch (XPathFactoryConfigurationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (XPathExpressionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 		}

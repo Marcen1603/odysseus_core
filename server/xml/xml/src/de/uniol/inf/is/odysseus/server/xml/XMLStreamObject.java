@@ -32,62 +32,56 @@ import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
 
-// GetNext nicht vorgeschrieben im Protocolhandler - ACCESS benutzt es aber
+public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable {
 
-public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable
-{
-	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObject.class);
+	private static final Logger log = LoggerFactory.getLogger(XMLStreamObject.class);
 	private static final long serialVersionUID = 4868112466855659283L;
+
 	public static final String SLASH_REPLACEMENT_STRING = "__SLASH_PLACEHOLDER__";
 	public static final String AT_REPLACEMENT_STRING = "__AT_PLACEHOLDER__";
 	public static final String LEFT_BRACE_REPLACEMENT_STRING = "__LEFT_BRACE_PLACEHOLDER__";
 	public static final String RIGHT_BRACE_REPLACEMENT_STRING = "__RIGHT_BRACE_PLACEHOLDER__";
+
 	private static XPath xpath;
-
 	private Document content;
+	private static XPathFactory factory = XPathFactory.newInstance(); 
 
-	public static XMLStreamObject<IMetaAttribute> createInstance(Document doc)
-	{
+	public static XMLStreamObject<IMetaAttribute> createInstance(Document doc) throws XPathFactoryConfigurationException {
 		return new XMLStreamObject<>(doc);
 	}
 
-	public static XMLStreamObject<IMetaAttribute> createInstance(Node node)
-	{
+	public static XMLStreamObject<IMetaAttribute> createInstance(Node node) throws XPathFactoryConfigurationException {
 		Document newDoc;
-		try
-		{
+		try {
 			newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			Node copyNode = newDoc.importNode(node, true);
 			newDoc.appendChild(copyNode);
 			return new XMLStreamObject<>(newDoc);
-		} catch (ParserConfigurationException e)
-		{
+		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
-	{
-		XMLStreamObject<IMetaAttribute> result = (XMLStreamObject<IMetaAttribute>) new XMLStreamObject<IMetaAttribute>(right.getDocument());
-		Node node = result.xpathToNode(path);
-		if(node!=null)
-		{
+			throws XPathFactoryConfigurationException, XPathExpressionException {
+		XMLStreamObject<IMetaAttribute> result = (XMLStreamObject<IMetaAttribute>) new XMLStreamObject<IMetaAttribute>(
+				right.getDocument());
+		Node node = result.getNode(path);
+		if (node != null) {
 			Node appendNode = right.getDocument().importNode(left.getDocument().getFirstChild().cloneNode(true), true);
 			node.appendChild(appendNode);
 		}
-		return result;			
+		return result;
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return toString(true);
 	}
 
 	@Override
-	public String toString(boolean handleMetadata)
-	{
+	public String toString(boolean handleMetadata) {
 		StringBuilder ret = new StringBuilder();
 		ret.append(xpathToString("/node()")); // Rootnode
 		if (handleMetadata && getMetadata() != null)
@@ -95,179 +89,127 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return ret.toString();
 	}
 
-	private XMLStreamObject(Document _content)
-	{
-		try
-		{
-			xpath = XPathFactory.newInstance(XPathConstants.DOM_OBJECT_MODEL).newXPath();
-		} catch (XPathFactoryConfigurationException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		content = _content;
-		// System.out.println("XMLStreamObject Constructor");
+	public XMLStreamObject() {
+		
+	}
+	
+	private XMLStreamObject(Document xml) throws XPathFactoryConfigurationException {
+		xpath = XPathFactory.newInstance(XPathConstants.DOM_OBJECT_MODEL).newXPath();
+		setDocument(xml);
 	}
 
-	public XMLStreamObject()
-	{
-	}
-
-	private XMLStreamObject(XMLStreamObject<T> obj)
-	{
+	private XMLStreamObject(XMLStreamObject<T> obj) {
 		TransformerFactory tfactory = TransformerFactory.newInstance();
 		Transformer tx;
-		try
-		{
+		try {
 			tx = tfactory.newTransformer();
 			DOMSource source = new DOMSource(obj.getDocument());
 			DOMResult result = new DOMResult();
 			tx.transform(source, result);
 			content = (Document) result.getNode();
-		} catch (TransformerException e)
-		{
-			LOG.error("Could not copy DOM", e);
+		} catch (TransformerException e) {
+			log.error("Could not copy DOM", e);
 			e.printStackTrace();
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private void setDocument(Document doc)
-	{
-		content = doc;
+	protected void setDocument(Document xml) {
+		content = xml;
 	}
 
-	public Document getDocument()
-	{
+	public Document getDocument() {
 		return content;
 	}
 
 	@Override
-	public AbstractStreamObject<T> clone()
-	{
+	public AbstractStreamObject<T> clone() {
 		return new XMLStreamObject<>(this);
 	}
 
 	@Override
-	public AbstractStreamObject<T> newInstance()
-	{
+	public AbstractStreamObject<T> newInstance() {
 		return new XMLStreamObject<>();
 	}
 
-	public boolean isEmpty()
-	{
-		try
-		{
+	public boolean isEmpty() {
+		try {
 			Node check = content.getFirstChild();
 			check.getNodeName();
 			return false;
-		} catch (NullPointerException e)
-		{
+		} catch (NullPointerException e) {
 			return true;
 		}
 	}
 
-	public static boolean hasParent(NodeList nl, Node node)
-	{
+	public static boolean hasParent(NodeList nl, Node node) {
 		Node parent = node.getParentNode();
-		for (int i = 0; i < nl.getLength(); i++)
-		{
+		for (int i = 0; i < nl.getLength(); i++) {
 			if (nl.item(i) == parent)
 				return true;
 		}
 		return false;
 	}
-	
-	/*
-	public Document xpathToDocument(String expression)
-	{
-		try
-		{
-			NodeList nodelist = xpathToNodeList(expression);
-			for(int i=0; i < nodelist.getLength(); i++)
-			{
-				if(hasParent(nodelist, nodelist.item(i)))
-				{
-					Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-					if (nodelist.getLength() > 0)
-					{
-						Node node = nodelist.item(0);
-						Node copyNode = newDoc.importNode(node, true);
-						newDoc.appendChild(copyNode);
-					}
-					return newDoc;				
-				}
-			}
-			return null;
-		} catch (ParserConfigurationException e)
-		{
-			LOG.error("Returning Document from xpath failed", e);
-			e.printStackTrace();
-		}
-		return null;
-	}*/
 
-	public NodeList xpathToNodeList(String expression)
-	{
-		try
-		{
+	/*
+	 * public Document xpathToDocument(String expression) { try { NodeList nodelist
+	 * = xpathToNodeList(expression); for(int i=0; i < nodelist.getLength(); i++) {
+	 * if(hasParent(nodelist, nodelist.item(i))) { Document newDoc =
+	 * DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument(); if
+	 * (nodelist.getLength() > 0) { Node node = nodelist.item(0); Node copyNode =
+	 * newDoc.importNode(node, true); newDoc.appendChild(copyNode); } return newDoc;
+	 * } } return null; } catch (ParserConfigurationException e) {
+	 * LOG.error("Returning Document from xpath failed", e); e.printStackTrace(); }
+	 * return null; }
+	 */
+	public NodeList xpathToNodeList(String expression) {
+		try {
 			XPathExpression xExp = xpath.compile(expression);
 			return (NodeList) xExp.evaluate(content, XPathConstants.NODESET);
-		} catch (XPathExpressionException e)
-		{
+		} catch (XPathExpressionException e) {
 			XPathExpression xExp;
-			try
-			{
+			try {
 				xExp = xpath.compile(expression);
-				String atomicValue = "<?xml version=\"1.0\"?><atomicResult>" + xExp.evaluate(content) + "</atomicResult>";
+				String atomicValue = "<?xml version=\"1.0\"?><atomicResult>" + xExp.evaluate(content)
+						+ "</atomicResult>";
 				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document doc = docBuilder.parse(new InputSource(new StringReader(atomicValue)));
 				xpath.reset();
 				xExp = xpath.compile("//node()");
 				return (NodeList) xExp.evaluate(doc, XPathConstants.NODESET);
-			} catch (XPathExpressionException | SAXException | IOException | ParserConfigurationException e1)
-			{
+			} catch (XPathExpressionException | SAXException | IOException | ParserConfigurationException e1) {
 				e1.printStackTrace();
 			}
-			LOG.error("XPathExpression Error", e);
+			log.error("XPathExpression Error", e);
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public Node xpathToNode(String expression)
-	{
-		try
-		{
-			XPathExpression xExp = xpath.compile(expression);
-			Node item = (Node) xExp.evaluate(content, XPathConstants.NODE);
-			return item;
-		} catch (XPathExpressionException e)
-		{
-			LOG.error("XPathExpression Error", e);
-			// e.printStackTrace();
-		}
-		return null;
+	public static NodeList getNodeList(String expression, Document document) throws XPathExpressionException {
+		return (NodeList) factory.newXPath().compile(expression).evaluate(document, XPathConstants.NODESET);
 	}
-
-	public String xpathToString(String expression)
-	{
+	
+	public NodeList getNodeList(String expression) throws XPathExpressionException {
+		return (NodeList) factory.newXPath().compile(expression).evaluate(content, XPathConstants.NODESET);
+	}
+	
+	public Node getNode(String expression) throws XPathExpressionException {
+		return (Node) factory.newXPath().compile(expression).evaluate(content, XPathConstants.NODE);
+	}
+	
+	public String xpathToString(String expression) {
 		NodeList nl = xpathToNodeList(expression);
 		StringWriter buf = new StringWriter();
-		try
-		{
+		try {
 			Transformer xform = TransformerFactory.newInstance().newTransformer();
 			xform.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 			xform.setOutputProperty(OutputKeys.INDENT, "yes");
 			xform.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-			for (int i = 0; i < nl.getLength(); i++)
-			{
+			for (int i = 0; i < nl.getLength(); i++) {
 				Node elem = nl.item(i);// Your Node
 				xform.transform(new DOMSource(elem), new StreamResult(buf));
 			}
-		} catch (TransformerException e)
-		{
-			// TODO Auto-generated catch block
+		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 		return buf.toString();
@@ -275,17 +217,15 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <K> K getAttribute(String name)
-	{
+	public <K> K getAttribute(String name) {
 		name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
 		name = name.replaceAll(AT_REPLACEMENT_STRING, "@");
 		name = name.replaceAll(LEFT_BRACE_REPLACEMENT_STRING, "(");
 		name = name.replaceAll(RIGHT_BRACE_REPLACEMENT_STRING, ")");
-		try
-		{
+		try {
 			return (K) xpath.compile(name).evaluate(content);
-		} catch (XPathExpressionException e)
-		{
+		} catch (XPathExpressionException e) {
+			log.error("could not compile x-path expression");
 			return null;
 		}
 	}
@@ -299,6 +239,6 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	@Override
 	public void setAttribute(String name, Object value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

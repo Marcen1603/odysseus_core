@@ -2,6 +2,8 @@ package de.uniol.inf.is.odysseus.server.xml.physicaloperator;
 
 import java.util.List;
 
+import javax.xml.xpath.XPathFactoryConfigurationException;
+
 import org.w3c.dom.NodeList;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -49,9 +51,15 @@ public class XPathPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObj
 			{
 				if(!XMLStreamObject.hasParent(nl, nl.item(i)))
 				{
-					XMLStreamObject<IMetaAttribute> newObject = XMLStreamObject.createInstance(nl.item(i)); 
-					newObject.setMetadata(object.getMetadata().clone());
-					if(!newObject.isEmpty()) transfer((XMLStreamObject<T>) newObject);
+					XMLStreamObject<IMetaAttribute> newObject;
+					try {
+						newObject = XMLStreamObject.createInstance(nl.item(i));
+						newObject.setMetadata(object.getMetadata().clone());
+						if(!newObject.isEmpty()) transfer((XMLStreamObject<T>) newObject);
+					} catch (XPathFactoryConfigurationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
 				}
 			}
 		}

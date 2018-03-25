@@ -112,9 +112,9 @@ public class ToXMLAO extends UnaryLogicalOp {
 		this.rootElement = root;
 	}
 	
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "rootAttribute", optional = true)
-	public void setRootAttribute(SDFAttribute root) {
-		this.rootAttribute = root.getAttributeName();
+	@Parameter(type = StringParameter.class, name = "rootAttribute", optional = true)
+	public void setRootAttribute(String root) {
+		this.rootAttribute = root;
 	}
 	
 	@Parameter(type = OptionParameter.class, name = "options", optional = true, isList = true, doc = "Additional options.")
@@ -122,7 +122,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 		if (value != null) {
 			for (Option option : value) {
 				if (value != null) {
-					optionsMap.setOption(option.getName().toLowerCase(), option.getValue());
+					optionsMap.setOption(option.getName(), option.getValue());
 				}
 			}
 			optionsList = value;

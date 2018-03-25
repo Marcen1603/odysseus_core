@@ -15,6 +15,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -69,7 +70,12 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 		try
 		{
 			Document doc = docBuilder.parse(new InputSource(new StringReader(input)));
-			return XMLStreamObject.createInstance(doc);
+			try {
+				return XMLStreamObject.createInstance(doc);
+			} catch (XPathFactoryConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (SAXException | IOException e)
 		{
 			LOG.error("Parsing data using a String failed", e);
@@ -84,7 +90,12 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 		try
 		{
 			Document doc = docBuilder.parse(inputStream);
-			return XMLStreamObject.createInstance(doc);
+			try {
+				return XMLStreamObject.createInstance(doc);
+			} catch (XPathFactoryConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (SAXException | IOException e)
 		{
 			LOG.error("Parsing data using an inputstream failed", e);
