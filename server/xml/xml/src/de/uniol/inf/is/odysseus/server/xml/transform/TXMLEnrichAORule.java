@@ -4,13 +4,12 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.JoinAO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.JoinPO;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XMLEnrichAO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLEnrichPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-
-public class TJoinAORule extends AbstractTransformationRule<JoinAO>{
+public class TXMLEnrichAORule extends AbstractTransformationRule<XMLEnrichAO> {
 
 	@Override
 	public int getPriority() {
@@ -18,19 +17,20 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO>{
 	}
 
 	@Override
-	public void execute(JoinAO operator, TransformationConfiguration config) throws RuleException {
-		JoinPO<IMetaAttribute> po = new JoinPO<IMetaAttribute>(operator.getPredicate(), operator.getMinimumSize(), operator.getTargetPath());
+	public void execute(XMLEnrichAO operator, TransformationConfiguration config) throws RuleException {
+		XMLEnrichPO<IMetaAttribute> po = new XMLEnrichPO<IMetaAttribute>(operator.getPredicate(),
+				operator.getMinimumSize(), operator.getTargetPath());
 		defaultExecute(operator, po, config, true, true);
 	}
 
 	@Override
-	public boolean isExecutable(JoinAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(XMLEnrichAO operator, TransformationConfiguration config) {
 		return operator.isAllPhysicalInputSet();
 	}
 
 	@Override
 	public String getName() {
-		return "JoinAO -> JoinPO";
+		return "XMLEnrichAO -> XMLEnrichPO";
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class TJoinAORule extends AbstractTransformationRule<JoinAO>{
 	}
 
 	@Override
-	public Class<? super JoinAO> getConditionClass() {
-		return JoinAO.class;
+	public Class<? super XMLEnrichAO> getConditionClass() {
+		return XMLEnrichAO.class;
 	}
 
 }

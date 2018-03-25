@@ -30,7 +30,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicate;
 
-public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>>
+public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>>
 		implements IHasPredicate {
 
 	private XMLStreamObjectPredicate<XMLStreamObject<T>> predicate;
@@ -40,18 +40,18 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 
 	private int minSize = 0;
 
-	public JoinPO(int minimalSize) {
+	public XMLEnrichPO(int minimalSize) {
 		this.minSize = minimalSize;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public JoinPO(IPredicate predicate, int minimumSize, String _target) {
+	public XMLEnrichPO(IPredicate predicate, int minimumSize, String _target) {
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) predicate;
 		this.minSize = minimumSize;
 		this.target = _target;
 	}
 
-	public JoinPO(JoinPO<T> po) {
+	public XMLEnrichPO(XMLEnrichPO<T> po) {
 		super(po);
 		this.minSize = po.minSize;
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) po.predicate.clone();
@@ -76,6 +76,7 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 
 	@Override
 	protected void process_next(XMLStreamObject<T> object, int port) {
+		
 		// if port == 0, it is a cached-object
 		if (port == 0) {
 			this.cache.add(object);
@@ -109,15 +110,21 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 		try {
 			synchronized (cache) {
 				
-				for (XMLStreamObject<T> cached : this.cache) {
-					if (this.predicate.evaluate(cached, object)) {
-						XMLStreamObject<T> enriched;
-						enriched = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, this.target);
-						transfer(enriched);
+				for (XMLStreamObject<T> cached : cache) {
+					//TODO predicate is not right!
+					// It cannot be evaluated correctly, because the values of the specified expression are neither
+					// retrieved nor evaluated. Currently, the predicate relates to a string comparison.
+
+					if (predicate != null) {
+						if (predicate.evaluate(cached, object)) {
+							transfer((XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target));
+						}
+					} else {
+						transfer((XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target));
 					}
 				}
-				
 			}
+			
 		} catch (XPathFactoryConfigurationException e) {
 			e.printStackTrace();
 		} catch (XPathExpressionException e) {
@@ -152,6 +159,5 @@ public class JoinPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObje
 	@Override
 	public void setPredicate(IPredicate<?> predicate) {
 		// TODO Auto-generated method stub
-
 	}
 }

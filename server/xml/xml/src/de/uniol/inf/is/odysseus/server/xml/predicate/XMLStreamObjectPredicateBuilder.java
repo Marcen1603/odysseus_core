@@ -19,8 +19,12 @@ public class XMLStreamObjectPredicateBuilder<M extends IMetaAttribute> extends A
 		predicate = predicate.replaceAll("(", XMLStreamObject.LEFT_BRACE_REPLACEMENT_STRING);
 		predicate = predicate.replaceAll(")", XMLStreamObject.RIGHT_BRACE_REPLACEMENT_STRING);
 		*/
+		
+		
+		
 		SDFExpression expression = new SDFExpression("", predicate, null, MEP.getInstance(), AggregateFunctionBuilderRegistry.getAggregatePattern());
 		IPredicate<XMLStreamObject<M>> pred = new XMLStreamObjectPredicate<>(expression, resolver.getSchema());
 		return pred;
 	}
+	
 }

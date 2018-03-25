@@ -32,86 +32,69 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-/**
- * @author Dennis Geesen
- *
- */
-@LogicalOperator(name = "XMLJOIN", minInputPorts = 2, maxInputPorts = 2, doc = "XML Join operator", category = {LogicalOperatorCategory.BASE})
-public class JoinAO extends BinaryLogicalOp implements IHasPredicate
-{
+@LogicalOperator(name = "XMLEnrich", minInputPorts = 2, maxInputPorts = 2, doc = "XML-Enrich operator", category = {
+		LogicalOperatorCategory.ENRICH })
+public class XMLEnrichAO extends BinaryLogicalOp implements IHasPredicate {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8451182921980419314L;
-	private int minimumSize = 0;
+
+	private int minimumSize = 1;
 	private IPredicate<?> predicate;
 	private String targetPath;
 
-	public JoinAO()
-	{
-
+	public XMLEnrichAO() {
 	}
 
-	public JoinAO(JoinAO joinAO)
-	{
+	public XMLEnrichAO(XMLEnrichAO joinAO) {
 		super(joinAO);
 		this.minimumSize = joinAO.minimumSize;
 		this.targetPath = joinAO.targetPath;
-		if (joinAO.predicate != null)
-		{
+		if (joinAO.predicate != null) {
 			this.predicate = joinAO.predicate.clone();
 		}
 	}
 
 	@Override
-	public JoinAO clone()
-	{
-		return new JoinAO(this);
+	public XMLEnrichAO clone() {
+		return new XMLEnrichAO(this);
 	}
 
 	@Parameter(name = "target", type = StringParameter.class, optional = false, doc = "Specifies the target path in the first object where the second object is joined onto.")
-	public void setTargetPath(String _targetPath)
-	{
+	public void setTargetPath(String _targetPath) {
 		this.targetPath = _targetPath;
 	}
 
-	public String getTargetPath()
-	{
+	public String getTargetPath() {
 		return this.targetPath;
 	}
 
-	@Parameter(name = "minimumSize", type = IntegerParameter.class, optional = true, doc = "Blocks all until there are at least minimumSize elements in the chache")
-	public synchronized void setMinimumSize(int i)
-	{
+	@Parameter(name = "minimumSize", type = IntegerParameter.class, optional = true, doc = "Blocks all until there are at least minimumSize elements in the chache.")
+	public synchronized void setMinimumSize(int i) {
 		this.minimumSize = i;
 	}
 
-	public int getMinimumSize()
-	{
+	public int getMinimumSize() {
 		return this.minimumSize;
 	}
 
-	@Parameter(name = "predicate", type = PredicateParameter.class, doc = "Predicate to filter combinations")
-	public synchronized void setPredicate(IPredicate<?> joinPredicate)
-	{
+	@Parameter(name = "predicate", type = PredicateParameter.class, doc = "Predicate to filter combinations.", optional = true)
+	public synchronized void setPredicate(IPredicate<?> joinPredicate) {
 		this.predicate = joinPredicate;
 	}
 
 	@Override
-	public IPredicate<?> getPredicate()
-	{
+	public IPredicate<?> getPredicate() {
 		return predicate;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public synchronized SDFSchema getOutputSchemaIntern(int pos)
-	{
-			Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
-			SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),	(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes);
-			setOutputSchema(newOutputSchema);
-			return newOutputSchema;
-	}	
+	@SuppressWarnings("unchecked")
+	public synchronized SDFSchema getOutputSchemaIntern(int pos) {
+		Collection<SDFAttribute> emptyAttributes = new ArrayList<>();
+		SDFSchema newOutputSchema = SDFSchemaFactory.createNewSchema(getInputSchema(pos).getURI(),
+				(Class<? extends IStreamObject<?>>) XMLStreamObject.class, emptyAttributes);
+		setOutputSchema(newOutputSchema);
+		return newOutputSchema;
+	}
 
 }

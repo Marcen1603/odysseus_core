@@ -76,13 +76,21 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
 			throws XPathFactoryConfigurationException, XPathExpressionException {
-		XMLStreamObject<IMetaAttribute> result = (XMLStreamObject<IMetaAttribute>) new XMLStreamObject<IMetaAttribute>(
-				right.getDocument());
+		
+		XMLStreamObject<IMetaAttribute> result = new XMLStreamObject<IMetaAttribute>(right.getDocument());
+		
 		Node node = result.getNode(path);
+		
 		if (node != null) {
-			Node appendNode = right.getDocument().importNode(left.getDocument().getFirstChild().cloneNode(true), true);
+			
+			Node appendNode = right.getDocument().importNode(
+					left.getDocument().getFirstChild().cloneNode(true), 
+					true
+			);
+			
 			node.appendChild(appendNode);
 		}
+		
 		return result;
 	}
 
