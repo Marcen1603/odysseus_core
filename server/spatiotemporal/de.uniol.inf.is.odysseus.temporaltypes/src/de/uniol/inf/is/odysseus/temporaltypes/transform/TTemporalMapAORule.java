@@ -9,7 +9,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.physicalopertor.TemporalRelationalMapPO;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -20,7 +20,7 @@ public class TTemporalMapAORule extends AbstractTransformationRule<MapAO> {
 	@Override
 	public void execute(MapAO mapAO, TransformationConfiguration config) throws RuleException {
 		int[] restrictList = SDFSchema.calcRestrictList(mapAO.getInputSchema(), mapAO.getRemoveAttributes());
-		TemporalRelationalMapPO<IValidTime> mapPO = new TemporalRelationalMapPO<>(mapAO.getInputSchema(),
+		TemporalRelationalMapPO<IValidTimes> mapPO = new TemporalRelationalMapPO<>(mapAO.getInputSchema(),
 				mapAO.getExpressionList().toArray(new SDFExpression[0]), mapAO.isAllowNullValue(),
 				mapAO.isEvaluateOnPunctuation(), mapAO.isExpressionsUpdateable(), mapAO.isSuppressErrors(),
 				mapAO.isKeepInput(), restrictList);

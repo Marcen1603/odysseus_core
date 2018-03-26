@@ -11,6 +11,8 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.TimeValueIte
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.temporaltypes.logicaloperator.ChangeValidTimeAO;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 
 /**
  * This operator manipulates the ValidTime metadata. It is doing this based on
@@ -58,10 +60,13 @@ public class ChangeValidTimePO<T extends IStreamObject<?>> extends AbstractPipe<
 
 			PointInTime newValidStart = streamTime.getStart().plus(convertedValueToAddStart);
 			PointInTime newValidEnd = streamTime.getStart().plus(convertedValueToAddEnd);
-			if (metadata instanceof IValidTime) {
+			if (metadata instanceof IValidTimes) {
 				// Use the calculated start and end timestamps for the ValidTime
-				IValidTime validTime = (IValidTime) metadata;
-				validTime.setValidStartAndEnd(newValidStart, newValidEnd);
+				IValidTimes validTime = (IValidTimes) metadata;
+				validTime.clear();
+				IValidTime newTime = new ValidTime();
+				newTime.setValidStartAndEnd(newValidStart, newValidEnd);
+				validTime.addValidTime(newTime);
 			}
 		}
 		transfer(object);

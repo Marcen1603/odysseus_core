@@ -25,7 +25,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.integer.TemporalInteger;
  * Makes a TemporalInteger from an integer.
  * 
  * Remark: Uses the non-incremental interface to deal with the second metadata
- * (ValidTime) correctly.
+ * (ValidTimes) correctly.
  * 
  * @author Tobias Brandt
  *
