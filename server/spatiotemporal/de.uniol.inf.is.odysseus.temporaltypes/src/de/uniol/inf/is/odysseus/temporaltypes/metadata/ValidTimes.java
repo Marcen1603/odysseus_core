@@ -66,15 +66,20 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
-		// TODO Auto-generated method stub
-		return null;
+		return (K) validTimes.get(index);
 	}
 
 	@Override
 	public List<IValidTime> getValidTimes() {
 		return this.validTimes;
+	}
+	
+	@Override
+	public void addValidTime(IValidTime validTime) {
+		this.validTimes.add(validTime);
 	}
 
 	@Override

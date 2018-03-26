@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 
@@ -19,13 +20,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
  *
  * @param <T>
  */
-public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
+public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
 
-	public TemporalSelectPO(TemporalRelationalExpression<IValidTime> expression) {
+	public TemporalSelectPO(TemporalRelationalExpression<IValidTimes> expression) {
 		super(expression);
 	}
 
-	public TemporalSelectPO(boolean predicateIsUpdateable, TemporalRelationalExpression<IValidTime> expression) {
+	public TemporalSelectPO(boolean predicateIsUpdateable, TemporalRelationalExpression<IValidTimes> expression) {
 		super(predicateIsUpdateable, expression);
 	}
 
@@ -84,12 +85,14 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 		 * create a single tuple with a list of valid time intervals. As for now,
 		 * multiple tuples are created if there are multiple time intervals.
 		 */
+		@SuppressWarnings("unchecked")
+		T newObject = (T) object.clone();
+		
 		for (IValidTime validTime : validTimeIntervals) {
-			@SuppressWarnings("unchecked")
-			T newObject = (T) object.clone();
-			newObject.getMetadata().setValidStartAndEnd(validTime.getValidStart(), validTime.getValidEnd());
-			transfer(newObject);
+			newObject.getMetadata().addValidTime(validTime);
 		}
+		
+		transfer(newObject);
 	}
 
 	/**
@@ -99,9 +102,9 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 	 * @return The predicate at a TemporalRelationalExpression
 	 */
 	@SuppressWarnings("unchecked")
-	private TemporalRelationalExpression<IValidTime> getExpression() {
+	private TemporalRelationalExpression<IValidTimes> getExpression() {
 		if (this.getPredicate() instanceof TemporalRelationalExpression<?>) {
-			return (TemporalRelationalExpression<IValidTime>) (this.getPredicate());
+			return (TemporalRelationalExpression<IValidTimes>) (this.getPredicate());
 		}
 		return null;
 	}

@@ -7,5 +7,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 public interface IValidTimes extends IMetaAttribute {
 	
 	public List<IValidTime> getValidTimes();
+	
+	public void addValidTime(IValidTime validTime);
 
 }
