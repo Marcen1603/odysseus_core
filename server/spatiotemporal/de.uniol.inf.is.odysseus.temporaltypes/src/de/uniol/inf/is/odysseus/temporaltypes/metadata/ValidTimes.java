@@ -33,7 +33,6 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	}
 
 	public ValidTimes() {
-		// For OSGi
 	}
 
 	public ValidTimes(ValidTimes toCopy) {
@@ -74,10 +73,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
-		if (validTimes.size() > index) {
-			return (K) validTimes.get(index);
-		}
-		return null;
+		return (K) this;
 	}
 
 	@Override
@@ -115,7 +111,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 			if (!first) {
 				builder.append(", ");
 			}
-			builder.append("(" + validTime.getValidStart() + ", " + validTime.getValidEnd() + "]");
+			builder.append("[" + validTime.getValidStart() + ", " + validTime.getValidEnd() + ")");
 			first = false;
 		}
 		builder.append("]");

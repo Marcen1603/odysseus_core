@@ -14,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpress
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
-import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 
@@ -108,7 +108,7 @@ public class TSetTemporalConstraintsOnMapAORule extends TTemporalMapAORule {
 	@Override
 	public boolean isExecutable(MapAO operator, TransformationConfiguration config) {
 		// Only use this rule if the map has temporal expressions
-		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTime.class);
+		boolean hasValidTime = operator.getInputSchema().hasMetatype(IValidTimes.class);
 		boolean hasTemporalExpression = this.containsExpressionWithTemporalAttribute(operator.getExpressionList());
 		return hasValidTime && hasTemporalExpression;
 	}

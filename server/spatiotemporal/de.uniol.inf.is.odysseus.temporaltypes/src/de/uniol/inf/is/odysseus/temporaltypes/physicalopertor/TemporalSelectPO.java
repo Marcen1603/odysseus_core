@@ -87,12 +87,15 @@ public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> 
 		 */
 		@SuppressWarnings("unchecked")
 		T newObject = (T) object.clone();
-		
+		IValidTimes validTimes = (IValidTimes) newObject.getMetadata();
+		validTimes.clear();
 		for (IValidTime validTime : validTimeIntervals) {
-			newObject.getMetadata().addValidTime(validTime);
+			validTimes.addValidTime(validTime);
 		}
-		
-		transfer(newObject);
+
+		if (validTimes.getValidTimes().size() > 0) {
+			transfer(newObject);
+		}
 	}
 
 	/**
