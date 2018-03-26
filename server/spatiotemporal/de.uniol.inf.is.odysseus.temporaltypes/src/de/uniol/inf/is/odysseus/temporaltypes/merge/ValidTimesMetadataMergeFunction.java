@@ -6,6 +6,12 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 
+/**
+ * Used to merge two metadata fields with valid times. Merges the lists.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ValidTimesMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
 	@Override
@@ -17,16 +23,17 @@ public class ValidTimesMetadataMergeFunction implements IInlineMetadataMergeFunc
 			}
 		}
 	}
-	
+
 	private IValidTime mergeValidTime(IValidTime left, IValidTime right) {
 		IValidTime mergedData = (IValidTime) left.createInstance();
 		mergedData.setValidStart(PointInTime.max(left.getValidStart(), right.getValidStart()));
 		mergedData.setValidEnd(PointInTime.min(left.getValidEnd(), right.getValidEnd()));
 		return mergedData;
 	}
-	
+
 	private IValidTimes addValidTimeToValidTimes(IValidTimes addTo, IValidTime validTime) {
-		if(validTime.getValidEnd().after(validTime.getValidStart())) {
+		if (validTime.getValidEnd().after(validTime.getValidStart())) {
+			// Only add if the resulting interval is at least valid for one time instance
 			addTo.addValidTime(validTime);
 		}
 		return addTo;

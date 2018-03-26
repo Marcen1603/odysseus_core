@@ -4,6 +4,12 @@ import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 
+/**
+ * The metadata type for a list of valid times.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public interface IValidTimes extends IMetaAttribute {
 
 	public List<IValidTime> getValidTimes();
