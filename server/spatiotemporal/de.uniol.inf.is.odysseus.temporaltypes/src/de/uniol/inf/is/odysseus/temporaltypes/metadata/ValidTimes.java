@@ -14,6 +14,14 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataMergeFunction;
 
+/**
+ * The metadata type for a list of valid times. Bundles the underlying metadata
+ * type ValidTime. Used because in the same stream time interval multiple valid
+ * time intervals can exist.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes, Cloneable, Serializable {
 
 	private static final long serialVersionUID = -7851387086652619437L;
@@ -85,7 +93,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	public void addValidTime(IValidTime validTime) {
 		this.validTimes.add(validTime);
 	}
-	
+
 	@Override
 	public void clear() {
 		this.validTimes = new ArrayList<>();
@@ -100,12 +108,12 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	public IMetaAttribute clone() {
 		return new ValidTimes(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		
+
 		boolean first = true;
 		for (IValidTime validTime : validTimes) {
 			if (!first) {
@@ -115,7 +123,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 			first = false;
 		}
 		builder.append("]");
-		
+
 		return builder.toString();
 	}
 

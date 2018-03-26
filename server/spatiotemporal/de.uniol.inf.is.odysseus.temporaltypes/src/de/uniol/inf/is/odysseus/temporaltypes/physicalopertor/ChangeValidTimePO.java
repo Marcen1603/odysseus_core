@@ -15,11 +15,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 
 /**
- * This operator manipulates the ValidTime metadata. It is doing this based on
+ * This operator manipulates the ValidTimes metadata. It is doing this based on
  * the stream time interval. It uses the start timestamp of the stream time
  * interval (the "normal" time interval) of a stream element and adds /
  * substracts the given values to / from it to calculate the start and end
  * timestamp of the ValidTime.
+ * 
+ * Removes all previous information in the ValidTimes metadata.
  * 
  * @author Tobias Brandt
  *
