@@ -12,15 +12,16 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataMergeFunction;
 
 public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes, Cloneable, Serializable {
 
 	private static final long serialVersionUID = -7851387086652619437L;
-	
+
 	private final static String METADATA_NAME = "ValidTimes";
-	
-	List<IValidTime> validTimes= new ArrayList<>();
-	
+
+	List<IValidTime> validTimes = new ArrayList<>();
+
 	@SuppressWarnings("unchecked")
 	public final static Class<? extends IMetaAttribute>[] classes = new Class[] { IValidTimes.class };
 
@@ -28,9 +29,13 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	static {
 		List<SDFAttribute> attributes = new ArrayList<SDFAttribute>();
 		attributes.add(new SDFAttribute("ValidTimes", "ValidTimes", SDFDatatype.LIST_TUPLE));
-		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTimes", Tuple.class, attributes, IValidTime.class));
+		schema.add(SDFSchemaFactory.createNewMetaSchema("ValidTimes", Tuple.class, attributes, IValidTimes.class));
 	}
-	
+
+	public ValidTimes() {
+		// For OSGi
+	}
+
 	public ValidTimes(ValidTimes toCopy) {
 		for (IValidTime validTime : toCopy.validTimes) {
 			this.validTimes.add(validTime);
@@ -69,28 +74,53 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	@SuppressWarnings("unchecked")
 	@Override
 	public <K> K getValue(int subtype, int index) {
-		return (K) validTimes.get(index);
+		if (validTimes.size() > index) {
+			return (K) validTimes.get(index);
+		}
+		return null;
 	}
 
 	@Override
 	public List<IValidTime> getValidTimes() {
 		return this.validTimes;
 	}
-	
+
 	@Override
 	public void addValidTime(IValidTime validTime) {
 		this.validTimes.add(validTime);
 	}
+	
+	@Override
+	public void clear() {
+		this.validTimes = new ArrayList<>();
+	}
 
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ValidTimesMetadataMergeFunction();
 	}
 
 	@Override
 	public IMetaAttribute clone() {
 		return new ValidTimes(this);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		
+		boolean first = true;
+		for (IValidTime validTime : validTimes) {
+			if (!first) {
+				builder.append(", ");
+			}
+			builder.append("(" + validTime.getValidStart() + ", " + validTime.getValidEnd() + "]");
+			first = false;
+		}
+		builder.append("]");
+		
+		return builder.toString();
 	}
 
 }
