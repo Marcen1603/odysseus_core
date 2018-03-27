@@ -1,8 +1,17 @@
 package de.uniol.inf.is.odysseus.wrapper.pmml.server;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -110,8 +119,24 @@ public class PMMLProtocolHandler extends AbstractProtocolHandler<IStreamObject<?
 			try {
 				this.inputStream = getTransportHandler().getInputStream();
 				
+				try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+						BufferedReader reader = new BufferedReader(inputStreamReader)) {
+
+					String pmmlString = reader.lines().collect(Collectors.joining("\n"));
+					//Pattern pattern = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$"); 
+					//Matcher matcher = pattern.matcher(pmmlString);
+					
+					Decoder decoder = Base64.getDecoder();
+					try {
+						this.inputStream = new ByteArrayInputStream(decoder.decode(pmmlString));
+					} catch(IllegalArgumentException e) {
+						// if pmml is not base 64 encoded
+					}
+				}
+		          
+				
 				if(this.inputStream.available() > 0) {
-					PMML pmml = PMMLUtil.unmarshal(inputStream);
+					PMML pmml = PMMLUtil.unmarshal(this.inputStream);
 					
 					if(pmml != null) {
 						this.pmml = pmml;
