@@ -34,6 +34,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalO
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.BooleanParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.EnumParameter;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.IntegerParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.PredicateParameter;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
@@ -51,7 +52,10 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	private Boolean assureOrder = null;
 
 	private IPredicate<?> predicate;
-	private String sweepAreaName; 
+	private String sweepAreaName;
+	
+	private int elementSizePort0 = -1;
+	private int elementSizePort1 = -1;
 
 	public JoinAO() {
 		super();
@@ -65,6 +69,9 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		}
 		this.assureOrder = joinAO.assureOrder;
 		this.sweepAreaName = joinAO.sweepAreaName;
+		
+		this.elementSizePort0 = joinAO.elementSizePort0;
+		this.elementSizePort1 = joinAO.elementSizePort1;
 	}
 
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
@@ -104,6 +111,24 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	@Override
 	public IPredicate<?> getPredicate() {
 		return predicate;
+	}
+	
+	@Parameter(type = IntegerParameter.class, optional = true, name = "elementSizePort0", doc = "Internal element window size for port 0. Only the n newest elements from that port are used.")
+	public void setElementSizePort0(int elementSize) {
+		this.elementSizePort0 = elementSize;
+	}
+	
+	public int getElementSizePort1() {
+		return this.elementSizePort0;
+	}
+	
+	@Parameter(type = IntegerParameter.class, optional = true, name = "elementSizePort1", doc = "Internal element window size for port 1. Only the n newest elements from that port are used.")
+	public void setElementSizePort1(int elementSize) {
+		this.elementSizePort1 = elementSize;
+	}
+	
+	public int getElementSizePort2() {
+		return this.elementSizePort1;
 	}
 
 	public @Override JoinAO clone() {
