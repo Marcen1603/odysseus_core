@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFConstraint;
 import de.uniol.inf.is.odysseus.rcp.AbstractKeyValueGeneralProvider;
 
 public class OutputSchemaOperatorDetailProvider extends AbstractKeyValueGeneralProvider {
@@ -20,7 +21,12 @@ public class OutputSchemaOperatorDetailProvider extends AbstractKeyValueGeneralP
 	protected Map<String, String> getKeyValuePairs(IPhysicalOperator operator) {
 		Map<String, String> map = Maps.newHashMap();
 		for( SDFAttribute attribute : operator.getOutputSchema() ) {
-			map.put(determineFullName(attribute), attribute.getDatatype().getQualName());
+			String constraints = "[";
+			for (SDFConstraint constraint : attribute.getDtConstraints()) {
+				constraints = (constraints.length() > 1 ? ", " : "") + constraints + constraint.getURI() + " : " + constraint.getValue();
+			}
+			constraints = constraints + "]";
+			map.put(determineFullName(attribute), attribute.getDatatype().getQualName() + "; constraints: " + constraints);
 		}
 		return map;
 	}
