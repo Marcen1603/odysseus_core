@@ -45,18 +45,17 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#execute(java.lang.Object,
 	 * java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
 
-		// temp check to avoid aggreation in scenarios where more that
-		// timeinterval is
-		// used --> aggregation does not handle
-		// metadata correctly in this case
+		/*
+		 * temp check to avoid aggregation in scenarios where more than timeinterval is
+		 * used --> aggregation does not handle metadata correctly in this case
+		 */
 
 		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
 		// Attention: Time meta data is set in aggregation
@@ -77,8 +76,18 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 			}
 		}
 
-		if (operator.getInputSchema().getMetaAttributeNames().size() > 1 && incrementalFunctions.size() > 0
-				|| operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName()) {
+		/*
+		 * If there is at least one non-incremental function, the SweepArea is used and
+		 * hence, the merge of metadata for other types of metadata works. If there is
+		 * no non-incremental function, the operator currently cannot handle other types
+		 * of metadata.
+		 */
+		boolean hasMoreThanOneMetadata = operator.getInputSchema().getMetaAttributeNames().size() > 1;
+		boolean hasNonIncrementalFunction = nonIncrementalFunctions.size() > 0;
+		boolean hasOnlyOneMetadataButOtherThanTimeInterval = !hasMoreThanOneMetadata
+				&& operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName();
+		
+		if (hasMoreThanOneMetadata && !hasNonIncrementalFunction || hasOnlyOneMetadataButOtherThanTimeInterval) {
 			throw new TransformationException(
 					"Aggregation currently only works with #METADATA TimeInterval for incremental functions! Use Aggregate instead");
 		}
@@ -109,8 +118,7 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
+	 * @see de.uniol.inf.is.odysseus.ruleengine.rule.IRule#isExecutable(java.lang.
 	 * Object, java.lang.Object)
 	 */
 	@Override
