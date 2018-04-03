@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFExpression;
 import de.uniol.inf.is.odysseus.core.usermanagement.ISession;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
@@ -21,7 +22,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
  *
  * @param <T>
  */
-public class TemporalRelationalExpression<T extends IValidTime> extends RelationalExpression<T> {
+public class TemporalRelationalExpression<T extends IValidTimes> extends RelationalExpression<T> {
 
 	private static final long serialVersionUID = 7516261668144789244L;
 
@@ -42,19 +43,21 @@ public class TemporalRelationalExpression<T extends IValidTime> extends Relation
 		 */
 		GenericTemporalType<Object> temporalType = new GenericTemporalType<>();
 
-		PointInTime validStart = object.getMetadata().getValidStart();
-		PointInTime validEnd = object.getMetadata().getValidEnd();
-
 		/*
-		 * Iterate over the whole valid time interval and evaluate the expression for
+		 * Iterate over the whole valid time intervals and evaluate the expression for
 		 * each point in time. This is done by calculating the values of the temporal
 		 * types at the points in time, fill a Tuple with it and do the normal
 		 * evaluation process for this filled tuple.
 		 */
-		for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
-			Tuple<T> nonTemporalObject = this.atTimeInstance(object, i);
-			Object result = super.evaluate(nonTemporalObject, sessions, history);
-			temporalType.setValue(i, result);
+		for (IValidTime validTime : object.getMetadata().getValidTimes()) {
+			PointInTime validStart = validTime.getValidStart();
+			PointInTime validEnd = validTime.getValidEnd();
+			
+			for (PointInTime i = validStart.clone(); i.before(validEnd); i = i.plus(1)) {
+				Tuple<T> nonTemporalObject = this.atTimeInstance(object, i);
+				Object result = super.evaluate(nonTemporalObject, sessions, history);
+				temporalType.setValue(i, result);
+			}
 		}
 
 		return temporalType;
