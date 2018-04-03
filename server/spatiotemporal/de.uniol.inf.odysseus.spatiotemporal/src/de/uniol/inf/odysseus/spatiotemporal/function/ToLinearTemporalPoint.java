@@ -79,6 +79,9 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 		long timeInstancesTravelled = pointInTime.minus(basePointInTime).getMainPoint();
 		double metersTravelled = geodeticCalculator.getOrthodromicDistance();
 		double speedMetersPerTimeInstance = metersTravelled / timeInstancesTravelled;
+		if (Double.isNaN(speedMetersPerTimeInstance)) {
+			speedMetersPerTimeInstance = 0;
+		}
 		double azimuth = geodeticCalculator.getAzimuth();
 
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,

@@ -2,7 +2,10 @@ package de.uniol.inf.is.odysseus.temporaltypes.metadata;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
@@ -22,7 +25,7 @@ import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataMergeFunct
  * @author Tobias Brandt
  *
  */
-public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes, Cloneable, Serializable {
+public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes, Cloneable, Serializable, List<IValidTime> {
 
 	private static final long serialVersionUID = -7851387086652619437L;
 
@@ -125,6 +128,116 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 		builder.append("]");
 
 		return builder.toString();
+	}
+
+	@Override
+	public boolean add(IValidTime e) {
+		return validTimes.add(e);
+	}
+
+	@Override
+	public void add(int index, IValidTime element) {
+		validTimes.add(index, element);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends IValidTime> c) {
+		return validTimes.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends IValidTime> c) {
+		return validTimes.addAll(index, c);
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return validTimes.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return validTimes.containsAll(c);
+	}
+
+	@Override
+	public IValidTime get(int index) {
+		return validTimes.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return validTimes.indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return validTimes.isEmpty();
+	}
+
+	@Override
+	public Iterator<IValidTime> iterator() {
+		return validTimes.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return validTimes.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<IValidTime> listIterator() {
+		return validTimes.listIterator();
+	}
+
+	@Override
+	public ListIterator<IValidTime> listIterator(int index) {
+		return validTimes.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		return validTimes.remove(o);
+	}
+
+	@Override
+	public IValidTime remove(int index) {
+		return validTimes.remove(index);
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		return validTimes.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return validTimes.retainAll(c);
+	}
+
+	@Override
+	public IValidTime set(int index, IValidTime element) {
+		return validTimes.set(index, element);
+	}
+
+	@Override
+	public int size() {
+		return validTimes.size();
+	}
+
+	@Override
+	public List<IValidTime> subList(int fromIndex, int toIndex) {
+		return validTimes.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return validTimes.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return validTimes.toArray(a);
 	}
 
 }
