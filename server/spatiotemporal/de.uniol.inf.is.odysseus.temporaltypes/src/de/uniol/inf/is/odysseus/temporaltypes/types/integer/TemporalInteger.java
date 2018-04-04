@@ -1,10 +1,12 @@
-package de.uniol.inf.is.odysseus.temporaltypes.types;
+package de.uniol.inf.is.odysseus.temporaltypes.types.integer;
 
 import java.io.Serializable;
 
 import de.uniol.inf.is.odysseus.core.IClone;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
 /**
  * A temporal integer uses a temporal function for integers that returns a value
@@ -17,14 +19,14 @@ public class TemporalInteger implements IClone, Cloneable, Serializable, Tempora
 
 	private static final long serialVersionUID = 6537783520942392777L;
 
-	private IntegerFunction function;
+	private TemporalFunction<Integer> function;
 
 	/**
 	 * 
 	 * @param function
 	 *            The function which is used to calculate the values
 	 */
-	public TemporalInteger(IntegerFunction function) {
+	public TemporalInteger(TemporalFunction<Integer> function) {
 		this.function = function;
 	}
 

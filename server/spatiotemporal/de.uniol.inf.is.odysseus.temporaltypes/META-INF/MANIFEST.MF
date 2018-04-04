@@ -19,3 +19,5 @@ Require-Bundle: org.eclipse.osgi,
 Service-Component: OSGI-INF/ValidTime.xml,OSGI-INF/TemporalFunctionProvider.xml,OSGI-INF/AggregateFunctionTemporalizeInteger.xml,
  OSGI-INF/AggregateFunctionNonIncrementalTemporalizeInteger.xml
 Bundle-ActivationPolicy: lazy
+Export-Package: de.uniol.inf.is.odysseus.temporaltypes.types
+Automatic-Module-Name: de.uniol.inf.is.odysseus.temporaltypes
