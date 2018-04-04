@@ -133,7 +133,9 @@ public class MetrticSpatialUtils {
 
 	/**
 	 * Calculates the azimuth (direction)
-	 * @param crs if null, WGS84 is used
+	 * 
+	 * @param crs
+	 *            if null, WGS84 is used
 	 * @param coordinate1
 	 *            starting point, x = latitude, y = longitude
 	 * @param coordinate2
@@ -152,10 +154,13 @@ public class MetrticSpatialUtils {
 	}
 
 	public Envelope getEnvelopeForRadius(Coordinate center, double rangeMeters) {
+		return getEnvelopeForRadius(center.x, center.y, rangeMeters);
+	}
 
-		org.geotools.referencing.GeodeticCalculator calc = new org.geotools.referencing.GeodeticCalculator();
+	public Envelope getEnvelopeForRadius(double latitude, double longitude, double rangeMeters) {
+		GeodeticCalculator calc = new GeodeticCalculator();
 		// mind, this is lon/lat
-		calc.setStartingGeographicPoint(center.y, center.x);
+		calc.setStartingGeographicPoint(longitude, latitude);
 
 		// get upper left point
 		// go to the north
@@ -185,5 +190,4 @@ public class MetrticSpatialUtils {
 
 		return env;
 	}
-
 }

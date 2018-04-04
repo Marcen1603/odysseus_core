@@ -6,15 +6,21 @@ import java.util.NavigableMap;
 import java.util.SortedMap;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
+import ch.hsr.geohash.BoundingBox;
 import ch.hsr.geohash.GeoHash;
+import ch.hsr.geohash.WGS84Point;
+import ch.hsr.geohash.queries.GeoHashBoundingBoxQuery;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
+import de.uniol.inf.is.odysseus.spatial.utilities.MetrticSpatialUtils;
 
 public class GeoHashHelper {
 
@@ -48,9 +54,38 @@ public class GeoHashHelper {
 		GeoHash hash = GeoHash.withBitPrecision(centroid.getX(), centroid.getY(), numberOfBits);
 		return hash;
 	}
-	
+
 	public static GeoHash fromLatLong(double latitude, double longitude, int numberOfBits) {
 		return GeoHash.withBitPrecision(latitude, longitude, numberOfBits);
+	}
+
+	public static List<GeoHash> approximateCircle(double centerLatitude, double centerLongitude, double radius,
+			int srid) {
+		// Get the rectangular envelope for the circle
+		Envelope env = MetrticSpatialUtils.getInstance().getEnvelopeForRadius(centerLatitude, centerLongitude, radius);
+		GeometryFactory factory = new GeometryFactory(new PrecisionModel(), srid);
+		Point topLeft = factory.createPoint(new Coordinate(env.getMaxX(), env.getMaxY()));
+		Point lowerRight = factory.createPoint(new Coordinate(env.getMinX(), env.getMinY()));
+
+		// Get the hashes which approximately cover the given area
+		List<GeoHash> geoHashes = GeoHashHelper
+				.approximateBoundingBox(GeoHashHelper.createPolygon(GeoHashHelper.createBox(topLeft, lowerRight)));
+		return geoHashes;
+	}
+
+	public static List<GeoHash> approximateBoundingBox(Polygon polygon) {
+		Geometry envelope = polygon.getEnvelope();
+
+		// Get hashes that we have to search for
+		// TODO This is guessed. See which coordinate is which. ->
+		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
+		// with all polygonPoints
+		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
+		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
+		BoundingBox bBox = new BoundingBox(point1, point2);
+		GeoHashBoundingBoxQuery bbQuery = new GeoHashBoundingBoxQuery(bBox);
+		List<GeoHash> searchHashes = bbQuery.getSearchHashes();
+		return searchHashes;
 	}
 
 	public static List<Point> createBox(Point topLeft, Point lowerRight) {
