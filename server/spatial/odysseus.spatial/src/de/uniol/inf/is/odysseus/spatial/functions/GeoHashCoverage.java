@@ -13,6 +13,13 @@ import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.index.GeoHashHelper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
+/**
+ * This function calculates the GeoHashes that cover a given radius. This is
+ * only an approximation!
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class GeoHashCoverage extends AbstractFunction<List<GeoHashWrapper>> {
 
 	private static final long serialVersionUID = 1661673870725509296L;

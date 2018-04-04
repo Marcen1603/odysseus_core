@@ -59,6 +59,16 @@ public class GeoHashHelper {
 		return GeoHash.withBitPrecision(latitude, longitude, numberOfBits);
 	}
 
+	/**
+	 * 
+	 * @param centerLatitude
+	 * @param centerLongitude
+	 * @param radius
+	 * @param srid
+	 * @return A list of GeoHashes that fully cover the area defined by the center
+	 *         and the radius. Could cover more (likely!) as this is only an
+	 *         approximation. Probably more the shape of a box.
+	 */
 	public static List<GeoHash> approximateCircle(double centerLatitude, double centerLongitude, double radius,
 			int srid) {
 		// Get the rectangular envelope for the circle
@@ -73,13 +83,17 @@ public class GeoHashHelper {
 		return geoHashes;
 	}
 
+	/**
+	 * 
+	 * @param polygon
+	 *            The bounding box. First and third coordinate (upper left, lower
+	 *            right) are used to create the bounding box for GeoHash
+	 *            calculation.
+	 * @return A list of hashes that fully cover the given bounding box. Could cover
+	 *         more, this is only an approximation!
+	 */
 	public static List<GeoHash> approximateBoundingBox(Polygon polygon) {
 		Geometry envelope = polygon.getEnvelope();
-
-		// Get hashes that we have to search for
-		// TODO This is guessed. See which coordinate is which. ->
-		// First test seems to be OK. Other possibility: expand BoundingBoxQuery
-		// with all polygonPoints
 		WGS84Point point1 = new WGS84Point(envelope.getCoordinates()[0].x, envelope.getCoordinates()[0].y);
 		WGS84Point point2 = new WGS84Point(envelope.getCoordinates()[2].x, envelope.getCoordinates()[2].y);
 		BoundingBox bBox = new BoundingBox(point1, point2);

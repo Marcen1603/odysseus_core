@@ -9,12 +9,19 @@ import de.uniol.inf.is.odysseus.spatial.datatype.GeoHashWrapper;
 import de.uniol.inf.is.odysseus.spatial.geom.GeometryWrapper;
 import de.uniol.inf.is.odysseus.spatial.sourcedescription.sdf.schema.SDFSpatialDatatype;
 
+/**
+ * Takes a spatial point and calculates the GeoHash for the point with the
+ * highest bit precision (full long value, 64 Bit).
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ToGeoHash extends AbstractFunction<GeoHashWrapper> {
 
 	private static final long serialVersionUID = 4863586728786679457L;
-	
+
 	public static final int BIT_PRECISION = 64;
-	
+
 	public static final SDFDatatype[] accTypes1 = new SDFDatatype[] { SDFSpatialDatatype.LIST_SPATIAL_POINT };
 	public static final SDFDatatype[][] accTypes = new SDFDatatype[][] { accTypes1 };
 
@@ -29,7 +36,7 @@ public class ToGeoHash extends AbstractFunction<GeoHashWrapper> {
 		if (!(inputValue instanceof GeometryWrapper)) {
 			return null;
 		}
-		
+
 		Geometry geometry = ((GeometryWrapper) inputValue).getGeometry();
 		double latitude = geometry.getCentroid().getX();
 		double longitude = geometry.getCentroid().getY();
