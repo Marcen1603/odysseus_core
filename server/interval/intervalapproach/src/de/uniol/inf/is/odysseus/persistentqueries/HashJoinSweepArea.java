@@ -91,7 +91,7 @@ public class HashJoinSweepArea implements ITimeIntervalSweepArea<Tuple<? extends
 
 	@Override
 	public ISweepArea<Tuple<? extends ITimeInterval>> newInstance(OptionMap options) {
-		throw new UnsupportedOperationException();
+		return new HashJoinSweepArea(this.insertRestrictList, this.queryRestrictList, this.inputOrderedByTime);
 	}
 
 	public HashJoinSweepArea(int[] insertRestrictList, int[] queryRestrictList, boolean inputOrderedByTime) {
