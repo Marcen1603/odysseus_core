@@ -99,7 +99,7 @@ public class SAJoinPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 
 		Iterator<T> qualifies;
 		Order order = Order.fromOrdinal(port);
-		qualifies = areas[otherport].queryCopy(object, order, false);
+		qualifies = this.getSweepArea(otherport, this.defaultGroupingKey).queryCopy(object, order, false);
 		List<ISecurityPunctuation> intersectedSPs = new ArrayList<>();
 
 		// extracts the SPs of the matching Tuples from the other port and

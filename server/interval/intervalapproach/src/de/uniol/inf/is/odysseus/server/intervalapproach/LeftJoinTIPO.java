@@ -96,7 +96,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (otherport == 0) {
-					Iterator<T> extracted = this.areas[otherport].extractElements(object, order);
+					Iterator<T> extracted = this.getSweepArea(otherport, this.defaultGroupingKey).extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
 						if (!next.hasTransientMarker(cMetaDataKey)) {
@@ -105,7 +105,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						}
 					}
 				} else {
-					this.areas[otherport].purgeElements(object, order);
+					this.getSweepArea(otherport, this.defaultGroupingKey).purgeElements(object, order);
 				}
 			}
 
@@ -141,7 +141,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				}
 			}
 
-			qualifies = this.areas[otherport].queryCopy(object, order, extract);
+			qualifies = this.getSweepArea(otherport, this.defaultGroupingKey).queryCopy(object, order, extract);
 
 			boolean hit = qualifies.hasNext();
 
@@ -159,21 +159,21 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
 				if (hit && otherport == 0 && (!next.hasTransientMarker(cMetaDataKey))) {
-					this.areas[otherport].remove(next);
+					this.getSweepArea(otherport, this.defaultGroupingKey).remove(next);
 					next.setTransientMarker(cMetaDataKey, Boolean.TRUE);
-					this.areas[otherport].insert(next);
+					this.getSweepArea(otherport, this.defaultGroupingKey).insert(next);
 				}
 
 			}
 			// Depending on card insert elements into sweep area
 			if (this.card == null || this.card == Cardinalities.MANY_MANY) {
-				this.areas[port].insert(object);
+				this.getSweepArea(port, this.defaultGroupingKey).insert(object);
 			} else {
 				switch (this.card) {
 				case ONE_ONE:
 					// If one to one case, a hit cannot be produce another hit
 					if (!hit) {
-						this.areas[port].insert(object);
+						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
 					}
 					break;
 				case ONE_MANY:
@@ -181,7 +181,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					// if from right and no hit, insert (corresponding left
 					// element not found now)
 					if (port == 0 || (port == 1 && !hit)) {
-						this.areas[port].insert(object);
+						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
 					}
 					break;
 				case MANY_ONE:
@@ -189,11 +189,11 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					// if from left and no hit, insert (corresponding right
 					// element not found now)
 					if (port == 1 || (port == 0 && !hit)) {
-						this.areas[port].insert(object);
+						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
 					}
 					break;
 				default:
-					this.areas[port].insert(object);
+					this.getSweepArea(port, this.defaultGroupingKey).insert(object);
 					break;
 				}
 			}
@@ -207,7 +207,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			// There are no more join partners for every element in sweep area
 			// with port 0
 
-			StreamSupport.stream(this.areas[0].spliterator(), false)
+			StreamSupport.stream(this.getSweepArea(0, this.defaultGroupingKey).spliterator(), false)
 					.filter(elem -> !elem.hasTransientMarker(cMetaDataKey)).forEach(elem -> {
 						T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(elem);
 						this.transferFunction.transfer(out);
@@ -224,7 +224,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (port == 1) {
-					Iterator<T> extracted = this.areas[port ^ 1].extractElementsBefore(punctuation.getTime());
+					Iterator<T> extracted = this.getSweepArea(port ^ 1, this.defaultGroupingKey).extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
 						if (!next.hasTransientMarker(cMetaDataKey)) {
@@ -233,7 +233,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						}
 					}
 				} else {
-					this.areas[port ^ 1].purgeElementsBefore(punctuation.getTime());
+					this.getSweepArea(port ^ 1, this.defaultGroupingKey).purgeElementsBefore(punctuation.getTime());
 				}
 			}
 		}
