@@ -61,6 +61,7 @@ import de.uniol.inf.is.odysseus.spatial.functions.SpatialUnionBuffer;
 import de.uniol.inf.is.odysseus.spatial.functions.SpatialWithin;
 import de.uniol.inf.is.odysseus.spatial.functions.ToCartesianCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.ToEllipsoid;
+import de.uniol.inf.is.odysseus.spatial.functions.ToGeoHash;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPoint;
 import de.uniol.inf.is.odysseus.spatial.functions.ToPolarCoordinate;
 
@@ -124,6 +125,8 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new GetYFromSpatial());
 
 		functions.add(new SpatialOrthodromicMetricDistance());
+		
+		functions.add(new ToGeoHash());
 		
 		return functions;
 	}
