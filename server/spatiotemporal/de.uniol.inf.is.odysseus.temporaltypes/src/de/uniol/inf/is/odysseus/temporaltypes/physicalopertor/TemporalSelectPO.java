@@ -8,6 +8,7 @@ import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.SelectPO;
 import de.uniol.inf.is.odysseus.temporaltypes.expressions.TemporalRelationalExpression;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 
@@ -19,13 +20,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
  *
  * @param <T>
  */
-public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
+public class TemporalSelectPO<T extends Tuple<IValidTimes>> extends SelectPO<T> {
 
-	public TemporalSelectPO(TemporalRelationalExpression<IValidTime> expression) {
+	public TemporalSelectPO(TemporalRelationalExpression<IValidTimes> expression) {
 		super(expression);
 	}
 
-	public TemporalSelectPO(boolean predicateIsUpdateable, TemporalRelationalExpression<IValidTime> expression) {
+	public TemporalSelectPO(boolean predicateIsUpdateable, TemporalRelationalExpression<IValidTimes> expression) {
 		super(predicateIsUpdateable, expression);
 	}
 
@@ -43,9 +44,35 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 
 		@SuppressWarnings("unchecked")
 		GenericTemporalType<Boolean> temporalType = (GenericTemporalType<Boolean>) expressionResult;
+		List<IValidTime> validTimeIntervals = constructValidTimeIntervals(temporalType);
+		T newObject = createOutputTuple(object, validTimeIntervals);
+		if (validTimeIntervals.size() > 0) {
+			transfer(newObject);
+		}
+	}
+
+	/**
+	 * Combines the valid times into one metadata object for valid times, puts this
+	 * into a new (copied) stream object) and returns this new object.
+	 * 
+	 * @param originalStreamObject
+	 * @param validTimeIntervals
+	 * @return
+	 */
+	private T createOutputTuple(T originalStreamObject, List<IValidTime> validTimeIntervals) {
+		@SuppressWarnings("unchecked")
+		T newObject = (T) originalStreamObject.clone();
+		IValidTimes validTimes = (IValidTimes) newObject.getMetadata();
+		validTimes.clear();
+		for (IValidTime validTime : validTimeIntervals) {
+			validTimes.addValidTime(validTime);
+		}
+		return newObject;
+	}
+
+	private List<IValidTime> constructValidTimeIntervals(GenericTemporalType<Boolean> temporalType) {
 		List<IValidTime> validTimeIntervals = new ArrayList<>();
 		IValidTime currentInterval = null;
-
 		PointInTime lastTime = null;
 
 		/*
@@ -78,18 +105,7 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 			currentInterval = null;
 		}
 
-		/*
-		 * For each valid time interval, create a new tuple with the same stream time,
-		 * the same content but different valid time intervals. It would be possible to
-		 * create a single tuple with a list of valid time intervals. As for now,
-		 * multiple tuples are created if there are multiple time intervals.
-		 */
-		for (IValidTime validTime : validTimeIntervals) {
-			@SuppressWarnings("unchecked")
-			T newObject = (T) object.clone();
-			newObject.getMetadata().setValidStartAndEnd(validTime.getValidStart(), validTime.getValidEnd());
-			transfer(newObject);
-		}
+		return validTimeIntervals;
 	}
 
 	/**
@@ -99,9 +115,9 @@ public class TemporalSelectPO<T extends Tuple<IValidTime>> extends SelectPO<T> {
 	 * @return The predicate at a TemporalRelationalExpression
 	 */
 	@SuppressWarnings("unchecked")
-	private TemporalRelationalExpression<IValidTime> getExpression() {
+	private TemporalRelationalExpression<IValidTimes> getExpression() {
 		if (this.getPredicate() instanceof TemporalRelationalExpression<?>) {
-			return (TemporalRelationalExpression<IValidTime>) (this.getPredicate());
+			return (TemporalRelationalExpression<IValidTimes>) (this.getPredicate());
 		}
 		return null;
 	}

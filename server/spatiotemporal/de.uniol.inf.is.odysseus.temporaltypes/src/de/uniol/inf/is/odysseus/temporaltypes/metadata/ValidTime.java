@@ -119,7 +119,7 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 
 	@Override
 	public String toString() {
-		return getValidStart().toString() + "|" + getValidEnd().toString();
+		return "[" + getValidStart().toString() + ", " + getValidEnd().toString() + ")";
 	}
 
 	@Override
