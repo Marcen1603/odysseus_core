@@ -39,17 +39,13 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	private static final long serialVersionUID = -564559788689771841L;
 
-	protected TemporalPoint[] temporalPoint;
-
 	// For OSGi
 	public ToLinearTemporalPoint() {
 		super();
-		temporalPoint = new TemporalPoint[1];
 	}
 
 	public ToLinearTemporalPoint(final int[] attributes, final String[] outputNames) {
 		super(attributes, outputNames);
-		temporalPoint = new TemporalPoint[attributes.length];
 		if (outputNames.length != attributes.length) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
@@ -57,7 +53,6 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	public ToLinearTemporalPoint(final int inputAttributesLength, final String[] outputNames) {
 		super(null, outputNames);
-		this.temporalPoint = new TemporalPoint[inputAttributesLength];
 		if (outputNames.length != inputAttributesLength) {
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
@@ -65,14 +60,30 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	public ToLinearTemporalPoint(ToLinearTemporalPoint<M, T> other) {
 		super(other);
-		this.temporalPoint = new TemporalPoint[other.temporalPoint.length];
 	}
 
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
 		T oldestElement = popOldestElement(elements);
-		Geometry basePoint = getPointFromElement(oldestElement);
+		
+		if (oldestElement == null) {
+			return this.handleEmptyHistory(trigger);
+		}
+		return this.handleFilledHistory(trigger, oldestElement, pointInTime, elements);
+	}
+	
+	private Object[] handleEmptyHistory(T trigger) {
 		Geometry currentPoint = getPointFromElement(trigger);
+		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(currentPoint,
+				trigger.getMetadata().getStart(), 0, 0);
+		TemporalPoint[] temporalPoint = new TemporalPoint[1];
+		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		return temporalPoint;
+	}
+	
+	private Object[] handleFilledHistory(T trigger, T oldestElement, PointInTime pointInTime, Collection<T> history) {
+		Geometry currentPoint = getPointFromElement(trigger);
+		Geometry basePoint = getPointFromElement(oldestElement);
 		GeodeticCalculator geodeticCalculator = getGeodeticCalculator(basePoint, currentPoint);
 
 		PointInTime basePointInTime = oldestElement.getMetadata().getStart();
@@ -86,8 +97,9 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 		TemporalFunction<GeometryWrapper> temporalPointFunction = new LinearMovingPointFunction(basePoint,
 				basePointInTime, speedMetersPerTimeInstance, azimuth);
-		this.temporalPoint[0] = new TemporalPoint(temporalPointFunction);
-		return this.temporalPoint;
+		TemporalPoint[] temporalPoint = new TemporalPoint[1];
+		temporalPoint[0] = new TemporalPoint(temporalPointFunction);
+		return temporalPoint;
 	}
 
 	private GeodeticCalculator getGeodeticCalculator(Geometry from, Geometry to) {
@@ -133,7 +145,7 @@ public class ToLinearTemporalPoint<M extends ITimeInterval, T extends Tuple<M>>
 
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
-		final List<SDFAttribute> result = new ArrayList<>(this.temporalPoint.length);
+		final List<SDFAttribute> result = new ArrayList<>(outputAttributeNames.length);
 
 		for (final String attr : outputAttributeNames) {
 			result.add(new SDFAttribute(null, attr, SDFSpatialDatatype.SPATIAL_POINT, null,

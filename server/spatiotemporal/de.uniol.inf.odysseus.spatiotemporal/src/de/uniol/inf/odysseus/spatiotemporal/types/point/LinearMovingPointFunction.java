@@ -89,7 +89,7 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 
 	@Override
 	public String toString() {
-		return "speed: " + speedMeterPerTimeInstance + "m/s; azimuth: " + azimuth;
+		return "speed: " + speedMeterPerTimeInstance + "m/timeInstance; azimuth: " + azimuth;
 	}
 
 }
