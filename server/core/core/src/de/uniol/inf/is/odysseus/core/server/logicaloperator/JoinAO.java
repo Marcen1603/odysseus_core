@@ -64,6 +64,7 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	private int elementSizePort1 = -1;
 	private List<SDFAttribute> groupingAttributesPort0;
 	private List<SDFAttribute> groupingAttributesPort1;
+	private boolean keepEndTimestamp = false;
 
 	public JoinAO() {
 		super();
@@ -83,6 +84,8 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 		
 		this.groupingAttributesPort0 = joinAO.groupingAttributesPort0;
 		this.groupingAttributesPort1 = joinAO.groupingAttributesPort1;
+		
+		this.keepEndTimestamp = joinAO.keepEndTimestamp;
 	}
 
 	@Parameter(type = EnumParameter.class, optional = true, doc = "Type of input streams. For optimization purposes: ONE_ONE, ONE_MANY, MANY_ONE, MANY_MANY")
@@ -140,6 +143,15 @@ public class JoinAO extends BinaryLogicalOp implements IHasPredicate, IStatefulA
 	
 	public int getElementSizePort2() {
 		return this.elementSizePort1;
+	}
+	
+	public boolean keepEndTimestamp() {
+		return keepEndTimestamp;
+	}
+
+	@Parameter(type = BooleanParameter.class, optional = true, name = "keepEndTimestamp", doc = "When using element size restrictions, the end timestamp is set to infinity due to semantics (later aggeregation). If you want to keep end timestamp, set to true. Default is false.")
+	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
+		this.keepEndTimestamp = keepEndTimestamp;
 	}
 	
 	@Parameter(name = "group_by_port_0", optional = true, type = ResolvedSDFAttributeParameter.class, isList = true, doc = "Group the element window (if used) be these attributes on port 0.")

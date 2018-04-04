@@ -104,6 +104,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	 * This object will be used as fallback grouping key.
 	 */
 	protected final Serializable defaultGroupingKey = "";
+	protected boolean keepEndtimestamp = false;
 
 	// ------------------------------------------------------------------------------------
 
@@ -166,6 +167,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.elementSize[1] = join.elementSize[1];
 
 		this.groupingIndices = join.groupingIndices;
+		this.keepEndtimestamp = join.keepEndtimestamp;
 	}
 
 	public IDataMergeFunction<T, K> getDataMerge() {
@@ -231,6 +233,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.sweepAreaName[0] = port0;
 		this.sweepAreaName[1] = port1;
 		this.useInstanceInseadOfName = false;
+	}
+	
+	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
+		this.keepEndtimestamp = keepEndTimestamp;
 	}
 
 	/**
@@ -392,6 +398,13 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			while (qualifies.hasNext()) {
 				T next = qualifies.next();
 				T newElement = dataMerge.merge(object, next, metadataMerge, order);
+				if (this.useElementRestriction(port) && !this.keepEndtimestamp) {
+					/*
+					 * Remove the end timestamp for correct semantic (later aggregation could have
+					 * wrong results when expecting all elements from the window)
+					 */
+					newElement.getMetadata().setEnd(PointInTime.INFINITY);
+				}
 				transferFunction.transfer(newElement);
 			}
 		}
@@ -406,6 +419,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			transferFunction.newHeartbeat(heartbeat, port);
 			transferFunction.newHeartbeat(heartbeat, otherport);
 		}
+	}
+
+	private boolean useElementRestriction(int port) {
+		return this.elementSize[port] > 0;
 	}
 
 	/**
