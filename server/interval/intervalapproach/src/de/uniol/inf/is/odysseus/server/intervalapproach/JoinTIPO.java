@@ -332,6 +332,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
 				sweepArea.purgeElements(object, order);
 			}
+			this.tryEarlyCleanup(object.getMetadata().getStart(), port);
 		}
 
 		// status could change, if the other port was done and
@@ -672,12 +673,49 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 	public synchronized void processPunctuation(IPunctuation inPunctuation, int port) {
 		IPunctuation punctuation = joinPredicate.processPunctuation(inPunctuation);
 		if (punctuation.isHeartbeat()) {
+
+			// First a quick normal cleanup based on end timestamps
 			for (ITimeIntervalSweepArea<T> sweepArea : groups.get(port ^ 1).values()) {
 				sweepArea.purgeElementsBefore(punctuation.getTime());
 			}
+
+			// Maybe some more elements can be removed based on the start timestamp
+			this.tryEarlyCleanup(punctuation.getTime(), port);
 		}
 		this.transferFunction.sendPunctuation(punctuation);
 		this.transferFunction.newElement(punctuation, port);
+	}
+
+	/**
+	 * If the element restriction is used, the SweepAreas can be cleaned earlier
+	 * based on the start timestamps / age of the elements. The SweepAreas can be
+	 * reduced to the n newest elements. If this is possible, it is done here.
+	 * 
+	 * @param latestTimeOnPort
+	 *            The latest timestamp of the "port", e.g., from a heartbeat.
+	 * @param port
+	 *            The port where the timestamp is from.
+	 */
+	private void tryEarlyCleanup(PointInTime latestTimeOnPort, int port) {
+		int otherport = port ^ 1;
+
+		if (this.elementSize[otherport] < 0) {
+			return;
+		}
+
+		for (ITimeIntervalSweepArea<T> sweepArea : groups.get(otherport).values()) {
+			while (sweepArea.size() > this.elementSize[otherport]) {
+				try {
+					sweepArea.poll();
+				} catch (UnsupportedOperationException e) {
+					/*
+					 * Early cleanup is not possible with this type of SweepArea: we will simply not
+					 * do this optimization
+					 */
+					break;
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
