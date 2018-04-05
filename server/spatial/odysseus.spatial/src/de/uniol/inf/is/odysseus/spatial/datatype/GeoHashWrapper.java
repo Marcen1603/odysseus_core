@@ -5,14 +5,21 @@ import java.io.Serializable;
 import ch.hsr.geohash.GeoHash;
 import de.uniol.inf.is.odysseus.core.IClone;
 
+/**
+ * A wrapper for a GeoHash (which is cloneable).
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class GeoHashWrapper implements IClone, Cloneable, Serializable {
 
-	private static final long serialVersionUID = 7758590625140193600L;
-	
+	private static final long serialVersionUID = -658663791671077879L;
+
 	private GeoHash geoHash;
-	
+
 	public GeoHashWrapper(GeoHash geoHash) {
-		this.setGeoHash(geoHash);
+		super();
+		this.geoHash = geoHash;
 	}
 
 	public GeoHash getGeoHash() {
@@ -22,15 +29,15 @@ public class GeoHashWrapper implements IClone, Cloneable, Serializable {
 	public void setGeoHash(GeoHash geoHash) {
 		this.geoHash = geoHash;
 	}
-	
-	@Override
-	public String toString() {
-		return geoHash.toString();
-	}
 
 	@Override
 	public GeoHashWrapper clone() {
 		return new GeoHashWrapper(this.geoHash);
+	}
+
+	@Override
+	public String toString() {
+		return this.geoHash.toString();
 	}
 
 	@Override
@@ -57,7 +64,5 @@ public class GeoHashWrapper implements IClone, Cloneable, Serializable {
 			return false;
 		return true;
 	}
-	
-	
-	
+
 }

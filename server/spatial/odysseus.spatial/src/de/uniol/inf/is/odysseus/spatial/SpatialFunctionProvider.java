@@ -34,6 +34,8 @@ import de.uniol.inf.is.odysseus.spatial.functions.CalculateBearing;
 import de.uniol.inf.is.odysseus.spatial.functions.CalculateDistance;
 import de.uniol.inf.is.odysseus.spatial.functions.CalculateEndingCoordinates;
 import de.uniol.inf.is.odysseus.spatial.functions.FromWKT;
+import de.uniol.inf.is.odysseus.spatial.functions.GeoHashCoverage;
+import de.uniol.inf.is.odysseus.spatial.functions.GeoHashInside;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCentroid;
 import de.uniol.inf.is.odysseus.spatial.functions.GetCoordinate;
 import de.uniol.inf.is.odysseus.spatial.functions.GetXFromSpatial;
@@ -125,9 +127,11 @@ public class SpatialFunctionProvider implements IFunctionProvider {
 		functions.add(new GetYFromSpatial());
 
 		functions.add(new SpatialOrthodromicMetricDistance());
-		
+
 		functions.add(new ToGeoHash());
-		
+		functions.add(new GeoHashCoverage());
+		functions.add(new GeoHashInside());
+
 		return functions;
 	}
 
