@@ -762,7 +762,11 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 
 			if (mergedMeta == null) {
 				// TODO if handling of incremental meta data changes
-				mergedMeta = (M) new TimeInterval();
+				if (sampleOfGroup != null) {
+					mergedMeta = (M) sampleOfGroup.getMetadata().createInstance();
+				} else {
+					mergedMeta = (M) new TimeInterval();
+				}
 			}
 
 			mergedMeta.setEnd(PointInTime.INFINITY);
