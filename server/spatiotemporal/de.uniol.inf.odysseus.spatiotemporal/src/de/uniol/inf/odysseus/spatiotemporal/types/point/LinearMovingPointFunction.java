@@ -78,7 +78,7 @@ public class LinearMovingPointFunction implements TemporalFunction<GeometryWrapp
 		Point2D destinationGeographicPoint = geodeticCalculator.getDestinationGeographicPoint();
 
 		Geometry destination = GeometryFactory.createPointFromInternalCoord(
-				new Coordinate(destinationGeographicPoint.getX(), destinationGeographicPoint.getY()), this.basePoint);
+				new Coordinate(destinationGeographicPoint.getY(), destinationGeographicPoint.getX()), this.basePoint);
 		return destination;
 	}
 
