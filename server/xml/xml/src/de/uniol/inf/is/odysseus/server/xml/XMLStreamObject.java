@@ -2,9 +2,11 @@ package de.uniol.inf.is.odysseus.server.xml;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -15,6 +17,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
@@ -26,6 +29,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
@@ -182,6 +187,23 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return (Node) factory.newXPath().compile(expression).evaluate(content, XPathConstants.NODE);
 	}
 	
+	public NodeList getValueFromExpression(String expression) {
+		try {
+			String atomicValue = "<?xml version=\"1.0\"?><atomicResult>" + factory.newXPath().compile(expression).evaluate(content) + "</atomicResult>";
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(atomicValue)));
+			return (NodeList) factory.newXPath().compile("//node()").evaluate(doc, XPathConstants.NODESET);
+		} catch (ParserConfigurationException e1) {
+			e1.printStackTrace();
+		} catch (SAXException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public String xPathToString(String expression) {
 		
 		StringWriter buf = new StringWriter();
@@ -241,10 +263,9 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			
 			return (K) new Integer(result.hashCode());
 		} catch (XPathExpressionException e) {
-			log.error("could not compile x-path expression");
+			e.printStackTrace();
 		}
-		
-		throw new IllegalArgumentException("given attribute " + name);
+		return null;
 	}
 
 	@Override
