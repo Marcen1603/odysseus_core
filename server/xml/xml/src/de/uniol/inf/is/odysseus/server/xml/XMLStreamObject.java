@@ -219,11 +219,32 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		name = name.replaceAll(LEFT_BRACE_REPLACEMENT_STRING, "(");
 		name = name.replaceAll(RIGHT_BRACE_REPLACEMENT_STRING, ")");
 		try {
-			return (K) factory.newXPath().compile(name).evaluate(content);
+			
+			// Retrieve the attribute value
+			String result = factory.newXPath().compile(name).evaluate(content);
+			
+			// If result is a number, parse it to Double and return
+			if (result.matches("-?\\d+(\\.\\d+)?")) {
+				Double number = Double.parseDouble(result);
+				return (K) number;
+			}
+			
+			// Otherwise result is a string: return the hash code of the string to ensure
+			// the correct interpretation during the predicate evaluation, because instead
+			// of the StringEqualsOperator only the EqualsOperator (for numeric evaluations)
+			// will be used.
+			
+			// If the result is empty, return null
+			if ("".equals(result)) {
+				return null;
+			}
+			
+			return (K) new Integer(result.hashCode());
 		} catch (XPathExpressionException e) {
 			log.error("could not compile x-path expression");
-			return null;
 		}
+		
+		throw new IllegalArgumentException("given attribute " + name);
 	}
 
 	@Override
