@@ -5,12 +5,12 @@ import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfigu
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.MapAO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.MapPO;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XMLMapAO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLMapPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TMapRule extends AbstractTransformationRule<MapAO>
+public class TXMLMapRule extends AbstractTransformationRule<XMLMapAO>
 {
 
 	@Override
@@ -20,14 +20,14 @@ public class TMapRule extends AbstractTransformationRule<MapAO>
 	}
 
 	@Override
-	public void execute(MapAO operator, TransformationConfiguration config) throws RuleException
+	public void execute(XMLMapAO operator, TransformationConfiguration config) throws RuleException
 	{
-		MapPO<?> xmlmapPO = new MapPO<IMetaAttribute>(operator.getSource(), operator.getTarget());
+		XMLMapPO<?> xmlmapPO = new XMLMapPO<IMetaAttribute>(operator.getSource(), operator.getTarget());
 		defaultExecute(operator, xmlmapPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(MapAO operator, TransformationConfiguration config)
+	public boolean isExecutable(XMLMapAO operator, TransformationConfiguration config)
 	{
 		if ((operator.getInputSchema().getType() == XMLStreamObject.class) && operator.isAllPhysicalInputSet())
 		{

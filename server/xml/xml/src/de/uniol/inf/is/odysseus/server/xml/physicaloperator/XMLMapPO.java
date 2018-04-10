@@ -14,11 +14,11 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import org.w3c.dom.Element;
 
-public class MapPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
+public class XMLMapPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
 	private List<SDFAttribute> target;
 	private List<SDFAttribute> source;
 
-	public MapPO(List<SDFAttribute> _source, List<SDFAttribute> _target) {
+	public XMLMapPO(List<SDFAttribute> _source, List<SDFAttribute> _target) {
 		super();
 		source = _source;
 		target = _target;

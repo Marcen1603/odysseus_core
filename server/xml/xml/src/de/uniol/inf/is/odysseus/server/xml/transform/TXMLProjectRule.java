@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.logicaloperator.ConstructAO;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.ConstructPO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLProjectPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TConstructRule extends AbstractTransformationRule<ConstructAO>{
+public class TXMLProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
 	public int getPriority() {
@@ -18,13 +18,13 @@ public class TConstructRule extends AbstractTransformationRule<ConstructAO>{
 	}
 
 	@Override
-	public void execute(ConstructAO operator, TransformationConfiguration config) throws RuleException {
-		ConstructPO<?> constructPO = new ConstructPO<IMetaAttribute>(operator.getExpressions(), operator.getNewExpressions());
-		defaultExecute(operator, constructPO, config, true, false);
+	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
+		XMLProjectPO<?> projectPO = new XMLProjectPO<IMetaAttribute>(operator.getAttributes());
+		defaultExecute(operator, projectPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(ConstructAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
 		if ((operator.getInputSchema().getType() == XMLStreamObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
@@ -34,7 +34,7 @@ public class TConstructRule extends AbstractTransformationRule<ConstructAO>{
 
 	@Override
 	public String getName() {
-		return "ConstructAO --> ConstructPO";
+		return "ProjectAO --> XMLProjectPO";
 	}
 
 	@Override

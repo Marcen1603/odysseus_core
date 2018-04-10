@@ -31,7 +31,7 @@ import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFA
  * @author Jonas Jacobi
  */
 @LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XMLMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator", category = {LogicalOperatorCategory.BASE})
-public class MapAO extends UnaryLogicalOp
+public class XMLMapAO extends UnaryLogicalOp
 {
 
 	/**
@@ -41,12 +41,12 @@ public class MapAO extends UnaryLogicalOp
 	private List<SDFAttribute> target;
 	private List<SDFAttribute> source;
 
-	public MapAO()
+	public XMLMapAO()
 	{
 		super();
 	}
 
-	public MapAO(MapAO ao)
+	public XMLMapAO(XMLMapAO ao)
 	{
 		super(ao);
 		this.setSource(ao.source);
@@ -105,8 +105,8 @@ public class MapAO extends UnaryLogicalOp
 	}
 
 	@Override
-	public MapAO clone()
+	public XMLMapAO clone()
 	{
-		return new MapAO(this);
+		return new XMLMapAO(this);
 	}
 }

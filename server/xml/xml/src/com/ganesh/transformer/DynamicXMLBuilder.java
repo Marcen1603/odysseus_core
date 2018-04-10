@@ -2,6 +2,7 @@ package com.ganesh.transformer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -9,8 +10,13 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.xerces.xs.XSAttributeDeclaration;
@@ -22,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
 import org.xml.sax.SAXException;
 
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -115,6 +122,32 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 		}
 		
 		return xml;
+	}
+	
+	public Document transformXML(Document content, String xslt) {
+		
+		try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+			TransformerFactory factory = TransformerFactory.newInstance();
+			Transformer transformer = factory.newTransformer(new StreamSource(new ByteArrayInputStream(xslt.getBytes())));
+			transformer.transform(new DOMSource(content), new StreamResult(out));
+
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.parse(new ByteArrayInputStream(out.toByteArray()));
+
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 	
     public static class EmptySampleValueGenerator implements XSInstance.SampleValueGenerator{

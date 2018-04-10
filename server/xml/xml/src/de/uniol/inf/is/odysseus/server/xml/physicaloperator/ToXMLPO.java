@@ -51,7 +51,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 	private String xsdAttribute;
 	private Collection<String> xPathAttributes = new ArrayList<>(); 
 	private HashMap<String, String> xPathMapping = new HashMap<>();
-	private HashMap<String, Integer> mapping = new HashMap();
+	private HashMap<String, Integer> mapping = new HashMap<>();
 	private boolean dynamicXSD;
 	private boolean dynamicXPath;
 	private boolean setXpath;
@@ -257,12 +257,13 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 			StringWriter sw = new StringWriter();
 			transformer.setOutputProperty(OutputKeys.ENCODING, properties.getProperty("encoding"));
 			transformer.setOutputProperty(OutputKeys.INDENT, properties.getProperty("intend"));
-//			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.transform(source, new StreamResult(sw));
 
 			XMLStreamObject<T> output = (XMLStreamObject<T>) xsoHandler.readData(sw.toString());
 			if (output != null && !output.isEmpty()) {
-				output.setMetadata((T) object.getMetadata().clone());
+				if (output.getMetadata() != null) {
+					output.setMetadata((T) object.getMetadata().clone());
+				}
 				transfer(output);
 			}
 			

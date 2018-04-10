@@ -19,15 +19,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 
-public class ProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
+public class XMLProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
 	private List<SDFAttribute> paths;
 
-	public ProjectPO(List<SDFAttribute> paths) {
+	public XMLProjectPO(List<SDFAttribute> paths) {
 		super();
 		this.paths = paths;
 	}
 
-	public ProjectPO(ProjectPO<T> po) {
+	public XMLProjectPO(XMLProjectPO<T> po) {
 		super(po);
 		this.paths = po.paths;
 	}
@@ -89,10 +89,8 @@ public class ProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamO
 			if (!newObject.isEmpty())
 				transfer((XMLStreamObject<T>) newObject);
 		} catch (ParserConfigurationException | XPathFactoryConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
