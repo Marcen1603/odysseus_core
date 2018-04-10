@@ -1,0 +1,56 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#ADDQUERY
+input = ACCESS({
+            source='source2',
+            protocol='XML',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='Tuple',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
+              ['nickname', '/user/nickname'],
+              ['fname', '/user/fname'],
+              ['lname', '/user/lname'],
+              ['email', '/user/email'],
+              ['role', '/user/roles/role'],
+              ['age', '/user/age']
+            ],
+            schema=[
+              ['nickname','String'],
+              ['fname', 'String'],
+              ['lname', 'String'],
+              ['email', 'String'],
+              ['role', 'String'],
+              ['age', 'Integer']
+            ]                                                                                                                                    
+          }                                                                                                          
+        )
+              
+transform = TOXML({
+                rootelement = 'user',
+                xsdstring = '<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							  <xs:element name="user">
+							    <xs:complexType>
+							      <xs:sequence>
+							        <xs:element type="xs:string" name="nickname"/>
+							        <xs:element type="xs:string" name="fname"/>
+							        <xs:element type="xs:string" name="lname"/>
+							        <xs:element type="xs:string" name="email"/>
+							        <xs:element type="xs:byte" name="age"/>
+							        <xs:element name="roles">
+							          <xs:complexType>
+							            <xs:sequence>
+							              <xs:element type="xs:string" name="role"/>
+							            </xs:sequence>
+							          </xs:complexType>
+							        </xs:element>
+							      </xs:sequence>
+							    </xs:complexType>
+							  </xs:element>
+							</xs:schema>'             
+              },
+              input
+            )

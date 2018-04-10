@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -34,10 +33,6 @@ import de.uniol.inf.is.odysseus.core.util.ByteBufferBackedInputStream;
 
 /**
  * XML Protocol Handler which splits a xml document by a given tag.
- *
- * @author Henrik Surm
- * @author Marco Grawunder
- * @author Stephan Sachal
  *
  */
 public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttribute>> extends AbstractProtocolHandler<T> {

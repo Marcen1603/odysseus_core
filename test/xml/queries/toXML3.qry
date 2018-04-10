@@ -1,0 +1,54 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#ADDQUERY
+input = ACCESS({
+            source='source3',
+            protocol='XML',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='Tuple',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
+              ['nickname', '/user/nickname'],
+              ['fname', '/user/fname'],
+              ['lname', '/user/lname'],
+              ['email', '/user/email'],
+              ['role', '/user/roles/role'],
+              ['age', '/user/age']
+            ],
+            schema=[
+              ['nickname','String'],
+              ['fname', 'String'],
+              ['lname', 'String'],
+              ['email', 'String'],
+              ['role', 'String'],
+              ['age', 'Integer']
+            ]                                                                                                                                    
+          }                                                                                                          
+        )
+
+inputXSD = ACCESS({
+            source='toXmlExample2',
+            protocol='SimpleCSV',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='Tuple',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/data2.csv']
+            ],
+            schema=[
+              ['xsd','String'],
+              ['root', 'String']
+            ]                                                                                                                                   
+          }                                                                                                          
+        )
+
+transform = TOXML({
+                rootattribute = 'root',
+                xsdattribute = 'xsd'             
+              },
+              
+              JOIN(input, inputXSD)
+            )

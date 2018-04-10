@@ -1,0 +1,41 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#ADDQUERY
+/// if you use the root element as tag, nothing will be stripped
+input = ACCESS({
+            source='joinxmlexample8',
+            protocol='XML3',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='XMLStreamObject',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/toEnrich.xml'],
+              ['tag_to_strip', 'user']
+            ]                                                                                                                                                                      
+          }                                                                                                                                          
+        )
+        
+enrichment = ACCESS({
+                  source='enrichment',
+                  protocol='XML3',
+                  transport='File',
+                  wrapper='GenericPull',
+                  datahandler='XMLStreamObject',
+                  options=[
+                  ['filename', '${BUNDLE-ROOT}/queries/enrichment.xml'],
+                    ['tag_to_strip', 'roles']
+                  ]                                                                                                                                                                      
+                }                                                                                                                                          
+              )        
+        
+out = XMLENRICH({
+          target = '/user',
+          predicate = '/user/@id==/roles/@id'
+        },
+        
+        input,
+        enrichment
+      )        
+     

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<user xmlns:xs="http://www.w3.org/2001/XMLSchema">
+   <nickname>noname</nickname>
+   <fname>max</fname>
+   <lname>mustermann</lname>
+   <email>max.mustermann@mail.de</email>
+   <age>31</age>
+   <roles>
+      <role>ADMIN</role>
+   </roles>
+</user>

@@ -1,0 +1,62 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#ADDQUERY
+input = ACCESS({
+            source='toXmlExample1',
+            protocol='XML',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='Tuple',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document3.xml'],
+              ['nickname', '/user/nickname'],
+              ['fname', '/user/fname'],
+              ['lname', '/user/lname'],
+              ['email', '/user/email'],
+              ['role', '/user/roles/role'],
+              ['age', '/user/age'],
+              ['user_id', '/user/@id'],
+              ['role_1', '/user/roles/role[1]'],
+              ['role_2', '/user/roles/role[2]'],
+              ['role_3', '/user/roles/role[3]']
+            ],
+            schema=[
+              ['nickname','String'],
+              ['fname', 'String'],
+              ['lname', 'String'],
+              ['email', 'String'],
+              ['role', 'String'],
+              ['age', 'Integer'],
+              ['user_id', 'Integer'],
+              ['role_1', 'String'],
+              ['role_2', 'String'],
+              ['role_3', 'String']
+            ]                                                                                                                                                        
+          }                                                                                                                          
+        )
+
+inputXPath = ACCESS({
+                  source='toXmlExample2',
+                  protocol='SimpleCSV',
+                  transport='File',
+                  wrapper='GenericPull',
+                  datahandler='Tuple',
+                  options=[
+                  ['filename', '${BUNDLE-ROOT}/queries/data3.xml']
+                  ],
+                  schema=[
+                    ['xpaths','String']
+                  ]                                                                                                                             
+                }                                                                                                                  
+              )
+ 
+transform = TOXML({
+                rootelement = 'user',
+                xpathattributes = ['xpaths'],
+                xsdfile = '${BUNDLE-ROOT}/queries/schema4.xsd',
+                options = [['delimeter', ';']]                                 
+              },
+              JOIN(input, inputXPath)
+            )

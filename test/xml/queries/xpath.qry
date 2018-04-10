@@ -1,0 +1,21 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#PARSER PQL
+#ADDQUERY
+/// if you use the root element as tag, nothing will be stripped
+input = ACCESS({
+            source='source6',
+            protocol='XML3',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='XMLStreamObject',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
+              ['tag_to_strip', 'user']
+            ]                                                                                                                                                  
+          }                                                                                                                          
+        )
+
+/// expressions that reference a single attribute will produce a sinlge node with the attributes value as child!         
+out = XPATH({PATHS = ['/user/roles', '/user/fname', '/user/lname', '/user/@id']}, input)

@@ -1,0 +1,31 @@
+package de.uniol.inf.is.odysseus.test.component.xml;
+
+import java.util.List;
+
+import de.uniol.inf.is.odysseus.test.component.AbstractQueryTestComponent;
+import de.uniol.inf.is.odysseus.test.context.BasicTestContext;
+import de.uniol.inf.is.odysseus.test.set.QueryTestSet;
+import de.uniol.inf.is.odysseus.test.set.TestSetFactory;
+
+public class XMLTestComponent extends AbstractQueryTestComponent<BasicTestContext, QueryTestSet> {
+
+	public XMLTestComponent() {
+		super(false);
+	}
+	
+	@Override
+	public List<QueryTestSet> createTestSets(BasicTestContext context) {
+		return TestSetFactory.createQueryTestSetsFromBundleRoot(context.getDataRootPath());		
+	}
+	
+	@Override
+	public String getName() {		
+		return "XML Test Component";
+	}
+	
+	@Override
+	public boolean isActivated() {	
+		return true;
+	}
+
+}

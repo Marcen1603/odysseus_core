@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<roles id="109" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <role>PROGRAMMER</role>
+  <role>TESTER</role>
+  <role>OWNER</role>
+</roles>
