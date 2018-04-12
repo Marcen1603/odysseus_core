@@ -82,8 +82,8 @@ abstract public class AbstractRelationalTopKPO<T extends Tuple<M>, M extends ITi
 	}
 
 	final private RelationalExpression<M> setupExpression;
-	final private RelationalExpression<M> preScoreExpression;
-	final private RelationalExpression<M> scoreExpression;
+	final protected RelationalExpression<M> preScoreExpression;
+	final protected RelationalExpression<M> scoreExpression;
 	final private RelationalExpression<M> tearDownExpression;
 	final private RelationalExpression<M> cleanupPredicate;
 	
