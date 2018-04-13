@@ -17,7 +17,6 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
-// TODO For each valid time create a new aggregation function
 public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
@@ -75,7 +74,8 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		nonTemporalFunction.removeOutdated(outdatedElements, trigger, pointInTime);
+		this.nonTemporalFunctions.values().stream()
+				.forEach(f -> f.removeOutdated(outdatedElements, trigger, pointInTime));
 	}
 
 	@Override

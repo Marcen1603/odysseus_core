@@ -240,11 +240,15 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	}
 
 	public static TimeInterval union(ITimeInterval left, ITimeInterval right) {
-		if (overlaps(left, right)) {
+		if (overlaps(left, right) || areAdjacent(left, right)) {
 			return new TimeInterval(PointInTime.min(left.getStart(), right.getStart()),
 					PointInTime.max(left.getEnd(), right.getEnd()));
 		}
 		return null;
+	}
+	
+	public static boolean areAdjacent(ITimeInterval left, ITimeInterval right) {
+		return left.getEnd().equals(right.getStart()) || right.getEnd().equals(left.getStart());
 	}
 
 	@Override
