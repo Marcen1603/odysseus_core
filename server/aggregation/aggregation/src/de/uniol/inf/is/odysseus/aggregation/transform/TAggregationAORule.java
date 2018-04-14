@@ -51,16 +51,8 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	@Override
 	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
 
-		/*
-		 * temp check to avoid aggregation in scenarios where more than timeinterval is
-		 * used --> aggregation does not handle metadata correctly in this case
-		 */
-
-		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
-		// Attention: Time meta data is set in aggregation
-		metadataSet.remove(ITimeInterval.class.getName());
 		@SuppressWarnings("rawtypes")
-		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
+		IMetadataMergeFunction mf = getMetadataMergeFunction(operator);
 
 		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = getNonIncrementalFunction(
 				operator.getAggregations(), operator.getInputSchema());
@@ -107,6 +99,15 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf, alwaysUseSweepArea);
 
 		defaultExecute(operator, po, config, true, true);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	protected IMetadataMergeFunction getMetadataMergeFunction(AggregationAO operator) {
+		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
+		// Attention: Time meta data is set in aggregation
+		metadataSet.remove(ITimeInterval.class.getName());
+		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
+		return mf;
 	}
 
 	@SuppressWarnings("unchecked")

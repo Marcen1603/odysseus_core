@@ -15,7 +15,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetadataMergeFunction;
 
 /**
  * The metadata type for a list of valid times. Bundles the underlying metadata
@@ -104,7 +104,7 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
-		return new ValidTimesMetadataMergeFunction();
+		return new ValidTimesIntersectionMetadataMergeFunction();
 	}
 
 	@Override
