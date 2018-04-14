@@ -1,7 +1,9 @@
 package de.uniol.inf.is.odysseus.temporaltypes.aggregationfunctions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.AbstractIncrementalAggregationFunction;
@@ -24,11 +26,14 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 
 	protected AbstractIncrementalAggregationFunction<M, T> nonTemporalFunction;
 	protected Map<PointInTime, AbstractIncrementalAggregationFunction<M, T>> nonTemporalFunctions;
+	/* For each temporal element, multiple non-temporal elements can exist */
+	protected Map<T, List<T>> nonTemporalElements;
 
 	public TemporalIncrementalAggregationFunction(AbstractIncrementalAggregationFunction<M, T> nonTemporalFunction) {
 		super();
 		this.nonTemporalFunction = nonTemporalFunction;
 		this.nonTemporalFunctions = new HashMap<>();
+		this.nonTemporalElements = new HashMap<>();
 	}
 
 	@Override
@@ -38,6 +43,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 
 	@SuppressWarnings("unchecked")
 	private void addToAllValidTimes(T newElement) {
+		List<T> nonTemporal = new ArrayList<>();
 		if (newElement.getMetadata() instanceof IValidTimes) {
 			IValidTimes validTimes = (IValidTimes) newElement.getMetadata();
 			for (IValidTime validTime : validTimes.getValidTimes()) {
@@ -45,10 +51,12 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 						.before(validTime.getValidEnd()); time = time.plus(1)) {
 					// Use the correct aggregation function
 					Tuple<M> nonTemporalElement = createNonTemporalElement(newElement, time);
+					nonTemporal.add(newElement);
 					this.getAggregationFunction(time).addNew((T) nonTemporalElement);
 				}
 			}
 		}
+		this.nonTemporalElements.put(newElement, nonTemporal);
 	}
 
 	private AbstractIncrementalAggregationFunction<M, T> getAggregationFunction(PointInTime time) {
@@ -74,8 +82,16 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
-		this.nonTemporalFunctions.values().stream()
-				.forEach(f -> f.removeOutdated(outdatedElements, trigger, pointInTime));
+		/*
+		 * Remove the non-temporal elements, because we filled the functions with the
+		 * non-temporal elements, not the temporal ones.
+		 */
+		for (T outdatedElement : outdatedElements) {
+			this.nonTemporalFunctions.values().stream().forEach(
+					f -> f.removeOutdated(this.nonTemporalElements.get(outdatedElement), trigger, pointInTime));
+			// Also remove from this temporary storage
+			this.nonTemporalElements.remove(outdatedElement);
+		}
 	}
 
 	@Override
