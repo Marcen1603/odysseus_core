@@ -39,7 +39,7 @@ public class TopKDataStructure<T extends Tuple<M>, M extends ITimeInterval> {
 		}
 	}
 
-	public void insertSorted(SerializablePair<Double, T> scoredObject) {
+	void insertSorted(SerializablePair<Double, T> scoredObject) {
 		// 1. find position to insert with binary search
 		int pos = Collections.binarySearch(topK, scoredObject, comparator);
 		if (pos < 0) {
