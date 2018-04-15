@@ -5,6 +5,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 
 public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
@@ -53,7 +54,7 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 	private IValidTime union(IValidTime left, IValidTime right) {
 		TimeInterval leftInterval = new TimeInterval(left.getValidStart(), left.getValidEnd());
 		TimeInterval rightInterval = new TimeInterval(right.getValidStart(), right.getValidEnd());
-		TimeInterval unified = TimeInterval.union(leftInterval, rightInterval);
+		TimeInterval unified = ValidTime.union(leftInterval, rightInterval);
 		if (unified == null) {
 			return null;
 		}
