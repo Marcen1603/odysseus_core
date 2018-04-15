@@ -19,6 +19,15 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
+/**
+ * Makes it possible for an incremental aggregation function to work with
+ * temporal attributes.
+ * 
+ * @author Tobias Brandt
+ *
+ * @param <M>
+ * @param <T>
+ */
 public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T extends Tuple<M>>
 		extends AbstractIncrementalAggregationFunction<M, T> implements IAggregationFunctionFactory {
 
