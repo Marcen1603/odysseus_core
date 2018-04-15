@@ -21,6 +21,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataUnionMerge
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
 
+/**
+ * Changes a few things at the aggregation in case that it has to work with
+ * temporal attributes.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class TTemporalAggregationAORule extends TAggregationAORule {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

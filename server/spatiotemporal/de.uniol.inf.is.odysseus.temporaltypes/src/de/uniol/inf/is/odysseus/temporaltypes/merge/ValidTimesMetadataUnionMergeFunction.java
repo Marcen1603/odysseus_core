@@ -7,6 +7,13 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTime;
 
+/**
+ * Used to merge two metadata fields with valid times, especially for
+ * aggregation. Merges the lists by doing a union.
+ * 
+ * @author Tobias Brandt
+ *
+ */
 public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
 	@Override
@@ -15,23 +22,23 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 	}
 
 	private IValidTimes unionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
-		
+
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
 			result = mergeInto(leftValidTime, result);
 		}
-		
+
 		for (IValidTime rightValidTime : inRight.getValidTimes()) {
 			result = mergeInto(rightValidTime, result);
 		}
-		
+
 		return result;
 	}
-	
+
 	private IValidTimes mergeInto(IValidTime merge, IValidTimes into) {
-		
+
 		IValidTime toRemove = null;
 		IValidTime toAdd = null;
-		
+
 		for (IValidTime time : into.getValidTimes()) {
 			IValidTime union = union(merge, time);
 			if (union != null) {
@@ -39,7 +46,7 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 				toAdd = union;
 			}
 		}
-		
+
 		if (toAdd != null && toRemove != null && into instanceof IValidTimes) {
 			IValidTimes validTimes = (IValidTimes) into;
 			validTimes.getValidTimes().remove(toRemove);
@@ -47,7 +54,7 @@ public class ValidTimesMetadataUnionMergeFunction implements IInlineMetadataMerg
 		} else if (toAdd == null) {
 			into.addValidTime(merge);
 		}
-		
+
 		return into;
 	}
 

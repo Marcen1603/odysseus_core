@@ -7,7 +7,8 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 
 /**
- * Used to merge two metadata fields with valid times. Merges the lists.
+ * Used to merge two metadata fields with valid times. Merges the lists by doing
+ * an intersection. Just like the normal TimeIntervals.
  * 
  * @author Tobias Brandt
  *
