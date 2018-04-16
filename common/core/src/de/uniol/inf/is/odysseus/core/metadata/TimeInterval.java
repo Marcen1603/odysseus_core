@@ -250,6 +250,10 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 		return null;
 	}
 
+	/**
+	 * @return True, if the end of the left is equal to the start of the right or
+	 *         the other way around.
+	 */
 	public static boolean areAdjacent(ITimeInterval left, ITimeInterval right) {
 		return left.getEnd().equals(right.getStart()) || right.getEnd().equals(left.getStart());
 	}
