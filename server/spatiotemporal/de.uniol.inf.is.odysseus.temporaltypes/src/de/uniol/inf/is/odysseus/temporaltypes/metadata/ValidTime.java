@@ -121,6 +121,11 @@ final public class ValidTime extends AbstractBaseMetaAttribute
 	public void setValidStartAndEnd(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval.setStartAndEnd(start, end);
 	}
+	
+	@Override
+	public boolean includes(PointInTime p) {
+		return this.delegateTimeInterval.includes(p);
+	}
 
 	/**
 	 * Union of the left and right interval, if they are overlapping or adjacent

@@ -14,8 +14,10 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataUnionMergeFunction;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
+import de.uniol.inf.is.odysseus.temporaltypes.metadata.ValidTimes;
 import de.uniol.inf.is.odysseus.temporaltypes.types.GenericTemporalType;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalType;
 
@@ -36,23 +38,29 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 	protected AbstractIncrementalAggregationFunction<M, T> nonTemporalFunction;
 	protected Map<PointInTime, AbstractIncrementalAggregationFunction<M, T>> nonTemporalFunctions;
 	/* For each temporal element, multiple non-temporal elements can exist */
-	protected Map<T, List<T>> nonTemporalElements;
+	protected Map<T, List<Tuple<M>>> nonTemporalElements;
+	/* To track the valid time */
+	protected List<T> validElements;
+	protected ValidTimesMetadataUnionMergeFunction mergeFunction;
 
 	public TemporalIncrementalAggregationFunction(AbstractIncrementalAggregationFunction<M, T> nonTemporalFunction) {
 		super();
 		this.nonTemporalFunction = nonTemporalFunction;
 		this.nonTemporalFunctions = new HashMap<>();
 		this.nonTemporalElements = new HashMap<>();
+		this.validElements = new ArrayList<>();
+		this.mergeFunction = new ValidTimesMetadataUnionMergeFunction();
 	}
 
 	@Override
 	public void addNew(T newElement) {
 		addToAllValidTimes(newElement);
+		this.validElements.add(newElement);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void addToAllValidTimes(T newElement) {
-		List<T> nonTemporal = new ArrayList<>();
+		List<Tuple<M>> nonTemporal = new ArrayList<>();
 		if (newElement.getMetadata() instanceof IValidTimes) {
 			IValidTimes validTimes = (IValidTimes) newElement.getMetadata();
 			for (IValidTime validTime : validTimes.getValidTimes()) {
@@ -60,7 +68,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 						.before(validTime.getValidEnd()); time = time.plus(1)) {
 					// Use the correct aggregation function
 					Tuple<M> nonTemporalElement = createNonTemporalElement(newElement, time);
-					nonTemporal.add(newElement);
+					nonTemporal.add(nonTemporalElement);
 					this.getAggregationFunction(time).addNew((T) nonTemporalElement);
 				}
 			}
@@ -89,6 +97,7 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		return copyElement;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void removeOutdated(Collection<T> outdatedElements, T trigger, PointInTime pointInTime) {
 		/*
@@ -96,10 +105,47 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		 * non-temporal elements, not the temporal ones.
 		 */
 		for (T outdatedElement : outdatedElements) {
-			this.nonTemporalFunctions.values().stream().forEach(
-					f -> f.removeOutdated(this.nonTemporalElements.get(outdatedElement), trigger, pointInTime));
+			this.nonTemporalFunctions.values().stream().forEach(f -> f
+					.removeOutdated((List<T>) this.nonTemporalElements.get(outdatedElement), trigger, pointInTime));
+
 			// Also remove from this temporary storage
 			this.nonTemporalElements.remove(outdatedElement);
+
+			this.validElements.remove(outdatedElement);
+		}
+
+		IValidTimes validTimes = calculateValidTimes();
+		removeOldFunctions(validTimes);
+	}
+
+	/**
+	 * Uses the valid stream elements to calculate the valid time
+	 */
+	private IValidTimes calculateValidTimes() {
+		IValidTimes validTimes = new ValidTimes();
+
+		for (T element : this.validElements) {
+			if (element.getMetadata() instanceof IValidTimes) {
+				IValidTimes currentValidTimes = (IValidTimes) element.getMetadata();
+				this.mergeFunction.mergeInto(validTimes, currentValidTimes, new ValidTimes());
+			}
+		}
+		return validTimes;
+	}
+
+	/**
+	 * Remove the functions that are no longer needed because they are for a
+	 * ValidTime that is not needed any longer
+	 */
+	private void removeOldFunctions(IValidTimes validTimes) {
+		List<PointInTime> toRemove = new ArrayList<>();
+		for (PointInTime key : this.nonTemporalFunctions.keySet()) {
+			if (!validTimes.includes(key)) {
+				toRemove.add(key);
+			}
+		}
+		for (PointInTime remove : toRemove) {
+			this.nonTemporalFunctions.remove(remove);
 		}
 	}
 
