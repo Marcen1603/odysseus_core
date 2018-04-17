@@ -1024,16 +1024,6 @@ public abstract class AbstractSource<T extends IStreamObject<?>> extends Abstrac
 	// ------------------------------------------------------------------------
 
 	@Override
-	final public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	final public int hashCode() {
-		return super.hashCode();
-	}
-
-	@Override
 	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
 		if (!(ipo.isSource() || ipo instanceof IPipe))
 			return false;
