@@ -11,7 +11,6 @@ import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
-import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.DifferenceAO;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -24,7 +23,6 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		implements IStatefulOperator {
 
 	private static final int LEFT = 0;
-	private static final int RIGHT = 1;
 	private final ITimeIntervalSweepArea<T> leftSA;
 	private final ITimeIntervalSweepArea<T> rightSA;
 
@@ -57,8 +55,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 
 	@Override
 	public PointInTime getLatestEndTimestamp() {
-		// TODO Auto-generated method stub
-		return null;
+		return transferArea.getWatermark();
 	}
 
 	@Override
@@ -67,7 +64,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	@Override
-	protected void process_open() throws OpenFailedException {
+	protected void process_open() {
 		transferArea.init(this, 2);
 		leftSA.clear();
 		rightSA.clear();
@@ -96,7 +93,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 				intervalsRight);
 
 		if (!remainingIntervalsLeft.isEmpty()) {
-			ArrayList<T> replacements = new ArrayList<T>();
+			ArrayList<T> replacements = new ArrayList<>();
 			this.projectElementToTimeIntervals(object, remainingIntervalsLeft, replacements);
 			leftSA.insertAll(replacements);
 		}
@@ -112,7 +109,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 		
 		Iterator<T> leftElements = leftSA.queryCopy(object, Order.RightLeft, true);
 
-		ArrayList<T> replacements = new ArrayList<T>();
+		ArrayList<T> replacements = new ArrayList<>();
 
 		while (leftElements.hasNext()) {
 			T currentLeftElem = leftElements.next();
@@ -134,7 +131,7 @@ public class DifferenceTIPO<K extends ITimeInterval, T extends IStreamObject<K>>
 	}
 
 	private ArrayList<ITimeInterval> extractTimeIntervals(Iterator<T> matchingElements) {
-		ArrayList<ITimeInterval> intervals = new ArrayList<ITimeInterval>();
+		ArrayList<ITimeInterval> intervals = new ArrayList<>();
 
 		while (matchingElements.hasNext()) {
 			T elem = matchingElements.next();
