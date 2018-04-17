@@ -36,8 +36,8 @@ public class SubStringFunction extends AbstractFunction<String> {
 	@Override
 	public String getValue() {
 		String a = getInputValue(0);
-		Long b = getInputValue(1);
-		Long c = getInputValue(2);
+		Number b = getInputValue(1);
+		Number c = getInputValue(2);
 
 		if ((a == null) || (b == null) || (c == null)) {
 			return null;
