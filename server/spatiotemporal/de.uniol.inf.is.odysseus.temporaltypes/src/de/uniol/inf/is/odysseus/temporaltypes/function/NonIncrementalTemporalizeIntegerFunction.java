@@ -14,17 +14,18 @@ import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.IAttributeResolver;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.temporaltypes.types.IntegerFunction;
-import de.uniol.inf.is.odysseus.temporaltypes.types.LinearIntegerFunction;
+import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
-import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalInteger;
+import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.LinearIntegerFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.types.integer.TemporalInteger;
 
 /**
  * Function for the aggregation operator to temporalize an integer attribute.
  * Makes a TemporalInteger from an integer.
  * 
  * Remark: Uses the non-incremental interface to deal with the second metadata
- * (ValidTime) correctly.
+ * (ValidTimes) correctly.
  * 
  * @author Tobias Brandt
  *
@@ -51,6 +52,15 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
 		}
 	}
+	
+	public NonIncrementalTemporalizeIntegerFunction(final int inputAttributesLength, final String[] outputNames) {
+		super(null, outputNames);
+		this.temporalInteger = new TemporalInteger[inputAttributesLength];
+		// TODO Fill values?
+		if (outputNames.length != inputAttributesLength) {
+			throw new IllegalArgumentException("Input attribute length is not equal output attribute length.");
+		}
+	}
 
 	public NonIncrementalTemporalizeIntegerFunction(NonIncrementalTemporalizeIntegerFunction<M, T> other) {
 		super(other);
@@ -60,22 +70,59 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 	@Override
 	public Object[] evaluate(Collection<T> elements, T trigger, PointInTime pointInTime) {
 
+		// TODO What if there is more than one attribute? Handle each one independently?
+
+		// Get the value from the newest element (the trigger)
 		Object[] attributes = this.getAttributes(trigger);
 		Object value = attributes[0];
+		int newestValue = 0;
 		if (value instanceof Integer) {
-			// TODO Use slope of values for function
-			Integer valueAsInteger = (Integer) value;
-			IntegerFunction function = new LinearIntegerFunction(0, valueAsInteger);
-			this.temporalInteger[0] = new TemporalInteger(function);
-			return this.temporalInteger;
+			newestValue = (Integer) value;
 		} else {
 			throw new ClassCastException("Cannot use any other attribute type than integer.");
 		}
+
+		// Get the value from the oldest element (the first from the sorted collection)
+		int oldestValue = 0;
+		PointInTime oldestStartTime = null;;
+		if (!elements.iterator().hasNext()) {
+			// We only have the trigger element, use zero slope
+			oldestValue = newestValue;
+			oldestStartTime = trigger.getMetadata().getStart();
+		} else {
+			T firstElement = elements.iterator().next();
+			oldestStartTime = firstElement.getMetadata().getStart();
+			Object[] attributesFromFirst = this.getAttributes(firstElement);
+			Object valueFromFirst = attributesFromFirst[0];
+			if (valueFromFirst instanceof Integer) {
+				oldestValue = (Integer) valueFromFirst;
+			} else {
+				throw new ClassCastException("Cannot use any other attribute type than integer.");
+			}
+		}
+
+		// Calculate slope
+		// m = y / x = (|value_new - value_old| / |time_new - time_old|)
+		double m = 0;
+		long temporalDistance = Math.abs(trigger.getMetadata().getStart().minus(oldestStartTime).getMainPoint());
+		if (temporalDistance != 0) {
+			// Oldest and newest element are not valid at the same time -> we have a slope
+			m = (Math.abs(newestValue - oldestValue)) / temporalDistance;			
+		}
+		
+		// Calculate y axis intercept
+		double b = newestValue - m * trigger.getMetadata().getStart().getMainPoint();
+
+		// Create a linear function with the calculated values
+		TemporalFunction<Integer> function = new LinearIntegerFunction(m, b);
+		this.temporalInteger[0] = new TemporalInteger(function);
+		return this.temporalInteger;
 	}
 
 	@Override
 	public boolean needsOrderedElements() {
-		return false;
+		// We need to get the first element in the SweepArea to calculate the slope
+		return true;
 	}
 
 	@Override
@@ -83,7 +130,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 		final List<SDFAttribute> result = new ArrayList<>(this.temporalInteger.length);
 
 		for (final String attr : outputAttributeNames) {
-			result.add(new SDFAttribute(null, attr, TemporalDatatype.TEMPORAL_INTEGER, null, null, null));
+			result.add(new SDFAttribute(null, attr, SDFDatatype.INTEGER, null, TemporalDatatype.getTemporalConstraint(), null));
 		}
 
 		return result;
@@ -106,7 +153,7 @@ public class NonIncrementalTemporalizeIntegerFunction<M extends ITimeInterval, T
 				attributeResolver);
 
 		if (attributes == null) {
-			return new TemporalizeInteger<>(attributeResolver.getSchema().get(0).size(), outputNames);
+			return new NonIncrementalTemporalizeIntegerFunction<>(attributeResolver.getSchema().get(0).size(), outputNames);
 		}
 
 		return new NonIncrementalTemporalizeIntegerFunction<>(attributes, outputNames);

@@ -35,8 +35,7 @@ import de.uniol.inf.is.odysseus.core.sdf.unit.SDFUnit;
  *
  */
 
-public class SDFAttribute extends SDFElement implements
-		Comparable<SDFAttribute>, Serializable, IClone {
+public class SDFAttribute extends SDFElement implements Comparable<SDFAttribute>, Serializable, IClone {
 
 	private static final long serialVersionUID = -5128455072793206061L;
 
@@ -58,8 +57,7 @@ public class SDFAttribute extends SDFElement implements
 	final private SDFUnit unit;
 
 	/**
-	 * A set of data type constraints further restricting the set of possible
-	 * values
+	 * A set of data type constraints further restricting the set of possible values
 	 */
 	final private Map<String, SDFConstraint> dtConstraints;
 
@@ -68,28 +66,33 @@ public class SDFAttribute extends SDFElement implements
 	 */
 	private int number = -1;
 
-//	/**
-//	 * Create a new SDFAttribute
-//	 *
-//	 * @param sourceName
-//	 *            The source name of the attribute
-//	 * @param attributeName
-//	 *            The attribute name in the source
-//	 * @param datatype
-//	 *            The data type of this attribute
-//	 */
-//	public SDFAttribute(String sourceName, String attributeName,
-//			SDFDatatype datatype) {
-//		this(sourceName, attributeName, datatype, null, null);
-//	}
+	// /**
+	// * Create a new SDFAttribute
+	// *
+	// * @param sourceName
+	// * The source name of the attribute
+	// * @param attributeName
+	// * The attribute name in the source
+	// * @param datatype
+	// * The data type of this attribute
+	// */
+	// public SDFAttribute(String sourceName, String attributeName,
+	// SDFDatatype datatype) {
+	// this(sourceName, attributeName, datatype, null, null);
+	// }
 
-	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype datatype) {
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype datatype) {
 		this(sourceName, attributeName, datatype, null, (Collection<SDFConstraint>) null);
 	}
 
-	public SDFAttribute(SDFAttribute toCopyFrom, SDFDatatype newDatatype){
-		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), newDatatype,toCopyFrom.getUnit(), new LinkedList<>(toCopyFrom.dtConstraints.values()));
+	public SDFAttribute(SDFAttribute toCopyFrom, SDFDatatype newDatatype) {
+		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), newDatatype, toCopyFrom.getUnit(),
+				new LinkedList<>(toCopyFrom.dtConstraints.values()));
+	}
+
+	public SDFAttribute(SDFAttribute toCopyFrom, Collection<SDFConstraint> newConstraints) {
+		this(toCopyFrom.getSourceName(), toCopyFrom.getAttributeName(), toCopyFrom.getDatatype(), toCopyFrom.getUnit(),
+				newConstraints);
 	}
 
 	/**
@@ -106,15 +109,13 @@ public class SDFAttribute extends SDFElement implements
 	 * @param dtConstraints
 	 *            A set of constraints further restricting this attribute values
 	 */
-	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype datatype, SDFUnit unit,
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype datatype, SDFUnit unit,
 			Collection<SDFConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints, null);
 	}
 
-	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype datatype, SDFUnit unit,
-			Map<String,SDFConstraint> dtConstraints) {
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype datatype, SDFUnit unit,
+			Map<String, SDFConstraint> dtConstraints) {
 		this(sourceName, attributeName, datatype, unit, dtConstraints.values(), null);
 	}
 
@@ -134,8 +135,7 @@ public class SDFAttribute extends SDFElement implements
 	 * @param additionalInfo
 	 *            A list representing free definable additional informations
 	 */
-	public SDFAttribute(String sourceName, String attributeName,
-			SDFDatatype attribType, SDFUnit unit,
+	public SDFAttribute(String sourceName, String attributeName, SDFDatatype attribType, SDFUnit unit,
 			Collection<SDFConstraint> dtConstraints, List<?> addInfo) {
 		super(sourceName, attributeName);
 		this.datatype = attribType;
@@ -150,19 +150,18 @@ public class SDFAttribute extends SDFElement implements
 	}
 
 	/**
-	 * Creates a new Attribute from another attribute, preserving everything but
-	 * the names
+	 * Creates a new Attribute from another attribute, preserving everything but the
+	 * names
 	 *
 	 * @param newSourceName
 	 *            The new source name of the attribute
 	 * @param newAttributeName
 	 *            The new attribute name
 	 * @param sdfAttribute
-	 *            The attribute containing the other informations like data
-	 *            type, unit etc.
+	 *            The attribute containing the other informations like data type,
+	 *            unit etc.
 	 */
-	public SDFAttribute(String newSourceName, String newAttributeName,
-			SDFAttribute sdfAttribute) {
+	public SDFAttribute(String newSourceName, String newAttributeName, SDFAttribute sdfAttribute) {
 		super(newSourceName, newAttributeName);
 		this.datatype = sdfAttribute.datatype;
 		this.dtConstraints = sdfAttribute.dtConstraints;
@@ -170,8 +169,8 @@ public class SDFAttribute extends SDFElement implements
 		this.annotations = sdfAttribute.annotations;
 	}
 
-	public SDFAttribute(String name, String attributeName, SDFAttribute a,
-			SDFUnit unit, List<SDFConstraint> dtConstraints) {
+	public SDFAttribute(String name, String attributeName, SDFAttribute a, SDFUnit unit,
+			List<SDFConstraint> dtConstraints) {
 		super(name, attributeName);
 		this.datatype = a.datatype;
 		this.dtConstraints = new HashMap<>();
@@ -250,16 +249,15 @@ public class SDFAttribute extends SDFElement implements
 	}
 
 	/**
-	 * Compares current attribute with attr, returns true if both sourceNames
-	 * are not null and equals and attributeNames are equals If one of the
-	 * sourceName is null, only attributeNames are compared
+	 * Compares current attribute with attr, returns true if both sourceNames are
+	 * not null and equals and attributeNames are equals If one of the sourceName is
+	 * null, only attributeNames are compared
 	 *
 	 * @param attr
 	 * @return true if attributeNames/sourceNames are equal
 	 */
 	public boolean equalsCQL(SDFElement attr) {
-		if (this.getURIWithoutQualName() != null
-				&& attr.getURIWithoutQualName() != null) {
+		if (this.getURIWithoutQualName() != null && attr.getURIWithoutQualName() != null) {
 			if (!this.getSourceName().equals(attr.getURIWithoutQualName())) {
 				return false;
 			}
@@ -271,13 +269,9 @@ public class SDFAttribute extends SDFElement implements
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime
-				* result
-				+ ((getAttributeName() == null) ? 0 : getAttributeName()
-						.hashCode());
+		result = prime * result + ((getAttributeName() == null) ? 0 : getAttributeName().hashCode());
 		result = prime * result + ((annotations == null) ? 0 : annotations.hashCode());
-		result = prime * result
-				+ ((getSourceName() == null) ? 0 : getSourceName().hashCode());
+		result = prime * result + ((getSourceName() == null) ? 0 : getSourceName().hashCode());
 		return result;
 	}
 
@@ -319,9 +313,8 @@ public class SDFAttribute extends SDFElement implements
 	}
 
 	/**
-	 * Creates a new SDFAttribute with a new source name and a new attribute
-	 * name from this attribute, keeping all other information (like data type
-	 * or unit)
+	 * Creates a new SDFAttribute with a new source name and a new attribute name
+	 * from this attribute, keeping all other information (like data type or unit)
 	 *
 	 * @param newSourceName
 	 * @param newAttributeName
@@ -332,14 +325,14 @@ public class SDFAttribute extends SDFElement implements
 	}
 
 	/**
-	 * Creates a new SDFAttribute with a new datatype from this attribute,
-	 * keeping all other information
+	 * Creates a new SDFAttribute with a new datatype from this attribute, keeping
+	 * all other information
 	 */
 	public SDFAttribute clone(SDFDatatype dt) {
 		return new SDFAttribute(this, dt);
 	}
 
-	private SDFAttribute(SDFAttribute attr, int number){
+	private SDFAttribute(SDFAttribute attr, int number) {
 		this(attr.getSourceName(), attr.getAttributeName(), attr);
 		this.number = number;
 	}
@@ -348,8 +341,8 @@ public class SDFAttribute extends SDFElement implements
 		return number;
 	}
 
-	public SDFAttribute clone(int pos){
-		return new SDFAttribute(this,pos);
+	public SDFAttribute clone(int pos) {
+		return new SDFAttribute(this, pos);
 	}
 
 	@Override
@@ -371,21 +364,21 @@ public class SDFAttribute extends SDFElement implements
 			ret.append(getSourceName());
 		}
 		ret.append(".").append(getAttributeName());
-		if (unit != null){
+		if (unit != null) {
 			ret.append("[").append(unit).append("]");
 		}
-		if (number >= 0){
+		if (number >= 0) {
 			ret.append(" ").append(number);
 		}
 
 		return ret.toString();
 	}
 
-	public static final String replaceSpecialChars(String input){
+	public static final String replaceSpecialChars(String input) {
 		return input.replace("$", "root").replace("*", "_").replace(".", "_").replace("[", "_").replace("]", "_")
 				.replace("'", "_").replace(")", "_").replace("(", "_").replace("?", "_");
 	}
-	
+
 	public SDFAttribute createNewWithName(String newName) {
 		return new SDFAttribute(this.getSourceName(), newName, this);
 	}
