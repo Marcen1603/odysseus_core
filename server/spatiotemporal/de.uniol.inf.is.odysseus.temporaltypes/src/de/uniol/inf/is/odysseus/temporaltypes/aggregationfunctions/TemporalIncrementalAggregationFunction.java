@@ -155,9 +155,27 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		for (PointInTime validTime : this.nonTemporalFunctions.keySet()) {
 			result.setValue(validTime, this.nonTemporalFunctions.get(validTime).evalute(trigger, pointInTime));
 		}
-		Object[] returnValue = new Object[1];
-		returnValue[0] = result;
-		return returnValue;
+		if (differsFromPrevious(result)) {
+			Object[] returnValue = new Object[1];
+			returnValue[0] = result;
+			return returnValue;
+		} else {
+			Object[] returnValue = { null };
+			return returnValue;
+		}
+	}
+
+	private boolean differsFromPrevious(GenericTemporalType<Object[]> result) {
+		for (Object[] array : result.getValues().values()) {
+			if (array != null) {
+				for (int i = 0; i < array.length; i++) {
+					if (array[i] != null) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
