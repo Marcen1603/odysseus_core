@@ -73,9 +73,9 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 	private transient final List<Object> lastTopKOutput;
 
 	/**
-	 * If set to true, elements with same score are ordered so that the newest
-	 * are on top. If set to false, elements with same score are ordered so that
-	 * the oldest are on top.
+	 * If set to true, elements with same score are ordered so that the newest are
+	 * on top. If set to false, elements with same score are ordered so that the
+	 * oldest are on top.
 	 */
 	protected final boolean onEqualScoreNewestOnTop;
 
@@ -147,7 +147,8 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 		this.lastTopKOutput = new ArrayList<>(k);
 		this.onEqualScoreNewestOnTop = other.onEqualScoreNewestOnTop;
 		this.uniqueAttributeIndices = Arrays.copyOf(other.uniqueAttributeIndices, other.uniqueAttributeIndices.length);
-		this.removeLowerEqualsThan = (T) other.removeLowerEqualsThan.clone();
+		this.removeLowerEqualsThan = other.removeLowerEqualsThan == null ? null
+				: (T) other.removeLowerEqualsThan.clone();
 		this.scoringAttributes = Arrays.copyOf(other.scoringAttributes, other.scoringAttributes.length);
 	}
 
