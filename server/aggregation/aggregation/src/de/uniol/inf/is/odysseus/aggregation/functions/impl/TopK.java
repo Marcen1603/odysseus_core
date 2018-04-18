@@ -87,15 +87,17 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 		private final int[] attributes;
 		private final boolean onEqualScoreNewestOnTop;
+		private final boolean descending;
 
 		/**
 		 * @param onEqualScoreNewestOnTop
 		 * @param attributes
 		 * 
 		 */
-		public MyComparator(final int[] attributes, final boolean onEqualScoreNewestOnTop) {
+		public MyComparator(final int[] attributes, final boolean onEqualScoreNewestOnTop, final boolean descending) {
 			this.attributes = Arrays.copyOf(attributes, attributes.length);
 			this.onEqualScoreNewestOnTop = onEqualScoreNewestOnTop;
+			this.descending = descending;
 		}
 
 		@Override
@@ -121,7 +123,11 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 					}
 				}
 			}
-			return -result;
+			if (descending) {
+				return -result;
+			} else {
+				return result;
+			}
 		}
 	}
 
@@ -154,7 +160,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 
 	public TopK(final int k, final int[] attributes, final String outputAttributeName, final SDFSchema subSchema,
 			final boolean onEqualScoreNewestOnTop, final T removeLowerEqualsThan, final int[] uniqueAttributeIndices,
-			final int[] scoringAttributes) {
+			final int[] scoringAttributes, boolean descending) {
 		super(attributes, true, new String[] { outputAttributeName });
 		this.k = k;
 		// TODO: This comparator is not consistent with equals as
@@ -164,8 +170,8 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 		// TreeMultiset Javadoc says: "In all cases, this implementation uses
 		// Comparable.compareTo or Comparator.compare instead of Object.equals
 		// to determine equivalence of instances." -> no problem?
-		comparator = new MyComparator<M, T>(scoringAttributes, onEqualScoreNewestOnTop);
-		elements = new TreeSet<>(comparator);
+		this.comparator = new MyComparator<M, T>(scoringAttributes, onEqualScoreNewestOnTop, descending);
+		this.elements = new TreeSet<>(comparator);
 		this.subSchema = subSchema.clone();
 		this.lastTopKOutput = new ArrayList<>(k);
 		this.onEqualScoreNewestOnTop = onEqualScoreNewestOnTop;
@@ -363,9 +369,12 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 		final int[] scoringAttributes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
 				attributeResolver, "SCORING_ATTRIBUTES");
 
+		final boolean descending = AggregationFunctionParseOptionsHelper.getFunctionParameterAsBoolean(parameters,
+				"DESCENDING", true);
+
 		if (attributes == null) {
 			return new TopK<>(k, attributes, outputAttributeName, attributeResolver.getSchema().get(0), newestOnTop,
-					removeLowerEqualsThan, uniqueAttributeIndices, scoringAttributes);
+					removeLowerEqualsThan, uniqueAttributeIndices, scoringAttributes, descending);
 		} else {
 			final List<SDFAttribute> attr = new ArrayList<>();
 			for (final int idx : attributes) {
@@ -373,7 +382,7 @@ public class TopK<M extends ITimeInterval, T extends Tuple<M>> extends AbstractI
 			}
 			final SDFSchema subSchema = SDFSchemaFactory.createNewTupleSchema("", attr);
 			return new TopK<>(k, attributes, outputAttributeName, subSchema, newestOnTop, removeLowerEqualsThan,
-					uniqueAttributeIndices, scoringAttributes);
+					uniqueAttributeIndices, scoringAttributes, descending);
 		}
 	}
 
