@@ -7,27 +7,37 @@ import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTime;
 import de.uniol.inf.is.odysseus.temporaltypes.metadata.IValidTimes;
 
 /**
- * Used to merge two metadata fields with valid times. Merges the lists.
+ * Used to merge two metadata fields with valid times. Merges the lists by doing
+ * an intersection. Just like the normal TimeIntervals.
  * 
  * @author Tobias Brandt
  *
  */
-public class ValidTimesMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
+public class ValidTimesIntersectionMetadataMergeFunction implements IInlineMetadataMergeFunction<IValidTimes> {
 
 	@Override
 	public void mergeInto(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
+		result = intersectionMerge(result, inLeft, inRight);
+	}
+
+	private IValidTimes intersectionMerge(IValidTimes result, IValidTimes inLeft, IValidTimes inRight) {
 		for (IValidTime leftValidTime : inLeft.getValidTimes()) {
 			for (IValidTime rightValidTime : inRight.getValidTimes()) {
 				IValidTime mergedData = mergeValidTime(leftValidTime, rightValidTime);
 				result = addValidTimeToValidTimes(result, mergedData);
 			}
 		}
+		return result;
 	}
 
 	private IValidTime mergeValidTime(IValidTime left, IValidTime right) {
 		IValidTime mergedData = (IValidTime) left.createInstance();
-		mergedData.setValidStart(PointInTime.max(left.getValidStart(), right.getValidStart()));
-		mergedData.setValidEnd(PointInTime.min(left.getValidEnd(), right.getValidEnd()));
+		PointInTime mergedStart = PointInTime.max(left.getValidStart(), right.getValidStart());
+		PointInTime mergedEnd = PointInTime.min(left.getValidEnd(), right.getValidEnd());
+		if (!mergedEnd.before(mergedStart)) {
+			mergedData.setValidStart(mergedStart);
+			mergedData.setValidEnd(mergedEnd);
+		}
 		return mergedData;
 	}
 
@@ -41,7 +51,7 @@ public class ValidTimesMetadataMergeFunction implements IInlineMetadataMergeFunc
 
 	@Override
 	public IInlineMetadataMergeFunction<? super IValidTimes> clone() {
-		return new ValidTimesMetadataMergeFunction();
+		return new ValidTimesIntersectionMetadataMergeFunction();
 	}
 
 	@Override
