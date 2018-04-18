@@ -155,9 +155,32 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		for (PointInTime validTime : this.nonTemporalFunctions.keySet()) {
 			result.setValue(validTime, this.nonTemporalFunctions.get(validTime).evalute(trigger, pointInTime));
 		}
-		Object[] returnValue = new Object[1];
-		returnValue[0] = result;
-		return returnValue;
+		if (differsFromPrevious(result)) {
+			Object[] returnValue = new Object[1];
+			returnValue[0] = result;
+			return returnValue;
+		} else {
+			Object[] returnValue = { null };
+			return returnValue;
+		}
+	}
+
+	/**
+	 * Checks if the result contains more than only null values. This is the
+	 * behavior from the AggregationPO, which also does not transfers empty
+	 * (non-changed) results.
+	 */
+	private boolean differsFromPrevious(GenericTemporalType<Object[]> result) {
+		for (Object[] array : result.getValues().values()) {
+			if (array != null) {
+				for (int i = 0; i < array.length; i++) {
+					if (array[i] != null) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
