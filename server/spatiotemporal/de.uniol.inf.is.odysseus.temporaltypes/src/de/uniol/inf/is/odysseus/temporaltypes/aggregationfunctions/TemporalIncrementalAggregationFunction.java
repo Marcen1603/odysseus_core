@@ -165,6 +165,11 @@ public class TemporalIncrementalAggregationFunction<M extends ITimeInterval, T e
 		}
 	}
 
+	/**
+	 * Checks if the result contains more than only null values. This is the
+	 * behavior from the AggregationPO, which also does not transfers empty
+	 * (non-changed) results.
+	 */
 	private boolean differsFromPrevious(GenericTemporalType<Object[]> result) {
 		for (Object[] array : result.getValues().values()) {
 			if (array != null) {
