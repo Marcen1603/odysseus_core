@@ -30,26 +30,6 @@ import de.uniol.inf.is.odysseus.temporaltypes.types.TemporalDatatype;
  */
 public class TTemporalAggregationAORule extends TAggregationAORule {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected IMetadataMergeFunction getMetadataMergeFunction(AggregationAO operator) {
-		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
-		// Attention: Time meta data is set in aggregation
-		metadataSet.remove(ITimeInterval.class.getName());
-		// Search for the merge function for ValidTimes manually
-		metadataSet.remove(IValidTimes.class.getName());
-
-		// Create the merge function for all the other metadatas (maybe zero)
-		CombinedMergeFunction cmf = (CombinedMergeFunction) MetadataRegistry.getMergeFunction(metadataSet);
-
-		/*
-		 * And add the union merge for the ValidTimes (we need this for the aggregation
-		 * instead of the normal merge function which makes an intersection)
-		 */
-		ValidTimesMetadataUnionMergeFunction validTimesMetadataUnionMergeFunction = new ValidTimesMetadataUnionMergeFunction();
-		cmf.add(validTimesMetadataUnionMergeFunction);
-
-		return cmf;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
