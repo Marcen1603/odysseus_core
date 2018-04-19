@@ -15,8 +15,8 @@
  */
 package de.uniol.inf.is.odysseus.aggregation.transform;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.uniol.inf.is.odysseus.aggregation.functions.IAggregationFunction;
 import de.uniol.inf.is.odysseus.aggregation.functions.IIncrementalAggregationFunction;
@@ -30,7 +30,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.server.metadata.MetadataRegistry;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
-import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationException;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
@@ -52,44 +51,31 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 	@Override
 	public void execute(final AggregationAO operator, final TransformationConfiguration config) throws RuleException {
 
-		/*
-		 * temp check to avoid aggregation in scenarios where more than timeinterval is
-		 * used --> aggregation does not handle metadata correctly in this case
-		 */
-
-		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
-		// Attention: Time meta data is set in aggregation
-		metadataSet.remove(ITimeInterval.class.getName());
 		@SuppressWarnings("rawtypes")
-		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
+		IMetadataMergeFunction mf = getMetadataMergeFunction(operator);
 
-		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = new ArrayList<>();
-		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = new ArrayList<>();
+		final List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> nonIncrementalFunctions = getNonIncrementalFunction(
+				operator.getAggregations(), operator.getInputSchema());
+		final List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> incrementalFunctions = getIncrementalFunction(
+				operator.getAggregations());
 
-		final List<IAggregationFunction> functions = operator.getAggregations();
-		for (final IAggregationFunction f : functions) {
-			if (!f.isIncremental()) {
-				nonIncrementalFunctions
-						.add((INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
-			} else {
-				incrementalFunctions.add((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f);
-			}
-		}
+		operator.getInputSchema();
 
 		/*
 		 * If there is at least one non-incremental function, the SweepArea is used and
 		 * hence, the merge of metadata for other types of metadata works. If there is
 		 * no non-incremental function, the operator currently cannot handle other types
-		 * of metadata.
+		 * of metadata. BUT: When having multiple metadatas, simply use the SweepArea
+		 * all the time.
 		 */
 		boolean hasMoreThanOneMetadata = operator.getInputSchema().getMetaAttributeNames().size() > 1;
 		boolean hasNonIncrementalFunction = nonIncrementalFunctions.size() > 0;
 		boolean hasOnlyOneMetadataButOtherThanTimeInterval = !hasMoreThanOneMetadata
 				&& operator.getInputSchema().getMetaAttributeNames().get(0) != ITimeInterval.class.getName();
-		
+		boolean alwaysUseSweepArea = false;
+
 		if (hasMoreThanOneMetadata && !hasNonIncrementalFunction || hasOnlyOneMetadataButOtherThanTimeInterval) {
-			throw new TransformationException(
-					"Aggregation currently only works with #METADATA TimeInterval for incremental functions! Use Aggregate instead");
+			alwaysUseSweepArea = true;
 		}
 
 		final boolean evaluateAtOutdatingElements = operator.isEvaluateAtOutdatingElements();
@@ -110,9 +96,34 @@ public class TAggregationAORule extends AbstractTransformationRule<AggregationAO
 		final AggregationPO<ITimeInterval, Tuple<ITimeInterval>> po = new AggregationPO<>(nonIncrementalFunctions,
 				incrementalFunctions, evaluateAtOutdatingElements, evaluateBeforeRemovingOutdatingElements,
 				evaluateAtNewElement, evaluateAtDone, outputOnlyChanges, outputSchema, groupingAttributesIndices,
-				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf);
+				groupingAttributeIndicesOutputSchema, supressFullMetaDataHandling, mf, alwaysUseSweepArea);
 
 		defaultExecute(operator, po, config, true, true);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	protected IMetadataMergeFunction getMetadataMergeFunction(AggregationAO operator) {
+		List<String> metadataSet = operator.getInputSchema().getMetaAttributeNames();
+		// Attention: Time meta data is set in aggregation
+		metadataSet.remove(ITimeInterval.class.getName());
+		IMetadataMergeFunction mf = MetadataRegistry.getMergeFunction(metadataSet);
+		return mf;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected List<INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> getNonIncrementalFunction(
+			List<IAggregationFunction> allFunctions, SDFSchema inputSchema) {
+		return allFunctions.stream().filter(f -> !f.isIncremental())
+				.map(f -> ((INonIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f))
+				.collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("unchecked")
+	protected List<IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>> getIncrementalFunction(
+			List<IAggregationFunction> allFunctions) {
+		return allFunctions.stream().filter(f -> f.isIncremental())
+				.map(f -> ((IIncrementalAggregationFunction<ITimeInterval, Tuple<ITimeInterval>>) f))
+				.collect(Collectors.toList());
 	}
 
 	/*
