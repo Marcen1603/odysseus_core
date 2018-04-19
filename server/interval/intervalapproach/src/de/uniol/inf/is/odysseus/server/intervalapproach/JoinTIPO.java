@@ -44,6 +44,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulOperator;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IStatefulPO;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
+import de.uniol.inf.is.odysseus.core.planmanagement.IOperatorOwner;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
@@ -234,7 +235,7 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		this.sweepAreaName[1] = port1;
 		this.useInstanceInseadOfName = false;
 	}
-	
+
 	public void setKeepEndTimestamp(boolean keepEndTimestamp) {
 		this.keepEndtimestamp = keepEndTimestamp;
 	}
@@ -311,16 +312,10 @@ public class JoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> exten
 		transferFunction.newElement(object, port);
 
 		if (isDone()) {
-			/*
-			 * TODO bei den sources abmelden ??
-			 * 
-			 * MG: Warum?? propagateDone gemeint?
-			 * 
-			 * JJ: weil man schon fertig sein kann, wenn ein strom keine elemente liefert,
-			 * der andere aber noch, dann muss man von dem anderen keine eingaben mehr
-			 * verarbeiten, was dazu fuehren kann, dass ein kompletter teilplan nicht mehr
-			 * ausgefuehrt werden muss, man also ressourcen spart
-			 */
+			for (IOperatorOwner owner : getOwner()) {
+				this.getSubscribedToSource(port).getSource().close(owner);
+				this.getSubscribedToSource(port ^ 1).getSource().close(owner);
+			}
 			return;
 		}
 		if (getLogger().isDebugEnabled()) {
