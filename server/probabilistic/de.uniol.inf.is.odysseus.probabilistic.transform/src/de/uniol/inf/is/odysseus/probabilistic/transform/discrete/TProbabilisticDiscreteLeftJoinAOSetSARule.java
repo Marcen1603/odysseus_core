@@ -96,16 +96,7 @@ public class TProbabilisticDiscreteLeftJoinAOSetSARule extends AbstractTransform
         Objects.requireNonNull(transformConfig);
         if ((operator.getOutputSchema().getType() == ProbabilisticTuple.class) && operator.getInputSchema(0).hasMetatype(ITimeInterval.class)
         		&& operator.getInputSchema(1).hasMetatype(ITimeInterval.class)) {
-            if (operator.getAreas() == null) {
-                final IPredicate<?> predicate = operator.getPredicate();
-                final Set<SDFAttribute> attributes = PredicateUtils.getAttributes(predicate);
-                // if
-                // (SchemaUtils.containsDiscreteProbabilisticAttributes(attributes))
-                // {
-                // throw new IllegalArgumentException("Not implemented");
-                // }
-                // return true;
-            }
+        	return !operator.isAreasSet();
         }
         return false;
     }

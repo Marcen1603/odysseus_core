@@ -123,9 +123,7 @@ public class TJoinAOSetSARule extends AbstractTransformationRule<JoinTIPO> {
 	@Override
 	public boolean isExecutable(JoinTIPO operator, TransformationConfiguration transformConfig) {
 		if (operator.getOutputSchema().getType() == Tuple.class) {
-			if (operator.getAreas() == null) {
-				return true;
-			}
+			return !operator.isAreasSet();
 		}
 		return false;
 	}
