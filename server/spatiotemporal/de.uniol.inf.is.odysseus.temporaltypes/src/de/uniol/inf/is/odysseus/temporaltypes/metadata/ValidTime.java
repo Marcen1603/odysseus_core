@@ -11,6 +11,7 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.ITimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.metadata.TimeInterval;
 import de.uniol.inf.is.odysseus.core.metadata.TimeIntervalInlineMetadataMergeFunction;
@@ -26,7 +27,8 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
  * @author Tobias Brandt
  *
  */
-final public class ValidTime extends AbstractBaseMetaAttribute implements IValidTime, Cloneable, Serializable, List<PointInTime> {
+final public class ValidTime extends AbstractBaseMetaAttribute
+		implements IValidTime, Cloneable, Serializable, List<PointInTime> {
 
 	private static final long serialVersionUID = -4168542417427389337L;
 
@@ -118,6 +120,22 @@ final public class ValidTime extends AbstractBaseMetaAttribute implements IValid
 	@Override
 	public void setValidStartAndEnd(PointInTime start, PointInTime end) {
 		this.delegateTimeInterval.setStartAndEnd(start, end);
+	}
+	
+	@Override
+	public boolean includes(PointInTime p) {
+		return this.delegateTimeInterval.includes(p);
+	}
+
+	/**
+	 * Union of the left and right interval, if they are overlapping or adjacent
+	 */
+	public static TimeInterval union(ITimeInterval left, ITimeInterval right) {
+		if (TimeInterval.overlaps(left, right) || TimeInterval.areAdjacent(left, right)) {
+			return new TimeInterval(PointInTime.min(left.getStart(), right.getStart()),
+					PointInTime.max(left.getEnd(), right.getEnd()));
+		}
+		return null;
 	}
 
 	@Override
