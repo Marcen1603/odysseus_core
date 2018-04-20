@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IEC 60870 Wrapper
+Bundle-SymbolicName: de.uniol.inf.is.odysseus.wrapper.iec60870
+Bundle-Version: 0.0.1.qualifier
+Bundle-Vendor: University of Oldenburg
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: de.uniol.inf.is.odysseus.core,
+ de.uniol.inf.ei.oj104;bundle-version="0.0.1",
+ de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
+Import-Package: org.apache.commons.lang3.concurrent
+Service-Component: OSGI-INF/IEC104ClientProtocolHandler.xml
