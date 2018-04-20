@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.ei.oj104.communication.IAPDUHandler;
 import de.uniol.inf.ei.oj104.communication.IASDUHandler;
@@ -38,8 +37,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
 // TODO javaDoc
 public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHandler<Tuple<IMetaAttribute>>
 		implements IASDUHandler, ICommunicationHandler {
+
+	private static final String ignoreHandshakesKey = "104_ignoreHandshakes";
 	
-	protected static final Logger logger = LoggerFactory.getLogger("IEC104ProtocolHandler");
+	private static final String ignoreTimeoutsKey = "104_ignoreTimeouts";
+	
+	private static final String sendResponsesKey = "104_sendResponses";
 
 	private IAPDUHandler apduHandler = new StandardAPDUHandler();
 
@@ -58,6 +61,26 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		super(direction, access, dataHandler, options);
 		apduHandler.setASDUHandler(this);
 		apduHandler.setCommunicationHandler(this);
+		init_internal();
+	}
+
+	private void init_internal() {
+		OptionMap options = optionsMap;
+		if (options.containsKey(ignoreHandshakesKey)) {
+			boolean ignoreHandshakes = Boolean.parseBoolean(options.get(ignoreHandshakesKey));
+			getApduHandler().ignoreHandshakes(ignoreHandshakes);
+			getLogger().debug("Set '{}' to '{}'", ignoreHandshakesKey, ignoreHandshakes);
+		}
+		if (options.containsKey(ignoreTimeoutsKey)) {
+			boolean ignoreTimeouts = Boolean.parseBoolean(options.get(ignoreTimeoutsKey));
+			getApduHandler().ignoreTimeouts(ignoreTimeouts);
+			getLogger().debug("Set '{}' to '{}'", ignoreTimeoutsKey, ignoreTimeouts);
+		}
+		if (options.containsKey(sendResponsesKey)) {
+			boolean sendResponses = Boolean.parseBoolean(options.get(sendResponsesKey));
+			getApduHandler().sendResponses(sendResponses);
+			getLogger().debug("Set '{}' to '{}'", sendResponsesKey, sendResponses);
+		}
 	}
 
 	@Override
@@ -65,17 +88,19 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		return false;
 	}
 
+	protected abstract Logger getLogger();
+
 	private void process(byte[] message) {
 		try {
-			logger.debug("Received (bytes): {}", message);
+			getLogger().trace("Received (bytes): {}", message);
 
 			APDU apdu = new APDU();
 			apdu.fromBytes(message);
-			logger.debug("Received (APDU): {}", message);
+			getLogger().trace("Received (APDU): {}", message);
 
 			apduHandler.handleAPDU(apdu);
 		} catch (IEC608705104ProtocolException | IOException e) {
-			logger.error("Error while reading message {}!", message, e);
+			getLogger().error("Error while reading message {}!", message, e);
 		}
 	}
 
@@ -87,7 +112,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 			int length = bufferedReader.read(buffer, 0, 200);
 			process(new String(buffer, 0, length));
 		} catch (IOException e) {
-			logger.error("Error while reading message {}!", message, e);
+			getLogger().error("Error while reading message {}!", message, e);
 		}
 	}
 
@@ -122,11 +147,11 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 				try {
 					apduHandler.buildAndSendAPDU((ASDU) firstAttribute);
 				} catch (IEC608705104ProtocolException | IOException e) {
-					logger.error("Error while building and sending ASDU from {}", firstAttribute);
+					getLogger().error("Error while building and sending ASDU from {}", firstAttribute);
 				}
 				break;
 			} else if (!(firstAttribute instanceof DataUnitIdentifier)) {
-				logger.error("Mal formatted tuple: first attribute must be an ASDU or a DataUnitIdentifier!");
+				getLogger().error("Mal formatted tuple: first attribute must be an ASDU or a DataUnitIdentifier!");
 				break;
 			}
 			// else no break; use firstAttribute (DataUnitIdentifier) in snd. case
@@ -138,23 +163,24 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 					if (object instanceof IInformationObject) {
 						return (IInformationObject) object;
 					} else {
-						logger.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
+						getLogger()
+								.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
 						return null;
 					}
 				}).collect(Collectors.toList());
 				try {
 					apduHandler.buildAndSendAPDU(new ASDU((DataUnitIdentifier) firstAttribute, ioList));
 				} catch (IEC608705104ProtocolException | IOException e) {
-					logger.error("Error while building and sending ASDU from {} and {}", firstAttribute,
+					getLogger().error("Error while building and sending ASDU from {} and {}", firstAttribute,
 							secondAttribute);
 				}
 				break;
 			} else {
-				logger.error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
+				getLogger().error("Mal formatted tuple: second attribute must be a list of IInformationObjects!");
 				break;
 			}
 		default:
-			logger.error(
+			getLogger().error(
 					"Mal formatted tuple: first attribute must be an ASDU or a DataUnitIdentifier; second attribute must be a list of IInformationObjects if first is a DataUnitIdentifier!");
 			break;
 		}
@@ -184,7 +210,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		try {
 			close();
 		} catch (IOException e) {
-			logger.error("Error while closing connection!", e);
+			getLogger().error("Error while closing connection!", e);
 		}
 	}
 
@@ -193,8 +219,8 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		ITransportHandler transportHandler = getTransportHandler();
 		byte[] bytes = apdu.toBytes();
 		transportHandler.send(bytes);
-		logger.debug("Sent (APDU): {}", apdu);
-		logger.debug("Sent (bytes): {}", bytes);
+		getLogger().trace("Sent (APDU): {}", apdu);
+		getLogger().trace("Sent (bytes): {}", bytes);
 	}
 
 }
