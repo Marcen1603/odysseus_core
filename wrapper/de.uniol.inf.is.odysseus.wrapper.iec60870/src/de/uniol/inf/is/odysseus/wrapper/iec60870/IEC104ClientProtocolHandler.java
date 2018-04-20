@@ -3,6 +3,9 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniol.inf.ei.oj104.exception.IEC608705104ProtocolException;
 import de.uniol.inf.is.odysseus.core.collection.OptionMap;
 import de.uniol.inf.is.odysseus.core.collection.Tuple;
@@ -44,9 +47,11 @@ public class IEC104ClientProtocolHandler extends AbstractIEC104ProtocolHandler {
 
 		try {
 			// send start data transfer message
-			getApduHandler().startDataTransfer();
+			if(!getApduHandler().areHandshakesIgnored()) {
+				getApduHandler().startDataTransfer();
+			}
 		} catch (IEC608705104ProtocolException e) {
-			logger.error("Error while sending startDT command!", e);
+			getLogger().error("Error while sending startDT command!", e);
 		}
 	}
 
@@ -54,12 +59,19 @@ public class IEC104ClientProtocolHandler extends AbstractIEC104ProtocolHandler {
 	public void close() throws IOException {
 		try {
 			// send stop data transfer message
-			getApduHandler().stopDataTransfer();
+			if(!getApduHandler().areHandshakesIgnored()) {
+				getApduHandler().stopDataTransfer();
+			}
 		} catch (IEC608705104ProtocolException e) {
-			logger.error("Error while sending stopDT command!", e);
+			getLogger().error("Error while sending stopDT command!", e);
 		}
 
 		super.close();
+	}
+
+	@Override
+	protected Logger getLogger() {
+		return LoggerFactory.getLogger(IEC104ClientProtocolHandler.class);
 	}
 
 }
