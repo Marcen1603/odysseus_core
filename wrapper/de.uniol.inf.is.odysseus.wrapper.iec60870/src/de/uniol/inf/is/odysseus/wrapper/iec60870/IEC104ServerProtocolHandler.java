@@ -1,12 +1,8 @@
 package de.uniol.inf.is.odysseus.wrapper.iec60870;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.ei.oj104.exception.IEC608705104ProtocolException;
 import de.uniol.inf.ei.oj104.model.ASDU;
 import de.uniol.inf.ei.oj104.model.DataUnitIdentifier;
 import de.uniol.inf.ei.oj104.model.IInformationObject;
@@ -18,7 +14,7 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 
 /**
- * Client handler for the communication protocol IEC 60870-5-104. It uses the
+ * Server handler for the communication protocol IEC 60870-5-104. It uses the
  * library oj104 as implementation of the IEC 60870-5-104. It has three options
  * to configure:
  * <ul>
@@ -31,12 +27,12 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * </ul>
  * Two scenarios for the usage of the protocol and its options:
  * <ol>
- * <li>Together with a tcp client transport handler and
- * connected to a RTU. In this case, handshakes and timeouts should not be
- * ignored and responses should be sent.</li>
- * <li>Together with a pcap file transport handler and reading
- * 104 messages from a pcap file. In this case, handshakes and timeouts should
- * be ignored and responses should not be send.
+ * <li>Together with a tcp server transport handler and connected to a master
+ * station. In this case, handshakes and timeouts should not be ignored and
+ * responses should be sent.</li>
+ * <li>Together with a pcap file transport handler and reading 104 messages from
+ * a pcap file. In this case, handshakes and timeouts should be ignored and
+ * responses should not be send.
  * </ol>
  * Data format:<br />
  * The protocol handler can only handle tuples with one of the following
@@ -50,23 +46,23 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITranspor
  * @author Michael Brand (michael.brand@uol.de)
  *
  */
-public class IEC104ClientProtocolHandler extends AbstractIEC104ProtocolHandler {
+public class IEC104ServerProtocolHandler extends AbstractIEC104ProtocolHandler {
 
-	private static final String name = "104Client";
+	private static final String name = "104Server";
 
-	public IEC104ClientProtocolHandler() {
+	public IEC104ServerProtocolHandler() {
 		super();
 	}
 
-	public IEC104ClientProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
+	public IEC104ServerProtocolHandler(ITransportDirection direction, IAccessPattern access, OptionMap options,
 			IStreamObjectDataHandler<Tuple<IMetaAttribute>> dataHandler) {
 		super(direction, access, options, dataHandler);
 	}
 
 	@Override
-	public IEC104ClientProtocolHandler createInstance(ITransportDirection direction, IAccessPattern access,
+	public IEC104ServerProtocolHandler createInstance(ITransportDirection direction, IAccessPattern access,
 			OptionMap options, IStreamObjectDataHandler<Tuple<IMetaAttribute>> dataHandler) {
-		return new IEC104ClientProtocolHandler(direction, access, options, dataHandler);
+		return new IEC104ServerProtocolHandler(direction, access, options, dataHandler);
 	}
 
 	@Override
@@ -75,36 +71,8 @@ public class IEC104ClientProtocolHandler extends AbstractIEC104ProtocolHandler {
 	}
 
 	@Override
-	public void open() throws UnknownHostException, IOException {
-		super.open();
-
-		try {
-			// send start data transfer message
-			if (!getApduHandler().areHandshakesIgnored()) {
-				getApduHandler().startDataTransfer();
-			}
-		} catch (IEC608705104ProtocolException e) {
-			getLogger().error("Error while sending startDT command!", e);
-		}
-	}
-
-	@Override
-	public void close() throws IOException {
-		try {
-			// send stop data transfer message
-			if (!getApduHandler().areHandshakesIgnored()) {
-				getApduHandler().stopDataTransfer();
-			}
-		} catch (IEC608705104ProtocolException e) {
-			getLogger().error("Error while sending stopDT command!", e);
-		}
-
-		super.close();
-	}
-
-	@Override
 	protected Logger getLogger() {
-		return LoggerFactory.getLogger(IEC104ClientProtocolHandler.class);
+		return LoggerFactory.getLogger(IEC104ServerProtocolHandler.class);
 	}
 
 }

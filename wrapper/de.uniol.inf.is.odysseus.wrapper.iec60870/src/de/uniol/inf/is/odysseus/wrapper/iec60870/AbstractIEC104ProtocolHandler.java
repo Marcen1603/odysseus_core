@@ -34,14 +34,44 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.IAccessPa
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportDirection;
 import de.uniol.inf.is.odysseus.core.physicaloperator.access.transport.ITransportHandler;
 
-// TODO javaDoc
+/**
+ * Abstract handler for the communication protocol IEC 60870-5-104. It uses the
+ * library oj104 as implementation of the IEC 60870-5-104. It has three options
+ * to configure:
+ * <ul>
+ * <li>104_ignoreHandshakes: True when startDT, stopDT, sequence numbers and
+ * acks shall be ignored. Default = false.</li>
+ * <li>104_ignoreTimeouts: True when t1, t2 and t3 shall be ignored. Default =
+ * false.</li>
+ * <li>104_sendResponses: True, when received Format I APDUs shall be responded.
+ * Default = true.</li>
+ * </ul>
+ * Two scenarios for the usage of the protocol and its options:
+ * <ol>
+ * <li>Together with a tcp client or server transport handler, acting as server
+ * or client and connected to a RTU or master station. In this case, handshakes
+ * and timeouts should not be ignored and responses should be sent.</li>
+ * <li>Together with a pcap file transport handler, acting as server or client and reading
+ * 104 messages from a pcap file. In this case, handshakes and timeouts should
+ * be ignored and responses should not be send.
+ * </ol>
+ * Data format:<br />
+ * The protocol handler can only handle tuples with one of the following schemes:
+ * <ol>
+ * <li>One attribute, an {@link ASDU}.</li>
+ * <li>Two attributes, a {@link DataUnitIdentifier} and a list of {@link IInformationObject}s</li>
+ * </ol>
+ * 
+ * @author Michael Brand (michael.brand@uol.de)
+ *
+ */
 public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHandler<Tuple<IMetaAttribute>>
 		implements IASDUHandler, ICommunicationHandler {
 
 	private static final String ignoreHandshakesKey = "104_ignoreHandshakes";
-	
+
 	private static final String ignoreTimeoutsKey = "104_ignoreTimeouts";
-	
+
 	private static final String sendResponsesKey = "104_sendResponses";
 
 	private IAPDUHandler apduHandler = new StandardAPDUHandler();
