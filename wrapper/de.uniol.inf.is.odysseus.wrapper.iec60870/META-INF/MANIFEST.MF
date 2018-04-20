@@ -9,4 +9,6 @@ Require-Bundle: de.uniol.inf.is.odysseus.core,
  de.uniol.inf.ei.oj104;bundle-version="0.0.1",
  de.uniol.inf.is.odysseus.slf4j;bundle-version="1.7.16"
 Import-Package: org.apache.commons.lang3.concurrent
-Service-Component: OSGI-INF/IEC104ClientProtocolHandler.xml
+Service-Component: OSGI-INF/IEC104ClientProtocolHandler.xml,
+ OSGI-INF/IEC104ServerProtocolHandler.xml
+Bundle-ActivationPolicy: lazy
