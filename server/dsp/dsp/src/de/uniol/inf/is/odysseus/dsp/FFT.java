@@ -23,7 +23,7 @@ public class FFT<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNo
 	private static final long serialVersionUID = 4701984246348134053L;
 
 	public FFT(final int[] attributes) {
-		super(attributes, new String[] { "k", "X" });
+		super(attributes, new String[] { "k", "X_real", "X_imaginary" });
 	}
 
 	@Override
@@ -34,10 +34,11 @@ public class FFT<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNo
 		final FastFourierTransformer fastFourierTransformer = new FastFourierTransformer(DftNormalization.STANDARD);
 		final Complex[] transform = fastFourierTransformer.transform(values, TransformType.FORWARD);
 
-		final List<Double> amplitudes = Arrays.stream(transform).map(Complex::abs).collect(Collectors.toList());
+		final List<Double> realParts = Arrays.stream(transform).map(Complex::getReal).collect(Collectors.toList());
+		final List<Double> imaginaryParts = Arrays.stream(transform).map(Complex::getImaginary).collect(Collectors.toList());
 		final List<Integer> index = IntStream.range(0, elements.size()).boxed().collect(Collectors.toList());
 		
-		return new Object[] { index, amplitudes };
+		return new Object[] { index, realParts, imaginaryParts };
 	}
 
 	@Override
@@ -48,7 +49,8 @@ public class FFT<M extends ITimeInterval, T extends Tuple<M>> extends AbstractNo
 	@Override
 	public Collection<SDFAttribute> getOutputAttributes() {
 		return Arrays.asList(new SDFAttribute(null, outputAttributeNames[0], SDFDatatype.LIST_INTEGER),
-				new SDFAttribute(null, outputAttributeNames[1], SDFDatatype.LIST_DOUBLE));
+				new SDFAttribute(null, outputAttributeNames[1], SDFDatatype.LIST_DOUBLE),
+				new SDFAttribute(null, outputAttributeNames[2], SDFDatatype.LIST_DOUBLE));
 	}
 
 }
