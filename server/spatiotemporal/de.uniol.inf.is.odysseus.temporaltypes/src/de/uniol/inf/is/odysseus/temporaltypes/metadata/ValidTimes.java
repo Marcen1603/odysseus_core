@@ -11,11 +11,12 @@ import de.uniol.inf.is.odysseus.core.collection.Tuple;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractBaseMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.IInlineMetadataMergeFunction;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFMetaSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesMetadataMergeFunction;
+import de.uniol.inf.is.odysseus.temporaltypes.merge.ValidTimesIntersectionMetadataMergeFunction;
 
 /**
  * The metadata type for a list of valid times. Bundles the underlying metadata
@@ -101,10 +102,20 @@ public class ValidTimes extends AbstractBaseMetaAttribute implements IValidTimes
 	public void clear() {
 		this.validTimes = new ArrayList<>();
 	}
+	
+	@Override
+	public boolean includes(PointInTime time) {
+		for (IValidTime validTime : this.validTimes) {
+			if (validTime.includes(time)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	protected IInlineMetadataMergeFunction<? extends IMetaAttribute> getInlineMergeFunction() {
-		return new ValidTimesMetadataMergeFunction();
+		return new ValidTimesIntersectionMetadataMergeFunction();
 	}
 
 	@Override

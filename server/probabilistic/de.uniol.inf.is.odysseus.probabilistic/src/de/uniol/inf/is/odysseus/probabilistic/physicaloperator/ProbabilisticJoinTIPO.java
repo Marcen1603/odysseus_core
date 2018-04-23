@@ -70,7 +70,7 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 		synchronized (this) {
 
 			if (this.inOrder) {
-				this.getSweepArea(otherport, this.defaultGroupingKey).purgeElements(object, order);
+				this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).purgeElements(object, order);
 			}
 
 			// status could change, if the other port was done and
@@ -105,7 +105,7 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 				}
 			}
 
-			qualifies = this.getSweepArea(otherport, this.defaultGroupingKey).queryCopy(object, order, extract);
+			qualifies = this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).queryCopy(object, order, extract);
 
 			final boolean hit = qualifies.hasNext();
 			while (qualifies.hasNext()) {
@@ -121,14 +121,14 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 			}
 			// Depending on card insert elements into sweep area
 			if ((this.card == null) || (this.card == Cardinalities.MANY_MANY)) {
-				this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+				this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 			} else {
 				switch (this.card) {
 				case ONE_ONE:
 					// If one to one case, a hit cannot be produce another
 					// hit
 					if (!hit) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				case ONE_MANY:
@@ -136,7 +136,7 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 					// if from right and no hit, insert (corresponding left
 					// element not found now)
 					if ((port == 0) || ((port == 1) && !hit)) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				case MANY_ONE:
@@ -144,11 +144,11 @@ public class ProbabilisticJoinTIPO<K extends ITimeInterval, T extends IStreamObj
 					// if from left and no hit, insert (corresponding right
 					// element not found now)
 					if ((port == 1) || ((port == 0) && !hit)) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				default:
-					this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+					this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					break;
 				}
 			}

@@ -176,9 +176,9 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 *            linkes Intervall
 	 * @param right
 	 *            rechtes Intervall
-	 * @return true, wenn sowohl der Startzeitpunkt von left vor dem
-	 *         Startzeitpunkt von right liegt und der Endzeitpunkt von left vor
-	 *         ist ( NEIN! oder gleich dem Endzeitpunkt von right ist)
+	 * @return true, wenn sowohl der Startzeitpunkt von left vor dem Startzeitpunkt
+	 *         von right liegt und der Endzeitpunkt von left vor ist ( NEIN! oder
+	 *         gleich dem Endzeitpunkt von right ist)
 	 */
 	public static boolean totallyBefore(ITimeInterval left, ITimeInterval right) {
 		return totallyBefore(left, right.getStart());
@@ -239,12 +239,23 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 		return null;
 	}
 
+	/**
+	 * Union of the left and the right interval, iff they are overlapping
+	 */
 	public static TimeInterval union(ITimeInterval left, ITimeInterval right) {
 		if (overlaps(left, right)) {
 			return new TimeInterval(PointInTime.min(left.getStart(), right.getStart()),
 					PointInTime.max(left.getEnd(), right.getEnd()));
 		}
 		return null;
+	}
+
+	/**
+	 * @return True, if the end of the left is equal to the start of the right or
+	 *         the other way around.
+	 */
+	public static boolean areAdjacent(ITimeInterval left, ITimeInterval right) {
+		return left.getEnd().equals(right.getStart()) || right.getEnd().equals(left.getStart());
 	}
 
 	@Override
@@ -263,8 +274,8 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	}
 
 	/*
-	 * @TODO Difference method is returning a distance between time intervals
-	 * and not the difference, example for an time interval A and an inside time
+	 * @TODO Difference method is returning a distance between time intervals and
+	 * not the difference, example for an time interval A and an inside time
 	 * interval B: A - B = two time intervals left and right to A.
 	 *
 	 * minus method implements the difference
@@ -288,9 +299,9 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	}
 
 	/**
-	 * Difference method is returning a distance between time intervals and not
-	 * the difference, example for an time interval A and an inside time
-	 * interval B: A - B = two time intervals left and right to A.
+	 * Difference method is returning a distance between time intervals and not the
+	 * difference, example for an time interval A and an inside time interval B: A -
+	 * B = two time intervals left and right to A.
 	 *
 	 * The method implements the behaviour difference method should have.
 	 *
@@ -350,8 +361,8 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	}
 
 	/**
-	 * Beim Vergleich werden zunchst die Startzeitpunkte und dann die
-	 * Endzeitpunkte der Intervalle betrachtet
+	 * Beim Vergleich werden zunchst die Startzeitpunkte und dann die Endzeitpunkte
+	 * der Intervalle betrachtet
 	 *
 	 */
 	@Override
@@ -414,17 +425,16 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	}
 
 	/**
-	 * cuts out all time intervals given in the interval list from the target
-	 * time interval
+	 * cuts out all time intervals given in the interval list from the target time
+	 * interval
 	 * 
 	 * @param target
 	 *            the interval to cut
 	 * @param stencil
 	 *            list of intervals that should be cut out from the target
-	 * @return a list of time intervals that remain from the target time
-	 *         interval after cutting out. The list may be empty if the target
-	 *         time interval is fully covered by the given intervals in the
-	 *         input list.
+	 * @return a list of time intervals that remain from the target time interval
+	 *         after cutting out. The list may be empty if the target time interval
+	 *         is fully covered by the given intervals in the input list.
 	 */
 	public static ArrayList<TimeInterval> cutOutIntervals(ITimeInterval target, List<ITimeInterval> stencil) {
 		ArrayList<TimeInterval> result = new ArrayList<TimeInterval>();
@@ -477,14 +487,12 @@ final public class TimeInterval extends AbstractBaseMetaAttribute implements ITi
 	 * @param left
 	 *            the left time interval (that should be cut out)
 	 * @param broken
-	 *            flag indicating if a calling loop should break because
-	 *            consecutive elements will not change the result due to their
-	 *            ordering
+	 *            flag indicating if a calling loop should break because consecutive
+	 *            elements will not change the result due to their ordering
 	 * @param right
-	 *            the time interval that should be cut out from the other
-	 *            interval
-	 * @return the current remainder of the time interval (left) after cut out.
-	 *         may be null if the time interval left is totally covered by right
+	 *            the time interval that should be cut out from the other interval
+	 * @return the current remainder of the time interval (left) after cut out. may
+	 *         be null if the time interval left is totally covered by right
 	 */
 	private static TimeInterval cutoutInterval(ArrayList<TimeInterval> result, TimeInterval left, AtomicBoolean broken,
 			ITimeInterval right) {

@@ -98,7 +98,43 @@ public class GenericTemporalType<T> implements IClone, Cloneable, Serializable, 
 
 	@Override
 	public String toString() {
-		return "GenericTemporalType: " + this.values;
+		StringBuilder builder = new StringBuilder();
+		builder.append("GenericTemporalType: ");
+
+		boolean first = true;
+		for (PointInTime time : this.values.keySet()) {
+			if (!first) {
+				builder.append(", ");
+			} else {
+				first = false;
+			}
+			builder.append(time + " = ");
+			Object value = this.values.get(time);
+			if (value instanceof Object[]) {
+				Object[] values = (Object[]) value;
+				builder.append(arrayToString(values));
+			} else {
+				builder.append(value);
+			}
+		}
+
+		return builder.toString();
+	}
+
+	private String arrayToString(Object[] array) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		boolean first = true;
+		for (int i = 0; i < array.length; i++) {
+			if (!first) {
+				builder.append(", ");
+			} else {
+				first = false;
+			}
+			builder.append(array[i]);
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 
 }

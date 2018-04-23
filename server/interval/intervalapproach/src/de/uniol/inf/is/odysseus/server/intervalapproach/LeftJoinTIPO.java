@@ -31,7 +31,6 @@ import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.ITransferArea;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.Cardinalities;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.ILeftMergeFunction;
-import de.uniol.inf.is.odysseus.sweeparea.ITimeIntervalSweepArea;
 
 /**
  * Left Join: Works as a join with one exception: elements on the left input (0)
@@ -63,12 +62,8 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 	}
 
 	public LeftJoinTIPO(ILeftMergeFunction<T, K> dataMergeFunction, IMetadataMergeFunction<K> metaDataMergeFunction,
-			ITransferArea<T, T> transferArea, ITimeIntervalSweepArea<T>[] sweepAreas) {
-		super(dataMergeFunction, metaDataMergeFunction, transferArea, sweepAreas);
-	}
-
-	public LeftJoinTIPO(LeftJoinTIPO<K, T> other) {
-		super(other);
+			ITransferArea<T, T> transferArea) {
+		super(dataMergeFunction, metaDataMergeFunction, transferArea);
 	}
 
 	// End constructors from super
@@ -96,7 +91,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (otherport == 0) {
-					Iterator<T> extracted = this.getSweepArea(otherport, this.defaultGroupingKey).extractElements(object, order);
+					Iterator<T> extracted = this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).extractElements(object, order);
 					while (extracted.hasNext()) {
 						T next = extracted.next();
 						if (!next.hasTransientMarker(cMetaDataKey)) {
@@ -105,7 +100,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						}
 					}
 				} else {
-					this.getSweepArea(otherport, this.defaultGroupingKey).purgeElements(object, order);
+					this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).purgeElements(object, order);
 				}
 			}
 
@@ -141,7 +136,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				}
 			}
 
-			qualifies = this.getSweepArea(otherport, this.defaultGroupingKey).queryCopy(object, order, extract);
+			qualifies = this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).queryCopy(object, order, extract);
 
 			boolean hit = qualifies.hasNext();
 
@@ -159,21 +154,21 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if "next" is from the left sweep area, mark it as
 				// join partner found
 				if (hit && otherport == 0 && (!next.hasTransientMarker(cMetaDataKey))) {
-					this.getSweepArea(otherport, this.defaultGroupingKey).remove(next);
+					this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).remove(next);
 					next.setTransientMarker(cMetaDataKey, Boolean.TRUE);
-					this.getSweepArea(otherport, this.defaultGroupingKey).insert(next);
+					this.getSweepArea(otherport, DEFAULT_GROUPING_KEY).insert(next);
 				}
 
 			}
 			// Depending on card insert elements into sweep area
 			if (this.card == null || this.card == Cardinalities.MANY_MANY) {
-				this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+				this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 			} else {
 				switch (this.card) {
 				case ONE_ONE:
 					// If one to one case, a hit cannot be produce another hit
 					if (!hit) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				case ONE_MANY:
@@ -181,7 +176,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					// if from right and no hit, insert (corresponding left
 					// element not found now)
 					if (port == 0 || (port == 1 && !hit)) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				case MANY_ONE:
@@ -189,11 +184,11 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 					// if from left and no hit, insert (corresponding right
 					// element not found now)
 					if (port == 1 || (port == 0 && !hit)) {
-						this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+						this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					}
 					break;
 				default:
-					this.getSweepArea(port, this.defaultGroupingKey).insert(object);
+					this.getSweepArea(port, DEFAULT_GROUPING_KEY).insert(object);
 					break;
 				}
 			}
@@ -207,7 +202,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 			// There are no more join partners for every element in sweep area
 			// with port 0
 
-			StreamSupport.stream(this.getSweepArea(0, this.defaultGroupingKey).spliterator(), false)
+			StreamSupport.stream(this.getSweepArea(0, DEFAULT_GROUPING_KEY).spliterator(), false)
 					.filter(elem -> !elem.hasTransientMarker(cMetaDataKey)).forEach(elem -> {
 						T out = ((ILeftMergeFunction<T, K>) this.dataMerge).createLeftFilledUp(elem);
 						this.transferFunction.transfer(out);
@@ -224,7 +219,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 				// Left Join: if elements in the left sweep area (0) shall be
 				// purged, check, if they had join partners before.
 				if (port == 1) {
-					Iterator<T> extracted = this.getSweepArea(port ^ 1, this.defaultGroupingKey).extractElementsBefore(punctuation.getTime());
+					Iterator<T> extracted = this.getSweepArea(port ^ 1, DEFAULT_GROUPING_KEY).extractElementsBefore(punctuation.getTime());
 					while (extracted.hasNext()) {
 						T next = extracted.next();
 						if (!next.hasTransientMarker(cMetaDataKey)) {
@@ -233,7 +228,7 @@ public class LeftJoinTIPO<K extends ITimeInterval, T extends IStreamObject<K>> e
 						}
 					}
 				} else {
-					this.getSweepArea(port ^ 1, this.defaultGroupingKey).purgeElementsBefore(punctuation.getTime());
+					this.getSweepArea(port ^ 1, DEFAULT_GROUPING_KEY).purgeElementsBefore(punctuation.getTime());
 				}
 			}
 		}

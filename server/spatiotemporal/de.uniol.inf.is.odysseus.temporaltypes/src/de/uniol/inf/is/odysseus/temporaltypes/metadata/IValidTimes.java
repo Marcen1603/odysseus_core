@@ -3,6 +3,7 @@ package de.uniol.inf.is.odysseus.temporaltypes.metadata;
 import java.util.List;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.metadata.PointInTime;
 
 /**
  * The metadata type for a list of valid times.
@@ -21,6 +22,11 @@ public interface IValidTimes extends IMetaAttribute {
 	 *            The valid to add
 	 */
 	public void addValidTime(IValidTime validTime);
+
+	/**
+	 * @return True, if the given PointInTime is in the ValidTimes.
+	 */
+	public boolean includes(PointInTime time);
 
 	/**
 	 * Removes all valid times from the list.

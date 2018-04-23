@@ -306,14 +306,4 @@ public class LossyCountingPO<T extends IMetaAttribute> extends
 		return OutputMode.INPUT;
 	}
 
-	@Override
-	public boolean isSemanticallyEqual(IPhysicalOperator ipo) {
-		if (this == ipo)
-			return true;
-		if (!super.equals(ipo))
-			return false;
-		if (getClass() != ipo.getClass())
-			return false;
-		return true;
-	}
 }

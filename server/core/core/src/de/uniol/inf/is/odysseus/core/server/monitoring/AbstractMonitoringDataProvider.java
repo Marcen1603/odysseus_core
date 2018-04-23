@@ -15,6 +15,7 @@
  */
 package de.uniol.inf.is.odysseus.core.server.monitoring;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,22 +31,14 @@ import de.uniol.inf.is.odysseus.core.monitoring.IPeriodicalMonitoringData;
 
 public abstract class AbstractMonitoringDataProvider implements IMonitoringDataProvider {
 
-	static Logger _logger = null;
-
-	static private Logger getLogger() {
-		if (_logger == null) {
-			_logger = LoggerFactory.getLogger(AbstractMonitoringDataProvider.class);
-		}
-		return _logger;
-	}
+	static final Logger LOGGER = LoggerFactory.getLogger(AbstractMonitoringDataProvider.class);
 
 	@SuppressWarnings("rawtypes")
 	private Map<String, IMonitoringData> metaDataItem;
 	private int hashCode = -1;
 
-	@SuppressWarnings("rawtypes")
 	public AbstractMonitoringDataProvider() {
-		this.metaDataItem = new HashMap<String, IMonitoringData>();
+		this.metaDataItem = new HashMap<>();
 	}
 
 	@Override
@@ -60,12 +53,12 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 
 		if (this.metaDataItem.containsKey(item.getType())) {
 			throw new IllegalArgumentException(item.getType() + " is already registered for " + this);
-			// return ;
 		}
 
 		this.metaDataItem.put(item.getType(), item);
 
-		ScheduledFuture future = MonitoringDataScheduler.getInstance().scheduleAtFixedRate(item, 0, period, TimeUnit.MILLISECONDS);
+		ScheduledFuture future = MonitoringDataScheduler.getInstance().scheduleAtFixedRate(item, 0, period,
+				TimeUnit.MILLISECONDS);
 
 		// Speichere Item und Future in Scheduler, damit das Item spaeter
 		// wieder
@@ -85,10 +78,11 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 
 	@Override
 	public void addMonitoringData(String type, IMonitoringData<?> item) {
-		getLogger().debug("Add Monitoring Data " + type + " " + item + " to " + this);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(MessageFormat.format("Add Monitoring Data {0} {1} to {2}", type, item, this));
+		}
 		if (this.metaDataItem.containsKey(type)) {
 			throw new IllegalArgumentException(type + " is already registered");
-			// return;
 		}
 
 		this.metaDataItem.put(type, item);
@@ -96,13 +90,17 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 
 	@Override
 	public void removeMonitoringData(String type) {
-		getLogger().debug("Remove Monitoring Data " + type + " from " + this);
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug(MessageFormat.format("Remove Monitoring Data {0} from {1}", type, this));
+		}
 		this.metaDataItem.remove(type);
 	}
 
 	protected void stopMonitoring() {
 		if (metaDataItem.size() > 0) {
-			getLogger().debug("Stop Monitoring " + this);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(MessageFormat.format("Stop Monitoring {0}", this));
+			}
 			for (IMonitoringData<?> m : metaDataItem.values()) {
 				m.cancelMonitoring();
 			}
@@ -111,12 +109,12 @@ public abstract class AbstractMonitoringDataProvider implements IMonitoringDataP
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		return super.equals(obj);
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		// optimization for event dispatcher
 		if (hashCode == -1) {
 			hashCode = super.hashCode();

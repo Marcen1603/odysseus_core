@@ -176,6 +176,10 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	protected final boolean supressFullMetaDataHandling;
 
 	protected final IMetadataMergeFunction<M> metadataMergeFunc;
+	
+	/* Fill the SweepArea independently of the existence of a non-incremental 
+	 * function (e.g., to have metadata handling for multiple metadatas) */
+	protected final boolean alwaysUseSweepArea;
 
 	/**
 	 * Constructor.
@@ -201,6 +205,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 	 *            The indices that form the grouping attributes.
 	 * @param groupingAttributesIdxOutputSchema
 	 *            The indices that form the grouping attributes on the output schema
+	 * @param alwaysUseSweepArea Fill the SweepArea independently of the existence of a non-incremental 
+	 * function (e.g., to have metadata handling for multiple metadatas)
 	 */
 	public AggregationPO(final List<INonIncrementalAggregationFunction<M, T>> nonIncrementalFunctions,
 			final List<IIncrementalAggregationFunction<M, T>> incrementalFunctions,
@@ -208,7 +214,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 			final boolean evaluateAtNewElement, final boolean evaluateAtDone, final boolean outputOnlyChanges,
 			final SDFSchema outputSchema, final int[] groupingAttributesIdx,
 			final int[] groupingAttributesIdxOutputSchema, final boolean supressFullMetaDataHandling,
-			final IMetadataMergeFunction<M> mmf) {
+			final IMetadataMergeFunction<M> mmf, boolean alwaysUseSweepArea) {
 		// REMARK: Consider safe copies.
 		this.nonIncrementalFunctions = Collections.unmodifiableList(nonIncrementalFunctions);
 		this.incrementalFunctions = Collections.unmodifiableList(incrementalFunctions);
@@ -232,6 +238,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 				.anyMatch(e -> e.needsOrderedElements());
 		this.supressFullMetaDataHandling = supressFullMetaDataHandling;
 		this.metadataMergeFunc = mmf;
+		
+		this.alwaysUseSweepArea = alwaysUseSweepArea;
 	}
 
 	/**
@@ -255,6 +263,8 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		this.groupingAttributesIndicesOutputSchema = other.groupingAttributesIndicesOutputSchema;
 		this.supressFullMetaDataHandling = other.supressFullMetaDataHandling;
 		this.metadataMergeFunc = other.metadataMergeFunc;
+		
+		this.alwaysUseSweepArea = other.alwaysUseSweepArea;
 	}
 
 	@Override
@@ -542,7 +552,7 @@ public class AggregationPO<M extends ITimeInterval, T extends Tuple<M>> extends 
 		// element gets invalid (than we need to know the invalid elements even
 		// we have only incremental functions to invoke them with the outdated
 		// elements).
-		if (hasNonIncrementalFunctions || !object.getMetadata().getEnd().isInfinite()) {
+		if (alwaysUseSweepArea || hasNonIncrementalFunctions || !object.getMetadata().getEnd().isInfinite()) {
 			sa = getSweepArea(groupKey);
 
 			// If we have non-incremental functions we need to save all elements
