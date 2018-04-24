@@ -4,7 +4,9 @@ import java.util.List;
 
 public interface SpatialIndex2<T extends Object> {
 	
-	public void add(double latitude, double longitude, T object);
+	public void add(T object);
+	
+	public boolean remove(T object);
 	
 	public List<T> getKNearestNeighbors(T center, int k);
 	

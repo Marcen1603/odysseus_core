@@ -18,9 +18,12 @@ public class VPTreeIndex<T extends Tuple<?>> implements SpatialIndex2<T> {
 	}
 
 	@Override
-	public void add(double latitude, double longitude, T object) {
+	public void add(T object) {
 		this.index.add(object);
-
+	}
+	
+	public boolean remove(T object) {
+		return this.index.remove(object);
 	}
 
 	@Override

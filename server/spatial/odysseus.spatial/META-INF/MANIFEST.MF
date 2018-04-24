@@ -39,3 +39,4 @@ Import-Package: com.google.common.base,
  de.uniol.inf.is.odysseus.parser.pql.relational,
  de.uniol.inf.is.odysseus.physicaloperator.relational
 Automatic-Module-Name: de.uniol.inf.is.odysseus.spatial
+Bundle-ActivationPolicy: lazy
