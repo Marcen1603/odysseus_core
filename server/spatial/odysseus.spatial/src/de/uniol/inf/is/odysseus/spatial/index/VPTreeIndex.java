@@ -12,8 +12,8 @@ public class VPTreeIndex<T extends Tuple<?>> implements SpatialIndex2<T> {
 	private VPTree<T, T> index;
 	private DistanceFunction<T> distanceFunction;
 
-	public VPTreeIndex(int latitudeAttribute, int longitudeAttribute) {
-		this.distanceFunction = new TupleHaversineDistanceFunction<T>(latitudeAttribute, longitudeAttribute);
+	public VPTreeIndex(int pointAttributeIndex) {
+		this.distanceFunction = new TupleHaversineDistanceFunction<T>(pointAttributeIndex);
 		this.index = new VPTree<>(distanceFunction);
 	}
 
