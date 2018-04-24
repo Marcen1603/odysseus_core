@@ -24,31 +24,29 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 	private static final long serialVersionUID = 6762176719624927978L;
 	private SpatialIndex2<T> index;
 	private SDFSchema subSchema;
+	private final static String OUTPUT_NAME = "kNN";
 
 	private final int k;
-	private final int latitudeAttributeIndex;
-	private final int longitudeAttributeIndex;
+	private final int pointAttributeIndex;
 
 	public SpatialKNearestNeighbors() {
 		this.k = 0;
-		this.latitudeAttributeIndex = 0;
-		this.longitudeAttributeIndex = 0;
+		this.pointAttributeIndex = 0;
 	}
-	
-	public SpatialKNearestNeighbors(int latitudeAttributeIndex, int longitudeAttributeIndex, int k,
-			SDFSchema subSchema) {
+
+	public SpatialKNearestNeighbors(int pointAttributeIndex, int k, SDFSchema subSchema, int[] attributes) {
+		super(attributes, true, new String[] { OUTPUT_NAME });
 		this.k = k;
-		this.latitudeAttributeIndex = latitudeAttributeIndex;
-		this.longitudeAttributeIndex = longitudeAttributeIndex;
-		this.index = new VPTreeIndex<>(latitudeAttributeIndex, longitudeAttributeIndex);
+		this.pointAttributeIndex = pointAttributeIndex;
+		this.index = new VPTreeIndex<>(pointAttributeIndex);
 		this.subSchema = subSchema.clone();
 	}
 
 	public SpatialKNearestNeighbors(SpatialKNearestNeighbors<M, T> copy) {
+		super(copy);
 		this.k = copy.k;
-		this.latitudeAttributeIndex = copy.latitudeAttributeIndex;
-		this.longitudeAttributeIndex = copy.longitudeAttributeIndex;
-		this.index = new VPTreeIndex<>(copy.latitudeAttributeIndex, copy.longitudeAttributeIndex);
+		this.pointAttributeIndex = copy.pointAttributeIndex;
+		this.index = new VPTreeIndex<>(copy.pointAttributeIndex);
 		this.subSchema = copy.subSchema.clone();
 	}
 
@@ -74,37 +72,34 @@ public class SpatialKNearestNeighbors<M extends ITimeInterval, T extends Tuple<M
 		// Nested output
 		final SDFDatatype datatype = SDFDatatype.createTypeWithSubSchema(SDFDatatype.TUPLE, SDFDatatype.TUPLE,
 				subSchema);
-		return Collections.singleton(new SDFAttribute(null, outputAttributeNames[0], datatype, null, null, null));
+		return Collections.singleton(new SDFAttribute(null, "kNN", datatype, null, null, null));
 	}
 
 	private final static String K = "K";
-	private final static String LATITUDE_ATTRIBUTE = "latitude_attribute_name";
-	private final static String LONGITUDE_ATTRIBUTE = "longitude_attribute_name";
+	private final static String POINT_ATTRIBUTE = "point_attribute_name";
 
 	@Override
 	public boolean checkParameters(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 		final int k = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters, K, -1);
-		final int[] latitudeAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, LATITUDE_ATTRIBUTE);
-		final int[] longitudeAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, LONGITUDE_ATTRIBUTE);
-		return k > 0 && latitudeAttributeIndexes.length > 0 && longitudeAttributeIndexes.length > 0;
+		final int[] pointAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
+				attributeResolver, POINT_ATTRIBUTE);
+		return k > 0 && pointAttributeIndexes.length > 0;
 	}
 
 	@Override
 	public IAggregationFunction createInstance(Map<String, Object> parameters, IAttributeResolver attributeResolver) {
 		final int k = AggregationFunctionParseOptionsHelper.getFunctionParameterAsInt(parameters, K, -1);
-		final int[] latitudeAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, LATITUDE_ATTRIBUTE);
-		final int[] longitudeAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
-				attributeResolver, LONGITUDE_ATTRIBUTE);
+		final int[] pointAttributeIndexes = AggregationFunctionParseOptionsHelper.getAttributeIndices(parameters,
+				attributeResolver, POINT_ATTRIBUTE);
+		final int[] attributes = AggregationFunctionParseOptionsHelper.getInputAttributeIndices(parameters,
+				attributeResolver, 0, false);
 
 		SpatialKNearestNeighbors<M, T> spatialKNearestNeighbors = null;
-		if (latitudeAttributeIndexes.length > 0 && longitudeAttributeIndexes.length > 0) {
-			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(latitudeAttributeIndexes[0],
-					longitudeAttributeIndexes[0], k, attributeResolver.getSchema().get(0));
+		if (attributes != null && pointAttributeIndexes.length > 0) {
+			spatialKNearestNeighbors = new SpatialKNearestNeighbors<>(pointAttributeIndexes[0], k,
+					attributeResolver.getSchema().get(0), attributes);
 		} else {
-			throw new RuntimeException("Are the latitude and longitude attributes correct?");
+			throw new RuntimeException("Is the point attributes correct?");
 		}
 		return spatialKNearestNeighbors;
 	}
