@@ -14,6 +14,7 @@ import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.QuadTreeST
 import de.uniol.inf.is.odysseus.spatial.datastructures.spatiotemporal.SpatioTemporalDataStructuresRegistry;
 import de.uniol.inf.is.odysseus.spatial.physicaloperator.access.transport.SpatioTemporalDataStructureTransportHandler;
 
+@Deprecated
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
