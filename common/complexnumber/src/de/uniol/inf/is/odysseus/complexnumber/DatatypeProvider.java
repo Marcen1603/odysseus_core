@@ -12,6 +12,7 @@ public class DatatypeProvider implements IDatatypeProvider{
 	public List<SDFDatatype> getDatatypes() {
         List<SDFDatatype> ret = new ArrayList<>();
         ret.add(SDFComplexNumberDatatype.COMPLEX_NUMBER);
+        ret.add(SDFComplexNumberDatatype.LIST_COMPLEX_NUMBER);
         return ret;	
     }
 
