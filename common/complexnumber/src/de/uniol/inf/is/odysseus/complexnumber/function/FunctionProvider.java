@@ -17,6 +17,7 @@ public class FunctionProvider implements IFunctionProvider {
 		funcs.add(new ComplexNumberPlusOperator());
 		funcs.add(new CreateComplexNumberFunction());
 		funcs.add(new ComplexNumberAbsFunction());
+		funcs.add(new AsComplexNumberFunction());
 		return funcs;
 	}
 
