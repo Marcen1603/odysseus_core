@@ -45,16 +45,16 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
  *
  * @param <T>
  */
-abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>>
-		extends AbstractPipe<T, T> {
+abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T extends INamedAttributeStreamObject<K>> extends AbstractPipe<T, T> {
 
 	static private Logger logger = LoggerFactory.getLogger(AbstractNamedAttributeMapPO.class);
 
-	protected String[][] variables; // Expression.Index
+	private final SDFSchema inputSchema;
+	private final boolean allowNull;
+	
+	private String[][] variables; // Expression.Index
 	private boolean[] pathExpression;
 	private List<NamedExpression> expressions;
-	private final SDFSchema inputSchema;
-	final private boolean allowNull;
 
 	public AbstractNamedAttributeMapPO(MapAO mapAO) {
 		this.inputSchema = mapAO.getInputSchema();
@@ -67,7 +67,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	final protected void process_next(T object, int port) {
+	protected void process_next(T object, int port) {
 		if (object != null) {
 
 			T outputVal = createInstance();
@@ -142,7 +142,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 	}
 
 	protected abstract T createInstance();
-
+	
 	protected void initExpressions(List<NamedExpression> exprToInit) {
 		this.variables = new String[exprToInit.size()][];
 		this.pathExpression = new boolean[exprToInit.size()];
@@ -150,11 +150,19 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 		int i = 0;
 		for (NamedExpression expression : exprToInit) {
 
-			// A little hack to allow path expressions in MAP, too
+			// A little hack to allow path expressions in MAP, too.
+			// Whereas the expString.contains("/") is used to recognize
+			// XPath expressions in order to allow the use of
+			// MEP functions in  XML documents.
 			String expString = expression.expression.getExpressionString();
-			if (expString.startsWith("\"path")) {
+			if (expString.startsWith("\"path") || expString.contains("/")) {
 				this.pathExpression[i] = true;
-				String path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
+
+				String path = expString;
+				if (expString.startsWith("\"path")) {//if JSON Path is used (for JSON)
+					path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
+				}
+				
 				String[] newArray = new String[1];
 				newArray[0] = path;
 				this.variables[i++] = newArray;
@@ -199,7 +207,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 		}
 	}
 
-	private String removePoint(String name) {
+	protected String removePoint(String name) {
 		if (name.substring(0, 1).equals(".")) {
 			return name.substring(1);
 		}

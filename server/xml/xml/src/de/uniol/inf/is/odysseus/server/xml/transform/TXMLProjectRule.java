@@ -19,7 +19,7 @@ public class TXMLProjectRule extends AbstractTransformationRule<ProjectAO>{
 
 	@Override
 	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
-		XMLProjectPO<?> projectPO = new XMLProjectPO<IMetaAttribute>(operator.getAttributes());
+		XMLProjectPO<IMetaAttribute> projectPO = new XMLProjectPO<IMetaAttribute>(operator.getAttributes());
 		defaultExecute(operator, projectPO, config, true, false);
 	}
 

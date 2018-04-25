@@ -1,6 +1,6 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
-import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
+import de.uniol.inf.is.odysseus.core.physicaloperator.IPhysicalOperator;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
@@ -22,8 +22,8 @@ public class TXMLMapRule extends AbstractTransformationRule<XMLMapAO>
 	@Override
 	public void execute(XMLMapAO operator, TransformationConfiguration config) throws RuleException
 	{
-		XMLMapPO<?> xmlmapPO = new XMLMapPO<IMetaAttribute>(operator.getSource(), operator.getTarget());
-		defaultExecute(operator, xmlmapPO, config, true, false);
+		IPhysicalOperator mapPO = new XMLMapPO<>(operator);
+		defaultExecute(operator, mapPO, config, true, false);
 	}
 
 	@Override

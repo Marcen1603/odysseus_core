@@ -87,6 +87,7 @@ public class ToXMLAO extends UnaryLogicalOp {
 		return false;
 	}
 	
+	
 	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "xPathAttributes", isList = true, optional = true)
 	public void setXPathAttributes(List<SDFAttribute> attributes) {
 		this.xpathAttributes = attributes.stream().map(e -> e.getAttributeName()).collect(Collectors.toList());

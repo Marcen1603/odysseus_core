@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,6 +36,7 @@ import org.xml.sax.SAXException;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
+import jlibs.core.lang.NotImplementedException;
 
 public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable {
 
@@ -77,20 +81,28 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return null;
 	}
 
+	public static XMLStreamObject<IMetaAttribute> createInstance(Collection<Node> nodes, Collection<String> rootPaths)
+			throws XPathFactoryConfigurationException {
+		throw new NotImplementedException();
+//		Collection<XMLStreamObject<?>> col = new ArrayList<>();
+//		
+//		// Create for each node a new document
+//		for (Node n : nodes) {
+//			col.add(XMLStreamObject.createInstance(n));
+//		}
+//		
+//		return null;
+	}
+
 	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
 			throws XPathFactoryConfigurationException, XPathExpressionException {
 		
-		XMLStreamObject<IMetaAttribute> result = new XMLStreamObject<IMetaAttribute>(right.getDocument());
-		
+		XMLStreamObject<IMetaAttribute> result = new XMLStreamObject<IMetaAttribute>(left.getDocument());
 		Node node = result.getNode(path);
-		
 		if (node != null) {
-			
-			Node appendNode = right.getDocument().importNode(
-					left.getDocument().getFirstChild().cloneNode(true), 
-					true
+			Node appendNode = left.getDocument().importNode(
+					right.getDocument().getFirstChild().cloneNode(true), true
 			);
-			
 			node.appendChild(appendNode);
 		}
 		
@@ -105,7 +117,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	@Override
 	public String toString(boolean handleMetadata) {
 		StringBuilder ret = new StringBuilder();
-		ret.append(xPathToString("/node()")); // Rootnode
+		ret.append(xPathToString("/node()"));
 		if (handleMetadata && getMetadata() != null) {
 			ret.append(";").append(getMetadata().toString());
 		}
@@ -231,35 +243,22 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return buf.toString();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
+	@SuppressWarnings("unchecked")
 	public <K> K getAttribute(String name) {
 		name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
 		name = name.replaceAll(AT_REPLACEMENT_STRING, "@");
-		name = name.replaceAll(LEFT_BRACE_REPLACEMENT_STRING, "(");
-		name = name.replaceAll(RIGHT_BRACE_REPLACEMENT_STRING, ")");
 		try {
 			
 			// Retrieve the attribute value
 			String result = factory.newXPath().compile(name).evaluate(content);
-			
-			// If result is a number, parse it to Double and return
-			if (result.matches("-?\\d+(\\.\\d+)?")) {
-				Double number = Double.parseDouble(result);
-				return (K) number;
-			}
-			
-			// Otherwise result is a string: return the hash code of the string to ensure
-			// the correct interpretation during the predicate evaluation, because instead
-			// of the StringEqualsOperator only the EqualsOperator (for numeric evaluations)
-			// will be used.
 			
 			// If the result is empty, return null
 			if ("".equals(result)) {
 				return null;
 			}
 			
-			return (K) new Integer(result.hashCode());
+			return (K) result;
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
@@ -274,7 +273,29 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 
 	@Override
 	public void setAttribute(String name, Object value) {
-		// TODO Auto-generated method stub
-
+		
+		final String REGEX1 = "\\{|\\}";
+		final String REGEX2 = "\\[|\\]";
+		String path = name.replaceAll(REGEX1, "");
+		String realValue = value.toString();
+		
+		if (value != null && value.getClass().isArray()) {
+			Object[] objArray = (Object[]) value;
+			realValue = Arrays.toString(objArray);
+			if (objArray.length == 1) {
+				realValue = realValue.replaceAll(REGEX2, "");
+			}
+		}
+		
+		try {
+			NodeList nodes = getNodeList(path);
+			if (nodes.item(0) instanceof Attr) {
+				((Attr) nodes.item(0)).setNodeValue(realValue);
+			} else if (nodes.item(0) instanceof Element) {
+				((Element) nodes.item(0)).setTextContent(realValue);
+			}
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
 	}
 }

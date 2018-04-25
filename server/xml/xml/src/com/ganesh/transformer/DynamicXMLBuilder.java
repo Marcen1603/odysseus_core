@@ -3,16 +3,28 @@ package com.ganesh.transformer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -146,6 +158,45 @@ public class DynamicXMLBuilder<T extends IMetaAttribute> {
 		}
 
 		return null;
+	}
+	
+	public Collection<String> splitDocument(InputStream input, String tagToStrip) {
+		Collection<String> documents = new ArrayList<>();
+		try {
+			TransformerFactory.newInstance().newTransformer();
+			XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(input);
+			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+			XMLEventWriter eventWriter = null;
+			StringWriter XMLOutput = new StringWriter();
+			while (eventReader.hasNext()) {
+				XMLEvent event = eventReader.nextEvent();
+				if (event.getEventType() == XMLStreamConstants.START_ELEMENT
+						&& event.asStartElement().getName().getLocalPart().equalsIgnoreCase(tagToStrip)) {
+					XMLOutput = new StringWriter();
+					eventWriter = outputFactory.createXMLEventWriter(XMLOutput);
+					eventWriter.add(event);
+				} else if (event.getEventType() == XMLStreamConstants.END_ELEMENT
+						&& event.asEndElement().getName().getLocalPart().equalsIgnoreCase(tagToStrip)) {
+					eventWriter.add(event);
+					eventWriter.close();
+					eventWriter = null;
+					documents.add(XMLOutput.toString());
+				} else if (eventWriter != null) {
+					eventWriter.add(event);
+				}
+
+			}
+			eventReader.close();
+
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		}
+		
+		return documents;
 	}
 	
     public static class EmptySampleValueGenerator implements XSInstance.SampleValueGenerator{

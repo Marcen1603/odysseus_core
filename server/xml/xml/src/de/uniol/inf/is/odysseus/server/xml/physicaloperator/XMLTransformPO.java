@@ -144,6 +144,7 @@ public class XMLTransformPO<T extends IMetaAttribute> extends AbstractPipe<XMLSt
 				)
 			);
 
+			//TODO result can also be a pure string!
 			// Translate document to string and send it
 			StringWriter sw = new StringWriter();
 			transformer.setOutputProperty(OutputKeys.ENCODING, properties.getProperty("encoding"));

@@ -257,6 +257,7 @@ public class ToXMLPO<T extends IMetaAttribute> extends AbstractPipe<Tuple<T>, XM
 			StringWriter sw = new StringWriter();
 			transformer.setOutputProperty(OutputKeys.ENCODING, properties.getProperty("encoding"));
 			transformer.setOutputProperty(OutputKeys.INDENT, properties.getProperty("intend"));
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.transform(source, new StreamResult(sw));
 
 			XMLStreamObject<T> output = (XMLStreamObject<T>) xsoHandler.readData(sw.toString());

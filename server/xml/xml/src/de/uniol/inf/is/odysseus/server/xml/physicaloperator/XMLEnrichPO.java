@@ -107,14 +107,11 @@ public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStrea
 
 	@SuppressWarnings("unchecked")
 	private void processJoin(XMLStreamObject<T> object) {
+		
 		try {
 			synchronized (cache) {
 				
 				for (XMLStreamObject<T> cached : cache) {
-					//TODO predicate is not right!
-					// It cannot be evaluated correctly, because the values of the specified expression are neither
-					// retrieved nor evaluated. Currently, the predicate relates to a string comparison.
-
 					if (predicate != null) {
 						if (predicate.evaluate(cached, object)) {
 							transfer((XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target));
@@ -130,6 +127,7 @@ public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStrea
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	@Override

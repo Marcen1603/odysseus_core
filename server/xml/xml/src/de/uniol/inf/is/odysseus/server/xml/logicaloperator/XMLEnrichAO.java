@@ -32,8 +32,7 @@ import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.StringParameter;
 
-@LogicalOperator(name = "XMLEnrich", minInputPorts = 2, maxInputPorts = 2, doc = "XML-Enrich operator", category = {
-		LogicalOperatorCategory.ENRICH })
+@LogicalOperator(name = "XMLEnrich", minInputPorts = 2, maxInputPorts = 2, doc = "XML-Enrich operator", category = {LogicalOperatorCategory.ENRICH })
 public class XMLEnrichAO extends BinaryLogicalOp implements IHasPredicate {
 
 	private static final long serialVersionUID = -8451182921980419314L;

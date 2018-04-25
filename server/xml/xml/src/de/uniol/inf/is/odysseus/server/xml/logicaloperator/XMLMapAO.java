@@ -15,98 +15,35 @@
  */
 package de.uniol.inf.is.odysseus.server.xml.logicaloperator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uniol.inf.is.odysseus.core.logicaloperator.LogicalOperatorCategory;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
-import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.UnaryLogicalOp;
+import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.LogicalOperator;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.annotations.Parameter;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.ResolvedSDFAttributeParameter;
 
-/**
- * @author Jonas Jacobi
- */
-@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XMLMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator", category = {LogicalOperatorCategory.BASE})
-public class XMLMapAO extends UnaryLogicalOp
-{
+@LogicalOperator(maxInputPorts = 1, minInputPorts = 1, name = "XMLMAP", doc = "Performs a mapping of incoming attributes to out-coming attributes using map functions. Odysseus also provides a wide range of mapping functions. Hint: Map is stateless. To used Map in a statebased fashion see: StateMap", url = "http://wiki.odysseus.informatik.uni-oldenburg.de/display/ODYSSEUS/Map+operator", category = {LogicalOperatorCategory.BASE })
+public class XMLMapAO extends MapAO {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8811796037313025039L;
-	private List<SDFAttribute> target;
-	private List<SDFAttribute> source;
+	private boolean tupleOutput;
 
-	public XMLMapAO()
-	{
+	public XMLMapAO() {
 		super();
 	}
 
-	public XMLMapAO(XMLMapAO ao)
-	{
+	public XMLMapAO(XMLMapAO ao) {
 		super(ao);
-		this.setSource(ao.source);
-		this.setTarget(ao.target);
-	}
-
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "source", isList = true, optional = false, doc = "A list of expressions.")
-	public void setSource(List<SDFAttribute> sourceExpressions)
-	{
-		this.source = sourceExpressions;
-		source = new ArrayList<>();
-		if (sourceExpressions != null)
-		{
-			for (SDFAttribute e : sourceExpressions)
-			{
-				source.add(e);
-			}
-		}
-		setOutputSchema(null);
-	}
-
-	public List<SDFAttribute> getTarget()
-	{
-		return this.target;
-	}
-
-	@Parameter(type = ResolvedSDFAttributeParameter.class, name = "target", isList = true, optional = false, doc = "A list of expressions.")
-	public void setTarget(List<SDFAttribute> targetExpressions)
-	{
-		this.target = targetExpressions;
-		target = new ArrayList<>();
-		if (targetExpressions != null)
-		{
-			for (SDFAttribute e : targetExpressions)
-			{
-				target.add(e);
-			}
-		}
-		setOutputSchema(null);
-	}
-
-	public List<SDFAttribute> getSource()
-	{
-		return this.source;
+		this.tupleOutput = ao.isTupleOutput();
 	}
 
 	@Override
-	protected SDFSchema getOutputSchemaIntern(int pos)
-	{
-		return SDFSchemaFactory.createNewWithAttributes(target, getInputSchema());
-	}
+	public void initialize() { }
 
 	@Override
-	public void initialize()
-	{
-	}
-
-	@Override
-	public XMLMapAO clone()
-	{
+	public XMLMapAO clone() {
 		return new XMLMapAO(this);
 	}
+	
+	public boolean isTupleOutput() {
+		return tupleOutput;
+	}
+	
 }
