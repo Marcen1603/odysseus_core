@@ -305,4 +305,8 @@
          id="de.uniol.inf.is.odysseus.rest.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.uniol.inf.is.odysseus.dsp.feature"
+         version="0.0.0"/>
+
 </feature>
