@@ -17,6 +17,8 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,6 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchemaFactory;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.MapAO;
 import de.uniol.inf.is.odysseus.core.server.logicaloperator.builder.NamedExpression;
-import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 
 /**
  * Implementation of map operator for key value objects. Adapted from relational
@@ -143,6 +144,9 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	protected abstract T createInstance();
 	
+	final String XPATH_REGEX = "(\\/(\\d|\\w|@|=|\\s|\\*|\\+|\\-|\\/|\\[|\\])*)";
+	final Pattern pattern = Pattern.compile(XPATH_REGEX);
+	
 	protected void initExpressions(List<NamedExpression> exprToInit) {
 		this.variables = new String[exprToInit.size()][];
 		this.pathExpression = new boolean[exprToInit.size()];
@@ -155,14 +159,17 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 			// XPath expressions in order to allow the use of
 			// MEP functions in  XML documents.
 			String expString = expression.expression.getExpressionString();
-			if (expString.startsWith("\"path") || expString.contains("/")) {
+			if (expString.startsWith("\"path")) { //|| expString.contains("/")) {
 				this.pathExpression[i] = true;
-
-				String path = expString;
-				if (expString.startsWith("\"path")) {//if JSON Path is used (for JSON)
-					path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
-				}
 				
+				String path = expString;
+//				final Matcher matcher = pattern.matcher(expString);
+//				if (matcher.find()) {
+//					path = matcher.group(1);
+//					path = path.replace("(", "");
+//				} 
+				
+				path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
 				String[] newArray = new String[1];
 				newArray[0] = path;
 				this.variables[i++] = newArray;
@@ -175,8 +182,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 				for (SDFAttribute a : exprAttributes) {
 					Pair<Integer, Integer> pos = getInputSchema().indexOfMetaAttribute(a.getURI());
 					if (pos != null) {
-						neededAttributes
-								.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
+						neededAttributes.add(getInputSchema().getMetaschema().get(pos.getE1()).getAttribute(pos.getE2()));
 						changedSchema = true;
 					} else {
 						neededAttributes.add(a);

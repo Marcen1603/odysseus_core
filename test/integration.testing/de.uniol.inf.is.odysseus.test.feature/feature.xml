@@ -89,13 +89,6 @@ Unless required by applicable law or agreed to in writing, software
          unpack="false"/>
 
    <plugin
-         id="de.uniol.inf.is.odysseus.test.component.xml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.jlibs"
          download-size="0"
          install-size="0"
@@ -110,6 +103,12 @@ Unless required by applicable law or agreed to in writing, software
 
    <plugin
          id="org.apache.commons.collections15"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="de.uniol.inf.is.odysseus.test.component.keyvalue"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
