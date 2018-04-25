@@ -8,10 +8,8 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.slf4j.Logger;
 
 import de.uniol.inf.ei.oj104.communication.IAPDUHandler;
@@ -222,7 +220,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 	}
 
 	@Override
-	public Future<Optional<ASDU>> handleASDU(ASDU asdu) {
+	public Optional<ASDU> handleASDU(ASDU asdu) {
 		// Creates a tuple with DataUnitIdentifier and List of InformationObjects
 		ITransfer<Tuple<IMetaAttribute>> transfer = getTransfer();
 
@@ -232,7 +230,7 @@ public abstract class AbstractIEC104ProtocolHandler extends AbstractProtocolHand
 		transfer.transfer(tuple);
 
 		// No response ASDU to server
-		return ConcurrentUtils.constantFuture(Optional.empty());
+		return Optional.empty();
 	}
 
 	@Override
