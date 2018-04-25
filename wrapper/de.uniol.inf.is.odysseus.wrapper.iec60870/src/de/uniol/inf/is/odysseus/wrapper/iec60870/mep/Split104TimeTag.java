@@ -3,22 +3,23 @@ package de.uniol.inf.is.odysseus.wrapper.iec60870.mep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniol.inf.ei.oj104.model.ITimeTag;
 import de.uniol.inf.ei.oj104.model.InformationElementSequence;
+import de.uniol.inf.is.odysseus.core.collection.Tuple;
+import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
 // TODO javaDoc
-public class Get104TimeTag extends AbstractFunction<ITimeTag> {
+public class Split104TimeTag extends AbstractFunction<Tuple<IMetaAttribute>> {
 
-	private static final long serialVersionUID = -2969523156697135666L;
+	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(Get104TimeTag.class);
+	private static final Logger logger = LoggerFactory.getLogger(Split104TimeTag.class);
 
 	/**
 	 * The name of the MEP function to be used in query languages.
 	 */
-	private static final String name = Get104TimeTag.class.getSimpleName();
+	private static final String name = Split104TimeTag.class.getSimpleName();
 
 	/**
 	 * The amount of input values.
@@ -39,19 +40,22 @@ public class Get104TimeTag extends AbstractFunction<ITimeTag> {
 	/**
 	 * Creates a new MEP function.
 	 */
-	public Get104TimeTag() {
+	public Split104TimeTag() {
 		super(name, numInputs, inputTypes, outputType);
 	}
 
 	@Override
-	public ITimeTag getValue() {
+	public Tuple<IMetaAttribute> getValue() {
 		if (!(getInputValue(0) instanceof InformationElementSequence)) {
 			logger.error("'{}' is not an information element sequence!", (Object) getInputValue(0));
 			return null;
 		}
 
 		InformationElementSequence seq = (InformationElementSequence) getInputValue(0);
-		return seq.getTimeTag().orElse(null);
+		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
+		tuple.setAttribute(0, seq.getInformationElements());
+		tuple.setAttribute(1, seq.getTimeTag().orElse(null));
+		return tuple;
 	}
 
 	@Override
