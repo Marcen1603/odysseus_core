@@ -11,8 +11,8 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
  * handlers (and the oj104 library). Provided MEP functions are: <br />
  * <ul>
  * <li>{@link Get104ElementSequences}</li>
+ * <li>{@link GetTimestampFrom104TimeTag}</li>
  * <li>{@link Split104ElementSequence}</li>
- * <li>{@link Transform104TimeTagToLong}</li>
  * </ul>
  *
  * @author Michael Brand (michael.brand@uol.de)
@@ -23,7 +23,7 @@ public class IEC104MEPFunctionProvider implements IFunctionProvider {
 	/**
 	 * Instances of the provided MEP functions.
 	 */
-	private static final IMepFunction<?>[] functions = new IMepFunction[] { new Get104ElementSequences(), new Split104ElementSequence(), new Transform104TimeTagToLong() };
+	private static final IMepFunction<?>[] functions = new IMepFunction[] { new Get104ElementSequences(), new Split104ElementSequence(), new GetTimestampFrom104TimeTag() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
