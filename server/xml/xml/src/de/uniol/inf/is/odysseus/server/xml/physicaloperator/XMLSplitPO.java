@@ -13,15 +13,15 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFAttribute;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
 
-public class XMLProjectPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
+public class XMLSplitPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>> {
 	private List<SDFAttribute> paths;
 
-	public XMLProjectPO(List<SDFAttribute> paths) {
+	public XMLSplitPO(List<SDFAttribute> paths) {
 		super();
 		this.paths = paths;
 	}
 
-	public XMLProjectPO(XMLProjectPO<T> po) {
+	public XMLSplitPO(XMLSplitPO<T> po) {
 		super(po);
 		this.paths = po.paths;
 	}

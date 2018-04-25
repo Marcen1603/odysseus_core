@@ -4,26 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLEventWriter;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +37,10 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 	public static final String NAME = "XML3";
 	public static final String TAG_TO_STRIP = "tag_to_strip";
 
-	private IStreamObjectDataHandler<XMLStreamObject<? extends IMetaAttribute>> xsoHandler = new XMLStreamObjectDataHandler();
-	private Transformer transformer;
 	private InputStream input;
 	private OutputStream output;
 	private String tagToStrip;
-	private XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	private DynamicXMLBuilder<?> builder = new DynamicXMLBuilder<>();
-	private XMLEventReader eventReader;
 
 	
 	public XMLProtocolHandler3() {
@@ -79,14 +57,6 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 		OptionMap options = optionsMap;
 		if (options.get(TAG_TO_STRIP) != null) {
 			this.tagToStrip = options.get(TAG_TO_STRIP).toString();
-		}
-		
-		try {
-			this.transformer = TransformerFactory.newInstance().newTransformer();
-		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e) {
-			e.printStackTrace();
 		}
 		
 	}
@@ -174,43 +144,10 @@ public class XMLProtocolHandler3<T extends XMLStreamObject<? extends IMetaAttrib
 				e.printStackTrace();
 			}
 		}
-		
-//		try {
-
-			builder.splitDocument(input, tagToStrip).forEach(d -> {
-				getTransfer().transfer(getDataHandler().readData(d));
-			});
+		builder.splitDocument(input, tagToStrip).forEach(d -> {
+			getTransfer().transfer(getDataHandler().readData(d));
+		});
 			
-			
-//			eventReader = inputFactory.createXMLEventReader(input);
-//
-//			XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-//			XMLEventWriter eventWriter = null;
-//			StringWriter XMLOutput = new StringWriter();
-//			while (eventReader.hasNext()) {
-//				XMLEvent event = eventReader.nextEvent();
-//				if (event.getEventType() == XMLStreamConstants.START_ELEMENT
-//						&& event.asStartElement().getName().getLocalPart().equalsIgnoreCase(tagToStrip)) {
-//					eventWriter = outputFactory.createXMLEventWriter(XMLOutput);
-//					eventWriter.add(event);
-//				} else if (event.getEventType() == XMLStreamConstants.END_ELEMENT
-//						&& event.asEndElement().getName().getLocalPart().equalsIgnoreCase(tagToStrip)) {
-//					eventWriter.add(event);
-//					eventWriter.close();
-//					eventWriter = null;
-//					return this.getDataHandler().readData(XMLOutput.toString());
-//				} else if (eventWriter != null) {
-//					eventWriter.add(event);
-//				}
-//			}
-//			eventReader.close();
-//
-//		} catch (XMLStreamException e) {
-//			e.printStackTrace();
-//			log.error("error occurred during parseXml():" + e.getMessage());
-//		}
-
-//		return null;
 	}
 
 	@Override

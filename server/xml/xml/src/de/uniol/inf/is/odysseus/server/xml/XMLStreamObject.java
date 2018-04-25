@@ -5,8 +5,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,7 +34,6 @@ import org.xml.sax.SAXException;
 import de.uniol.inf.is.odysseus.core.metadata.AbstractStreamObject;
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.metadata.INamedAttributeStreamObject;
-import jlibs.core.lang.NotImplementedException;
 
 public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObject<T> implements INamedAttributeStreamObject<T>, Serializable {
 
@@ -52,10 +49,13 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	
 	private Document content;
 
+	
+	/** Creates a new XMLStreamObject from a {@link Document}. **/
 	public static XMLStreamObject<IMetaAttribute> createInstance(Document doc) throws XPathFactoryConfigurationException {
 		return new XMLStreamObject<>(doc);
 	}
 
+	/** Creates a new XMLStreamObject from a {@link Node}. **/
 	public static XMLStreamObject<IMetaAttribute> createInstance(Node node) throws XPathFactoryConfigurationException {
 		try {
 			
@@ -80,20 +80,112 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		
 		return null;
 	}
-
-	public static XMLStreamObject<IMetaAttribute> createInstance(Collection<Node> nodes, Collection<String> rootPaths)
-			throws XPathFactoryConfigurationException {
-		throw new NotImplementedException();
-//		Collection<XMLStreamObject<?>> col = new ArrayList<>();
-//		
-//		// Create for each node a new document
-//		for (Node n : nodes) {
-//			col.add(XMLStreamObject.createInstance(n));
-//		}
-//		
-//		return null;
+	
+	/** Creates a new XMLStreamObject from a list of XPath expressions. **/
+	public static XMLStreamObject<IMetaAttribute> createInstance(List<String> paths) {
+		
+		final String REGEX1 = "\\{|\\}";
+		
+		try {
+			
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			for (String targetXpath : paths) {
+				// Remove curly braces
+				targetXpath = targetXpath.replaceAll(REGEX1, "");
+				// Split path to retrieve single tokens
+				String[] tokens = targetXpath.split("/");
+				List<String> tokensList = new ArrayList<String>();
+				for (String token : tokens) {
+					if (token != null & !token.trim().equals(""))
+						tokensList.add(token.trim());
+				}
+				
+				String previousXpath = "";
+				Element parentElement = null;
+				
+				for (String token : tokensList) {
+					
+					String currentXpath = previousXpath + "/" + token;
+					
+					if (token.contains("[")) {
+						
+						String neededNode = token.split("\\[")[0];
+						String indexStr = token.split("\\[")[1].split("\\]")[0];
+						
+						if (indexStr.contains("@")) {
+							indexStr = "1";
+						}
+						
+						Integer index = Integer.valueOf(indexStr.trim());
+						NodeList nodes = getNodeList(previousXpath + "/" + neededNode, document);
+						
+						int resultCount = nodes.getLength();
+						
+						if (resultCount < index) {
+							
+							Element currentParent = null;
+							for (int i = resultCount + 1; i <= index; i++) {
+								Element el = document.createElement(neededNode);
+								parentElement.appendChild(el);
+								
+								if (i == index) {
+									currentParent = el;
+								}
+							}
+							
+							parentElement = currentParent;
+						} else {
+							
+							NodeList nodeList = getNodeList(currentXpath, document);
+							parentElement = (Element) nodeList.item(0);
+						}
+						
+					} else {
+						
+						NodeList nodes = getNodeList(currentXpath, document);
+						int resultCount = nodes.getLength();
+						
+						if (resultCount > 0) {
+							if (nodes.item(0) instanceof Element) {
+								parentElement = (Element) nodes.item(0);
+							}
+						} else {
+							
+							if (token.contains("@")) {
+								Attr attr = document.createAttribute(token.replace("@", "").trim());
+								parentElement.setAttributeNode(attr);
+							} else {
+								
+								if (parentElement == null) {
+									Element root = document.createElement(token);
+									document.appendChild(root);
+									parentElement = root;
+								} else {
+									Element el = document.createElement(token);
+									parentElement.appendChild(el);
+									parentElement = el;
+								}
+							}
+						}
+						
+					}
+					previousXpath = currentXpath;
+				}
+			}
+			
+			return XMLStreamObject.createInstance(document);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		} catch (XPathFactoryConfigurationException e) {
+			e.printStackTrace();
+		}
+			
+		return null;
 	}
 
+	/** Merges two XMLStreamObjects by specified target path. **/
 	public static XMLStreamObject<IMetaAttribute> merge(XMLStreamObject<?> left, XMLStreamObject<?> right, String path)
 			throws XPathFactoryConfigurationException, XPathExpressionException {
 		
@@ -124,14 +216,13 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 		return ret.toString();
 	}
 
-	public XMLStreamObject() {
-		
-	}
+	public XMLStreamObject() {}
 	
 	private XMLStreamObject(Document xml) throws XPathFactoryConfigurationException {
 		setDocument(xml);
 	}
 
+	@SuppressWarnings("unchecked")
 	private XMLStreamObject(XMLStreamObject<T> obj) {
 		TransformerFactory tfactory = TransformerFactory.newInstance();
 		Transformer tx;
@@ -141,6 +232,7 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 			DOMResult result = new DOMResult();
 			tx.transform(source, result);
 			content = (Document) result.getNode();
+			this.setMetadata((T) obj.getMetadata().clone());
 		} catch (TransformerException e) {
 			log.error("Could not copy DOM", e);
 			e.printStackTrace();
@@ -246,12 +338,20 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	@Override
 	@SuppressWarnings("unchecked")
 	public <K> K getAttribute(String name) {
-		name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
-		name = name.replaceAll(AT_REPLACEMENT_STRING, "@");
 		try {
 			
-			// Retrieve the attribute value
-			String result = factory.newXPath().compile(name).evaluate(content);
+			name = name.replaceAll(SLASH_REPLACEMENT_STRING, "/");
+			name = name.replaceAll(AT_REPLACEMENT_STRING, "@");
+			
+			// Retrieve the node list
+			NodeList nl = getNodeList(name);
+			
+			if (nl.getLength() > 1) {
+				return null;
+			}
+			
+			// Retrieve node value
+			String result = nl.item(0).getTextContent();
 			
 			// If the result is empty, return null
 			if ("".equals(result)) {
@@ -266,26 +366,23 @@ public class XMLStreamObject<T extends IMetaAttribute> extends AbstractStreamObj
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Object> path(String path) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return (List<Object>) getNode(path);
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<>();
 	}
 
 	@Override
 	public void setAttribute(String name, Object value) {
 		
 		final String REGEX1 = "\\{|\\}";
-		final String REGEX2 = "\\[|\\]";
 		String path = name.replaceAll(REGEX1, "");
 		String realValue = value.toString();
-		
-		if (value != null && value.getClass().isArray()) {
-			Object[] objArray = (Object[]) value;
-			realValue = Arrays.toString(objArray);
-			if (objArray.length == 1) {
-				realValue = realValue.replaceAll(REGEX2, "");
-			}
-		}
 		
 		try {
 			NodeList nodes = getNodeList(path);

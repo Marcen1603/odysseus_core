@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<user id="109" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-   <nickname>noname</nickname>
-   <fname>max</fname>
-   <lname>mustermann</lname>
-   <email>max.mustermann@mail.de</email>
-   <age>31</age>
-</user>
+<?xml version="1.0" encoding="UTF-8"?> 
+<users>
+    <user id="-62">
+        <nickname>nickname1</nickname>
+        <fname>fname1</fname>
+        <lname>lname1</lname>
+        <email>email1</email>
+        <age>-8</age>
+    </user>
+</users>

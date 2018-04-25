@@ -25,6 +25,7 @@ import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
 import de.uniol.inf.is.odysseus.core.physicaloperator.IPunctuation;
 import de.uniol.inf.is.odysseus.core.physicaloperator.OpenFailedException;
 import de.uniol.inf.is.odysseus.core.predicate.IPredicate;
+import de.uniol.inf.is.odysseus.core.server.metadata.UseRightInputMetadata;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.AbstractPipe;
 import de.uniol.inf.is.odysseus.core.server.physicaloperator.IHasPredicate;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
@@ -33,6 +34,7 @@ import de.uniol.inf.is.odysseus.server.xml.predicate.XMLStreamObjectPredicate;
 public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStreamObject<T>, XMLStreamObject<T>>
 		implements IHasPredicate {
 
+	private UseRightInputMetadata<T> metaMergeFunction = new UseRightInputMetadata<>();
 	private XMLStreamObjectPredicate<XMLStreamObject<T>> predicate;
 	private List<XMLStreamObject<T>> cache = new ArrayList<>();
 	private List<XMLStreamObject<T>> buffer = new ArrayList<>();
@@ -49,12 +51,14 @@ public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStrea
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) predicate;
 		this.minSize = minimumSize;
 		this.target = _target;
+		this.metaMergeFunction.init();
 	}
 
 	public XMLEnrichPO(XMLEnrichPO<T> po) {
 		super(po);
 		this.minSize = po.minSize;
 		this.predicate = (XMLStreamObjectPredicate<XMLStreamObject<T>>) po.predicate.clone();
+		this.metaMergeFunction.init();
 	}
 
 	@Override
@@ -114,10 +118,14 @@ public class XMLEnrichPO<T extends IMetaAttribute> extends AbstractPipe<XMLStrea
 				for (XMLStreamObject<T> cached : cache) {
 					if (predicate != null) {
 						if (predicate.evaluate(cached, object)) {
-							transfer((XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target));
+							XMLStreamObject<T> r = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target);
+							r.setMetadata(metaMergeFunction.mergeMetadata(cached.getMetadata(), object.getMetadata()));
+							transfer(r);
 						}
 					} else {
-						transfer((XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target));
+						XMLStreamObject<T> r = (XMLStreamObject<T>) XMLStreamObject.merge(object, cached, target);
+						r.setMetadata(metaMergeFunction.mergeMetadata(cached.getMetadata(), object.getMetadata()));
+						transfer(r);
 					}
 				}
 			}

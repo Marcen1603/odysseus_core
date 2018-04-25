@@ -2,6 +2,7 @@
 #DROPALLSOURCES
 #DROPALLSINKS
 #PARSER PQL
+#DEFINE filename toXML4
 #ADDQUERY
 input = ACCESS({
             source='source4',
@@ -10,17 +11,17 @@ input = ACCESS({
             wrapper='GenericPull',
             datahandler='Tuple',
             options=[
-              ['filename', '${BUNDLE-ROOT}/queries/document3.xml'],
-              ['nickname', '/user/nickname'],
-              ['fname', '/user/fname'],
-              ['lname', '/user/lname'],
-              ['email', '/user/email'],
-              ['role', '/user/roles/role'],
-              ['age', '/user/age'],
-              ['user_id', '/user/@id'],
-              ['role_1', '/user/roles/role[1]'],
-              ['role_2', '/user/roles/role[2]'],
-              ['role_3', '/user/roles/role[3]']
+              ['filename', '${BUNDLE-ROOT}/queries/document2.xml'],
+              ['nickname', '/users/user/nickname'],
+              ['fname', '/users/user/fname'],
+              ['lname', '/users/user/lname'],
+              ['email', '/users/user/email'],
+              ['role', '/users/user/roles/role'],
+              ['age', '/users/user/age'],
+              ['user_id', '/users/user/@id'],
+              ['role_1', '/users/user/roles/role[1]'],
+              ['role_2', '/users/user/roles/role[2]'],
+              ['role_3', '/users/user/roles/role[3]']
             ],
             schema=[
               ['nickname','String'],
@@ -37,9 +38,9 @@ input = ACCESS({
           }                                                                                                                  
         )
               
-transform = TOXML({
+transform1 = TOXML({
                 rootelement = 'user',
-                xsdfile = '${BUNDLE-ROOT}/queries/schema3.xsd',
+                xsdfile = '${BUNDLE-ROOT}/queries/schema2.xsd',
                 options = [
                   ['user_id', '/user/@id'],
                   ['role_1', '/user/roles/role[1]'],
@@ -49,3 +50,44 @@ transform = TOXML({
               },
               input
             )
+            
+transform2 = XMLTOTUPLE({
+expressions = [
+                  ['id', '/user/@id'],
+                  ['nickname','/user/nickname'],
+                  ['fname', '/user/fname'],
+                  ['lname', '/user/lname'],
+                  ['email', '/user/email'],
+                  ['role1', '/user/roles/role[1]'],
+                  ['role2', '/user/roles/role[2]'],
+                  ['role3', '/user/roles/role[3]'],
+                  ['age', '/user/age']
+                  ],
+                  schema = [
+                  ['id', 'String'] ,             
+                  ['nickname','String'],
+                  ['fname', 'String'],
+                  ['lname', 'String'],
+                  ['email', 'String'],
+                  ['role1', 'String'],
+                  ['role2', 'String'],
+                  ['role3', 'String'],
+                  ['age', 'Integer']
+                  ]
+                },
+                transform1
+              )
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='CSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ]
+///                  ]                   
+///                },
+///                transform2
+///              )              
+            

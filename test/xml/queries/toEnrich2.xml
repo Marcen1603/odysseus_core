@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+ <?xml-stylesheet href="hello.xsl" type="text/xsl"?>
+  <page>
+   <title>Hello</title>
+   <content>Here is some content</content>
+   <comment>Written by DKS.</comment>
+</page>

@@ -29,8 +29,7 @@ import de.uniol.inf.is.odysseus.core.sdf.schema.SDFSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<XMLStreamObject<?>>
-{
+public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<XMLStreamObject<?>> {
 	protected static List<String> types = new ArrayList<String>();
 	protected static final Logger LOG = LoggerFactory.getLogger(XMLStreamObjectDataHandler.class);
 	private static DocumentBuilder docBuilder;
@@ -38,37 +37,29 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 
 	private CharsetEncoder encoder = charset.newEncoder();
 
-	static
-	{
+	static {
 		types.add(SDFXMLStreamObjectDatatype.XMLSTREAMOBJECT.getURI());
 	}
 
-	public XMLStreamObjectDataHandler()
-	{
+	public XMLStreamObjectDataHandler() {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		docFactory.setNamespaceAware(false);
-		try
-		{
+		try {
 			docBuilder = docFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e)
-		{
-			// TODO Auto-generated catch block  
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public XMLStreamObject<?> readData(ByteBuffer buffer, boolean handleMetaData)
-	{
-		// TODO Auto-generated method stub
+	public XMLStreamObject<?> readData(ByteBuffer buffer, boolean handleMetaData) {
 		return null;
 	}
 
-	public XMLStreamObject<?> readData(String input, boolean handleMetaData)
-	{
-		//System.out.println(input);
-		try
-		{
+	public XMLStreamObject<?> readData(String input, boolean handleMetaData) {
+		// System.out.println(input);
+		try {
 			Document doc = docBuilder.parse(new InputSource(new StringReader(input)));
 			try {
 				return XMLStreamObject.createInstance(doc);
@@ -76,24 +67,21 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (SAXException | IOException e)
-		{
+		} catch (SAXException | IOException e) {
 			LOG.error("Parsing data using a String failed", e);
 			e.printStackTrace(); // TODO remove later
 		}
 		return null;
 	}
-	
+
 	@Override
 	public XMLStreamObject<?> readData(InputStream inputStream) throws IOException {
 		return readData(inputStream, false);
 	}
 
 	@Override
-	public XMLStreamObject<?> readData(InputStream inputStream, boolean handleMetaData)
-	{
-		try
-		{
+	public XMLStreamObject<?> readData(InputStream inputStream, boolean handleMetaData) {
+		try {
 			Document doc = docBuilder.parse(inputStream);
 			try {
 				return XMLStreamObject.createInstance(doc);
@@ -101,8 +89,7 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (SAXException | IOException e)
-		{
+		} catch (SAXException | IOException e) {
 			LOG.error("Parsing data using an inputstream failed", e);
 			e.printStackTrace(); // TODO remove later
 		}
@@ -110,63 +97,52 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 	}
 
 	@Override
-	public XMLStreamObject<?> readData(Iterator<String> input, boolean handleMetaData)
-	{
+	public XMLStreamObject<?> readData(Iterator<String> input, boolean handleMetaData) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 	@Override
-	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData)
-	{
+	public void writeData(ByteBuffer buffer, Object data, boolean handleMetaData) {
 		StringBuilder builder = new StringBuilder();
-		if (data instanceof XMLStreamObject<?>)
-		{
+		if (data instanceof XMLStreamObject<?>) {
 			builder.append(((XMLStreamObject<?>) data).toString());
 		}
 		ByteBuffer charBuffer;
-		try
-		{
+		try {
 			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
 			buffer.put(charBuffer);
 			return;
-		} catch (CharacterCodingException e)
-		{
+		} catch (CharacterCodingException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void writeData(ByteBuffer buffer, XMLStreamObject<?> data, boolean handleMetaData)
-	{
+	public void writeData(ByteBuffer buffer, XMLStreamObject<?> data, boolean handleMetaData) {
 		StringBuilder builder = new StringBuilder();
 		builder.append(((XMLStreamObject<?>) data).toString());
 		ByteBuffer charBuffer;
-		try
-		{
+		try {
 			charBuffer = encoder.encode(CharBuffer.wrap(builder.toString()));
 			buffer.put(charBuffer);
 			return;
-		} catch (CharacterCodingException e)
-		{
+		} catch (CharacterCodingException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void writeData(StringBuilder builder, Object data, boolean handleMetaData)
-	{
-		if (data instanceof XMLStreamObject<?>)
-		{
+	public void writeData(StringBuilder builder, Object data, boolean handleMetaData) {
+		if (data instanceof XMLStreamObject<?>) {
 			builder.append(((XMLStreamObject<?>) data).toString());
 		}
 	}
 
 	@Override
-	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options)
-	{
+	public void writeData(List<String> output, Object data, boolean handleMetaData, WriteOptions options) {
 		StringBuilder builder = new StringBuilder();
-		if (data instanceof XMLStreamObject<?>)
-		{
+		if (data instanceof XMLStreamObject<?>) {
 			builder.append(((XMLStreamObject<?>) data).toString());
 		}
 		output.add(builder.toString());
@@ -174,26 +150,22 @@ public class XMLStreamObjectDataHandler extends AbstractStreamObjectDataHandler<
 	}
 
 	@Override
-	public int memSize(Object attribute, boolean handleMetaData)
-	{
+	public int memSize(Object attribute, boolean handleMetaData) {
 		return 0;
 	}
 
 	@Override
-	public Class<?> createsType()
-	{
+	public Class<?> createsType() {
 		return XMLStreamObject.class;
 	}
 
 	@Override
-	protected IDataHandler<XMLStreamObject<?>> getInstance(SDFSchema schema)
-	{
+	protected IDataHandler<XMLStreamObject<?>> getInstance(SDFSchema schema) {
 		return new XMLStreamObjectDataHandler();
 	}
 
 	@Override
-	public List<String> getSupportedDataTypes()
-	{
+	public List<String> getSupportedDataTypes() {
 		return types;
 	}
 }

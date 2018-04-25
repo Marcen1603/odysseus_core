@@ -1,0 +1,47 @@
+#DROPALLQUERIES
+#DROPALLSOURCES
+#DROPALLSINKS
+#DEFINE filename project
+#PARSER PQL
+#ADDQUERY
+/// if you use the root element as tag, nothing will be stripped
+input = ACCESS({
+            source='projectExample',
+            protocol='XML3',
+            transport='File',
+            wrapper='GenericPull',
+            datahandler='XMLStreamObject',
+            options=[
+              ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
+              ['tag_to_strip', 'user']
+            ]                                                                                                                                                                                
+          }                                                                                                                                                  
+        )
+        
+transform1 = XMLSPLIT({EXPRESSIONS = ['/user/roles', '/user/fname']}, input)
+
+transform2 = XMLTOTUPLE({
+                  expressions = [
+                  ['role','/roles/role[1]'],
+                  ['fname','/fname']
+                  ],
+                  schema = [
+                  ['role', 'String'],
+                  ['fname', 'String']
+                  ]
+                },
+                transform1
+              )
+              
+///outputXML2 = SENDER({
+///                  sink='csvOutput',
+///                  protocol='CSV',
+///                  transport='File',
+///                  wrapper='GenericPull',
+///                  datahandler='Tuple',
+///                  options=[
+///                    ['filename','${BUNDLE-ROOT}/queries/${filename}.csv' ]
+///                  ]                   
+///                },
+///                transform2
+///              )  

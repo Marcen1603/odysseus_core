@@ -2,6 +2,7 @@
 #DROPALLSOURCES
 #DROPALLSINKS
 #PARSER PQL
+#DEFINE filename enrich
 #ADDQUERY
 /// if you use the root element as tag, nothing will be stripped
 input = ACCESS({
@@ -13,10 +14,10 @@ input = ACCESS({
             options=[
               ['filename', '${BUNDLE-ROOT}/queries/toEnrich.xml'],
               ['tag_to_strip', 'user']
-            ]                                                                                                                                                                      
-          }                                                                                                                                          
+            ]                                                                                                                                                                                
+          }                                                                                                                                                  
         )
-        
+
 enrichment = ACCESS({
                   source='enrichment',
                   protocol='XML3',
@@ -24,18 +25,41 @@ enrichment = ACCESS({
                   wrapper='GenericPull',
                   datahandler='XMLStreamObject',
                   options=[
-                  ['filename', '${BUNDLE-ROOT}/queries/enrichment.xml'],
+                    ['filename', '${BUNDLE-ROOT}/queries/enrichment.xml'],
                     ['tag_to_strip', 'roles']
-                  ]                                                                                                                                                                      
-                }                                                                                                                                          
+                  ]                                                                                                                                                                                      
+                }                                                                                                                                                        
               )        
         
-out = XMLENRICH({
-          target = '/user',
-          predicate = '/user/@id==/roles/@id'
-        },
-        
-        input,
-        enrichment
-      )        
+transform1 = XMLENRICH({
+                  target = '/user',
+                  predicate = 'true'///'/user/@id != /roles/@id'        
+                },
+                enrichment,
+                input
+              )        
      
+transform2 = XMLTOTUPLE({
+                  expressions = [
+                    ['nickname','/user/nickname'],
+                    ['fname', '/user/fname'],
+                    ['lname', '/user/lname'],
+                    ['email', '/user/email'],
+                    ['role1', '/user/roles/role[1]'],
+                    ['role2', '/user/roles/role[2]'],
+                    ['role3', '/user/roles/role[3]'],
+                    ['age', '/user/age']
+                  ],
+                  schema = [
+                    ['nickname','String'],
+                    ['fname', 'String'],
+                    ['lname', 'String'],
+                    ['email', 'String'],
+                    ['role1', 'String'],
+                    ['role2', 'String'],
+                    ['role3', 'String'],
+                    ['age', 'Integer']
+                  ]                
+                },
+                transform1
+              )

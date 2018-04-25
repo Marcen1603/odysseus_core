@@ -2,6 +2,7 @@
 #DROPALLSOURCES
 #DROPALLSINKS
 #PARSER PQL
+#DEFINE filename toXML1
 #ADDQUERY
 input = ACCESS({
             source='source1',
@@ -11,12 +12,12 @@ input = ACCESS({
             datahandler='Tuple',
             options=[
               ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
-              ['nickname', '/user/nickname'],
-              ['fname', '/user/fname'],
-              ['lname', '/user/lname'],
-              ['email', '/user/email'],
-              ['role', '/user/roles/role'],
-              ['age', '/user/age']
+              ['nickname', '/users/user/nickname'],
+              ['fname', '/users/user/fname'],
+              ['lname', '/users/user/lname'],
+              ['email', '/users/user/email'],
+              ['role', '/users/user/roles/role'],
+              ['age', '/users/user/age']
             ],
             schema=[
               ['nickname','String'],
@@ -25,13 +26,34 @@ input = ACCESS({
               ['email', 'String'],
               ['role', 'String'],
               ['age', 'Integer']
-            ]                                                                                                                                    
-          }                                                                                                          
+            ]                                                                                                                                              
+          }                                                                                                                  
         )
               
-transform = TOXML({
-                rootelement = 'user',
-                xsdfile = '${BUNDLE-ROOT}/queries/schema.xsd'              
-              },
-              input
-            )
+transform1 = TOXML({
+                  rootelement = 'user',
+                  xsdfile = '${BUNDLE-ROOT}/queries/schema.xsd'                        
+                },
+                input
+              )
+            
+transform2 = XMLTOTUPLE({
+expressions = [
+                  ['nickname','/user/nickname'],
+                  ['fname', '/user/fname'],
+                  ['lname', '/user/lname'],
+                  ['email', '/user/email'],
+                  ['role', '/user/roles/role'],
+                  ['age', '/user/age']
+                  ],
+                  schema = [              
+                  ['nickname','String'],
+                  ['fname', 'String'],
+                  ['lname', 'String'],
+                  ['email', 'String'],
+                  ['role', 'String'],
+                  ['age', 'Integer']
+                  ]
+                },
+                transform1
+              )        

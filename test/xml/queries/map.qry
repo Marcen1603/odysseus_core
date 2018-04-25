@@ -2,25 +2,48 @@
 #DROPALLSOURCES
 #DROPALLSINKS
 #PARSER PQL
+#DEFINE filename map
+#METADATA TimeInterval
 #ADDQUERY
-/// if you use the root element as tag, nothing will be stripped
 input = ACCESS({
-            source='joinxmlexample8',
+            source='mapExample',
             protocol='XML3',
             transport='File',
             wrapper='GenericPull',
             datahandler='XMLStreamObject',
             options=[
-              ['filename', '${BUNDLE-ROOT}/queries/document.xml'],
+              ['filename', '${BUNDLE-ROOT}/queries/document2.xml'],
               ['tag_to_strip', 'user']
-            ]                                                                                                                                                                                
-          }                                                                                                                                                  
+            ]                                                                                                                                                                                          
+          }                                                                                                                                                          
         )
         
-xmlMapped = XMLMAP({
-                target = ['//user//age'],
-                source = ['//user//age * 2']
-              },
-              input
-            )      
-  
+win = TIMEWINDOW({SIZE = [1000000, 'MINUTES'], SLIDE = [1000000, 'MINUTES']}, input)        
+        
+transform1 = XMLMAP({
+                  expressions = [
+                    ['toInteger({/user/age}) * (-1)', '/user/age'],
+                    ['upper(toString({/user/fname}))', '/user/fname'],
+                    ['lower(toString({/user/lname}))', '/user/lname'],
+                    ['concat(toString({/user/nickname}), "UUID-1239ABCD")', '/user/nickname']
+                  ]              
+                },
+                win
+              )
+
+transform2 = XMLTOTUPLE({
+                  schema = [
+                    ['nickname','String'],
+                    ['fname', 'String'],
+                    ['lname', 'String'],
+                    ['age', 'Integer']
+                  ],
+                  expressions = [
+                    ['nickname', '/user/nickname'],
+                    ['fname', '/user/fname'],
+                    ['lname', '/user/lname'],
+                    ['age', '/user/age']
+                  ]                        
+                },
+                transform1
+              )

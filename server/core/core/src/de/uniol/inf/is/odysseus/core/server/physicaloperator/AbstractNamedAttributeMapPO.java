@@ -17,8 +17,6 @@ package de.uniol.inf.is.odysseus.core.server.physicaloperator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	@Override
 	@SuppressWarnings({ "unchecked" })
-	protected void process_next(T object, int port) {
+	final public void process_next(T object, int port) {
 		if (object != null) {
 
 			T outputVal = createInstance();
@@ -144,10 +142,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 
 	protected abstract T createInstance();
 	
-	final String XPATH_REGEX = "(\\/(\\d|\\w|@|=|\\s|\\*|\\+|\\-|\\/|\\[|\\])*)";
-	final Pattern pattern = Pattern.compile(XPATH_REGEX);
-	
-	protected void initExpressions(List<NamedExpression> exprToInit) {
+	final protected void initExpressions(List<NamedExpression> exprToInit) {
 		this.variables = new String[exprToInit.size()][];
 		this.pathExpression = new boolean[exprToInit.size()];
 		this.expressions = new ArrayList<>(exprToInit.size());
@@ -155,21 +150,10 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 		for (NamedExpression expression : exprToInit) {
 
 			// A little hack to allow path expressions in MAP, too.
-			// Whereas the expString.contains("/") is used to recognize
-			// XPath expressions in order to allow the use of
-			// MEP functions in  XML documents.
 			String expString = expression.expression.getExpressionString();
 			if (expString.startsWith("\"path")) { //|| expString.contains("/")) {
 				this.pathExpression[i] = true;
-				
-				String path = expString;
-//				final Matcher matcher = pattern.matcher(expString);
-//				if (matcher.find()) {
-//					path = matcher.group(1);
-//					path = path.replace("(", "");
-//				} 
-				
-				path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
+				String path = expString.substring(expString.indexOf("(") + 1, expString.lastIndexOf(")"));
 				String[] newArray = new String[1];
 				newArray[0] = path;
 				this.variables[i++] = newArray;
@@ -213,7 +197,7 @@ abstract public class AbstractNamedAttributeMapPO<K extends IMetaAttribute, T ex
 		}
 	}
 
-	protected String removePoint(String name) {
+	private String removePoint(String name) {
 		if (name.substring(0, 1).equals(".")) {
 			return name.substring(1);
 		}

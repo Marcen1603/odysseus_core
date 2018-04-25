@@ -116,11 +116,7 @@ public class KeyValueObject<T extends IMetaAttribute> extends AbstractStreamObje
 
 	private KeyValueObject(String json) {
 		try {
-			
-			//TODO remove after debugging
-			String responseString = "{\"name\":\"FOO\",\"bar\":{\"id\":42}}";
-			
-			this.node = new ObjectMapper().readTree(responseString);
+			this.node = jsonMapper.reader().readTree(json);
 			this.setNode(this.node);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

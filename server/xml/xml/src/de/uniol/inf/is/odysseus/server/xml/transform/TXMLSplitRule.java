@@ -1,16 +1,16 @@
 package de.uniol.inf.is.odysseus.server.xml.transform;
 
 import de.uniol.inf.is.odysseus.core.metadata.IMetaAttribute;
-import de.uniol.inf.is.odysseus.core.server.logicaloperator.ProjectAO;
 import de.uniol.inf.is.odysseus.core.server.planmanagement.TransformationConfiguration;
 import de.uniol.inf.is.odysseus.ruleengine.rule.RuleException;
 import de.uniol.inf.is.odysseus.ruleengine.ruleflow.IRuleFlowGroup;
 import de.uniol.inf.is.odysseus.server.xml.XMLStreamObject;
-import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLProjectPO;
+import de.uniol.inf.is.odysseus.server.xml.logicaloperator.XMLSplitAO;
+import de.uniol.inf.is.odysseus.server.xml.physicaloperator.XMLSplitPO;
 import de.uniol.inf.is.odysseus.transform.flow.TransformRuleFlowGroup;
 import de.uniol.inf.is.odysseus.transform.rule.AbstractTransformationRule;
 
-public class TXMLProjectRule extends AbstractTransformationRule<ProjectAO>{
+public class TXMLSplitRule extends AbstractTransformationRule<XMLSplitAO>{
 
 	@Override
 	public int getPriority() {
@@ -18,13 +18,13 @@ public class TXMLProjectRule extends AbstractTransformationRule<ProjectAO>{
 	}
 
 	@Override
-	public void execute(ProjectAO operator, TransformationConfiguration config) throws RuleException {
-		XMLProjectPO<IMetaAttribute> projectPO = new XMLProjectPO<IMetaAttribute>(operator.getAttributes());
+	public void execute(XMLSplitAO operator, TransformationConfiguration config) throws RuleException {
+		XMLSplitPO<IMetaAttribute> projectPO = new XMLSplitPO<IMetaAttribute>(operator.getAttributes());
 		defaultExecute(operator, projectPO, config, true, false);
 	}
 
 	@Override
-	public boolean isExecutable(ProjectAO operator, TransformationConfiguration config) {
+	public boolean isExecutable(XMLSplitAO operator, TransformationConfiguration config) {
 		if ((operator.getInputSchema().getType() == XMLStreamObject.class ) &&
 				operator.isAllPhysicalInputSet()) {
 			return true;
