@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniol.inf.ei.oj104.model.ITimeTag;
+import de.uniol.inf.ei.oj104.model.timetag.SevenOctetBinaryTime;
 import de.uniol.inf.is.odysseus.core.sdf.schema.SDFDatatype;
 import de.uniol.inf.is.odysseus.mep.AbstractFunction;
 
@@ -58,8 +59,10 @@ public class GetTimestampFrom104TimeTag extends AbstractFunction<Long> {
 		
 		if(tt == null) {
 			return null;
+		} else if(tt instanceof SevenOctetBinaryTime) {
+			return ((SevenOctetBinaryTime) tt).getTimestamp(tz, century);
 		} else {
-			return tt.getTimestamp(tz, century);
+			return tt.getTimestamp();
 		}
 	}
 

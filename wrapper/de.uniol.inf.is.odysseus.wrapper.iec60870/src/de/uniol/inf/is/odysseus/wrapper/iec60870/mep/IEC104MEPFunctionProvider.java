@@ -12,6 +12,7 @@ import de.uniol.inf.is.odysseus.mep.IFunctionProvider;
  * <ul>
  * <li>{@link Get104ElementSequences}</li>
  * <li>{@link Get104TimeTagClass}</li>
+ * <li>{@link Get104TimeTagFromTimestamp}</li>
  * <li>{@link GetTimestampFrom104TimeTag}</li>
  * <li>{@link Is104TimeTagInvalid}</li>
  * <li>{@link Is104TimeTagSubstituted}</li>
@@ -27,8 +28,8 @@ public class IEC104MEPFunctionProvider implements IFunctionProvider {
 	 * Instances of the provided MEP functions.
 	 */
 	private static final IMepFunction<?>[] functions = new IMepFunction[] { new Get104ElementSequences(),
-			new Split104ElementSequence(), new GetTimestampFrom104TimeTag(), new Is104TimeTagInvalid(),
-			new Is104TimeTagSubstituted(), new Get104TimeTagClass() };
+			new Split104ElementSequence(), new Get104TimeTagFromTimestamp(), new Is104TimeTagInvalid(),
+			new Is104TimeTagSubstituted(), new Get104TimeTagClass(), new GetTimestampFrom104TimeTag() };
 
 	@Override
 	public List<IMepFunction<?>> getFunctions() {
