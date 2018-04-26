@@ -15,7 +15,7 @@ public class GroupedCounterFunction extends AbstractFunction<Long> implements IS
 	/**
 	 * The name of the MEP function to be used in query languages.
 	 */
-	private static final String name = GroupedCounterFunction.class.getSimpleName();
+	private static final String name = "GroupedCounter";
 
 	/**
 	 * The amount of input values.
