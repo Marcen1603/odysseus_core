@@ -52,9 +52,11 @@ public class Split104ElementSequence extends AbstractFunction<Tuple<IMetaAttribu
 		}
 
 		InformationElementSequence seq = (InformationElementSequence) getInputValue(0);
-		Tuple<IMetaAttribute> tuple = new Tuple<>(2, false);
-		tuple.setAttribute(0, seq.getInformationElements());
-		tuple.setAttribute(1, seq.getTimeTag().orElse(null));
+		Tuple<IMetaAttribute> tuple = new Tuple<>(4, false);
+		tuple.setAttribute(0, seq.getInformationElementClasses());
+		tuple.setAttribute(1, seq.getInformationElements());
+		tuple.setAttribute(2, seq.getTimeTagClass().orElse(null));
+		tuple.setAttribute(3, seq.getTimeTag().orElse(null));
 		return tuple;
 	}
 
